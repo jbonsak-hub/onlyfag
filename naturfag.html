@@ -126,7 +126,7 @@
   </div>
 </aside>
 <main class="main">
-  <header class="topbar"><div class="top-title" id="topTitle">Kjemi – oppgavebank</div><button class="top-periodic-btn" id="floatingPtBtn" type="button">▤&nbsp; Periodesystem</button><div class="top-spacer"></div><span class="pill">Naturfag</span><div class="info-wrap"><button class="info-btn" id="infoBtn" type="button" aria-label="Om oppgavebanken" aria-expanded="false">i</button><div class="info-pop" id="infoPop" role="dialog" aria-label="Om oppgavebanken"><p>Oppgavene er basert på pensum i kjemi i <a href="https://www.udir.no/lk20/nat01-05/kompetansemaal-og-vurdering/kv1079" target="_blank" rel="noopener noreferrer">Naturfag Vg1 SF</a>.<br>Siden er utviklet som et interaktivt supplement til undervisning og øving, med fokus på korte oppgaver, variasjon og umiddelbar tilbakemelding.<br>Oppgavebanken erstatter ikke lærebok eller undervisning, men er laget som et øvingsverktøy.<br>Bonsak, Elvebakken vgs.</p></div></div></header>
+  <header class="topbar"><div class="top-title" id="topTitle">Kjemi – oppgavebank</div><button class="top-periodic-btn" id="floatingPtBtn" type="button">▤&nbsp; Periodesystem</button><div class="top-spacer"></div><span class="pill">Naturfag</span><div class="info-wrap"><button class="info-btn" id="infoBtn" type="button" aria-label="Om oppgavebanken" aria-expanded="false">i</button><div class="info-pop" id="infoPop" role="dialog" aria-label="Om oppgavebanken"><p>Oppgavene er basert på pensum i kjemi i <a href="https://www.udir.no/lk20/nat01-05/kompetansemaal-og-vurdering/kv1079" target="_blank" rel="noopener noreferrer">Naturfag Vg1 SF</a>.<br>Siden er utviklet som et interaktivt supplement til undervisning og øving, med fokus på korte oppgaver, variasjon og umiddelbar tilbakemelding.<br>Oppgavebanken erstatter ikke lærebok eller undervisning, men er laget som et øvingsverktøy.<br>Jack Bonsak, Elvebakken vgs.</p></div></div></header>
   <div class="content">
     <section class="page active" id="page-home">
       <h1>Kjemi - oppgavebank</h1>
@@ -244,7 +244,7 @@ $$('.nav-btn').forEach(b=>b.onclick=()=>openPage(b.dataset.page));
 const safeStore={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 $('#collapseBtn').onclick=()=>{document.body.classList.toggle('side-collapsed');safeStore.set('chemSide',document.body.classList.contains('side-collapsed')?'1':'0')};
 $('#themeBtn').onclick=()=>{document.body.classList.toggle('dark');safeStore.set('chemTheme',document.body.classList.contains('dark')?'dark':'light')};
-if(safeStore.get('chemTheme')==='dark')document.body.classList.add('dark');
+if(safeStore.get('chemTheme')==='dark'||(!safeStore.get('chemTheme')&&matchMedia('(prefers-color-scheme: dark)').matches))document.body.classList.add('dark');
 if(safeStore.get('chemSide')==='1'&&innerWidth>860)document.body.classList.add('side-collapsed');
 
 const homeModules=[
