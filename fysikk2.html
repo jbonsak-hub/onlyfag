@@ -973,7 +973,7 @@ function applyGlobalTheme(theme, save=true){
 }
 
 function setupGlobalTheme(){
-  let theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  let theme = 'light';
   try{const saved=localStorage.getItem('fys2-theme');if(saved==='dark'||saved==='light')theme=saved}catch(error){}
   applyGlobalTheme(theme,false);
   const button=document.getElementById('global-theme-toggle');
