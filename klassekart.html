@@ -20,7 +20,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid #7fb39f;outline-offset
 input[type=checkbox],input[type=radio]{accent-color:var(--green)}
 h1,h2,h3,p{margin:0}.muted{color:var(--muted)}.row{display:flex;align-items:center;gap:8px}.between{justify-content:space-between}.grow{flex:1}.hidden{display:none!important}
 .app-header{height:58px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:0 14px;position:relative;z-index:10}
-.brandmark{width:30px;height:30px;border-radius:8px;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:900;font-size:18px;flex:0 0 auto}
+.brandmark{width:30px;height:30px;border-radius:8px;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:900;font-size:18px;flex:0 0 auto;text-decoration:none}.brandmark:hover{background:var(--green2)}
 .class-picker{width:220px;flex:0 0 auto}
 .title-input{border:0;background:transparent;font-weight:800;font-size:18px;padding:2px 0;width:min(320px,28vw);letter-spacing:-.35px}.title-input:focus{outline:none;border-bottom:1px solid #86aa9c}
 .save-inline{display:flex;align-items:center;gap:7px;margin-left:auto;min-width:0;max-width:520px}.save-status{font-size:9.5px;line-height:1.25;color:var(--muted);max-width:430px;text-align:right}.header-actions{display:flex;gap:7px;flex:0 0 auto;align-items:center}.header-actions #printBtn{padding:8px 14px;font-size:12px}.stats-chip{display:inline-flex;align-items:center;gap:12px;padding:8px 12px;border:1px solid #bfd0c8;border-radius:11px;background:#eef6f1;color:#406258;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:inset 0 0 0 1px #f8fbf9}.stats-chip strong{font-size:14px;color:#17312f;margin-right:3px}.stats-chip.alert{background:#fff0f0;border-color:#d98f8f;color:#8d3434;box-shadow:inset 0 0 0 1px #ffe5e5}.stats-chip.alert strong{color:#8b2020}
@@ -115,7 +115,7 @@ dialog{border:0;border-radius:14px;padding:0;width:min(620px,92vw);max-height:88
 </head>
 <body>
 <header class="app-header">
-  <div class="brandmark">⌘</div>
+  <a class="brandmark" href="https://onlyfag.no" aria-label="Tilbake til OnlyFag" title="Tilbake til OnlyFag">⌘</a>
   <select id="classPicker" class="class-picker"></select>
   <input id="projectTitle" class="title-input" value="Klassekart" aria-label="Klassenavn">
   <div class="save-inline"><button id="undoBtn" class="icon" title="Angre">↶</button><div id="saveStatus" class="save-status">All informasjon lagres i denne nettleseren. For å lagre i filen --&gt;</div></div>
