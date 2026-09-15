@@ -1,0 +1,859 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Klassekart</title>
+<style>
+:root{
+  --green:#176454; --green2:#0e5244; --ink:#17312f; --muted:#71817b; --line:#d8e0db;
+  --bg:#f4f6f2; --paper:#fff; --soft:#edf5f0; --warm:#fff7ed; --sidebar:410px;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--ink); font-size:14px;
+}
+*{box-sizing:border-box} html,body{height:100%} body{margin:0;background:var(--bg);overflow:hidden}
+button,input,select,textarea{font:inherit;color:inherit} button{cursor:pointer}
+button{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap}
+button:hover{background:#f4f7f4;border-color:#b9c8bf} button.primary{background:var(--green);border-color:var(--green);color:#fff} button.primary:hover{background:var(--green2)} button.subtle{border-color:transparent;background:transparent} button.icon{width:36px;padding:8px} button.danger{color:#a54134} button:disabled{opacity:.45;cursor:default}
+input,select,textarea{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 9px;min-width:0;max-width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid #7fb39f;outline-offset:1px}
+input[type=checkbox],input[type=radio]{accent-color:var(--green)}
+h1,h2,h3,p{margin:0}.muted{color:var(--muted)}.row{display:flex;align-items:center;gap:8px}.between{justify-content:space-between}.grow{flex:1}.hidden{display:none!important}
+.app-header{height:58px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:0 14px;position:relative;z-index:10}
+.brandmark{width:30px;height:30px;border-radius:8px;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:900;font-size:18px;flex:0 0 auto}
+.class-picker{width:220px;flex:0 0 auto}
+.title-input{border:0;background:transparent;font-weight:800;font-size:18px;padding:2px 0;width:min(320px,28vw);letter-spacing:-.35px}.title-input:focus{outline:none;border-bottom:1px solid #86aa9c}
+.save-inline{display:flex;align-items:center;gap:7px;margin-left:auto;min-width:0;max-width:520px}.save-status{font-size:9.5px;line-height:1.25;color:var(--muted);max-width:430px;text-align:right}.header-actions{display:flex;gap:7px;flex:0 0 auto;align-items:center}.header-actions #printBtn{padding:8px 14px;font-size:12px}.stats-chip{display:inline-flex;align-items:center;gap:12px;padding:8px 12px;border:1px solid #bfd0c8;border-radius:11px;background:#eef6f1;color:#406258;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:inset 0 0 0 1px #f8fbf9}.stats-chip strong{font-size:14px;color:#17312f;margin-right:3px}.stats-chip.alert{background:#fff0f0;border-color:#d98f8f;color:#8d3434;box-shadow:inset 0 0 0 1px #ffe5e5}.stats-chip.alert strong{color:#8b2020}
+.app{height:calc(100vh - 58px);min-height:0;display:grid;grid-template-columns:var(--sidebar) 6px minmax(0,1fr);overflow:hidden}
+.sidebar{background:#fff;min-width:300px;min-height:0;height:100%;overflow:visible;display:flex;flex-direction:column;border-right:1px solid var(--line);position:relative}.sidebar.collapsed{min-width:0;background:transparent;border-right-color:transparent}.sidebar.collapsed .tabs,.sidebar.collapsed .panel{display:none!important}.left-collapse{position:absolute;right:-16px;top:14px;width:31px;height:31px;padding:0;border-radius:50%;font-size:18px;z-index:12;background:#fff;color:var(--green);box-shadow:0 2px 8px #17312f22}.left-collapse:hover{background:#f3f8f5}.app.left-collapsed{grid-template-columns:12px 6px minmax(0,1fr)}
+.resizer{cursor:col-resize;background:transparent;position:relative;z-index:14}.resizer::after{content:"";position:absolute;left:0;right:0;top:0;bottom:0;width:6px;background:transparent}.resizer:hover::after,.resizer.dragging::after{background:#8fb0a3}
+.tabs{display:flex;border-bottom:1px solid var(--line);padding:4px 8px 0;gap:1px}.tab{flex:1;border:0;background:transparent;color:var(--muted);border-radius:7px 7px 0 0;padding:10px 4px;font-size:12.5px;position:relative}.tab.active{color:var(--green);background:#f3f7f3}.tab.active::after{content:"";position:absolute;left:10px;right:10px;bottom:0;height:2px;background:var(--green)}
+.panel{display:none;padding:10px 12px 12px;overflow:auto;min-height:0;height:auto;flex:1 1 auto}.panel.active{display:flex;flex-direction:column}.panel h2{font-size:18px;letter-spacing:-.35px}.count{font-size:10px;font-weight:800;color:var(--green);background:var(--soft);padding:3px 6px;border-radius:6px}
+.small-help{font-size:10.5px;color:var(--muted);line-height:1.45}.divider{height:1px;background:var(--line);margin:11px 0}
+.import-row{display:flex;gap:7px;margin-top:8px}.import-row button:first-child{flex:1;background:#edf5f0;color:var(--green)}
+.column-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0 7px;padding:7px 8px;border:1px solid var(--line);border-radius:8px;background:#fafcf9;font-size:10.8px}.column-controls strong{font-size:10.8px}.column-controls label{display:flex;align-items:center;gap:4px}
+.student-search{width:100%;padding:7px 9px;margin-bottom:6px}
+.student-grid-wrap{border:1px solid var(--line);border-radius:8px;overflow-x:auto;overflow-y:visible;background:#fff;flex:0 0 auto;min-height:0}
+.student-grid{border-collapse:separate;border-spacing:0;width:100%;min-width:0;table-layout:auto;font-size:12.4px}.student-grid th{position:sticky;top:0;z-index:2;background:#f5f8f5;color:#63756f;font-size:10px;text-align:left;font-weight:750;border-bottom:1px solid var(--line);padding:6px 5px;white-space:nowrap}.student-grid td{border-bottom:1px solid #edf1ee;padding:0}.student-grid tr:last-child td{border-bottom:0}.student-grid tr:hover td{background:#fbfdfb}.student-grid input,.student-grid select{width:100%;min-width:0;border:0;border-radius:0;background:transparent;padding:7px 5px;font-size:12.2px;outline:none}.student-grid input:focus,.student-grid select:focus{outline:2px solid #79a894;outline-offset:-2px;background:#fff}.student-grid .drag-cell{width:24px;text-align:center;color:#a7b4ae;cursor:default}.student-grid .action-cell{width:28px;min-width:28px;text-align:center;white-space:nowrap}.student-grid .action-cell button{border:0;background:transparent;color:#8d9b95;padding:2px 3px;font-weight:600;min-width:22px}.student-grid .action-cell button:hover{color:#176454}.student-grid .action-cell .delete-btn:hover{color:#a54134}.student-grid .name-col{min-width:90px;width:auto}.student-grid .class-col{width:74px;min-width:68px}.student-grid .gender-col{width:76px;min-width:72px}.student-grid .group-col{width:64px;min-width:60px}.student-grid .hidden-col{display:none}
+.add-student-wrap{position:sticky;bottom:0;background:linear-gradient(to top,#fff 78%,rgba(255,255,255,0));padding-top:8px;margin-top:auto}.student-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px;gap:7px}.add-student{width:100%;padding:8px;border-style:dashed;background:#fbfdfb;color:var(--green)}.shorten-btn{width:100%;padding:8px;background:#fff;font-size:12px}.relations-btn{position:relative;width:44px;padding:8px 0;font-size:18px;background:#fff}.relations-btn.active{background:#fff4df;border-color:#d59b39;color:#875407;box-shadow:inset 0 0 0 1px #f0cb84}.relations-badge{display:none;position:absolute;right:-5px;top:-6px;min-width:18px;height:18px;padding:0 4px;border-radius:999px;background:#b84a3a;color:#fff;font-size:10px;font-weight:900;line-height:18px;text-align:center}.relations-btn.active .relations-badge{display:block}
+.room-controls{display:grid;gap:10px}.stack{display:grid;gap:6px}.field{display:grid;gap:5px;font-size:11px;font-weight:700}.field.inline{grid-template-columns:1fr auto;align-items:center}.mini{font-size:11px;color:var(--muted)}
+.action-card{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fbfcfb}.action-card h3{font-size:12.5px;margin-bottom:3px}.action-card p{font-size:10.5px;color:var(--muted);line-height:1.35;margin-bottom:8px}
+.rule-list{display:grid;gap:7px;margin-top:8px}.rule{display:grid;grid-template-columns:20px 18px minmax(0,1fr) 148px;align-items:center;gap:7px;border:1px solid var(--line);border-radius:9px;padding:8px;background:#fff}.rule.enabled{background:#f5faf6;border-color:#b9d0c5}.rule .handle{cursor:grab;color:#99aaa2;font-weight:800;user-select:none}.rule .rule-title{font-size:12px;font-weight:780;line-height:1.15}.rule .rule-sub{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.25}.rule select{padding:6px 7px;font-size:11px;width:100%}.rule.dragging{opacity:.45}.priority-note{font-size:10px;color:var(--muted);margin-top:5px}.draw-btn{width:100%;margin-top:10px;padding:10px}.result{font-size:10.8px;color:var(--green);background:var(--soft);border-radius:8px;padding:8px 9px;margin-top:7px}
+.history-list{display:grid;gap:7px;margin-top:8px}.history-card{border:1px solid var(--line);border-radius:9px;padding:9px;background:#fff}.history-card .date{color:var(--green);font-size:10.5px;font-weight:800}.history-card strong{display:block;margin:3px 0 2px;font-size:12px}.history-card .meta{font-size:10px;color:var(--muted)}.history-actions{display:flex;gap:6px;margin-top:7px}.history-actions button{flex:1;font-size:10.8px;padding:6px}.history-empty{border:1px dashed var(--line);padding:18px 10px;text-align:center;border-radius:8px;color:var(--muted);font-size:11px}
+.workspace{min-width:0;min-height:0;height:100%;padding:8px 12px 0;display:grid;grid-template-rows:42px minmax(0,1fr);gap:5px;overflow:hidden}.toolbar{display:grid;grid-template-columns:auto minmax(150px,1fr) auto;align-items:center;gap:18px;min-height:42px;max-height:42px;overflow:visible;white-space:nowrap;position:relative;z-index:9}.toolbar-left{display:flex;align-items:center;gap:6px;min-width:0;flex:0 0 auto}.toolbar-left #newMapBtn{margin-left:14px}.toolbar-middle{display:flex;justify-content:center;align-items:center;min-width:0}.toolbar-right{display:flex;align-items:center;justify-content:flex-end;gap:7px;min-width:0;flex:0 0 auto}.segmented{display:inline-flex;gap:2px;padding:2px;background:#ecf0eb;border:1px solid var(--line);border-radius:9px}.segmented button{padding:6px 9px;border:0;background:transparent;color:var(--muted);font-size:11px}.segmented button.active{background:#fff;color:var(--green);box-shadow:0 1px 4px #17312f12}.toolbar-menu{position:relative}.toolbar-menu summary{list-style:none;cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 11px;font-weight:700;font-size:11px;min-width:76px;text-align:center;user-select:none}.toolbar-menu summary::-webkit-details-marker{display:none}.toolbar-menu[open] summary{border-color:#9ab8ab;background:#f7faf8}.toolbar-menu-pop{position:absolute;right:0;top:calc(100% + 5px);z-index:30;display:grid;gap:3px;min-width:150px;padding:5px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 28px #17312f22}.toolbar-menu-pop button{justify-content:flex-start;width:100%;padding:7px 9px;font-size:11px;border:0;background:#fff}.toolbar-menu-pop button:hover{background:#f1f6f3}.toolbar-menu-pop button.selected{background:#e8f3ed;color:var(--green)}.toolbar-hidden-select{display:none!important}.content-grid{min-height:0;height:100%;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:9px;position:relative}.right-controls{min-height:0;height:100%;position:relative;overflow:visible;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 8px 28px #273d3810}.right-scroll{height:100%;overflow:auto;padding:8px}.right-collapse{position:absolute;left:-16px;top:14px;width:31px;height:31px;padding:0;border-radius:50%;font-size:18px;z-index:6;background:#fff;color:var(--green);box-shadow:0 2px 8px #17312f22}.right-collapse:hover{background:#f3f8f5}.content-grid.right-collapsed{grid-template-columns:minmax(0,1fr) 12px}.right-controls.collapsed{background:transparent;border-color:transparent;box-shadow:none}.right-controls.collapsed .right-scroll{display:none}.right-controls.collapsed .right-collapse{left:-16px}.side-section{padding:2px 2px 10px}.side-section+.side-section{border-top:1px solid var(--line);padding-top:16px;margin-top:8px}.side-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:6px}.right-scroll>.side-section:first-child>.side-title{padding-left:22px}.side-title h3{font-size:14px;letter-spacing:-.15px}.room-name-input{font-weight:800;font-size:14px;border:0;padding:4px 2px;background:transparent;min-width:0;flex:1}.side-title #resetRoomBtn{padding:6px 8px;font-size:10.5px}.room-name-input:focus{outline:none;border-bottom:1px solid #86aa9c}.compact-field{display:grid;gap:3px;margin-bottom:6px;font-size:10.5px;font-weight:750}.compact-field>span{color:#556a62}.compact-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px;margin-bottom:6px}.compact-row select{min-width:0}.saved-room-list{display:grid;gap:5px;margin-bottom:8px}.saved-room-item{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:5px}.saved-room-load{justify-content:flex-start;width:100%;padding:8px 10px;font-weight:700}.saved-room-delete{padding:8px 10px;color:#a54134}.saved-room-empty{font-size:10.5px;color:var(--muted);padding:8px 2px}.right-controls .rule-list{gap:7px;margin-top:7px}.right-controls .rule{grid-template-columns:15px 18px minmax(0,1fr);gap:6px;padding:6px 6px}.right-controls .rule select{grid-column:3;font-size:10.8px;padding:6px 7px}.right-controls .rule .rule-title,.right-controls .rule .rule-sub{display:none}.right-controls .priority-note{font-size:9.3px;margin-top:8px}.import-help-box{margin-bottom:10px;padding:10px 11px;border:1px solid #b8d3c7;border-left:4px solid var(--green);border-radius:8px;background:#f3f8f5;color:#34544a;font-size:12px;line-height:1.5}.import-help-box strong{color:var(--green)}
+.room-card{min-height:0;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;display:grid;grid-template-rows:minmax(0,1fr);box-shadow:0 8px 28px #273d3810;position:relative}
+.room-svg-wrap{min-height:0;display:flex;align-items:center;justify-content:center;padding:4px;overflow:hidden;cursor:grab}.room-svg-wrap:active{cursor:grabbing}.room-svg{touch-action:none;width:100%;height:100%;display:block;margin:auto}.room-card::after{content:"Rull for å zoome";position:absolute;right:10px;bottom:8px;font-size:9px;color:#71817b;background:rgba(255,255,255,.78);padding:2px 5px;border-radius:5px;pointer-events:none;opacity:.72}.room-border{fill:#fcfdfb;stroke:#acc1b5;stroke-width:1.4}.grid-dot{fill:#c9d5ce}.board{fill:#1d6b59}.board-text{fill:#fff;font-size:17px;font-weight:850}.door{fill:#fff2e8;stroke:#d5a276}.pillar{fill:#eef1ed;stroke:#c6d0ca}.catheder{fill:#eef4ff;stroke:#9fb4d6}.obj-label{font-size:12px;fill:#536760}.door-label{font-size:16px;font-weight:800;fill:#7f5b42;letter-spacing:.2px}.move-hint{fill:#8ca49a;font-size:10px;font-weight:700;pointer-events:none}.table-shell{fill:#f0f4ed;stroke:#cdd7d1}.table-label{font-size:9.5px;fill:#72837c}.table-handle{fill:#9ab0a7}.table-group,.room-object,.seat-group{cursor:grab}.table-group:active,.room-object:active,.seat-group:active{cursor:grabbing}.table-group:hover .table-shell,.room-object:hover .outline{stroke:#3b846c;stroke-width:1.8}.seat{fill:#fff;stroke:#c7d4cc;stroke-width:1}.seat.empty{fill:#fbfcfa;stroke-dasharray:2 2}.seat-name{font-size:19px;font-weight:800;fill:#17312f;pointer-events:none}.seat-sub{font-size:10px;fill:#6d7e77;pointer-events:none}.seat-group:hover .seat{stroke:#3b846c;stroke-width:1.8}.seat-group.selected .seat{stroke:#176454;stroke-width:2.3}.seat-lock{font-size:12px;fill:#176454;font-weight:900;pointer-events:none}
+.stats{display:none}.stats strong{font-size:14px;color:var(--ink);margin-right:3px}.unseated-mini{margin-left:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;max-width:55%}.footer{font-size:9.8px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%) translateY(8px);background:#17312f;color:#fff;border-radius:999px;padding:10px 14px;font-size:12px;opacity:0;pointer-events:none;transition:.18s}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+dialog{border:0;border-radius:14px;padding:0;width:min(620px,92vw);max-height:88vh;box-shadow:0 20px 60px #17312f2a}dialog::backdrop{background:#0c171433}.dialog-head,.dialog-foot{padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px}.dialog-body{padding:12px 14px;overflow:auto;max-height:72vh}.dialog-body textarea{width:100%;min-height:240px;resize:vertical}.dialog-head{border-bottom:1px solid var(--line)}.dialog-foot{border-top:1px solid var(--line)}
+
+.trash-drop{position:absolute;right:22px;bottom:22px;z-index:8;min-width:118px;padding:13px 16px;border:2px dashed #c96c60;border-radius:14px;background:#fff5f2;color:#a74236;font-weight:800;text-align:center;opacity:0;transform:translateY(8px) scale(.97);pointer-events:none;transition:.14s}
+.trash-drop.visible{opacity:1;transform:translateY(0) scale(1)}
+.trash-drop.hot{background:#fde7e1;border-style:solid;transform:translateY(0) scale(1.04)}
+.drag-ghost{position:fixed;z-index:1000;pointer-events:none;display:none;min-width:112px;padding:10px 13px;border:1px solid #9fb3a8;border-radius:8px;background:#f6f8f4;box-shadow:0 10px 28px #17312f2b;font-weight:800;text-align:center}
+.drag-ghost.visible{display:block}
+
+
+
+.restriction-note{font-size:11px;color:var(--muted);line-height:1.45;margin-bottom:10px}.fixed-placement-box{padding:11px 12px 12px;margin-bottom:14px;border:1px solid #c8d7d0;border-radius:10px;background:#f6faf7}.fixed-placement-row{display:grid;grid-template-columns:auto minmax(170px,1fr) 36px;align-items:center;gap:8px}.fixed-placement-row>span{font-size:12px;font-weight:800}.fixed-placement-row select{width:100%;padding:8px 7px}.fixed-add{width:36px;height:36px;padding:0}.fixed-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.fixed-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 7px 5px 9px;border:1px solid #b9cec4;border-radius:999px;background:#fff;font-size:11px;font-weight:700}.fixed-chip button{border:0;background:transparent;padding:0 2px;color:#9b5147;font-size:14px}.restriction-divider{height:1px;background:var(--line);margin:0 0 12px}.restriction-list{display:grid;gap:7px}.restriction-row{display:grid;grid-template-columns:minmax(0,1fr) 190px minmax(0,1fr) 34px;gap:7px;align-items:center}.restriction-row select{width:100%;padding:8px 7px}.restriction-row .remove-restriction{width:34px;height:34px;padding:0;color:#a54134}.restriction-empty{border:1px dashed var(--line);border-radius:9px;padding:18px 10px;text-align:center;color:var(--muted);font-size:11px}.restriction-add{margin-top:10px;width:100%;border-style:dashed;color:var(--green);background:#fbfdfb}.restriction-conflict{margin-top:8px;padding:8px 10px;border-radius:8px;background:#fff0ed;color:#8d3b30;font-size:11px;line-height:1.4}.restriction-dialog{width:min(780px,94vw)}
+@media(max-width:700px){.fixed-placement-row{grid-template-columns:1fr}.fixed-add{justify-self:end}.restriction-row{grid-template-columns:1fr}.restriction-row .remove-restriction{justify-self:end}}
+
+.name-preview{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:9px;overflow:hidden;font-size:12.5px}.name-preview th{position:sticky;top:0;background:#f5f8f5;text-align:left;padding:8px;border-bottom:1px solid var(--line);font-size:10.5px;color:#61736c}.name-preview td{padding:6px 8px;border-bottom:1px solid #edf1ee}.name-preview tr:last-child td{border-bottom:0}.name-preview input{width:100%;padding:6px 7px}.name-preview-wrap{max-height:52vh;overflow:auto}.name-note{font-size:11px;color:var(--muted);line-height:1.45;margin-bottom:9px}
+
+
+.print-meta{display:none}
+.room-card.design-board .room-border{fill:#253b34;stroke:#17312f}.room-card.design-board .grid-dot{fill:#587068}.room-card.design-board .table-shell{fill:#344a43;stroke:#70877e}.room-card.design-board .table-label{fill:#dce9e3}.room-card.design-board .seat.empty{fill:#2f433d;stroke:#73877f}.room-card.design-board .seat-sub{fill:#b8c9c2}.room-card.design-board .board{fill:#0f251f;stroke:#759086}.room-card.design-board .door{fill:#5f4b3d;stroke:#d6ad87}.room-card.design-board .door-label{fill:#fff1df}.room-card.design-board .pillar{fill:#40554e;stroke:#81938d}.room-card.design-board .obj-label{fill:#e3ece8}
+.room-card.design-contrast .room-border{fill:#fff;stroke:#536b61;stroke-width:2}.room-card.design-contrast .table-shell{fill:#e8eee9;stroke:#60766d;stroke-width:1.6}.room-card.design-contrast .seat{stroke:#526a60;stroke-width:1.4}.room-card.design-contrast .seat-name{font-weight:900}.room-card.design-contrast .table-label{fill:#40564d;font-weight:800}.room-card.design-contrast .board{fill:#0c4f41}
+.room-card.design-wood .room-border{fill:#fbf7ee;stroke:#b69b75;stroke-width:1.5}.room-card.design-wood .grid-dot{fill:#d5c3aa}.room-card.design-wood .table-shell{fill:#d9b37b;stroke:#8a6746;stroke-width:1.5;filter:drop-shadow(0 2px 2px #604a3626)}.room-card.design-wood .table-label{fill:#5d422c;font-weight:800}.room-card.design-wood .seat{stroke:#8d7257;stroke-width:1.2}.room-card.design-wood .seat-name{font-family:Georgia,"Times New Roman",serif;font-weight:700}.room-card.design-wood .board{fill:#315c46;stroke:#173d2d;stroke-width:1.5}.room-card.design-wood .door{fill:#c9915e;stroke:#8c5d36}.room-card.design-wood .door-label{fill:#5c371f}.room-card.design-wood .catheder{fill:#d6b381;stroke:#8d6a45}
+.room-card.design-blueprint .room-border{fill:#eaf4f8;stroke:#3f7188;stroke-width:1.8}.room-card.design-blueprint .grid-dot{fill:#8cb7c8}.room-card.design-blueprint .table-shell{fill:rgba(255,255,255,.48);stroke:#39718b;stroke-width:1.6;stroke-dasharray:4 2}.room-card.design-blueprint .table-label{fill:#245a72;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-weight:800}.room-card.design-blueprint .seat{stroke:#4f87a0;stroke-width:1.5}.room-card.design-blueprint .seat-name{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-weight:800}.room-card.design-blueprint .board{fill:#266783;stroke:#17475d}.room-card.design-blueprint .board-text{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:1px}.room-card.design-blueprint .door{fill:#e9f3f7;stroke:#4b8198}.room-card.design-blueprint .door-label{fill:#285b70}.room-card.design-blueprint .pillar{fill:#d8e8ee;stroke:#5d8798}
+.room-card.design-pods .room-border{fill:#fbfcff;stroke:#a5b0c6;stroke-width:1.4}.room-card.design-pods .grid-dot{display:none}.room-card.design-pods .table-shell{fill:transparent;stroke:#b7c0d1;stroke-width:1.2;stroke-dasharray:3 4}.room-card.design-pods .table-label{fill:#68748d;font-weight:800}.room-card.design-pods .seat{stroke:#8fa0bd;stroke-width:1.6;rx:18px;filter:drop-shadow(0 2px 2px #30405b1b)}.room-card.design-pods .seat-name{font-family:"Trebuchet MS",Inter,sans-serif;font-weight:800}.room-card.design-pods .board{fill:#4b5f82;stroke:#344661}.room-card.design-pods .door{fill:#f5efff;stroke:#978ab1}.room-card.design-pods .door-label{fill:#66577e}.room-card.design-pods .catheder{fill:#eef1f8;stroke:#9aa7be}
+
+
+
+@media (max-width:1450px){
+  .app{grid-template-columns:var(--sidebar) 6px minmax(0,1fr)}
+  .sidebar{min-width:0}
+  .content-grid{grid-template-columns:minmax(0,1fr) 292px}
+  .toolbar{gap:5px}
+  .toolbar-left{gap:5px}
+  .toolbar-left .primary{padding-left:9px;padding-right:9px;font-size:10.7px}
+  .toolbar{gap:12px}.toolbar-left #newMapBtn{margin-left:10px}.toolbar-menu summary{padding-left:9px;padding-right:9px}
+}
+@media (max-width:1180px){
+  .app{grid-template-columns:var(--sidebar) 6px minmax(0,1fr)}
+  .content-grid{grid-template-columns:minmax(0,1fr) 278px}
+  .toolbar{gap:8px}.toolbar-left #newMapBtn{margin-left:8px}.toolbar-menu summary{min-width:68px;padding-left:7px;padding-right:7px}
+  .segmented button{padding-left:7px;padding-right:7px}
+}
+
+@media print{
+  @page{size:A4 landscape;margin:7mm}
+  html,body{width:100%;height:auto;background:#fff!important;overflow:visible!important}
+  .app-header,.sidebar,.resizer,.toolbar,.right-controls,.stats,.footer,.toast,.trash-drop,.drag-ghost{display:none!important}
+  .app{display:block!important;height:auto!important}
+  .workspace{display:block!important;padding:0!important;height:auto!important;overflow:visible!important}
+  .content-grid{display:block!important}
+  .room-card{display:block!important;position:relative!important;width:100%!important;height:190mm!important;max-height:190mm!important;border:0!important;box-shadow:none!important;overflow:hidden!important;break-inside:avoid!important;page-break-inside:avoid!important}
+  .room-svg-wrap{width:100%!important;height:100%!important;padding:0!important;overflow:hidden!important}
+  .room-svg{width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important}
+  .print-meta{display:block!important;position:absolute;right:5mm;top:4mm;z-index:20;padding:2.5mm 3mm;border-radius:2mm;background:rgba(255,255,255,.88);border:1px solid #ccd7d1;font-size:10pt;font-weight:750;color:#17312f}
+}
+</style>
+</head>
+<body>
+<header class="app-header">
+  <div class="brandmark">⌘</div>
+  <select id="classPicker" class="class-picker"></select>
+  <input id="projectTitle" class="title-input" value="Klassekart" aria-label="Klassenavn">
+  <div class="save-inline"><button id="undoBtn" class="icon" title="Angre">↶</button><div id="saveStatus" class="save-status">All informasjon lagres i denne nettleseren. For å lagre i filen --&gt;</div></div>
+  <div class="header-actions">
+    <button id="downloadBtn" class="primary" title="Lagrer en ny, selvstendig HTML-fil med bare den valgte klassen.">Lagre i HTML-fil</button>
+    <button id="printBtn" title="Skriv ut">Print</button>
+    <button id="fullscreenBtn" class="icon" title="Fullskjerm">⛶</button>
+  </div>
+</header>
+<div class="app">
+  <aside id="leftSidebar" class="sidebar"><button id="collapseLeftBtn" class="left-collapse" title="Minimer menyen">‹</button>
+    <nav class="tabs">
+      <button class="tab active" data-tab="students">Elever · <span id="tabCount">0</span></button>
+      <button class="tab" data-tab="history">Tidligere klassekart</button>
+    </nav>
+
+    <section id="panel-students" class="panel active">
+      <div class="import-row"><button id="vismaBtn">▣ Kopier fra Visma</button><button id="pasteBtn">Annen liste</button></div>
+      <div class="column-controls"><strong>Vis:</strong><label><input id="showClass" type="checkbox"> Klasse</label><label><input id="showGender" type="checkbox"> Kjønn</label><label><input id="showGroup" type="checkbox"> Gruppe</label></div>
+      <div class="student-grid-wrap">
+        <table class="student-grid">
+          <thead><tr><th style="width:24px;text-align:center">#</th><th class="name-col">Elevnavn</th><th data-col="class" class="class-col hidden-col">Klasse</th><th data-col="gender" class="gender-col hidden-col">Kjønn</th><th data-col="group" class="group-col hidden-col">Gruppe</th><th class="action-cell"></th></tr></thead>
+          <tbody id="studentBody"></tbody>
+        </table>
+      </div>
+      <div class="add-student-wrap"><div class="student-actions"><button id="addStudentBottom" class="add-student">＋ Ny elev</button><button id="shortenNamesBtn" class="shorten-btn">Fjern etternavn</button><button id="relationsBtn" class="relations-btn" title="Sitteønsker og restriksjoner" aria-label="Sitteønsker og restriksjoner">⚑<span id="relationsBadge" class="relations-badge">0</span></button></div></div>
+    </section>
+
+
+    <section id="panel-history" class="panel">
+      <div class="row between"><h2>Tidligere klassekart</h2><span id="historyCount" class="count">0 kart</span></div>
+      <p class="small-help" style="margin-top:5px">Lagre et kart når klassen faktisk har sittet slik. Historikken brukes også når du vil unngå gamle bordkamerater eller hente fram et tidligere rom.</p>
+      <div id="historyList" class="history-list"></div>
+    </section>
+  </aside>
+  <div id="resizer" class="resizer" title="Dra for å endre bredden på menyen"></div>
+
+  <main class="workspace">
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <div class="segmented"><button id="teacherViewBtn" class="active">Som lærer</button><button id="studentViewBtn">Som elev</button></div>
+        <button id="newMapBtn" class="primary">Generer nytt klassekart</button><button id="saveHistoryBtn">Lagre klassekartet</button>
+      </div>
+      <div class="toolbar-middle"><div class="stats-chip"><span><strong id="placedCountTop">0/0</strong> plassert</span><span><strong id="placesCountTop">0</strong> plasser</span></div></div>
+      <div class="toolbar-right">
+        <details class="toolbar-menu" id="colorMenu"><summary>Fargekode</summary><div class="toolbar-menu-pop"><button data-color-choice="table">Bordgruppe</button><button data-color-choice="group">Gruppe</button><button data-color-choice="class">Klasse</button><button data-color-choice="gender">Kjønn</button><button data-color-choice="none">Ingen</button></div></details>
+        <details class="toolbar-menu" id="paletteMenu"><summary>Farger</summary><div class="toolbar-menu-pop"><button data-palette-choice="soft">Myk</button><button data-palette-choice="strong">Sterk</button><button data-palette-choice="cool">Kjølig</button><button data-palette-choice="warm">Varm</button></div></details>
+        <details class="toolbar-menu" id="designMenu"><summary>Design</summary><div class="toolbar-menu-pop"><button data-design-choice="classic">Klassisk</button><button data-design-choice="board">Tavle</button><button data-design-choice="contrast">Kontrast</button><button data-design-choice="wood">Treverk</button><button data-design-choice="blueprint">Blueprint</button><button data-design-choice="pods">Runde pulter</button></div></details>
+        <select id="colorMode" class="toolbar-hidden-select"><option value="table">Bordgruppe</option><option value="group">Gruppe</option><option value="class">Klasse</option><option value="gender">Kjønn</option><option value="none">Ingen</option></select>
+        <select id="paletteMode" class="toolbar-hidden-select"><option value="soft">Myk</option><option value="strong">Sterk</option><option value="cool">Kjølig</option><option value="warm">Varm</option></select>
+        <select id="designMode" class="toolbar-hidden-select"><option value="classic">Klassisk</option><option value="board">Tavle</option><option value="contrast">Kontrast</option><option value="wood">Treverk</option><option value="blueprint">Blueprint</option><option value="pods">Runde pulter</option></select>
+      </div>
+    </div>
+    <div class="content-grid">
+      <section id="roomCard" class="room-card design-classic"><div id="printMeta" class="print-meta"></div>
+        <div class="room-svg-wrap"><svg id="roomSvg" class="room-svg" aria-label="Klassekart"></svg></div><div id="trashDrop" class="trash-drop">🗑 Fjern</div>
+      </section>
+      <aside id="rightControls" class="right-controls" aria-label="Rom og fordeling"><button id="collapseRightBtn" class="right-collapse" title="Minimer menyen">›</button><div class="right-scroll">
+        <section class="side-section">
+          <div class="side-title"><input id="roomNameInput" class="room-name-input" value="Rom" aria-label="Romnavn"><button id="resetRoomBtn">Tilbakestill rom</button><span id="seatCount" class="count"></span></div>
+          <div class="compact-row"><select id="addTableSize"></select><button id="addTableBtn">＋ Bord</button></div>
+          <div class="compact-row"><select id="addObjectType"><option value="door">Legg til dør</option><option value="board">Legg til tavle</option><option value="tv">Legg til TV</option><option value="catheder">Legg til kateter</option><option value="pillar">Legg til stolpe</option></select><button id="addObjectBtn">＋ Legg til</button></div>
+        </section>
+        <section class="side-section">
+          <div class="side-title"><h3>Fordeling</h3><span class="count">Prioritert rekkefølge</span></div>
+          <div id="ruleList" class="rule-list"></div>
+        </section>
+        </div>
+      </aside>
+    </div>
+    <div class="stats" hidden><span><strong id="placedCount">0/0</strong> plassert</span><span><strong id="placesCount">0</strong> plasser</span><span class="unseated-mini">Ikke plassert: <span id="unseatedNames">–</span></span></div>
+  </main>
+</div>
+<div id="toast" class="toast"></div><div id="dragGhost" class="drag-ghost"></div>
+
+<dialog id="importDialog">
+  <div class="dialog-head"><h3 id="importTitle">Lim inn elevliste</h3><button id="closeImport" class="icon">×</button></div>
+  <div class="dialog-body"><div id="importHelp" class="import-help-box"></div><textarea id="importText" placeholder="Lim inn her …"></textarea></div>
+  <div class="dialog-foot"><button id="cancelImport">Avbryt</button><button id="applyImport" class="primary">Bruk listen</button></div>
+</dialog>
+
+<dialog id="shortenDialog">
+  <div class="dialog-head"><h3>Fjern etternavn</h3><button id="closeShorten" class="icon">×</button></div>
+  <div class="dialog-body">
+    <p class="name-note">Forslaget beholder fornavnet. Bindestrek beholdes. Hvis flere har samme fornavn, legges første bokstav i neste navn til automatisk. Du kan redigere forslagene før du bruker dem.</p>
+    <div class="name-preview-wrap"><table class="name-preview"><thead><tr><th>Gammelt navn</th><th>Forslag</th></tr></thead><tbody id="shortenBody"></tbody></table></div>
+  </div>
+  <div class="dialog-foot"><button id="cancelShorten">Avbryt</button><button id="applyShorten" class="primary">Bruk disse navnene</button></div>
+</dialog>
+
+<dialog id="relationsDialog" class="restriction-dialog">
+  <div class="dialog-head"><h3>Sitteønsker og restriksjoner</h3><button id="closeRelations" class="icon">×</button></div>
+  <div class="dialog-body">
+    <div class="fixed-placement-box">
+      <div class="fixed-placement-row"><span>Skal beholde plasseringen i klasserommet:</span><select id="fixedStudentSelect"></select><button id="addFixedStudent" class="fixed-add" title="Legg til">＋</button></div>
+      <div id="fixedStudentChips" class="fixed-chips"></div>
+    </div>
+    <div class="restriction-divider"></div>
+    <p class="restriction-note">Legg inn hvem som skal sitte ved samme bord – eller hvem som ikke skal sitte sammen. Disse valgene prioriteres foran den vanlige fordelingen.</p>
+    <div id="restrictionList" class="restriction-list"></div>
+    <button id="addRestrictionBtn" class="restriction-add">＋ Ny linje</button>
+    <div id="restrictionConflict" class="restriction-conflict hidden"></div>
+  </div>
+  <div class="dialog-foot"><button id="cancelRelations">Avbryt</button><button id="saveRelations" class="primary">Lagre</button></div>
+</dialog>
+
+<script id="app-bundle" type="application/json">null</script>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const copy=o=>JSON.parse(JSON.stringify(o));
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const today=()=>new Date().toISOString().slice(0,10);
+const dateLabel=iso=>new Intl.DateTimeFormat('nb-NO',{day:'numeric',month:'short',year:'numeric'}).format(new Date(iso));
+const timeLabel=iso=>new Intl.DateTimeFormat('nb-NO',{hour:'2-digit',minute:'2-digit'}).format(new Date(iso));
+const STORAGE='klassekart.v4.bundle';
+const paletteSets={soft:['#e5f1e8','#e9eef9','#faeadb','#eee7f3','#e3f0f2','#f7e3e4','#f1f2dc','#e8e9fa','#f7efd4','#dbeee8'],strong:['#cfe8d7','#d7e2fb','#ffdcbc','#eadcf7','#d4e9ef','#ffd6da','#eef1bf','#dde0ff','#ffefbb','#cde8dd'],cool:['#ddeee6','#dde6fb','#dfeffc','#e7e6ff','#d6f0f5','#e6f2ff','#e1ecef','#e8efff','#d9f0ea','#dbe8f4'],warm:['#f0ead8','#ffe7db','#f7e3e4','#f9ecd0','#efe4d6','#f7ddd3','#eee8d8','#fae6dc','#f7ebdf','#f3e2d0']};
+let selectedStudent=null,undoStack=[],saveTimer=null,dragRule=null,dragItem=null;
+
+const exampleClasses=['1STA','1STB','1STC','1STD','1STE','1STF'];
+function exampleStudents(){
+  return Array.from({length:32},(_,i)=>({id:uid(),name:'Elev '+(i+1),class:exampleClasses[i%exampleClasses.length],gender:i%2===0?'Jente':'Gutt',group:''}));
+}
+function blankStudents(){
+  return Array.from({length:32},()=>({id:uid(),name:'',class:'',gender:'',group:''}));
+}
+
+function defaultRoom(){return {w:1120,h:720}}
+function defaultObjects(room=defaultRoom()){
+  return [
+    {id:uid(),type:'board',x:room.w/2-180,y:room.h-42,orient:'h'},
+    {id:uid(),type:'door',x:12,y:room.h/2-54,orient:'v'}
+  ];
+}
+function tidyTablePositions(room=defaultRoom(),n=8){
+  const pos=[
+    [320,60],[582,60],
+    [190,250],[451,250],[712,250],
+    [190,440],[451,440],[712,440]
+  ];
+  return Array.from({length:n},(_,i)=>({x:pos[i%pos.length]?.[0]??190,y:pos[i%pos.length]?.[1]??60}));
+}
+function defaultTables(room=defaultRoom()){
+  return tidyTablePositions(room,8).map((p,i)=>({id:uid(),label:'',x:p.x,y:p.y,seats:4}));
+}
+function fresh(title='Eksempelklasse',blank=false){
+  const room=defaultRoom();
+  const students=blank?blankStudents():exampleStudents();
+  const tables=defaultTables(room),placements={};
+  if(!blank){let k=0;tables.forEach(t=>{for(let i=0;i<t.seats;i++) if(students[k]) placements[t.id+':'+i]=students[k++].id});}
+  return {
+    version:14,id:uid(),title,sidebarWidth:410,showCols:{class:false,gender:false,group:false},view:'teacher',colorMode:'table',paletteMode:'soft',designMode:'classic',roomName:'Rom',roomZoom:1,roomPanX:0,roomPanY:0,roomPresets:[],
+    room,students,tables,placements,locked:{},restrictions:[],objects:defaultObjects(room),history:[],lastEdited:Date.now(),
+    rules:[
+      {id:'order',on:false,label:'Rekkefølge',sub:'Plasser elevene alfabetisk forfra, nærmest læreren først.',mode:'alpha'},
+      {id:'mates',on:true,label:'Bordkamerater',sub:'Nye bordkamerater eller helt tilfeldige bordkamerater.',mode:'new'},
+      {id:'seat',on:true,label:'Plassering i rommet',sub:'Ny plassering i rommet eller helt tilfeldig plassering.',mode:'new'},
+      {id:'class',on:false,label:'Klassekamerater',sub:'Hold klassekamerater fra hverandre eller la dem sitte sammen.',mode:'mix'},
+      {id:'gender',on:false,label:'Kjønn',sub:'Bland kjønn ved bordene eller la samme kjønn sitte sammen.',mode:'mix'},
+      {id:'group',on:false,label:'Grupper',sub:'La grupper sitte sammen eller bland dem tilfeldig.',mode:'together'}
+    ]
+  };
+}
+function objectDims(type){
+  if(type==='board') return {w:360,h:42};
+  if(type==='door') return {w:52,h:108};
+  if(type==='pillar') return {w:38,h:54};
+  if(type==='catheder') return {w:92,h:40};
+  if(type==='tv') return {w:132,h:72};
+  return {w:40,h:40};
+}
+function tableLayout(seats){
+  let cols=2,rows=2,cellW=104,cellH=55;
+  if(seats<=1){cols=1;rows=1;cellW=126;cellH=56}
+  else if(seats===2){cols=2;rows=1;cellW=108;cellH=56}
+  else if(seats===3){cols=3;rows=1;cellW=88;cellH=54}
+  else if(seats===4){cols=2;rows=2;cellW=104;cellH=55}
+  else if(seats<=6){cols=3;rows=Math.ceil(seats/3);cellW=82;cellH=50}
+  else {cols=4;rows=2;cellW=72;cellH=46}
+  const top=22,pad=5,rects=[];
+  for(let i=0;i<seats;i++){
+    const c=i%cols,r=Math.floor(i/cols);
+    rects.push({x:pad+c*cellW,y:top+pad+r*cellH,w:cellW-5,h:cellH-5,font:cellW>=104?19:cellW>=82?17:15});
+  }
+  return {cols,rows,cellW,cellH,top,shellW:cols*cellW+pad*2,shellH:top+rows*cellH+pad*2,rects};
+}
+function sanitizeState(s){
+  if(!s||!Array.isArray(s.students)||!Array.isArray(s.tables)) return fresh();
+  const originalRoom=s.room&&s.room.w&&s.room.h?{w:clamp(Number(s.room.w)||1100,860,1700),h:clamp(Number(s.room.h)||620,500,1000)}:defaultRoom();
+  const migrateLegacy=Number(s.version||0)<9&&((Math.abs(originalRoom.w-900)<3&&Math.abs(originalRoom.h-720)<3)||(Math.abs(originalRoom.w-1100)<3&&Math.abs(originalRoom.h-620)<3));
+  const room=migrateLegacy?defaultRoom():originalRoom;
+  const roomScaleX=migrateLegacy?room.w/originalRoom.w:1,roomScaleY=migrateLegacy?room.h/originalRoom.h:1;
+  const out={
+    version:9,
+    id:s.id||uid(),
+    title:s.title||'Eksempelklasse',
+    sidebarWidth:clamp(Number(s.sidebarWidth)||410,300,760),
+    showCols:{class:!!s.showCols?.class,gender:!!s.showCols?.gender,group:!!s.showCols?.group},
+    view:s.view==='student'?'student':'teacher',
+    colorMode:['table','group','class','gender','none'].includes(s.colorMode)?s.colorMode:'table',
+    paletteMode:['soft','strong','cool','warm'].includes(s.paletteMode)?s.paletteMode:'soft',
+    designMode:['classic','board','contrast','wood','blueprint','pods'].includes(s.designMode)?s.designMode:((s.designMode==='clean'||s.designMode==='soft')?'classic':'classic'),
+    roomName:s.roomName||'Rom',
+    roomZoom:clamp(Number(s.roomZoom)||1,.55,1.65),
+    roomPanX:clamp(Number(s.roomPanX)||0,-420,420),
+    roomPanY:clamp(Number(s.roomPanY)||0,-320,320),
+    roomPresets:Array.isArray(s.roomPresets)?s.roomPresets:[],
+    room,
+    students:(s.students||[]).map(st=>({id:st.id||uid(),name:st.name||'Ny elev',class:st.class||'',gender:st.gender||'',group:st.group||''})),
+    tables:(s.tables||[]).map((t,i)=>({id:t.id||uid(),label:'',x:clamp((Number(t.x)||90)*roomScaleX,10,room.w-220),y:clamp((Number(t.y)||80)*roomScaleY,10,room.h-150),seats:clamp(Number(t.seats)||4,1,8)})),
+    placements:typeof s.placements==='object'&&s.placements?copy(s.placements):{},
+    locked:typeof s.locked==='object'&&s.locked?copy(s.locked):{},
+    restrictions:Array.isArray(s.restrictions)?s.restrictions.map(r=>({id:r.id||uid(),a:r.a||'',type:r.type==='together'?'together':'apart',b:r.b||''})):[],
+    objects:[],history:Array.isArray(s.history)?s.history:[],lastEdited:Number(s.lastEdited)||Date.now(),
+    rules:Array.isArray(s.rules)&&s.rules.length?s.rules:fresh().rules
+  };
+  if(Array.isArray(s.objects)) out.objects=s.objects.map(o=>({id:o.id||uid(),type:['board','door','pillar','catheder','tv'].includes(o.type)?o.type:'pillar',x:clamp((Number(o.x)||10)*roomScaleX,0,room.w-20),y:clamp((Number(o.y)||10)*roomScaleY,0,room.h-20),orient:o.orient||(['board','tv'].includes(o.type)?'h':['door'].includes(o.type)?'v':'h')}));
+  else if(s.objects&&typeof s.objects==='object'){
+    if(s.objects.board) out.objects.push({id:uid(),type:'board',x:room.w/2-180,y:room.h-42,orient:'h'});
+    if(s.objects.door) out.objects.push({id:uid(),type:'door',x:12,y:room.h/2-54,orient:'v'});
+    if(s.objects.pillar) out.objects.push({id:uid(),type:'pillar',x:room.w/2-19,y:room.h/2-27});
+  }
+  if(!out.tables.length) out.tables=defaultTables(room);
+  if(!out.objects.length) out.objects=defaultObjects(room);
+  if(!out.rules.some(r=>r.id==='order')) out.rules.unshift({id:'order',on:false,label:'Rekkefølge',sub:'Plasser elevene alfabetisk forfra, nærmest læreren først.',mode:'alpha'});
+  const validSeats=new Set(out.tables.flatMap(t=>Array.from({length:t.seats},(_,i)=>t.id+':'+i)));
+  const validStudents=new Set(out.students.map(st=>st.id));
+  Object.keys(out.placements).forEach(k=>{if(!validSeats.has(k)||!validStudents.has(out.placements[k])) delete out.placements[k]});
+  Object.keys(out.locked).forEach(id=>{if(!validStudents.has(id)) delete out.locked[id]});
+  out.restrictions=(out.restrictions||[]).filter(r=>validStudents.has(r.a)&&validStudents.has(r.b)&&r.a!==r.b);
+  out.roomPresets=(out.roomPresets||[]).map(r=>({id:r.id||uid(),name:r.name||'Lagret rom',room:r.room||copy(room),tables:Array.isArray(r.tables)?r.tables:[],objects:Array.isArray(r.objects)?r.objects:[]}));
+  out.history=out.history.map(h=>({
+    id:h.id||uid(),date:h.date||new Date().toISOString(),title:h.title||out.title,studentCount:h.studentCount||0,seatCount:h.seatCount||0,
+    placements:h.placements||{},students:h.students||[],tables:h.tables||[],objects:h.objects||[],room:h.room||room
+  }));
+  return out;
+}
+function loadInitialBundle(){
+  let embedded=null,local=null;
+  try{embedded=JSON.parse($('app-bundle').textContent)}catch{}
+  try{local=JSON.parse(localStorage.getItem(STORAGE))}catch{}
+  if(embedded&&embedded.portableSnapshot&&Array.isArray(embedded.classes)&&embedded.classes.length){
+    const snap=sanitizeState(embedded.classes[0]);
+    const base=local&&Array.isArray(local.classes)?local:{version:1,currentClassId:snap.id,classes:[]};
+    base.classes=(base.classes||[]).map(sanitizeState).filter(c=>c.id!==snap.id);
+    base.classes.unshift(snap);base.currentClassId=snap.id;return base;
+  }
+  if(local&&Array.isArray(local.classes)&&local.classes.length){
+    local.classes=local.classes.map(sanitizeState);
+    if(!local.currentClassId||!local.classes.find(c=>c.id===local.currentClassId)) local.currentClassId=local.classes[0].id;
+    return local;
+  }
+  if(embedded&&Array.isArray(embedded.classes)&&embedded.classes.length){
+    embedded.classes=embedded.classes.map(sanitizeState);
+    if(!embedded.currentClassId||!embedded.classes.find(c=>c.id===embedded.currentClassId)) embedded.currentClassId=embedded.classes[0].id;
+    return embedded;
+  }
+  const st=fresh('Eksempelklasse',false);
+  return {version:1,currentClassId:st.id,classes:[st]};
+}
+let bundle=loadInitialBundle();
+let state=copy(bundle.classes.find(c=>c.id===bundle.currentClassId)||bundle.classes[0]||fresh());
+
+function toast(msg,ms=1800){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),ms)}
+function updatePrintMeta(){const d=new Intl.DateTimeFormat('nb-NO',{day:'2-digit',month:'2-digit',year:'numeric'}).format(new Date());if($('printMeta'))$('printMeta').textContent=(state.title||'Klasse')+' · '+d}
+function syncStateIntoBundle(){state.lastEdited=Date.now();const idx=bundle.classes.findIndex(c=>c.id===state.id);if(idx>=0) bundle.classes[idx]=copy(state);else bundle.classes.unshift(copy(state));bundle.currentClassId=state.id;bundle.classes=[...new Map(bundle.classes.map(c=>[c.id,c])).values()];bundle.classes.sort((a,b)=>(b.lastEdited||0)-(a.lastEdited||0));}
+function persist(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{try{syncStateIntoBundle();localStorage.setItem(STORAGE,JSON.stringify(bundle));$('saveStatus').textContent='All informasjon lagres i denne nettleseren. For å lagre i filen -->';renderClassPicker()}catch{$('saveStatus').textContent='Kunne ikke lagre lokalt i nettleseren.'}},130)}
+function commit(mut){undoStack.push(copy(state));if(undoStack.length>30)undoStack.shift();mut();state.lastEdited=Date.now();render();persist();}
+function allSeats(){return state.tables.flatMap(t=>Array.from({length:t.seats},(_,i)=>t.id+':'+i))}
+function seatPosition(seat){const cut=seat.lastIndexOf(':'),tid=seat.slice(0,cut),i=Number(seat.slice(cut+1)),t=state.tables.find(x=>x.id===tid);if(!t)return{x:0,y:0};const lay=tableLayout(t.seats),r=lay.rects[i]||{x:0,y:0,w:0,h:0};return{x:t.x+r.x+r.w/2,y:t.y+r.y+r.h/2}}
+function seatsFrontFirst(){return allSeats().slice().sort((a,b)=>{const A=seatPosition(a),B=seatPosition(b);return (B.y-A.y)||(A.x-B.x)})}
+function student(id){return state.students.find(s=>s.id===id)}
+function currentSeat(studentId){return Object.keys(state.placements).find(k=>state.placements[k]===studentId)||null}
+function normalizePlacements(){const seats=new Set(allSeats()),studs=new Set(state.students.map(s=>s.id));for(const k of Object.keys(state.placements)) if(!seats.has(k)||!studs.has(state.placements[k])) delete state.placements[k]}
+function textLines(name){const words=String(name||'').trim().split(/\s+/);if(name.length<=13||words.length===1)return[name];let best=[name];for(let i=1;i<words.length;i++){const a=words.slice(0,i).join(' '),b=words.slice(i).join(' ');if(Math.max(a.length,b.length)<Math.max(best[0]?.length||99,best[1]?.length||99)) best=[a,b]}return best.slice(0,2)}
+function colorFor(s,t){
+  const palette=paletteSets[state.paletteMode||'soft']||paletteSets.soft;
+  if(state.colorMode==='table'){
+    const idx=Math.max(0,state.tables.findIndex(x=>t&&x.id===t.id));
+    return palette[idx%palette.length];
+  }
+  if(!s||state.colorMode==='none')return '#fff';
+  let v=''; if(state.colorMode==='class')v=s.class; if(state.colorMode==='gender')v=s.gender; if(state.colorMode==='group')v=s.group; if(!v)return '#fff';
+  let h=0; for(const c of v)h=(h*31+c.charCodeAt(0))>>>0; return palette[h%palette.length];
+}
+
+
+function roomListEntries(){
+  return [{id:'__standard',name:'Standard 8 bord',deletable:false}].concat((state.roomPresets||[]).map(r=>({id:r.id,name:r.name||'Lagret rom',deletable:true})));
+}
+function renderClassPicker(){
+  const sorted=[...bundle.classes].sort((a,b)=>(b.lastEdited||0)-(a.lastEdited||0));
+  let list=sorted.slice(0,5);
+  if(!list.find(c=>c.id===state.id)){const current=sorted.find(c=>c.id===state.id);if(current) list=[current,...list].slice(0,5)}
+  $('classPicker').innerHTML=list.map(c=>`<option value="${c.id}">${esc(c.title)}</option>`).join('')+'<option value="__new__">＋ Ny klasse</option><option value="__delete__">− Slett valgt klasse</option>';
+  $('classPicker').value=list.find(c=>c.id===state.id)?state.id:'__new__';
+}
+function render(){
+  if(!Array.isArray(state.tables)||!state.tables.length){state.tables=defaultTables(state.room||defaultRoom());normalizePlacements()}
+  document.documentElement.style.setProperty('--sidebar',state.sidebarWidth+'px');
+  renderClassPicker();
+  $('projectTitle').value=state.title;
+  $('tabCount').textContent=state.students.length;
+  $('showClass').checked=!!state.showCols.class;$('showGender').checked=!!state.showCols.gender;$('showGroup').checked=!!state.showCols.group;
+  $('colorMode').value=state.colorMode;
+  $('paletteMode').value=state.paletteMode||'soft';
+  $('designMode').value=state.designMode||'classic';
+  document.querySelectorAll('[data-color-choice]').forEach(b=>b.classList.toggle('selected',b.dataset.colorChoice===state.colorMode));
+  document.querySelectorAll('[data-palette-choice]').forEach(b=>b.classList.toggle('selected',b.dataset.paletteChoice===(state.paletteMode||'soft')));
+  document.querySelectorAll('[data-design-choice]').forEach(b=>b.classList.toggle('selected',b.dataset.designChoice===(state.designMode||'classic')));
+  $('roomCard').className='room-card design-'+(state.designMode||'classic');
+  updatePrintMeta();
+  if($('roomNameInput')) $('roomNameInput').value=state.roomName||'Rom';
+  $('teacherViewBtn').classList.toggle('active',state.view==='teacher');
+  $('studentViewBtn').classList.toggle('active',state.view==='student');
+  $('colorMode').value=state.colorMode;
+  renderRestrictionsIndicator();renderStudents();renderRoomControls();renderRules();renderHistory();renderRoom();
+  $('undoBtn').disabled=!undoStack.length;
+}
+function renderRestrictionsIndicator(){
+  const restrictions=(state.restrictions||[]).length,fixed=Object.values(state.locked||{}).filter(Boolean).length,n=restrictions+fixed,btn=$('relationsBtn'),badge=$('relationsBadge');
+  if(!btn||!badge)return;
+  btn.classList.toggle('active',n>0);badge.textContent=n;
+  if(n){const parts=[];if(fixed)parts.push(`${fixed} fast plassering${fixed===1?'':'er'}`);if(restrictions)parts.push(`${restrictions} sitteønske/restriksjon${restrictions===1?'':'er'}`);btn.title=parts.join(' · ')}else btn.title='Sitteønsker, restriksjoner og faste plasseringer';
+}
+function renderStudents(){
+  document.querySelectorAll('[data-col]').forEach(el=>el.classList.toggle('hidden-col',!state.showCols[el.dataset.col]));
+  const rows=state.students;
+  $('studentBody').innerHTML=rows.map((s,rowIndex)=>`<tr data-student-row="${s.id}"><td class="drag-cell">${rowIndex+1}</td><td class="name-col"><input data-field="name" data-id="${s.id}" value="${esc(s.name)}"></td><td data-col="class" class="class-col ${state.showCols.class?'':'hidden-col'}"><input data-field="class" data-id="${s.id}" value="${esc(s.class||'')}"></td><td data-col="gender" class="gender-col ${state.showCols.gender?'':'hidden-col'}"><select data-field="gender" data-id="${s.id}"><option value=""></option><option ${s.gender==='Jente'?'selected':''}>Jente</option><option ${s.gender==='Gutt'?'selected':''}>Gutt</option><option ${s.gender==='Annet'?'selected':''}>Annet</option></select></td><td data-col="group" class="group-col ${state.showCols.group?'':'hidden-col'}"><input data-field="group" data-id="${s.id}" value="${esc(s.group||'')}"></td><td class="action-cell"><button class="delete-btn" data-delete-student="${s.id}" title="Fjern elev">×</button></td></tr>`).join('');
+}
+function renderRoomControls(){
+  $('seatCount').textContent=allSeats().length+' plasser';
+  $('addTableSize').innerHTML=Array.from({length:8},(_,i)=>`<option value="${i+1}">Legg til bordgruppe: ${i+1} pult${i? 'er':''}</option>`).join('');
+}
+
+const ruleModes={order:[['alpha','Alfabetisk forfra'],['random','Tilfeldig rekkefølge']],mates:[['new','Nye bordkamerater'],['random','Tilfeldige bordkamerater']],seat:[['new','Ny plassering i rommet'],['random','Tilfeldig plassering']],class:[['mix','Klassekamerater deles'],['together','Klassekamerater samles']],gender:[['mix','Kjønn blandes'],['together','Kjønn samles']],group:[['together','Grupper sitter sammen'],['mix','Gruppene blandes tilfeldig']]};
+function renderRules(){
+  $('ruleList').innerHTML=state.rules.map(r=>`<div class="rule ${r.on?'enabled':''}" draggable="true" data-rule="${r.id}"><span class="handle" title="Dra for å prioritere">⋮⋮</span><input data-rule-on="${r.id}" type="checkbox" ${r.on?'checked':''}><select data-rule-mode="${r.id}" aria-label="${esc(r.label)}">${ruleModes[r.id].map(([v,l])=>`<option value="${v}" ${r.mode===v?'selected':''}>${l}</option>`).join('')}</select></div>`).join('');
+}
+function renderHistory(){
+  $('historyCount').textContent=state.history.length+' kart';
+  if($('savedHistoryHint')) $('savedHistoryHint').textContent=state.history.length?(state.history.length+' datert kart i historikken'):'';
+  if(!state.history.length){$('historyList').innerHTML='<div class="history-empty">Ingen tidligere kart ennå.</div>';return}
+  $('historyList').innerHTML=[...state.history].reverse().map(h=>`<div class="history-card"><div class="date">${esc(dateLabel(h.date))}</div><strong>${esc(h.title||state.title)}</strong><div class="meta">${h.studentCount} elever · ${h.seatCount} plasser</div><div class="history-actions"><button data-open-history="${h.id}">Åpne kartet</button><button data-delete-history="${h.id}" class="danger">Slett</button></div></div>`).join('');
+}
+function renderObject(o,W,H){
+  const orient=o.orient||(['board','tv'].includes(o.type)?'h':o.type==='door'?'v':'h');
+  const base=objectDims(o.type),nativeVertical=o.type==='door';
+  const swap=(nativeVertical&&orient==='h')||(!nativeVertical&&orient==='v');
+  const dw=swap?base.h:base.w,dh=swap?base.w:base.h;
+  const x=state.view==='student'?W-o.x-dw:o.x,y=state.view==='student'?H-o.y-dh:o.y;
+  if(o.type==='board'){
+    const text=orient==='v'?`<text x="${dw/2}" y="${dh/2}" text-anchor="middle" dominant-baseline="middle" class="board-text" transform="rotate(-90 ${dw/2} ${dh/2})">Tavle</text>`:`<text x="${dw/2}" y="${dh/2+6}" text-anchor="middle" class="board-text">Tavle</text>`;
+    return `<g class="room-object" data-drag-kind="object" data-object="${o.id}" transform="translate(${x},${y})"><rect class="board outline" width="${dw}" height="${dh}" rx="4"/>${text}</g>`;
+  }
+  if(o.type==='door'){
+    const text=orient==='v'?`<text x="${dw/2}" y="${dh/2}" text-anchor="middle" dominant-baseline="middle" class="door-label" transform="rotate(-90 ${dw/2} ${dh/2})">Dør</text>`:`<text x="${dw/2}" y="${dh/2+5}" text-anchor="middle" class="door-label">Dør</text>`;
+    return `<g class="room-object" data-drag-kind="object" data-object="${o.id}" transform="translate(${x},${y})"><rect class="door outline" width="${dw}" height="${dh}" rx="6"/>${text}</g>`;
+  }
+  if(o.type==='catheder') return `<g class="room-object" data-drag-kind="object" data-object="${o.id}" transform="translate(${x},${y})"><rect class="catheder outline" width="${dw}" height="${dh}" rx="5"/><text x="${dw/2}" y="${dh/2+4}" text-anchor="middle" class="obj-label">Kateter</text></g>`;
+  if(o.type==='tv'){
+    const label=orient==='v'?`<text x="${dw/2}" y="${dh/2}" text-anchor="middle" dominant-baseline="middle" class="obj-label" style="fill:#fff" transform="rotate(-90 ${dw/2} ${dh/2})">TV</text>`:`<text x="${dw/2}" y="${dh/2+4}" text-anchor="middle" class="obj-label" style="fill:#fff">TV</text>`;
+    return `<g class="room-object" data-drag-kind="object" data-object="${o.id}" transform="translate(${x},${y})"><rect class="catheder outline" width="${dw}" height="${dh}" rx="6"/><rect x="7" y="7" width="${Math.max(12,dw-14)}" height="${Math.max(12,dh-14)}" rx="4" fill="#17312f" opacity=".92"/>${label}</g>`;
+  }
+  return `<g class="room-object" data-drag-kind="object" data-object="${o.id}" transform="translate(${x},${y})"><rect class="pillar outline" width="${dw}" height="${dh}" rx="5"/><text x="${dw/2}" y="${dh/2+4}" text-anchor="middle" class="obj-label">Stolpe</text></g>`;
+}
+
+function renderRoom(){
+  const svg=$('roomSvg'),W=state.room.w,H=state.room.h,z=clamp(Number(state.roomZoom)||1,.55,1.65),cx=W/2,cy=H/2,panX=clamp(Number(state.roomPanX)||0,-420,420),panY=clamp(Number(state.roomPanY)||0,-320,320),displayPanX=state.view==='student'?-panX:panX,displayPanY=state.view==='student'?-panY:panY;
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);svg.setAttribute('preserveAspectRatio','xMidYMid meet');
+  let out=`<defs><pattern id="dots" width="18" height="18" patternUnits="userSpaceOnUse"><circle class="grid-dot" cx="1" cy="1" r=".7"/></pattern></defs><rect x="4" y="4" width="${W-8}" height="${H-8}" rx="9" class="room-border"/><rect x="5" y="5" width="${W-10}" height="${H-10}" fill="url(#dots)" opacity=".55"/><g id="roomContent" transform="translate(${cx+displayPanX} ${cy+displayPanY}) scale(${z}) translate(${-cx} ${-cy})">`;
+  state.tables.forEach(t=>{
+    const lay=tableLayout(t.seats),gx=state.view==='student'?W-t.x-lay.shellW:t.x,gy=state.view==='student'?H-t.y-lay.shellH:t.y;
+    const gripY=state.view==='student'?lay.shellH-11:11;
+    const shellRx=state.designMode==='pods'?22:state.designMode==='wood'?3:8;
+    out+=`<g class="table-group" data-drag-kind="table" data-table="${t.id}" transform="translate(${gx},${gy})"><rect x="0" y="0" width="${lay.shellW}" height="${lay.shellH}" rx="${shellRx}" class="table-shell"/><circle cx="12" cy="${gripY}" r="1.3" class="table-handle"/><circle cx="16" cy="${gripY}" r="1.3" class="table-handle"/><circle cx="20" cy="${gripY}" r="1.3" class="table-handle"/>`;
+    for(let i=0;i<t.seats;i++){
+      const base=lay.rects[i],r=state.view==='student'?{...base,x:lay.shellW-base.x-base.w,y:lay.shellH-base.y-base.h}:base;
+      const key=t.id+':'+i,sid=state.placements[key],s=student(sid),lines=textLines(s?.name||''),fill=colorFor(s,t),sel=sid&&selectedStudent===sid;
+      const seatRx=state.designMode==='pods'?Math.min(18,r.h/2):state.designMode==='wood'?2:4;
+      out+=`<g class="seat-group ${sel?'selected':''}" data-seat="${key}" data-student="${sid||''}" transform="translate(${r.x},${r.y})"><rect width="${r.w}" height="${r.h}" rx="${seatRx}" class="seat ${s?'':'empty'}" style="fill:${fill}"/>`;
+      if(s){
+        if(!String(s.name||'').trim()) out+=``;
+        else if(lines.length===1) out+=`<text x="${r.w/2}" y="${r.h/2+5}" text-anchor="middle" class="seat-name" style="font-size:${r.font}px">${esc(lines[0])}</text>`;
+        else out+=`<text x="${r.w/2}" y="${r.h/2-3}" text-anchor="middle" class="seat-name" style="font-size:${Math.max(11.5,r.font-2)}px">${esc(lines[0])}</text><text x="${r.w/2}" y="${r.h/2+12}" text-anchor="middle" class="seat-sub" style="font-size:${Math.max(9,r.font-5)}px">${esc(lines[1])}</text>`;
+      }else out+=`<text x="${r.w/2}" y="${r.h/2+4}" text-anchor="middle" class="seat-sub">Ledig</text>`;
+      if(s&&state.locked?.[s.id]) out+=`<text x="${r.w-8}" y="13" text-anchor="end" class="seat-lock">●</text>`;
+      out+='</g>';
+    }
+    out+='</g>';
+  });
+  state.objects.filter(o=>!['door','board','tv'].includes(o.type)).forEach(o=>out+=renderObject(o,W,H));
+  out+='</g>';
+  state.objects.filter(o=>['door','board','tv'].includes(o.type)).forEach(o=>{snapObjectToWall(o);out+=renderObject(o,W,H)});
+  svg.innerHTML=out;
+  const placed=new Set(Object.values(state.placements).filter(Boolean)),unseated=state.students.filter(s=>!placed.has(s.id));
+  $('placedCount').textContent=placed.size+'/'+state.students.length;$('placesCount').textContent=allSeats().length;$('unseatedNames').textContent=unseated.length?unseated.map(s=>s.name||'uten navn').join(', '):'ingen';if($('placedCountTop'))$('placedCountTop').textContent=placed.size+'/'+state.students.length;if($('placesCountTop'))$('placesCountTop').textContent=allSeats().length;const sc=document.querySelector('.stats-chip');if(sc)sc.classList.toggle('alert', placed.size<state.students.length);
+}
+function addStudent(){commit(()=>{const s={id:uid(),name:'Ny elev',class:'',gender:'',group:''};state.students.push(s);selectedStudent=s.id});setTimeout(()=>{const el=document.querySelector(`[data-field="name"][data-id="${selectedStudent}"]`);el?.focus();el?.select()},0)}
+function moveStudentToSeat(sid,seat){commit(()=>{const old=currentSeat(sid),occupant=state.placements[seat];if(old)delete state.placements[old];if(occupant&&occupant!==sid){if(old)state.placements[old]=occupant;else delete state.placements[seat]}state.placements[seat]=sid;selectedStudent=sid})}
+function tableOccupants(t){return Array.from({length:t.seats},(_,i)=>state.placements[t.id+':'+i]||null)}
+function writeTableOccupants(t,arr){for(const k of Object.keys(state.placements))if(k.startsWith(t.id+':'))delete state.placements[k];t.seats=arr.length;arr.forEach((sid,i)=>{if(sid)state.placements[t.id+':'+i]=sid})}
+function removeSeatFromTable(tableId,index){const t=state.tables.find(x=>x.id===tableId);if(!t)return null;const arr=tableOccupants(t),sid=arr[index]||null;arr.splice(index,1);if(arr.length===0){state.tables=state.tables.filter(x=>x.id!==tableId);for(const k of Object.keys(state.placements))if(k.startsWith(tableId+':'))delete state.placements[k]}else writeTableOccupants(t,arr);return sid}
+function reorderSeatWithinTable(tableId,fromIndex,toIndex){const t=state.tables.find(x=>x.id===tableId);if(!t)return;const arr=tableOccupants(t);fromIndex=clamp(fromIndex,0,arr.length-1);toIndex=clamp(toIndex,0,arr.length-1);const[moved]=arr.splice(fromIndex,1);arr.splice(toIndex,0,moved);writeTableOccupants(t,arr)}
+function moveSeatBetweenTables(sourceId,sourceIndex,targetId,targetIndex){
+  if(sourceId===targetId){reorderSeatWithinTable(sourceId,sourceIndex,targetIndex);return true}
+  const src=state.tables.find(x=>x.id===sourceId),dst=state.tables.find(x=>x.id===targetId);if(!src||!dst)return false;
+  if(dst.seats>=8){toast('Dette bordet har allerede 8 plasser');return false}
+  const srcArr=tableOccupants(src),dstArr=tableOccupants(dst),slot=srcArr.splice(sourceIndex,1)[0]??null;
+  targetIndex=clamp(targetIndex,0,dstArr.length);dstArr.splice(targetIndex,0,slot);
+  if(srcArr.length===0){state.tables=state.tables.filter(x=>x.id!==sourceId);for(const k of Object.keys(state.placements))if(k.startsWith(sourceId+':'))delete state.placements[k]}else writeTableOccupants(src,srcArr);
+  writeTableOccupants(dst,dstArr);return true;
+}
+function moveSeatToNewDesk(sourceId,sourceIndex,px,py){
+  const src=state.tables.find(x=>x.id===sourceId);if(!src)return false;
+  const arr=tableOccupants(src),slot=arr.splice(sourceIndex,1)[0]??null;
+  if(arr.length===0){state.tables=state.tables.filter(x=>x.id!==sourceId);for(const k of Object.keys(state.placements))if(k.startsWith(sourceId+':'))delete state.placements[k]}else writeTableOccupants(src,arr);
+  const lay=tableLayout(1);let cx=px,cy=py;if(state.view==='student'){cx=state.room.w-px;cy=state.room.h-py}
+  const t={id:uid(),label:'',x:clamp(cx-lay.shellW/2,8,state.room.w-lay.shellW-8),y:clamp(cy-lay.shellH/2,8,state.room.h-lay.shellH-8),seats:1};state.tables.push(t);if(slot)state.placements[t.id+':0']=slot;return true;
+}
+function deleteDraggedItem(d){if(d.kind==='seat'){const sid=removeSeatFromTable(d.tableId,d.index);if(sid&&selectedStudent===sid)selectedStudent=null}else if(d.kind==='table'){const id=d.item.id;state.tables=state.tables.filter(t=>t.id!==id);for(const k of Object.keys(state.placements))if(k.startsWith(id+':'))delete state.placements[k]}else if(d.kind==='object'){state.objects=state.objects.filter(o=>o.id!==d.item.id)}}
+function showTrash(show){$('trashDrop').classList.toggle('visible',!!show);if(!show)$('trashDrop').classList.remove('hot')}
+function updateDragGhost(d,x,y){const g=$('dragGhost');if(d?.kind==='seat'){g.textContent=d.sid?(student(d.sid)?.name||'Elev'):'Ledig pult';g.classList.add('visible');g.style.left=(x+14)+'px';g.style.top=(y+14)+'px'}else g.classList.remove('visible')}
+function hideDragGhost(){$('dragGhost').classList.remove('visible')}
+function pointInTrash(x,y){const r=$('trashDrop').getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom}
+function screenToRoom(clientX,clientY){const svg=$('roomSvg'),pt=svg.createSVGPoint();pt.x=clientX;pt.y=clientY;const p=pt.matrixTransform(svg.getScreenCTM().inverse()),z=clamp(Number(state.roomZoom)||1,.55,1.65),cx=state.room.w/2,cy=state.room.h/2,panX=clamp(Number(state.roomPanX)||0,-420,420),panY=clamp(Number(state.roomPanY)||0,-320,320),displayPanX=state.view==='student'?-panX:panX,displayPanY=state.view==='student'?-panY:panY;return{x:(p.x-(cx+displayPanX))/z+cx,y:(p.y-(cy+displayPanY))/z+cy}}
+function screenToFrame(clientX,clientY){const svg=$('roomSvg'),pt=svg.createSVGPoint();pt.x=clientX;pt.y=clientY;return pt.matrixTransform(svg.getScreenCTM().inverse())}
+function objectFootprint(o){
+  const base=objectDims(o.type),orient=o.orient||(['board','tv'].includes(o.type)?'h':o.type==='door'?'v':'h'),nativeVertical=o.type==='door';
+  const swap=(nativeVertical&&orient==='h')||(!nativeVertical&&orient==='v');
+  return {w:swap?base.h:base.w,h:swap?base.w:base.h};
+}
+function placeEdgeObjectFromPointer(o,p){
+  if(!['door','board','tv'].includes(o.type)) return;
+  const d=objectDims(o.type);
+  const dist={left:p.x,right:state.room.w-p.x,top:p.y,bottom:state.room.h-p.y};
+  let side='left',best=dist.left; for(const k of ['right','top','bottom']) if(dist[k]<best){best=dist[k];side=k}
+  const wantOrient=(side==='left'||side==='right')?'v':'h';
+  o.orient=wantOrient;
+  const f=objectFootprint(o);
+  if(side==='left'){o.x=12; o.y=clamp(p.y-f.h/2,8,state.room.h-f.h-8)}
+  else if(side==='right'){o.x=state.room.w-f.w-12; o.y=clamp(p.y-f.h/2,8,state.room.h-f.h-8)}
+  else if(side==='top'){o.y=12; o.x=clamp(p.x-f.w/2,8,state.room.w-f.w-8)}
+  else {o.y=state.room.h-f.h-12; o.x=clamp(p.x-f.w/2,8,state.room.w-f.w-8)}
+}
+function snapObjectToWall(o){
+  if(!['door','board','tv'].includes(o.type)) return;
+  const f=objectFootprint(o),cx=o.x+f.w/2,cy=o.y+f.h/2;
+  const dist={left:cx,right:state.room.w-cx,top:cy,bottom:state.room.h-cy};
+  let side='left',best=dist.left;for(const k of ['right','top','bottom'])if(dist[k]<best){best=dist[k];side=k}
+  o.orient=(side==='left'||side==='right')?'v':'h';
+  const nf=objectFootprint(o);
+  if(side==='left'){o.x=12;o.y=clamp(cy-nf.h/2,8,state.room.h-nf.h-8)}
+  else if(side==='right'){o.x=state.room.w-nf.w-12;o.y=clamp(cy-nf.h/2,8,state.room.h-nf.h-8)}
+  else if(side==='top'){o.y=12;o.x=clamp(cx-nf.w/2,8,state.room.w-nf.w-8)}
+  else{o.y=state.room.h-nf.h-12;o.x=clamp(cx-nf.w/2,8,state.room.w-nf.w-8)}
+}
+function nextTablePlacement(size){const lay=tableLayout(size);const candidates=[[58,72],[350,72],[642,72],[58,266],[350,266],[642,266],[58,500],[350,500],[642,500],[58,160],[642,160]]; for(const [x,y] of candidates){let hit=false; for(const t of state.tables){const tl=tableLayout(t.seats); if(!(x+lay.shellW+18<t.x||x>t.x+tl.shellW+18||y+lay.shellH+18<t.y||y>t.y+tl.shellH+18)){hit=true;break}} if(!hit) return {x,y}} return {x:58,y:72}}
+function nextObjectPlacement(type){const counts=state.objects.filter(o=>o.type===type).length; if(type==='door') return {x:12,y:clamp(80+counts*120,12,state.room.h-objectDims('door').h-12),orient:'v'}; if(type==='board') return {x:clamp(state.room.w/2-objectDims('board').w/2+counts*16,8,state.room.w-objectDims('board').w-8),y:state.room.h-objectDims('board').h-12,orient:'h'}; if(type==='tv') return {x:clamp(state.room.w/2-objectDims('tv').w/2+counts*18,8,state.room.w-objectDims('tv').w-8),y:12,orient:'h'}; if(type==='catheder') return {x:clamp(state.room.w-130-counts*18,8,state.room.w-objectDims('catheder').w-8),y:clamp(state.room.h/2-20+counts*18,8,state.room.h-objectDims('catheder').h-8),orient:'h'}; if(type==='pillar') return {x:clamp(state.room.w/2-19+counts*20,8,state.room.w-objectDims('pillar').w-8),y:clamp(state.room.h/2-27+counts*20,8,state.room.h-objectDims('pillar').h-8),orient:'h'}; return {x:20,y:20,orient:'h'}}
+function randomShuffle(a){const x=[...a];for(let i=x.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]]}return x}
+function historyPairs(){const set=new Set();state.history.forEach(h=>{if(!h.placements||!Array.isArray(h.tables))return;h.tables.forEach(t=>{const ids=Object.keys(h.placements).filter(k=>k.startsWith(t.id+':')).map(k=>h.placements[k]).filter(Boolean);for(let i=0;i<ids.length;i++)for(let j=i+1;j<ids.length;j++)set.add([ids[i],ids[j]].sort().join('|'))})});return set}
+function latestHistory(){return state.history[state.history.length-1]||null}
+function assignmentSeatMap(assign){const m=new Map();Object.entries(assign).forEach(([seat,sid])=>{if(sid)m.set(sid,seat)});return m}
+function restrictionViolations(assign){
+  const seatMap=assignmentSeatMap(assign),issues=[];
+  for(const r of (state.restrictions||[])){
+    const sa=seatMap.get(r.a),sb=seatMap.get(r.b);
+    if(!sa||!sb){issues.push(r);continue}
+    const ta=sa.slice(0,sa.lastIndexOf(':')),tb=sb.slice(0,sb.lastIndexOf(':')),same=ta===tb;
+    if((r.type==='together'&&!same)||(r.type==='apart'&&same))issues.push(r);
+  }
+  return issues;
+}
+function restrictionPenalty(assign){return restrictionViolations(assign).length*1000000000}
+function scoreAssignment(assign){
+  const active=state.rules.filter(r=>r.on),weights=[100000,10000,1000,100,10],oldPairs=historyPairs(),latest=latestHistory();
+  const byTable=new Map(state.tables.map(t=>[t.id,[]]));Object.entries(assign).forEach(([seat,sid])=>byTable.get(seat.split(':')[0])?.push(sid));
+  let score=restrictionPenalty(assign);
+  active.forEach((r,rank)=>{const w=weights[Math.min(rank,weights.length-1)];let penalty=0;
+    if(r.id==='mates'&&r.mode==='new'){byTable.forEach(ids=>{for(let i=0;i<ids.length;i++)for(let j=i+1;j<ids.length;j++)if(oldPairs.has([ids[i],ids[j]].sort().join('|'))) penalty+=1})}
+    if(r.id==='seat'&&r.mode==='new'&&latest?.placements){Object.entries(assign).forEach(([seat,sid])=>{if(latest.placements[seat]===sid) penalty+=1})}
+    if(r.id==='order'&&r.mode==='alpha'){const ordered=seatsFrontFirst(),rank=new Map(ordered.map((seat,i)=>[seat,i])),ids=Object.values(assign).filter(Boolean).sort((a,b)=>(student(a)?.name||'').localeCompare(student(b)?.name||'','nb',{sensitivity:'base',numeric:true}));ids.forEach((sid,i)=>{const seat=Object.keys(assign).find(k=>assign[k]===sid);if(seat&&rank.has(seat))penalty+=Math.abs(rank.get(seat)-i)*.15})}
+    if(['class','gender','group'].includes(r.id)){
+      const field=r.id==='class'?'class':r.id==='gender'?'gender':'group';
+      byTable.forEach(ids=>{const vals=ids.map(id=>student(id)?.[field]).filter(Boolean);for(let i=0;i<vals.length;i++)for(let j=i+1;j<vals.length;j++){const same=vals[i]===vals[j];if(r.mode==='mix'&&same) penalty+=1;if(r.mode==='together'&&!same) penalty+=1}})
+    }
+    score+=penalty*w;
+  });
+  return score;
+}
+function repairRestrictions(assign,lockedStudents=new Set()){
+  const restrictions=(state.restrictions||[]).filter(r=>assign&&r.a&&r.b);if(!restrictions.length)return assign;
+  const seatOf=sid=>Object.keys(assign).find(k=>assign[k]===sid)||null;
+  const tableOf=sid=>{const s=seatOf(sid);return s?s.slice(0,s.lastIndexOf(':')):null};
+  const swapStudents=(a,b)=>{const sa=seatOf(a),sb=seatOf(b);if(!sa||!sb||lockedStudents.has(a)||lockedStudents.has(b))return false;assign[sa]=b;assign[sb]=a;return true};
+  for(let pass=0;pass<8;pass++){
+    let changed=false;
+    for(const r of restrictions){
+      const ta=tableOf(r.a),tb=tableOf(r.b);if(!ta||!tb)continue;
+      if(r.type==='together'&&ta!==tb){
+        const movable=!lockedStudents.has(r.b)?r.b:(!lockedStudents.has(r.a)?r.a:null);if(!movable)continue;
+        const targetTable=movable===r.b?ta:tb;
+        const occupants=Object.entries(assign).filter(([seat,sid])=>seat.slice(0,seat.lastIndexOf(':'))===targetTable&&!lockedStudents.has(sid)&&sid!==r.a&&sid!==r.b).map(([,sid])=>sid);
+        if(occupants.length){changed=swapStudents(movable,occupants[Math.floor(Math.random()*occupants.length)])||changed}
+      }else if(r.type==='apart'&&ta===tb){
+        const movable=!lockedStudents.has(r.b)?r.b:(!lockedStudents.has(r.a)?r.a:null);if(!movable)continue;
+        const candidates=Object.values(assign).filter(sid=>sid&&!lockedStudents.has(sid)&&sid!==r.a&&sid!==r.b&&tableOf(sid)!==ta);
+        if(candidates.length){changed=swapStudents(movable,candidates[Math.floor(Math.random()*candidates.length)])||changed}
+      }
+    }
+    if(!changed||restrictionViolations(assign).length===0)break;
+  }
+  return assign;
+}
+function distribute(){
+  const orderedSeats=seatsFrontFirst(),students=state.students.map(s=>s.id);if(!students.length||!orderedSeats.length)return;
+  const lockedPairs=[];const lockedStudents=new Set();const reservedSeats=new Set();
+  for(const sid of students){if(!state.locked?.[sid])continue;const seat=currentSeat(sid);if(seat&&orderedSeats.includes(seat)){lockedPairs.push([seat,sid]);lockedStudents.add(sid);reservedSeats.add(seat)}}
+  const freeStudents=students.filter(id=>!lockedStudents.has(id));
+  const availableFrontSeats=orderedSeats.filter(seat=>!reservedSeats.has(seat));
+  const chosenSeats=availableFrontSeats.slice(0,Math.min(freeStudents.length,availableFrontSeats.length));
+  const alphaRule=state.rules.find(r=>r.id==='order'&&r.on&&r.mode==='alpha');
+  const restrictions=(state.restrictions||[]).length;
+  if(alphaRule&&!restrictions){
+    const sorted=[...freeStudents].sort((a,b)=>(student(a)?.name||'').localeCompare(student(b)?.name||'','nb',{sensitivity:'base',numeric:true}));
+    const a={};lockedPairs.forEach(([seat,sid])=>a[seat]=sid);chosenSeats.forEach((seat,i)=>{if(sorted[i])a[seat]=sorted[i]});
+    commit(()=>{state.placements=a;selectedStudent=null});
+    toast('Elevene er plassert alfabetisk forfra i rommet');
+    return;
+  }
+  let best=null,bestScore=Infinity,iterations=restrictions?Math.min(12000,Math.max(3500,freeStudents.length*260)):Math.min(2800,Math.max(700,freeStudents.length*80));
+  for(let n=0;n<iterations;n++){
+    const sh=alphaRule?[...freeStudents].sort((a,b)=>(student(a)?.name||'').localeCompare(student(b)?.name||'','nb',{sensitivity:'base',numeric:true})):randomShuffle(freeStudents),a={};lockedPairs.forEach(([seat,sid])=>a[seat]=sid);chosenSeats.forEach((seat,i)=>{if(sh[i])a[seat]=sh[i]});
+    if(restrictions)repairRestrictions(a,lockedStudents);
+    const sc=scoreAssignment(a);if(sc<bestScore){bestScore=sc;best=copy(a);if(sc===0)break}
+    if(alphaRule&&restrictions&&n%2===0){const rs=randomShuffle(freeStudents),b={};lockedPairs.forEach(([seat,sid])=>b[seat]=sid);chosenSeats.forEach((seat,i)=>{if(rs[i])b[seat]=rs[i]});repairRestrictions(b,lockedStudents);const bs=scoreAssignment(b);if(bs<bestScore){bestScore=bs;best=copy(b)}}
+  }
+  commit(()=>{state.placements=best||Object.fromEntries(lockedPairs);selectedStudent=null});
+  const remaining=restrictionViolations(state.placements).length;
+  if(remaining)toast(`${remaining} sitteønske/restriksjon kunne ikke oppfylles`,3600);else toast(alphaRule?'Elevene er fordelt med sitteønsker og alfabetisk prioritet':'Elevene er fordelt med sitteønskene');
+}
+function saveHistory(){
+  commit(()=>{
+    state.history.push({id:uid(),date:new Date().toISOString(),title:state.title,studentCount:state.students.length,seatCount:allSeats().length,placements:copy(state.placements),students:copy(state.students),tables:copy(state.tables),objects:copy(state.objects),room:copy(state.room)});
+    if(state.history.length>60) state.history.shift();
+  });
+  toast('Lagret i liste over tidligere klassekart',3600);
+}
+function tidyTables(){const positions=tidyTablePositions(state.room,state.tables.length||8);state.tables.forEach((t,i)=>{t.x=positions[i]?.x??58;t.y=positions[i]?.y??72});const board=state.objects.find(o=>o.type==='board');if(board){board.x=state.room.w/2-objectDims('board').w/2;board.y=state.room.h-objectDims('board').h-12;board.orient='h'}const door=state.objects.find(o=>o.type==='door');if(door){door.x=12;door.y=state.room.h/2-objectDims('door').h/2;door.orient='v'}}
+function resetToStandardRoom(){commit(()=>{state.room=defaultRoom();state.tables=defaultTables(state.room);state.objects=defaultObjects(state.room);state.roomZoom=1;state.roomPanX=0;state.roomPanY=0;state.colorMode='table';state.paletteMode='soft';state.designMode='classic';tidyTables();normalizePlacements()})}
+function saveCurrentRoom(){commit(()=>{state.roomName=($('roomNameInput').value||'Rom').trim()||'Rom';const rec={id:uid(),name:state.roomName,room:copy(state.room),tables:copy(state.tables),objects:copy(state.objects)};state.roomPresets=(state.roomPresets||[]).filter(r=>r.name!==rec.name);state.roomPresets.unshift(rec);if(state.roomPresets.length>20)state.roomPresets.length=20});toast('Rommet er lagret')}
+function applyRoomPreset(id){
+  if(id==='__standard'){resetToStandardRoom();return}
+  const r=(state.roomPresets||[]).find(x=>x.id===id);if(!r)return;
+  commit(()=>{state.room=copy(r.room||defaultRoom());state.tables=copy(r.tables||defaultTables(state.room));state.objects=(r.objects&&r.objects.length)?copy(r.objects):defaultObjects(state.room);normalizePlacements()});
+  toast('Romoppsettet er hentet fram');
+}
+function deleteRoomPreset(id){commit(()=>{state.roomPresets=(state.roomPresets||[]).filter(r=>r.id!==id)});toast('Rommet er slettet')}
+function serializedHtml(){
+  const snapshot=copy(state);snapshot.lastEdited=Date.now();
+  const portable={version:1,portableSnapshot:true,currentClassId:snapshot.id,classes:[snapshot]};
+  const clone=document.documentElement.cloneNode(true);clone.querySelector('#app-bundle').textContent=JSON.stringify(portable).replace(/</g,'\u003c');clone.querySelectorAll('dialog').forEach(d=>d.removeAttribute('open'));clone.querySelector('#toast').classList.remove('show');clone.querySelector('#trashDrop').classList.remove('visible','hot');clone.querySelector('#dragGhost').classList.remove('visible');return '<!doctype html>\n'+clone.outerHTML
+}
+function downloadHtml(){syncStateIntoBundle();persist();const blob=new Blob([serializedHtml()],{type:'text/html;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(state.title||'klassekart').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9_-]+/g,'-').replace(/^-|-$/g,'').toLowerCase()+'-'+today()+'.html';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5000);toast('Klassekartet er lagret i en ny HTML-fil')}
+
+// Tabs
+for(const b of document.querySelectorAll('.tab')) b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));$('panel-'+b.dataset.tab).classList.add('active')};
+// Header + class switching
+$('projectTitle').oninput=e=>{state.title=e.target.value;persist()};
+$('projectTitle').onchange=()=>{renderClassPicker();persist()};
+$('classPicker').onchange=e=>{
+  const choice=e.target.value;
+  if(choice==='__new__'){
+    syncStateIntoBundle();state=fresh('Ny klasse',true);bundle.classes.unshift(copy(state));bundle.currentClassId=state.id;undoStack=[];selectedStudent=null;render();persist();requestAnimationFrame(()=>renderRoom());setTimeout(()=>{$('projectTitle').focus();$('projectTitle').select()},0);return;
+  }
+  if(choice==='__delete__'){
+    const name=state.title||'denne klassen';if(!confirm('Slette «'+name+'»?')){renderClassPicker();return}
+    syncStateIntoBundle();bundle.classes=bundle.classes.filter(c=>c.id!==state.id);if(bundle.classes.length){state=copy([...bundle.classes].sort((a,b)=>(b.lastEdited||0)-(a.lastEdited||0))[0])}else{state=fresh('Ny klasse',true);bundle.classes=[copy(state)]}bundle.currentClassId=state.id;undoStack=[];selectedStudent=null;render();persist();toast('Klassen er slettet');return;
+  }
+  syncStateIntoBundle();const found=bundle.classes.find(c=>c.id===choice);if(found){state=sanitizeState(copy(found));undoStack=[];selectedStudent=null;render();persist();requestAnimationFrame(()=>renderRoom())}
+};
+$('undoBtn').onclick=()=>{if(!undoStack.length)return;state=undoStack.pop();render();persist()};
+$('saveHistoryBtn').onclick=saveHistory;
+$('downloadBtn').onclick=downloadHtml;$('printBtn').onclick=()=>{updatePrintMeta();window.print()};
+$('fullscreenBtn').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.();
+$('newMapBtn').onclick=()=>distribute();
+// View toggles
+$('teacherViewBtn').onclick=()=>commit(()=>state.view='teacher');
+$('studentViewBtn').onclick=()=>commit(()=>state.view='student');
+$('colorMode').onchange=e=>commit(()=>state.colorMode=e.target.value);
+$('paletteMode').onchange=e=>commit(()=>state.paletteMode=e.target.value);
+$('designMode').onchange=e=>commit(()=>state.designMode=e.target.value);
+function closeToolbarMenus(except=null){document.querySelectorAll('.toolbar-menu').forEach(d=>{if(d!==except)d.removeAttribute('open')})}
+document.querySelector('.toolbar-right').addEventListener('click',e=>{const c=e.target.dataset.colorChoice,p=e.target.dataset.paletteChoice,d=e.target.dataset.designChoice;if(c){e.preventDefault();commit(()=>state.colorMode=c);$('colorMenu').removeAttribute('open')}if(p){e.preventDefault();commit(()=>state.paletteMode=p);$('paletteMenu').removeAttribute('open')}if(d){e.preventDefault();commit(()=>state.designMode=d);$('designMenu').removeAttribute('open')}});
+document.querySelectorAll('.toolbar-menu').forEach(m=>m.addEventListener('toggle',()=>{if(m.open)closeToolbarMenus(m)}));
+$('resetRoomBtn').onclick=()=>resetToStandardRoom();
+// Student list
+for(const [id,key] of [['showClass','class'],['showGender','gender'],['showGroup','group']]) $(id).onchange=e=>commit(()=>state.showCols[key]=e.target.checked);
+$('addStudentBottom').onclick=addStudent;
+$('studentBody').addEventListener('input',e=>{const f=e.target.dataset.field,id=e.target.dataset.id;if(!f||!id)return;const s=student(id);if(s){s[f]=e.target.value;renderRoom();persist()}});
+$('studentBody').addEventListener('change',e=>{const f=e.target.dataset.field,id=e.target.dataset.id;if(!f||!id)return;const s=student(id);if(s){s[f]=e.target.value;renderRoom();persist()}});
+$('studentBody').addEventListener('click',e=>{const del=e.target.dataset.deleteStudent;if(del){commit(()=>{state.students=state.students.filter(s=>s.id!==del);for(const k of Object.keys(state.placements)) if(state.placements[k]===del) delete state.placements[k];if(state.locked)delete state.locked[del];state.restrictions=(state.restrictions||[]).filter(r=>r.a!==del&&r.b!==del);if(selectedStudent===del) selectedStudent=null});return}const tr=e.target.closest('[data-student-row]');if(tr&&!e.target.matches('input,select,button')){selectedStudent=tr.dataset.studentRow;renderStudents();renderRoom()}})
+function surnameSuggestions(){
+  const rows=state.students.map(s=>{const old=String(s.name||'').trim(),parts=old.split(/\s+/).filter(Boolean);return{id:s.id,old,parts,base:parts[0]||''}});
+  const counts=new Map();rows.forEach(r=>{const k=r.base.toLocaleLowerCase('nb-NO');if(k)counts.set(k,(counts.get(k)||0)+1)});
+  const used=new Map();
+  return rows.map(r=>{
+    let proposed=r.base;
+    if(proposed&&counts.get(proposed.toLocaleLowerCase('nb-NO'))>1){
+      const second=r.parts[1]||'';
+      const hit=(second.match(/[A-Za-zÆØÅæøå0-9]/)||[''])[0];
+      if(/\d/.test(hit)) proposed+=' '+second;
+      else if(hit) proposed+=' '+hit.toUpperCase()+'.';
+      const k=proposed.toLocaleLowerCase('nb-NO'),n=(used.get(k)||0)+1;used.set(k,n);
+      if(n>1&&second) proposed=r.base+' '+second;
+    }
+    return{id:r.id,old:r.old,proposed};
+  });
+}
+function openShortenNames(){
+  const suggestions=surnameSuggestions();
+  $('shortenBody').innerHTML=suggestions.map(r=>`<tr><td>${esc(r.old||'—')}</td><td><input data-short-id="${r.id}" value="${esc(r.proposed)}"></td></tr>`).join('');
+  $('shortenDialog').showModal();
+}
+$('shortenNamesBtn').onclick=openShortenNames;
+$('closeShorten').onclick=$('cancelShorten').onclick=()=>$('shortenDialog').close();
+$('applyShorten').onclick=()=>{
+  const values=[...document.querySelectorAll('[data-short-id]')].map(el=>[el.dataset.shortId,el.value.trim()]);
+  commit(()=>{for(const [id,name] of values){const s=student(id);if(s)s.name=name}});
+  $('shortenDialog').close();toast('Navnene er oppdatert');
+};
+
+let restrictionDraft=[],fixedDraft=[];
+function studentOptions(selected){return `<option value="" ${!selected?'selected':''}>Velg elev</option>`+state.students.map(s=>`<option value="${s.id}" ${s.id===selected?'selected':''}>${esc(s.name||'Uten navn')}</option>`).join('')}
+function renderFixedDraft(){
+  const select=$('fixedStudentSelect'),used=new Set(fixedDraft);
+  select.innerHTML='<option value="">Velg elev</option>'+state.students.filter(s=>!used.has(s.id)).map(s=>`<option value="${s.id}">${esc(s.name||'Uten navn')}</option>`).join('');
+  const chips=$('fixedStudentChips');chips.innerHTML=fixedDraft.map(id=>{const s=student(id);return s?`<span class="fixed-chip">${esc(s.name||'Uten navn')}<button data-remove-fixed="${id}" title="Fjern fast plassering">×</button></span>`:''}).join('');
+}
+function renderRestrictionDraft(){
+  const box=$('restrictionList');if(!restrictionDraft.length){box.innerHTML='<div class="restriction-empty">Ingen sitteønsker eller restriksjoner.</div>';return}
+  box.innerHTML=restrictionDraft.map((r,i)=>`<div class="restriction-row" data-restriction-index="${i}"><select data-restriction-field="a">${studentOptions(r.a)}</select><select data-restriction-field="type"><option value="apart" ${r.type==='apart'?'selected':''}>skal ikke sitte sammen med</option><option value="together" ${r.type==='together'?'selected':''}>skal sitte sammen med</option></select><select data-restriction-field="b">${studentOptions(r.b)}</select><button class="remove-restriction" data-remove-restriction="${i}" title="Fjern">×</button></div>`).join('');
+}
+function addRestrictionDraft(){if(state.students.length<2)return;restrictionDraft.push({id:uid(),a:'',type:'apart',b:''});renderRestrictionDraft()}
+function openRelations(){restrictionDraft=copy(state.restrictions||[]);fixedDraft=Object.keys(state.locked||{}).filter(id=>state.locked[id]&&student(id));renderFixedDraft();renderRestrictionDraft();$('restrictionConflict').classList.add('hidden');$('relationsDialog').showModal()}
+$('relationsBtn').onclick=openRelations;$('closeRelations').onclick=$('cancelRelations').onclick=()=>$('relationsDialog').close();$('addRestrictionBtn').onclick=addRestrictionDraft;
+$('addFixedStudent').onclick=()=>{const id=$('fixedStudentSelect').value;if(!id||fixedDraft.includes(id))return;if(!currentSeat(id)){toast('Eleven må ha en plass i klassekartet før plasseringen kan låses');return}fixedDraft.push(id);renderFixedDraft()};
+$('fixedStudentChips').addEventListener('click',e=>{const id=e.target.dataset.removeFixed;if(!id)return;fixedDraft=fixedDraft.filter(x=>x!==id);renderFixedDraft()});
+$('restrictionList').addEventListener('change',e=>{const row=e.target.closest('[data-restriction-index]');if(!row)return;const i=Number(row.dataset.restrictionIndex),field=e.target.dataset.restrictionField;if(field&&restrictionDraft[i])restrictionDraft[i][field]=e.target.value});
+$('restrictionList').addEventListener('click',e=>{const i=e.target.dataset.removeRestriction;if(i===undefined)return;restrictionDraft.splice(Number(i),1);renderRestrictionDraft()});
+$('saveRelations').onclick=()=>{
+  const validIds=new Set(state.students.map(s=>s.id));
+  const incomplete=restrictionDraft.some(r=>(r.a||r.b)&&(!validIds.has(r.a)||!validIds.has(r.b)));if(incomplete){$('restrictionConflict').textContent='Velg en elev i begge ytterkolonnene, eller slett den uferdige linjen.';$('restrictionConflict').classList.remove('hidden');return}
+  const same=restrictionDraft.some(r=>r.a&&r.a===r.b);if(same){$('restrictionConflict').textContent='En elev kan ikke ha en regel mot seg selv. Velg to forskjellige elever.';$('restrictionConflict').classList.remove('hidden');return}
+  const clean=restrictionDraft.filter(r=>validIds.has(r.a)&&validIds.has(r.b)&&r.a!==r.b).map(r=>({id:r.id||uid(),a:r.a,type:r.type==='together'?'together':'apart',b:r.b}));
+  const contradictory=[];for(let i=0;i<clean.length;i++)for(let j=i+1;j<clean.length;j++){const a=[clean[i].a,clean[i].b].sort().join('|'),b=[clean[j].a,clean[j].b].sort().join('|');if(a===b&&clean[i].type!==clean[j].type)contradictory.push(a)}
+  if(contradictory.length){$('restrictionConflict').textContent='Samme elevpar er lagt inn både som «skal sitte sammen» og «skal ikke sitte sammen». Fjern én av linjene først.';$('restrictionConflict').classList.remove('hidden');return}
+  const fixed=fixedDraft.filter(id=>validIds.has(id)&&currentSeat(id));
+  commit(()=>{state.restrictions=clean;state.locked=Object.fromEntries(fixed.map(id=>[id,true]))});$('relationsDialog').close();
+  const total=clean.length+fixed.length;toast(total?`${total} regel${total===1?'':'er'} / fast plassering lagret`:'Ingen sitteønsker, restriksjoner eller faste plasseringer');
+};
+
+// Room actions
+$('roomNameInput').onchange=e=>commit(()=>state.roomName=(e.target.value||'Rom').trim()||'Rom');
+$('addTableBtn').onclick=()=>commit(()=>{const size=clamp(Number($('addTableSize').value)||4,1,8),spot=nextTablePlacement(size);state.tables.push({id:uid(),label:'',x:spot.x,y:spot.y,seats:size})});
+$('addObjectBtn').onclick=()=>commit(()=>{const type=$('addObjectType').value,spot=nextObjectPlacement(type);state.objects.push({id:uid(),type,x:spot.x,y:spot.y,orient:spot.orient||'h'})});
+// Rules
+$('ruleList').addEventListener('change',e=>{const id=e.target.dataset.ruleOn||e.target.dataset.ruleMode;if(!id)return;commit(()=>{const r=state.rules.find(x=>x.id===id);if(!r)return;if(e.target.dataset.ruleOn)r.on=e.target.checked;else r.mode=e.target.value})});
+$('ruleList').addEventListener('dragstart',e=>{const r=e.target.closest('[data-rule]');if(!r)return;dragRule=r.dataset.rule;r.classList.add('dragging');e.dataTransfer.effectAllowed='move'});
+$('ruleList').addEventListener('dragend',e=>{e.target.closest('[data-rule]')?.classList.remove('dragging');dragRule=null});
+$('ruleList').addEventListener('dragover',e=>{e.preventDefault();const over=e.target.closest('[data-rule]'),dragged=document.querySelector(`[data-rule="${dragRule}"]`);if(!over||!dragged||over===dragged)return;const box=over.getBoundingClientRect();if(e.clientY<box.top+box.height/2) over.before(dragged); else over.after(dragged)});
+$('ruleList').addEventListener('drop',e=>{e.preventDefault();const ids=[...$('ruleList').querySelectorAll('[data-rule]')].map(el=>el.dataset.rule);const byId=new Map(state.rules.map(r=>[r.id,r]));state.rules=ids.map(id=>byId.get(id)).filter(Boolean);persist();renderRules()});
+// History
+$('historyList').addEventListener('click',e=>{const open=e.target.dataset.openHistory,del=e.target.dataset.deleteHistory;if(open){const h=state.history.find(x=>x.id===open);if(h) commit(()=>{state.placements=copy(h.placements||{});if(Array.isArray(h.students)) h.students.forEach(old=>{const s=student(old.id);if(s){s.name=old.name;s.class=old.class;s.gender=old.gender;s.group=old.group}});normalizePlacements()});return}if(del) commit(()=>state.history=state.history.filter(h=>h.id!==del))});
+// Import dialog
+let importMode='visma';
+function openImport(mode){importMode=mode;$('importTitle').textContent=mode==='visma'?'Kopier fra Visma':'Lim inn elevliste';$('importHelp').innerHTML=mode==='visma'?'<strong>I Visma:</strong> finn undervisningsgruppe → klikk på tannhjulet → huk av for <strong>Kjønn og Klasse</strong> → merk linjene med elever og kopier teksten → lim inn her.':'<strong>Annen liste:</strong> Lim inn én elev per linje, eller tab-separerte kolonner. Første kolonne brukes som navn.';$('importText').value='';$('importDialog').showModal()}
+$('vismaBtn').onclick=()=>openImport('visma');$('pasteBtn').onclick=()=>openImport('plain');$('closeImport').onclick=$('cancelImport').onclick=()=>$('importDialog').close();
+function hasMeaningfulStudentList(){
+  return state.students.some(s=>String(s.name||'').trim().length>0);
+}
+function ensureUsableRoom(){
+  if(!Array.isArray(state.tables)||!state.tables.length) state.tables=defaultTables(state.room||defaultRoom());
+  if(!Array.isArray(state.objects)||!state.objects.length) state.objects=defaultObjects(state.room||defaultRoom());
+}
+function distributeImportedStudents(){
+  ensureUsableRoom();
+  const seats=seatsFrontFirst(),ids=randomShuffle(state.students.map(s=>s.id)),placements={};
+  seats.slice(0,ids.length).forEach((seat,i)=>{if(ids[i])placements[seat]=ids[i]});
+  state.placements=placements;state.locked={};
+}
+function parseImport(text){const lines=text.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);const out=[];for(const line of lines){const cells=line.split(/\t|;/).map(x=>x.trim()).filter((x,i,a)=>x||a.length===1);if(!cells.length)continue;if(/^(navn|elev|name)$/i.test(cells[0]))continue;let name=cells[0],cls='',gender='',group='';for(let i=1;i<cells.length;i++){const c=cells[i];if(/^(jente|gutt|kvinne|mann|annet)$/i.test(c)) gender=/jente|kvinne/i.test(c)?'Jente':/gutt|mann/i.test(c)?'Gutt':'Annet';else if(/^[123][A-ZÆØÅ]{1,8}[A-Z0-9-]*$/i.test(c)||/^[A-ZÆØÅ]{1,4}\d{0,2}[A-Z0-9-]*$/i.test(c)) cls=cls||c;else group=group||c}out.push({id:uid(),name,class:cls,gender,group})}return out}
+$('applyImport').onclick=()=>{
+  const parsed=parseImport($('importText').value);if(!parsed.length){toast('Fant ingen elever i teksten');return}
+  if(hasMeaningfulStudentList()&&!confirm('Det finnes allerede en elevliste for «'+(state.title||'denne klassen')+'». Vil du slette den gamle elevlista og legge inn den nye?'))return;
+  commit(()=>{ensureUsableRoom();state.students=parsed;state.restrictions=[];selectedStudent=null;distributeImportedStudents()});
+  $('importDialog').close();toast(parsed.length+' elever lagt inn og fordelt på bordene');
+};
+// Room interaction
+$('roomSvg').addEventListener('pointerdown',e=>{
+  const svg=$('roomSvg'),seatEl=e.target.closest('[data-seat]'),tableEl=e.target.closest('[data-table]'),objectEl=e.target.closest('[data-object]');
+  const p=screenToRoom(e.clientX,e.clientY);
+  if(seatEl){const cut=seatEl.dataset.seat.lastIndexOf(':'),tableId=seatEl.dataset.seat.slice(0,cut),indexText=seatEl.dataset.seat.slice(cut+1),sid=seatEl.dataset.student||null;dragItem={kind:'seat',tableId,index:Number(indexText),sid,startClientX:e.clientX,startClientY:e.clientY,startX:p.x,startY:p.y,moved:false};showTrash(true);updateDragGhost(dragItem,e.clientX,e.clientY)}
+  else if(tableEl){const t=state.tables.find(x=>x.id===tableEl.dataset.table);if(!t)return;const lay=tableLayout(t.seats);dragItem={kind:'table',item:t,x:t.x,y:t.y,w:lay.shellW,h:lay.shellH,startClientX:e.clientX,startClientY:e.clientY,startX:p.x,startY:p.y,moved:false};showTrash(true);updateDragGhost(dragItem,e.clientX,e.clientY)}
+  else if(objectEl){const o=state.objects.find(x=>x.id===objectEl.dataset.object);if(!o)return;const d=objectFootprint(o);dragItem={kind:'object',item:o,x:o.x,y:o.y,w:d.w,h:d.h,startClientX:e.clientX,startClientY:e.clientY,startX:p.x,startY:p.y,moved:false};showTrash(true);updateDragGhost(dragItem,e.clientX,e.clientY)}
+  else {dragItem={kind:'pan',panX:Number(state.roomPanX)||0,panY:Number(state.roomPanY)||0,startClientX:e.clientX,startClientY:e.clientY,moved:false};hideDragGhost();showTrash(false)}
+  e.target.setPointerCapture?.(e.pointerId);e.preventDefault();
+});
+window.addEventListener('pointermove',e=>{
+  if(!dragItem)return;if(Math.hypot(e.clientX-dragItem.startClientX,e.clientY-dragItem.startClientY)>5)dragItem.moved=true;if(dragItem.kind!=='pan')$('trashDrop').classList.toggle('hot',pointInTrash(e.clientX,e.clientY));updateDragGhost(dragItem,e.clientX,e.clientY);if(!dragItem.moved||dragItem.kind==='seat')return;
+  if(dragItem.kind==='pan'){state.roomPanX=clamp(dragItem.panX+(e.clientX-dragItem.startClientX),-420,420);state.roomPanY=clamp(dragItem.panY+(e.clientY-dragItem.startClientY),-320,320);renderRoom();return}
+  const svg=$('roomSvg');if(dragItem.kind==='object'&&['door','board','tv'].includes(dragItem.item.type)){const fp=screenToFrame(e.clientX,e.clientY),p=state.view==='student'?{x:state.room.w-fp.x,y:state.room.h-fp.y}:fp;placeEdgeObjectFromPointer(dragItem.item,p);renderRoom();return}const p=screenToRoom(e.clientX,e.clientY);let dx=p.x-dragItem.startX,dy=p.y-dragItem.startY;if(state.view==='student'){dx=-dx;dy=-dy}dragItem.item.x=clamp(dragItem.x+dx,8,state.room.w-dragItem.w-8);dragItem.item.y=clamp(dragItem.y+dy,8,state.room.h-dragItem.h-8);renderRoom();
+});
+window.addEventListener('pointerup',e=>{
+  if(!dragItem)return;const d=dragItem;dragItem=null;hideDragGhost();if(d.kind==='pan'){showTrash(false);if(d.moved){persist()}return}const inTrash=pointInTrash(e.clientX,e.clientY);showTrash(false);const svg=$('roomSvg'),rect=svg.getBoundingClientRect();const outside=e.clientX<rect.left||e.clientX>rect.right||e.clientY<rect.top||e.clientY>rect.bottom;
+  if((outside||inTrash)&&d.moved){commit(()=>deleteDraggedItem(d));toast(d.kind==='seat'?'Eleven er nå uten plass':'Fjernet fra rommet');return}
+  if(d.kind==='seat'){
+    if(!d.moved){const seat=d.tableId+':'+d.index;if(selectedStudent&&selectedStudent!==d.sid)moveStudentToSeat(selectedStudent,seat);else if(d.sid){selectedStudent=d.sid;renderStudents();renderRoom()}return}
+    const p=screenToRoom(e.clientX,e.clientY);const under=document.elementFromPoint(e.clientX,e.clientY),targetSeat=under?.closest?.('[data-seat]'),targetTable=under?.closest?.('[data-table]');let changed=false;
+    commit(()=>{if(targetSeat){const cut=targetSeat.dataset.seat.lastIndexOf(':'),tid=targetSeat.dataset.seat.slice(0,cut),idxText=targetSeat.dataset.seat.slice(cut+1);changed=moveSeatBetweenTables(d.tableId,d.index,tid,Number(idxText))}else if(targetTable){const tid=targetTable.dataset.table,t=state.tables.find(x=>x.id===tid);changed=t?moveSeatBetweenTables(d.tableId,d.index,tid,t.seats):false}else changed=moveSeatToNewDesk(d.tableId,d.index,p.x,p.y);if(changed)selectedStudent=d.sid||selectedStudent});if(changed)toast(d.sid?'Pulten og eleven er flyttet':'Den ledige pulten er flyttet');return;
+  }
+  if(d.kind==='object'&&d.moved){snapObjectToWall(d.item)}
+  if(d.moved){render();persist()}
+});
+// Zoom room content only; the outer classroom frame stays fixed.
+let lastZoomWheel=0;
+$('roomSvg').addEventListener('wheel',e=>{
+  e.preventDefault();
+  const now=performance.now();if(now-lastZoomWheel<38)return;lastZoomWheel=now;
+  const current=clamp(Number(state.roomZoom)||1,.55,1.65),step=.05;
+  const next=clamp(Math.round((current+(e.deltaY<0?step:-step))*20)/20,.55,1.65);
+  if(next===current)return;
+  state.roomZoom=next;renderRoom();persist();
+},{passive:false});
+// Right-side menu collapse
+let rightCollapsed=false,leftCollapsed=false;
+$('collapseLeftBtn').onclick=()=>{leftCollapsed=!leftCollapsed;$('leftSidebar').classList.toggle('collapsed',leftCollapsed);document.querySelector('.app').classList.toggle('left-collapsed',leftCollapsed);$('collapseLeftBtn').textContent=leftCollapsed?'›':'‹';$('collapseLeftBtn').title=leftCollapsed?'Vis menyen':'Minimer menyen';};
+$('collapseRightBtn').onclick=()=>{rightCollapsed=!rightCollapsed;$('rightControls').classList.toggle('collapsed',rightCollapsed);document.querySelector('.content-grid').classList.toggle('right-collapsed',rightCollapsed);$('collapseRightBtn').textContent=rightCollapsed?'‹':'›';$('collapseRightBtn').title=rightCollapsed?'Vis menyen':'Minimer menyen';};
+// Sidebar resizer
+$('resizer').addEventListener('pointerdown',e=>{e.preventDefault();$('resizer').classList.add('dragging');const startX=e.clientX,startW=state.sidebarWidth;const move=ev=>{state.sidebarWidth=clamp(startW+(ev.clientX-startX),300,760);document.documentElement.style.setProperty('--sidebar',state.sidebarWidth+'px')};const up=()=>{window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',up);$('resizer').classList.remove('dragging');persist()};window.addEventListener('pointermove',move);window.addEventListener('pointerup',up)});
+let printZoomBackup=null,printPanBackup=null;window.addEventListener('beforeprint',()=>{updatePrintMeta();printZoomBackup=state.roomZoom;printPanBackup={x:Number(state.roomPanX)||0,y:Number(state.roomPanY)||0};state.roomZoom=1;state.roomPanX=0;state.roomPanY=0;renderRoom()});window.addEventListener('afterprint',()=>{if(printZoomBackup!=null){state.roomZoom=printZoomBackup;state.roomPanX=printPanBackup?.x||0;state.roomPanY=printPanBackup?.y||0;printZoomBackup=null;printPanBackup=null;renderRoom()}});
+window.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();$('undoBtn').click()}});
+let resizeFrame=0;
+function refreshAfterResize(){cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(()=>{renderRoom();});}
+window.addEventListener('resize',refreshAfterResize,{passive:true});
+if(window.ResizeObserver){const ro=new ResizeObserver(refreshAfterResize);ro.observe(document.querySelector('.workspace'));ro.observe(document.querySelector('.room-card'));}
+render();persist();
+})();
+</script>
+</body>
+</html>
