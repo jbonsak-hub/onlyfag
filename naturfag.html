@@ -377,6 +377,209 @@ body.dark .v40-context{background:var(--panel2)}
 #carbonMode button.active .prep-note{color:inherit;opacity:.78}
 </style>
 
+
+<style id="kjemi-v42-question-layout">
+/* Oppgavegrunnlag/scenario skal leses som en viktig del av oppgaven. */
+.carbon-scenario,
+.v40-context{
+  position:relative;
+  max-width:860px!important;
+  margin:2px auto 18px!important;
+  padding:15px 18px 15px 20px!important;
+  border:1px solid color-mix(in srgb,var(--accent) 22%,var(--line))!important;
+  border-left:5px solid var(--accent)!important;
+  border-radius:11px!important;
+  background:color-mix(in srgb,var(--soft) 72%,var(--panel))!important;
+  color:var(--text)!important;
+  font-size:1rem!important;
+  line-height:1.55!important;
+  font-weight:560!important;
+  box-shadow:0 1px 5px rgba(0,0,0,.025);
+}
+.carbon-scenario::before,
+.v40-context::before{
+  content:"";
+  position:absolute;
+  left:-5px;
+  top:13px;
+  bottom:13px;
+  width:5px;
+  border-radius:999px;
+  background:var(--accent);
+}
+#page-carbon .question{
+  max-width:860px;
+  margin:2px auto 16px;
+  text-align:center;
+}
+
+/* Små temaetiketter i Karbonkjemi brukes ikke lenger. */
+#page-carbon .carbon-kicker{display:none!important}
+
+/* Lange svar: to like kolonner / fire like kort. */
+.options.options-balanced-grid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:11px!important;
+  width:min(820px,100%)!important;
+  margin-inline:auto!important;
+  align-items:stretch!important;
+}
+.options.options-balanced-grid .option{
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  min-height:68px!important;
+  padding:13px 16px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  line-height:1.35!important;
+}
+
+/* Svært lange svar: én ryddig rad per alternativ. */
+.options.options-long-list{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:9px!important;
+  width:min(820px,100%)!important;
+  margin-inline:auto!important;
+}
+.options.options-long-list .option{
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  min-height:54px!important;
+  padding:12px 16px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  line-height:1.4!important;
+}
+
+/* Også vanlige svaralternativer får litt roligere sentrering. */
+.options .option{
+  line-height:1.35;
+}
+
+@media(max-width:700px){
+  .options.options-balanced-grid{
+    grid-template-columns:1fr!important;
+  }
+  .options.options-balanced-grid .option,
+  .options.options-long-list .option{
+    min-height:52px!important;
+  }
+  .carbon-scenario,
+  .v40-context{
+    padding:13px 14px 13px 17px!important;
+    font-size:.95rem!important;
+  }
+}
+</style>
+
+
+<style id="kjemi-v43-final-question-layout">
+#page-carbon .carbon-scenario,
+.v40-context{
+  max-width:860px!important;
+  margin:2px auto 18px!important;
+  padding:15px 18px!important;
+  border:1px solid color-mix(in srgb,var(--accent) 26%,var(--line))!important;
+  border-left:5px solid var(--accent)!important;
+  border-radius:11px!important;
+  background:color-mix(in srgb,var(--soft) 78%,var(--panel))!important;
+  color:var(--text)!important;
+  font-size:1rem!important;
+  line-height:1.55!important;
+  font-weight:600!important;
+}
+#page-carbon .carbon-kicker{display:none!important}
+#page-carbon .question{
+  max-width:860px!important;
+  margin:3px auto 16px!important;
+  text-align:center!important;
+  line-height:1.4!important;
+}
+
+.options.options-balanced-grid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  grid-auto-rows:1fr!important;
+  gap:10px!important;
+  width:min(820px,100%)!important;
+  margin:0 auto!important;
+  align-items:stretch!important;
+}
+.options.options-balanced-grid .option{
+  width:100%!important;
+  max-width:none!important;
+  min-width:0!important;
+  min-height:66px!important;
+  height:100%!important;
+  padding:12px 15px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  line-height:1.35!important;
+  white-space:normal!important;
+}
+
+.options.options-long-list{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  grid-auto-rows:1fr!important;
+  gap:9px!important;
+  width:min(820px,100%)!important;
+  margin:0 auto!important;
+}
+.options.options-long-list .option{
+  width:100%!important;
+  max-width:none!important;
+  min-width:0!important;
+  min-height:58px!important;
+  height:100%!important;
+  padding:12px 16px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  line-height:1.4!important;
+  white-space:normal!important;
+}
+
+#page-carbon .next-task-row{
+  margin-top:14px!important;
+  padding-bottom:2px;
+}
+
+@media(max-width:700px){
+  .options.options-balanced-grid{
+    grid-template-columns:1fr!important;
+  }
+  .options.options-balanced-grid .option,
+  .options.options-long-list .option{
+    min-height:54px!important;
+  }
+}
+</style>
+
+
+
+<style id="kjemi-v46-carbon-next-style">
+#carbonArea .carbon-next-inline{
+  justify-content:center!important;
+  margin-top:14px!important;
+  padding-bottom:2px;
+}
+#carbonArea .carbon-next-inline .btn{
+  min-width:132px;
+}
+</style>
+
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
@@ -493,7 +696,7 @@ body.dark .v40-context{background:var(--panel2)}
 
     <section class="page" id="page-carbon">
       <h1>Karbonkjemi</h1>
-      <p class="lead carbon-lead">Varierte oppgaver om karbon – fra forbrenning og celleånding til allotroper, hydrokarboner, alkoholer, syrer, plast og olje.</p>
+      
       <div class="module-tools">
         <div class="seg carbon-mode" id="carbonMode">
           <button data-mode="combustion" class="active">Forbrenning</button>
@@ -536,7 +739,13 @@ function prettyFormula(s){return String(s).replace(/([A-Za-z\)])(\d+)/g,(m,a,n)=
 function norm(s){return (s||'').replace(/[₀₁₂₃₄₅₆₇₈₉]/g,c=>Object.keys(subMap).find(k=>subMap[k]===c)).replace(/\s+/g,'').toLowerCase();}
 function setFeedback(id,msg,ok){const el=$('#'+id); if(!el)return; el.textContent=msg; el.className='feedback '+(ok===true?'good':ok===false?'bad':'');}
 function mc(container, options, answer, feedbackId, explanation=''){
-  container.innerHTML='<div class="options">'+shuffle(options).map(o=>`<button class="option" data-v="${o.replace(/"/g,'&quot;')}">${prettyFormula(o)}</button>`).join('')+'</div><div class="feedback" id="'+feedbackId+'"></div>'+(explanation?'<div class="explain" id="'+feedbackId+'Ex">'+explanation+'</div>':'');
+  const cleanOptions=options.map(o=>String(o));
+  const maxLen=Math.max(...cleanOptions.map(o=>o.replace(/<[^>]*>/g,'').length),0);
+  const totalLen=cleanOptions.reduce((sum,o)=>sum+o.replace(/<[^>]*>/g,'').length,0);
+  const longSingle=maxLen>=82||totalLen>=250;
+  const balancedGrid=!longSingle&&cleanOptions.length===4&&(maxLen>=28||totalLen>=90);
+  const layoutClass=longSingle?' options-long-list':balancedGrid?' options-balanced-grid':'';
+  container.innerHTML='<div class="options'+layoutClass+'">'+shuffle(cleanOptions).map(o=>`<button class="option" data-v="${o.replace(/"/g,'&quot;')}">${prettyFormula(o)}</button>`).join('')+'</div><div class="feedback" id="'+feedbackId+'"></div>'+(explanation?'<div class="explain" id="'+feedbackId+'Ex">'+explanation+'</div>':'');
   container.querySelectorAll('.option').forEach(b=>b.onclick=()=>{if(container.dataset.done)return; container.dataset.done='1'; const ok=b.dataset.v===answer; b.classList.add(ok?'correct':'wrong'); container.querySelectorAll('.option').forEach(x=>{if(x.dataset.v===answer)x.classList.add('correct')}); setFeedback(feedbackId,ok?'Riktig.':'Ikke helt.',ok); const ex=$('#'+feedbackId+'Ex'); if(ex)ex.classList.add('show');});
 }
 function setupSeg(id,callback){$('#'+id).querySelectorAll('button').forEach(b=>b.onclick=()=>{$('#'+id).querySelectorAll('button').forEach(x=>x.classList.remove('active'));b.classList.add('active');callback(b.dataset.mode);});}
@@ -638,70 +847,389 @@ function newRedox(){const q=rand(redoxBank),ask=rand(['donor','acceptor','n']),a
 area.innerHTML=`<div class="molecule formula" style="font-size:1.4rem">${prettyFormula(q.eq)}</div><div class="question">${question}</div><div id="redoxOpts"></div>`;mc($('#redoxOpts'),[...new Set(opts)],ans,'redoxFb','Delreaksjoner: '+q.half)}
 
 const combustionQs=[
-{q:'Hvilke tre ting må være til stede for at det skal begynne å brenne?',o:['Brennbart materiale, oksygen og høy nok temperatur','Vann, nitrogen og sollys','Oksygen, salt og lav temperatur','Karbon, hydrogen og vann'],a:'Brennbart materiale, oksygen og høy nok temperatur',e:'Dette er branntrekanten.'},
-{q:'Hva er produktene ved fullstendig forbrenning av et hydrokarbon?',o:['CO2 og H2O','CO og H2','C og O2','CH4 og O2'],a:'CO2 og H2O',e:'Ved fullstendig forbrenning reagerer hydrokarbonet med nok oksygen.'},
-{q:'Hvorfor veier produktet mer når magnesium brennes i luft?',o:['Magnesium binder oksygen fra lufta','Magnesium lager nye protoner','Elektroner får masse','Lufta presser vekta ned'],a:'Magnesium binder oksygen fra lufta',e:'2Mg + O₂ → 2MgO. Oksygenatomer blir en del av produktet.'},
-{q:'Hvilke sterke bindinger brytes og dannes når magnesium brenner til MgO?',o:['Metallbinding og O=O-binding brytes; ionebinding dannes','Ionebinding brytes; metallbinding dannes','Bare hydrogenbindinger endres','Ingen bindinger endres'],a:'Metallbinding og O=O-binding brytes; ionebinding dannes',e:'Magnesium går fra metall til Mg²⁺ i en ionisk forbindelse med O²⁻.'},
-{q:'Hvilken likning viser fullstendig forbrenning av metan?',o:['CH4 + 2O2 → CO2 + 2H2O','CH4 + O2 → CO + H2O','2CH4 → C2H6 + H2','CH4 + H2O → CO2 + O2'],a:'CH4 + 2O2 → CO2 + 2H2O',e:'Tell C, H og O på begge sider.'},
-{q:'Hvilken likning viser fullstendig forbrenning av propan?',o:['C3H8 + 5O2 → 3CO2 + 4H2O','C3H8 + 3O2 → 3CO + 4H2','2C3H8 + O2 → 6C + 8H2O','C3H8 → C3H6 + H2'],a:'C3H8 + 5O2 → 3CO2 + 4H2O',e:'3 C gir 3 CO₂, 8 H gir 4 H₂O; da trengs 10 O-atomer = 5 O₂.'}
+{q:'Hvilke tre forhold må være til stede for at en forbrenning skal kunne fortsette?',o:['Brennbart stoff, oksygen og høy nok temperatur','Brennbart stoff, karbondioksid og høy nok temperatur','Oksygen, vann og høy nok temperatur','Brennbart stoff, nitrogen og vann'],a:'Brennbart stoff, oksygen og høy nok temperatur',e:'Dette er branntrekanten: brennbart stoff, oksygen og tilstrekkelig temperatur.'},
+{q:'Hva dannes ved fullstendig forbrenning av et hydrokarbon?',o:['CO2 og H2O','CO og H2O','C og H2O','CO2 og H2'],a:'CO2 og H2O',e:'Ved god tilgang på oksygen oksideres karbon til CO₂ og hydrogen til H₂O.'},
+{q:'Magnesium varmes opp med en gassbrenner til det lyser kraftig. Hvilket stoff dannes hovedsakelig i den forenklede modellen?',o:['MgO','MgO2','Mg2O','CO2'],a:'MgO',e:'Magnesium reagerer med oksygen: 2Mg + O₂ → 2MgO.'},
+{q:'Hvorfor får magnesiumbåndet større masse når det brennes i luft?',o:['Oksygenatomer fra lufta blir en del av produktet','Magnesiumatomene får flere protoner','Varmeenergi blir omdannet direkte til masse i forsøket','Magnesium trekker til seg CO2 uten å reagere med oksygen'],a:'Oksygenatomer fra lufta blir en del av produktet',e:'Magnesium reagerer med O₂ og danner MgO. Produktet inneholder derfor både magnesium og oksygen.'},
+{q:'Hvilke bindingstyper brytes og dannes når magnesium reagerer med oksygen til MgO?',o:['Metallbinding og O=O-binding brytes; ionebinding dannes','Ionebinding og O=O-binding brytes; metallbinding dannes','Metallbinding brytes; elektronparbinding dannes mellom Mg-atomene','Bare svake bindinger mellom molekyler endres'],a:'Metallbinding og O=O-binding brytes; ionebinding dannes',e:'Magnesium går fra metall til Mg²⁺, og oksygen danner O²⁻. I MgO holdes ionene sammen av ionebinding.'},
+{q:'Hvilken likning er balansert for fullstendig forbrenning av metan?',o:['CH4 + 2O2 → CO2 + 2H2O','CH4 + O2 → CO2 + 2H2O','2CH4 + 3O2 → 2CO2 + 4H2O','CH4 + 2O2 → CO + 2H2O'],a:'CH4 + 2O2 → CO2 + 2H2O',e:'Tell C-, H- og O-atomer på begge sider.'},
+{q:'Hvilken likning er balansert for fullstendig forbrenning av propan?',o:['C3H8 + 5O2 → 3CO2 + 4H2O','C3H8 + 4O2 → 3CO2 + 4H2O','C3H8 + 5O2 → 2CO2 + 4H2O','C3H8 + 3O2 → 3CO + 4H2O'],a:'C3H8 + 5O2 → 3CO2 + 4H2O',e:'3 C gir 3 CO₂ og 8 H gir 4 H₂O. Da trengs 10 O-atomer = 5 O₂.'},
+{q:'Et hydrokarbon brenner med for lite luft. Hvilket stoff kan da dannes i større mengde enn ved fullstendig forbrenning?',o:['CO','O2','H2','CH4'],a:'CO',e:'Ved oksygenmangel kan karbon bli delvis oksidert til karbonmonoksid, CO.'},
+{q:'Hvorfor kan en gul, sotende flamme tyde på ufullstendig forbrenning?',o:['Noe karbon blir ikke fullstendig oksidert og kan dannes som sot','Alt karbon omdannes raskere til CO2','Flammen inneholder mer oksygen enn en blå flamme','Sot er kondensert vanndamp fra forbrenningen'],a:'Noe karbon blir ikke fullstendig oksidert og kan dannes som sot',e:'Ved begrenset oksygentilgang kan karbonpartikler dannes og gløde gult i flammen.'},
+{q:'En kullgrill brukes i et dårlig ventilert rom. Hvilken gass er særlig farlig ved ufullstendig forbrenning?',o:['CO','CO2','O2','N2'],a:'CO',e:'CO binder seg sterkt til hemoglobin og reduserer blodets evne til å transportere oksygen.'},
+{q:'Et stearinlys blir lettere mens det brenner på en åpen vekt. Hvorfor bryter ikke dette loven om massebevaring?',o:['Gassformige produkter forlater området som veies, samtidig som O2 tas inn fra lufta','Masse forsvinner når et stoff brenner','Oksygen har så liten masse at det ikke teller','Karbonatomene omdannes til energi og forsvinner helt'],a:'Gassformige produkter forlater området som veies, samtidig som O2 tas inn fra lufta',e:'Massebevaring gjelder for hele systemet. På en åpen vekt kommer O₂ inn, mens blant annet CO₂ og vanndamp forlater området.'},
+{q:'Når luftinntaket på en gassbrenner åpnes, går flammen fra gul til blå. Hva er den beste forklaringen?',o:['Bedre oksygentilgang gir mer fullstendig forbrenning','Mer nitrogen gjør forbrenningen fullstendig','Brenselet får høyere karboninnhold','Flammen blir blå fordi det dannes mer sot'],a:'Bedre oksygentilgang gir mer fullstendig forbrenning',e:'Mer oksygen reduserer ufullstendig forbrenning og sotdannelse.'},
+{q:'Ved forbrenning brytes gamle bindinger og nye bindinger dannes. Hvorfor kan reaksjonen likevel frigjøre energi?',o:['Det frigjøres mer energi når nye bindinger dannes enn det kreves for å bryte de gamle','Alle bindinger som brytes frigjør energi','Oksygen tilfører energi uten selv å delta i reaksjonen','Atomene mister masse når de danner sterkere bindinger'],a:'Det frigjøres mer energi når nye bindinger dannes enn det kreves for å bryte de gamle',e:'En eksoterm reaksjon har netto energifrigjøring fordi bindingsdannelsen frigjør mer energi enn bindingsbruddene krever.'},
+{q:'En kald glassflate holdes over en ren flamme fra et hydrokarbon, og det dannes små vanndråper. Hva viser observasjonen?',o:['Hydrogenet i brenselet kan ende som H2O ved forbrenning','Oksygenet i lufta kondenserer til flytende O2','Karbonet i brenselet omdannes til vann','Glassoverflaten lager vann når den varmes opp'],a:'Hydrogenet i brenselet kan ende som H2O ved forbrenning',e:'Ved fullstendig forbrenning av hydrokarboner dannes både CO₂ og H₂O.'}
 ];
 function newCombustion(){const q=rand(combustionQs);$('#combustionArea').innerHTML=`<div class="question">${prettyFormula(q.q)}</div><div id="combOpts"></div>`;mc($('#combOpts'),q.o,q.a,'combFb',prettyFormula(q.e))}
 
 
 const carbonBanks={
   combustion:[
-    {tag:'Fullstendig forbrenning',scene:'En gassbrenner får rikelig med oksygen og brenner metan med en klar blå flamme.',q:'Hvilken reaksjonslikning passer best?',o:['CH4 + 2O2 → CO2 + 2H2O','2CH4 + 3O2 → 2CO + 4H2O','CH4 + O2 → C + 2H2O','CH4 → C + 2H2'],a:'CH4 + 2O2 → CO2 + 2H2O',e:'Ved fullstendig forbrenning av et hydrokarbon dannes CO₂ og H₂O. Likningen er balansert for C, H og O.'},
-    {tag:'Ufullstendig forbrenning',scene:'Flammen på et stormkjøkken blir gul og soter når lufttilførselen nesten stenges.',q:'Hva er den beste forklaringen?',o:['For lite oksygen gir ufullstendig forbrenning','For mye oksygen gjør karbonet svart','Nitrogen i lufta blir til sot','Vannet i brenselet fryser'],a:'For lite oksygen gir ufullstendig forbrenning',e:'Når oksygentilførselen er for liten, kan karbonet ende som CO og/eller sot (C) i stedet for bare CO₂.'},
-    {tag:'Karbonmonoksid',scene:'En kullgrill brukes i et nesten lukket rom.',q:'Hvorfor er dette spesielt farlig selv om du ikke ser eller lukter noe?',o:['Det kan dannes CO som hindrer blodet i å transportere oksygen','CO2 eksploderer alltid i romtemperatur','Karbon blir radioaktivt','Oksygen blir omdannet til nitrogen'],a:'Det kan dannes CO som hindrer blodet i å transportere oksygen',e:'CO er fargeløs og luktfri og binder seg sterkt til hemoglobin. Ufullstendig forbrenning i dårlig ventilerte rom kan derfor være svært farlig.'},
-    {tag:'Balansering',scene:'Propan (C3H8) brenner fullstendig.',q:'Hvor mange O2-molekyler trengs per propanmolekyl i den balanserte likningen?',o:['3','4','5','6'],a:'5',e:'C₃H₈ + 5O₂ → 3CO₂ + 4H₂O. Produktene inneholder til sammen 10 O-atomer, altså 5 O₂.'},
-    {tag:'Bensinmodell',scene:'Vi bruker oktan, C8H18, som en enkel modell for en bestanddel i bensin.',q:'Hvilken likning er balansert for fullstendig forbrenning?',o:['2C8H18 + 25O2 → 16CO2 + 18H2O','C8H18 + 8O2 → 8CO2 + 9H2O','2C8H18 + 18O2 → 16CO + 18H2O','C8H18 + O2 → 8C + 9H2O'],a:'2C8H18 + 25O2 → 16CO2 + 18H2O',e:'16 C-atomer gir 16 CO₂ og 36 H-atomer gir 18 H₂O. Da trengs 50 O-atomer = 25 O₂.'},
-    {tag:'Celleånding',scene:'I en muskelcelle brytes glukose ned ved hjelp av oksygen.',q:'Hvilken samlet reaksjon beskriver celleånding best?',o:['C6H12O6 + 6O2 → 6CO2 + 6H2O + energi','6CO2 + 6H2O → C6H12O6 + 6O2','C6H12O6 → 6C + 6H2O','C6H12O6 + O2 → CO + H2'],a:'C6H12O6 + 6O2 → 6CO2 + 6H2O + energi',e:'Celleånding er en kontrollert oksidasjon av glukose. Den skjer i mange enzymstyrte trinn, men netto dannes CO₂, H₂O og frigitt energi.'},
-    {tag:'Sammenlikn prosesser',scene:'Et stearinlys brenner, mens en elev samtidig løper opp en trapp.',q:'Hva har forbrenning i flammen og celleånding til felles?',o:['Begge er oksidasjonsprosesser som kan frigjøre energi','Begge krever klor','Begge foregår bare over 100 °C','Begge lager glukose av CO2'],a:'Begge er oksidasjonsprosesser som kan frigjøre energi',e:'Vanlig forbrenning skjer raskt og varmt. Celleånding er langsom og enzymstyrt, men begge innebærer oksidasjon og energifrigjøring.'},
-    {tag:'Følg karbonet',scene:'Ett karbonatom starter i et metanmolekyl som forbrennes fullstendig.',q:'Hvor finner vi mest sannsynlig karbonatomet etter reaksjonen?',o:['I CO2','I CO','Som sot (C)','I uforbrent CH4'],a:'I CO2',e:'Ved fullstendig forbrenning oksideres karbonet i hydrokarbonet til CO₂. CO, sot og uforbrent CH₄ hører i stedet sammen med ufullstendig forbrenning eller ufullstendig omsetning.'},
-    {tag:'Detektivoppgave',scene:'Et hydrokarbon forbrenner fullstendig og gir 4 CO2 og 5 H2O per molekyl hydrokarbon.',q:'Hvilken molekylformel må hydrokarbonet ha?',o:['C4H10','C4H8','C5H10','C5H12'],a:'C4H10',e:'Fire CO₂ betyr 4 C-atomer. Fem H₂O inneholder 10 H-atomer. Hydrokarbonet er derfor C₄H₁₀.'},
-    {tag:'Ufullstendig forbrenning',scene:'Metan brenner med begrenset tilgang på oksygen og danner CO i stedet for CO2.',q:'Hvilken likning er balansert?',o:['2CH4 + 3O2 → 2CO + 4H2O','CH4 + 2O2 → CO + 2H2O','2CH4 + O2 → 2CO + 4H2','CH4 + O2 → CO2 + H2'],a:'2CH4 + 3O2 → 2CO + 4H2O',e:'Tell atomene: 2 C, 8 H og 6 O på begge sider.'},
-    {tag:'Sot',scene:'En kald porselensskål holdes kort over en gul stearinlysflamme og får et svart belegg.',q:'Hva består det svarte belegget hovedsakelig av?',o:['Karbon (sot)','Karbonmonoksid i fast form','Kalsiumkarbonat','Jernoksid'],a:'Karbon (sot)',e:'Ved oksygenmangel kan noe karbon ikke oksideres helt og avsettes som små karbonpartikler – sot.'},
-    {tag:'Massebevaring',scene:'Et stearinlys blir lettere mens det brenner på en åpen vekt.',q:'Bryter dette loven om bevaring av masse?',o:['Nei, gassformige produkter forlater vekten','Ja, masse blir omdannet til ingenting','Ja, oksygen har ingen masse','Nei, fordi karbon ikke har masse'],a:'Nei, gassformige produkter forlater vekten',e:'I et åpent system forsvinner CO₂ og vanndamp ut i lufta, samtidig som O₂ tas inn. I et lukket system er total masse bevart.'},
-    {tag:'Flammefarge',scene:'Samme gassbrenner gir først gul flamme og deretter blå flamme når luftinntaket åpnes.',q:'Hva endret seg?',o:['Mer oksygen gjorde forbrenningen mer fullstendig','Mindre oksygen ga høyere forbrenningsgrad','Karbonet forsvant fra brenselet','Gassen ble til et metall'],a:'Mer oksygen gjorde forbrenningen mer fullstendig',e:'God lufttilførsel gir mer fullstendig forbrenning og vanligvis en renere, blåere flamme.'},
-    {tag:'Energi',scene:'Både ved forbrenning av ved og ved celleånding ender mye karbon som CO2.',q:'Hvor kommer den frigjorte energien i hovedsak fra?',o:['Fra forskjellen i kjemisk energi mellom reaktanter og produkter','Fra at CO2 ikke har masse','Fra nye protoner som dannes','Fra at oksygen mister alle elektronene sine'],a:'Fra forskjellen i kjemisk energi mellom reaktanter og produkter',e:'Bindinger brytes og nye bindinger dannes. Produktene ligger lavere i kjemisk energi, og energiforskjellen frigjøres.'}
+    {
+      scene:'Metan brenner i en gassbrenner med god tilgang på luft.',
+      q:'Hvilken reaksjonslikning beskriver fullstendig forbrenning av metan?',
+      o:['CH4 + 2O2 → CO2 + 2H2O','CH4 + O2 → CO2 + 2H2O','2CH4 + 3O2 → 2CO2 + 4H2O','CH4 + 2O2 → CO + 2H2O'],
+      a:'CH4 + 2O2 → CO2 + 2H2O',
+      e:'Ved fullstendig forbrenning dannes CO₂ og H₂O, og antall atomer må være likt på begge sider.'
+    },
+    {
+      scene:'Et hydrokarbon brenner med begrenset tilgang på luft.',
+      q:'Hva er mest sannsynlig sammenliknet med fullstendig forbrenning?',
+      o:['En større andel av karbonet kan ende som CO eller sot','Alt karbon danner fortsatt CO2, men hydrogenet reagerer ikke','Det dannes mer O2 fordi forbrenningen går saktere','Hydrokarbonet spaltes bare til C og H2 uten andre produkter'],
+      a:'En større andel av karbonet kan ende som CO eller sot',
+      e:'Ved oksygenmangel kan karbonet bli delvis oksidert til CO eller bli igjen som sot.'
+    },
+    {
+      scene:'En kullgrill brukes i et nesten lukket rom.',
+      q:'Hva er den viktigste grunnen til at dette kan være spesielt farlig?',
+      o:['Ufullstendig forbrenning kan danne CO, som binder seg sterkt til hemoglobin','CO2 fra grillen reagerer direkte med hemoglobin på samme måte som CO','Nitrogenet i lufta blir brukt opp av forbrenningen før oksygenet','Vanndamp fra grillen hindrer lungene i å ta opp oksygen'],
+      a:'Ufullstendig forbrenning kan danne CO, som binder seg sterkt til hemoglobin',
+      e:'CO er fargeløs og luktfri og kan hindre effektiv oksygentransport i blodet.'
+    },
+    {
+      scene:'Propan, C3H8, forbrenner fullstendig.',
+      q:'Hvor mange O2-molekyler trengs per propanmolekyl i den balanserte likningen?',
+      o:['3','4','5','6'],
+      a:'5',
+      e:'C₃H₈ + 5O₂ → 3CO₂ + 4H₂O.'
+    },
+    {
+      scene:'Oktan, C8H18, brukes som en enkel modell for en bestanddel i bensin.',
+      q:'Hvilken likning er balansert for fullstendig forbrenning?',
+      o:['2C8H18 + 25O2 → 16CO2 + 18H2O','2C8H18 + 17O2 → 16CO2 + 18H2O','C8H18 + 9O2 → 8CO2 + 9H2O','2C8H18 + 25O2 → 8CO2 + 18H2O'],
+      a:'2C8H18 + 25O2 → 16CO2 + 18H2O',
+      e:'16 C-atomer gir 16 CO₂ og 36 H-atomer gir 18 H₂O. Da trengs 50 O-atomer = 25 O₂.'
+    },
+    {
+      scene:'I cellene frigjøres energi fra glukose ved hjelp av oksygen.',
+      q:'Hvilken samlet reaksjonslikning beskriver celleånding best?',
+      o:['C6H12O6 + 6O2 → 6CO2 + 6H2O + energi','C6H12O6 + 3O2 → 6CO + 6H2O + energi','C6H12O6 + 6O2 → 3CO2 + 6H2O + energi','6CO2 + 6H2O → C6H12O6 + 6O2 + energi'],
+      a:'C6H12O6 + 6O2 → 6CO2 + 6H2O + energi',
+      e:'Netto blir glukose oksidert til CO₂ og H₂O. Reaksjonslikningen må også være balansert.'
+    },
+    {
+      scene:'Et stearinlys brenner, mens en person samtidig bruker glukose i muskelcellene.',
+      q:'Hva har vanlig forbrenning og celleånding til felles?',
+      o:['Begge er oksidasjonsprosesser der kjemisk energi kan frigjøres','Begge foregår bare dersom temperaturen er høy nok til å gi en flamme','Begge har glukose som nødvendig utgangsstoff','Begge skjer i ett enkelt reaksjonstrinn'],
+      a:'Begge er oksidasjonsprosesser der kjemisk energi kan frigjøres',
+      e:'Celleånding er trinnvis og enzymstyrt, mens vanlig forbrenning er raskere, men begge innebærer oksidasjon og energifrigjøring.'
+    },
+    {
+      scene:'Ett karbonatom starter i et metanmolekyl som forbrennes fullstendig.',
+      q:'Hvor finner vi mest sannsynlig karbonatomet etter reaksjonen?',
+      o:['I CO2','I CO','Som sot (C)','I uforbrent CH4'],
+      a:'I CO2',
+      e:'Ved fullstendig forbrenning oksideres karbonet til CO₂.'
+    },
+    {
+      scene:'Et hydrokarbon forbrenner fullstendig og gir 4 CO2 og 5 H2O per molekyl hydrokarbon.',
+      q:'Hvilken molekylformel må hydrokarbonet ha?',
+      o:['C4H10','C4H8','C5H10','C5H12'],
+      a:'C4H10',
+      e:'Fire CO₂ betyr fire C-atomer. Fem H₂O inneholder til sammen ti H-atomer.'
+    },
+    {
+      scene:'Metan brenner med begrenset tilgang på luft.',
+      q:'Hvilken likning kan beskrive ufullstendig forbrenning der det dannes CO?',
+      o:['2CH4 + 3O2 → 2CO + 4H2O','CH4 + 2O2 → CO + 2H2O','2CH4 + 2O2 → 2CO + 4H2O','2CH4 + 3O2 → 2CO2 + 4H2O'],
+      a:'2CH4 + 3O2 → 2CO + 4H2O',
+      e:'Den riktige likningen må både ha CO som karbonprodukt og være balansert.'
+    },
+    {
+      scene:'En kald porselensskål holdes kort over en gul stearinlysflamme og får et svart belegg.',
+      q:'Hva er den beste forklaringen på det svarte belegget?',
+      o:['Karbonpartikler er dannet ved ufullstendig forbrenning og avsettes som sot','CO2 kondenserer på den kalde skålen og blir svart','Vann fra forbrenningen reagerer med porselenet og danner karbon','Oksygen fra lufta avsettes som et mørkt oksid på porselenet'],
+      a:'Karbonpartikler er dannet ved ufullstendig forbrenning og avsettes som sot',
+      e:'Ved oksygenmangel kan noe av karbonet i brenselet ende som sot i stedet for CO₂.'
+    },
+    {
+      scene:'Et stearinlys blir lettere mens det brenner på en åpen vekt.',
+      q:'Hva er den beste forklaringen uten å bryte loven om bevaring av masse?',
+      o:['Gassformige produkter forlater området som veies, samtidig som O2 tas inn fra lufta','Voksen går bare over til gass og reagerer derfor ikke kjemisk','Massen er bevart bare for faste stoffer, ikke for gasser','Oksygenet som reagerer har ingen målbar masse'],
+      a:'Gassformige produkter forlater området som veies, samtidig som O2 tas inn fra lufta',
+      e:'Vekten viser ikke hele systemet. O₂ kommer inn fra lufta, mens blant annet CO₂ og vanndamp forlater området som veies.'
+    },
+    {
+      scene:'En gassbrenner går fra gul, sotende flamme til blå flamme når luftinntaket åpnes.',
+      q:'Hva er den beste forklaringen på endringen?',
+      o:['Bedre tilgang på oksygen gjør forbrenningen mer fullstendig','Mer nitrogen i flammen gjør at karbon forbrenner raskere','Brenselet får lavere karboninnhold når luftinntaket åpnes','Den blå flammen betyr at forbrenningen har sluttet å produsere vann'],
+      a:'Bedre tilgang på oksygen gjør forbrenningen mer fullstendig',
+      e:'Bedre oksygentilgang gir mindre CO og sot og mer fullstendig forbrenning.'
+    },
+    {
+      scene:'Ved forbrenning av et hydrokarbon frigjøres energi til omgivelsene.',
+      q:'Hva er den beste forklaringen på netto energifrigjøring?',
+      o:['Det frigjøres mer energi når produktbindingene dannes enn det kreves for å bryte bindingene i reaktantene','Bindingene i hydrokarbonet inneholder energi som frigjøres bare ved at de brytes','Oksygen fungerer som et energilager som tømmes uten at nye bindinger dannes','Karbonatomene mister litt masse og denne massen blir til varme i vanlig kjemisk forbrenning'],
+      a:'Det frigjøres mer energi når produktbindingene dannes enn det kreves for å bryte bindingene i reaktantene',
+      e:'Bindingsbrudd krever energi, mens bindingsdannelse frigjør energi. Ved en eksoterm reaksjon er nettoresultatet energifrigjøring.'
+    },
+    {
+      scene:'En kald glassflate holdes over en ren flamme fra et hydrokarbon. Etter kort tid dannes små dråper.',
+      q:'Hva støtter denne observasjonen?',
+      o:['At vann kan være et produkt ved forbrenning av hydrokarboner','At oksygengass kondenserer på glasset','At karbonet i brenselet omdannes til flytende vann','At glasset spaltes kjemisk når det varmes opp'],
+      a:'At vann kan være et produkt ved forbrenning av hydrokarboner',
+      e:'Hydrogenatomene i hydrokarbonet kan oksideres til H₂O.'
+    }
   ],
+
   inorganic:[
-    {tag:'Allotroper',scene:'Diamant, grafitt og grafen består alle bare av karbon.',q:'Hvordan kan de likevel ha svært ulike egenskaper?',o:['Karbonatomene er bundet og ordnet på ulike måter','De har ulike typer karbonatomer','Bare diamant har elektroner','Grafitt inneholder alltid jern'],a:'Karbonatomene er bundet og ordnet på ulike måter',e:'Allotroper er ulike strukturformer av samme grunnstoff. Strukturen bestemmer blant annet hardhet og elektrisk ledningsevne.'},
-    {tag:'Diamant',scene:'Du skal velge et karbonmateriale som elektrisk isolator.',q:'Hvilket er det beste valget av disse?',o:['Diamant','Grafitt','Grafen','Karbonnanorør'],a:'Diamant',e:'I diamant er hvert karbonatom bundet sterkt til fire andre i et tredimensjonalt nettverk. Elektronene er i liten grad frie til å transportere strøm.'},
-    {tag:'Grafitt',scene:'En blyantstrek kan lede strøm nok til å registreres med et følsomt multimeter.',q:'Hvorfor kan grafitt lede elektrisk strøm?',o:['Den har delokaliserte elektroner som kan bevege seg langs lagene','Karbonatomene er positive ioner i vann','Grafitt består av kobberlag','Alle elektronene sitter helt fast i enkeltbindinger'],a:'Den har delokaliserte elektroner som kan bevege seg langs lagene',e:'I grafitt binder hvert C-atom seg til tre naboer. Elektroner kan delokaliseres over lagene og bidra til elektrisk ledning.'},
-    {tag:'Grafitt',scene:'Grafitt brukes blant annet som smøremiddel.',q:'Hvilken struktur forklarer at grafitt er relativt mykt og glatt?',o:['Lag med svakere krefter mellom lagene kan gli over hverandre','Et stivt tredimensjonalt nettverk av fire bindinger per karbon','Kuler av C60 er fylt med olje','Grafitt smelter ved romtemperatur'],a:'Lag med svakere krefter mellom lagene kan gli over hverandre',e:'Sterke bindinger holder atomene sammen i hvert lag, mens lagene lettere kan gli i forhold til hverandre.'},
-    {tag:'Grafen',scene:'Du tar i prinsippet ett enkelt atomtykt lag ut av grafitt.',q:'Hva kalles dette materialet?',o:['Grafen','Fulleren','Diamant','Karbonmonoksid'],a:'Grafen',e:'Grafen er ett enkelt lag av karbonatomer ordnet i et sekskantet nettverk.'},
-    {tag:'Nanomateriale',scene:'Et ekstremt tynt rør kan tenkes som et grafenark som er rullet sammen.',q:'Hva beskriver dette?',o:['Karbonnanorør','Diamant','Tørris','Kullsyre'],a:'Karbonnanorør',e:'Karbonnanorør har en grafen-lignende struktur rullet til et rør og kan ha svært høy styrke og god elektrisk ledningsevne.'},
-    {tag:'Fullerener',scene:'Et molekyl består av 60 karbonatomer i en hul, fotball-lignende struktur.',q:'Hva er dette et eksempel på?',o:['Et fulleren (C60)','Et alkan','Et karbonat-ion','En diamantkrystall'],a:'Et fulleren (C60)',e:'C₆₀ er det mest kjente fullerennet: et lukket karbonbur med fem- og sekskanter.'},
-    {tag:'Ledningsevne',scene:'Fire prøver består av diamant, grafitt, grafen og karbonnanorør.',q:'Hvilken påstand er mest riktig?',o:['Grafitt, grafen og mange karbonnanorør kan lede; diamant leder dårlig','Bare diamant leder godt','Ingen karbonallotroper kan lede','Alle leder nøyaktig like godt'],a:'Grafitt, grafen og mange karbonnanorør kan lede; diamant leder dårlig',e:'Elektronstrukturen er forskjellig. Grafitt/grafen har delokaliserte elektroner; diamant har et mer låst elektronnettverk.'},
-    {tag:'CO2',scene:'CO2 har to polare C=O-bindinger.',q:'Hvorfor regnes CO2-molekylet likevel som upolart?',o:['Molekylet er lineært, så bindingsdipolene peker motsatt og opphever hverandre','C=O-bindingene er egentlig ionebindinger','CO2 har ingen elektroner','Oksygen og karbon har samme elektronegativitet'],a:'Molekylet er lineært, så bindingsdipolene peker motsatt og opphever hverandre',e:'O=C=O er lineært og symmetrisk. De to like bindingsdipolene kansellerer hverandre.'},
-    {tag:'CO vs. CO2',scene:'To gasser inneholder karbon og oksygen.',q:'Hvilken er særlig farlig fordi den kan binde seg sterkt til hemoglobin?',o:['CO','CO2','Begge er like giftige på samme måte','Ingen av dem'],a:'CO',e:'Karbonmonoksid (CO) binder seg sterkt til hemoglobin og reduserer blodets evne til å frakte oksygen.'},
-    {tag:'Karbon i blyanten',scene:'En elev sier at blyanten skriver med metallisk bly fordi vi kaller det «blyantbly».',q:'Hva er kjernen i en vanlig blyant hovedsakelig laget av?',o:['Grafitt blandet med bindemiddel/leire','Metallisk bly','Diamantpulver','Karbonmonoksid'],a:'Grafitt blandet med bindemiddel/leire',e:'Blyantkjernen inneholder grafitt, en allotrop av karbon – ikke metallisk bly.'},
-    {tag:'Begrep',scene:'Samme grunnstoff kan danne diamant, grafitt og grafen.',q:'Hva betyr ordet allotrop?',o:['En av flere strukturformer av samme grunnstoff','Et stoff med både metall og ikke-metall','Et radioaktivt karbonisotopnavn','En type hydrokarbon'],a:'En av flere strukturformer av samme grunnstoff',e:'Allotropi handler om at atomene til ett grunnstoff kan kobles sammen på ulike måter og dermed gi ulike egenskaper.'},
-    {tag:'Struktur → egenskap',scene:'Du trenger et svært hardt materiale til et skjæreverktøy.',q:'Hvilken karbonallotrop passer best – og hvorfor?',o:['Diamant, fordi C-atomene danner et sterkt tredimensjonalt nettverk','Grafitt, fordi lagene glir lett','C60, fordi molekylene er gasser','CO2, fordi molekylet er lineært'],a:'Diamant, fordi C-atomene danner et sterkt tredimensjonalt nettverk',e:'Det tredimensjonale nettverket av sterke kovalente bindinger gjør diamant svært hardt.'},
-    {tag:'Klima og molekyler',scene:'CO2 slipper mye synlig sollys gjennom atmosfæren, men påvirker likevel jordas energibalanse.',q:'Hva er den sentrale drivhusegenskapen til CO2?',o:['Molekylet kan absorbere og sende ut infrarød stråling ved bestemte bølgelengder','CO2 reflekterer alt synlig lys','CO2 produserer sollys','CO2 gjør oksygen radioaktivt'],a:'Molekylet kan absorbere og sende ut infrarød stråling ved bestemte bølgelengder',e:'CO₂ har vibrasjonsmoduser som vekselvirker med infrarød varmestråling og bidrar derfor til drivhuseffekten.'}
+    {
+      scene:'Diamant, grafitt og grafen består alle bare av karbon.',
+      q:'Hvordan kan de likevel ha svært ulike egenskaper?',
+      o:['Karbonatomene er bundet og ordnet på ulike måter','De har ulikt antall protoner i karbonatomene','De består av forskjellige grunnstoffer med samme symbol','Forskjellen skyldes bare hvor rent karbonet er'],
+      a:'Karbonatomene er bundet og ordnet på ulike måter',
+      e:'Allotroper er ulike strukturformer av samme grunnstoff. Strukturen påvirker egenskapene.'
+    },
+    {
+      scene:'Du skal velge et karbonmateriale som elektrisk isolator.',
+      q:'Hvilket materiale passer best?',
+      o:['Diamant','Grafitt','Grafen','Et metallisk karbonnanorør'],
+      a:'Diamant',
+      e:'I diamant er valenselektronene bundet i et tredimensjonalt nettverk og kan ikke bevege seg fritt gjennom materialet.'
+    },
+    {
+      scene:'En tykk blyantstrek kan registreres som elektrisk ledende med et følsomt multimeter.',
+      q:'Hva forklarer at grafitt kan lede strøm?',
+      o:['Noen elektroner er delokaliserte og kan bevege seg langs karbonlagene','Grafitt inneholder frie Mg2+-ioner mellom karbonlagene','Karbonatomene i grafitt avgir alle fire valenselektronene','Strømmen går fordi lagene i grafitt glir mot hverandre'],
+      a:'Noen elektroner er delokaliserte og kan bevege seg langs karbonlagene',
+      e:'I grafitt er noen elektroner delokaliserte over lagene og kan transportere ladning.'
+    },
+    {
+      scene:'Grafitt er mye mykere enn diamant og kan brukes som smøremiddel.',
+      q:'Hvilken struktur forklarer dette best?',
+      o:['Sterke karbonlag holdes sammen av langt svakere krefter mellom lagene','Alle karbonatomene er bundet like sterkt til fire naboer i alle retninger','Grafitt består av små diamantkrystaller som ruller over hverandre','Karbonatomene i grafitt er ikke kjemisk bundet til hverandre'],
+      a:'Sterke karbonlag holdes sammen av langt svakere krefter mellom lagene',
+      e:'Lagene i grafitt kan gli i forhold til hverandre fordi kreftene mellom lagene er svakere enn bindingene inne i lagene.'
+    },
+    {
+      scene:'Vi isolerer ett enkelt atomtykt lag fra strukturen i grafitt.',
+      q:'Hvilket karbonmateriale har vi da?',
+      o:['Grafen','Fulleren','Diamant','Karbonnanorør'],
+      a:'Grafen',
+      e:'Grafen er ett enkelt lag av karbonatomer ordnet i et sekskantet nettverk.'
+    },
+    {
+      scene:'Et karbonmateriale består av et svært tynt, rørformet nettverk med samme grunnstruktur som et grafenlag.',
+      q:'Hvilket materiale beskrives?',
+      o:['Karbonnanorør','Fulleren','Grafitt','Diamant'],
+      a:'Karbonnanorør',
+      e:'Et karbonnanorør kan idealiseres som et grafenark som er rullet til et rør.'
+    },
+    {
+      scene:'Et karbonmolekyl danner et lukket, hult bur av fem- og sekskanter.',
+      q:'Hvilken type karbonstruktur beskrives?',
+      o:['Fulleren','Karbonnanorør','Grafen','Diamant'],
+      a:'Fulleren',
+      e:'Fullerener er lukkede karbonbur. C₆₀ er et kjent eksempel.'
+    },
+    {
+      scene:'Vi sammenlikner diamant, grafitt, grafen og karbonnanorør.',
+      q:'Hvilken påstand om elektrisk ledningsevne er best?',
+      o:['Grafitt og grafen leder godt, diamant leder svært dårlig, og nanorør kan ha ulike elektriske egenskaper','Alle leder omtrent like godt fordi de består av samme grunnstoff','Diamant leder best fordi den har flest sterke bindinger','Grafitt leder dårlig fordi lagene ikke er bundet sterkt til hverandre'],
+      a:'Grafitt og grafen leder godt, diamant leder svært dårlig, og nanorør kan ha ulike elektriske egenskaper',
+      e:'Elektronstrukturen og bindingene bestemmer ledningsevnen, ikke bare hvilket grunnstoff materialet består av.'
+    },
+    {
+      scene:'CO2 har to polare C=O-bindinger og en lineær molekylform.',
+      q:'Hvorfor har molekylet likevel ingen permanent nettodipol?',
+      o:['De to like bindingsdipolene peker motsatt vei og opphever hverandre','C=O-bindingene blir upolare når det finnes to av dem','Karbonatomet overfører begge bindingselektronparene helt til oksygen','Molekylet roterer så raskt at polariteten forsvinner'],
+      a:'De to like bindingsdipolene peker motsatt vei og opphever hverandre',
+      e:'CO₂ er lineært og symmetrisk, slik at bindingsdipolene kansellerer.'
+    },
+    {
+      scene:'CO og CO2 kan begge dannes i forbindelse med forbrenning.',
+      q:'Hvilket utsagn skiller dem best?',
+      o:['CO dannes lettere ved oksygenmangel og er svært giftig fordi det binder seg til hemoglobin','CO2 dannes bare ved oksygenmangel, mens CO er produktet ved fullstendig forbrenning','CO og CO2 har samme virkning på kroppen fordi begge inneholder karbon','CO inneholder mer oksygen enn CO2 og dannes derfor ved god lufttilgang'],
+      a:'CO dannes lettere ved oksygenmangel og er svært giftig fordi det binder seg til hemoglobin',
+      e:'CO er knyttet til ufullstendig forbrenning, mens CO₂ er hovedproduktet ved fullstendig forbrenning.'
+    },
+    {
+      scene:'En vanlig blyant lager en mørk strek på papiret.',
+      q:'Hva består blyantkjernen hovedsakelig av?',
+      o:['Grafitt blandet med leire eller bindemiddel','Metallisk bly blandet med karbon','Diamantpulver blandet med voks','Karbonnanorør blandet med jern'],
+      a:'Grafitt blandet med leire eller bindemiddel',
+      e:'Blyantkjernen inneholder grafitt, ikke metallisk bly.'
+    },
+    {
+      scene:'Samme grunnstoff kan blant annet danne diamant, grafitt og grafen.',
+      q:'Hva betyr begrepet allotrop?',
+      o:['En av flere strukturformer av det samme grunnstoffet','En isotop med et annet antall nøytroner','En forbindelse mellom karbon og et annet grunnstoff','Et stoff som både har ionebinding og metallbinding'],
+      a:'En av flere strukturformer av det samme grunnstoffet',
+      e:'Allotropi handler om ulike strukturer av samme grunnstoff.'
+    },
+    {
+      scene:'Du trenger et karbonmateriale til et svært hardt skjæreverktøy.',
+      q:'Hvilket materiale passer best, og hvorfor?',
+      o:['Diamant, fordi karbonatomene inngår i et sterkt tredimensjonalt nettverk','Grafitt, fordi hvert lag består av sterke bindinger og derfor hele krystallen er svært hard','Grafen, fordi ett enkelt lag automatisk er hardere i alle retninger enn diamant','Fulleren, fordi de hule molekylene låser seg til et tredimensjonalt ionegitter'],
+      a:'Diamant, fordi karbonatomene inngår i et sterkt tredimensjonalt nettverk',
+      e:'Diamant har sterke kovalente bindinger i alle retninger gjennom et tredimensjonalt nettverk.'
+    },
+    {
+      scene:'CO2 påvirker jordas energibalanse selv om mesteparten av synlig solstråling passerer gjennom atmosfæren.',
+      q:'Hva er den viktigste egenskapen til CO2 i drivhuseffekten?',
+      o:['Molekylet kan absorbere og sende ut infrarød stråling ved bestemte bølgelengder','Molekylet absorberer først og fremst alt synlig lys før det når bakken','CO2 stopper konveksjon og hindrer varm luft i å stige','CO2 reagerer med O2 og frigjør varme kontinuerlig i atmosfæren'],
+      a:'Molekylet kan absorbere og sende ut infrarød stråling ved bestemte bølgelengder',
+      e:'Vibrasjoner i CO₂-molekylet kan vekselvirke med infrarød varmestråling.'
+    },
+    {
+      scene:'Diamant og grafitt har ulik tetthet selv om begge består av karbon.',
+      q:'Hva er den beste forklaringen?',
+      o:['Karbonatomene er pakket og organisert forskjellig i strukturene','Karbonatomene i diamant har flere protoner','Grafitt inneholder alltid luftlommer mellom hvert karbonatom','Diamant består av en tyngre type karbonatom'],
+      a:'Karbonatomene er pakket og organisert forskjellig i strukturene',
+      e:'Forskjellig krystallstruktur gir forskjellig masse per volum.'
+    }
   ],
+
   organic:[
-    {tag:'Hydrokarbonfamilier',scene:'Et molekyl har bare enkeltbindinger mellom karbonatomene.',q:'Hvilken stoffgruppe tilhører et slikt mettet hydrokarbon?',o:['Alkaner','Alkener','Alkyner','Alkoholer'],a:'Alkaner',e:'Alkaner er mettede hydrokarboner med bare enkeltbindinger mellom C-atomene.'},
-    {tag:'Finn familien',scene:'Du får molekylformelen C4H8 for et åpent hydrokarbon med én C=C-dobbeltbinding.',q:'Hvilken stoffgruppe passer?',o:['Alken','Alkan','Alkyn','Alkohol'],a:'Alken',e:'Et alken med én dobbeltbinding følger formelen CₙH₂ₙ. C₄H₈ passer derfor.'},
-    {tag:'Finn familien',scene:'Molekylet C2H2 har en trippelbinding mellom karbonatomene.',q:'Hva kalles hydrokarbonet?',o:['Etyn','Eten','Etan','Etanol'],a:'Etyn',e:'C₂H₂ er et alkyn og heter etyn (acetylen).'},
-    {tag:'Molekylformel',scene:'Et alkan har 5 karbonatomer.',q:'Hvilken molekylformel har det?',o:['C5H12','C5H10','C5H8','C5H5'],a:'C5H12',e:'Alkaner følger CₙH₂ₙ₊₂. For n = 5 får vi C₅H₁₂ (pentan).'},
-    {tag:'Umettet',scene:'Et hydrokarbon kan addere brom fordi det har en flerbinding.',q:'Hvilke stoffgrupper er umettede?',o:['Alkener og alkyner','Bare alkaner','Alkaner og alkoholer','Bare karboksylsyrer'],a:'Alkener og alkyner',e:'Dobbelt- og trippelbindinger gjør alkener og alkyner umettede.'},
-    {tag:'Alkoholer',scene:'Et molekyl består av to karbonatomer og én OH-gruppe: C2H5OH.',q:'Hva heter alkoholen?',o:['Etanol','Metanol','Propanol','Glyserol'],a:'Etanol',e:'To karbonatomer gir prefikset et-, og OH-gruppen gjør stoffet til en alkohol: etanol.'},
-    {tag:'Alkoholer',scene:'Metanol og etanol ser ganske like ut i formel og egenskaper.',q:'Hvilken påstand er viktigst sikkerhetsmessig?',o:['Metanol er svært giftig og kan blant annet skade synet','Etanol er et metall','Metanol er alltid fast stoff','Begge er ufarlige å drikke'],a:'Metanol er svært giftig og kan blant annet skade synet',e:'Metanol er toksisk selv i relativt små mengder. Etanol er heller ikke ufarlig, men toksisiteten og metabolismen er forskjellig.'},
-    {tag:'Glyserol',scene:'Et molekyl har tre karbonatomer og tre OH-grupper.',q:'Hvilket vanlig stoff beskrives?',o:['Glyserol','Propan','Eddiksyre','Eten'],a:'Glyserol',e:'Glyserol (glyserin) er en alkohol med tre OH-grupper og er blant annet en byggestein i fettstoffer.'},
-    {tag:'Organiske syrer',scene:'Du kjenner igjen gruppen –COOH i enden av et molekyl.',q:'Hvilken stoffgruppe peker dette mot?',o:['Karboksylsyrer (organiske syrer)','Alkaner','Alkyner','Karbonallotroper'],a:'Karboksylsyrer (organiske syrer)',e:'Karboksylgruppen –COOH er den karakteristiske funksjonelle gruppen i karboksylsyrer.'},
-    {tag:'Maursyre',scene:'Den enkleste karboksylsyren har bare ett karbonatom.',q:'Hvilken formel har maursyre (metansyre)?',o:['HCOOH','CH3COOH','C2H5OH','CO2'],a:'HCOOH',e:'Maursyre/metansyre har formelen HCOOH.'},
-    {tag:'Eddiksyre',scene:'Syren som gir eddik den karakteristiske sure egenskapen har to karbonatomer.',q:'Hvilken formel har eddiksyre (etansyre)?',o:['CH3COOH','HCOOH','C2H5OH','C2H4'],a:'CH3COOH',e:'Eddiksyre/etansyre er CH₃COOH.'},
-    {tag:'Fettsyrer',scene:'Et molekyl har en lang hydrokarbonkjede og en –COOH-gruppe i enden.',q:'Hva kalles denne typen forbindelse typisk?',o:['Fettsyre','Alkyn','Fulleren','Karbonmonoksid'],a:'Fettsyre',e:'Fettsyrer er karboksylsyrer med lange hydrokarbonkjeder.'},
-    {tag:'Fettsyrer',scene:'To fettsyrer har like lange karbonkjeder, men den ene har en C=C-dobbeltbinding.',q:'Hva kalles fettsyren med dobbeltbinding?',o:['Umettet fettsyre','Mettet fettsyre','Alkan','Fulleren'],a:'Umettet fettsyre',e:'En eller flere C=C-dobbeltbindinger gjør en fettsyre umettet.'},
-    {tag:'Plast',scene:'Mange etenmolekyler kobles sammen til en lang kjede.',q:'Hvilken plast dannes?',o:['Polyeten (PE)','Polypropen (PP)','PVC fra metan','Grafitt'],a:'Polyeten (PE)',e:'Eten er monomeren som ved addisjonspolymerisering kan danne polyeten.'},
-    {tag:'Plast',scene:'Propen brukes som monomer i en addisjonspolymerisering.',q:'Hva heter polymeren?',o:['Polypropen (PP)','Polyeten (PE)','Polymetan','Fulleren'],a:'Polypropen (PP)',e:'Navnet på polymeren følger monomeren: propen → polypropen.'},
-    {tag:'Polymerisering',scene:'Når eten blir til polyeten, åpnes C=C-dobbeltbindingen og molekylene kobles til en kjede.',q:'Hva kalles denne reaksjonstypen?',o:['Addisjonspolymerisering','Fullstendig forbrenning','Nøytralisering','Celleånding'],a:'Addisjonspolymerisering',e:'Mange umettede monomerer kobles sammen uten at små molekyler spaltes av.'},
-    {tag:'Råolje',scene:'En prøve råolje inneholder svært mange ulike molekyler.',q:'Hva er råolje kjemisk sett?',o:['En blanding av mange hydrokarboner og andre forbindelser','Ett rent hydrokarbon','Rent karbon','Bare etanol og vann'],a:'En blanding av mange hydrokarboner og andre forbindelser',e:'Råolje er en kompleks blanding, hovedsakelig av hydrokarboner med ulik kjedelengde og struktur.'},
-    {tag:'Oljeraffineri',scene:'Råolje varmes opp og stoffene fordeles i ulike fraksjoner.',q:'Hvilken egenskap utnyttes først og fremst i fraksjonert destillasjon?',o:['Ulike kokepunkter','Ulik elektrisk ladning','Ulikt antall protoner i karbon','Ulik radioaktivitet'],a:'Ulike kokepunkter',e:'Hydrokarboner med ulike størrelser og strukturer har ulike kokepunkter og kan derfor separeres i fraksjoner.'},
-    {tag:'Kjedelengde',scene:'Sammenlikn omtrent tilsvarende alkaner med kort og lang karbonkjede.',q:'Hva skjer vanligvis med kokepunktet når karbonkjeden blir lengre?',o:['Det øker','Det blir alltid 0 °C','Det synker alltid kraftig','Det blir uavhengig av molekylstørrelsen'],a:'Det øker',e:'Større hydrokarbonmolekyler får sterkere dispersjonskrefter og har vanligvis høyere kokepunkt.'},
-    {tag:'Klassifisering',scene:'CO2 og CO inneholder karbon, men behandles vanligvis ikke som organiske forbindelser i grunnleggende kjemi.',q:'Hvilken påstand passer best?',o:['De regnes vanligvis som uorganiske karbonforbindelser','Alle stoffer med karbon er automatisk hydrokarboner','CO2 er et alkohol','CO er et alkan'],a:'De regnes vanligvis som uorganiske karbonforbindelser',e:'Organisk kjemi omfatter svært mange karbonforbindelser, men noen enkle karbonforbindelser som CO og CO₂ klassifiseres vanligvis som uorganiske.'}
+    {
+      scene:'Et hydrokarbon har bare enkeltbindinger mellom karbonatomene.',
+      q:'Hvilken stoffgruppe tilhører det?',
+      o:['Alkaner','Alkener','Alkyner','Alkoholer'],
+      a:'Alkaner',
+      e:'Alkaner er mettede hydrokarboner med bare enkeltbindinger mellom karbonatomene.'
+    },
+    {
+      scene:'Et åpent hydrokarbon har formelen C4H8 og én C=C-binding.',
+      q:'Hvilken stoffgruppe tilhører molekylet?',
+      o:['Alkener','Alkaner','Alkyner','Alkoholer'],
+      a:'Alkener',
+      e:'Alkener har minst én C=C-dobbeltbinding. Et alken med én dobbeltbinding følger CₙH₂ₙ.'
+    },
+    {
+      scene:'Et hydrokarbon med to karbonatomer har én trippelbinding.',
+      q:'Hva heter forbindelsen?',
+      o:['Etyn','Eten','Etan','Etanol'],
+      a:'Etyn',
+      e:'C₂H₂ er et alkyn og heter etyn.'
+    },
+    {
+      scene:'Et alkan har fem karbonatomer.',
+      q:'Hvilken molekylformel har det?',
+      o:['C5H12','C5H10','C5H8','C5H14'],
+      a:'C5H12',
+      e:'Alkaner følger CₙH₂ₙ₊₂.'
+    },
+    {
+      scene:'To hydrokarboner har like mange karbonatomer. Det ene har bare enkeltbindinger, det andre har én C=C-binding.',
+      q:'Hvilket utsagn er riktig?',
+      o:['Molekylet med C=C-binding er umettet','Molekylet med bare enkeltbindinger er umettet','Begge er mettede fordi de bare består av C og H','Begge er umettede fordi karbon kan danne fire bindinger'],
+      a:'Molekylet med C=C-binding er umettet',
+      e:'Dobbelt- eller trippelbinding mellom karbonatomer gjør et hydrokarbon umettet.'
+    },
+    {
+      scene:'Et molekyl har formelen C2H5OH.',
+      q:'Hva heter alkoholen?',
+      o:['Etanol','Metanol','Propanol','Etansyre'],
+      a:'Etanol',
+      e:'To karbonatomer gir prefikset et-, og OH-gruppen gjør stoffet til en alkohol.'
+    },
+    {
+      scene:'Metanol og etanol er begge små alkoholer og kan se ganske like ut.',
+      q:'Hvilket utsagn er viktigst sikkerhetsmessig?',
+      o:['Metanol er langt mer akutt giftig enn etanol og kan blant annet skade synet','Metanol og etanol har samme giftighet fordi begge har en OH-gruppe','Etanol er en ioneforbindelse, mens metanol er et molekylstoff','Metanol blir ufarlig dersom det blandes med nok vann'],
+      a:'Metanol er langt mer akutt giftig enn etanol og kan blant annet skade synet',
+      e:'Metanol er svært giftig. Stoffene brytes ned forskjellig i kroppen.'
+    },
+    {
+      scene:'Et molekyl har tre karbonatomer og tre OH-grupper.',
+      q:'Hvilket vanlig stoff passer med beskrivelsen?',
+      o:['Glyserol','Propanol','Propan','Propansyre'],
+      a:'Glyserol',
+      e:'Glyserol har tre hydroksylgrupper og inngår blant annet i fettstoffer.'
+    },
+    {
+      scene:'Et organisk molekyl inneholder gruppen –COOH.',
+      q:'Hvilken stoffgruppe peker dette mot?',
+      o:['Karboksylsyrer','Alkoholer','Alkaner','Alkyner'],
+      a:'Karboksylsyrer',
+      e:'–COOH er karboksylgruppen.'
+    },
+    {
+      scene:'Den enkleste karboksylsyren har ett karbonatom.',
+      q:'Hvilken formel har maursyre (metansyre)?',
+      o:['HCOOH','CH3COOH','CH3OH','HCHO'],
+      a:'HCOOH',
+      e:'Maursyre/metansyre har formelen HCOOH.'
+    },
+    {
+      scene:'Eddiksyre er en karboksylsyre med to karbonatomer.',
+      q:'Hvilken formel passer?',
+      o:['CH3COOH','HCOOH','C2H5OH','CH3CHO'],
+      a:'CH3COOH',
+      e:'Eddiksyre/etansyre har formelen CH₃COOH.'
+    },
+    {
+      scene:'Et molekyl har en lang hydrokarbonkjede og en –COOH-gruppe i enden.',
+      q:'Hva kalles denne typen forbindelse typisk?',
+      o:['Fettsyre','Alkan','Alkohol','Alken'],
+      a:'Fettsyre',
+      e:'Fettsyrer er karboksylsyrer med lange hydrokarbonkjeder.'
+    },
+    {
+      scene:'To fettsyrer har like lange karbonkjeder, men den ene inneholder en C=C-binding.',
+      q:'Hva kalles fettsyren med dobbeltbinding?',
+      o:['Umettet fettsyre','Mettet fettsyre','Fullstendig hydrogenert fettsyre','Alkan'],
+      a:'Umettet fettsyre',
+      e:'Én eller flere C=C-bindinger gjør en fettsyre umettet.'
+    },
+    {
+      scene:'Mange etenmolekyler kobles sammen til lange kjeder.',
+      q:'Hvilken polymer dannes?',
+      o:['Polyeten (PE)','Polypropen (PP)','Polystyren (PS)','Polyvinylklorid (PVC)'],
+      a:'Polyeten (PE)',
+      e:'Eten er monomeren som danner polyeten.'
+    },
+    {
+      scene:'Propen brukes som monomer i en addisjonspolymerisering.',
+      q:'Hva heter polymeren?',
+      o:['Polypropen (PP)','Polyeten (PE)','Polystyren (PS)','Polyvinylklorid (PVC)'],
+      a:'Polypropen (PP)',
+      e:'Propen danner polypropen.'
+    },
+    {
+      scene:'Når eten blir til polyeten, åpnes C=C-bindingen og mange monomerer kobles sammen.',
+      q:'Hva kalles denne reaksjonstypen?',
+      o:['Addisjonspolymerisering','Kondensasjonspolymerisering','Forbrenning','Hydrolyse'],
+      a:'Addisjonspolymerisering',
+      e:'Ved addisjonspolymerisering kobles umettede monomerer sammen uten at små molekyler spaltes av.'
+    },
+    {
+      scene:'En prøve råolje inneholder svært mange forskjellige molekyler.',
+      q:'Hva er råolje kjemisk sett?',
+      o:['En blanding av mange hydrokarboner og mindre mengder andre forbindelser','Ett rent hydrokarbon med svært lange molekyler','En blanding av bare alkaner med samme kokepunkt','Karbonpartikler løst i vann'],
+      a:'En blanding av mange hydrokarboner og mindre mengder andre forbindelser',
+      e:'Råolje er en kompleks blanding, hovedsakelig av hydrokarboner med ulik størrelse og struktur.'
+    },
+    {
+      scene:'Råolje varmes opp og deles i ulike fraksjoner i et raffineri.',
+      q:'Hvilken egenskap utnyttes først og fremst i fraksjonert destillasjon?',
+      o:['Ulike kokepunkter','Ulik elektrisk ledningsevne','Ulik surhetsgrad','Ulik løselighet i vann'],
+      a:'Ulike kokepunkter',
+      e:'Hydrokarboner med ulike størrelser og strukturer har ulike kokepunkter.'
+    },
+    {
+      scene:'Vi sammenlikner alkaner med stadig lengre karbonkjede.',
+      q:'Hva skjer vanligvis med kokepunktet når kjeden blir lengre?',
+      o:['Det øker fordi dispersjonskreftene mellom molekylene blir sterkere','Det synker fordi molekylene får flere C–C-bindinger','Det er omtrent konstant fordi alle alkaner er upolare','Det bestemmes bare av hvor mange H-atomer som sitter på endekarbonene'],
+      a:'Det øker fordi dispersjonskreftene mellom molekylene blir sterkere',
+      e:'Større molekyler har flere elektroner og større kontaktflate, noe som gir sterkere dispersjonskrefter.'
+    },
+    {
+      scene:'Metan, eten og etyn har ulike bindinger mellom karbonatomene eller forskjellig antall karbonatomer.',
+      q:'Hvilken sammenheng mellom navn og bindingstype er riktig?',
+      o:['Endelsen -an brukes for alkaner, -en for alkener og -yn for alkyner','Endelsen -an brukes for alkener, -en for alkaner og -yn for alkoholer','Endelsen -ol brukes for alle hydrokarboner med dobbeltbinding','Endelsen -syre brukes for hydrokarboner uten funksjonelle grupper'],
+      a:'Endelsen -an brukes for alkaner, -en for alkener og -yn for alkyner',
+      e:'Navneendelsene gir informasjon om stoffgruppen: alkan, alken og alkyn.'
+    },
+    {
+      scene:'Et molekyl har tre karbonatomer og bare enkeltbindinger mellom karbonatomene.',
+      q:'Hva heter hydrokarbonet?',
+      o:['Propan','Propen','Propyn','Propanol'],
+      a:'Propan',
+      e:'Tre karbonatomer gir prop-, og bare enkeltbindinger gir endelsen -an.'
+    }
   ]
 };
 
@@ -716,9 +1244,12 @@ function newCarbon(){
   carbonLastQuestion[mode]=q.q;
   area.dataset.done='';
   area.innerHTML=
-    `<div class="carbon-kicker">${q.tag}</div>`+
     (q.scene?`<div class="carbon-scenario">${prettyFormula(q.scene)}</div>`:'')+
-    `<div class="question">${prettyFormula(q.q)}</div><div id="carbonOpts"></div>`;
+    `<div class="question">${prettyFormula(q.q)}</div>`+
+    `<div id="carbonOpts"></div>`+
+    `<div class="next-task-row carbon-next-inline" style="display:none">`+
+      `<button class="btn" type="button" onclick="newCarbon()">Ny oppgave</button>`+
+    `</div>`;
   mc($('#carbonOpts'),q.o,q.a,'carbonFb',prettyFormula(q.e));
 }
 setupSeg('carbonMode',()=>newCarbon());
@@ -2057,9 +2588,17 @@ function ensureFloatingPt(){
 
   mc=function(container,options,answer,feedbackId,explanation=''){
     container.dataset.done='';
+    const cleanOptions=options.map(o=>String(o));
+    const maxLen=Math.max(...cleanOptions.map(o=>o.replace(/<[^>]*>/g,'').length),0);
+    const totalLen=cleanOptions.reduce((sum,o)=>sum+o.replace(/<[^>]*>/g,'').length,0);
+    const isCarbon=container.closest('.page')?.id==='page-carbon';
+    const longSingle=maxLen>=72||totalLen>=220;
+    const balancedGrid=!longSingle&&cleanOptions.length===4&&(isCarbon||maxLen>=22||totalLen>=70);
+    const layoutClass=longSingle?' options-long-list':balancedGrid?' options-balanced-grid':'';
+
     container.innerHTML=
-      '<div class="options">'+
-      shuffle(options).map(o=>`<button class="option" data-v="${String(o).replace(/"/g,'&quot;')}">${prettyFormula(o)}</button>`).join('')+
+      '<div class="options'+layoutClass+'">'+
+      shuffle(cleanOptions).map(o=>`<button class="option" data-v="${String(o).replace(/"/g,'&quot;')}">${prettyFormula(o)}</button>`).join('')+
       '</div><div class="feedback" id="'+feedbackId+'"></div>'+
       (explanation?'<div class="explain" id="'+feedbackId+'Ex">'+explanation+'</div>':'');
 
@@ -2076,7 +2615,10 @@ function ensureFloatingPt(){
       setFeedback(feedbackId,ok?'Riktig.':'Ikke helt.',ok);
       const ex=$('#'+feedbackId+'Ex');
       if(ex)ex.classList.add('show');
-      v14AddNextButton(container);
+
+      if(!isCarbon){
+        v14AddNextButton(container);
+      }
     });
   };
 
@@ -4251,6 +4793,233 @@ function toggleNaturfagFullscreen(){
         button.classList.add('active');
         generator();
       };
+    });
+  });
+})();
+</script>
+
+
+<script id="kjemi-v44-repeat-guard">
+(function(){
+  /*
+    Felles repetisjonsvern for ALLE oppgavemodulene.
+    En signatur som har vært brukt blant de 10 siste oppgavene i samme
+    modul/undermodus blir forkastet og en ny oppgave trekkes.
+  */
+  const STORE='chemQuestionHistoryV44';
+  const WINDOW=10;
+  const MAX_TRIES=240;
+  let history={};
+  const running=new Set();
+
+  try{
+    history=JSON.parse(localStorage.getItem(STORE)||'{}')||{};
+  }catch(e){
+    history={};
+  }
+
+  const normalize=s=>String(s||'').replace(/\s+/g,' ').trim();
+
+  function save(){
+    try{localStorage.setItem(STORE,JSON.stringify(history))}catch(e){}
+  }
+
+  function mode(id,fallback='main'){
+    const el=document.querySelector('#'+id+' button.active');
+    return el?.dataset?.mode||fallback;
+  }
+
+  function list(key){
+    if(!Array.isArray(history[key]))history[key]=[];
+    return history[key];
+  }
+
+  function commit(key,sig){
+    if(!sig)return;
+    const arr=list(key);
+    if(arr.at(-1)!==sig)arr.push(sig);
+    if(arr.length>80)arr.splice(0,arr.length-80);
+    save();
+  }
+
+  function signature(selector){
+    const root=document.querySelector(selector);
+    if(!root)return '';
+
+    // Svarrekkefølgen stokkes, så sorter alternativene før de inngår i signaturen.
+    const optionValues=[...root.querySelectorAll('.option')]
+      .map(x=>normalize(x.dataset.v||x.textContent))
+      .filter(Boolean)
+      .sort();
+
+    const clone=root.cloneNode(true);
+    clone.querySelectorAll(
+      '.options,.feedback,.explain,.next-task-row,.module-tools button,'+
+      '.stats,.progress,.quiz-preset-tabs,.quiz-preset-desc,.quiz-mode-note,'+
+      'button,input,select,textarea'
+    ).forEach(n=>n.remove());
+
+    const parts=[normalize(clone.textContent)];
+
+    // Skallmodeller inneholder mye av informasjonen grafisk, ikke som tekst.
+    const electrons=root.querySelectorAll('.atom-svg .electron').length;
+    const shells=root.querySelectorAll('.atom-svg .atom-shell').length;
+    if(electrons||shells)parts.push(`atom:${electrons}:${shells}`);
+
+    // Periodesystemoppgaver kan uttrykke målet som markering i tabellen.
+    const highlighted=[...root.querySelectorAll('.pt-cell.highlight[data-el]')]
+      .map(x=>x.dataset.el).sort();
+    if(highlighted.length)parts.push('highlight:'+highlighted.join(','));
+
+    // Skriveoppgaver lagrer ofte korrekt formel her.
+    if(root.dataset?.answer)parts.push('answer:'+normalize(root.dataset.answer));
+
+    // For spørsmål som "hvilket er størst/høyest?" er selve alternativene
+    // en nødvendig del av spørsmålsidentiteten.
+    if(optionValues.length && !(electrons||shells)){
+      parts.push('opts:'+optionValues.join('|'));
+    }
+
+    return normalize(parts.filter(Boolean).join(' || '));
+  }
+
+  function wrapGenerator(name,selector,keyFn){
+    const base=window[name];
+    if(typeof base!=='function')return;
+
+    window[name]=function(...args){
+      const key=keyFn();
+      if(running.has(key))return base.apply(this,args);
+
+      running.add(key);
+      try{
+        const recent=list(key).slice(-WINDOW);
+        let result;
+        let sig='';
+
+        for(let attempt=0;attempt<MAX_TRIES;attempt++){
+          result=base.apply(this,args);
+          sig=signature(selector);
+          if(!sig)return result;
+
+          if(!recent.includes(sig)){
+            commit(key,sig);
+            return result;
+          }
+        }
+
+        // Dette skal bare kunne nås dersom en valgt undermodus faktisk har
+        // færre enn 11 forskjellige oppgaver. Behold da siste trekk i stedet
+        // for å låse nettleseren i en evig løkke.
+        if(sig)commit(key,sig);
+        return result;
+      }finally{
+        running.delete(key);
+      }
+    };
+  }
+
+  // Fire ekstra "vanskelig"-reaksjoner gjør at også dette nivået har
+  // minst 11 forskjellige oppgaver og dermed kan holde et 10-spørsmålsvindu.
+  if(typeof reactions!=='undefined' && Array.isArray(reactions)){
+    const extraHard=[
+      {level:'hard',r:[['Fe',4],['O2',3]],p:[['Fe2O3',2]]},
+      {level:'hard',r:[['Al',2],['HCl',6]],p:[['AlCl3',2],['H2',3]]},
+      {level:'hard',r:[['C2H6',2],['O2',7]],p:[['CO2',4],['H2O',6]]},
+      {level:'hard',r:[['NH3',4],['O2',3]],p:[['N2',2],['H2O',6]]}
+    ];
+    extraHard.forEach(q=>{
+      const sig=JSON.stringify(q);
+      if(!reactions.some(x=>JSON.stringify(x)===sig))reactions.push(q);
+    });
+  }
+
+  // Synlige oppgavemoduler
+  wrapGenerator('newAtom','#atomArea',()=>`atom:${mode('atomMode')}`);
+  wrapGenerator('periodicGeneral','#periodicArea',()=>`periodic:general`);
+  wrapGenerator('newIonSalt','#ionSaltArea',()=>`ionsalts:${mode('ionSaltMode')}`);
+  wrapGenerator('newBinding','#bindingArea',()=>`binding:main`);
+  wrapGenerator('newPolar','#polarArea',()=>`polar:${mode('polarMode')}`);
+  wrapGenerator('newSolubility','#solArea',()=>`solubility:${mode('solMode')}`);
+  wrapGenerator('newBalance','#balanceArea',()=>`balance:${mode('balLevel')}`);
+  wrapGenerator('newCombustion','#combustionArea',()=>`combustion:main`);
+  wrapGenerator('newCarbon','#carbonArea',()=>`carbon:${mode('carbonMode')}`);
+
+  // Eldre/underliggende oppgavemoduler beholdes også beskyttet dersom de
+  // senere tas frem igjen i grensesnittet.
+  wrapGenerator('newIon','#ionArea',()=>`ion:${mode('ionMode')}`);
+  wrapGenerator('newSalt','#saltArea',()=>`salt:main`);
+  wrapGenerator('newRedox','#redoxArea',()=>`redox:main`);
+
+  // Blandet fagquiz: samme regel på elementnivå, også mellom to quizrunder.
+  if(typeof makeQuizItem==='function'){
+    const baseMakeQuizItem=makeQuizItem;
+    makeQuizItem=function(level){
+      const key='mix:'+(level||'mixed');
+      const recent=list(key).slice(-WINDOW);
+      let fallback=null;
+
+      for(let i=0;i<MAX_TRIES;i++){
+        const item=baseMakeQuizItem(level);
+        if(!item)return item;
+        const sig=normalize(
+          `${item.topic||''} || ${item.q||''} || ${item.a||''} || `+
+          `${[...(item.o||[])].map(String).sort().join('|')}`
+        );
+        fallback={item,sig};
+        if(!recent.includes(sig)){
+          commit(key,sig);
+          return item;
+        }
+      }
+
+      if(fallback){
+        commit(key,fallback.sig);
+        return fallback.item;
+      }
+      return baseMakeQuizItem(level);
+    };
+  }
+
+  // Enkelte eldre hendelser lagret en direkte funksjonsreferanse før dette
+  // repetisjonsvernet ble lagt på. Bind disse på nytt til den endelige funksjonen.
+  const showEN=document.getElementById('showEN');
+  if(showEN)showEN.onchange=()=>newBinding();
+
+  // Spørsmålene som allerede ligger på skjermen ved første lasting teller som
+  // "sist vist", slik at første klikk på Ny oppgave heller ikke kan gi samme igjen.
+  const seeds=[
+    ['#atomArea',()=>`atom:${mode('atomMode')}`],
+    ['#periodicArea',()=>`periodic:general`],
+    ['#ionSaltArea',()=>`ionsalts:${mode('ionSaltMode')}`],
+    ['#bindingArea',()=>`binding:main`],
+    ['#polarArea',()=>`polar:${mode('polarMode')}`],
+    ['#solArea',()=>`solubility:${mode('solMode')}`],
+    ['#balanceArea',()=>`balance:${mode('balLevel')}`],
+    ['#combustionArea',()=>`combustion:main`],
+    ['#carbonArea',()=>`carbon:${mode('carbonMode')}`]
+  ];
+  seeds.forEach(([selector,keyFn])=>{
+    const sig=signature(selector);
+    if(sig)commit(keyFn(),sig);
+  });
+})();
+</script>
+
+
+<script id="kjemi-v46-carbon-next">
+(function(){
+  const area=document.getElementById('carbonArea');
+  if(!area)return;
+
+  // Uavhengig av hvilken flervalgsfunksjon som tegner oppgaven:
+  // første forsøk på et svar gjør Ny oppgave synlig.
+  area.addEventListener('click',e=>{
+    const option=e.target.closest('.option');
+    if(!option || !area.contains(option))return;
+    requestAnimationFrame(()=>{
+      const row=area.querySelector('.carbon-next-inline');
+      if(row)row.style.display='flex';
     });
   });
 })();
