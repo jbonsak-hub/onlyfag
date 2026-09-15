@@ -100,6 +100,41 @@
 #page-home .score-footnote{margin-top:7px}
 </style>
 
+
+
+<style id="onlyfag-back-arrow-style">
+.onlyfag-back-arrow{
+  position:fixed;
+  left:12px;
+  bottom:12px;
+  z-index:1200;
+  width:40px;
+  height:40px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--panel2);
+  color:var(--text);
+  text-decoration:none;
+  font:800 1.55rem/1 system-ui,-apple-system,"Segoe UI",sans-serif;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+  transition:.15s;
+}
+.onlyfag-back-arrow:hover{
+  background:var(--soft);
+  transform:translateX(-2px);
+}
+
+body.side-collapsed .onlyfag-back-arrow{left:12px}
+@media(max-width:860px){
+  .onlyfag-back-arrow{position:absolute;left:12px;bottom:12px}
+}
+
+
+</style>
+
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
@@ -124,6 +159,7 @@
     <button class="side-action" id="themeBtn"><b>◐</b><span>Dark mode</span></button>
     <button class="side-action" id="collapseBtn"><b>⇤</b><span>Minimer meny</span></button>
   </div>
+<a class="onlyfag-back-arrow" href="index.html" aria-label="Tilbake til hovedsiden" title="Tilbake til hovedsiden">←</a>
 </aside>
 <main class="main">
   <header class="topbar"><div class="top-title" id="topTitle">Kjemi – oppgavebank</div><button class="top-periodic-btn" id="floatingPtBtn" type="button">▤&nbsp; Periodesystem</button><div class="top-spacer"></div><span class="pill">Naturfag</span><div class="info-wrap"><button class="info-btn" id="infoBtn" type="button" aria-label="Om oppgavebanken" aria-expanded="false">i</button><div class="info-pop" id="infoPop" role="dialog" aria-label="Om oppgavebanken"><p>Oppgavene er basert på pensum i kjemi i <a href="https://www.udir.no/lk20/nat01-05/kompetansemaal-og-vurdering/kv1079" target="_blank" rel="noopener noreferrer">Naturfag Vg1 SF</a>.<br>Siden er utviklet som et interaktivt supplement til undervisning og øving, med fokus på korte oppgaver, variasjon og umiddelbar tilbakemelding.<br>Oppgavebanken erstatter ikke lærebok eller undervisning, men er laget som et øvingsverktøy.<br>Jack Bonsak, Elvebakken vgs.</p></div></div></header>
@@ -132,7 +168,7 @@
       <h1>Kjemi - oppgavebank</h1>
       
       <div class="grid" id="homeGrid"></div>
-      <div class="note" style="margin-top:30px"><strong>Arbeidsmåte:</strong> Hver modul trekker nye varianter. <span class="kbd">Enter</span> sjekker svar i skriveoppgaver, og <span class="kbd">N</span> trekker ny oppgave i alle oppgavemoduler.</div>
+      
     </section>
 
     <section class="page" id="page-atom">

@@ -523,6 +523,39 @@ html[data-theme="dark"] #hurtigfaktorisering .hf-primary{background:#7040a4}
 @media(max-width:420px){#hurtigfaktorisering .hf-root-options{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:600px){#hurtigfaktorisering .hf-examples,#hurtigfaktorisering .hf-variants{grid-template-columns:minmax(0,1fr)}#hurtigfaktorisering .hf-start-row{align-items:flex-start;flex-direction:column}#hurtigfaktorisering .hf-answer-row{flex-wrap:wrap}#hurtigfaktorisering #hf-answer{flex-basis:100%}#hurtigfaktorisering .hf-question{padding:16px 12px}#hurtigfaktorisering .hf-math{font-size:1.1rem}#hurtigfaktorisering .hf-problem{font-size:1.65rem}}
 </style>
+
+<style id="onlyfag-back-arrow-style">
+.onlyfag-back-arrow{
+  position:fixed;
+  left:12px;
+  bottom:12px;
+  z-index:1200;
+  width:40px;
+  height:40px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid #d9cce6;
+  border-radius:10px;
+  background:#f7f0ff;
+  color:#5b2d90;
+  text-decoration:none;
+  font:800 1.55rem/1 system-ui,-apple-system,"Segoe UI",sans-serif;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+  transition:.15s;
+}
+.onlyfag-back-arrow:hover{
+  background:#eadcf7;
+  transform:translateX(-2px);
+}
+body.sidebar-collapsed .onlyfag-back-arrow{display:none}
+
+
+html[data-theme="dark"] .onlyfag-back-arrow{background:#2a2231;color:#f0dcff;border-color:#51425e}
+html[data-theme="dark"] .onlyfag-back-arrow:hover{background:#352343}
+
+</style>
+
 </head>
 <body>
 <nav class="sidebar"><h1><span>📘 Fysikk 2</span><button aria-label="Bytt mellom lys og mørk modus" class="global-theme-toggle" id="global-theme-toggle" title="Mørk modus" type="button">◐</button></h1>
@@ -569,6 +602,7 @@ html[data-theme="dark"] #hurtigfaktorisering .hf-primary{background:#7040a4}
 <div class="submenu-item ne-menu-link" onclick="openNewExamPractice(this)">Ekstraoppgaver</div>
 </div></div>
 <div class="menu-item"><div class="menu-header trivia-main-link" onclick="openTriviaQuiz(this)"><span class="menu-icon">◆</span>Trivia-quiz</div></div>
+<a class="onlyfag-back-arrow" href="index.html" aria-label="Tilbake til hovedsiden" title="Tilbake til hovedsiden">←</a>
 </nav>
 <button aria-expanded="true" aria-label="Minimer sidemenyen" class="sidebar-toggle" id="sidebar-toggle" title="Minimer sidemenyen" type="button">‹</button>
 <div aria-label="Endre bredden på sidemenyen" aria-orientation="vertical" aria-valuemax="520" aria-valuemin="220" aria-valuenow="300" class="sidebar-resizer" id="sidebar-resizer" role="separator" tabindex="0" title="Dra for å endre menybredden. Dobbeltklikk for å tilbakestille."></div>
@@ -2608,4 +2642,21 @@ function ensureQuickFactorization(){
   root.dataset.ready='true';
 }
 </script>
+
+<script id="direct-section-link">
+(function(){
+  function openLinkedSection(){
+    if(location.hash === '#hurtigfaktorisering' && typeof openQuickFactorization === 'function'){
+      openQuickFactorization();
+    }
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', openLinkedSection, {once:true});
+  }else{
+    openLinkedSection();
+  }
+  window.addEventListener('hashchange', openLinkedSection);
+})();
+</script>
+
 </body></html>
