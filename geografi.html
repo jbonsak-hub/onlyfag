@@ -11550,7 +11550,7 @@ body.dark-mode .hs-button.light{background:#111820;color:#8df0b8;border-color:#3
   function renderStatleGame(){
     var app=document.getElementById('world-statle-app');if(!app||!statleState)return;
     if(!statleState.current){app.innerHTML='<div class="statle-shell statle-setup"><h3>Alle 50 er funnet!</h3><p>Du brukte '+formatSeconds(Math.floor((Date.now()-statleState.startedAt)/1000))+' og hadde '+statleState.misses+' feilforsøk.</p><button class="statle-start" onclick="startStatle()">Spill igjen</button></div>';return}
-    app.innerHTML='<div class="statle-shell statle-game"><aside class="statle-side"><div class="statle-head"><span class="worldle-pill">Statle</span><span class="worldle-pill">Klarert '+statleState.completed.size+' / 50</span><span class="worldle-pill statle-remaining" id="statle-remaining-count"></span><span class="worldle-pill" id="statle-time">Tid 0:00</span><button class="worldle-back" onclick="startStatle()">Start på nytt</button></div><div class="statle-target-cue"><i aria-hidden="true"></i><span>Finn staten som blinker rosa på kartet</span></div><div class="statle-input-row"><input id="statle-answer" list="statle-remaining-list" autocomplete="off" placeholder="Skriv navnet på staten …"><datalist id="statle-remaining-list"></datalist><button class="worldle-guess-btn" onclick="submitStatleGuess()">🇺🇸 Gjett</button></div><div id="statle-feedback" class="statle-feedback">'+(statleState.lastSkipped?'Forrige fasit: '+htmlEscape(statleState.lastSkipped)+'.':'')+'</div><div class="statle-hint-panel"><button id="statle-hint-button" class="statle-hint-button" onclick="requestStatleHint()">Vis hint 1 av 4</button><div id="statle-hints" class="statle-hints"></div></div><div class="statle-completed-panel"><strong>Klarerte stater</strong><div class="statle-completed-list" id="statle-completed-list"></div></div><p class="statle-source">Kartgrunnlag: U.S. Census Bureau, 2024. SVG-kartet er skarpt i alle størrelser.</p></aside><div id="statle-map-host">'+statleMapSvg()+'</div></div>';
+    app.innerHTML='<div class="statle-shell statle-game"><aside class="statle-side"><div class="statle-head"><span class="worldle-pill">Statle</span><span class="worldle-pill">Klarert '+statleState.completed.size+' / 50</span><span class="worldle-pill statle-remaining" id="statle-remaining-count"></span><span class="worldle-pill" id="statle-time">Tid 0:00</span><button class="worldle-back" onclick="startStatle()">Start på nytt</button></div><div class="statle-target-cue"><i aria-hidden="true"></i><span>Finn staten som blinker rosa på kartet</span></div><div class="statle-input-row"><input id="statle-answer" list="statle-remaining-list" autocomplete="off" placeholder="Skriv navnet på staten …"><datalist id="statle-remaining-list"></datalist><button class="worldle-guess-btn" onclick="submitStatleGuess()">🇺🇸 Gjett</button></div><div id="statle-feedback" class="statle-feedback">'+(statleState.lastSkipped?'Forrige fasit: '+htmlEscape(statleState.lastSkipped)+'.':'')+'</div><div class="statle-hint-panel"><button id="statle-hint-button" class="statle-hint-button" onclick="requestStatleHint()">Vis hint 1 av 4</button><div id="statle-hints" class="statle-hints"></div></div><div class="statle-completed-panel"><strong>Klarerte stater</strong><div class="statle-completed-list" id="statle-completed-list"></div></div><p class="statle-source">Kartgrunnlag: U.S. Census Bureau, 2024.</p></aside><div id="statle-map-host">'+statleMapSvg()+'</div></div>';
     updateStatleDatalist();updateStatleCompletedList();renderStatleHints();updateStatleTime();var input=document.getElementById('statle-answer');if(input){input.focus();input.addEventListener('keydown',function(e){if(e.key==='Enter')submitStatleGuess()})}
   }
   window.initStatle=function(){
@@ -11617,6 +11617,90 @@ body.dark-mode .hs-button.light{background:#111820;color:#8df0b8;border-color:#3
   );
   new MutationObserver(sync).observe(lab,{attributes:true,attributeFilter:['class']});
   sync();
+})();
+</script>
+
+
+<script id="geowiz-balanced-categories">
+(function(){
+  function geoWizNorwayOnly(){
+    try{
+      ensureGeoGuessrSelection();
+      return geoGuessrSelection instanceof Set &&
+             geoGuessrSelection.size===1 &&
+             geoGuessrSelection.has('place:Norge');
+    }catch(e){return false}
+  }
+
+  function geoWizCategoryBuckets(){
+    ensureGeoGuessrSelection();
+    const norwayOnly=geoWizNorwayOnly();
+    const buckets=[];
+
+    if(geoGuessrSelection.has('capitals')){
+      const items=geoUniqueTargets(geoPlayableCapitals()).slice();
+      if(items.length)buckets.push({key:'capitals',items:shuffleArray(items)});
+    }
+
+    const places=geoPlayablePlaces();
+    const selectedPlaceCategories=[...geoGuessrSelection]
+      .filter(k=>k.startsWith('place:'))
+      .map(k=>k.slice(6));
+
+    selectedPlaceCategories.forEach(category=>{
+      let items=places.filter(t=>t.category===category);
+      if(category==='Norge'&&!norwayOnly)items=items.filter(t=>t.lat<=75);
+      items=geoUniqueTargets(items).slice();
+      if(items.length)buckets.push({key:'place:'+category,items:shuffleArray(items)});
+    });
+
+    return shuffleArray(buckets);
+  }
+
+  function geoWizBalancedRounds(count){
+    let buckets=geoWizCategoryBuckets();
+    const total=buckets.reduce((sum,b)=>sum+b.items.length,0);
+    if(total<count)return [];
+
+    const rounds=[];
+    while(rounds.length<count && buckets.length){
+      // Ny tilfeldig rekkefølge for hver "runde" gjennom kategoriene.
+      buckets=shuffleArray(buckets.filter(b=>b.items.length));
+      let added=0;
+
+      for(const bucket of buckets){
+        if(rounds.length>=count)break;
+        const target=bucket.items.pop();
+        if(target){
+          rounds.push(target);
+          added++;
+        }
+      }
+      if(!added)break;
+    }
+    return rounds;
+  }
+
+  startGeoGuessr=function(){
+    stopGeoGuessrClock();
+    const rounds=geoWizBalancedRounds(10);
+    if(rounds.length<10){
+      refreshGeoGuessrSelectionStatus();
+      return;
+    }
+    geoGuessrState={
+      rounds,
+      index:0,
+      total:0,
+      baseTotal:0,
+      bonusTotal:0,
+      results:[],
+      answered:false,
+      questionStarted:performance.now(),
+      norwayOnly:geoWizNorwayOnly()
+    };
+    renderGeoGuessrRound();
+  };
 })();
 </script>
 

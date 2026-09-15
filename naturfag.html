@@ -160,14 +160,175 @@ body.dark #page-carbon .carbon-kicker{background:#263229}
 }
 </style>
 
+
+<style id="naturfag-geografi-sidebar-style">
+:root{--sidebar:320px}
+.sidebar{
+  width:var(--sidebar)!important;
+  min-width:240px!important;
+  max-width:680px!important;
+  height:100vh!important;
+  position:sticky!important;
+  top:0!important;
+  display:block!important;
+  overflow:auto!important;
+  background:var(--panel)!important;
+  border-right:4px solid var(--line)!important;
+  padding:0 0 76px!important;
+  transition:width .16s,min-width .16s,border-color .16s!important;
+}
+.nf-sidebar-head{
+  padding:17px 20px 13px;
+  border-bottom:1px solid var(--line);
+  margin-bottom:9px;
+}
+.nf-sidebar-head h1{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:0;
+  color:var(--accent2);
+  font-size:1.15rem;
+  line-height:1.25;
+  font-weight:800;
+}
+.nf-sidebar-sub{
+  margin:5px 0 0 29px;
+  color:var(--muted);
+  font-size:.81rem;
+  font-weight:800;
+  letter-spacing:.02em;
+}
+.sidebar-scroll{
+  overflow:visible!important;
+  padding:4px 0 10px!important;
+}
+.nav-btn{
+  width:100%!important;
+  margin:0!important;
+  padding:9px 20px!important;
+  border-radius:0!important;
+  gap:10px!important;
+  color:var(--text)!important;
+  font-size:.92rem!important;
+  font-weight:650!important;
+  line-height:1.3!important;
+}
+.nav-btn:hover,.nav-btn.active{
+  background:var(--soft)!important;
+  color:var(--accent2)!important;
+}
+.nav-icon{
+  width:18px!important;
+  margin:0 2px 0 0!important;
+  color:var(--muted);
+  font-size:.82rem!important;
+  text-align:center;
+}
+.nav-btn.active .nav-icon,.nav-btn:hover .nav-icon{color:var(--accent2)}
+.nf-menu-divider{
+  height:1px;
+  margin:10px 20px 8px;
+  background:var(--line);
+}
+.nf-sidebar-tools{
+  margin:22px 12px 0;
+  padding:11px 8px 10px;
+  border-top:1px solid var(--line);
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+}
+.nf-tool-button{
+  width:34px;
+  height:34px;
+  border:1px solid color-mix(in srgb,var(--accent) 22%,var(--line));
+  border-radius:10px;
+  background:var(--panel2);
+  color:var(--accent2);
+  font:800 1rem/1 inherit;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:.15s;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.nf-tool-button:hover{background:var(--soft);transform:translateY(-1px)}
+.nf-sidebar-collapse{
+  position:fixed;
+  top:10px;
+  left:calc(var(--sidebar) - 19px);
+  z-index:3200;
+  width:30px;
+  height:30px;
+  border-radius:999px;
+  border:1px solid color-mix(in srgb,var(--accent) 20%,var(--line));
+  background:var(--panel);
+  color:var(--accent2);
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  font:900 1.05rem/1 inherit;
+  box-shadow:0 2px 9px rgba(0,0,0,.12);
+  transition:left .16s ease,background .16s ease;
+}
+.nf-sidebar-collapse:hover{background:var(--soft)}
+body.side-collapsed .sidebar{
+  width:0!important;
+  min-width:0!important;
+  max-width:0!important;
+  padding:0!important;
+  border-right:0!important;
+  overflow:hidden!important;
+}
+body.side-collapsed .nf-sidebar-collapse{left:10px}
+body.side-collapsed .onlyfag-back-arrow{display:none!important}
+body.side-collapsed .main{width:100%;flex:1 1 100%}
+body.dark .nf-sidebar-head h1{color:var(--accent2)}
+body.dark .nf-tool-button,
+body.dark .nf-sidebar-collapse{background:var(--panel2);border-color:var(--line)}
+body.dark .nf-tool-button:hover,
+body.dark .nf-sidebar-collapse:hover{background:var(--soft)}
+.home-score-explanation{
+  margin-top:12px!important;
+  padding-top:10px;
+  border-top:1px solid var(--line);
+  max-width:760px;
+}
+@media(max-width:860px){
+  .sidebar{
+    position:fixed!important;
+    left:0!important;
+    width:min(88vw,310px)!important;
+    min-width:0!important;
+    max-width:none!important;
+    padding-bottom:70px!important;
+    transform:translateX(-100%);
+    box-shadow:0 10px 30px rgba(0,0,0,.2);
+  }
+  body.mobile-open .sidebar{transform:none}
+  body.side-collapsed .sidebar{
+    width:min(88vw,310px)!important;
+    max-width:none!important;
+    padding-bottom:70px!important;
+  }
+  .nf-sidebar-collapse{display:none!important}
+}
+@media print{
+  .nf-sidebar-collapse,.nf-sidebar-tools{display:none!important}
+}
+</style>
+
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
-  <div class="brand"><div class="brand-mark">K</div><div class="brand-text"><div class="brand-title">Naturfag · Kjemi</div><div class="brand-sub">Oppgavebank</div></div></div>
+  <div class="nf-sidebar-head">
+    <h1><span aria-hidden="true">🧪</span> Naturfag</h1>
+    <div class="nf-sidebar-sub">Kjemi</div>
+  </div>
   <div class="sidebar-scroll">
-    <div class="nav-label">Oversikt</div>
     <button class="nav-btn active" data-page="home"><span class="nav-icon">⌂</span><span class="nav-txt">Start</span></button>
-    <div class="nav-label">Oppgavemoduler</div>
     <button class="nav-btn" data-page="atom"><span class="nav-icon">⚛</span><span class="nav-txt">Atomer</span></button>
     <button class="nav-btn" data-page="periodic"><span class="nav-icon">▤</span><span class="nav-txt">Periodesystem</span></button>
     <button class="nav-btn" data-page="ionsalts"><span class="nav-icon">±</span><span class="nav-txt">Ioner og salter</span></button>
@@ -177,16 +338,18 @@ body.dark #page-carbon .carbon-kicker{background:#263229}
     <button class="nav-btn" data-page="balance"><span class="nav-icon">⇌</span><span class="nav-txt">Balanser reaksjoner</span></button>
     <button class="nav-btn" data-page="combustion"><span class="nav-icon">△</span><span class="nav-txt">Forbrenning</span></button>
     <button class="nav-btn" data-page="carbon"><span class="nav-icon">C</span><span class="nav-txt">Karbonkjemi</span></button>
-    <div class="nav-label">Quiz</div>
+    <div class="nf-menu-divider" aria-hidden="true"></div>
     <button class="nav-btn" data-page="mix"><span class="nav-icon">✓</span><span class="nav-txt">Blandet fagquiz</span></button>
     <button class="nav-btn" data-page="elementquiz"><span class="nav-icon">◎</span><span class="nav-txt">Grunnstoffquiz</span></button>
   </div>
-  <div class="sidebar-foot">
-    <button class="side-action" id="themeBtn"><b>◐</b><span>Dark mode</span></button>
-    <button class="side-action" id="collapseBtn"><b>⇤</b><span>Minimer meny</span></button>
+  <div class="nf-sidebar-tools" aria-label="Sideverktøy">
+    <button class="nf-tool-button" type="button" onclick="window.print()" aria-label="Lagre som PDF" title="Lagre som PDF">↓</button>
+    <button class="nf-tool-button" type="button" onclick="toggleNaturfagFullscreen()" aria-label="Fullskjerm" title="Fullskjerm">⛶</button>
+    <button class="nf-tool-button" id="themeBtn" type="button" aria-label="Mørk modus" title="Mørk modus">◐</button>
   </div>
 <a class="onlyfag-back-arrow" href="index.html" aria-label="Tilbake til hovedsiden" title="Tilbake til hovedsiden">←</a>
 </aside>
+<button class="nf-sidebar-collapse" id="collapseBtn" type="button" aria-label="Minimer sidemenyen" title="Minimer sidemenyen">‹</button>
 <main class="main">
   <header class="topbar"><div class="top-title" id="topTitle">Kjemi – oppgavebank</div><button class="top-periodic-btn" id="floatingPtBtn" type="button">▤&nbsp; Periodesystem</button><div class="top-spacer"></div><span class="pill">Naturfag</span><div class="info-wrap"><button class="info-btn" id="infoBtn" type="button" aria-label="Om oppgavebanken" aria-expanded="false">i</button><div class="info-pop" id="infoPop" role="dialog" aria-label="Om oppgavebanken"><p>Oppgavene er basert på pensum i kjemi i <a href="https://www.udir.no/lk20/nat01-05/kompetansemaal-og-vurdering/kv1079" target="_blank" rel="noopener noreferrer">Naturfag Vg1 SF</a>.<br>Siden er utviklet som et interaktivt supplement til undervisning og øving, med fokus på korte oppgaver, variasjon og umiddelbar tilbakemelding.<br>Oppgavebanken erstatter ikke lærebok eller undervisning, men er laget som et øvingsverktøy.<br>Jack Bonsak, Elvebakken vgs.</p></div></div></header>
   <div class="content">
@@ -194,6 +357,7 @@ body.dark #page-carbon .carbon-kicker{background:#263229}
       <h1>Kjemi - oppgavebank</h1>
       
       <div class="grid" id="homeGrid"></div>
+      <div class="score-footnote home-score-explanation">Prosentene viser andelen riktige svar i de siste 20 oppgavene i hver modul. Fremgang lagres lokalt i nettleseren.</div>
       
     </section>
 
@@ -992,6 +1156,7 @@ const homeModulesV13=[
 ['solubility','◌','Løselighet','Likt løser likt, ionestørrelse, ladning og styrke i salter.'],
 ['balance','⇌','Balanser reaksjoner','Koeffisienter fra en stor reaksjonsbank i flere nivåer.'],
 ['combustion','△','Forbrenning','Branntrekant, hydrokarboner og forbrenning av flere grunnstoffer.'],
+['carbon','C','Karbonkjemi','Forbrenning, karbonallotroper, organisk kjemi, plast og olje.'],
 ['mix','✓','Blandet fagquiz','Tilfeldig fagquiz med oppgavetyper fra øvingsprøven og modulene.'],
 ['elementquiz','◎','Grunnstoffquiz','Plasser grunnstoffer i periodesystemet og få poeng etter avstand.']
 ];
@@ -1682,6 +1847,7 @@ function ensureFloatingPt(){
     solubility:['like','saltstrength'],
     balance:['basic','mixed','hard'],
     combustion:['main'],
+    carbon:['combustion','inorganic','organic'],
     mix:['main']
   };
 
@@ -1770,7 +1936,8 @@ function ensureFloatingPt(){
       ['ionsalts','ionSaltMode',['charged','build','hard','interpret','transfer']],
       ['polar','polarMode',['polarity','weak']],
       ['solubility','solMode',['like','saltstrength']],
-      ['balance','balLevel',['basic','mixed','hard']]
+      ['balance','balLevel',['basic','mixed','hard']],
+      ['carbon','carbonMode',['combustion','inorganic','organic']]
     ];
   }
 
@@ -1816,6 +1983,7 @@ function ensureFloatingPt(){
     if(page==='page-solubility')return {cat:'solubility',sub:currentMode('solMode')};
     if(page==='page-balance')return {cat:'balance',sub:currentMode('balLevel')};
     if(page==='page-combustion')return {cat:'combustion',sub:'main'};
+    if(page==='page-carbon')return {cat:'carbon',sub:currentMode('carbonMode')};
     if(page==='page-mix')return {cat:'mix',sub:'main'};
     return null;
   }
@@ -3593,6 +3761,29 @@ bindDynamicSeg('solMode', newSolubility);</script>
   injectAtomHint();
 })();</script>
 
+
+
+<script id="naturfag-sidebar-tools-script">
+function toggleNaturfagFullscreen(){
+  if(document.fullscreenElement){
+    document.exitFullscreen?.();
+  }else{
+    document.documentElement.requestFullscreen?.();
+  }
+}
+(function(){
+  const btn=document.getElementById('collapseBtn');
+  if(!btn)return;
+  const sync=()=>{
+    const closed=document.body.classList.contains('side-collapsed');
+    btn.textContent=closed?'›':'‹';
+    btn.setAttribute('aria-label',closed?'Vis sidemenyen':'Minimer sidemenyen');
+    btn.title=closed?'Vis sidemenyen':'Minimer sidemenyen';
+  };
+  btn.addEventListener('click',()=>setTimeout(sync,0));
+  sync();
+})();
+</script>
 
 </body>
 </html>
