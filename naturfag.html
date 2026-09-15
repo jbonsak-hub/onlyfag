@@ -162,7 +162,7 @@ body.dark #page-carbon .carbon-kicker{background:#263229}
 
 
 <style id="naturfag-geografi-sidebar-style">
-:root{--sidebar:320px}
+:root{--sidebar:240px}
 .sidebar{
   width:var(--sidebar)!important;
   min-width:240px!important;
@@ -320,6 +320,63 @@ body.dark .nf-sidebar-collapse:hover{background:var(--soft)}
 }
 </style>
 
+
+<style id="naturfag-sidebar-resizer-style">
+.nf-sidebar-resizer{
+  position:fixed;
+  top:0;
+  left:calc(var(--sidebar) - 4px);
+  width:9px;
+  height:100vh;
+  z-index:3100;
+  cursor:col-resize;
+  touch-action:none;
+  background:transparent;
+}
+.nf-sidebar-resizer::before{
+  content:"";
+  position:absolute;
+  inset:0 3px;
+  background:transparent;
+  transition:background .15s;
+}
+.nf-sidebar-resizer:hover::before,
+.nf-sidebar-resizer:focus-visible::before,
+body.nf-sidebar-resizing .nf-sidebar-resizer::before{
+  background:color-mix(in srgb,var(--accent) 48%,transparent);
+}
+body.nf-sidebar-resizing{cursor:col-resize;user-select:none}
+body.side-collapsed .nf-sidebar-resizer{display:none}
+@media(max-width:860px){.nf-sidebar-resizer{display:none!important}}
+</style>
+
+
+<style id="kjemi-v40-classroom-style">
+.v40-context{
+  max-width:830px;
+  margin:0 auto 14px;
+  padding:12px 14px;
+  border-left:4px solid var(--accent);
+  border-radius:0 9px 9px 0;
+  background:var(--panel2);
+  color:var(--muted);
+  font-size:.92rem;
+  line-height:1.5;
+}
+body.dark .v40-context{background:var(--panel2)}
+</style>
+
+
+<style id="kjemi-v41-prep-note">
+#carbonMode .prep-note{
+  font-size:.78em;
+  font-weight:650;
+  color:var(--muted);
+  white-space:nowrap;
+}
+#carbonMode button.active .prep-note{color:inherit;opacity:.78}
+</style>
+
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
@@ -349,6 +406,11 @@ body.dark .nf-sidebar-collapse:hover{background:var(--soft)}
   </div>
 <a class="onlyfag-back-arrow" href="index.html" aria-label="Tilbake til hovedsiden" title="Tilbake til hovedsiden">←</a>
 </aside>
+<div class="nf-sidebar-resizer" id="nf-sidebar-resizer"
+     role="separator" aria-orientation="vertical"
+     aria-label="Endre bredden på sidemenyen"
+     aria-valuemin="210" aria-valuemax="460" aria-valuenow="240"
+     tabindex="0" title="Dra for å endre menybredden. Dobbeltklikk for å tilbakestille."></div>
 <button class="nf-sidebar-collapse" id="collapseBtn" type="button" aria-label="Minimer sidemenyen" title="Minimer sidemenyen">‹</button>
 <main class="main">
   <header class="topbar"><div class="top-title" id="topTitle">Kjemi – oppgavebank</div><button class="top-periodic-btn" id="floatingPtBtn" type="button">▤&nbsp; Periodesystem</button><div class="top-spacer"></div><span class="pill">Naturfag</span><div class="info-wrap"><button class="info-btn" id="infoBtn" type="button" aria-label="Om oppgavebanken" aria-expanded="false">i</button><div class="info-pop" id="infoPop" role="dialog" aria-label="Om oppgavebanken"><p>Oppgavene er basert på pensum i kjemi i <a href="https://www.udir.no/lk20/nat01-05/kompetansemaal-og-vurdering/kv1079" target="_blank" rel="noopener noreferrer">Naturfag Vg1 SF</a>.<br>Siden er utviklet som et interaktivt supplement til undervisning og øving, med fokus på korte oppgaver, variasjon og umiddelbar tilbakemelding.<br>Oppgavebanken erstatter ikke lærebok eller undervisning, men er laget som et øvingsverktøy.<br>Jack Bonsak, Elvebakken vgs.</p></div></div></header>
@@ -436,12 +498,11 @@ body.dark .nf-sidebar-collapse:hover{background:var(--soft)}
         <div class="seg carbon-mode" id="carbonMode">
           <button data-mode="combustion" class="active">Forbrenning</button>
           <button data-mode="inorganic">Uorganiske karbonforbindelser</button>
-          <button data-mode="organic">Organisk kjemi</button>
+          <button data-mode="organic">Organisk kjemi <span class="prep-note">(forberedelse til Kjemi 1)</span></button>
         </div>
       </div>
       <div class="card carbon-card">
         <div id="carbonArea"></div>
-        <div class="next-task-row"><button class="btn" type="button" onclick="newCarbon()">Ny oppgave</button></div>
       </div>
     </section>
 
@@ -471,7 +532,7 @@ const shuffle=a=>[...a].sort(()=>Math.random()-.5);
 const gcd=(a,b)=>b?gcd(b,a%b):a; const lcm=(a,b)=>Math.abs(a*b)/gcd(a,b);
 const subMap={'0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉'};
 const supMap={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','+':'⁺','-':'⁻'};
-function prettyFormula(s){return s.replace(/([A-Za-z\)])(\d+)/g,(m,a,n)=>a+[...n].map(x=>subMap[x]).join('')).replace(/\^([0-9]*[+-])/g,(m,n)=>[...n].map(x=>supMap[x]).join(''));}
+function prettyFormula(s){return String(s).replace(/([A-Za-z\)])(\d+)/g,(m,a,n)=>a+[...n].map(x=>subMap[x]).join('')).replace(/\^([0-9]*[+\-−])/g,(m,n)=>[...n].map(x=>x==='−'?supMap['-']:supMap[x]).join(''));}
 function norm(s){return (s||'').replace(/[₀₁₂₃₄₅₆₇₈₉]/g,c=>Object.keys(subMap).find(k=>subMap[k]===c)).replace(/\s+/g,'').toLowerCase();}
 function setFeedback(id,msg,ok){const el=$('#'+id); if(!el)return; el.textContent=msg; el.className='feedback '+(ok===true?'good':ok===false?'bad':'');}
 function mc(container, options, answer, feedbackId, explanation=''){
@@ -556,7 +617,7 @@ setupSeg('solMode',newSolubility);
 const reactions=[
 {level:'basic',r:[['H2',2],['O2',1]],p:[['H2O',2]]},{level:'basic',r:[['C',2],['O2',1]],p:[['CO',2]]},{level:'basic',r:[['N2',1],['H2',3]],p:[['NH3',2]]},{level:'basic',r:[['Al',4],['O2',3]],p:[['Al2O3',2]]},{level:'basic',r:[['Mg',3],['N2',1]],p:[['Mg3N2',1]]},{level:'basic',r:[['Ca',2],['O2',1]],p:[['CaO',2]]},{level:'basic',r:[['Li',4],['O2',1]],p:[['Li2O',2]]},{level:'basic',r:[['P4',1],['Cl2',6]],p:[['PCl3',4]]},
 {level:'mixed',r:[['CH4',1],['O2',2]],p:[['CO2',1],['H2O',2]]},{level:'mixed',r:[['C2H6',2],['O2',7]],p:[['CO2',4],['H2O',6]]},{level:'mixed',r:[['C3H8',1],['O2',5]],p:[['CO2',3],['H2O',4]]},{level:'mixed',r:[['NaOH',2],['CO2',1]],p:[['Na2CO3',1],['H2O',1]]},{level:'mixed',r:[['Na',2],['Cl2',1]],p:[['NaCl',2]]},{level:'mixed',r:[['Mg',2],['O2',1]],p:[['MgO',2]]},{level:'mixed',r:[['K',4],['O2',1]],p:[['K2O',2]]},{level:'mixed',r:[['Na',4],['O2',1]],p:[['Na2O',2]]},
-{level:'hard',r:[['Na',4],['O2',1]],p:[['Na2O',2]]},{level:'hard',r:[['K',6],['B2O3',1]],p:[['K2O',3],['B',2]]},{level:'hard',r:[['Na',10],['NaNO3',2]],p:[['Na2O',6],['N2',1]]},{level:'hard',r:[['Rb',10],['RbNO3',2]],p:[['Rb2O',6],['N2',1]]},{level:'hard',r:[['N2',2],['O2',5]],p:[['N2O5',2]]},{level:'hard',r:[['C6H6',2],['O2',15]],p:[['CO2',12],['H2O',6]]},{level:'hard',r:[['Al',2],['S',3]],p:[['Al2S3',1]]}
+{level:'hard',r:[['Na',4],['O2',1]],p:[['Na2O',2]]},{level:'hard',r:[['K',6],['B2O3',1]],p:[['K2O',3],['B',2]]},{level:'hard',r:[['Na',10],['NaNO3',2]],p:[['Na2O',6],['N2',1]]},{level:'hard',r:[['Rb',10],['RbNO3',2]],p:[['Rb2O',6],['N2',1]]},{level:'hard',r:[['N2',2],['O2',5]],p:[['N2O5',2]]},{level:'hard',r:[['SO2',2],['O2',1]],p:[['SO3',2]]},{level:'hard',r:[['Al',2],['S',3]],p:[['Al2S3',1]]}
 ];
 let currentReaction=null;
 function reactionHTML(q){let idx=0;const side=arr=>arr.map(([s])=>`<input class="coef" data-i="${idx++}" inputmode="numeric" aria-label="koeffisient for ${s}"><span class="species formula">${prettyFormula(s)}</span>`).join('<span class="eqplus">+</span>');return `<div class="equation">${side(q.r)}<span class="arroweq">→</span>${side(q.p)}</div>`}
@@ -848,7 +909,7 @@ function newBinding(){
 const molecules2=[
 {f:'HCl',name:'hydrogenklorid',polar:true,weak:'Dipolbindinger',why:'HCl har en positiv og en negativ side.'},{f:'HBr',name:'hydrogenbromid',polar:true,weak:'Dipolbindinger',why:'HBr har et permanent dipolmoment.'},{f:'HF',name:'hydrogenfluorid',polar:true,weak:'Hydrogenbindinger',why:'H er bundet til F.'},{f:'H2O',name:'vann',polar:true,weak:'Hydrogenbindinger',why:'Vann er vinklet og H er bundet til O.'},{f:'NH3',name:'ammoniakk',polar:true,weak:'Hydrogenbindinger',why:'NH₃ er polart og H er bundet til N.'},{f:'CO',name:'karbonmonoksid',polar:true,weak:'Dipolbindinger',why:'CO er et polart molekyl.'},{f:'SO2',name:'svoveldioksid',polar:true,weak:'Dipolbindinger',why:'SO₂ er vinklet, så ladningsforskyvningen kanselleres ikke.'},
 {f:'O2',name:'oksygen',polar:false,weak:'Ingen av delene',why:'To like atomer gir et upolart molekyl.'},{f:'N2',name:'nitrogen',polar:false,weak:'Ingen av delene',why:'To like atomer gir et upolart molekyl.'},{f:'Cl2',name:'klor',polar:false,weak:'Ingen av delene',why:'To like atomer gir et upolart molekyl.'},{f:'CO2',name:'karbondioksid',polar:false,weak:'Ingen av delene',why:'CO₂ er lineært og symmetrisk.'},
-{f:'CH4',name:'metan',polar:false,weak:'Ingen av delene',why:'Metan er symmetrisk og upolart.'},{f:'C2H6',name:'etan',polar:false,weak:'Ingen av delene',why:'Etan er et upolart hydrokarbon.'},{f:'C3H8',name:'propan',polar:false,weak:'Ingen av delene',why:'Propan er et upolart hydrokarbon.'},{f:'C4H10',name:'butan',polar:false,weak:'Ingen av delene',why:'Butan er et upolart hydrokarbon.'},{f:'C6H14',name:'heksan',polar:false,weak:'Ingen av delene',why:'Heksan er et upolart hydrokarbon.'},{f:'C8H18',name:'oktan',polar:false,weak:'Ingen av delene',why:'Oktan er et upolart hydrokarbon.'},{f:'C6H6',name:'benzen',polar:false,weak:'Ingen av delene',why:'Benzen behandles her som et upolart hydrokarbon.'},
+{f:'CH4',name:'metan',polar:false,weak:'Ingen av delene',why:'Metan er symmetrisk og upolart.'},{f:'C2H6',name:'etan',polar:false,weak:'Ingen av delene',why:'Etan er et upolart hydrokarbon.'},{f:'C3H8',name:'propan',polar:false,weak:'Ingen av delene',why:'Propan er et upolart hydrokarbon.'},{f:'C4H10',name:'butan',polar:false,weak:'Ingen av delene',why:'Butan er et upolart hydrokarbon.'},{f:'C6H14',name:'heksan',polar:false,weak:'Ingen av delene',why:'Heksan er et upolart hydrokarbon.'},{f:'C8H18',name:'oktan',polar:false,weak:'Ingen av delene',why:'Oktan er et upolart hydrokarbon.'},
 {f:'olje',name:'olje',polar:false,weak:null,why:'Vanlig olje består hovedsakelig av upolare hydrokarboner.'},{f:'fett',name:'fett',polar:false,weak:null,why:'Fett er overveiende upolart.'},{f:'smør',name:'smør',polar:false,weak:null,why:'Smør inneholder mye fett og behandles her som hovedsakelig upolart.'}
 ];
 function moleculeVisual(m){if(['C4H10','C6H14','C8H18'].includes(m.f)){const structures={C4H10:'CH₃–CH₂–CH₂–CH₃',C6H14:'CH₃–(CH₂)₄–CH₃',C8H18:'CH₃–(CH₂)₆–CH₃'};return `<div class="molecule"><div class="structure">${structures[m.f]}</div><div class="mol-name">${m.name}</div></div>`}if(['olje','fett','smør'].includes(m.f))return `<div class="molecule"><div>${m.name}</div><div class="mol-name">stoffblanding / fettstoff</div></div>`;return `<div class="molecule formula"><div>${prettyFormula(m.f)}</div><div class="mol-name">${m.name}</div></div>`}
@@ -865,7 +926,7 @@ const saltSize=[
 {name:'BeO',charge:2,size:2,desc:'Be²⁺ og O²⁻ er små ioner'},{name:'MgS',charge:2,size:4,desc:'Mg²⁺ og S²⁻ er større enn Be²⁺ og O²⁻'},{name:'CaSe',charge:2,size:6,desc:'Ca²⁺ og Se²⁻ er større ioner'},{name:'SrTe',charge:2,size:8,desc:'Sr²⁺ og Te²⁻ er store ioner'}
 ];
 function saltSizePair(){const ch=rand([1,2]),pool=saltSize.filter(x=>x.charge===ch);let a=rand(pool),b=rand(pool.filter(x=>x.name!==a.name&&x.size!==a.size));return[a,b]}
-function newSolubility(){const mode=currentMode('solMode'),area=$('#solArea');if(mode==='like'){if(Math.random()<.22){const ans='Aceton';area.innerHTML=`<div class="question">Du skal løse opp et salt. Hvilket av disse løsemidlene vil egne seg best av alternativene?</div><div id="solOpts"></div>`;mc($('#solOpts'),['Heksan','Benzen','Dietyleter','Aceton'],ans,'solFb','Aceton er klart mest polart av disse fire alternativene.');return}const q=rand(likeBank2);area.innerHTML=`<div class="solubility-scene"><div class="beaker beaker-clean"><div class="beaker-label">${q.solute}</div></div><div class="arrow">→</div><div class="beaker beaker-clean"><div class="beaker-label">${q.solvent}</div></div></div><div class="question">Vil stoffene normalt blande/løse seg godt i hverandre?</div><div id="solOpts"></div>`;mc($('#solOpts'),['Ja','Nei'],q.ans,'solFb',q.why);return}
+function newSolubility(){const mode=currentMode('solMode'),area=$('#solArea');if(mode==='like'){if(Math.random()<.22){const ans='Alkohol';area.innerHTML=`<div class="question">Du skal løse opp et salt. Hvilket av disse løsemidlene vil egne seg best av alternativene?</div><div id="solOpts"></div>`;mc($('#solOpts'),['Olje','Heksan','Alkohol','Smør'],ans,'solFb','Alkohol er polart, mens olje, heksan og smør er hovedsakelig upolare.');return}const q=rand(likeBank2);area.innerHTML=`<div class="solubility-scene"><div class="beaker beaker-clean"><div class="beaker-label">${q.solute}</div></div><div class="arrow">→</div><div class="beaker beaker-clean"><div class="beaker-label">${q.solvent}</div></div></div><div class="question">Vil stoffene normalt blande/løse seg godt i hverandre?</div><div id="solOpts"></div>`;mc($('#solOpts'),['Ja','Nei'],q.ans,'solFb',q.why);return}
 if(mode==='saltstrength'){const [a,b]=saltSizePair(),strong=a.size<b.size?a:b,weak=a.size<b.size?b:a,askStrong=Math.random()<.7,ans=askStrong?strong.name:weak.name,q=askStrong?'Hvilket salt har sterkest tiltrekning mellom ionene?':'Hvilket salt vil, ut fra bare ionestørrelse, forventes å være lettere å trekke fra hverandre?';const why=`Ionene har samme ladningsstørrelse i begge saltene. ${strong.name} har kortere avstand mellom ionene enn ${weak.name}, og dermed sterkere tiltrekning.`;area.innerHTML=`<div class="ion-pair"><span class="ion-chip">${prettyFormula(a.name)}</span><span class="plus">vs.</span><span class="ion-chip">${prettyFormula(b.name)}</span></div><div class="question">${q}</div><div id="solOpts"></div>`;mc($('#solOpts'),[a.name,b.name],ans,'solFb',why);return}
 area.innerHTML=`<div class="question">Hva skjer når en løsning av NaCl blandes med en løsning av AgNO₃?</div><div id="solOpts"></div>`;mc($('#solOpts'),['Det dannes et bunnfall av AgCl','Alt fordamper','Det dannes H₂-gass','Ingen synlig reaksjon'], 'Det dannes et bunnfall av AgCl','solFb','Ag⁺ og Cl⁻ danner tungtløselig AgCl(s).')}
 bindDynamicSeg('solMode',newSolubility);
@@ -1055,7 +1116,7 @@ const boilingSetsV3=[
 ];
 newPolar=function(){const mode=currentMode('polarMode'),area=$('#polarArea');if(mode==='weak'&&Math.random()<.42){const q=rand(boilingSetsV3);area.innerHTML=`<div class="question">Hvilket stoff har høyest kokepunkt?</div><div id="polarOpts"></div>`;mc($('#polarOpts'),q.opts,q.a,'polarFb',q.e);return}if(mode==='weak'&&Math.random()<.35){const ans='NH3';area.innerHTML=`<div class="question">I hvilken av forbindelsene finner vi de sterkeste tiltrekningskreftene mellom molekylene?</div><div id="polarOpts"></div>`;mc($('#polarOpts'),['O2','Cl2','NH3','HBr'],ans,'polarFb','NH₃ kan danne hydrogenbindinger, som er sterkere enn dipolbindingene i HBr.');return}const pool=mode==='weak'?molecules2.filter(m=>m.weak):molecules2,m=rand(pool);area.innerHTML=`${moleculeVisual(m)}<div class="question">${mode==='polarity'?'Er stoffet/molekylet hovedsakelig polart eller upolart?':'Hva er den viktigste av disse svake bindingstypene mellom molekylene?'}</div><div id="polarOpts"></div>`;if(mode==='polarity')mc($('#polarOpts'),['Polart','Upolart'],m.polar?'Polart':'Upolart','polarFb',m.why);else mc($('#polarOpts'),['Dipolbindinger','Hydrogenbindinger','Ingen av delene'],m.weak,'polarFb',m.why)};
 
-newSolubility=function(){const mode=currentMode('solMode'),area=$('#solArea');if(mode==='like'){if(Math.random()<.22){const ans='Aceton';area.innerHTML=`<div class="question">Du skal løse opp et salt. Hvilket av disse løsemidlene vil egne seg best av alternativene?</div><div id="solOpts"></div>`;mc($('#solOpts'),['Heksan','Benzen','Dietyleter','Aceton'],ans,'solFb','Aceton er klart mest polart av disse fire alternativene.');return}const q=rand(likeBank2);area.innerHTML=`<div class="solubility-scene"><div class="beaker beaker-clean"><div class="beaker-label">${q.solute}</div></div><div class="arrow">→</div><div class="beaker beaker-clean"><div class="beaker-label">${q.solvent}</div></div></div><div class="question">Vil stoffene normalt blande/løse seg godt i hverandre?</div><div id="solOpts"></div>`;mc($('#solOpts'),['Ja','Nei'],q.ans,'solFb',q.why);return}
+newSolubility=function(){const mode=currentMode('solMode'),area=$('#solArea');if(mode==='like'){if(Math.random()<.22){const ans='Alkohol';area.innerHTML=`<div class="question">Du skal løse opp et salt. Hvilket av disse løsemidlene vil egne seg best av alternativene?</div><div id="solOpts"></div>`;mc($('#solOpts'),['Olje','Heksan','Alkohol','Smør'],ans,'solFb','Alkohol er polart, mens olje, heksan og smør er hovedsakelig upolare.');return}const q=rand(likeBank2);area.innerHTML=`<div class="solubility-scene"><div class="beaker beaker-clean"><div class="beaker-label">${q.solute}</div></div><div class="arrow">→</div><div class="beaker beaker-clean"><div class="beaker-label">${q.solvent}</div></div></div><div class="question">Vil stoffene normalt blande/løse seg godt i hverandre?</div><div id="solOpts"></div>`;mc($('#solOpts'),['Ja','Nei'],q.ans,'solFb',q.why);return}
 const [a,b]=saltSizePair(),strong=a.size<b.size?a:b,weak=a.size<b.size?b:a;const style=rand(['strong','easy','easy']);let ans,q;if(style==='strong'){ans=strong.name;q='Hvilket salt har sterkest tiltrekning mellom ionene?'}else{ans=weak.name;q='Hvilket salt vil mest sannsynlig løse seg lettest i vann, når vi sammenligner ut fra ionestørrelse?'}const why=`Ionene har samme ladningsstørrelse i begge saltene. ${strong.name} har mindre ioner og kortere avstand mellom ladningene, og dermed sterkere ionetiltrekning. ${weak.name} holdes derfor svakere sammen og forventes i denne modellen å løses lettere.`;area.innerHTML=`<div class="ion-pair"><span class="ion-chip">${prettyFormula(a.name)}</span><span class="plus">vs.</span><span class="ion-chip">${prettyFormula(b.name)}</span></div><div class="question">${q}</div><div id="solOpts"></div>`;mc($('#solOpts'),[a.name,b.name],ans,'solFb',why)};
 
 const solCard=[...document.querySelectorAll('.home-card')].find(x=>x.dataset.go==='solubility');if(solCard){const m=solCard.querySelector('.mini');if(m)m.textContent='Likt løser likt, ionestørrelse og styrke i salter.'}
@@ -1317,7 +1378,7 @@ function chargeContrastPair(){const one=rand(saltSize.filter(x=>x.charge===1)),t
 newSolubility=function(){
   const mode=currentMode('solMode'),area=$('#solArea');
   if(mode==='like'){
-    if(Math.random()<.22){const ans='Aceton';area.innerHTML=`<div class="question">Du skal løse opp et salt. Hvilket av disse løsemidlene vil egne seg best av alternativene?</div><div id="solOpts"></div>`;mc($('#solOpts'),['Heksan','Benzen','Dietyleter','Aceton'],ans,'solFb','Aceton er klart mest polart av disse fire alternativene.');return}
+    if(Math.random()<.22){const ans='Alkohol';area.innerHTML=`<div class="question">Du skal løse opp et salt. Hvilket av disse løsemidlene vil egne seg best av alternativene?</div><div id="solOpts"></div>`;mc($('#solOpts'),['Olje','Heksan','Alkohol','Smør'],ans,'solFb','Alkohol er polart, mens olje, heksan og smør er hovedsakelig upolare.');return}
     const q=rand(likeBank2);area.innerHTML=`<div class="solubility-scene"><div class="beaker beaker-clean"><div class="beaker-label">${q.solute}</div></div><div class="arrow">→</div><div class="beaker beaker-clean"><div class="beaker-label">${q.solvent}</div></div></div><div class="question">Vil stoffene normalt blande/løse seg godt i hverandre?</div><div id="solOpts"></div>`;mc($('#solOpts'),['Ja','Nei'],q.ans,'solFb',q.why);return
   }
   if(Math.random()<.42){
@@ -1384,7 +1445,8 @@ function v14PageGenerator(pageId){
     'page-polar':()=>newPolar(),
     'page-solubility':()=>newSolubility(),
     'page-balance':()=>newBalance(),
-    'page-combustion':()=>newCombustion()
+    'page-combustion':()=>newCombustion(),
+    'page-carbon':()=>newCarbon()
   };
   return map[pageId]||null;
 }
@@ -1486,7 +1548,7 @@ newSolubility=function(){
     if(Math.random()<.22){
       const ans='Aceton';
       area.innerHTML=`<div class="question">Du skal løse opp et salt. Hvilket av disse løsemidlene vil egne seg best av alternativene?</div><div id="solOpts"></div>`;
-      mc($('#solOpts'),['Heksan','Benzen','Dietyleter','Aceton'],ans,'solFb','Aceton er klart mest polart av disse fire alternativene.');
+      mc($('#solOpts'),['Olje','Heksan','Alkohol','Smør'],ans,'solFb','Aceton er klart mest polart av disse fire alternativene.');
       return;
     }
     const q=rand(likeBank2);
@@ -1611,7 +1673,7 @@ function v14PolarQuizItem(){
 function v14SolQuizItem(){
   const kind=rand(['like','sizeStrong','sizeEasy','chargeStrong','chargeEasy']);
   if(kind==='like'){
-    if(Math.random()<.18)return {topic:'Løselighet',q:'Du skal løse opp et salt. Hvilket av disse løsemidlene egner seg best?',a:'Aceton',o:['Heksan','Benzen','Dietyleter','Aceton'],e:'Aceton er klart mest polart av disse fire alternativene.'};
+    if(Math.random()<.18)return {topic:'Løselighet',q:'Du skal løse opp et salt. Hvilket av disse løsemidlene egner seg best?',a:'Alkohol',o:['Olje','Heksan','Alkohol','Smør'],e:'Alkohol er polart, mens olje, heksan og smør er hovedsakelig upolare.'};
     const q=rand(likeBank2);return {topic:'Løselighet',q:`Vil ${q.solute} normalt løses/blandes godt i ${q.solvent}?`,a:q.ans,o:['Ja','Nei'],e:q.why};
   }
   if(kind.startsWith('charge')){
@@ -3447,7 +3509,7 @@ bindDynamicSeg('solMode', newSolubility);</script>
     const root = document.getElementById('solArea');
     if(!root) return false;
     const txt = (root.textContent || '').replace(/\s+/g,' ').trim();
-    return /Aceton|Dietyleter|Benzen/.test(txt);
+    return /Aceton/.test(txt);
   }
 
   newSolubility = function(){
@@ -3485,6 +3547,333 @@ bindDynamicSeg('solMode', newSolubility);</script>
 
 
 <style id="kjemi-v35-center-simple-structures">.simple-struct{ width:100%; text-align:center; } .simple-struct .line, .simple-struct .name{ width:100%; text-align:center; }</style>
+
+
+<script id="kjemi-v40-classroom-and-textbook">
+(function(){
+
+  // ---------- Forsøk: Zalo/kanel + konditorfarge/vann/olje ----------
+  const v40SolubilityExperiments=[
+    {
+      scene:'Forsøk: Kanel ligger først på vannoverflaten. Når en dråpe Zalo tilsettes, brytes overflaten opp og mye av kanelen blir våt og synker.',
+      q:'Hva er den viktigste virkningen av Zalo i dette forsøket?',
+      o:['Zalo senker vannets overflatespenning','Zalo gjør vannet mye tettere','Zalo gjør kanel magnetisk','Zalo omdanner kanel til et salt'],
+      a:'Zalo senker vannets overflatespenning',
+      e:'Vannmolekylene tiltrekker hverandre og gir overflaten en tydelig overflatespenning. Tensidene i Zalo svekker denne effekten, slik at vannet lettere væter kanelpartiklene.'
+    },
+    {
+      scene:'Forsøk: Kanel kan ligge på vannoverflaten selv om kanelpartiklene ikke egentlig er lettere enn alt vann.',
+      q:'Hva viser dette best om vannoverflaten?',
+      o:['Overflatespenningen kan bidra til å holde små partikler oppe','Vannoverflaten har ingen tiltrekning mellom molekylene','Kanel reagerer kjemisk med vann og blir en gass','Tyngdekraften virker ikke på små partikler'],
+      a:'Overflatespenningen kan bidra til å holde små partikler oppe',
+      e:'Krefter mellom vannmolekylene gjør at overflaten oppfører seg litt som en spent hinne. Dette er en fysisk effekt, ikke en kjemisk reaksjon.'
+    },
+    {
+      scene:'Forsøk: Vann og olje danner to lag. Når vi drypper konditorfarge i glasset, blir vannlaget blått, mens oljelaget nesten ikke farges.',
+      q:'Hva forteller forsøket oss først og fremst?',
+      o:['Konditorfargen løses mye bedre i polart vann enn i upolar olje','Olje inneholder ikke molekyler','Vann og olje har samme polaritet','Konditorfarge kan bare bevege seg nedover på grunn av tyngdekraften'],
+      a:'Konditorfargen løses mye bedre i polart vann enn i upolar olje',
+      e:'Forsøket illustrerer «likt løser likt»: mange vanlige konditorfarger er vannløselige/polare og fordeler seg derfor i vannfasen, ikke i den upolare oljen.'
+    },
+    {
+      scene:'Forsøk: Konditorfarge tilsettes et glass med et tydelig vannlag og oljelag.',
+      q:'Hvilken observasjon støtter best regelen «likt løser likt»?',
+      o:['Fargen fordeler seg i vannet, mens oljen forblir omtrent ufarget','Vannet og oljen blir til ett nytt stoff','Oljen synker alltid under vannet','Fargen får vannet til å koke'],
+      a:'Fargen fordeler seg i vannet, mens oljen forblir omtrent ufarget',
+      e:'Vann er polart og olje hovedsakelig upolar. Et vannløselig fargestoff foretrekker derfor vannfasen.'
+    },
+    {
+      scene:'Du har vann, olje og et vannløselig fargestoff i samme glass.',
+      q:'Hvorfor legger vann og olje seg fortsatt i to faser selv etter omrøring?',
+      o:['Polare vannmolekyler og upolare oljemolekyler tiltrekker ikke hverandre nok til å blandes godt','Olje er et grunnstoff og kan derfor ikke blandes','Vann mangler elektroner','Olje reagerer alltid med oksygen og skiller seg ut'],
+      a:'Polare vannmolekyler og upolare oljemolekyler tiltrekker ikke hverandre nok til å blandes godt',
+      e:'Vann–vann og olje–olje er energetisk gunstigere enn å blande de to fasene fullstendig. Derfor skiller de lag.'
+    }
+  ];
+
+  const v40SolubilityBase=newSolubility;
+  newSolubility=function(){
+    const mode=currentMode('solMode');
+    if(mode==='like' && Math.random()<0.38){
+      const q=rand(v40SolubilityExperiments),area=$('#solArea');
+      area.innerHTML=`<div class="v40-context">${q.scene}</div><div class="question">${q.q}</div><div id="solOpts"></div>`;
+      mc($('#solOpts'),q.o,q.a,'solFb',q.e);
+      return;
+    }
+    return v40SolubilityBase();
+  };
+  bindDynamicSeg('solMode',newSolubility);
+
+  // ---------- Ioner og salter: karbonat + lærebokinspirert teori ----------
+  const v40IonSaltTasks=[
+    {
+      scene:'Nytt ion: karbonationet skrives CO3^2-.',
+      q:'Hva betyr ladningen ²⁻ i karbonationet CO3^2-?',
+      o:['Hele ionet har to flere elektroner enn den samlede positive kjerneladningen tilsvarer','Karbonat inneholder to karbonatomer','Hvert oksygenatom har ladning 2− i saltet','Ionets masse er 2 u'],
+      a:'Hele ionet har to flere elektroner enn den samlede positive kjerneladningen tilsvarer',
+      e:'CO₃²⁻ er et sammensatt, negativt ion. Tallet 2− er nettoladningen til hele ionet.'
+    },
+    {
+      scene:'Karbonationet er CO3^2- og natriumionet er Na^+.',
+      q:'Hvilken formel får det nøytrale saltet natriumkarbonat?',
+      o:['Na2CO3','NaCO3','Na3CO2','Na2CO2'],
+      a:'Na2CO3',
+      e:'To Na⁺ gir til sammen +2 og balanserer ett CO₃²⁻.'
+    },
+    {
+      scene:'Karbonationet er CO3^2- og kalsiumionet er Ca^2+.',
+      q:'Hvilken formel får kalsiumkarbonat?',
+      o:['CaCO3','Ca2CO3','Ca(CO3)2','Ca3CO2'],
+      a:'CaCO3',
+      e:'Ca²⁺ og CO₃²⁻ har like stor, motsatt ladning. Ett av hvert ion gir et nøytralt salt.'
+    },
+    {
+      scene:'Aluminiumionet er Al^3+ og karbonationet er CO3^2-.',
+      q:'Hvilken formel gir total ladning 0?',
+      o:['Al2(CO3)3','AlCO3','Al3(CO3)2','Al2CO3'],
+      a:'Al2(CO3)3',
+      e:'2 · (+3) = +6 og 3 · (−2) = −6. Derfor trengs 2 Al³⁺ og 3 karbonationer.'
+    },
+    {
+      scene:'Na2CO3 består av natriumioner og karbonationer.',
+      q:'Hva slags forbindelse er Na2CO3?',
+      o:['En ioneforbindelse (et salt)','Et rent metall','Et hydrokarbon','Et grunnstoff'],
+      a:'En ioneforbindelse (et salt)',
+      e:'Na₂CO₃ består av Na⁺ og CO₃²⁻ som holdes sammen av elektrostatisk tiltrekning.'
+    },
+    {
+      scene:'Natron har formelen NaHCO3 og heter natriumhydrogenkarbonat.',
+      q:'Hvilket negativt ion finnes i natron?',
+      o:['HCO3^-','CO3^2-','OH^-','O^2-'],
+      a:'HCO3^-',
+      e:'HCO₃⁻ kalles hydrogenkarbonationet. Ett Na⁺ balanserer ett HCO₃⁻.'
+    },
+    {
+      scene:'Natron (NaHCO3) blandes med en syre, og det begynner å bruse.',
+      q:'Hvilken gass er boblene hovedsakelig?',
+      o:['CO2','O2','H2','N2'],
+      a:'CO2',
+      e:'Hydrogenkarbonat reagerer med syre og danner blant annet CO₂-gass og vann. Gassen får blandingen til å bruse.'
+    },
+    {
+      scene:'I bakst kan natron brukes sammen med en sur ingrediens, for eksempel surmelk.',
+      q:'Hvorfor er den sure ingrediensen nyttig?',
+      o:['Syren reagerer med hydrogenkarbonat og frigjør CO2 som kan heve baksten','Syren gjør NaHCO3 om til metallisk natrium','Syren fjerner all gass fra deigen','Syren gjør vannet upolart'],
+      a:'Syren reagerer med hydrogenkarbonat og frigjør CO2 som kan heve baksten',
+      e:'CO₂-bobler dannes i syre–hydrogenkarbonat-reaksjonen og kan gjøre baksten luftig.'
+    },
+    {
+      scene:'K^+ og O^2- skal danne et elektrisk nøytralt salt.',
+      q:'Hvilken formel er riktig?',
+      o:['K2O','KO','K2O2','KO2'],
+      a:'K2O',
+      e:'To K⁺ gir +2 og balanserer ett O²⁻.'
+    },
+    {
+      scene:'Ca^2+ og Br^- skal danne et salt.',
+      q:'Hvilken formel er riktig?',
+      o:['CaBr2','Ca2Br','CaBr','Ca2Br2'],
+      a:'CaBr2',
+      e:'Ett Ca²⁺ trenger to Br⁻ for at total ladning skal bli 0.'
+    },
+    {
+      scene:'Ag^+ og I^- skal danne et salt.',
+      q:'Hvilken formel er riktig?',
+      o:['AgI','Ag2I','AgI2','Ag2I3'],
+      a:'AgI',
+      e:'Ladningene er +1 og −1, så forholdet blir 1:1.'
+    },
+    {
+      scene:'Al^3+ og S^2- skal danne et salt.',
+      q:'Hvilken formel er riktig?',
+      o:['Al2S3','AlS','Al3S2','Al2S'],
+      a:'Al2S3',
+      e:'2 · (+3) og 3 · (−2) gir +6 og −6.'
+    },
+    {
+      scene:'Et fast salt består av positive og negative ioner i et regelmessig gitter.',
+      q:'Hvorfor har mange salter høye smeltepunkter?',
+      o:['Det er sterke elektrostatiske krefter mellom motsatt ladde ioner','Ioner har ingen masse','Alle salter inneholder metallbinding','Saltmolekylene er fylt med luft'],
+      a:'Det er sterke elektrostatiske krefter mellom motsatt ladde ioner',
+      e:'Det krever mye energi å trekke ionene langt nok fra hverandre til at gitteret brytes opp.'
+    },
+    {
+      scene:'Vi kobler elektroder til først fast NaCl og deretter smeltet NaCl.',
+      q:'Hvorfor leder smeltet salt strøm, mens fast salt leder dårlig?',
+      o:['I smelten kan ionene bevege seg og transportere ladning; i fast salt er de låst i gitteret','Smeltet salt får frie protoner','Fast salt mangler ioner','Elektronene i fast salt blir til nøytroner'],
+      a:'I smelten kan ionene bevege seg og transportere ladning; i fast salt er de låst i gitteret',
+      e:'Strøm krever bevegelige ladningsbærere. I smelte eller løsning kan ionene flytte seg.'
+    },
+    {
+      scene:'Mange ioneforbindelser kan løses i vann.',
+      q:'Hva er en viktig grunn til at vann kan trekke ioner ut av et saltgitter?',
+      o:['Polare vannmolekyler kan orientere seg rundt og stabilisere positive og negative ioner','Vannmolekyler er upolare og avviser ionene','Vann omdanner alltid ioner til atomer','Salt mister protoner når det møter vann'],
+      a:'Polare vannmolekyler kan orientere seg rundt og stabilisere positive og negative ioner',
+      e:'Vannets positive og negative sider tiltrekkes av ionene. For mange salter kan dette bidra til å rive ionene ut av gitteret.'
+    }
+  ];
+
+  const v40IonSaltBase=newIonSalt;
+  newIonSalt=function(){
+    const mode=currentMode('ionSaltMode');
+    if(mode!=='transfer' && Math.random()<0.34){
+      const q=rand(v40IonSaltTasks),area=$('#ionSaltArea');
+      area.innerHTML=`<div class="v40-context">${prettyFormula(q.scene)}</div><div class="question">${prettyFormula(q.q)}</div><div id="ionSaltOpts"></div>`;
+      mc($('#ionSaltOpts'),q.o,q.a,'ionSaltFb',prettyFormula(q.e));
+      return;
+    }
+    return v40IonSaltBase();
+  };
+  bindDynamicSeg('ionSaltMode',newIonSalt);
+
+  // ---------- Sterke bindinger: oppgaver inspirert av 3.5 og 3.6 ----------
+  bondTheory.push(
+    {
+      q:'Hvorfor kan mange metaller valses til plater og trekkes ut til tråder uten at bindingene straks brytes?',
+      o:['Lag av metallioner kan forskyves mens de delokaliserte elektronene fortsatt holder strukturen sammen','Metallene består av separate molekyler som ikke tiltrekker hverandre','Metallatomene er bundet med hydrogenbindinger','Alle metallionene er negative'],
+      a:'Lag av metallioner kan forskyves mens de delokaliserte elektronene fortsatt holder strukturen sammen',
+      e:'Metallbindingen er ikke retningsbestemt på samme måte som et stivt molekylgitter. Det gjør metaller formbare og duktile.'
+    },
+    {
+      q:'Hvorfor leder metaller vanligvis elektrisk strøm godt?',
+      o:['De har delokaliserte elektroner som kan bevege seg gjennom materialet','Metallionene hopper ut av metallet','Metaller består alltid av oppløste ioner','Protonene kan flytte seg mellom atomkjernene'],
+      a:'De har delokaliserte elektroner som kan bevege seg gjennom materialet',
+      e:'I metallmodellen kan valenselektroner bevege seg gjennom strukturen og transportere elektrisk ladning.'
+    },
+    {
+      q:'Hvorfor kan aluminium brukes i noen ledninger selv om kobber leder strøm bedre?',
+      o:['Aluminium er mye lettere og kan være gunstig når masse og pris også betyr noe','Aluminium leder ikke strøm og brukes derfor som isolator','Kobber er alltid flytende i ledninger','Aluminium har ingen elektroner'],
+      a:'Aluminium er mye lettere og kan være gunstig når masse og pris også betyr noe',
+      e:'Materialvalg handler om flere egenskaper samtidig: ledningsevne, masse, pris og mekaniske egenskaper.'
+    },
+    {
+      q:'Gull, sølv og platina kalles ofte edle metaller. Hva kjennetegner dem?',
+      o:['De reagerer relativt lite og oksideres vanskelig','De har alltid lavest smeltepunkt','De består av ionebindinger','De kan ikke lede strøm'],
+      a:'De reagerer relativt lite og oksideres vanskelig',
+      e:'Edle metaller er lite reaktive sammenliknet med mange andre metaller.'
+    },
+    {
+      q:'Hvilke av disse molekylene har en dobbeltbinding mellom atomene?',
+      o:['O2','N2','H2','HCl'],
+      a:'O2',
+      e:'O₂ har en dobbeltbinding. N₂ har trippelbinding, mens H₂ og HCl har enkeltbinding.'
+    },
+    {
+      q:'Hvilke av disse molekylene har en trippelbinding mellom atomene?',
+      o:['N2','O2','H2','HCl'],
+      a:'N2',
+      e:'Nitrogenmolekylet N₂ har tre delte elektronpar mellom nitrogenatomene.'
+    }
+  );
+
+  // ---------- Balansering: reaksjoner fra/etter mønsteret i lærebokoppgavene ----------
+  reactions.push(
+    {level:'basic',r:[['S',1],['O2',1]],p:[['SO2',1]]},
+    {level:'basic',r:[['N2',1],['O2',1]],p:[['NO',2]]},
+    {level:'mixed',r:[['N2',1],['O2',2]],p:[['NO2',2]]},
+    {level:'mixed',r:[['O3',2]],p:[['O2',3]]},
+    {level:'mixed',r:[['Na',2],['H2O',2]],p:[['NaOH',2],['H2',1]]},
+    {level:'mixed',r:[['Ca',1],['H2O',2]],p:[['Ca(OH)2',1],['H2',1]]}
+  );
+
+  // ---------- Karbonkjemi: et par nye sammenlikningsoppgaver fra tabell/struktur ----------
+  carbonBanks.inorganic.push(
+    {
+      tag:'Grafitt og diamant',
+      scene:'Diamant og grafitt består begge bare av karbon, men diamant er svært hardt mens grafitt er mykt.',
+      q:'Hva er den beste forklaringen på forskjellen i hardhet?',
+      o:['Diamant har et sterkt tredimensjonalt nettverk; grafitt har lag som lettere kan gli mot hverandre','Grafitt inneholder ikke kjemiske bindinger','Diamant består av metallioner','Grafitt er egentlig flytende ved romtemperatur'],
+      a:'Diamant har et sterkt tredimensjonalt nettverk; grafitt har lag som lettere kan gli mot hverandre',
+      e:'Strukturen er avgjørende: diamant er bundet i et 3D-nettverk, mens grafitt består av sterke lag med svakere binding mellom lagene.'
+    },
+    {
+      tag:'Struktur og tetthet',
+      scene:'Diamant og grafitt har ulik tetthet selv om begge består av karbonatomer.',
+      q:'Hva kan forklare at allotroper av samme grunnstoff får ulik tetthet?',
+      o:['Atomene er pakket og organisert forskjellig i strukturene','Karbonatomene har ulikt antall protoner i diamant og grafitt','Bare grafitt har elektroner','Tetthet bestemmes bare av fargen til stoffet'],
+      a:'Atomene er pakket og organisert forskjellig i strukturene',
+      e:'Samme atomtype kan gi forskjellig masse per volum når atomene er ordnet og pakket på ulike måter.'
+    }
+  );
+
+  // ---------- Blandet quiz: kjemisk reaksjon + saltteori fra bildene ----------
+  testInspired.push(
+    ()=>({
+      topic:'Kjemiske reaksjoner',
+      q:'To blanke løsninger blandes, og det dannes et fast stoff i bunnen. Hva er den beste tolkningen?',
+      a:'Det tyder på at en kjemisk reaksjon har dannet et nytt, tungtløselig stoff',
+      o:['Det tyder på at en kjemisk reaksjon har dannet et nytt, tungtløselig stoff','Det må bare ha skjedd fordamping','Ingen endring har skjedd fordi løsningene var blanke først','Væsken har bare blitt kaldere'],
+      e:'Dannelse av bunnfall er et tydelig tegn på at nye stoffer kan ha blitt dannet.'
+    }),
+    ()=>({
+      topic:'Kjemiske reaksjoner',
+      q:'Vann fordamper fra et glass. Er dette i seg selv en kjemisk reaksjon?',
+      a:'Nei, det er en fysisk faseendring',
+      o:['Nei, det er en fysisk faseendring','Ja, vann blir til et nytt grunnstoff','Ja, fordi gass alltid betyr kjemisk reaksjon','Ja, fordi O–H-bindingene nødvendigvis brytes'],
+      e:'H₂O-molekylene er fortsatt H₂O. Bare aggregattilstanden endres.'
+    }),
+    ()=>({
+      topic:'Kjemiske reaksjoner',
+      q:'En gul løsning blandes med en blank løsning, og blandingen blir rød. Hva kan observasjonen tyde på?',
+      a:'Det kan ha skjedd en kjemisk reaksjon som danner stoffer med andre egenskaper',
+      o:['Det kan ha skjedd en kjemisk reaksjon som danner stoffer med andre egenskaper','Fargeendring kan aldri være tegn på reaksjon','Alle fargeendringer skyldes bare fordamping','Atomene har forsvunnet'],
+      e:'Fargeendring kan være et tegn på kjemisk reaksjon, men bør vurderes sammen med hva slags stoffer som er blandet.'
+    }),
+    ()=>({
+      topic:'Ioner og salter',
+      q:'Hvorfor leder et smeltet salt strøm bedre enn det samme saltet i fast form?',
+      a:'Ionene kan bevege seg i smelten, men er låst i det faste ionegitteret',
+      o:['Ionene kan bevege seg i smelten, men er låst i det faste ionegitteret','Fast salt inneholder ingen ladde partikler','Smelting lager frie protoner','Elektronene forsvinner ved størkning'],
+      e:'Bevegelige ladningsbærere er nødvendig for strøm. I smeltet salt kan ionene vandre.'
+    }),
+    ()=>({
+      topic:'Ioner og salter',
+      q:'Hvilken formel får forbindelsen mellom Al^3+ og S^2-?',
+      a:'Al2S3',
+      o:['Al2S3','Al3S2','AlS','Al2S'],
+      e:'Minste felles ladning er 6: to Al³⁺ og tre S²⁻.'
+    }),
+    ()=>({
+      topic:'Sterke bindinger',
+      q:'Hvorfor er grafitt en mye bedre elektrisk leder enn diamant?',
+      a:'Grafitt har delokaliserte elektroner som kan bevege seg langs lagene',
+      o:['Grafitt har delokaliserte elektroner som kan bevege seg langs lagene','Diamant mangler karbonatomer','Grafitt består av kobberioner','Diamant har ingen valenselektroner'],
+      e:'Bindingene og elektronstrukturen er ulike i de to karbonallotropene.'
+    })
+  );
+
+  // ---------- Ekstra sikkerhet for eldre, utgåtte oppgavevarianter ----------
+  const v40MakeQuizBase=makeQuizItem;
+  makeQuizItem=function(level){
+    for(let i=0;i<50;i++){
+      const item=v40MakeQuizBase(level);
+      const hay=JSON.stringify(item||{});
+      if(!/C6H6/.test(hay))return item;
+    }
+    return {
+      topic:'Løselighet',
+      q:'Hvorfor blander olje og vann seg dårlig?',
+      a:'Olje er hovedsakelig upolar, mens vann er polart',
+      o:['Olje er hovedsakelig upolar, mens vann er polart','Begge er ioneforbindelser','Vann er upolart og olje er et salt','Olje mangler molekyler'],
+      e:'«Likt løser likt»: polaritet påvirker hvilke stoffer som blandes godt.'
+    };
+  };
+
+  // Fjern eventuelle C6H6-reaksjoner som kan ligge igjen i reaksjonsbanken.
+  for(let i=reactions.length-1;i>=0;i--){
+    const raw=JSON.stringify(reactions[i]);
+    if(raw.includes('C6H6'))reactions.splice(i,1);
+  }
+
+  // Oppdater skjulte startoppgaver etter at bankene er renset/utvidet.
+  try{newPolar()}catch(e){}
+  try{newSolubility()}catch(e){}
+  try{newIonSalt()}catch(e){}
+  try{newBinding()}catch(e){}
+  try{newBalance()}catch(e){}
+})();
+</script>
+
 
 <script id="kjemi-v31-anti-repeat">
 (function(){
@@ -3772,16 +4161,98 @@ function toggleNaturfagFullscreen(){
   }
 }
 (function(){
+  const root=document.documentElement;
   const btn=document.getElementById('collapseBtn');
-  if(!btn)return;
-  const sync=()=>{
-    const closed=document.body.classList.contains('side-collapsed');
-    btn.textContent=closed?'›':'‹';
-    btn.setAttribute('aria-label',closed?'Vis sidemenyen':'Minimer sidemenyen');
-    btn.title=closed?'Vis sidemenyen':'Minimer sidemenyen';
+  const resizer=document.getElementById('nf-sidebar-resizer');
+  const STORE='naturfagSidebarWidthV40';
+  const MIN=210,MAX=460,DEFAULT=240;
+  let dragging=false;
+
+  const clampWidth=v=>Math.max(MIN,Math.min(MAX,Math.round(v)));
+  const setWidth=(value,save=true)=>{
+    const w=clampWidth(value);
+    root.style.setProperty('--sidebar',w+'px');
+    resizer?.setAttribute('aria-valuenow',String(w));
+    if(save){try{localStorage.setItem(STORE,String(w))}catch(e){}}
   };
-  btn.addEventListener('click',()=>setTimeout(sync,0));
-  sync();
+
+  try{
+    const saved=Number(localStorage.getItem(STORE));
+    setWidth(Number.isFinite(saved)&&saved>=MIN&&saved<=MAX?saved:DEFAULT,false);
+  }catch(e){
+    setWidth(DEFAULT,false);
+  }
+
+  if(resizer){
+    resizer.addEventListener('pointerdown',e=>{
+      if(document.body.classList.contains('side-collapsed'))return;
+      dragging=true;
+      document.body.classList.add('nf-sidebar-resizing');
+      resizer.setPointerCapture?.(e.pointerId);
+      e.preventDefault();
+    });
+    resizer.addEventListener('pointermove',e=>{
+      if(!dragging)return;
+      setWidth(e.clientX);
+    });
+    const stop=e=>{
+      if(!dragging)return;
+      dragging=false;
+      document.body.classList.remove('nf-sidebar-resizing');
+      try{resizer.releasePointerCapture?.(e.pointerId)}catch(_){}
+    };
+    resizer.addEventListener('pointerup',stop);
+    resizer.addEventListener('pointercancel',stop);
+    resizer.addEventListener('dblclick',()=>setWidth(DEFAULT));
+    resizer.addEventListener('keydown',e=>{
+      const current=parseInt(getComputedStyle(root).getPropertyValue('--sidebar'))||DEFAULT;
+      if(e.key==='ArrowLeft'){setWidth(current-10);e.preventDefault()}
+      if(e.key==='ArrowRight'){setWidth(current+10);e.preventDefault()}
+      if(e.key==='Home'){setWidth(MIN);e.preventDefault()}
+      if(e.key==='End'){setWidth(MAX);e.preventDefault()}
+    });
+  }
+
+  if(btn){
+    const sync=()=>{
+      const closed=document.body.classList.contains('side-collapsed');
+      btn.textContent=closed?'›':'‹';
+      btn.setAttribute('aria-label',closed?'Vis sidemenyen':'Minimer sidemenyen');
+      btn.title=closed?'Vis sidemenyen':'Minimer sidemenyen';
+    };
+    btn.addEventListener('click',()=>setTimeout(sync,0));
+    sync();
+  }
+})();
+</script>
+
+
+<script id="kjemi-v41-mode-lock">
+(function(){
+  const bindings=[
+    ['atomMode',()=>newAtom()],
+    ['periodicMode',()=>newPeriodic()],
+    ['ionMode',()=>newIon()],
+    ['saltMode',()=>newSalt()],
+    ['ionSaltMode',()=>newIonSalt()],
+    ['polarMode',()=>newPolar()],
+    ['solMode',()=>newSolubility()],
+    ['balLevel',()=>newBalance()],
+    ['carbonMode',()=>newCarbon()]
+  ];
+
+  bindings.forEach(([id,generator])=>{
+    const seg=document.getElementById(id);
+    if(!seg)return;
+    seg.querySelectorAll('button').forEach(button=>{
+      button.onclick=()=>{
+        if(button.classList.contains('active'))return;
+        seg.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+        button.classList.add('active');
+        generator();
+      };
+    });
+  });
 })();
 </script>
 

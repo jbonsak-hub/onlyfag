@@ -28,9 +28,11 @@
     }
 
     main {
+      position: relative;
       width: min(920px, calc(100% - 40px));
+      min-height: 100vh;
       margin: 0 auto;
-      padding: 80px 0 60px;
+      padding: 80px 0 96px;
     }
 
     header {
@@ -106,6 +108,47 @@
       font-size: 0.9rem;
     }
 
+
+    .teacher-tools {
+      position: absolute;
+      right: 0;
+      bottom: 24px;
+      display: flex;
+      justify-content: flex-end;
+      margin: 0;
+    }
+
+    .teacher-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: rgba(255,255,255,0.55);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 600;
+      transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .teacher-link:hover {
+      color: var(--text);
+      border-color: #c9c9c4;
+      background: var(--card);
+    }
+
+    .teacher-link:focus-visible {
+      outline: 3px solid rgba(31, 95, 74, 0.18);
+      outline-offset: 3px;
+    }
+
+    .teacher-link .teacher-icon {
+      font-size: 0.9rem;
+      opacity: 0.72;
+    }
+
     @media (max-width: 720px) {
       main {
         padding-top: 48px;
@@ -117,6 +160,11 @@
 
       .subject {
         min-height: 150px;
+      }
+
+      .teacher-tools {
+        right: 0;
+        bottom: 18px;
       }
     }
   </style>
@@ -161,6 +209,14 @@
       </a>
 
     </section>
+
+    <div class="teacher-tools" aria-label="Verktøy for lærere">
+      <a class="teacher-link" href="klassekart/" title="Klassekart">
+        <span class="teacher-icon" aria-hidden="true">▦</span>
+        <span>Klassekart</span>
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
 </main>
 </body>
 </html>
