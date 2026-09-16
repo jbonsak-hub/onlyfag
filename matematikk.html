@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Matematikk – OnlyFag</title>
+<meta name="description" content="Interaktive matematikkressurser og hurtigøving på OnlyFag.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='13' fill='%235b2d90'/%3E%3Ctext x='12' y='49' fill='white' font-family='Georgia,serif' font-size='48' font-style='italic' font-weight='700'%3EM%3C/text%3E%3C/svg%3E">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--sidebar-width:300px;--purple:#5b2d90;--purple-dark:#472270;--paper:#fff;--bg:#f5f5f5;--ink:#26222b;--muted:#6b6570;--line:#e0e0e0;--soft:#f7f0ff;--soft2:#eee6f6;--ok:#247349;--bad:#ac2948}
+html[data-theme="dark"]{--paper:#1b181f;--bg:#121016;--ink:#eeeaf3;--muted:#bfb6c5;--line:#42394a;--soft:#2b2136;--soft2:#33283e;--purple:#c58df0;--purple-dark:#d7b0f5;--ok:#87d7a9;--bad:#ffa1b1;color-scheme:dark}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;display:flex;min-height:100vh;background:var(--bg);color:var(--ink)}
+button,input{font:inherit}
+button{cursor:pointer}
+.sidebar{width:var(--sidebar-width);min-width:220px;max-width:520px;flex:0 0 auto;background:var(--paper);border-right:1px solid var(--line);padding:20px 0;overflow-y:auto;position:sticky;top:0;height:100vh;transition:width .18s,min-width .18s,max-width .18s,padding .18s,border-color .18s}
+.sidebar h1{font-size:1.15rem;padding:0 20px 15px;color:var(--purple);border-bottom:1px solid var(--line);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.global-theme-toggle{width:30px;height:30px;flex:0 0 30px;border:1px solid #d9cce6;border-radius:8px;background:var(--soft);color:var(--purple);font:700 1rem/1 inherit;cursor:pointer}
+.menu-header{display:flex;align-items:center;padding:10px 20px;color:var(--ink);font-weight:650;cursor:pointer;transition:.15s}
+.menu-header:hover,.menu-header.active{background:var(--soft);color:var(--purple)}
+.menu-icon{width:20px;margin-right:10px;font-size:.75rem;color:var(--muted);text-align:center}
+.submenu{display:none;background:color-mix(in srgb,var(--paper) 92%,var(--bg))}.submenu.open{display:block}
+.submenu-item{padding:9px 20px 9px 50px;color:var(--muted);cursor:pointer;transition:.15s;font-size:.92rem}
+.submenu-item:hover,.submenu-item.active{background:var(--soft2);color:var(--purple);font-weight:650}
+.onlyfag-back-arrow{display:flex;width:38px;height:38px;margin:24px 16px 0;align-items:center;justify-content:center;border-radius:10px;color:var(--purple);text-decoration:none;font-size:1.35rem;border:1px solid var(--line);background:var(--paper)}
+.onlyfag-back-arrow:hover{background:var(--soft)}
+.sidebar-resizer{position:sticky;top:0;width:8px;height:100vh;flex:0 0 8px;cursor:col-resize;touch-action:none;background:transparent}
+.sidebar-resizer::before{content:"";position:absolute;inset:0 3px;background:transparent;transition:.15s}
+.sidebar-resizer:hover::before,body.sidebar-resizing .sidebar-resizer::before{background:#7d4cc2}
+.sidebar-toggle{position:fixed;z-index:1000;left:calc(var(--sidebar-width) - 1px);top:50%;transform:translateY(-50%);width:25px;height:44px;border:0;border-radius:0 8px 8px 0;background:#6b329e;color:#fff;font:700 1.18rem/1 inherit;box-shadow:0 2px 8px rgba(35,20,48,.2);transition:left .18s}
+body.sidebar-collapsed .sidebar{width:0!important;min-width:0;max-width:0;padding:0;border-right:0;overflow:hidden}
+body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sidebar-toggle{left:0}
+.content{flex:1;min-width:0;padding:30px 40px;max-width:1250px}
+.page-section{display:none;animation:fade .15s ease-in;background:var(--paper);border-radius:14px;padding:28px;box-shadow:0 2px 10px rgba(0,0,0,.06)}.page-section.active{display:block}
+@keyframes fade{from{opacity:.4;transform:translateY(3px)}to{opacity:1;transform:none}}
+.placeholder{background:var(--paper);border:2px dashed var(--line);border-radius:14px;padding:56px 40px;color:var(--muted)}
+.placeholder h2,.page-section h2{color:var(--purple);margin-bottom:14px;font-weight:700}
+.module-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:22px}
+.module-card{border:1px solid var(--line);border-radius:14px;background:var(--paper);padding:17px;text-align:left;color:var(--ink);cursor:pointer;transition:.15s}
+.module-card:hover{transform:translateY(-1px);border-color:#9f7fc2;box-shadow:0 4px 14px rgba(75,37,120,.08)}.module-card strong{display:block;color:var(--purple);font-size:1.05rem;margin:0}.module-card span{display:none}
+.btn{border:0;border-radius:9px;padding:10px 15px;font-weight:750;background:#5b2d90;color:#fff}.btn:hover{background:#472270}.btn.secondary{background:var(--soft2);color:var(--purple);border:1px solid var(--line)}.btn.ghost{background:transparent;color:var(--purple);border:1px solid var(--line)}
+[hidden]{display:none!important}
+
+/* Hurtigfaktorisering */
+#hurtigfaktorisering{--hf-accent:var(--purple);max-width:1060px}
+.hf-introtext{max-width:820px;color:var(--muted);line-height:1.55;margin-bottom:16px}
+.hf-rule{border-left:4px solid var(--purple);padding:12px 18px 8px;margin:16px 0;background:var(--soft);border-radius:0 8px 8px}
+.hf-rule math{font-size:1.35rem;margin-bottom:8px} math{font-family:"Cambria Math","STIX Two Math","Latin Modern Math",serif}
+.hf-examples{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:16px 0}
+.hf-examples article{border:1px solid var(--line);padding:15px;border-radius:10px}.hf-examples h3{font-size:1rem;color:var(--purple);margin-bottom:8px}.hf-examples p{color:var(--muted);line-height:1.45;font-size:.92rem;margin:7px 0}
+.hf-math{font-size:1.18rem;line-height:1.8;overflow-x:auto;padding:3px 0}
+.hf-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0 12px}
+.hf-choice{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);background:var(--paper);border-radius:11px;padding:12px;cursor:pointer}
+.hf-choice:has(input:checked){background:var(--soft);border-color:#9d72c5}.hf-choice input{width:18px;height:18px;margin-top:1px;accent-color:#5b2d90}.hf-choice strong{display:block;color:var(--ink);margin-bottom:3px}.hf-choice small{color:var(--muted);line-height:1.35}
+.hf-mode-error{min-height:20px;color:var(--bad);font-size:.88rem;margin:2px 0 10px}
+.hf-startline{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid var(--line);padding-top:16px}.hf-bank{color:var(--muted);font-size:.9rem}
+.hf-topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}.hf-score{display:flex;gap:24px;color:var(--muted)}.hf-score strong{color:var(--ink);font-size:1.15rem;margin-left:4px}
+.hf-question{border:1px solid var(--line);border-radius:12px;background:var(--soft);padding:20px;text-align:center}.hf-question-meta{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:.86rem;margin-bottom:18px}.hf-problem{font-size:2rem;margin:3px 0}
+.hf-answer-area{margin-top:18px}.hf-answer-area>label{display:block;font-weight:650;margin-bottom:7px}.hf-answer-row{display:flex;gap:9px}.hf-text{width:100%;min-width:0;flex:1;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink);padding:12px;font-family:ui-monospace,Consolas,monospace;font-size:1.08rem}
+.hf-roots-inputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.hf-root-field label{display:block;color:var(--muted);font-size:.85rem;margin-bottom:5px}.hf-root-field input{width:100%;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink);padding:12px;font-family:ui-monospace,Consolas,monospace;font-size:1.08rem}
+.hf-help{color:var(--muted);font-size:.84rem;line-height:1.4;margin-top:8px}.hf-error{min-height:20px;color:var(--bad);font-size:.88rem;margin-top:6px}
+.hf-giveup{margin-top:8px;border:0;background:transparent;color:var(--purple);padding:5px 0}
+.hf-feedback{margin-top:18px;padding:17px 18px;border:1px solid var(--line);border-left:4px solid var(--bad);border-radius:9px;background:var(--soft)}.hf-feedback[data-correct="true"]{border-left-color:var(--ok)}.hf-feedback h3{color:var(--bad);margin-bottom:6px}.hf-feedback[data-correct="true"] h3{color:var(--ok)}.hf-feedback p{line-height:1.48;margin:5px 0}
+.hf-feedback-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.9fr);gap:22px;align-items:start}.hf-answer-box{border:1px solid var(--line);border-radius:9px;background:var(--paper);padding:15px}.hf-answer-box h4{color:var(--purple);margin-bottom:10px}.hf-answer-label{font-size:.82rem;color:var(--muted);margin-top:9px}
+.hf-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.hf-summary{max-width:620px;margin:20px auto}.hf-summary-scores{display:flex;gap:42px;margin:18px 0}.hf-summary-scores strong{display:block;font-size:2rem}.hf-summary-scores span{color:var(--muted);font-size:.88rem}
+
+/* Pi */
+#pi-trener{max-width:920px}
+.pi-shell{max-width:720px;margin:5vh auto 0;text-align:center}
+.pi-symbol{font-family:Georgia,"Times New Roman",serif;font-size:5.3rem;line-height:1;color:var(--purple);margin-bottom:8px}
+.pi-stats{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}.pi-pill{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--soft);font-size:.86rem;color:var(--muted)}.pi-pill strong{color:var(--ink)}
+.pi-display{min-height:170px;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--paper) 92%,var(--soft));padding:26px 22px;display:flex;align-items:center;justify-content:center;margin:12px 0;overflow:hidden}
+.pi-digits{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:clamp(1.35rem,4.4vw,2.35rem);font-weight:750;line-height:1.28;letter-spacing:.035em;max-width:100%;overflow:auto;scrollbar-width:thin;text-align:left}
+.pi-mainline,.pi-errorline{display:flex;align-items:flex-end;white-space:nowrap;width:max-content;min-width:100%}
+.pi-mainline{color:var(--purple)}
+.pi-errorline{min-height:1.25em;margin-top:.06em}
+.pi-prefix{color:var(--purple)}.pi-prefix.ghost{visibility:hidden}
+.pi-correcttrail{color:var(--purple)}
+.pi-future{color:var(--muted);margin-left:.5em}
+.pi-error-pad{display:inline-block;width:0}
+.pi-wrong-inline{color:var(--bad);font-weight:850;text-decoration:line-through;text-decoration-thickness:.1em}
+.pi-cursor{display:inline-block;width:.55em;border-bottom:3px solid var(--purple);transform:translateY(-.1em);animation:blink 1s steps(1) infinite}@keyframes blink{50%{opacity:.2}}
+.pi-input{width:min(420px,100%);margin:6px auto 0;display:block;border:2px solid #9d72c5;border-radius:12px;background:var(--paper);color:var(--ink);padding:14px 16px;text-align:center;font-size:1.15rem;font-weight:700;letter-spacing:.08em;outline:none}.pi-input:focus{box-shadow:0 0 0 4px color-mix(in srgb,#7d4cc2 18%,transparent)}
+.pi-actions{margin-top:12px}
+
+@media(max-width:760px){
+  body{display:block}.sidebar{position:relative;width:100%!important;min-width:0;max-width:none;height:auto;padding-bottom:12px}.sidebar-resizer,.sidebar-toggle{display:none}.content{padding:16px}.page-section{padding:20px 16px;border-radius:12px}.placeholder{padding:30px 22px}
+  .hf-examples,.hf-options,.hf-feedback-grid,.hf-roots-inputs{grid-template-columns:1fr}.hf-answer-row{flex-direction:column}.hf-startline{align-items:stretch;flex-direction:column}.hf-startline .btn{width:100%}.hf-problem{font-size:1.7rem}
+  .pi-shell{margin:1vh auto 0}.pi-symbol{font-size:4.5rem}.pi-display{min-height:145px;padding:18px 12px}.pi-input{font-size:1.1rem;padding:15px}.pi-digits{font-size:clamp(1.25rem,6vw,1.8rem)}
+}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <h1><span>∑ Matematikk</span><button aria-label="Bytt mellom lys og mørk modus" class="global-theme-toggle" id="themeToggle" title="Mørk modus" type="button">◐</button></h1>
+  <div class="menu-item">
+    <div class="menu-header active" onclick="toggleMenu(this)"><span class="menu-icon">▼</span>Øving</div>
+    <div class="submenu open">
+      <div class="submenu-item" data-section="hurtigfaktorisering" onclick="showContent('hurtigfaktorisering',this)">Hurtigfaktorisering</div>
+      <div class="submenu-item" data-section="pi-trener" onclick="showContent('pi-trener',this)">π</div>
+    </div>
+  </div>
+  <a class="onlyfag-back-arrow" href="index.html" aria-label="Tilbake til hovedsiden" title="Tilbake til hovedsiden">←</a>
+</nav>
+<button aria-expanded="true" aria-label="Minimer sidemenyen" class="sidebar-toggle" id="sidebarToggle" title="Minimer sidemenyen" type="button">‹</button>
+<div class="sidebar-resizer" id="sidebarResizer" role="separator" aria-orientation="vertical" aria-valuemin="220" aria-valuemax="520" aria-valuenow="300" tabindex="0"></div>
+
+<main class="content">
+  <div class="placeholder" id="welcome">
+    <h2>Matematikk</h2>
+    <div class="module-cards">
+      <button class="module-card" onclick="showContent('hurtigfaktorisering',document.querySelector('[data-section=&quot;hurtigfaktorisering&quot;]'))"><strong>Hurtigfaktorisering</strong></button>
+      <button class="module-card" onclick="showContent('pi-trener',document.querySelector('[data-section=&quot;pi-trener&quot;]'))"><strong>π</strong></button>
+    </div>
+  </div>
+
+  <section class="page-section" id="hurtigfaktorisering">
+    <h2>Hurtigfaktorisering</h2>
+    <div id="hf-intro">
+      <p class="hf-introtext">Se etter to tall med riktig <strong>sum</strong> og <strong>produkt</strong>. Oppgavene varierer mellom vanlig sum/produkt, kvadratsetninger, felles faktor, annet tall foran x² og noen π-varianter.</p>
+      <div class="hf-rule">
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msup><mi>x</mi><mn>2</mn></msup><mo>+</mo><mi>b</mi><mi>x</mi><mo>+</mo><mi>c</mi><mo>=</mo><mo>(</mo><mi>x</mi><mo>+</mo><mi>d</mi><mo>)</mo><mo>(</mo><mi>x</mi><mo>+</mo><mi>e</mi><mo>)</mo></mrow></math>
+        <p>Finn <math><mi>d</mi></math> og <math><mi>e</mi></math> slik at <math><mrow><mi>d</mi><mo>+</mo><mi>e</mi><mo>=</mo><mi>b</mi></mrow></math> og <math><mrow><mi>d</mi><mo>·</mo><mi>e</mi><mo>=</mo><mi>c</mi></mrow></math>.</p>
+      </div>
+      <div class="hf-examples">
+        <article><h3>Finn to tall</h3><div class="hf-math" data-hf-expr="x^2+5x+6"></div><p>2 og 3 passer: summen er 5 og produktet er 6.</p><div class="hf-math" data-hf-equality="x^2+5x+6|(x+2)(x+3)"></div></article>
+        <article><h3>Trekk ut felles faktor først</h3><div class="hf-math" data-hf-expr="2x^2-8x-42"></div><p>Trekk ut 2. Deretter gir 3 og −7 sum −4 og produkt −21.</p><div class="hf-math" data-hf-equality="2x^2-8x-42|2(x+3)(x-7)"></div></article>
+      </div>
+
+      <h3 style="margin:22px 0 8px;color:var(--purple)">Hva vil du øve på?</h3>
+      <div class="hf-options">
+        <label class="hf-choice"><input type="checkbox" id="hf-mode-factor" checked><span><strong>Finn faktorisering</strong><small>Skriv svaret med parenteser, for eksempel (x+2)(x−3).</small></span></label>
+        <label class="hf-choice"><input type="checkbox" id="hf-mode-roots" checked><span><strong>Finn løsninger</strong><small>Skriv x-verdiene direkte. Velg bare denne for raskest mulig øving.</small></span></label>
+      </div>
+      <div class="hf-mode-error" id="hf-mode-error"></div>
+      <div class="hf-startline"><span class="hf-bank" id="hf-bank-size"></span><button type="button" class="btn" id="hf-start">Start øving →</button></div>
+    </div>
+
+    <div id="hf-practice" hidden>
+      <div class="hf-topbar"><div class="hf-score" aria-live="polite"><span>Riktige <strong id="hf-correct">0</strong></span><span>Feil <strong id="hf-wrong">0</strong></span></div><button type="button" class="btn ghost" id="hf-abort">Avbryt</button></div>
+      <div class="hf-question"><div class="hf-question-meta"><span id="hf-number"></span><span id="hf-kind"></span></div><p id="hf-prompt"></p><div class="hf-problem hf-math" id="hf-problem"></div></div>
+
+      <form id="hf-form" class="hf-answer-area" novalidate>
+        <div id="hf-factor-area">
+          <label for="hf-answer">Ditt svar</label>
+          <div class="hf-answer-row"><input id="hf-answer" class="hf-text" type="text" maxlength="180" autocomplete="off" spellcheck="false" autocapitalize="off" placeholder="(x+2)(x−3)"><button type="submit" class="btn" id="hf-check">Sjekk svar</button></div>
+          <p class="hf-help">Bruk parenteser, x^2, brøker som 1/3 og pi eller π. Rekkefølgen på faktorene er valgfri.</p>
+        </div>
+        <div id="hf-roots-area" hidden>
+          <label>Løsninger</label>
+          <div class="hf-roots-inputs">
+            <div class="hf-root-field"><label for="hf-root1">x₁</label><input id="hf-root1" type="text" autocomplete="off" spellcheck="false" inputmode="text" placeholder="f.eks. 2"></div>
+            <div class="hf-root-field" id="hf-root2-wrap"><label for="hf-root2">x₂</label><input id="hf-root2" type="text" autocomplete="off" spellcheck="false" inputmode="text" placeholder="f.eks. −3"></div>
+          </div>
+          <p class="hf-help">Skriv bare verdiene. Brøker og π går fint.</p>
+          <div style="margin-top:10px"><button type="submit" class="btn">Sjekk svar</button></div>
+        </div>
+        <p id="hf-input-error" class="hf-error" role="alert"></p>
+      </form>
+
+      <button type="button" class="hf-giveup" id="hf-give-up">Vet ikke – vis løsning</button>
+      <div id="hf-feedback" class="hf-feedback" hidden tabindex="-1">
+        <div class="hf-feedback-grid">
+          <div><h3 id="hf-feedback-title"></h3><p id="hf-verdict"></p><div id="hf-explanation"></div></div>
+          <aside class="hf-answer-box"><h4>Fasit</h4><p class="hf-answer-label">Faktorisering</p><div id="hf-solution" class="hf-math"></div><p class="hf-answer-label">Løsninger</p><div id="hf-roots" class="hf-math"></div></aside>
+        </div>
+        <div class="hf-actions"><button type="button" class="btn" id="hf-next">Neste oppgave →</button><button type="button" class="btn secondary" id="hf-finish">Avslutt</button></div>
+      </div>
+    </div>
+
+    <div id="hf-summary" class="hf-summary" hidden tabindex="-1"><h3 style="color:var(--purple)">Økten er avsluttet</h3><p id="hf-summary-text"></p><div class="hf-summary-scores"><div><strong id="hf-total-correct"></strong><span>riktige</span></div><div><strong id="hf-total-wrong"></strong><span>feil</span></div></div><div class="hf-actions"><button type="button" class="btn" id="hf-restart">Ny økt</button><button type="button" class="btn secondary" id="hf-introduction">Til innstillinger</button></div></div>
+  </section>
+
+  <section class="page-section" id="pi-trener">
+    <div class="pi-shell">
+      <div class="pi-symbol">π</div>
+      <div class="pi-stats"><span class="pi-pill">Riktige: <strong id="pi-count">0</strong></span><span class="pi-pill">Beste: <strong id="pi-best">0</strong></span></div>
+      <div class="pi-display" id="pi-display">
+        <div class="pi-digits" id="pi-digits">
+          <div class="pi-mainline">
+            <span class="pi-prefix">3,</span><span class="pi-correcttrail" id="pi-correct-digits"></span><span class="pi-cursor" id="pi-cursor"></span><span class="pi-future" id="pi-future-digits" hidden></span>
+          </div>
+          <div class="pi-errorline" id="pi-errorline" hidden>
+            <span class="pi-prefix ghost">3,</span><span class="pi-error-pad" id="pi-error-pad"></span><span class="pi-wrong-inline" id="pi-wrong"></span>
+          </div>
+        </div>
+      </div>
+      <input id="pi-input" class="pi-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Skriv neste desimal av pi" placeholder="Skriv neste siffer">
+      <div class="pi-actions" id="pi-actions" hidden><button type="button" class="btn" id="pi-reset">Begynn på nytt</button></div>
+    </div>
+  </section>
+</main>
+
+<script>
+function toggleMenu(header){
+  const submenu=header.nextElementSibling,icon=header.querySelector('.menu-icon');
+  const open=submenu.classList.toggle('open'); if(icon)icon.textContent=open?'▼':'▶';
+}
+function showContent(id,el){
+  document.getElementById('welcome').style.display='none';
+  document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.submenu-item').forEach(i=>i.classList.remove('active'));
+  const sec=document.getElementById(id); if(sec)sec.classList.add('active'); if(el)el.classList.add('active');
+  history.replaceState(null,'','#'+id);
+  if(id==='hurtigfaktorisering')ensureQuickFactorization();
+  if(id==='pi-trener')setTimeout(()=>document.getElementById('pi-input')?.focus({preventScroll:true}),60);
+}
+(function setupChrome(){
+  const root=document.documentElement,theme=document.getElementById('themeToggle'),toggle=document.getElementById('sidebarToggle'),handle=document.getElementById('sidebarResizer');
+  let saved='light';try{saved=localStorage.getItem('onlyfag-math-theme')||'light'}catch(e){}
+  root.dataset.theme=saved;
+  const syncTheme=()=>{theme.textContent=root.dataset.theme==='dark'?'☀':'◐';theme.title=root.dataset.theme==='dark'?'Lys modus':'Mørk modus';};syncTheme();
+  theme.addEventListener('click',()=>{root.dataset.theme=root.dataset.theme==='dark'?'light':'dark';try{localStorage.setItem('onlyfag-math-theme',root.dataset.theme)}catch(e){}syncTheme();});
+  toggle.addEventListener('click',()=>{const c=document.body.classList.toggle('sidebar-collapsed');toggle.textContent=c?'›':'‹';toggle.setAttribute('aria-expanded',String(!c));});
+  let drag=false;
+  const setW=x=>{const w=Math.max(220,Math.min(520,x));root.style.setProperty('--sidebar-width',w+'px');handle.setAttribute('aria-valuenow',String(Math.round(w)));return w;};
+  try{const w=Number(localStorage.getItem('onlyfag-math-sidebar'));if(w)setW(w)}catch(e){}
+  handle.addEventListener('pointerdown',e=>{drag=true;document.body.classList.add('sidebar-resizing');handle.setPointerCapture?.(e.pointerId)});
+  handle.addEventListener('pointermove',e=>{if(drag)setW(e.clientX)});
+  const stop=e=>{if(!drag)return;drag=false;document.body.classList.remove('sidebar-resizing');const w=parseFloat(getComputedStyle(root).getPropertyValue('--sidebar-width'));try{localStorage.setItem('onlyfag-math-sidebar',String(w))}catch(x){}};
+  handle.addEventListener('pointerup',stop);handle.addEventListener('pointercancel',stop);
+})();
+</script>
+
+<script id="quick-factor-core">
+const QuickFactorCore=(()=>{
+  const gcd=(a,b)=>{a=a<0n?-a:a;b=b<0n?-b:b;while(b){[a,b]=[b,a%b];}return a||1n;};
+  const rat=(a,b=1n)=>{a=BigInt(a);b=BigInt(b);if(!b)throw Error('Du kan ikke dele på null.');if(b<0n){a=-a;b=-b;}const g=gcd(a,b);return [a/g,b/g];};
+  const addR=(a,b)=>rat(a[0]*b[1]+b[0]*a[1],a[1]*b[1]),mulR=(a,b)=>rat(a[0]*b[0],a[1]*b[1]);
+  const clean=p=>{for(const [k,v]of p)if(v[0]===0n)p.delete(k);return p;};
+  const constant=r=>clean(new Map([['0,0',r]]));
+  const add=(a,b,sign=1n)=>{const p=new Map(a);for(const [k,v]of b)p.set(k,addR(p.get(k)||rat(0),mulR(v,rat(sign))));return clean(p);};
+  const mul=(a,b)=>{const p=new Map();for(const [ka,va]of a)for(const [kb,vb]of b){
+    const aa=ka.split(',').map(Number),bb=kb.split(',').map(Number),x=aa[0]+bb[0],pi=aa[1]+bb[1];
+    if(x+pi>8)throw Error('Her trenger du bare lave potenser.');const k=x+','+pi;p.set(k,addR(p.get(k)||rat(0),mulR(va,vb)));
+  }return clean(p);};
+  const n=(a,b=1)=>({t:'n',r:rat(a,b)}),x={t:'x'},pi={t:'pi'},op=(t,a,b)=>({t,a,b});
+  function poly(ast){
+    if(ast.t==='n')return constant(ast.r);if(ast.t==='x')return new Map([['1,0',rat(1)]]);if(ast.t==='pi')return new Map([['0,1',rat(1)]]);
+    if(ast.t==='neg')return mul(constant(rat(-1)),poly(ast.a));
+    if(ast.t==='+')return add(poly(ast.a),poly(ast.b));if(ast.t==='-')return add(poly(ast.a),poly(ast.b),-1n);
+    if(ast.t==='*')return mul(poly(ast.a),poly(ast.b));
+    if(ast.t==='/'){
+      const divisor=poly(ast.b);if(divisor.size!==1||!divisor.has('0,0'))throw Error('Nevneren må være et tall, ikke et uttrykk med x eller pi.');
+      const [a,b]=divisor.get('0,0');return mul(poly(ast.a),constant(rat(b,a)));
+    }
+    if(ast.t==='^'){let p=constant(rat(1));for(let i=0;i<ast.b;i++)p=mul(p,poly(ast.a));return p;}
+    throw Error('Ukjent skrivemåte.');
+  }
+  const key=p=>[...p].sort(([a],[b])=>a.localeCompare(b)).map(([k,v])=>k+':'+v.join('/')).join(';');
+  const degree=p=>Math.max(0,...[...p.keys()].map(k=>Number(k.split(',')[0])));
+  function parse(input){
+    let s=String(input).trim().replace(/[−–—]/g,'-').replace(/[·×]/g,'*').replace(/²/g,'^2').replace(/³/g,'^3').replace(/π/g,'pi').replace(/[𝑥𝒙]/gu,'x').replace(/,/g,'.').toLowerCase();
+    if(!s)throw Error('Skriv et faktorisert uttrykk først.');if(s.length>180)throw Error('Svaret er for langt.');
+    if(s.includes('='))throw Error('Skriv bare det faktoriserte uttrykket, uten likhetstegn.');
+    const tokens=[];let pos=0;
+    while(pos<s.length){
+      if(/\s/.test(s[pos])){pos++;continue;}
+      const rest=s.slice(pos),number=rest.match(/^(?:\d+(?:\.\d+)?|\.\d+)/);
+      if(number){if(number[0].replace('.','').length>10)throw Error('Tallet er for stort.');tokens.push({t:'num',v:number[0]});pos+=number[0].length;}
+      else if(rest.startsWith('pi')){tokens.push({t:'pi'});pos+=2;}
+      else if('x+-*/^()'.includes(s[pos])){tokens.push({t:s[pos++]});}
+      else throw Error('Bruk x, pi eller π, tall, parenteser og + − * / ^.');
+    }
+    let i=0;const peek=()=>tokens[i]?.t;
+    function primary(){
+      const token=tokens[i++];if(!token)throw Error('Uttrykket er ikke ferdig.');
+      if(token.t==='num'){const [whole,fraction='']=token.v.split('.');return n(BigInt((whole||'0')+fraction),10n**BigInt(fraction.length));}
+      if(token.t==='x')return x;if(token.t==='pi')return pi;
+      if(token.t==='('){const a=sum();if(peek()!==')')throw Error('Det mangler en sluttparentes.');i++;return a;}
+      throw Error('Sjekk parenteser og fortegn.');
+    }
+    function power(){let a=primary();if(peek()==='^'){i++;const exponent=tokens[i++];if(exponent?.t!=='num'||!/^\d$/.test(exponent.v)||Number(exponent.v)>4)throw Error('Bruk en heltallspotens fra 0 til 4.');a=op('^',a,Number(exponent.v));}return a;}
+    function unary(){if(peek()==='+'){i++;return unary();}if(peek()==='-'){i++;return op('neg',unary());}return power();}
+    function product(){let a=unary();while(i<tokens.length){const next=peek();
+      if(next==='*'||next==='/'){i++;a=op(next,a,unary());}
+      else if(['(','x','pi','num'].includes(next)){
+        if(next==='num'&&tokens[i-1]?.t==='num')throw Error('Sett et gangetegn mellom tall.');a=op('*',a,unary());
+      }else break;
+    }return a;}
+    function sum(){let a=product();while(peek()==='+'||peek()==='-'){const t=tokens[i++].t;a=op(t,a,product());}return a;}
+    const ast=sum();if(i!==tokens.length)throw Error('Sjekk parenteser og tegn i svaret.');poly(ast);return ast;
+  }
+  function factorDegrees(ast){
+    if(ast.t==='*')return [...factorDegrees(ast.a),...factorDegrees(ast.b)];
+    if(ast.t==='/'||ast.t==='neg')return factorDegrees(ast.a);
+    if(ast.t==='^')return Array.from({length:ast.b},()=>factorDegrees(ast.a)).flat();
+    return [degree(poly(ast))].filter(Boolean);
+  }
+  const judge=(input,question)=>{
+    let ast;try{ast=parse(input);}catch(error){return {valid:false,message:error.message};}
+    const equal=key(poly(ast))===question.key,degrees=factorDegrees(ast),complete=degrees.length===2&&degrees.every(d=>d===1);
+    return {valid:true,correct:equal&&complete,equal,complete,ast};
+  };
+  const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const fence=s=>'<mrow><mo>(</mo>'+s+'<mo>)</mo></mrow>';
+  function rationalMath(r){const [a,b]=r;return b===1n?'<mn>'+a+'</mn>':'<mfrac><mn>'+a+'</mn><mn>'+b+'</mn></mfrac>';}
+  function astMath(a){
+    if(a.t==='n')return rationalMath(a.r);if(a.t==='x')return '<mi>x</mi>';if(a.t==='pi')return '<mi>π</mi>';
+    if(a.t==='neg')return '<mrow><mo>−</mo>'+(['+','-'].includes(a.a.t)?fence(astMath(a.a)):astMath(a.a))+'</mrow>';
+    if(a.t==='/')return '<mfrac>'+astMath(a.a)+astMath(a.b)+'</mfrac>';
+    if(a.t==='^')return '<msup>'+(['x','pi','n'].includes(a.a.t)?astMath(a.a):fence(astMath(a.a)))+'<mn>'+a.b+'</mn></msup>';
+    if(a.t==='*')return '<mrow>'+(['+','-','neg'].includes(a.a.t)?fence(astMath(a.a)):astMath(a.a))+'<mo>'+(a.b.t==='n'?'·':'⁢')+'</mo>'+(['+','-','neg'].includes(a.b.t)?fence(astMath(a.b)):astMath(a.b))+'</mrow>';
+    return '<mrow>'+astMath(a.a)+'<mo>'+(a.t==='-'?'−':'+')+'</mo>'+(a.t==='-'&&['+','-'].includes(a.b.t)?fence(astMath(a.b)):astMath(a.b))+'</mrow>';
+  }
+  function polynomialMath(p){
+    const terms=[...p].sort(([a],[b])=>{const aa=a.split(',').map(Number),bb=b.split(',').map(Number);return bb[0]-aa[0]||bb[1]-aa[1];});
+    if(!terms.length)return '<mn>0</mn>';
+    return '<mrow>'+terms.map(([k,r],i)=>{
+      const [px,pp]=k.split(',').map(Number),abs=rat(r[0]<0n?-r[0]:r[0],r[1]);
+      let term=(r[0]<0n?'<mo>−</mo>':i?'<mo>+</mo>':'');
+      if(!(abs[0]===abs[1]&&(px||pp)))term+=rationalMath(abs);
+      for(const [power,letter]of [[pp,'π'],[px,'x']])if(power)term+=power===1?'<mi>'+letter+'</mi>':'<msup><mi>'+letter+'</mi><mn>'+power+'</mn></msup>';
+      return '<mrow>'+term+'</mrow>';
+    }).join('')+'</mrow>';
+  }
+  const math=(inner,label='')=>'<math xmlns="http://www.w3.org/1998/Math/MathML"'+(label?' aria-label="'+escape(label)+'"':'')+'>'+inner+'</math>';
+  const exprMath=s=>math(astMath(parse(s)));
+  // Roots are calculated exactly from the linear factors, including fractions and π.
+  function linearFactors(ast){
+    if(ast.t==='*')return [...linearFactors(ast.a),...linearFactors(ast.b)];
+    if(ast.t==='/'||ast.t==='neg')return linearFactors(ast.a);
+    if(ast.t==='^')return Array.from({length:ast.b},()=>linearFactors(ast.a)).flat();
+    const p=poly(ast);if(!degree(p))return [];
+    if(degree(p)!==1)throw Error('Fasiten må bestå av lineære faktorer.');
+    return [p];
+  }
+  function rootOf(p){
+    const coefficient=p.get('1,0');
+    if(!coefficient||[...p.keys()].some(k=>k.startsWith('1,')&&k!=='1,0'))throw Error('Uventet koeffisient foran x.');
+    const rest=new Map(p);rest.delete('1,0');
+    return mul(rest,constant(rat(-coefficient[1],coefficient[0])));
+  }
+  const rootValue=p=>[...p].reduce((sum,[k,r])=>sum+Number(r[0])/Number(r[1])*Math.PI**Number(k.split(',')[1]),0);
+  const distinctRoots=values=>[...new Map(values.map(p=>[key(p),p])).values()].sort((a,b)=>rootValue(a)-rootValue(b));
+  const roots=q=>distinctRoots(linearFactors(parse(q.answer)).map(rootOf));
+  const rootSetKey=values=>JSON.stringify(distinctRoots(values).map(key).sort());
+  const rootSetMath=values=>math('<mrow><mi>L</mi><mo>=</mo><mo>{</mo>'+distinctRoots(values).map(polynomialMath).join('<mo separator="true">,</mo>')+'<mo>}</mo></mrow>');
+  function rootSteps(q){
+    const seen=new Set();return linearFactors(parse(q.answer)).flatMap(factor=>{
+      const root=rootOf(factor),k=key(root);if(seen.has(k))return [];seen.add(k);
+      return [math('<mrow>'+polynomialMath(factor)+'<mo>=</mo><mn>0</mn><mo>⇒</mo><mi>x</mi><mo>=</mo>'+polynomialMath(root)+'</mrow>')];
+    });
+  }
+  function rootChoices(q,random=Math.random){
+    const correct=roots(q),correctKey=rootSetKey(correct),choices=[],seen=new Set();
+    const insert=values=>{
+      values=distinctRoots(values);const k=rootSetKey(values);
+      if(values.length!==correct.length||seen.has(k))return;
+      seen.add(k);choices.push({values,correct:k===correctKey});
+    };
+    insert(correct);
+    const negate=p=>mul(p,constant(rat(-1))),shift=(p,delta)=>add(p,constant(rat(delta)));
+    const candidates=[correct.map(negate),...correct.map((_,i)=>correct.map((p,j)=>i===j?negate(p):p))];
+    for(const delta of [-1,1,-2,2]){
+      for(let i=0;i<correct.length;i++)candidates.push(correct.map((p,j)=>i===j?shift(p,delta):p));
+      candidates.push(correct.map(p=>shift(p,delta)));
+    }
+    for(let i=candidates.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[candidates[i],candidates[j]]=[candidates[j],candidates[i]];}
+    for(const candidate of candidates){if(choices.length===4)break;insert(candidate);}
+    if(choices.length!==4)throw Error('Det må være fire ulike løsningsmengder.');
+    for(let i=choices.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[choices[i],choices[j]]=[choices[j],choices[i]];}
+    return choices;
+  }
+  function judgeRoots(index,q){
+    if(!Number.isInteger(index)||index<0||index>=q.options.length)return {valid:false,message:'Velg en løsningsmengde.'};
+    return {valid:true,correct:rootSetKey(q.options[index].values)===rootSetKey(roots(q)),selected:index};
+  }
+  const signed=v=>v<0?String(v):'+'+v;
+  const factor=(a,b)=>'('+(a===1?'x':a+'x')+(b?signed(b):'')+')';
+  function bank(){
+    const result=[],seen=new Map();
+    const insert=(answer,group,meta={},source='')=>{
+      const ast=parse(answer),p=poly(ast),k=key(p);if(degree(p)!==2)throw Error('Not quadratic');
+      if(seen.has(k)){if(source)seen.get(k).source=source;return;}
+      const q={id:'hf-'+(result.length+1),answer,key:k,group,meta,source};seen.set(k,q);result.push(q);
+    };
+    // All twenty expressions from the supplied sheet, including corrected k).
+    const sources=[
+      ['(x+1)(x+2)','pair',{d:1,e:2}],['(x+2)(x+3)','pair',{d:2,e:3}],['(x+3)(x+4)','pair',{d:3,e:4}],['(x+4)(x+5)','pair',{d:4,e:5}],
+      ['(x+1)(x-2)','pair',{d:1,e:-2}],['(x-1)(x+2)','pair',{d:-1,e:2}],['(x-1)(x-2)','pair',{d:-1,e:-2}],['(x-4)(x-2)','pair',{d:-4,e:-2}],
+      ['(x-2)(x-3)','pair',{d:-2,e:-3}],['(x-1)(x-3)','pair',{d:-1,e:-3}],['(x+4)(x-5)','pair',{d:4,e:-5}],['(x-5)(x+1)','pair',{d:-5,e:1}],
+      ['(x+2)(x-2)','square',{d:2,e:-2}],['(x+4)(x-4)','square',{d:4,e:-4}],['5(x+1)(x-1)','common',{k:5,d:1,e:-1}],
+      ['(x+2)^2','square',{d:2,e:2}],['(x-5)^2','square',{d:-5,e:-5}],['(x+pi)^2','symbol',{}],['(1/3)x(x+6)','common',{k:'1/3',d:0,e:6}],
+      ['(2x-3)(x+1)','leading',{a:2,b:-3,c:1,d:1}]
+    ];
+    sources.forEach(([answer,group,meta],i)=>insert(answer,group,meta,'Hurtighetsprøven '+String.fromCharCode(97+i)+')'));
+    // Complete unordered pairs: no duplicates from swapping the factors.
+    for(let d=-12;d<=12;d++)for(let e=d;e<=12;e++){
+      if(d===0||e===0)continue;insert(d===e?factor(1,d)+'^2':factor(1,d)+factor(1,e),d===e||d===-e?'square':'pair',{d,e});
+    }
+    for(const k of [2,3,4,5,-1,-2])for(let d=-8;d<=8;d++)for(let e=d;e<=8;e++){
+      if(d===0&&e===0)continue;insert(k+factor(1,d)+factor(1,e),'common',{k,d,e});
+    }
+    for(const [a,c]of [[2,1],[3,1],[4,1],[5,1],[2,3]])for(let b=-7;b<=7;b++)for(let d=-7;d<=7;d++){
+      if(!b||!d||gcd(BigInt(a),BigInt(b))!==1n||gcd(BigInt(c),BigInt(d))!==1n)continue;
+      insert(factor(a,b)+factor(c,d),'leading',{a,b,c,d});
+    }
+    for(const denominator of [2,3,4])for(let d=-5;d<=5;d++)for(let e=d;e<=5;e++){
+      if(!d||!e)continue;insert('(1/'+denominator+')'+factor(1,d)+factor(1,e),'common',{k:'1/'+denominator,d,e});
+    }
+    for(const k of [1,2,3])for(const sign of [1,-1]){
+      const t=(sign<0?'-':'+')+(k===1?'':k+'*')+'pi';
+      insert('(x'+t+')^2','symbol',{});
+      for(const d of [-3,-2,-1,1,2,3])insert('(x'+t+')'+factor(1,d),'symbol',{});
+    }
+    for(const k of [1,2,3])insert('(x+'+(k===1?'':k+'*')+'pi)(x-'+(k===1?'':k+'*')+'pi)','symbol',{});
+    return result;
+  }
+  function session(questions,random=Math.random){
+    const remaining=[...questions];
+    // Three gentle starters: integer factors AND displayed coefficients are single-digit.
+    const warmup=questions.filter(q=>{
+      if(q.group!=='pair')return false;
+      const {d,e}=q.meta;return [d,e,d+e,d*e].every(v=>Number.isInteger(v)&&Math.abs(v)<=9);
+    });
+    const draw=pool=>pool.splice(Math.floor(random()*pool.length),1)[0];
+    const state={phase:'ready',current:null,correct:0,wrong:0,answered:0,remaining:questions.length,last:null};
+    function next(){
+      if(state.phase==='question'||state.phase==='ended')return null;
+      if(!remaining.length){state.phase='ended';return null;}
+      let q;
+      if(state.answered<3&&warmup.length){q=draw(warmup);remaining.splice(remaining.indexOf(q),1);}
+      else q=draw(remaining); // Thereafter every unused problem has the same chance.
+      const kind=state.answered>=3&&state.answered%3===0?'roots':'factor';
+      state.current={...q,kind,...(kind==='roots'?{options:rootChoices(q,random)}:{})};
+      state.remaining--;state.phase='question';state.last=null;return state.current;
+    }
+    function submit(input,giveUp=false){
+      if(state.phase!=='question')return null;
+      const result=giveUp?{valid:true,correct:false,giveUp:true}:state.current.kind==='roots'?judgeRoots(input,state.current):judge(input,state.current);
+      if(!result.valid)return result;
+      state.correct+=result.correct?1:0;state.wrong+=result.correct?0:1;state.answered++;state.last=result;state.phase='feedback';return result;
+    }
+    function stop(){state.phase='ended';}
+    return {state,next,submit,stop};
+  }
+  return {parse,poly,key,degree,judge,bank,session,math,exprMath,astMath,polynomialMath,escape,roots,rootSetKey,rootSetMath,rootSteps,rootChoices,judgeRoots};
+})();
+if(typeof module!=='undefined'&&module.exports)module.exports=QuickFactorCore;
+</script>
+
+<script id="quick-factor-ui">
+(function(){
+  let ready=false,bank=[],remaining=[],current=null,score={correct:0,wrong:0,answered:0},modes={factor:true,roots:true},lastKind='roots';
+  const $=id=>document.getElementById('hf-'+id),C=QuickFactorCore;
+  const kinds={pair:'Sum og produkt',square:'Kvadratsetninger',common:'Felles faktor',leading:'Utvidet faktorisering',symbol:'Med π'};
+  const equality=(left,right)=>C.math('<mrow>'+left+'<mo>=</mo>'+right+'</mrow>');
+  function ensureQuickFactorization(){
+    if(ready)return;ready=true;bank=C.bank();
+    for(const node of document.querySelectorAll('#hurtigfaktorisering [data-hf-expr]'))node.innerHTML=C.exprMath(node.dataset.hfExpr);
+    for(const node of document.querySelectorAll('#hurtigfaktorisering [data-hf-equality]')){const [a,b]=node.dataset.hfEquality.split('|');node.innerHTML=equality(C.astMath(C.parse(a)),C.astMath(C.parse(b)));}
+    $('bank-size').textContent=bank.length.toLocaleString('nb-NO')+' ulike uttrykk i oppgavebanken';
+  }
+  window.ensureQuickFactorization=ensureQuickFactorization;
+  const show=screen=>['intro','practice','summary'].forEach(id=>$(id).hidden=id!==screen);
+  const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+  function buildPool(){
+    const warm=bank.filter(q=>q.group==='pair'&&[q.meta.d,q.meta.e,q.meta.d+q.meta.e,q.meta.d*q.meta.e].every(v=>Number.isInteger(v)&&Math.abs(v)<=9));
+    const warmPick=shuffle(warm).slice(0,3),warmIds=new Set(warmPick.map(q=>q.id));
+    return [...warmPick,...shuffle(bank.filter(q=>!warmIds.has(q.id)))];
+  }
+  function readModes(){
+    modes={factor:$('mode-factor').checked,roots:$('mode-roots').checked};
+    if(!modes.factor&&!modes.roots){$('mode-error').textContent='Velg minst én oppgavetype.';return false}
+    $('mode-error').textContent='';return true;
+  }
+  function chooseKind(){
+    if(modes.factor&&!modes.roots)return 'factor';if(modes.roots&&!modes.factor)return 'roots';
+    lastKind=lastKind==='factor'?'roots':'factor';return lastKind;
+  }
+  function updateScore(){$('correct').textContent=score.correct;$('wrong').textContent=score.wrong}
+  function solution(q){return equality(C.polynomialMath(C.poly(C.parse(q.answer))),C.astMath(C.parse(q.answer)));}
+  function explain(q){
+    let html='<div class="hf-math">'+solution(q)+'</div>';
+    const {d,e,k,a,b,c}=q.meta;
+    if(q.group==='pair'||q.group==='square'||q.group==='common'){
+      if(q.group==='common'&&k!==undefined)html+='<p>Trekk ut felles faktor først.</p>';
+      if(d!==undefined&&e!==undefined)html+='<p>Se etter tallene <strong>'+String(d).replace('-','−')+'</strong> og <strong>'+String(e).replace('-','−')+'</strong>: summen og produktet må passe med uttrykket.</p>';
+    }else if(q.group==='leading')html+='<p>Her må også kryssleddene kontrolleres fordi koeffisienten foran x² ikke er 1.</p>';
+    else html+='<p>Behandle π som en konstant og bruk de samme faktoriseringsreglene.</p>';
+    html+='<p>Setter du uttrykket lik 0, må minst én lineær faktor være 0.</p>'+C.rootSteps(q).map(s=>'<div class="hf-math">'+s+'</div>').join('');
+    return html;
+  }
+  function next(){
+    if(!remaining.length)return finish();
+    current={...remaining.shift(),kind:chooseKind()};
+    $('number').textContent='Oppgave '+(score.answered+1);$('kind').textContent=(current.kind==='roots'?'Finn løsninger · ': 'Faktoriser · ')+kinds[current.group];
+    $('prompt').textContent=current.kind==='roots'?'Finn løsningen eller løsningene:':'Faktoriser uttrykket fullstendig:';
+    $('problem').innerHTML=C.math('<mrow>'+C.polynomialMath(C.poly(C.parse(current.answer)))+(current.kind==='roots'?'<mo>=</mo><mn>0</mn>':'')+'</mrow>');
+    $('factor-area').hidden=current.kind!=='factor';$('roots-area').hidden=current.kind!=='roots';$('input-error').textContent='';$('feedback').hidden=true;$('give-up').hidden=false;
+    $('answer').value='';$('root1').value='';$('root2').value='';
+    const rootCount=C.roots(current).length;$('root2-wrap').hidden=current.kind==='roots'&&rootCount===1;
+    show('practice');updateScore();
+    const focus=current.kind==='factor'?$('answer'):$('root1');setTimeout(()=>focus.focus({preventScroll:true}),30);
+  }
+  function start(){
+    if(!readModes())return;score={correct:0,wrong:0,answered:0};remaining=buildPool();lastKind='roots';next();
+  }
+  function parseRootValue(value){
+    const ast=C.parse(value),p=C.poly(ast);if(C.degree(p)!==0)throw Error('Skriv bare en verdi for x, ikke et uttrykk med x.');return p;
+  }
+  function judgeRoots(){
+    const correct=C.roots(current),values=[$('root1').value.trim(),$('root2-wrap').hidden?'':$('root2').value.trim()].filter(Boolean);
+    if(values.length!==correct.length)return {valid:false,message:correct.length===1?'Skriv løsningen.':'Skriv begge løsningene.'};
+    try{const actual=values.map(parseRootValue);return {valid:true,correct:C.rootSetKey(actual)===C.rootSetKey(correct)}}catch(error){return {valid:false,message:error.message.replace('Skriv et faktorisert uttrykk først.','Skriv en verdi først.')}}
+  }
+  function submit(giveUp=false){
+    if(!current)return;
+    let result;
+    if(giveUp)result={valid:true,correct:false,giveUp:true};
+    else result=current.kind==='factor'?C.judge($('answer').value,current):judgeRoots();
+    if(!result.valid){$('input-error').textContent=result.message;return}
+    score.answered++;if(result.correct)score.correct++;else score.wrong++;updateScore();
+    $('give-up').hidden=true;$('feedback').hidden=false;$('feedback').dataset.correct=String(result.correct);
+    $('feedback-title').textContent=result.correct?'Riktig':result.giveUp?'Løsning':'Ikke riktig';
+    $('verdict').textContent=result.giveUp?'Oppgaven er registrert som feil.':result.correct?(current.kind==='roots'?'Løsningene stemmer.':'Faktoriseringen stemmer.'):(current.kind==='factor'&&result.equal?'Uttrykket er riktig, men ikke fullstendig faktorisert.':'Sjekk fortegn og faktorene.');
+    $('solution').innerHTML=C.exprMath(current.answer);$('roots').innerHTML=C.rootSetMath(C.roots(current));$('explanation').innerHTML=explain(current);
+    $('next').textContent=remaining.length?'Neste oppgave →':'Se resultat';
+    $('feedback').focus({preventScroll:true});$('feedback').scrollIntoView({block:'nearest'});
+  }
+  function finish(){
+    show('summary');$('summary-text').textContent='Du svarte på '+score.answered+' oppgave'+(score.answered===1?'':'r')+'.';$('total-correct').textContent=score.correct;$('total-wrong').textContent=score.wrong;
+  }
+  $('form').addEventListener('submit',e=>{e.preventDefault();submit(false)});
+  $('start').addEventListener('click',start);$('restart').addEventListener('click',start);$('next').addEventListener('click',next);$('give-up').addEventListener('click',()=>submit(true));$('abort').addEventListener('click',finish);$('finish').addEventListener('click',finish);$('introduction').addEventListener('click',()=>show('intro'));
+  [$('mode-factor'),$('mode-roots')].forEach(x=>x.addEventListener('change',readModes));
+})();
+</script>
+
+<script id="pi-trainer-script">
+(function(){
+  const DIGITS="14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230664709384460955058223172535940812848111745028410270193852110555964462294895493038196442881097566593344612847564823378678316527120190914564856692346034861045432664821339360726024914127372458700660631558817488152092096282925409171536436789259036001133053054882046652138414695194151160943305727036575959195309218611738193261179310511854807446237996274956735188575272489122793818301194912983367336244065664308602139494639522473719070217986094370277053921717629317675238467481846766940513200056812714526356082778577134275778960917363717872146844090122495343014654958537105079227968925892354201995611212902196086403441815981362977477130996051870721134999999837297804995105973173281609631859502445945534690830264252230825334468503526193118817101000313783875288658753320838142061717766914730359825349042875546873115956286388235378759375195778185778053217122680661300192787661119590921642019893809525720106548586327886593615338182796823030195203530185296899577362259941389124972177528347913151557485724245415069595082953311686172785588907509838175463746493931925506040092770167113900984882401285836160356370766010471018194295559619894676783744944825537977472684710404753464620804668425906949129331367702898915210475216205696602405803815019351125338243003558764024749647326391419927260426992279678235478163600934172164121992458631503028618297455570674983850549458858692699569092721079750930295532116534498720275596023648066549911988183479775356636980742654252786255181841757467289097777279380008164706001614524919217321721477235014144197356854816136115735255213347574184946843852332390739414333454776241686251898356948556209921922218427255025425688767179049460165346680498862723279178608578438382796797668145410095388378636095068006422512520511739298489608412848862694560424196528502221066118630674427862203919494504712371378696095636437191728746776465757396241389086583264599581339047802759009";
+  const input=document.getElementById('pi-input'),correct=document.getElementById('pi-correct-digits'),count=document.getElementById('pi-count'),best=document.getElementById('pi-best'),cursor=document.getElementById('pi-cursor');
+  const future=document.getElementById('pi-future-digits'),errorLine=document.getElementById('pi-errorline'),errorPad=document.getElementById('pi-error-pad'),wrong=document.getElementById('pi-wrong'),actions=document.getElementById('pi-actions');
+  let pos=0,ended=false,bestN=0;
+  try{bestN=Number(localStorage.getItem('onlyfag-pi-best')||0)}catch(e){} best.textContent=bestN;
+  function scrollDigits(){requestAnimationFrame(()=>{const d=document.getElementById('pi-digits');d.scrollLeft=d.scrollWidth;d.scrollTop=d.scrollHeight})}
+  function render(){count.textContent=pos;correct.textContent=DIGITS.slice(0,pos);scrollDigits()}
+  function fail(ch){
+    ended=true;input.disabled=true;cursor.hidden=true;future.hidden=false;future.textContent=DIGITS.slice(pos,pos+3).split('').join(' ');errorLine.hidden=false;errorPad.style.width=pos+'ch';wrong.textContent=ch;
+    if(pos>bestN){bestN=pos;best.textContent=bestN;try{localStorage.setItem('onlyfag-pi-best',String(bestN))}catch(e){}}
+    actions.hidden=false;scrollDigits();
+  }
+  function consume(raw){
+    if(ended)return;const chars=String(raw).replace(/\D/g,'');if(!chars)return;
+    for(const ch of chars){if(pos>=DIGITS.length)return;if(ch===DIGITS[pos]){pos++;render()}else{fail(ch);break}}
+  }
+  input.addEventListener('input',()=>{const v=input.value;input.value='';consume(v)});
+  document.addEventListener('keydown',e=>{if(!document.getElementById('pi-trener').classList.contains('active')||ended||e.ctrlKey||e.metaKey||e.altKey)return;if(/^\d$/.test(e.key)&&document.activeElement!==input){e.preventDefault();consume(e.key)}});
+  function reset(){pos=0;ended=false;input.disabled=false;input.value='';future.hidden=true;future.textContent='';errorLine.hidden=true;errorPad.style.width='0';wrong.textContent='';actions.hidden=true;cursor.hidden=false;render();setTimeout(()=>input.focus({preventScroll:true}),20)}
+  document.getElementById('pi-reset').addEventListener('click',reset);render();
+})();
+</script>
+
+<script>
+(function directLink(){
+  const open=()=>{const id=location.hash.slice(1);if(['hurtigfaktorisering','pi-trener'].includes(id))showContent(id,document.querySelector('[data-section="'+id+'"]'))};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',open,{once:true});else open();window.addEventListener('hashchange',open);
+})();
+</script>
+
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "1b3cf01bc1c645a99f02736c18c9ab78"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
