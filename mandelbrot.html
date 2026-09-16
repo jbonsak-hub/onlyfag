@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mandelbrot – OnlyFag</title>
+<meta name="description" content="Interaktiv Mandelbrot-utforsker med Julia-mengder og komplekse iterasjoner.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='13' fill='%235b2d90'/%3E%3Ccircle cx='26' cy='32' r='13' fill='white'/%3E%3Ccircle cx='41' cy='25' r='8' fill='white'/%3E%3Ccircle cx='42' cy='42' r='7' fill='white'/%3E%3C/svg%3E">
+<style>
+:root{
+  --purple:#5b2d90;--purple-dark:#472270;--purple-soft:#f5ecff;--bg:#f4f3f5;--paper:#fff;
+  --ink:#252129;--muted:#746c79;--line:#dfdbe2;--ok:#247349;--bad:#a92845;--shadow:0 4px 18px rgba(41,25,53,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:"Segoe UI",system-ui,-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--ink)}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{min-height:100vh;display:grid;grid-template-rows:auto 1fr}
+.topbar{min-height:58px;background:var(--paper);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:10px 16px;position:sticky;top:0;z-index:20}
+.brand{font-weight:850;color:var(--purple);font-size:1.15rem;white-space:nowrap}
+.brand .mark{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:1.25rem;margin-right:6px}
+.top-spacer{flex:1}
+.coord-chip{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.82rem;color:var(--muted);background:var(--purple-soft);border:1px solid #dac6ec;border-radius:999px;padding:6px 10px;white-space:nowrap}
+.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink);padding:8px 11px;font-weight:750}
+.btn:hover{border-color:#a98cc1;background:#fbf8ff}
+.btn.primary{background:var(--purple);border-color:var(--purple);color:#fff}.btn.primary:hover{background:var(--purple-dark)}
+.btn.small{padding:7px 9px;font-size:.86rem}
+.control{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:.82rem;font-weight:700}
+.control input[type=range]{width:130px;accent-color:var(--purple)}
+.control output{min-width:34px;text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+.main{padding:14px;min-width:0;display:grid;grid-template-columns:minmax(0,1.52fr) minmax(310px,.78fr);gap:14px;align-items:start;max-width:1600px;width:100%;margin:0 auto}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);min-width:0}
+.mandel-panel{overflow:hidden;position:relative}
+.canvas-toolbar{display:flex;align-items:center;gap:9px;padding:10px 12px;border-bottom:1px solid var(--line);min-height:46px}
+.canvas-toolbar strong{font-size:.92rem;color:var(--purple)}
+.canvas-toolbar .mini{font-size:.78rem;color:var(--muted)}
+.canvas-wrap{position:relative;aspect-ratio:16/10;min-height:410px;background:#0a0810;overflow:hidden;touch-action:none}
+.fractal{position:absolute;inset:0;width:100%;height:100%;display:block}
+.overlay{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+.crosshair{position:absolute;width:14px;height:14px;border:2px solid #fff;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 1px rgba(0,0,0,.55);pointer-events:none}
+.crosshair::before,.crosshair::after{content:"";position:absolute;background:#fff;opacity:.9}.crosshair::before{left:50%;top:-5px;width:1px;height:20px}.crosshair::after{top:50%;left:-5px;height:1px;width:20px}
+.hud{position:absolute;left:10px;bottom:10px;display:flex;gap:7px;flex-wrap:wrap;pointer-events:none}.hud span{background:rgba(9,8,13,.72);color:#eee;border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:4px 8px;font-size:.72rem;backdrop-filter:blur(4px)}
+.side{display:grid;gap:14px;min-width:0}
+.card{padding:15px}.card h2{font-size:1.02rem;margin:0 0 10px;color:var(--purple)}
+.eq{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:1.35rem;text-align:center;margin:8px 0 13px}
+.selection{display:grid;grid-template-columns:1fr;gap:7px;margin-top:10px}.selection-row{display:flex;justify-content:space-between;gap:12px;padding:7px 9px;border-radius:8px;background:#faf9fb;font-size:.84rem}.selection-row span:first-child{color:var(--muted)}.selection-row code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--ink);font-size:.86rem;text-align:right}
+.orbit-wrap{height:240px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fbfafc}.orbit-wrap canvas{width:100%;height:100%;display:block}
+.orbit-controls{display:flex;gap:8px;align-items:center;justify-content:space-between;margin:8px 0 0}.orbit-controls span{font-size:.78rem;color:var(--muted)}
+.julia-wrap{aspect-ratio:1.15/1;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#0a0810;position:relative}.julia-wrap canvas{width:100%;height:100%;display:block}
+.presets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.preset{border:1px solid var(--line);border-radius:9px;background:#fff;padding:8px;text-align:left;font-weight:700;font-size:.82rem}.preset:hover{border-color:#a98cc1;background:#fbf8ff}.preset small{display:block;color:var(--muted);font-weight:500;margin-top:2px;line-height:1.25}
+.help{font-size:.82rem;color:var(--muted);line-height:1.45}.help strong{color:var(--ink)}
+.back{position:fixed;left:14px;bottom:14px;width:42px;height:42px;border:1px solid var(--line);border-radius:12px;background:var(--paper);display:grid;place-items:center;text-decoration:none;color:var(--purple);font-size:1.35rem;box-shadow:var(--shadow);z-index:30}.back:hover{background:var(--purple-soft)}
+.status{position:absolute;right:10px;top:10px;background:rgba(9,8,13,.75);color:#fff;border:1px solid rgba(255,255,255,.13);border-radius:999px;padding:5px 8px;font-size:.72rem;pointer-events:none}
+@media(max-width:1040px){.main{grid-template-columns:1fr}.side{grid-template-columns:repeat(2,minmax(0,1fr))}.side>.card:first-child{grid-column:1/-1}.canvas-wrap{min-height:360px}.julia-wrap{aspect-ratio:1.4/1}}
+@media(max-width:720px){.topbar{position:relative;align-items:flex-start;flex-wrap:wrap}.top-spacer{display:none}.coord-chip{order:4;width:100%;overflow:hidden;text-overflow:ellipsis}.toolbar{width:100%}.control{flex:1 1 180px}.control input[type=range]{flex:1}.main{padding:8px 8px 72px;gap:9px}.side{grid-template-columns:1fr;gap:9px}.side>.card:first-child{grid-column:auto}.canvas-wrap{min-height:300px;aspect-ratio:1/1}.canvas-toolbar{align-items:flex-start;flex-direction:column;gap:2px}.card{padding:12px}.orbit-wrap{height:220px}.julia-wrap{aspect-ratio:1/1}.presets{grid-template-columns:1fr 1fr}.back{left:10px;bottom:10px;width:46px;height:46px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><span class="mark">ℂ</span>Mandelbrot</div>
+    <div class="toolbar">
+      <button class="btn small" id="resetView">Tilbakestill</button>
+      <label class="control">Iterasjoner <input id="iter" type="range" min="60" max="700" step="20" value="220"><output id="iterOut">220</output></label>
+      <label class="control">Detalj <input id="quality" type="range" min="45" max="100" step="5" value="85"><output id="qualityOut">85%</output></label>
+    </div>
+    <div class="top-spacer"></div>
+    <div class="coord-chip" id="coordChip">c = −0.100000 + 0.651000i</div>
+  </header>
+
+  <main class="main">
+    <section class="panel mandel-panel">
+      <div class="canvas-toolbar"><strong>Mandelbrotmengden</strong><span class="mini">Rull/pinch for å zoome · dra for å flytte · trykk for å velge c</span></div>
+      <div class="canvas-wrap" id="mandelWrap">
+        <canvas class="fractal" id="mandel"></canvas>
+        <canvas class="overlay" id="mandelOverlay"></canvas>
+        <div class="crosshair" id="crosshair"></div>
+        <div class="status" id="renderStatus">klar</div>
+        <div class="hud"><span id="zoomHud">Zoom 1×</span><span id="centerHud">Senter −0.50 + 0.00i</span></div>
+      </div>
+    </section>
+
+    <aside class="side">
+      <section class="panel card">
+        <h2>Iterasjon</h2>
+        <div class="eq">z<sub>n+1</sub> = z<sub>n</sub><sup>2</sup> + c,&nbsp; z<sub>0</sub> = 0</div>
+        <div class="selection">
+          <div class="selection-row"><span>Valgt c</span><code id="cValue">−0.100000 + 0.651000i</code></div>
+          <div class="selection-row"><span>Status</span><code id="escapeValue">–</code></div>
+          <div class="selection-row"><span>|z| etter banen</span><code id="modValue">–</code></div>
+        </div>
+      </section>
+
+      <section class="panel card">
+        <h2>Bane i det komplekse planet</h2>
+        <div class="orbit-wrap"><canvas id="orbit"></canvas></div>
+        <div class="orbit-controls"><span id="orbitText">z₀ → z₁ → …</span><button class="btn small" id="playOrbit">Spill av</button></div>
+      </section>
+
+      <section class="panel card">
+        <h2>Julia-mengden for valgt c</h2>
+        <div class="julia-wrap"><canvas id="julia"></canvas></div>
+      </section>
+
+      <section class="panel card">
+        <h2>Utforsk steder</h2>
+        <div class="presets">
+          <button class="preset" data-preset="home">Hele mengden<small>Startutsnitt</small></button>
+          <button class="preset" data-preset="seahorse">Seahorse Valley<small>Spiraler og haler</small></button>
+          <button class="preset" data-preset="elephant">Elephant Valley<small>Elefant-lignende former</small></button>
+          <button class="preset" data-preset="spiral">Spiralområde<small>Tette selvliknende spiraler</small></button>
+        </div>
+      </section>
+
+      <section class="panel card help">
+        <strong>Hva betyr bildet?</strong> For hvert punkt velger vi c og gjentar formelen. Punkter som ikke løper av gårde, tegnes mørke. Fargene utenfor viser hvor raskt banen rømmer. Julia-bildet bruker samme c, men varierer startverdien z₀.
+      </section>
+    </aside>
+  </main>
+</div>
+<a class="back" href="matematikk.html" aria-label="Tilbake til matematikk" title="Tilbake til matematikk">←</a>
+
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const mandel=$('mandel'), overlay=$('mandelOverlay'), orbitCanvas=$('orbit'), julia=$('julia'), wrap=$('mandelWrap');
+const iter=$('iter'), quality=$('quality'), iterOut=$('iterOut'), qualityOut=$('qualityOut');
+const coordChip=$('coordChip'), cValue=$('cValue'), escapeValue=$('escapeValue'), modValue=$('modValue');
+const zoomHud=$('zoomHud'), centerHud=$('centerHud'), crosshair=$('crosshair'), status=$('renderStatus');
+const presetViews={
+  home:{cx:-.5,cy:0,scale:3.2},
+  seahorse:{cx:-.743643887037151,cy:.13182590420533,scale:.018},
+  elephant:{cx:.285,cy:.01,scale:.22},
+  spiral:{cx:-.761574,cy:-.0847596,scale:.035}
+};
+let view={...presetViews.home};
+let selected={re:-.1,im:.651};
+let dragging=false,lastX=0,lastY=0,moved=false;
+let touches=new Map(),pinchStart=null;
+let renderQueued=false;
+let orbitAnimation=null;
+let orbitStep=0;
+let mainGL=null,juliaGL=null;
+
+function fmt(n,d=6){let s=Math.abs(n).toFixed(d);return s.replace(/0+$/,'').replace(/\.$/,'')||'0'}
+function complexStr(z,d=6){return `${z.re<0?'−':''}${fmt(z.re,d)} ${z.im<0?'−':'+'} ${fmt(z.im,d)}i`}
+function updateLabels(){coordChip.textContent='c = '+complexStr(selected);cValue.textContent=complexStr(selected);const z=orbitData(selected,Math.min(+iter.value,120));const escaped=z.escape>=0;escapeValue.textContent=escaped?`rømmer ved n = ${z.escape}`:'ikke rømt i vist bane';modValue.textContent=fmt(z.mod,4);zoomHud.textContent='Zoom '+formatZoom(3.2/view.scale)+'×';centerHud.textContent='Senter '+complexStr({re:view.cx,im:view.cy},4);}
+function formatZoom(x){if(x<10)return x.toFixed(1);if(x<1000)return Math.round(x).toString();return x.toExponential(1)}
+
+function initGL(canvas){
+  const gl=canvas.getContext('webgl',{antialias:false,preserveDrawingBuffer:false});
+  if(!gl)return null;
+  const vs=`attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}`;
+  const fs=`precision highp float;
+uniform vec2 resolution;uniform vec2 center;uniform float scale;uniform int maxIter;uniform int mode;uniform vec2 juliaC;
+vec3 pal(float t){
+  vec3 a=vec3(.50,.48,.54),b=vec3(.50,.52,.46),c=vec3(1.0),d=vec3(.70,.84,.96);
+  return a+b*cos(6.28318*(c*t+d));
+}
+void main(){
+  vec2 uv=(gl_FragCoord.xy-.5*resolution)/resolution.y;
+  vec2 c0=center+uv*scale;
+  vec2 z=mode==0?vec2(0.):c0;
+  vec2 c=mode==0?c0:juliaC;
+  float it=0.;float smoothIt=0.;bool esc=false;
+  for(int i=0;i<700;i++){
+    if(i>=maxIter)break;
+    float x=z.x*z.x-z.y*z.y+c.x;
+    float y=2.0*z.x*z.y+c.y;
+    z=vec2(x,y);it=float(i);
+    float r2=dot(z,z);
+    if(r2>256.0){smoothIt=it+1.0-log2(log2(r2))*0.5;esc=true;break;}
+  }
+  if(!esc){gl_FragColor=vec4(.018,.014,.025,1.);return;}
+  float t=.035*smoothIt;
+  vec3 col=pal(t);
+  col*=.55+.45*(1.0-exp(-.028*smoothIt));
+  gl_FragColor=vec4(col,1.);
+}`;
+  const compile=(type,src)=>{const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s};
+  const pr=gl.createProgram();gl.attachShader(pr,compile(gl.VERTEX_SHADER,vs));gl.attachShader(pr,compile(gl.FRAGMENT_SHADER,fs));gl.linkProgram(pr);if(!gl.getProgramParameter(pr,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(pr));
+  const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);gl.useProgram(pr);const loc=gl.getAttribLocation(pr,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+  return {gl,pr,u:{resolution:gl.getUniformLocation(pr,'resolution'),center:gl.getUniformLocation(pr,'center'),scale:gl.getUniformLocation(pr,'scale'),maxIter:gl.getUniformLocation(pr,'maxIter'),mode:gl.getUniformLocation(pr,'mode'),juliaC:gl.getUniformLocation(pr,'juliaC')}};
+}
+function sizeCanvas(canvas,ratio=1){const r=canvas.getBoundingClientRect();const dpr=Math.min(devicePixelRatio||1,2);const q=(+quality.value)/100;const w=Math.max(2,Math.round(r.width*dpr*q*ratio)),h=Math.max(2,Math.round(r.height*dpr*q*ratio));if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}return {w,h,r,dpr,q};}
+function drawFractal(ctx,mode){if(!ctx)return;const {gl,pr,u}=ctx;const canvas=gl.canvas;const s=sizeCanvas(canvas,mode===1?.82:1);gl.viewport(0,0,s.w,s.h);gl.useProgram(pr);gl.uniform2f(u.resolution,s.w,s.h);if(mode===0){gl.uniform2f(u.center,view.cx,view.cy);gl.uniform1f(u.scale,view.scale);}else{gl.uniform2f(u.center,0,0);gl.uniform1f(u.scale,3.25);}gl.uniform1i(u.maxIter,+iter.value);gl.uniform1i(u.mode,mode);gl.uniform2f(u.juliaC,selected.re,selected.im);gl.drawArrays(gl.TRIANGLES,0,6);}
+function queueRender(){if(renderQueued)return;renderQueued=true;status.textContent='tegner …';requestAnimationFrame(()=>{renderQueued=false;try{drawFractal(mainGL,0);drawFractal(juliaGL,1);drawCrosshair();drawOrbit();status.textContent='klar';}catch(e){status.textContent='WebGL-feil';console.error(e)}updateLabels();});}
+function toComplex(clientX,clientY){const r=mandel.getBoundingClientRect();const nx=(clientX-r.left)/r.width-.5,ny=(clientY-r.top)/r.height-.5;return {re:view.cx+nx*view.scale*(r.width/r.height),im:view.cy-ny*view.scale};}
+function toScreen(z){const r=mandel.getBoundingClientRect();const aspect=r.width/r.height;return {x:r.width*(.5+(z.re-view.cx)/(view.scale*aspect)),y:r.height*(.5-(z.im-view.cy)/view.scale)};}
+function drawCrosshair(){const p=toScreen(selected);crosshair.style.left=p.x+'px';crosshair.style.top=p.y+'px';crosshair.style.display=(p.x>=0&&p.x<=mandel.clientWidth&&p.y>=0&&p.y<=mandel.clientHeight)?'block':'none';}
+function zoomAt(clientX,clientY,factor){const before=toComplex(clientX,clientY);view.scale=Math.max(1e-13,Math.min(5,view.scale*factor));const after=toComplex(clientX,clientY);view.cx+=before.re-after.re;view.cy+=before.im-after.im;queueRender();}
+
+wrap.addEventListener('wheel',e=>{e.preventDefault();zoomAt(e.clientX,e.clientY,Math.exp(e.deltaY*.0012))},{passive:false});
+wrap.addEventListener('pointerdown',e=>{wrap.setPointerCapture(e.pointerId);touches.set(e.pointerId,{x:e.clientX,y:e.clientY});if(touches.size===1){dragging=true;lastX=e.clientX;lastY=e.clientY;moved=false}else if(touches.size===2){const a=[...touches.values()];pinchStart={dist:Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y),scale:view.scale,cx:(a[0].x+a[1].x)/2,cy:(a[0].y+a[1].y)/2};}});
+wrap.addEventListener('pointermove',e=>{if(!touches.has(e.pointerId))return;touches.set(e.pointerId,{x:e.clientX,y:e.clientY});if(touches.size===2&&pinchStart){const a=[...touches.values()],d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y),midX=(a[0].x+a[1].x)/2,midY=(a[0].y+a[1].y)/2;const factor=pinchStart.dist/Math.max(10,d);view.scale=Math.max(1e-13,Math.min(5,pinchStart.scale*factor));const r=mandel.getBoundingClientRect(),aspect=r.width/r.height;view.cx-=((midX-pinchStart.cx)/r.width)*view.scale*aspect;view.cy+=((midY-pinchStart.cy)/r.height)*view.scale;pinchStart.cx=midX;pinchStart.cy=midY;queueRender();return}if(dragging&&touches.size===1){const dx=e.clientX-lastX,dy=e.clientY-lastY;if(Math.hypot(dx,dy)>2)moved=true;const r=mandel.getBoundingClientRect();view.cx-=dx/r.width*view.scale*(r.width/r.height);view.cy+=dy/r.height*view.scale;lastX=e.clientX;lastY=e.clientY;queueRender();}});
+function endPointer(e){if(touches.has(e.pointerId)&&touches.size===1&&dragging&&!moved){selected=toComplex(e.clientX,e.clientY);orbitStep=0;queueRender();}touches.delete(e.pointerId);if(touches.size<2)pinchStart=null;if(touches.size===0)dragging=false;}
+wrap.addEventListener('pointerup',endPointer);wrap.addEventListener('pointercancel',e=>{touches.delete(e.pointerId);dragging=false;pinchStart=null});
+wrap.addEventListener('dblclick',e=>{e.preventDefault();selected=toComplex(e.clientX,e.clientY);zoomAt(e.clientX,e.clientY,.48)});
+
+function orbitData(c,max=80){let x=0,y=0,pts=[{x:0,y:0}],escape=-1;for(let n=1;n<=max;n++){const nx=x*x-y*y+c.re,ny=2*x*y+c.im;x=nx;y=ny;pts.push({x,y});if(x*x+y*y>16&&escape<0){escape=n;break}}return {pts,escape,mod:Math.hypot(x,y)}}
+function drawOrbit(){const ctx=orbitCanvas.getContext('2d'),r=orbitCanvas.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);orbitCanvas.width=Math.round(r.width*dpr);orbitCanvas.height=Math.round(r.height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,r.width,r.height);const data=orbitData(selected,80),pts=data.pts;let max=2;for(const p of pts.slice(0,Math.max(2,orbitStep||pts.length))){max=Math.max(max,Math.abs(p.x),Math.abs(p.y));}max=Math.min(8,max*1.15);const pad=16,s=Math.min((r.width-2*pad)/(2*max),(r.height-2*pad)/(2*max)),X=x=>r.width/2+x*s,Y=y=>r.height/2-y*s;ctx.strokeStyle='#e3dce8';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pad,Y(0));ctx.lineTo(r.width-pad,Y(0));ctx.moveTo(X(0),pad);ctx.lineTo(X(0),r.height-pad);ctx.stroke();ctx.fillStyle='#766d7b';ctx.font='11px Segoe UI';ctx.fillText('Re',r.width-30,Y(0)-5);ctx.fillText('Im',X(0)+5,14);const upto=orbitStep?Math.min(orbitStep,pts.length):pts.length;ctx.strokeStyle='#6d39a0';ctx.lineWidth=1.7;ctx.beginPath();for(let i=0;i<upto;i++){const p=pts[i];i?ctx.lineTo(X(p.x),Y(p.y)):ctx.moveTo(X(p.x),Y(p.y))}ctx.stroke();for(let i=0;i<upto;i++){const p=pts[i];ctx.fillStyle=i===upto-1?'#ac2948':'#5b2d90';ctx.beginPath();ctx.arc(X(p.x),Y(p.y),i===upto-1?3.2:2,0,Math.PI*2);ctx.fill()}$('orbitText').textContent=data.escape>=0?`Banen rømmer ved n = ${data.escape}`:`Viser ${pts.length-1} iterasjoner`}
+function playOrbit(){const data=orbitData(selected,80);if(orbitAnimation){clearInterval(orbitAnimation);orbitAnimation=null;orbitStep=0;$('playOrbit').textContent='Spill av';drawOrbit();return}orbitStep=1;$('playOrbit').textContent='Stopp';orbitAnimation=setInterval(()=>{orbitStep++;drawOrbit();if(orbitStep>=data.pts.length){clearInterval(orbitAnimation);orbitAnimation=null;$('playOrbit').textContent='Spill av';setTimeout(()=>{orbitStep=0;drawOrbit()},700)}},90)}
+$('playOrbit').addEventListener('click',playOrbit);
+
+iter.addEventListener('input',()=>{iterOut.textContent=iter.value;queueRender()});quality.addEventListener('input',()=>{qualityOut.textContent=quality.value+'%';queueRender()});
+$('resetView').addEventListener('click',()=>{view={...presetViews.home};queueRender()});
+document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{view={...presetViews[b.dataset.preset]};queueRender()}));
+addEventListener('resize',queueRender);
+
+try{mainGL=initGL(mandel);juliaGL=initGL(julia);}catch(e){console.error(e);status.textContent='WebGL støttes ikke';}
+iterOut.textContent=iter.value;qualityOut.textContent=quality.value+'%';queueRender();
+})();
+</script>
+
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "1b3cf01bc1c645a99f02736c18c9ab78"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
