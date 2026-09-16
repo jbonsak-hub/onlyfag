@@ -23,6 +23,7 @@ button{cursor:pointer}
 .submenu-item{padding:9px 20px 9px 50px;color:var(--muted);cursor:pointer;transition:.15s;font-size:.92rem}
 .submenu-item:hover,.submenu-item.active{background:var(--soft2);color:var(--purple);font-weight:650}
 .submenu-item.direct{padding:11px 20px;font-size:.98rem}
+.pi-nav-glyph{font-family:"Cambria Math","STIX Two Math","Times New Roman",Georgia,serif;font-size:1.22em;font-weight:400;line-height:1;display:inline-block;vertical-align:-.04em}
 .onlyfag-back-arrow{position:fixed;left:16px;bottom:16px;z-index:120;display:flex;width:42px;height:42px;margin:0;align-items:center;justify-content:center;border-radius:12px;color:var(--purple);text-decoration:none;font-size:1.35rem;border:1px solid var(--line);background:var(--paper);box-shadow:0 4px 14px rgba(35,20,48,.08)}
 .onlyfag-back-arrow:hover{background:var(--soft)}
 .sidebar-resizer{position:sticky;top:0;width:8px;height:100vh;flex:0 0 8px;cursor:col-resize;touch-action:none;background:transparent}
@@ -70,7 +71,7 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
 /* Pi */
 #pi-trener{max-width:920px;position:relative}
 .pi-shell{max-width:720px;margin:5vh auto 0;text-align:center}
-.pi-symbol{display:flex;justify-content:center;align-items:center;margin-bottom:8px}.pi-symbol svg{display:block;width:72px;height:58px;overflow:visible}.pi-symbol path{fill:none;stroke:var(--purple);stroke-width:10;stroke-linecap:round;stroke-linejoin:round}
+.pi-symbol{font-family:Georgia,"Times New Roman",serif;font-size:5.3rem;line-height:1;color:var(--purple);margin-bottom:8px;font-weight:400}
 .pi-stats{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}.pi-pill{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--soft);font-size:.86rem;color:var(--muted)}.pi-pill strong{color:var(--ink)}
 .pi-display{min-height:170px;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--paper) 92%,var(--soft));padding:26px 22px;display:flex;align-items:center;justify-content:center;margin:12px 0;overflow:hidden}
 .pi-digits{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:clamp(1.35rem,4.4vw,2.35rem);font-weight:750;line-height:1.28;letter-spacing:.035em;max-width:100%;overflow:auto;scrollbar-width:thin;text-align:left}
@@ -101,7 +102,7 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
 
   #pi-trener.page-section{max-width:none;margin:0;background:transparent;box-shadow:none;border-radius:0;padding:10px 0 0}
   .pi-shell{max-width:none;margin:0;text-align:center;display:grid;gap:0}
-  .pi-symbol{margin:5px 0 5px}.pi-symbol svg{width:51px;height:41px}.pi-symbol path{stroke-width:9}
+  .pi-symbol{margin:5px 0 5px;font-size:4.5rem}
   .pi-stats{gap:18px;margin:0 0 9px}.pi-pill{padding:0;border:0;background:transparent;font-size:.78rem;color:var(--muted)}.pi-pill strong{font-size:.92rem}
   .pi-display{min-height:102px;margin:0 0 12px;padding:20px 2px;border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);border-radius:0;background:transparent}
   .pi-digits{width:100%;font-size:clamp(1.32rem,6vw,1.62rem);line-height:1.12;letter-spacing:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;padding:0 4px}
@@ -118,7 +119,7 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
 
 @media(max-width:430px){
   .sidebar h1{padding:9px 12px;font-size:1rem}.submenu-item.direct{padding:9px 8px;font-size:.9rem}
-  .content{padding-inline:10px}.pi-symbol svg{width:47px;height:38px}.pi-display{min-height:96px;padding:18px 0}.pi-digits{font-size:1.38rem}.pi-input{min-height:47px}
+  .content{padding-inline:10px}.pi-symbol{font-size:4.2rem}.pi-display{min-height:96px;padding:18px 0}.pi-digits{font-size:1.38rem}.pi-input{min-height:47px}
 }
 </style>
 </head>
@@ -126,7 +127,7 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
 <nav class="sidebar">
   <h1><span>∑ Matematikk</span><button aria-label="Bytt mellom lys og mørk modus" class="global-theme-toggle" id="themeToggle" title="Mørk modus" type="button">◐</button></h1>
   <div class="submenu-item direct" data-section="hurtigfaktorisering" onclick="showContent('hurtigfaktorisering',this)">Hurtigfaktorisering</div>
-  <div class="submenu-item direct" data-section="pi-trener" onclick="showContent('pi-trener',this)">π</div>
+  <div class="submenu-item direct" data-section="pi-trener" onclick="showContent('pi-trener',this)"><span class="pi-nav-glyph">π</span></div>
   <a class="onlyfag-back-arrow" href="index.html" aria-label="Tilbake til hovedsiden" title="Tilbake til hovedsiden">←</a>
 </nav>
 <button aria-expanded="true" aria-label="Minimer sidemenyen" class="sidebar-toggle" id="sidebarToggle" title="Minimer sidemenyen" type="button">‹</button>
@@ -198,13 +199,9 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
   </section>
 
   <section class="page-section" id="pi-trener">
-    <button type="button" class="pi-explore-btn" id="pi-explore" title="Se og visualiser π">π ↗</button>
+    <button type="button" class="pi-explore-btn" id="pi-explore" title="Se og visualiser π"><span class="pi-nav-glyph">π</span> ↗</button>
     <div class="pi-shell">
-      <div class="pi-symbol" aria-label="pi">
-        <svg viewBox="0 0 100 80" role="img" aria-hidden="true">
-          <path d="M14 20 C31 17 68 17 86 20 M35 20 C34 37 32 57 25 69 M67 20 C66 38 66 57 75 69"/>
-        </svg>
-      </div>
+      <div class="pi-symbol" aria-label="pi">π</div>
       <div class="pi-stats"><span class="pi-pill">Riktige: <strong id="pi-count">0</strong></span><span class="pi-pill">Beste: <strong id="pi-best">0</strong></span></div>
       <div class="pi-display" id="pi-display">
         <div class="pi-digits" id="pi-digits">
