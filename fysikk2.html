@@ -556,6 +556,78 @@ html[data-theme="dark"] .onlyfag-back-arrow:hover{background:#352343}
 
 </style>
 
+
+<style id="mc-size-control-style">
+:root{--mc-question-scale:.80}
+
+.mc-grid{
+  width:min(100%,calc(980px * var(--mc-question-scale)))!important;
+  max-width:none!important;
+  transition:width .14s ease;
+}
+
+.mc-size-control{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  z-index:4500;
+  display:none;
+  width:230px;
+  padding:9px 11px 10px;
+  border:1px solid #d9cee6;
+  border-radius:12px;
+  background:rgba(255,255,255,.95);
+  backdrop-filter:blur(8px);
+  box-shadow:0 5px 20px rgba(45,25,65,.14);
+  color:#3d245c;
+}
+body.mc-exam-view .mc-size-control{display:block}
+
+.mc-size-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:6px;
+  font-size:.76rem;
+  font-weight:750;
+}
+.mc-size-value{
+  min-width:36px;
+  text-align:right;
+  color:#5b2d90;
+  font-variant-numeric:tabular-nums;
+}
+.mc-size-control input[type="range"]{
+  width:100%;
+  accent-color:#6b35a4;
+  cursor:pointer;
+}
+.mc-size-scale{
+  display:flex;
+  justify-content:space-between;
+  margin-top:2px;
+  color:#8a8191;
+  font-size:.61rem;
+}
+body.dark .mc-size-control{
+  background:rgba(28,24,33,.95);
+  border-color:#574861;
+  color:#eee8f2;
+}
+body.dark .mc-size-value{color:#c99bea}
+
+@media(max-width:760px){
+  :root{--mc-question-scale:1}
+  .mc-grid{width:100%!important}
+  .mc-size-control{
+    right:10px;
+    bottom:10px;
+    width:205px;
+  }
+}
+</style>
+
 </head>
 <body>
 <nav class="sidebar"><h1><span>📘 Fysikk 2</span><button aria-label="Bytt mellom lys og mørk modus" class="global-theme-toggle" id="global-theme-toggle" title="Mørk modus" type="button">◐</button></h1>
@@ -972,7 +1044,7 @@ function toggleMenu(header){const icon=header.querySelector('.menu-icon');const 
 function toggleSolutionMenu(header){const icon=header.querySelector('.menu-icon');const submenu=header.nextElementSibling;const isOpen=submenu.classList.contains('open');submenu.classList.toggle('open');icon.textContent=isOpen?'▶':'▼';header.classList.toggle('active',!isOpen);}
 function syncNuclideTheme(frame=document.getElementById('frame-nuklidekart')){if(!frame||!frame.contentDocument)return;try{const dark=document.documentElement.dataset.theme==='dark';const doc=frame.contentDocument;doc.documentElement.dataset.theme=dark?'dark':'light';const button=doc.getElementById('theme-toggle');if(button){button.textContent=dark?'☀':'◐';button.title=dark?'Bruk lys modus':'Bruk mørk modus'}const meta=doc.querySelector('meta[name="theme-color"]');if(meta)meta.setAttribute('content',dark?'#17141b':'#5b2d90');if(typeof frame.contentWindow.draw==='function')frame.contentWindow.draw()}catch(error){}}
 function ensureNuclideChart(){const frame=document.getElementById('frame-nuklidekart');if(!frame||frame.dataset.loaded)return;frame.addEventListener('load',()=>syncNuclideTheme(frame),{once:true});frame.src='data/fysikk2/nuklidekart.html';frame.dataset.loaded='true';}
-function showContent(id, el){document.body.classList.toggle('nuklide-view',id==='nuklidekart');document.body.classList.toggle('periodic-view',id==='periodesystem');if(id==='periodesystem')ensurePeriodicTable();document.getElementById('welcome').style.display='none';document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.submenu-item,.quiz-menu-link,.trivia-main-link').forEach(i=>i.classList.remove('active'));const sec=document.getElementById(id);if(sec)sec.classList.add('active');if(el)el.classList.add('active');if(id==='nuklidekart')ensureNuclideChart();setTimeout(fitFormulae, 50);}
+function showContent(id, el){document.body.classList.toggle('nuklide-view',id==='nuklidekart');document.body.classList.toggle('periodic-view',id==='periodesystem');document.body.classList.toggle('mc-exam-view',/^mc-/.test(id));if(id==='periodesystem')ensurePeriodicTable();document.getElementById('welcome').style.display='none';document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.submenu-item,.quiz-menu-link,.trivia-main-link').forEach(i=>i.classList.remove('active'));const sec=document.getElementById(id);if(sec)sec.classList.add('active');if(el)el.classList.add('active');if(id==='nuklidekart')ensureNuclideChart();setTimeout(fitFormulae, 50);}
 
 function sortMultipleChoiceCards(){
   const examSetValue = label => {
@@ -2656,6 +2728,48 @@ function ensureQuickFactorization(){
     openLinkedSection();
   }
   window.addEventListener('hashchange', openLinkedSection);
+})();
+</script>
+
+
+<div class="mc-size-control" id="mcSizeControl" aria-label="Juster størrelse på flervalgsoppgaver">
+  <div class="mc-size-head">
+    <span>Oppgavestørrelse</span>
+    <span class="mc-size-value" id="mcSizeValue">80 %</span>
+  </div>
+  <input id="mcSizeSlider" type="range" min="55" max="100" step="5" value="80" aria-label="Oppgavestørrelse">
+  <div class="mc-size-scale"><span>Mindre</span><span>Større</span></div>
+</div>
+
+
+<script id="mc-size-control-script">
+(function(){
+  const slider=document.getElementById('mcSizeSlider');
+  const value=document.getElementById('mcSizeValue');
+  if(!slider||!value)return;
+
+  const STORE='fys2-mc-question-size';
+  const DEFAULT=80;
+
+  function apply(raw,save=true){
+    let pct=Math.max(55,Math.min(100,Number(raw)||DEFAULT));
+    pct=Math.round(pct/5)*5;
+    document.documentElement.style.setProperty('--mc-question-scale',String(pct/100));
+    slider.value=String(pct);
+    value.textContent=pct+' %';
+    if(save){
+      try{localStorage.setItem(STORE,String(pct))}catch(e){}
+    }
+  }
+
+  let initial=DEFAULT;
+  try{
+    const saved=Number(localStorage.getItem(STORE));
+    if(saved>=55&&saved<=100)initial=saved;
+  }catch(e){}
+  apply(initial,false);
+
+  slider.addEventListener('input',()=>apply(slider.value));
 })();
 </script>
 
