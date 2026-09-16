@@ -580,6 +580,99 @@ body.dark .v40-context{background:var(--panel2)}
 }
 </style>
 
+
+<style id="kjemi-v47-carbon-tab-label">
+#carbonMode{
+  flex-wrap:wrap;
+}
+#carbonMode button{
+  white-space:normal;
+  line-height:1.2;
+  min-height:34px;
+}
+</style>
+
+
+<style id="kjemi-v48-balance-states">
+#balanceArea .balance-species{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  white-space:nowrap;
+}
+#balanceArea .state-select{
+  width:58px;
+  min-width:58px;
+  height:34px;
+  padding:3px 4px;
+  border:1px solid var(--line);
+  border-radius:7px;
+  background:var(--panel);
+  color:var(--text);
+  font-weight:700;
+  text-align:center;
+}
+#balanceArea .state-key{
+  margin:-4px auto 13px;
+  color:var(--muted);
+  font-size:.78rem;
+  text-align:center;
+}
+@media(max-width:720px){
+  #balanceArea .equation{
+    row-gap:9px;
+  }
+  #balanceArea .state-select{
+    width:54px;
+    min-width:54px;
+  }
+}
+</style>
+
+
+<style id="kjemi-v49-balance-state-only">
+#balanceArea .state-select{
+  width:72px!important;
+  min-width:72px!important;
+  height:38px!important;
+  padding:4px 22px 4px 8px!important;
+  font-size:.9rem!important;
+  line-height:1!important;
+  overflow:visible!important;
+}
+#balanceArea .coef-fixed{
+  min-width:18px;
+  text-align:right;
+  font-weight:800;
+}
+#balanceArea .balance-species{
+  gap:7px!important;
+}
+#balanceArea .equation{
+  column-gap:9px!important;
+}
+@media(max-width:720px){
+  #balanceArea .state-select{
+    width:68px!important;
+    min-width:68px!important;
+    padding-right:20px!important;
+  }
+}
+</style>
+
+
+<style id="kjemi-v50-reaction-title">
+.balance-subtitle{
+  font-size:.62em;
+  font-weight:600;
+  color:var(--muted);
+  white-space:nowrap;
+}
+@media(max-width:650px){
+  .balance-subtitle{white-space:normal}
+}
+</style>
+
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
@@ -595,9 +688,9 @@ body.dark .v40-context{background:var(--panel2)}
     <button class="nav-btn" data-page="binding"><span class="nav-icon">⌁</span><span class="nav-txt">Sterke bindinger</span></button>
     <button class="nav-btn" data-page="polar"><span class="nav-icon">↔</span><span class="nav-txt">Polaritet & svake bindinger</span></button>
     <button class="nav-btn" data-page="solubility"><span class="nav-icon">◌</span><span class="nav-txt">Løselighet</span></button>
-    <button class="nav-btn" data-page="balance"><span class="nav-icon">⇌</span><span class="nav-txt">Balanser reaksjoner</span></button>
-    <button class="nav-btn" data-page="combustion"><span class="nav-icon">△</span><span class="nav-txt">Forbrenning</span></button>
+    <button class="nav-btn" data-page="balance"><span class="nav-icon">⇌</span><span class="nav-txt">Reaksjonslikninger</span></button>
     <button class="nav-btn" data-page="carbon"><span class="nav-icon">C</span><span class="nav-txt">Karbonkjemi</span></button>
+    <button class="nav-btn" data-page="combustion"><span class="nav-icon">△</span><span class="nav-txt">Forbrenning</span></button>
     <div class="nf-menu-divider" aria-hidden="true"></div>
     <button class="nav-btn" data-page="mix"><span class="nav-icon">✓</span><span class="nav-txt">Blandet fagquiz</span></button>
     <button class="nav-btn" data-page="elementquiz"><span class="nav-icon">◎</span><span class="nav-txt">Grunnstoffquiz</span></button>
@@ -676,8 +769,8 @@ body.dark .v40-context{background:var(--panel2)}
     </section>
 
     <section class="page" id="page-balance">
-      <h1>Balanser reaksjonslikninger</h1>
-      <div class="module-tools"><div class="seg" id="balLevel"><button data-mode="basic" class="active">Grunnleggende</button><button data-mode="mixed">Blandet</button><button data-mode="hard">Utfordring</button></div></div>
+      <h1>Reaksjonslikninger <span class="balance-subtitle">(balansering og tilstandsformer)</span></h1>
+      <div class="module-tools"><div class="seg" id="balLevel"><button data-mode="basic" class="active">Grunnleggende</button><button data-mode="hard">Utfordring</button></div></div>
       <div class="card"><div id="balanceArea"></div></div>
     </section>
 
@@ -687,19 +780,12 @@ body.dark .v40-context{background:var(--panel2)}
       <div class="card"><div id="redoxArea"></div></div>
     </section>
 
-    <section class="page" id="page-combustion">
-      <h1>Forbrenning</h1>
-      
-      <div class="card"><div id="combustionArea"></div></div>
-    </section>
-
-
-    <section class="page" id="page-carbon">
+<section class="page" id="page-carbon">
       <h1>Karbonkjemi</h1>
       
       <div class="module-tools">
         <div class="seg carbon-mode" id="carbonMode">
-          <button data-mode="combustion" class="active">Forbrenning</button>
+          <button data-mode="combustion" class="active">Kjemiske reaksjoner med karbon</button>
           <button data-mode="inorganic">Uorganiske karbonforbindelser</button>
           <button data-mode="organic">Organisk kjemi <span class="prep-note">(forberedelse til Kjemi 1)</span></button>
         </div>
@@ -707,6 +793,12 @@ body.dark .v40-context{background:var(--panel2)}
       <div class="card carbon-card">
         <div id="carbonArea"></div>
       </div>
+    </section>
+
+<section class="page" id="page-combustion">
+      <h1>Forbrenning</h1>
+      
+      <div class="card"><div id="combustionArea"></div></div>
     </section>
 
     <section class="page" id="page-elementquiz">
@@ -751,7 +843,7 @@ function mc(container, options, answer, feedbackId, explanation=''){
 function setupSeg(id,callback){$('#'+id).querySelectorAll('button').forEach(b=>b.onclick=()=>{$('#'+id).querySelectorAll('button').forEach(x=>x.classList.remove('active'));b.classList.add('active');callback(b.dataset.mode);});}
 function currentMode(id){return $('#'+id+' button.active').dataset.mode}
 
-const titles={home:'Kjemi – oppgavebank',atom:'Atomer & periodesystem',ion:'Ioner',salt:'Ioniske forbindelser',binding:'Sterke bindinger',polar:'Polaritet & svake bindinger',solubility:'Løselighet',balance:'Balanser reaksjoner',redox:'Elektronoverføring',combustion:'Forbrenning',carbon:'Karbonkjemi',mix:'Blandet fagquiz'};
+const titles={home:'Kjemi – oppgavebank',atom:'Atomer & periodesystem',ion:'Ioner',salt:'Ioniske forbindelser',binding:'Sterke bindinger',polar:'Polaritet & svake bindinger',solubility:'Løselighet',balance:'Reaksjonslikninger',redox:'Elektronoverføring',combustion:'Forbrenning',carbon:'Karbonkjemi',mix:'Blandet fagquiz'};
 function openPage(name){$$('.page').forEach(p=>p.classList.remove('active'));$('#page-'+name).classList.add('active');$$('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===name));$('#topTitle').textContent=titles[name];document.body.classList.remove('mobile-open');window.scrollTo({top:0,behavior:'instant'});}
 $$('.nav-btn').forEach(b=>b.onclick=()=>openPage(b.dataset.page));
 const safeStore={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
@@ -761,7 +853,7 @@ if(safeStore.get('chemTheme')==='dark')document.body.classList.add('dark');
 if(safeStore.get('chemSide')==='1'&&innerWidth>860)document.body.classList.add('side-collapsed');
 
 const homeModules=[
-['atom','⚛','Atomer & periodesystem','Atomoppbygning, skall, grupper, perioder og atomstørrelse.'],['ion','±','Ioner','Ladning, elektronantall, kationer, anioner og åtteregelen.'],['salt','▦','Ioniske forbindelser','Sett sammen ioner til nøytrale salter og skriv formel.'],['binding','⌁','Sterke bindinger','Ionisk, upolar/polar elektronparbinding og metallbinding.'],['polar','↔','Polaritet & svake bindinger','Polaritet, dipolbindinger og hydrogenbindinger.'],['solubility','◌','Løselighet','Likt løser likt, ionestyrke og utfelling.'],['balance','⇌','Balanser reaksjoner','Koeffisienter fra en stor reaksjonsbank i flere nivåer.'],['redox','e⁻','Elektronoverføring','Hvem avgir, hvem mottar og hvor mange elektroner?'],['combustion','△','Forbrenning','Branntrekant, hydrokarboner og magnesium.'],['carbon','C','Karbonkjemi','Forbrenning, karbonallotroper, organisk kjemi, plast og olje.'],['mix','✓','Blandet fagquiz','Sett sammen en tilfeldig fagquiz på 10–30 spørsmål.']];
+['atom','⚛','Atomer & periodesystem','Atomoppbygning, skall, grupper, perioder og atomstørrelse.'],['ion','±','Ioner','Ladning, elektronantall, kationer, anioner og åtteregelen.'],['salt','▦','Ioniske forbindelser','Sett sammen ioner til nøytrale salter og skriv formel.'],['binding','⌁','Sterke bindinger','Ionisk, upolar/polar elektronparbinding og metallbinding.'],['polar','↔','Polaritet & svake bindinger','Polaritet, dipolbindinger og hydrogenbindinger.'],['solubility','◌','Løselighet','Likt løser likt, ionestyrke og utfelling.'],['balance','⇌','Reaksjonslikninger','Koeffisienter fra en stor reaksjonsbank i flere nivåer.'],['redox','e⁻','Elektronoverføring','Hvem avgir, hvem mottar og hvor mange elektroner?'],['carbon','C','Karbonkjemi','Karbonreaksjoner, karbonkretsløp, havforsuring, allotroper og organisk kjemi.'],['combustion','△','Forbrenning','Branntrekant, hydrokarboner og magnesium.'],['mix','✓','Blandet fagquiz','Sett sammen en tilfeldig fagquiz på 10–30 spørsmål.']];
 $('#homeGrid').innerHTML=homeModules.map(([p,i,t,d])=>`<div class="home-card" data-go="${p}"><div style="font-size:1.25rem;margin-bottom:8px">${i}</div><strong>${t}</strong><div class="mini">${d}</div></div>`).join('');$$('[data-go]').forEach(c=>c.onclick=()=>openPage(c.dataset.go));
 
 const elements=[
@@ -824,16 +916,223 @@ else{area.innerHTML=`<div class="question">Hva skjer når en løsning av NaCl bl
 setupSeg('solMode',newSolubility);
 
 const reactions=[
-{level:'basic',r:[['H2',2],['O2',1]],p:[['H2O',2]]},{level:'basic',r:[['C',2],['O2',1]],p:[['CO',2]]},{level:'basic',r:[['N2',1],['H2',3]],p:[['NH3',2]]},{level:'basic',r:[['Al',4],['O2',3]],p:[['Al2O3',2]]},{level:'basic',r:[['Mg',3],['N2',1]],p:[['Mg3N2',1]]},{level:'basic',r:[['Ca',2],['O2',1]],p:[['CaO',2]]},{level:'basic',r:[['Li',4],['O2',1]],p:[['Li2O',2]]},{level:'basic',r:[['P4',1],['Cl2',6]],p:[['PCl3',4]]},
-{level:'mixed',r:[['CH4',1],['O2',2]],p:[['CO2',1],['H2O',2]]},{level:'mixed',r:[['C2H6',2],['O2',7]],p:[['CO2',4],['H2O',6]]},{level:'mixed',r:[['C3H8',1],['O2',5]],p:[['CO2',3],['H2O',4]]},{level:'mixed',r:[['NaOH',2],['CO2',1]],p:[['Na2CO3',1],['H2O',1]]},{level:'mixed',r:[['Na',2],['Cl2',1]],p:[['NaCl',2]]},{level:'mixed',r:[['Mg',2],['O2',1]],p:[['MgO',2]]},{level:'mixed',r:[['K',4],['O2',1]],p:[['K2O',2]]},{level:'mixed',r:[['Na',4],['O2',1]],p:[['Na2O',2]]},
-{level:'hard',r:[['Na',4],['O2',1]],p:[['Na2O',2]]},{level:'hard',r:[['K',6],['B2O3',1]],p:[['K2O',3],['B',2]]},{level:'hard',r:[['Na',10],['NaNO3',2]],p:[['Na2O',6],['N2',1]]},{level:'hard',r:[['Rb',10],['RbNO3',2]],p:[['Rb2O',6],['N2',1]]},{level:'hard',r:[['N2',2],['O2',5]],p:[['N2O5',2]]},{level:'hard',r:[['SO2',2],['O2',1]],p:[['SO3',2]]},{level:'hard',r:[['Al',2],['S',3]],p:[['Al2S3',1]]}
+/* Grunnleggende balansering */
+{level:'basic',r:[['H2',2],['O2',1]],p:[['H2O',2]]},
+{level:'basic',r:[['C',2],['O2',1]],p:[['CO',2]]},
+{level:'basic',r:[['N2',1],['H2',3]],p:[['NH3',2]]},
+{level:'basic',r:[['Al',4],['O2',3]],p:[['Al2O3',2]]},
+{level:'basic',r:[['Mg',3],['N2',1]],p:[['Mg3N2',1]]},
+{level:'basic',r:[['Ca',2],['O2',1]],p:[['CaO',2]]},
+{level:'basic',r:[['Li',4],['O2',1]],p:[['Li2O',2]]},
+{level:'basic',r:[['CH4',1],['O2',2]],p:[['CO2',1],['H2O',2]]},
+{level:'basic',r:[['C3H8',1],['O2',5]],p:[['CO2',3],['H2O',4]]},
+{level:'basic',r:[['Na',2],['Cl2',1]],p:[['NaCl',2]]},
+{level:'basic',r:[['Mg',2],['O2',1]],p:[['MgO',2]]},
+{level:'basic',r:[['K',4],['O2',1]],p:[['K2O',2]]},
+{level:'basic',r:[['Na',4],['O2',1]],p:[['Na2O',2]]},
+
+/* Grunnleggende oppgaver som også tester tilstandsformer */
+{
+  level:'basic',
+  prompt:'Natrium reagerer med klor. Bruk stoffenes vanlige tilstandsformer ved 20 °C.',stateOnly:true,
+  r:[['Na',2],['Cl2',1]],p:[['NaCl',2]],
+  rs:['s','g'],ps:['s'],
+  explain:'Natrium er fast stoff, klor er gass, og natriumklorid er et fast ionisk salt: 2Na(s) + Cl₂(g) → 2NaCl(s).'
+},
+{
+  level:'basic',
+  prompt:'Magnesium reagerer med oksygen og danner magnesiumoksid. Bruk stoffenes vanlige tilstandsformer ved 20 °C.',stateOnly:true,
+  r:[['Mg',2],['O2',1]],p:[['MgO',2]],
+  rs:['s','g'],ps:['s'],
+  explain:'Magnesium og magnesiumoksid er faste stoffer, mens oksygen er gass: 2Mg(s) + O₂(g) → 2MgO(s).'
+},
+{
+  level:'basic',
+  prompt:'Metan forbrenner fullstendig. Velg tilstandsformene stoffene har under selve forbrenningen.',stateOnly:true,
+  r:[['CH4',1],['O2',2]],p:[['CO2',1],['H2O',2]],
+  rs:['g','g'],ps:['g','g'],
+  explain:'I flammen er metan, oksygen, karbondioksid og vanndamp gasser: CH₄(g) + 2O₂(g) → CO₂(g) + 2H₂O(g).'
+},
+{
+  level:'basic',
+  prompt:'Natriumklorid tilsettes vann og løses. Velg riktig tilstandsform for NaCl før oppløsning og for ionene etterpå.',stateOnly:true,
+  r:[['NaCl',1]],p:[['Na^+',1],['Cl^-',1]],
+  rs:['s'],ps:['aq','aq'],
+  explain:'Når NaCl løses i vann, skilles ionene og blir hydratiserte: NaCl(s) → Na⁺(aq) + Cl⁻(aq).'
+},
+{
+  level:'basic',
+  prompt:'Sølvnitrat og saltsyre blandes. Reaksjonen gir AgCl og HNO3. Velg riktig tilstandsform for hvert stoff.',stateOnly:true,
+  r:[['AgNO3',1],['HCl',1]],p:[['AgCl',1],['HNO3',1]],
+  rs:['aq','aq'],ps:['s','aq'],
+  explain:'AgCl er tungtløselig og felles ut som fast stoff: AgNO₃(aq) + HCl(aq) → AgCl(s) + HNO₃(aq).'
+},
+{
+  level:'basic',
+  prompt:'Hydrogen reagerer med oksygen. Produktet avkjøles til 20 °C. Velg riktig tilstandsform for hvert stoff.',stateOnly:true,
+  r:[['H2',2],['O2',1]],p:[['H2O',2]],
+  rs:['g','g'],ps:['l'],
+  explain:'Hydrogen og oksygen er gasser ved romtemperatur, mens avkjølt vann er væske: 2H₂(g) + O₂(g) → 2H₂O(l).'
+},
+
+
+/* Flere grunnleggende reaksjoner: balansering */
+{level:'basic',r:[['C',1],['O2',1]],p:[['CO2',1]],
+  prompt:'Balanser fullstendig forbrenning av karbon.'},
+{level:'basic',r:[['C',2],['O2',1]],p:[['CO',2]],
+  prompt:'Balanser ufullstendig forbrenning av karbon der produktet er CO.'},
+{level:'basic',r:[['C4H10',2],['O2',13]],p:[['CO2',8],['H2O',10]],
+  prompt:'Balanser fullstendig forbrenning av butan, C4H10.'},
+{level:'basic',r:[['C4H10',2],['O2',9]],p:[['CO',8],['H2O',10]],
+  prompt:'Balanser ufullstendig forbrenning av butan der karbonproduktet er CO.'},
+{level:'basic',r:[['C6H12O6',1],['O2',6]],p:[['CO2',6],['H2O',6]],
+  prompt:'Balanser den forenklede reaksjonslikningen for celleånding.'},
+{level:'basic',r:[['CO2',6],['H2O',6]],p:[['C6H12O6',1],['O2',6]],
+  prompt:'Balanser den forenklede reaksjonslikningen for fotosyntese.'},
+
+/* Samme kjemi, men her testes bare tilstandsformer */
+{
+  level:'basic',stateOnly:true,
+  prompt:'Karbon forbrenner fullstendig i oksygen. Bruk stoffenes vanlige tilstandsformer ved 20 °C.',
+  r:[['C',1],['O2',1]],p:[['CO2',1]],
+  rs:['s','g'],ps:['g'],
+  explain:'Ved 20 °C er karbon fast stoff, mens O₂ og CO₂ er gasser: C(s) + O₂(g) → CO₂(g).'
+},
+{
+  level:'basic',stateOnly:true,
+  prompt:'Karbon forbrenner ufullstendig og danner CO. Bruk stoffenes vanlige tilstandsformer ved 20 °C.',
+  r:[['C',2],['O2',1]],p:[['CO',2]],
+  rs:['s','g'],ps:['g'],
+  explain:'Ved 20 °C er karbon fast stoff, mens O₂ og CO er gasser: 2C(s) + O₂(g) → 2CO(g).'
+},
+{
+  level:'basic',stateOnly:true,
+  prompt:'Butan forbrenner fullstendig. Velg tilstandsformene stoffene har under selve forbrenningen.',
+  r:[['C4H10',2],['O2',13]],p:[['CO2',8],['H2O',10]],
+  rs:['g','g'],ps:['g','g'],
+  explain:'I flammen behandles butan, O₂, CO₂ og vanndamp som gasser: 2C₄H₁₀(g) + 13O₂(g) → 8CO₂(g) + 10H₂O(g).'
+},
+{
+  level:'basic',stateOnly:true,
+  prompt:'Butan forbrenner ufullstendig og danner CO. Velg tilstandsformene stoffene har under selve forbrenningen.',
+  r:[['C4H10',2],['O2',9]],p:[['CO',8],['H2O',10]],
+  rs:['g','g'],ps:['g','g'],
+  explain:'Under forbrenningen er butan, O₂, CO og vanndamp gasser: 2C₄H₁₀(g) + 9O₂(g) → 8CO(g) + 10H₂O(g).'
+},
+{
+  level:'basic',stateOnly:true,
+  prompt:'Se på den forenklede celleåndingsreaksjonen. For denne oppgaven bruker vi stoffenes vanlige tilstandsformer ved 20 °C.',
+  r:[['C6H12O6',1],['O2',6]],p:[['CO2',6],['H2O',6]],
+  rs:['s','g'],ps:['g','l'],
+  explain:'I en enkel standardframstilling ved 20 °C skriver vi glukose som fast stoff, O₂ og CO₂ som gasser og vann som væske: C₆H₁₂O₆(s) + 6O₂(g) → 6CO₂(g) + 6H₂O(l).'
+},
+{
+  level:'basic',stateOnly:true,
+  prompt:'Se på den forenklede fotosyntesereaksjonen. For denne oppgaven bruker vi stoffenes vanlige tilstandsformer ved 20 °C.',
+  r:[['CO2',6],['H2O',6]],p:[['C6H12O6',1],['O2',6]],
+  rs:['g','l'],ps:['s','g'],
+  explain:'I en enkel standardframstilling ved 20 °C skriver vi CO₂ og O₂ som gasser, vann som væske og glukose som fast stoff: 6CO₂(g) + 6H₂O(l) → C₆H₁₂O₆(s) + 6O₂(g).'
+},
+
+/* Utfordring */
+{level:'hard',r:[['P4',1],['Cl2',6]],p:[['PCl3',4]]},
+{level:'hard',r:[['C2H6',2],['O2',7]],p:[['CO2',4],['H2O',6]]},
+{level:'hard',r:[['NaOH',2],['CO2',1]],p:[['Na2CO3',1],['H2O',1]]},
+{level:'hard',r:[['K',6],['B2O3',1]],p:[['K2O',3],['B',2]]},
+{level:'hard',r:[['Na',10],['NaNO3',2]],p:[['Na2O',6],['N2',1]]},
+{level:'hard',r:[['Rb',10],['RbNO3',2]],p:[['Rb2O',6],['N2',1]]},
+{level:'hard',r:[['N2',2],['O2',5]],p:[['N2O5',2]]},
+{level:'hard',r:[['SO2',2],['O2',1]],p:[['SO3',2]]},
+{level:'hard',r:[['Al',2],['S',3]],p:[['Al2S3',1]]}
 ];
 let currentReaction=null;
-function reactionHTML(q){let idx=0;const side=arr=>arr.map(([s])=>`<input class="coef" data-i="${idx++}" inputmode="numeric" aria-label="koeffisient for ${s}"><span class="species formula">${prettyFormula(s)}</span>`).join('<span class="eqplus">+</span>');return `<div class="equation">${side(q.r)}<span class="arroweq">→</span>${side(q.p)}</div>`}
-function newBalance(){let level=currentMode('balLevel'),pool=reactions.filter(q=>level==='mixed'?q.level!=='hard':q.level===level);currentReaction=rand(pool);$('#balanceArea').innerHTML=`<div class="question">Fyll inn koeffisientene slik at antall atomer av hvert grunnstoff er likt på begge sider.</div>${reactionHTML(currentReaction)}<div class="module-tools"><button class="btn" onclick="checkBalance()">Sjekk</button><button class="btn secondary" onclick="revealBalance()">Vis svar</button></div><div class="feedback" id="balFb"></div><div class="explain" id="balEx"></div>`;$('#balanceArea').querySelectorAll('.coef').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')checkBalance()}))}
+function reactionHTML(q){
+  let idx=0,stateIdx=0;
+  const stateSelect=()=>{
+    const i=stateIdx++;
+    return `<select class="state-select" data-state-i="${i}" aria-label="Tilstandsform">
+      <option value="">(?)</option>
+      <option value="s">(s)</option>
+      <option value="l">(l)</option>
+      <option value="g">(g)</option>
+      <option value="aq">(aq)</option>
+    </select>`
+  };
+  const side=(arr,states)=>arr.map(([s,c])=>{
+    const state=states?stateSelect():'';
+    const coeff=q.stateOnly
+      ?`<span class="coef-fixed">${c===1?'':c}</span>`
+      :`<input class="coef" data-i="${idx++}" inputmode="numeric" aria-label="koeffisient for ${s}">`;
+    return `<span class="balance-species">${coeff}<span class="species formula">${prettyFormula(s)}</span>${state}</span>`
+  }).join('<span class="eqplus">+</span>');
+  return `<div class="equation">${side(q.r,q.rs)}<span class="arroweq">→</span>${side(q.p,q.ps)}</div>`
+}
+function balanceExpectedStates(q){
+  return q?.rs&&q?.ps?[...q.rs,...q.ps]:null
+}
+function balanceIsCorrect(){
+  const states=balanceExpectedStates(currentReaction);
+  const chosen=states?$$('#balanceArea .state-select').map(x=>x.value):[];
+  const stateOk=!states||(chosen.length===states.length&&chosen.every((v,i)=>v===states[i]));
+  if(currentReaction?.stateOnly)return stateOk;
+
+  const inputs=$$('#balanceArea .coef'),ans=coeffs(currentReaction);
+  const vals=inputs.map(x=>x.value.trim()===''?1:Number(x.value));
+  const coeffOk=vals.every((v,i)=>v===ans[i]);
+  return coeffOk&&stateOk
+}
+function newBalance(){
+  const level=currentMode('balLevel');
+  const pool=reactions.filter(q=>q.level===level);
+  currentReaction=rand(pool);
+  const stateTask=!!balanceExpectedStates(currentReaction);
+  const prompt=currentReaction.prompt||(currentReaction.stateOnly
+    ?'Velg riktig tilstandsform for hvert stoff.'
+    :stateTask
+      ?'Fyll inn koeffisientene og velg riktig tilstandsform for hvert stoff.'
+      :'Fyll inn koeffisientene slik at antall atomer av hvert grunnstoff er likt på begge sider.');
+  $('#balanceArea').innerHTML=
+    `<div class="question">${prompt}</div>`+
+    (stateTask?`<div class="state-key">(s) fast stoff · (l) væske · (g) gass · (aq) løst i vann</div>`:'')+
+    reactionHTML(currentReaction)+
+    `<div class="module-tools"><button class="btn" onclick="checkBalance()">Sjekk</button><button class="btn secondary" onclick="revealBalance()">Vis svar</button></div>`+
+    `<div class="feedback" id="balFb"></div><div class="explain" id="balEx"></div>`;
+  $('#balanceArea').querySelectorAll('.coef').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')checkBalance()}))
+}
 function coeffs(q){return [...q.r,...q.p].map(x=>x[1])}
-function checkBalance(){const inputs=$$('#balanceArea .coef'),ans=coeffs(currentReaction),vals=inputs.map(x=>x.value.trim()===''?1:Number(x.value));const ok=vals.every((v,i)=>v===ans[i]);setFeedback('balFb',ok?'Riktig balansert.':'Ikke balansert ennå. Tell hvert grunnstoff på begge sider.',ok);if(!ok){$('#balEx').innerHTML='Tips: start med grunnstoffet som finnes i færrest forbindelser.'}else $('#balEx').innerHTML='Koeffisienter: <strong>'+ans.join(' – ')+'</strong>';$('#balEx').classList.add('show')}
-function revealBalance(){const ans=coeffs(currentReaction);$$('#balanceArea .coef').forEach((x,i)=>x.value=ans[i]===1?'':ans[i]);$('#balEx').innerHTML='Koeffisienter: <strong>'+ans.join(' – ')+'</strong>';$('#balEx').classList.add('show')}
+function checkBalance(){
+  const ok=balanceIsCorrect();
+  const stateTask=!!balanceExpectedStates(currentReaction);
+  const wrongText=currentReaction.stateOnly
+    ?'Ikke helt. Sjekk tilstandsformen for hvert stoff.'
+    :stateTask
+      ?'Ikke helt. Sjekk både koeffisientene og tilstandsformene.'
+      :'Ikke balansert ennå. Tell hvert grunnstoff på begge sider.';
+  setFeedback('balFb',ok?'Riktig.':wrongText,ok);
+  if(!ok){
+    $('#balEx').innerHTML=currentReaction.stateOnly
+      ?'Tips: vurder om stoffet er fast, flytende, gass eller løst i vann ved forholdene som er beskrevet.'
+      :stateTask
+        ?'Tips: balanser først reaksjonen, og vurder deretter om hvert stoff er fast, flytende, gass eller løst i vann.'
+        :'Tips: start med grunnstoffet som finnes i færrest forbindelser.';
+  }else{
+    const ans=coeffs(currentReaction);
+    $('#balEx').innerHTML=currentReaction.explain||('Koeffisienter: <strong>'+ans.join(' – ')+'</strong>');
+  }
+  $('#balEx').classList.add('show')
+}
+function revealBalance(){
+  const ans=coeffs(currentReaction);
+  if(!currentReaction?.stateOnly){
+    $$('#balanceArea .coef').forEach((x,i)=>x.value=ans[i]===1?'':ans[i]);
+  }
+  const states=balanceExpectedStates(currentReaction);
+  if(states)$$('#balanceArea .state-select').forEach((x,i)=>x.value=states[i]);
+  $('#balEx').innerHTML=currentReaction.explain||(currentReaction?.stateOnly
+    ?'Riktige tilstandsformer er fylt inn.'
+    :'Koeffisienter: <strong>'+ans.join(' – ')+'</strong>');
+  $('#balEx').classList.add('show')
+}
 setupSeg('balLevel',newBalance);
 
 const redoxBank=[
@@ -972,7 +1271,137 @@ const carbonBanks={
       a:'At vann kan være et produkt ved forbrenning av hydrokarboner',
       e:'Hydrogenatomene i hydrokarbonet kan oksideres til H₂O.'
     }
+,
+    {
+      scene:'En plante tar opp CO2 fra lufta og vann gjennom røttene mens den får lys.',
+      q:'Hva skjer med karbonet fra CO2 i fotosyntesen?',
+      o:['Det bygges inn i organiske stoffer som glukose','Det blir hovedsakelig til O2 som slippes ut','Det blir liggende som fritt karbon i bladet','Det omdannes til nitrogenforbindelser'],
+      a:'Det bygges inn i organiske stoffer som glukose',
+      e:'Fotosyntesen flytter karbon fra CO₂ over i organiske molekyler. Lysenergi lagres samtidig som kjemisk energi.'
+    },
+    {
+      scene:'Fotosyntese og celleånding flytter karbon mellom atmosfæren og levende organismer.',
+      q:'Hvilket utsagn beskriver sammenhengen best?',
+      o:['Fotosyntese tar opp CO2, mens celleånding kan føre karbon tilbake som CO2','Begge prosessene tar bare opp CO2 fra atmosfæren','Fotosyntese og celleånding lagrer karbon permanent i bergarter','Celleånding danner glukose fra CO2 og vann'],
+      a:'Fotosyntese tar opp CO2, mens celleånding kan føre karbon tilbake som CO2',
+      e:'Fotosyntese binder karbon i organisk stoff, mens celleånding oksiderer organisk stoff og frigjør blant annet CO₂.'
+    },
+    {
+      scene:'Vi sammenlikner karbon som sirkulerer mellom atmosfære, planter, dyr, jord og overflatehav med karbon i sedimenter og bergarter.',
+      q:'Hva kjennetegner det raske karbonkretsløpet?',
+      o:['Karbon kan flyttes mellom lagrene på tider fra dager til hundrevis av år','Karbonet er låst i bergarter i millioner av år før det kan flyttes','Det foregår bare i havet','Det styres hovedsakelig av subduksjon og vulkanisme'],
+      a:'Karbon kan flyttes mellom lagrene på tider fra dager til hundrevis av år',
+      e:'Det raske, biologiske karbonkretsløpet omfatter blant annet atmosfære, levende organismer, jord og overflatehav.'
+    },
+    {
+      scene:'Karbon kan også lagres i dyphav, sedimenter og bergarter.',
+      q:'Hva kjennetegner det langsomme karbonkretsløpet?',
+      o:['Prosessene kan gå over tusenvis til millioner av år','Alt karbon går gjennom kretsløpet på noen få døgn','Det består bare av fotosyntese og celleånding','Det foregår bare i levende organismer'],
+      a:'Prosessene kan gå over tusenvis til millioner av år',
+      e:'Forvitring, sedimentasjon, begravelse, bergartsdannelse, subduksjon og vulkanisme virker på lange tidsskalaer.'
+    },
+    {
+      scene:'Karbon i atmosfæren skal flyttes inn i et langsomt geologisk lager.',
+      q:'Hvilken prosessrekke passer best?',
+      o:['Forvitring → transport til havet → kalk/sediment → bergart','Celleånding → fotosyntese → fordamping → skydannelse','Forbrenning → atmosfære → celleånding → vulkanisme','Fotosyntese → respirasjon → forbrenning → nedbrytning'],
+      a:'Forvitring → transport til havet → kalk/sediment → bergart',
+      e:'I det langsomme kretsløpet kan forvitringsprodukter transporteres til havet, inngå i karbonater og etter hvert lagres i sedimenter og bergarter.'
+    },
+    {
+      scene:'Karbon har vært lagret i sedimentære bergarter over svært lang tid.',
+      q:'Hvilken prosess kan til slutt føre noe av dette karbonet tilbake til atmosfæren som CO2?',
+      o:['Subduksjon og vulkanisme','Fotosyntese i planter','Opptak av CO2 i overflatehavet','Dannelse av kalkskall'],
+      a:'Subduksjon og vulkanisme',
+      e:'Karbonholdige sedimenter og bergarter kan trekkes ned ved subduksjon. Geologiske prosesser kan senere føre CO₂ tilbake til atmosfæren gjennom vulkanisme.'
+    },
+    {
+      scene:'Mennesker henter opp kull, olje og gass og forbrenner dem.',
+      q:'Hva gjør dette med karbonkretsløpet?',
+      o:['Det flytter karbon fra et langsomt geologisk lager til det raske kretsløpet','Det flytter karbon fra atmosfæren direkte til bergarter','Det stopper fotosyntesen i det raske kretsløpet','Det flytter karbon fra planter til dyphavet uten å påvirke atmosfæren'],
+      a:'Det flytter karbon fra et langsomt geologisk lager til det raske kretsløpet',
+      e:'Fossilt karbon har vært lagret svært lenge. Ved forbrenning frigjøres det raskt som CO₂ til atmosfæren.'
+    },
+    {
+      scene:'Atmosfæren og overflatehavet utveksler hele tiden CO2.',
+      q:'Hvilket utsagn er mest riktig?',
+      o:['Havet kan både ta opp CO2 fra atmosfæren og avgi CO2 tilbake','CO2 kan bare gå fra havet til atmosfæren','Alt CO2 som løses i havet blir straks til kalkstein','CO2 kan ikke løses i vann'],
+      a:'Havet kan både ta opp CO2 fra atmosfæren og avgi CO2 tilbake',
+      e:'Utvekslingen går begge veier. Hvor mye CO₂ havet tar opp eller avgir påvirkes blant annet av konsentrasjon og temperatur.'
+    },
+    {
+      scene:'Mer CO2 fra atmosfæren løses i havvann.',
+      q:'Hva kan da skje med surhetsgraden i havet?',
+      o:['pH kan synke fordi det kan dannes karbonsyre','pH må stige fordi CO2 er en base','pH forblir alltid helt uendret når en gass løses i vann','Havet blir basisk fordi CO2 omdannes direkte til OH−'],
+      a:'pH kan synke fordi det kan dannes karbonsyre',
+      e:'Løst CO₂ kan reagere med vann og danne karbonsyre. Derfor kan økt opptak av CO₂ bidra til havforsuring.'
+    },
+    {
+      scene:'CO2 løses i vann og reagerer med vannmolekyler.',
+      q:'Hvilken formel har karbonsyre?',
+      o:['H2CO3','HCO3','CO3','H2CO2'],
+      a:'H2CO3',
+      e:'Den forenklede reaksjonen kan skrives CO₂ + H₂O ⇌ H₂CO₃. Her er det nok å kjenne hovedideen, ikke detaljene i likevektene.'
+    },
+    {
+      scene:'Koraller og mange skalldyr bygger harde strukturer av kalsiumkarbonat.',
+      q:'Hvilken formel har kalsiumkarbonat?',
+      o:['CaCO3','Ca2CO3','Ca(CO2)2','CaC'],
+      a:'CaCO3',
+      e:'Kalsiumkarbonat, CaCO₃, er et viktig materiale i kalkskall og korallskjelett.'
+    },
+    {
+      scene:'Havet blir surere når mer CO2 tas opp fra atmosfæren.',
+      q:'Hvorfor kan dette være et problem for kalkdannende organismer?',
+      o:['Det blir vanskeligere å bygge og vedlikeholde strukturer av kalsiumkarbonat','Kalsiumatomene forsvinner fullstendig fra havet','CO2 gjør alt kalk om til metallisk kalsium','Organismene mister evnen til celleånding fordi havet ikke lenger inneholder oksygen'],
+      a:'Det blir vanskeligere å bygge og vedlikeholde strukturer av kalsiumkarbonat',
+      e:'Havforsuring endrer karbonatkjemien i sjøvannet og kan gjøre kalkdannelse vanskeligere. På dette nivået er hovedpoenget konsekvensen, ikke de detaljerte likevektene.'
+    },
+    {
+      scene:'Et skall fra en marin organisme består hovedsakelig av CaCO3.',
+      q:'Hvilke ioner kan vi tenke oss at stoffet er bygd opp av?',
+      o:['Ca2+ og CO3^2−','Ca+ og CO2−','Ca3+ og CO3^3−','Ca2+ og CO2^2−'],
+      a:'Ca2+ og CO3^2−',
+      e:'Kalsiumkarbonat kan beskrives som Ca²⁺ og CO₃²⁻. Ladningene balanserer hverandre i forholdet 1:1.'
+    },
+    {
+      scene:'Vi sorterer prosesser etter om de først og fremst hører til det raske eller det langsomme karbonkretsløpet.',
+      q:'Hvilken prosess hører tydeligst til det langsomme kretsløpet?',
+      o:['Sedimentasjon og dannelse av karbonatbergarter','Celleånding hos dyr','Fotosyntese i planter','Utveksling av CO2 mellom luft og overflatehav'],
+      a:'Sedimentasjon og dannelse av karbonatbergarter',
+      e:'Sedimentasjon og bergartsdannelse lagrer karbon på geologiske tidsskalaer.'
+    },
+    {
+      scene:'Vi sorterer karbonlagre etter hvor lenge karbon vanligvis kan bli værende der.',
+      q:'Hvilket lager er mest typisk for det langsomme karbonkretsløpet?',
+      o:['Sedimentære bergarter','Atmosfæren','Blader på et tre','Overflatehavet'],
+      a:'Sedimentære bergarter',
+      e:'Bergarter kan lagre karbon i svært lange tidsrom, mens de andre lagrene i større grad inngår i det raske kretsløpet.'
+    },
+    {
+      scene:'Karbon beveger seg mellom raske og langsomme lagre på jorda.',
+      q:'Hvilket utsagn oppsummerer menneskets viktigste påvirkning i denne sammenhengen?',
+      o:['Forbrenning av fossile brensler tilfører raskt karbon som var lagret geologisk','Menneskelig aktivitet flytter hovedsakelig CO2 fra atmosfæren til bergarter','Forbrenning av fossile brensler reduserer mengden karbon i det raske kretsløpet','Mennesker påvirker bare karbon i levende organismer, ikke geologiske lagre'],
+      a:'Forbrenning av fossile brensler tilfører raskt karbon som var lagret geologisk',
+      e:'Dette kobler det langsomme og raske kretsløpet sammen på en måte som tilfører atmosfæren CO₂ mye raskere enn naturlig geologisk tilbakeføring.'
+    }
+,
+
+    {
+      scene:'På grotteraven i Oslo i 2020 ble mange festdeltakere syke etter at forbrenningsmotorer/generatorer ble brukt i et dårlig ventilert, underjordisk lokale.',
+      q:'Hva er den beste kjemiske forklaringen på at situasjonen kunne bli farlig?',
+      o:['Ufullstendig forbrenning kan danne CO som hoper seg opp når ventilasjonen er dårlig','Fullstendig forbrenning danner store mengder O2 som gjør lufta giftig','CO2 omdannes til CO bare fordi lufttrykket er høyere under bakken','Nitrogen i lufta reagerer med bensin og danner CO ved romtemperatur'],
+      a:'Ufullstendig forbrenning kan danne CO som hoper seg opp når ventilasjonen er dårlig',
+      e:'Forbrenningsmotorer kan danne karbonmonoksid ved ufullstendig forbrenning. I et dårlig ventilert rom kan gassen hope seg opp til farlige konsentrasjoner.'
+    },
+    {
+      scene:'Flere på grotteraven merket ikke den farlige gassen før de ble dårlige.',
+      q:'Hvorfor er karbonmonoksid spesielt vanskelig å oppdage uten måleutstyr?',
+      o:['CO er fargeløs og luktfri, samtidig som den kan binde seg sterkt til hemoglobin','CO har en svak lukt som bare kan merkes ved svært høy temperatur','CO synker alltid til gulvet og kan derfor ikke merkes i pustehøyde','CO reagerer straks med vann i lufta og blir usynlig CO2'],
+      a:'CO er fargeløs og luktfri, samtidig som den kan binde seg sterkt til hemoglobin',
+      e:'Karbonmonoksid kan verken sees eller luktes. Når den pustes inn, binder den seg sterkt til hemoglobin og reduserer blodets evne til å transportere oksygen.'
+    }
   ],
+
 
   inorganic:[
     {
@@ -1492,7 +1921,7 @@ if(type==='redox'){const r=rand(redoxBank);return{topic:'Elektronoverføring',q:
 const c=rand(combustionQs);return{topic:'Forbrenning',q:prettyFormula(c.q),a:prettyFormula(c.a),o:c.o.map(prettyFormula),e:prettyFormula(c.e)}};
 
 const homeModules2=[
-['atom','⚛','Atomer','Atomoppbygning, skall og periodiske trender.'],['periodic','▤','Periodesystem','Oppbygning, grupper, perioder og plassering av grunnstoffer.'],['ion','±','Ioner','Ladning, elektronantall, åtteregelen og like elektrontall.'],['salt','▦','Ioniske forbindelser','Sett sammen ioner og tolk kjemiske formler.'],['binding','⌁','Sterke bindinger','Ionisk, elektronparbinding og metallbinding.'],['polar','↔','Polaritet & svake bindinger','Dipoler, hydrogenbindinger og upolare stoffer.'],['solubility','◌','Løselighet','Likt løser likt, ionestørrelse og utfelling.'],['balance','⇌','Balanser reaksjoner','Koeffisienter fra en stor reaksjonsbank i flere nivåer.'],['redox','e⁻','Elektronoverføring','Hvem avgir, hvem mottar og hvor mange elektroner?'],['combustion','△','Forbrenning','Branntrekant, hydrokarboner og magnesium.'],['mix','✓','Blandet fagquiz','Tilfeldig fagquiz med oppgavetyper fra øvingsprøven og modulene.']
+['atom','⚛','Atomer','Atomoppbygning, skall og periodiske trender.'],['periodic','▤','Periodesystem','Oppbygning, grupper, perioder og plassering av grunnstoffer.'],['ion','±','Ioner','Ladning, elektronantall, åtteregelen og like elektrontall.'],['salt','▦','Ioniske forbindelser','Sett sammen ioner og tolk kjemiske formler.'],['binding','⌁','Sterke bindinger','Ionisk, elektronparbinding og metallbinding.'],['polar','↔','Polaritet & svake bindinger','Dipoler, hydrogenbindinger og upolare stoffer.'],['solubility','◌','Løselighet','Likt løser likt, ionestørrelse og utfelling.'],['balance','⇌','Reaksjonslikninger','Koeffisienter fra en stor reaksjonsbank i flere nivåer.'],['redox','e⁻','Elektronoverføring','Hvem avgir, hvem mottar og hvor mange elektroner?'],['combustion','△','Forbrenning','Branntrekant, hydrokarboner og magnesium.'],['mix','✓','Blandet fagquiz','Tilfeldig fagquiz med oppgavetyper fra øvingsprøven og modulene.']
 ];
 $('#homeGrid').innerHTML=homeModules2.map(([p,i,t,d])=>`<div class="home-card" data-go="${p}"><div style="font-size:1.25rem;margin-bottom:8px">${i}</div><strong>${t}</strong><div class="mini">${d}</div></div>`).join('');$$('[data-go]').forEach(c=>c.onclick=()=>openPage(c.dataset.go));
 
@@ -1746,7 +2175,7 @@ const homeModulesV13=[
 ['binding','⌁','Sterke bindinger','Ionisk, elektronparbinding og metallbinding.'],
 ['polar','↔','Polaritet & svake bindinger','Dipoler, hydrogenbindinger og kokepunkt.'],
 ['solubility','◌','Løselighet','Likt løser likt, ionestørrelse, ladning og styrke i salter.'],
-['balance','⇌','Balanser reaksjoner','Koeffisienter fra en stor reaksjonsbank i flere nivåer.'],
+['balance','⇌','Reaksjonslikninger','Koeffisienter fra en stor reaksjonsbank i flere nivåer.'],
 ['combustion','△','Forbrenning','Branntrekant, hydrokarboner og forbrenning av flere grunnstoffer.'],
 ['carbon','C','Karbonkjemi','Forbrenning, karbonallotroper, organisk kjemi, plast og olje.'],
 ['mix','✓','Blandet fagquiz','Tilfeldig fagquiz med oppgavetyper fra øvingsprøven og modulene.'],
@@ -2224,7 +2653,7 @@ function v14BalanceQuizItem(level){
     const w=correct.map((x,i)=>i===k%correct.length?Math.max(1,x+(k%2?1:-1)):x).join(' – ');
     if(w!==ans&&!alts.includes(w))alts.push(w);
   }
-  return {topic:'Balanser reaksjoner',q:`Hvilken rekke koeffisienter balanserer reaksjonen ${skeleton}?`,a:ans,o:shuffle([ans,...alts]),e:`Koeffisienter fra venstre mot høyre: ${ans}.`};
+  return {topic:'Reaksjonslikninger',q:`Hvilken rekke koeffisienter balanserer reaksjonen ${skeleton}?`,a:ans,o:shuffle([ans,...alts]),e:`Koeffisienter fra venstre mot høyre: ${ans}.`};
 }
 
 const v14PreviousMakeQuizItem=makeQuizItem;
@@ -2438,7 +2867,7 @@ function ensureFloatingPt(){
     binding:['main'],
     polar:['polarity','weak'],
     solubility:['like','saltstrength'],
-    balance:['basic','mixed','hard'],
+    balance:['basic','hard'],
     combustion:['main'],
     carbon:['combustion','inorganic','organic'],
     mix:['main']
@@ -2529,7 +2958,7 @@ function ensureFloatingPt(){
       ['ionsalts','ionSaltMode',['charged','build','hard','interpret','transfer']],
       ['polar','polarMode',['polarity','weak']],
       ['solubility','solMode',['like','saltstrength']],
-      ['balance','balLevel',['basic','mixed','hard']],
+      ['balance','balLevel',['basic','hard']],
       ['carbon','carbonMode',['combustion','inorganic','organic']]
     ];
   }
@@ -2656,10 +3085,7 @@ function ensureFloatingPt(){
   const baseCheckBalance=checkBalance;
   checkBalance=function(){
     const area=$('#balanceArea');
-    const inputs=$$('#balanceArea .coef');
-    const ans=coeffs(currentReaction);
-    const vals=inputs.map(x=>x.value.trim()===''?1:Number(x.value));
-    const ok=vals.every((v,i)=>v===ans[i]);
+    const ok=balanceIsCorrect();
     if(area && area.dataset.scoreRecorded!=='1'){
       area.dataset.scoreRecorded='1';
       recordScore('balance',currentMode('balLevel'),ok);
@@ -4313,10 +4739,10 @@ bindDynamicSeg('solMode', newSolubility);</script>
   reactions.push(
     {level:'basic',r:[['S',1],['O2',1]],p:[['SO2',1]]},
     {level:'basic',r:[['N2',1],['O2',1]],p:[['NO',2]]},
-    {level:'mixed',r:[['N2',1],['O2',2]],p:[['NO2',2]]},
-    {level:'mixed',r:[['O3',2]],p:[['O2',3]]},
-    {level:'mixed',r:[['Na',2],['H2O',2]],p:[['NaOH',2],['H2',1]]},
-    {level:'mixed',r:[['Ca',1],['H2O',2]],p:[['Ca(OH)2',1],['H2',1]]}
+    {level:'hard',r:[['N2',1],['O2',2]],p:[['NO2',2]]},
+    {level:'basic',r:[['O3',2]],p:[['O2',3]]},
+    {level:'basic',r:[['Na',2],['H2O',2]],p:[['NaOH',2],['H2',1]]},
+    {level:'hard',r:[['Ca',1],['H2O',2]],p:[['Ca(OH)2',1],['H2',1]]}
   );
 
   // ---------- Karbonkjemi: et par nye sammenlikningsoppgaver fra tabell/struktur ----------
