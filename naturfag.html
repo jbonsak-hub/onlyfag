@@ -2929,9 +2929,10 @@ newAtom=function(){
     let candidates=spElements.filter(x=>x.s!==e.s&&(x.period===e.period||x.group===e.group||Math.abs(x.z-e.z)<=12));
     if(candidates.length<3)candidates=spElements.filter(x=>x.s!==e.s);
     const distract=shuffle(candidates).slice(0,3).map(x=>x.n);
-    const ex=`Modellen har ${e.shell.length} skall. Tell elektronene for å finne grunnstoffet.`;
+    const outer=outerElectrons(e);
+    const ex=`Modellen har ${e.shell.length} skall og ${outer} elektroner i det ytterste skallet. I periode ${e.period} og gruppe ${e.group} finner vi ${e.n} (${e.s}).`;
     area.innerHTML=`<div class="atom-layout"><div class="atom-visual">${atomSVGsp(e,true)}</div><div><div class="question">Hvilket grunnstoff viser skallmodellen?</div><div id="atomOpts"></div></div></div>`;
-    mc($('#atomOpts'),[e.n,...distract],e.n,'atomFb',`${ex} Grunnstoffet er ${e.n} (${e.s}).`);
+    mc($('#atomOpts'),[e.n,...distract],e.n,'atomFb',ex);
     return;
   }
 
