@@ -5456,6 +5456,126 @@ function toggleNaturfagFullscreen(){
 })();
 </script>
 
+
+<script id="kjemi-v49-organic-alcohol-acetone">
+(function(){
+  const ORGANIC_RE=/(?:aceton|alkohol|etanol)/i;
+
+  // Flytt de relevante løselighetsoppgavene ut av Naturfag-delen.
+  if(typeof likeBank2!=='undefined' && Array.isArray(likeBank2)){
+    for(let i=likeBank2.length-1;i>=0;i--){
+      if(ORGANIC_RE.test(JSON.stringify(likeBank2[i]||{}))) likeBank2.splice(i,1);
+    }
+  }
+
+  // Oppgavene hører nå til Organisk kjemi (forberedelse til Kjemi 1).
+  if(typeof carbonBanks!=='undefined' && Array.isArray(carbonBanks.organic)){
+    const movedOrganicTasks=[
+      {
+        scene:'Etanol har strukturformelen CH3–CH2–OH.',
+        q:'Er etanol hovedsakelig polart eller upolart?',
+        o:['Polart','Upolart'],
+        a:'Polart',
+        e:'OH-gruppen gir en tydelig ladningsforskyvning i molekylet. Etanol er derfor polart.'
+      },
+      {
+        scene:'Aceton kan skrives CH3–CO–CH3 og inneholder en karbonylgruppe (C=O).',
+        q:'Er aceton hovedsakelig polart eller upolart?',
+        o:['Polart','Upolart'],
+        a:'Polart',
+        e:'Karbonylgruppen (C=O) gir en tydelig ladningsforskyvning i molekylet, så aceton er polart.'
+      },
+      {
+        scene:'Vi blander etanol og vann.',
+        q:'Vil etanol normalt blande seg godt med vann?',
+        o:['Ja','Nei'],
+        a:'Ja',
+        e:'Etanol har en polar OH-gruppe og kan danne hydrogenbindinger med vann.'
+      },
+      {
+        scene:'Vi blander aceton og vann.',
+        q:'Vil aceton normalt blande seg godt med vann?',
+        o:['Ja','Nei'],
+        a:'Ja',
+        e:'Aceton er polart og kan blandes godt med vann.'
+      },
+      {
+        scene:'Du skal velge mellom olje, heksan, alkohol og smør som løsemiddel for et salt.',
+        q:'Hvilket av disse løsemidlene vil egne seg best?',
+        o:['Olje','Heksan','Alkohol','Smør'],
+        a:'Alkohol',
+        e:'Alkohol er polart, mens olje, heksan og smør er hovedsakelig upolare.'
+      }
+    ];
+    const existing=new Set(carbonBanks.organic.map(x=>`${x.q||''}|${x.a||''}`));
+    movedOrganicTasks.forEach(item=>{
+      const key=`${item.q}|${item.a}`;
+      if(!existing.has(key)){
+        carbonBanks.organic.push(item);
+        existing.add(key);
+      }
+    });
+  }
+
+  // Sørg for at slike oppgaver ikke dukker opp i Polaritet/Løselighet selv om
+  // en eldre generator fortsatt ligger i filen under nyere wrappers.
+  function withoutOrganicTerms(fn,areaSelector,fallback){
+    return function(){
+      const area=document.querySelector(areaSelector);
+      for(let i=0;i<60;i++){
+        fn();
+        const txt=(area?.textContent||'').replace(/\s+/g,' ').trim();
+        if(!ORGANIC_RE.test(txt)) return;
+      }
+      fallback();
+    };
+  }
+
+  if(typeof newPolar==='function'){
+    const basePolar=newPolar;
+    newPolar=withoutOrganicTerms(basePolar,'#polarArea',()=>{
+      const area=$('#polarArea');
+      area.innerHTML='<div class="molecule formula">H₂O</div><div class="question">Er vannmolekylet hovedsakelig polart eller upolart?</div><div id="polarOpts"></div>';
+      mc($('#polarOpts'),['Polart','Upolart'],'Polart','polarFb','Vann er vinklet, og ladningsforskyvningene opphever derfor ikke hverandre.');
+    });
+    bindDynamicSeg('polarMode',newPolar);
+  }
+
+  if(typeof newSolubility==='function'){
+    const baseSolubility=newSolubility;
+    newSolubility=withoutOrganicTerms(baseSolubility,'#solArea',()=>{
+      const area=$('#solArea');
+      area.innerHTML='<div class="solubility-scene"><div class="beaker beaker-clean"><div class="beaker-label">olje</div></div><div class="arrow">→</div><div class="beaker beaker-clean"><div class="beaker-label">vann</div></div></div><div class="question">Vil stoffene normalt blande seg godt i hverandre?</div><div id="solOpts"></div>';
+      mc($('#solOpts'),['Ja','Nei'],'Nei','solFb','Olje er hovedsakelig upolar, mens vann er polart.');
+    });
+    bindDynamicSeg('solMode',newSolubility);
+  }
+
+  // Fjern dem også fra Blandet fagquiz. Organisk kjemi har sin egen modul.
+  if(typeof makeQuizItem==='function'){
+    const baseMakeQuizItem=makeQuizItem;
+    makeQuizItem=function(level){
+      for(let i=0;i<80;i++){
+        const item=baseMakeQuizItem(level);
+        if(!item || !ORGANIC_RE.test(JSON.stringify(item))) return item;
+      }
+      return {
+        topic:'Løselighet',
+        q:'Hvorfor blander olje og vann seg dårlig?',
+        a:'Olje er hovedsakelig upolar, mens vann er polart',
+        o:['Olje er hovedsakelig upolar, mens vann er polart','Begge er ioneforbindelser','Vann er upolart og olje er et salt','Olje mangler molekyler'],
+        e:'«Likt løser likt»: polaritet påvirker hvilke stoffer som blandes godt.'
+      };
+    };
+  }
+
+  // Tegn på nytt slik at en tilfeldig startoppgave fra før denne flyttingen
+  // ikke blir liggende klar i en skjult modul.
+  try{newPolar()}catch(e){}
+  try{newSolubility()}catch(e){}
+})();
+</script>
+
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "1b3cf01bc1c645a99f02736c18c9ab78"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
