@@ -88,12 +88,37 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
 .pi-explore-btn{position:absolute;top:14px;right:14px;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--purple);padding:7px 10px;font-weight:750;font-size:.82rem;cursor:pointer}.pi-explore-btn:hover{background:var(--soft);border-color:#b99bd6}
 
 @media(max-width:760px){
-  body{display:block}.sidebar{position:relative;width:100%!important;min-width:0;max-width:none;height:auto;padding-bottom:12px}.sidebar-resizer,.sidebar-toggle{display:none}.content{padding:16px 16px 82px}.page-section{padding:20px 16px;border-radius:12px}.placeholder{padding:30px 22px}
-  .menu-header,.menu-icon,.submenu{display:none}
+  body{display:block;min-height:100svh}
+  .sidebar{position:relative;width:100%!important;min-width:0;max-width:none;height:auto;padding:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;overflow:visible;border-right:0;border-bottom:1px solid var(--line)}
+  .sidebar h1{grid-column:1 / -1;margin:0;padding:11px 14px 10px;font-size:1.05rem;border-bottom:1px solid var(--line)}
+  .global-theme-toggle{width:32px;height:32px;flex-basis:32px}
+  .submenu-item.direct{padding:10px 12px;text-align:center;font-size:.94rem;border-radius:0}
+  .submenu-item.direct+ .submenu-item.direct{border-left:1px solid var(--line)}
+  .sidebar-resizer,.sidebar-toggle,.menu-header,.menu-icon,.submenu{display:none}
+  .content{padding:0 12px 76px;max-width:none}
+  .page-section{padding:18px 14px;border-radius:12px}.placeholder{margin-top:12px;padding:26px 20px}
   .hf-examples,.hf-feedback-grid,.hf-roots-inputs{grid-template-columns:1fr}.hf-options{grid-template-columns:1fr;gap:12px}.hf-options-title{padding-top:0}.hf-options-stack{gap:8px}.hf-startwrap .btn{width:100%}.hf-mode-error{grid-column:auto}.hf-answer-row{flex-direction:column}.hf-problem{font-size:1.7rem}
-  .pi-shell{margin:1vh auto 0}.pi-symbol{font-size:4.5rem}.pi-display{min-height:132px;padding:16px 10px}.pi-input{font-size:1.05rem;padding:14px}.pi-digits{width:100%;font-size:1.5rem;line-height:1.18;letter-spacing:.015em}.pi-mainline,.pi-errorline{justify-content:center}.pi-future{margin-left:.14em}
-  .pi-explore-btn{top:10px;right:10px;padding:7px 9px;font-size:.78rem}
-  .onlyfag-back-arrow{left:12px;bottom:12px;width:46px;height:46px;border-radius:14px}
+
+  #pi-trener.page-section{max-width:none;margin:0;background:transparent;box-shadow:none;border-radius:0;padding:10px 0 0}
+  .pi-shell{max-width:none;margin:0;text-align:center;display:grid;gap:0}
+  .pi-symbol{font-size:3.05rem;line-height:.95;margin:5px 0 5px}
+  .pi-stats{gap:18px;margin:0 0 9px}.pi-pill{padding:0;border:0;background:transparent;font-size:.78rem;color:var(--muted)}.pi-pill strong{font-size:.92rem}
+  .pi-display{min-height:102px;margin:0 0 12px;padding:20px 2px;border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);border-radius:0;background:transparent}
+  .pi-digits{width:100%;font-size:clamp(1.32rem,6vw,1.62rem);line-height:1.12;letter-spacing:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;padding:0 4px}
+  .pi-digits::-webkit-scrollbar{display:none}
+  .pi-mainline,.pi-errorline{justify-content:center;min-width:max-content}
+  .pi-errorline{min-height:1.08em;margin-top:.02em}
+  .pi-future{margin-left:.11em}
+  .pi-input{width:100%;min-height:48px;margin:0;padding:11px 13px;border:1px solid #b996d9;border-radius:10px;background:var(--paper);font-size:.98rem;letter-spacing:.025em;box-shadow:none}
+  .pi-input:focus{border-color:#8f62bd;box-shadow:0 0 0 2px color-mix(in srgb,#7d4cc2 13%,transparent)}
+  .pi-actions{margin-top:9px}.pi-actions .btn{min-height:43px;padding:9px 15px}
+  .pi-explore-btn{top:7px;right:1px;width:36px;height:36px;padding:0;border:0;background:transparent;border-radius:10px;font-size:.82rem;box-shadow:none}.pi-explore-btn:hover{background:var(--soft)}
+  .onlyfag-back-arrow{left:12px;bottom:12px;width:44px;height:44px;border-radius:13px}
+}
+
+@media(max-width:430px){
+  .sidebar h1{padding:9px 12px;font-size:1rem}.submenu-item.direct{padding:9px 8px;font-size:.9rem}
+  .content{padding-inline:10px}.pi-symbol{font-size:2.85rem}.pi-display{min-height:96px;padding:18px 0}.pi-digits{font-size:1.38rem}.pi-input{min-height:47px}
 }
 </style>
 </head>
