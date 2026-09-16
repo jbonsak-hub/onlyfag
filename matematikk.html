@@ -70,7 +70,7 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
 /* Pi */
 #pi-trener{max-width:920px;position:relative}
 .pi-shell{max-width:720px;margin:5vh auto 0;text-align:center}
-.pi-symbol{font-family:Georgia,"Times New Roman",serif;font-size:5.3rem;line-height:1;color:var(--purple);margin-bottom:8px}
+.pi-symbol{display:flex;justify-content:center;align-items:center;margin-bottom:8px}.pi-symbol svg{display:block;width:72px;height:58px;overflow:visible}.pi-symbol path{fill:none;stroke:var(--purple);stroke-width:10;stroke-linecap:round;stroke-linejoin:round}
 .pi-stats{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}.pi-pill{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--soft);font-size:.86rem;color:var(--muted)}.pi-pill strong{color:var(--ink)}
 .pi-display{min-height:170px;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--paper) 92%,var(--soft));padding:26px 22px;display:flex;align-items:center;justify-content:center;margin:12px 0;overflow:hidden}
 .pi-digits{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:clamp(1.35rem,4.4vw,2.35rem);font-weight:750;line-height:1.28;letter-spacing:.035em;max-width:100%;overflow:auto;scrollbar-width:thin;text-align:left}
@@ -101,7 +101,7 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
 
   #pi-trener.page-section{max-width:none;margin:0;background:transparent;box-shadow:none;border-radius:0;padding:10px 0 0}
   .pi-shell{max-width:none;margin:0;text-align:center;display:grid;gap:0}
-  .pi-symbol{font-size:3.05rem;line-height:.95;margin:5px 0 5px}
+  .pi-symbol{margin:5px 0 5px}.pi-symbol svg{width:51px;height:41px}.pi-symbol path{stroke-width:9}
   .pi-stats{gap:18px;margin:0 0 9px}.pi-pill{padding:0;border:0;background:transparent;font-size:.78rem;color:var(--muted)}.pi-pill strong{font-size:.92rem}
   .pi-display{min-height:102px;margin:0 0 12px;padding:20px 2px;border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);border-radius:0;background:transparent}
   .pi-digits{width:100%;font-size:clamp(1.32rem,6vw,1.62rem);line-height:1.12;letter-spacing:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;padding:0 4px}
@@ -118,7 +118,7 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
 
 @media(max-width:430px){
   .sidebar h1{padding:9px 12px;font-size:1rem}.submenu-item.direct{padding:9px 8px;font-size:.9rem}
-  .content{padding-inline:10px}.pi-symbol{font-size:2.85rem}.pi-display{min-height:96px;padding:18px 0}.pi-digits{font-size:1.38rem}.pi-input{min-height:47px}
+  .content{padding-inline:10px}.pi-symbol svg{width:47px;height:38px}.pi-display{min-height:96px;padding:18px 0}.pi-digits{font-size:1.38rem}.pi-input{min-height:47px}
 }
 </style>
 </head>
@@ -200,7 +200,11 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
   <section class="page-section" id="pi-trener">
     <button type="button" class="pi-explore-btn" id="pi-explore" title="Se og visualiser π">π ↗</button>
     <div class="pi-shell">
-      <div class="pi-symbol">π</div>
+      <div class="pi-symbol" aria-label="pi">
+        <svg viewBox="0 0 100 80" role="img" aria-hidden="true">
+          <path d="M14 20 C31 17 68 17 86 20 M35 20 C34 37 32 57 25 69 M67 20 C66 38 66 57 75 69"/>
+        </svg>
+      </div>
       <div class="pi-stats"><span class="pi-pill">Riktige: <strong id="pi-count">0</strong></span><span class="pi-pill">Beste: <strong id="pi-best">0</strong></span></div>
       <div class="pi-display" id="pi-display">
         <div class="pi-digits" id="pi-digits">
@@ -589,13 +593,15 @@ if(typeof module!=='undefined'&&module.exports)module.exports=QuickFactorCore;
     const digits=JSON.stringify(DIGITS);
     w.document.open();
     w.document.write(`<!doctype html><html lang="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>π – OnlyFag</title><style>
-      :root{--bg:#09090c;--paper:#121218;--ink:#f5f2f8;--muted:#a89db3;--line:#2d2833;--soft:#2a1c37;--accent:#b884ff}*{box-sizing:border-box}html{font-size:90%}body{margin:0;font-family:Segoe UI,system-ui,sans-serif;background:var(--bg);color:var(--ink);height:100vh;overflow:hidden}header{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);background:rgba(18,18,24,.97);position:sticky;top:0;z-index:3;backdrop-filter:blur(10px)}.mark{font:700 2rem/1 Georgia,serif;color:var(--accent)}.tabs{display:flex;gap:7px;flex-wrap:wrap}.tabs button{border:1px solid #463355;background:var(--paper);border-radius:10px;padding:6px 10px;font-weight:700;color:var(--muted);cursor:pointer}.tabs button.active{background:var(--soft);color:var(--ink);border-color:#9e74d4;box-shadow:0 0 0 1px rgba(184,132,255,.18) inset}.spacer{flex:1}.range{display:flex;align-items:center;gap:10px;font-size:.82rem;color:var(--muted)}.range input{width:180px;accent-color:var(--accent)}main{padding:14px;max-width:1100px;margin:0 auto;height:calc(100vh - 68px)}.view{display:none;height:100%}.view.active{display:block}.digits{height:100%;overflow:auto;font:600 1.02rem/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.04em;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px}.digits b{color:var(--accent)}.chartbox{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:10px;height:100%;box-shadow:0 10px 30px rgba(0,0,0,.18)}.chartbox canvas{display:block;width:100%;height:100%}.count{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:800}.range strong{color:var(--ink)}@media(max-width:860px){html{font-size:100%}body{overflow:auto;height:auto}header{align-items:flex-start;flex-wrap:wrap}.spacer{display:none}.range{width:100%}.range input{flex:1}main{padding:12px;height:auto}.view{height:auto}.chartbox{height:400px}}
-    </style></head><body><header><div class="mark">π</div><div class="tabs"><button data-view="digits" class="active">Sifre</button><button data-view="graph">Graf</button><button data-view="web">Siffervev</button></div><div class="spacer"></div><label class="range"><span><strong class="count" id="nLabel">500</strong> sifre</span><input id="n" type="range" min="50" max="${DIGITS.length+1}" step="50" value="500"></label></header><main>
+      :root{--bg:#09090c;--paper:#121218;--ink:#f5f2f8;--muted:#a89db3;--line:#2d2833;--soft:#2a1c37;--accent:#b884ff}*{box-sizing:border-box}html{font-size:90%}body{margin:0;font-family:Segoe UI,system-ui,sans-serif;background:var(--bg);color:var(--ink);height:100vh;overflow:hidden}header{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);background:rgba(18,18,24,.97);position:sticky;top:0;z-index:3;backdrop-filter:blur(10px)}.mark{width:32px;height:28px;display:grid;place-items:center;flex:0 0 auto}.mark svg{width:31px;height:25px;display:block}.mark path{fill:none;stroke:var(--accent);stroke-width:10;stroke-linecap:round;stroke-linejoin:round}.tabs{display:flex;gap:7px;flex-wrap:wrap}.tabs button{border:1px solid #463355;background:var(--paper);border-radius:10px;padding:6px 10px;font-weight:700;color:var(--muted);cursor:pointer}.tabs button.active{background:var(--soft);color:var(--ink);border-color:#9e74d4;box-shadow:0 0 0 1px rgba(184,132,255,.18) inset}.spacer{flex:1}.range{display:flex;align-items:center;gap:10px;font-size:.82rem;color:var(--muted)}.range input{width:180px;accent-color:var(--accent)}main{padding:14px;max-width:1100px;margin:0 auto;height:calc(100vh - 68px)}.view{display:none;height:100%}.view.active{display:block}.digits{height:100%;overflow:auto;font:600 1.02rem/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.04em;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px}.digits b{color:var(--accent)}.digit-group{display:inline-block;margin-right:.75em;white-space:nowrap}.chartbox{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:10px;height:100%;box-shadow:0 10px 30px rgba(0,0,0,.18)}.chartbox canvas{display:block;width:100%;height:100%}.count{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:800}.range strong{color:var(--ink)}@media(max-width:860px){html{font-size:100%}body{overflow:auto;height:auto}header{align-items:center;flex-wrap:wrap}.spacer{display:none}.range{width:100%}.range input{flex:1}main{padding:12px;height:auto}.view{height:auto}.chartbox{height:400px}.digits{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 12px;line-height:1.45}.digit-group{display:block;margin:0;white-space:nowrap}.digit-group.first{grid-column:1 / -1;color:var(--accent);font-weight:800}}
+    </style></head><body><header><div class="mark" aria-label="pi"><svg viewBox="0 0 100 80" aria-hidden="true"><path d="M14 20 C31 17 68 17 86 20 M35 20 C34 37 32 57 25 69 M67 20 C66 38 66 57 75 69"/></svg></div><div class="tabs"><button data-view="digits" class="active">Sifre</button><button data-view="graph">Graf</button><button data-view="web">Siffervev</button></div><div class="spacer"></div><label class="range"><span><strong class="count" id="nLabel">500</strong> sifre</span><input id="n" type="range" min="50" max="${DIGITS.length+1}" step="50" value="500"></label></header><main>
       <section class="view active" id="digits"><div class="digits" id="digitsText"></div></section>
       <section class="view" id="graph"><div class="chartbox"><canvas id="line"></canvas></div></section>
       <section class="view" id="web"><div class="chartbox"><canvas id="weave"></canvas></div></section>
     </main><script>
       const DIGITS=${digits};
+      try{history.replaceState({piExplorerBase:true},'',location.href.split('#')[0]);history.pushState({piExplorer:true},'','#pi');}catch(e){}
+      addEventListener('popstate',()=>{try{if(opener&&!opener.closed)opener.focus();}catch(e){} window.close();});
       const tabs=[...document.querySelectorAll('[data-view]')],range=document.getElementById('n'),label=document.getElementById('nLabel');
       let mode='digits';
       const COLORS={graph:'#b884ff',grid:'rgba(255,255,255,.09)',axis:'#a89db3',digit:{0:'#4a40cb',1:'#ef8aa4',2:'#2e9b4a',3:'#e8d37a',4:'#5bc6c3',5:'#a62f72',6:'#a8dcff',7:'#c457c5',8:'#ff963b',9:'#f4f4f4'},lineAlpha:.16,lineWidth:.78};
@@ -604,7 +610,13 @@ if(typeof module!=='undefined'&&module.exports)module.exports=QuickFactorCore;
       addEventListener('resize',()=>{if(mode!=='digits')render()});
       function setup(canvas){const r=canvas.getBoundingClientRect(),dpr=devicePixelRatio||1;canvas.width=Math.max(1,Math.round(r.width*dpr));canvas.height=Math.max(1,Math.round(r.height*dpr));const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);return[c,r.width,r.height]}
       function piSequence(n){return ('3'+DIGITS).slice(0,n)}
-      function renderDigits(n){const seq=piSequence(n),s=seq.slice(1);let out='<b>3,</b>';for(let i=0;i<s.length;i++){out+=s[i];if((i+1)%10===0)out+=' ';if((i+1)%50===0)out+='<br>'}document.getElementById('digitsText').innerHTML=out}
+      function renderDigits(n){
+        const seq=piSequence(n),s=seq.slice(1),groups=[];
+        for(let i=0;i<s.length;i+=10)groups.push(s.slice(i,i+10));
+        let out='<span class="digit-group first"><b>3,</b>'+ (groups.shift()||'') +'</span>';
+        out+=groups.map(g=>'<span class="digit-group">'+g+'</span>').join('');
+        document.getElementById('digitsText').innerHTML=out;
+      }
       function renderGraph(n){const seq=piSequence(n),[c,w,h]=setup(document.getElementById('line')),pad={l:42,r:16,t:18,b:34},iw=w-pad.l-pad.r,ih=h-pad.t-pad.b;c.clearRect(0,0,w,h);c.strokeStyle=COLORS.grid;c.lineWidth=1;c.fillStyle=COLORS.axis;c.font='12px Segoe UI';for(let y=0;y<=9;y+=1){const py=pad.t+ih-(y/9)*ih;if(y%3===0){c.beginPath();c.moveTo(pad.l,py);c.lineTo(w-pad.r,py);c.stroke();c.fillText(String(y),14,py+4)}}c.strokeStyle=COLORS.graph;c.lineWidth=1.15;c.beginPath();for(let i=0;i<seq.length;i++){const x=pad.l+(i/Math.max(1,seq.length-1))*iw,y=pad.t+ih-(Number(seq[i])/9)*ih;i?c.lineTo(x,y):c.moveTo(x,y)}c.stroke();c.fillStyle=COLORS.axis;c.fillText('1',pad.l,h-10);c.fillText(String(seq.length),w-pad.r-String(seq.length).length*7,h-10)}
       function renderWeb(n){const seq=piSequence(n),[c,w,h]=setup(document.getElementById('weave'));const cx=w/2,cy=h/2,baseR=Math.min(w,h)*.33,order=[3,2,1,0,9,8,7,6,5,4],sector=Math.PI*2/10,arcSpan=sector*.78;const nodes=new Map();order.forEach((digit,i)=>{const a=-Math.PI/2+i*sector;nodes.set(digit,{digit,a});});const outCount=Array(10).fill(0),inCount=Array(10).fill(0),steps=[];for(let i=0;i<seq.length-1;i++){const a=+seq[i],b=+seq[i+1];steps.push([a,b]);outCount[a]++;inCount[b]++;}const outSeen=Array(10).fill(0),inSeen=Array(10).fill(0);const outerR=baseR+42,attachR=baseR+22;c.clearRect(0,0,w,h);c.lineCap='round';order.forEach(d=>{const node=nodes.get(d);c.strokeStyle=COLORS.digit[d];c.lineWidth=22;c.beginPath();c.arc(cx,cy,outerR,node.a-arcSpan/2,node.a+arcSpan/2);c.stroke();});function slotAngle(center,span,index,total){if(total<=1)return center;const t=(index+.5)/total;return center-span/2+t*span}function pt(angle,r){return [cx+Math.cos(angle)*r,cy+Math.sin(angle)*r]}steps.forEach(([a,b])=>{const na=nodes.get(a),nb=nodes.get(b);const sa=slotAngle(na.a,arcSpan*.92,outSeen[a]++,outCount[a]);const ta=slotAngle(nb.a,arcSpan*.92,inSeen[b]++,inCount[b]);const [sx,sy]=pt(sa,attachR),[tx,ty]=pt(ta,attachR);c.strokeStyle=COLORS.digit[a];c.globalAlpha=COLORS.lineAlpha;c.lineWidth=COLORS.lineWidth;c.beginPath();if(a===b){const [mx,my]=pt(sa,attachR-34);c.moveTo(sx,sy);c.bezierCurveTo(mx,my,mx,my,tx,ty)}else{c.moveTo(sx,sy);c.quadraticCurveTo(cx,cy,tx,ty)}c.stroke();});c.globalAlpha=1;order.forEach(d=>{const node=nodes.get(d);const [lx,ly]=pt(node.a,outerR+26);c.fillStyle=d===9?'#f4f4f4':COLORS.digit[d];c.font='700 19px Georgia, serif';c.textAlign='center';c.textBaseline='middle';c.fillText(String(d),lx,ly)})}
       function render(){const n=+range.value;renderDigits(n);if(mode==='graph')renderGraph(n);if(mode==='web')renderWeb(n)}render();
