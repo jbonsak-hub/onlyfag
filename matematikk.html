@@ -22,7 +22,8 @@ button{cursor:pointer}
 .submenu{display:none;background:color-mix(in srgb,var(--paper) 92%,var(--bg))}.submenu.open{display:block}
 .submenu-item{padding:9px 20px 9px 50px;color:var(--muted);cursor:pointer;transition:.15s;font-size:.92rem}
 .submenu-item:hover,.submenu-item.active{background:var(--soft2);color:var(--purple);font-weight:650}
-.onlyfag-back-arrow{display:flex;width:38px;height:38px;margin:24px 16px 0;align-items:center;justify-content:center;border-radius:10px;color:var(--purple);text-decoration:none;font-size:1.35rem;border:1px solid var(--line);background:var(--paper)}
+.submenu-item.direct{padding:11px 20px;font-size:.98rem}
+.onlyfag-back-arrow{position:fixed;left:16px;bottom:16px;z-index:120;display:flex;width:42px;height:42px;margin:0;align-items:center;justify-content:center;border-radius:12px;color:var(--purple);text-decoration:none;font-size:1.35rem;border:1px solid var(--line);background:var(--paper);box-shadow:0 4px 14px rgba(35,20,48,.08)}
 .onlyfag-back-arrow:hover{background:var(--soft)}
 .sidebar-resizer{position:sticky;top:0;width:8px;height:100vh;flex:0 0 8px;cursor:col-resize;touch-action:none;background:transparent}
 .sidebar-resizer::before{content:"";position:absolute;inset:0 3px;background:transparent;transition:.15s}
@@ -31,6 +32,7 @@ button{cursor:pointer}
 body.sidebar-collapsed .sidebar{width:0!important;min-width:0;max-width:0;padding:0;border-right:0;overflow:hidden}
 body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sidebar-toggle{left:0}
 .content{flex:1;min-width:0;padding:30px 40px;max-width:1250px}
+@media(min-width:861px){html{font-size:90%}.content{max-width:1125px;padding:27px 36px}#hurtigfaktorisering{max-width:980px}#pi-trener{max-width:860px}.pi-shell{max-width:660px}}
 .page-section{display:none;animation:fade .15s ease-in;background:var(--paper);border-radius:14px;padding:28px;box-shadow:0 2px 10px rgba(0,0,0,.06)}.page-section.active{display:block}
 @keyframes fade{from{opacity:.4;transform:translateY(3px)}to{opacity:1;transform:none}}
 .placeholder{background:var(--paper);border:2px dashed var(--line);border-radius:14px;padding:56px 40px;color:var(--muted)}
@@ -49,11 +51,11 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
 .hf-examples{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:16px 0}
 .hf-examples article{border:1px solid var(--line);padding:15px;border-radius:10px}.hf-examples h3{font-size:1rem;color:var(--purple);margin-bottom:8px}.hf-examples p{color:var(--muted);line-height:1.45;font-size:.92rem;margin:7px 0}
 .hf-math{font-size:1.18rem;line-height:1.8;overflow-x:auto;padding:3px 0}
-.hf-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0 12px}
-.hf-choice{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);background:var(--paper);border-radius:11px;padding:12px;cursor:pointer}
-.hf-choice:has(input:checked){background:var(--soft);border-color:#9d72c5}.hf-choice input{width:18px;height:18px;margin-top:1px;accent-color:#5b2d90}.hf-choice strong{display:block;color:var(--ink);margin-bottom:3px}.hf-choice small{color:var(--muted);line-height:1.35}
-.hf-mode-error{min-height:20px;color:var(--bad);font-size:.88rem;margin:2px 0 10px}
-.hf-startline{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid var(--line);padding-top:16px}.hf-bank{color:var(--muted);font-size:.9rem}
+.hf-options{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:16px;align-items:start;margin:30px 0 8px}
+.hf-options-title{color:var(--purple);font-weight:800;font-size:1.08rem;padding-top:11px}.hf-options-stack{display:grid;gap:10px}
+.hf-choice{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);background:var(--paper);border-radius:11px;padding:12px 13px;cursor:pointer}
+.hf-choice:has(input:checked){background:var(--soft);border-color:#9d72c5}.hf-choice input{width:18px;height:18px;margin-top:1px;accent-color:#5b2d90}.hf-choice strong{display:block;color:var(--ink);margin-bottom:3px}.hf-choice small{color:var(--muted);line-height:1.35}.hf-example-inline{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.94em;color:var(--muted);font-weight:600;margin-left:5px}.hf-startwrap{display:flex;align-items:center;height:100%}.hf-startwrap .btn{white-space:nowrap;padding-inline:18px}
+.hf-mode-error{grid-column:2 / 4;min-height:20px;color:var(--bad);font-size:.88rem;margin:2px 0 0}.hf-bank{color:var(--muted);font-size:.9rem;margin-top:10px}
 .hf-topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}.hf-score{display:flex;gap:24px;color:var(--muted)}.hf-score strong{color:var(--ink);font-size:1.15rem;margin-left:4px}
 .hf-question{border:1px solid var(--line);border-radius:12px;background:var(--soft);padding:20px;text-align:center}.hf-question-meta{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:.86rem;margin-bottom:18px}.hf-problem{font-size:2rem;margin:3px 0}
 .hf-answer-area{margin-top:18px}.hf-answer-area>label{display:block;font-weight:650;margin-bottom:7px}.hf-answer-row{display:flex;gap:9px}.hf-text{width:100%;min-width:0;flex:1;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink);padding:12px;font-family:ui-monospace,Consolas,monospace;font-size:1.08rem}
@@ -66,7 +68,7 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
 .hf-summary{max-width:620px;margin:20px auto}.hf-summary-scores{display:flex;gap:42px;margin:18px 0}.hf-summary-scores strong{display:block;font-size:2rem}.hf-summary-scores span{color:var(--muted);font-size:.88rem}
 
 /* Pi */
-#pi-trener{max-width:920px}
+#pi-trener{max-width:920px;position:relative}
 .pi-shell{max-width:720px;margin:5vh auto 0;text-align:center}
 .pi-symbol{font-family:Georgia,"Times New Roman",serif;font-size:5.3rem;line-height:1;color:var(--purple);margin-bottom:8px}
 .pi-stats{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}.pi-pill{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--soft);font-size:.86rem;color:var(--muted)}.pi-pill strong{color:var(--ink)}
@@ -77,30 +79,29 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
 .pi-errorline{min-height:1.25em;margin-top:.06em}
 .pi-prefix{color:var(--purple)}.pi-prefix.ghost{visibility:hidden}
 .pi-correcttrail{color:var(--purple)}
-.pi-future{color:var(--muted);margin-left:.5em}
+.pi-future{color:var(--muted);opacity:.58;margin-left:.18em}
 .pi-error-pad{display:inline-block;width:0}
-.pi-wrong-inline{color:var(--bad);font-weight:850;text-decoration:line-through;text-decoration-thickness:.1em}
+.pi-wrong-inline{color:var(--bad);font-weight:850;text-decoration:line-through;text-decoration-thickness:.1em;text-underline-offset:.08em}
 .pi-cursor{display:inline-block;width:.55em;border-bottom:3px solid var(--purple);transform:translateY(-.1em);animation:blink 1s steps(1) infinite}@keyframes blink{50%{opacity:.2}}
 .pi-input{width:min(420px,100%);margin:6px auto 0;display:block;border:2px solid #9d72c5;border-radius:12px;background:var(--paper);color:var(--ink);padding:14px 16px;text-align:center;font-size:1.15rem;font-weight:700;letter-spacing:.08em;outline:none}.pi-input:focus{box-shadow:0 0 0 4px color-mix(in srgb,#7d4cc2 18%,transparent)}
 .pi-actions{margin-top:12px}
+.pi-explore-btn{position:absolute;top:14px;right:14px;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--purple);padding:7px 10px;font-weight:750;font-size:.82rem;cursor:pointer}.pi-explore-btn:hover{background:var(--soft);border-color:#b99bd6}
 
 @media(max-width:760px){
-  body{display:block}.sidebar{position:relative;width:100%!important;min-width:0;max-width:none;height:auto;padding-bottom:12px}.sidebar-resizer,.sidebar-toggle{display:none}.content{padding:16px}.page-section{padding:20px 16px;border-radius:12px}.placeholder{padding:30px 22px}
-  .hf-examples,.hf-options,.hf-feedback-grid,.hf-roots-inputs{grid-template-columns:1fr}.hf-answer-row{flex-direction:column}.hf-startline{align-items:stretch;flex-direction:column}.hf-startline .btn{width:100%}.hf-problem{font-size:1.7rem}
-  .pi-shell{margin:1vh auto 0}.pi-symbol{font-size:4.5rem}.pi-display{min-height:145px;padding:18px 12px}.pi-input{font-size:1.1rem;padding:15px}.pi-digits{font-size:clamp(1.25rem,6vw,1.8rem)}
+  body{display:block}.sidebar{position:relative;width:100%!important;min-width:0;max-width:none;height:auto;padding-bottom:12px}.sidebar-resizer,.sidebar-toggle{display:none}.content{padding:16px 16px 82px}.page-section{padding:20px 16px;border-radius:12px}.placeholder{padding:30px 22px}
+  .menu-header,.menu-icon,.submenu{display:none}
+  .hf-examples,.hf-feedback-grid,.hf-roots-inputs{grid-template-columns:1fr}.hf-options{grid-template-columns:1fr;gap:12px}.hf-options-title{padding-top:0}.hf-options-stack{gap:8px}.hf-startwrap .btn{width:100%}.hf-mode-error{grid-column:auto}.hf-answer-row{flex-direction:column}.hf-problem{font-size:1.7rem}
+  .pi-shell{margin:1vh auto 0}.pi-symbol{font-size:4.5rem}.pi-display{min-height:132px;padding:16px 10px}.pi-input{font-size:1.05rem;padding:14px}.pi-digits{width:100%;font-size:1.5rem;line-height:1.18;letter-spacing:.015em}.pi-mainline,.pi-errorline{justify-content:center}.pi-future{margin-left:.14em}
+  .pi-explore-btn{top:10px;right:10px;padding:7px 9px;font-size:.78rem}
+  .onlyfag-back-arrow{left:12px;bottom:12px;width:46px;height:46px;border-radius:14px}
 }
 </style>
 </head>
 <body>
 <nav class="sidebar">
   <h1><span>∑ Matematikk</span><button aria-label="Bytt mellom lys og mørk modus" class="global-theme-toggle" id="themeToggle" title="Mørk modus" type="button">◐</button></h1>
-  <div class="menu-item">
-    <div class="menu-header active" onclick="toggleMenu(this)"><span class="menu-icon">▼</span>Øving</div>
-    <div class="submenu open">
-      <div class="submenu-item" data-section="hurtigfaktorisering" onclick="showContent('hurtigfaktorisering',this)">Hurtigfaktorisering</div>
-      <div class="submenu-item" data-section="pi-trener" onclick="showContent('pi-trener',this)">π</div>
-    </div>
-  </div>
+  <div class="submenu-item direct" data-section="hurtigfaktorisering" onclick="showContent('hurtigfaktorisering',this)">Hurtigfaktorisering</div>
+  <div class="submenu-item direct" data-section="pi-trener" onclick="showContent('pi-trener',this)">π</div>
   <a class="onlyfag-back-arrow" href="index.html" aria-label="Tilbake til hovedsiden" title="Tilbake til hovedsiden">←</a>
 </nav>
 <button aria-expanded="true" aria-label="Minimer sidemenyen" class="sidebar-toggle" id="sidebarToggle" title="Minimer sidemenyen" type="button">‹</button>
@@ -109,10 +110,6 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
 <main class="content">
   <div class="placeholder" id="welcome">
     <h2>Matematikk</h2>
-    <div class="module-cards">
-      <button class="module-card" onclick="showContent('hurtigfaktorisering',document.querySelector('[data-section=&quot;hurtigfaktorisering&quot;]'))"><strong>Hurtigfaktorisering</strong></button>
-      <button class="module-card" onclick="showContent('pi-trener',document.querySelector('[data-section=&quot;pi-trener&quot;]'))"><strong>π</strong></button>
-    </div>
   </div>
 
   <section class="page-section" id="hurtigfaktorisering">
@@ -128,13 +125,16 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
         <article><h3>Trekk ut felles faktor først</h3><div class="hf-math" data-hf-expr="2x^2-8x-42"></div><p>Trekk ut 2. Deretter gir 3 og −7 sum −4 og produkt −21.</p><div class="hf-math" data-hf-equality="2x^2-8x-42|2(x+3)(x-7)"></div></article>
       </div>
 
-      <h3 style="margin:22px 0 8px;color:var(--purple)">Hva vil du øve på?</h3>
       <div class="hf-options">
-        <label class="hf-choice"><input type="checkbox" id="hf-mode-factor" checked><span><strong>Finn faktorisering</strong><small>Skriv svaret med parenteser, for eksempel (x+2)(x−3).</small></span></label>
-        <label class="hf-choice"><input type="checkbox" id="hf-mode-roots" checked><span><strong>Finn løsninger</strong><small>Skriv x-verdiene direkte. Velg bare denne for raskest mulig øving.</small></span></label>
+        <div class="hf-options-title">Øv på</div>
+        <div class="hf-options-stack">
+          <label class="hf-choice"><input type="checkbox" id="hf-mode-factor" checked><span><strong>Faktorisering <span class="hf-example-inline">(x+2)(x−3)</span></strong></span></label>
+          <label class="hf-choice"><input type="checkbox" id="hf-mode-roots" checked><span><strong>Løsninger <span class="hf-example-inline">x₁ = 2&nbsp;&nbsp; x₂ = −3</span></strong></span></label>
+        </div>
+        <div class="hf-startwrap"><button type="button" class="btn" id="hf-start">Start øving →</button></div>
+        <div class="hf-mode-error" id="hf-mode-error"></div>
       </div>
-      <div class="hf-mode-error" id="hf-mode-error"></div>
-      <div class="hf-startline"><span class="hf-bank" id="hf-bank-size"></span><button type="button" class="btn" id="hf-start">Start øving →</button></div>
+      <div class="hf-bank" id="hf-bank-size"></div>
     </div>
 
     <div id="hf-practice" hidden>
@@ -173,6 +173,7 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
   </section>
 
   <section class="page-section" id="pi-trener">
+    <button type="button" class="pi-explore-btn" id="pi-explore" title="Se og visualiser π">π ↗</button>
     <div class="pi-shell">
       <div class="pi-symbol">π</div>
       <div class="pi-stats"><span class="pi-pill">Riktige: <strong id="pi-count">0</strong></span><span class="pi-pill">Beste: <strong id="pi-best">0</strong></span></div>
@@ -539,7 +540,10 @@ if(typeof module!=='undefined'&&module.exports)module.exports=QuickFactorCore;
   function scrollDigits(){requestAnimationFrame(()=>{const d=document.getElementById('pi-digits');d.scrollLeft=d.scrollWidth;d.scrollTop=d.scrollHeight})}
   function render(){count.textContent=pos;correct.textContent=DIGITS.slice(0,pos);scrollDigits()}
   function fail(ch){
-    ended=true;input.disabled=true;cursor.hidden=true;future.hidden=false;future.textContent=DIGITS.slice(pos,pos+3).split('').join(' ');errorLine.hidden=false;errorPad.style.width=pos+'ch';wrong.textContent=ch;
+    ended=true;input.disabled=true;cursor.hidden=true;future.hidden=false;future.textContent=DIGITS.slice(pos,pos+3);errorLine.hidden=false;
+    const futureGap=parseFloat(getComputedStyle(future).marginLeft)||0;
+    errorPad.style.width=(correct.getBoundingClientRect().width + futureGap)+'px';
+    wrong.textContent=ch;
     if(pos>bestN){bestN=pos;best.textContent=bestN;try{localStorage.setItem('onlyfag-pi-best',String(bestN))}catch(e){}}
     actions.hidden=false;scrollDigits();
   }
@@ -548,8 +552,42 @@ if(typeof module!=='undefined'&&module.exports)module.exports=QuickFactorCore;
     for(const ch of chars){if(pos>=DIGITS.length)return;if(ch===DIGITS[pos]){pos++;render()}else{fail(ch);break}}
   }
   input.addEventListener('input',()=>{const v=input.value;input.value='';consume(v)});
-  document.addEventListener('keydown',e=>{if(!document.getElementById('pi-trener').classList.contains('active')||ended||e.ctrlKey||e.metaKey||e.altKey)return;if(/^\d$/.test(e.key)&&document.activeElement!==input){e.preventDefault();consume(e.key)}});
+  document.addEventListener('keydown',e=>{
+    if(!document.getElementById('pi-trener').classList.contains('active')||e.ctrlKey||e.metaKey||e.altKey)return;
+    if(ended&&e.key==='Enter'){e.preventDefault();reset();return;}
+    if(ended)return;
+    if(/^\d$/.test(e.key)&&document.activeElement!==input){e.preventDefault();consume(e.key)}
+  });
+  function openPiExplorer(){
+    const w=window.open('', 'onlyfagPiExplorer', 'width=1060,height=760,resizable=yes,scrollbars=yes');
+    if(!w)return;
+    const digits=JSON.stringify(DIGITS);
+    w.document.open();
+    w.document.write(`<!doctype html><html lang="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>π – OnlyFag</title><style>
+      :root{--bg:#09090c;--paper:#121218;--ink:#f5f2f8;--muted:#a89db3;--line:#2d2833;--soft:#2a1c37;--accent:#b884ff}*{box-sizing:border-box}html{font-size:90%}body{margin:0;font-family:Segoe UI,system-ui,sans-serif;background:var(--bg);color:var(--ink);height:100vh;overflow:hidden}header{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);background:rgba(18,18,24,.97);position:sticky;top:0;z-index:3;backdrop-filter:blur(10px)}.mark{font:700 2rem/1 Georgia,serif;color:var(--accent)}.tabs{display:flex;gap:7px;flex-wrap:wrap}.tabs button{border:1px solid #463355;background:var(--paper);border-radius:10px;padding:6px 10px;font-weight:700;color:var(--muted);cursor:pointer}.tabs button.active{background:var(--soft);color:var(--ink);border-color:#9e74d4;box-shadow:0 0 0 1px rgba(184,132,255,.18) inset}.spacer{flex:1}.range{display:flex;align-items:center;gap:10px;font-size:.82rem;color:var(--muted)}.range input{width:180px;accent-color:var(--accent)}main{padding:14px;max-width:1100px;margin:0 auto;height:calc(100vh - 68px)}.view{display:none;height:100%}.view.active{display:block}.digits{height:100%;overflow:auto;font:600 1.02rem/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.04em;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px}.digits b{color:var(--accent)}.chartbox{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:10px;height:100%;box-shadow:0 10px 30px rgba(0,0,0,.18)}.chartbox canvas{display:block;width:100%;height:100%}.count{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:800}.range strong{color:var(--ink)}@media(max-width:860px){html{font-size:100%}body{overflow:auto;height:auto}header{align-items:flex-start;flex-wrap:wrap}.spacer{display:none}.range{width:100%}.range input{flex:1}main{padding:12px;height:auto}.view{height:auto}.chartbox{height:400px}}
+    </style></head><body><header><div class="mark">π</div><div class="tabs"><button data-view="digits" class="active">Sifre</button><button data-view="graph">Graf</button><button data-view="web">Siffervev</button></div><div class="spacer"></div><label class="range"><span><strong class="count" id="nLabel">500</strong> sifre</span><input id="n" type="range" min="50" max="${DIGITS.length+1}" step="50" value="500"></label></header><main>
+      <section class="view active" id="digits"><div class="digits" id="digitsText"></div></section>
+      <section class="view" id="graph"><div class="chartbox"><canvas id="line"></canvas></div></section>
+      <section class="view" id="web"><div class="chartbox"><canvas id="weave"></canvas></div></section>
+    </main><script>
+      const DIGITS=${digits};
+      const tabs=[...document.querySelectorAll('[data-view]')],range=document.getElementById('n'),label=document.getElementById('nLabel');
+      let mode='digits';
+      const COLORS={graph:'#b884ff',grid:'rgba(255,255,255,.09)',axis:'#a89db3',digit:{0:'#4a40cb',1:'#ef8aa4',2:'#2e9b4a',3:'#e8d37a',4:'#5bc6c3',5:'#a62f72',6:'#a8dcff',7:'#c457c5',8:'#ff963b',9:'#f4f4f4'},lineAlpha:.16,lineWidth:.78};
+      tabs.forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.view;tabs.forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===mode));render()}));
+      range.addEventListener('input',()=>{label.textContent=range.value;render()});
+      addEventListener('resize',()=>{if(mode!=='digits')render()});
+      function setup(canvas){const r=canvas.getBoundingClientRect(),dpr=devicePixelRatio||1;canvas.width=Math.max(1,Math.round(r.width*dpr));canvas.height=Math.max(1,Math.round(r.height*dpr));const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);return[c,r.width,r.height]}
+      function piSequence(n){return ('3'+DIGITS).slice(0,n)}
+      function renderDigits(n){const seq=piSequence(n),s=seq.slice(1);let out='<b>3,</b>';for(let i=0;i<s.length;i++){out+=s[i];if((i+1)%10===0)out+=' ';if((i+1)%50===0)out+='<br>'}document.getElementById('digitsText').innerHTML=out}
+      function renderGraph(n){const seq=piSequence(n),[c,w,h]=setup(document.getElementById('line')),pad={l:42,r:16,t:18,b:34},iw=w-pad.l-pad.r,ih=h-pad.t-pad.b;c.clearRect(0,0,w,h);c.strokeStyle=COLORS.grid;c.lineWidth=1;c.fillStyle=COLORS.axis;c.font='12px Segoe UI';for(let y=0;y<=9;y+=1){const py=pad.t+ih-(y/9)*ih;if(y%3===0){c.beginPath();c.moveTo(pad.l,py);c.lineTo(w-pad.r,py);c.stroke();c.fillText(String(y),14,py+4)}}c.strokeStyle=COLORS.graph;c.lineWidth=1.15;c.beginPath();for(let i=0;i<seq.length;i++){const x=pad.l+(i/Math.max(1,seq.length-1))*iw,y=pad.t+ih-(Number(seq[i])/9)*ih;i?c.lineTo(x,y):c.moveTo(x,y)}c.stroke();c.fillStyle=COLORS.axis;c.fillText('1',pad.l,h-10);c.fillText(String(seq.length),w-pad.r-String(seq.length).length*7,h-10)}
+      function renderWeb(n){const seq=piSequence(n),[c,w,h]=setup(document.getElementById('weave'));const cx=w/2,cy=h/2,baseR=Math.min(w,h)*.33,order=[3,2,1,0,9,8,7,6,5,4],sector=Math.PI*2/10,arcSpan=sector*.78;const nodes=new Map();order.forEach((digit,i)=>{const a=-Math.PI/2+i*sector;nodes.set(digit,{digit,a});});const outCount=Array(10).fill(0),inCount=Array(10).fill(0),steps=[];for(let i=0;i<seq.length-1;i++){const a=+seq[i],b=+seq[i+1];steps.push([a,b]);outCount[a]++;inCount[b]++;}const outSeen=Array(10).fill(0),inSeen=Array(10).fill(0);const outerR=baseR+42,attachR=baseR+22;c.clearRect(0,0,w,h);c.lineCap='round';order.forEach(d=>{const node=nodes.get(d);c.strokeStyle=COLORS.digit[d];c.lineWidth=22;c.beginPath();c.arc(cx,cy,outerR,node.a-arcSpan/2,node.a+arcSpan/2);c.stroke();});function slotAngle(center,span,index,total){if(total<=1)return center;const t=(index+.5)/total;return center-span/2+t*span}function pt(angle,r){return [cx+Math.cos(angle)*r,cy+Math.sin(angle)*r]}steps.forEach(([a,b])=>{const na=nodes.get(a),nb=nodes.get(b);const sa=slotAngle(na.a,arcSpan*.92,outSeen[a]++,outCount[a]);const ta=slotAngle(nb.a,arcSpan*.92,inSeen[b]++,inCount[b]);const [sx,sy]=pt(sa,attachR),[tx,ty]=pt(ta,attachR);c.strokeStyle=COLORS.digit[a];c.globalAlpha=COLORS.lineAlpha;c.lineWidth=COLORS.lineWidth;c.beginPath();if(a===b){const [mx,my]=pt(sa,attachR-34);c.moveTo(sx,sy);c.bezierCurveTo(mx,my,mx,my,tx,ty)}else{c.moveTo(sx,sy);c.quadraticCurveTo(cx,cy,tx,ty)}c.stroke();});c.globalAlpha=1;order.forEach(d=>{const node=nodes.get(d);const [lx,ly]=pt(node.a,outerR+26);c.fillStyle=d===9?'#f4f4f4':COLORS.digit[d];c.font='700 19px Georgia, serif';c.textAlign='center';c.textBaseline='middle';c.fillText(String(d),lx,ly)})}
+      function render(){const n=+range.value;renderDigits(n);if(mode==='graph')renderGraph(n);if(mode==='web')renderWeb(n)}render();
+    <\/script></body></html>`);
+    w.document.close();
+  }
   function reset(){pos=0;ended=false;input.disabled=false;input.value='';future.hidden=true;future.textContent='';errorLine.hidden=true;errorPad.style.width='0';wrong.textContent='';actions.hidden=true;cursor.hidden=false;render();setTimeout(()=>input.focus({preventScroll:true}),20)}
+  document.getElementById('pi-explore').addEventListener('click',openPiExplorer);
   document.getElementById('pi-reset').addEventListener('click',reset);render();
 })();
 </script>
