@@ -60,8 +60,9 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
 .hf-topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}.hf-score{display:flex;gap:24px;color:var(--muted)}.hf-score strong{color:var(--ink);font-size:1.15rem;margin-left:4px}
 .hf-question{border:1px solid var(--line);border-radius:12px;background:var(--soft);padding:20px;text-align:center}.hf-question-meta{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:.86rem;margin-bottom:18px}.hf-problem{font-size:2rem;margin:3px 0}
 .hf-answer-area{margin-top:18px}.hf-answer-area>label{display:block;font-weight:650;margin-bottom:7px}.hf-answer-row{display:flex;gap:9px}.hf-text{width:100%;min-width:0;flex:1;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink);padding:12px;font-family:ui-monospace,Consolas,monospace;font-size:1.08rem}
-.hf-roots-inputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.hf-root-field label{display:block;color:var(--muted);font-size:.85rem;margin-bottom:5px}.hf-root-field input{width:100%;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink);padding:12px;font-family:ui-monospace,Consolas,monospace;font-size:1.08rem}
+.hf-roots-compact{display:grid;grid-template-columns:auto 190px;align-items:start;gap:18px;max-width:390px}.hf-roots-title{font-weight:700;color:var(--ink);padding-top:9px}.hf-roots-inputs{display:grid;grid-template-columns:1fr;gap:8px}.hf-root-field{display:grid;grid-template-columns:34px 1fr;align-items:center;gap:7px}.hf-root-field label{color:var(--muted);font-size:.86rem;margin:0;text-align:right}.hf-root-field input{width:100%;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);padding:9px 10px;font-family:ui-monospace,Consolas,monospace;font-size:1rem}.hf-roots-actions{display:flex;gap:10px;align-items:center;margin-top:10px}
 .hf-help{color:var(--muted);font-size:.84rem;line-height:1.4;margin-top:8px}.hf-error{min-height:20px;color:var(--bad);font-size:.88rem;margin-top:6px}
+.hf-example-btn{border:1px solid var(--line);background:var(--paper);color:var(--purple);border-radius:8px;padding:6px 10px;font-weight:750;font-size:.82rem;cursor:pointer}.hf-example-btn:hover{background:var(--soft);border-color:#b99bd6}.hf-example-float{position:fixed;right:22px;top:86px;z-index:2400;width:max-content;max-width:min(360px,calc(100vw - 24px));border:1px solid var(--line);border-radius:9px;background:var(--paper);box-shadow:0 12px 30px rgba(24,15,32,.18);overflow:hidden}.hf-example-head{display:flex;align-items:center;gap:7px;padding:5px 7px;background:var(--soft);border-bottom:1px solid var(--line);cursor:move;user-select:none;font-size:.82rem}.hf-example-head strong{color:var(--purple)}.hf-example-head button{margin-left:auto;border:0;background:transparent;color:var(--muted);font-size:1rem;line-height:1;padding:0 2px}.hf-example-body{padding:7px 8px;color:var(--ink);line-height:1.28}.hf-example-body p{margin:2px 0;color:var(--muted);font-size:.82rem}.hf-example-body .hf-math{font-size:.98rem;line-height:1.35;margin:1px 0}.hf-example-metrics{display:flex;gap:10px;flex-wrap:wrap;margin:3px 0 4px;padding:3px 5px;border-radius:6px;background:var(--soft);color:var(--ink);font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.82rem;font-weight:700;white-space:nowrap}.hf-example-step{margin-top:2px}.hf-example-roots{margin-top:3px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.86rem;font-weight:700;color:var(--purple)}
 .hf-giveup{margin-top:8px;border:0;background:transparent;color:var(--purple);padding:5px 0}
 .hf-feedback{margin-top:18px;padding:17px 18px;border:1px solid var(--line);border-left:4px solid var(--bad);border-radius:9px;background:var(--soft)}.hf-feedback[data-correct="true"]{border-left-color:var(--ok)}.hf-feedback h3{color:var(--bad);margin-bottom:6px}.hf-feedback[data-correct="true"] h3{color:var(--ok)}.hf-feedback p{line-height:1.48;margin:5px 0}
 .hf-feedback-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.9fr);gap:22px;align-items:start}.hf-answer-box{border:1px solid var(--line);border-radius:9px;background:var(--paper);padding:15px}.hf-answer-box h4{color:var(--purple);margin-bottom:10px}.hf-answer-label{font-size:.82rem;color:var(--muted);margin-top:9px}
@@ -98,7 +99,7 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
   .sidebar-resizer,.sidebar-toggle,.menu-header,.menu-icon,.submenu{display:none}
   .content{padding:0 12px 76px;max-width:none}
   .page-section{padding:18px 14px;border-radius:12px}.placeholder{margin-top:12px;padding:26px 20px}
-  .hf-examples,.hf-feedback-grid,.hf-roots-inputs{grid-template-columns:1fr}.hf-options{grid-template-columns:1fr;gap:12px}.hf-options-title{padding-top:0}.hf-options-stack{gap:8px}.hf-startwrap .btn{width:100%}.hf-mode-error{grid-column:auto}.hf-answer-row{flex-direction:column}.hf-problem{font-size:1.7rem}
+  .hf-examples,.hf-feedback-grid{grid-template-columns:1fr}.hf-options{grid-template-columns:1fr;gap:12px}.hf-options-title{padding-top:0}.hf-options-stack{gap:8px}.hf-startwrap .btn{width:100%}.hf-mode-error{grid-column:auto}.hf-answer-row{flex-direction:column}.hf-problem{font-size:1.7rem}
 
   #pi-trener.page-section{max-width:none;margin:0;background:transparent;box-shadow:none;border-radius:0;padding:10px 0 0}
   .pi-shell{max-width:none;margin:0;text-align:center;display:grid;gap:0}
@@ -165,7 +166,7 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
 
     <div id="hf-practice" hidden>
       <div class="hf-topbar"><div class="hf-score" aria-live="polite"><span>Riktige <strong id="hf-correct">0</strong></span><span>Feil <strong id="hf-wrong">0</strong></span></div><button type="button" class="btn ghost" id="hf-abort">Avbryt</button></div>
-      <div class="hf-question"><div class="hf-question-meta"><span id="hf-number"></span><span id="hf-kind"></span></div><p id="hf-prompt"></p><div class="hf-problem hf-math" id="hf-problem"></div></div>
+      <div class="hf-question"><div class="hf-question-meta"><span id="hf-number"></span><span style="display:flex;align-items:center;gap:10px"><span id="hf-kind"></span><button type="button" class="hf-example-btn" id="hf-example-open">Eksempel</button></span></div><p id="hf-prompt"></p><div class="hf-problem hf-math" id="hf-problem"></div></div>
 
       <form id="hf-form" class="hf-answer-area" novalidate>
         <div id="hf-factor-area">
@@ -174,13 +175,16 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
           <p class="hf-help">Bruk parenteser, x^2, brøker som 1/3 og pi eller π. Rekkefølgen på faktorene er valgfri.</p>
         </div>
         <div id="hf-roots-area" hidden>
-          <label>Løsninger</label>
-          <div class="hf-roots-inputs">
-            <div class="hf-root-field"><label for="hf-root1">x₁</label><input id="hf-root1" type="text" autocomplete="off" spellcheck="false" inputmode="text" placeholder="f.eks. 2"></div>
-            <div class="hf-root-field" id="hf-root2-wrap"><label for="hf-root2">x₂</label><input id="hf-root2" type="text" autocomplete="off" spellcheck="false" inputmode="text" placeholder="f.eks. −3"></div>
+          <div class="hf-roots-compact">
+            <div class="hf-roots-title">Løsninger</div>
+            <div>
+              <div class="hf-roots-inputs">
+                <div class="hf-root-field"><label for="hf-root1">x₁ =</label><input id="hf-root1" type="text" autocomplete="off" spellcheck="false" inputmode="text"></div>
+                <div class="hf-root-field" id="hf-root2-wrap"><label for="hf-root2">x₂ =</label><input id="hf-root2" type="text" autocomplete="off" spellcheck="false" inputmode="text"></div>
+              </div>
+              <div class="hf-roots-actions"><button type="submit" class="btn">Sjekk svar</button></div>
+            </div>
           </div>
-          <p class="hf-help">Skriv bare verdiene. Brøker og π går fint.</p>
-          <div style="margin-top:10px"><button type="submit" class="btn">Sjekk svar</button></div>
         </div>
         <p id="hf-input-error" class="hf-error" role="alert"></p>
       </form>
@@ -193,6 +197,11 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
         </div>
         <div class="hf-actions"><button type="button" class="btn" id="hf-next">Neste oppgave →</button><button type="button" class="btn secondary" id="hf-finish">Avslutt</button></div>
       </div>
+    </div>
+
+    <div id="hf-example-float" class="hf-example-float" hidden>
+      <div class="hf-example-head" id="hf-example-head"><strong>Eksempel</strong><button type="button" id="hf-example-close" aria-label="Lukk eksempel">×</button></div>
+      <div class="hf-example-body" id="hf-example-body"></div>
     </div>
 
     <div id="hf-summary" class="hf-summary" hidden tabindex="-1"><h3 style="color:var(--purple)">Økten er avsluttet</h3><p id="hf-summary-text"></p><div class="hf-summary-scores"><div><strong id="hf-total-correct"></strong><span>riktige</span></div><div><strong id="hf-total-wrong"></strong><span>feil</span></div></div><div class="hf-actions"><button type="button" class="btn" id="hf-restart">Ny økt</button><button type="button" class="btn secondary" id="hf-introduction">Til innstillinger</button></div></div>
@@ -510,6 +519,28 @@ if(typeof module!=='undefined'&&module.exports)module.exports=QuickFactorCore;
     html+='<p>Setter du uttrykket lik 0, må minst én lineær faktor være 0.</p>'+C.rootSteps(q).map(s=>'<div class="hf-math">'+s+'</div>').join('');
     return html;
   }
+  function exampleFor(q){
+    const examples={
+      pair:{expr:'x^2+5x+6',sum:'2 + 3 = 5',product:'2 · 3 = 6',factor:'(x+2)(x+3)',roots:'x₁ = −2   x₂ = −3'},
+      square:{expr:'x^2-6x+9',sum:'−3 + (−3) = −6',product:'(−3) · (−3) = 9',factor:'(x-3)^2',roots:'x = 3'},
+      common:{expr:'2x^2-8x-42',prep:'2(x^2-4x-21)',sum:'3 + (−7) = −4',product:'3 · (−7) = −21',factor:'2(x+3)(x-7)',roots:'x₁ = −3   x₂ = 7'},
+      leading:{expr:'2x^2+7x+3',sum:'6 + 1 = 7',product:'6 · 1 = 2 · 3',prep:'2x^2+6x+x+3',factor:'(2x+1)(x+3)',roots:'x₁ = −1/2   x₂ = −3'},
+      symbol:{expr:'x^2-pi^2',sum:'π + (−π) = 0',product:'π · (−π) = −π²',factor:'(x+pi)(x-pi)',roots:'x₁ = −π   x₂ = π'}
+    };
+    const ex=examples[q.group]||examples.pair;
+    let html='<div class="hf-math">'+C.exprMath(ex.expr)+(q.kind==='roots'?' = 0':'')+'</div>';
+    if(ex.prep)html+='<div class="hf-math hf-example-step">'+C.exprMath(ex.prep)+'</div>';
+    html+='<div class="hf-example-metrics"><span>Sum: '+ex.sum+'</span><span>Produkt: '+ex.product+'</span></div>';
+    if(q.kind==='factor'){
+      html+='<div class="hf-math hf-example-step">'+equality(C.astMath(C.parse(ex.expr)),C.astMath(C.parse(ex.factor)))+'</div>';
+    }else{
+      html+='<div class="hf-math hf-example-step">'+C.exprMath(ex.factor)+' = 0</div><div class="hf-example-roots">'+ex.roots+'</div>';
+    }
+    return html;
+  }
+  function openExample(){if(!current)return;$('example-body').innerHTML=exampleFor(current);$('example-float').hidden=false}
+  function closeExample(){$('example-float').hidden=true}
+  (function makeExampleDraggable(){let drag=false,dx=0,dy=0,box,head;setTimeout(()=>{box=$('example-float');head=$('example-head');if(!box||!head)return;head.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;drag=true;const r=box.getBoundingClientRect();dx=e.clientX-r.left;dy=e.clientY-r.top;head.setPointerCapture?.(e.pointerId)});head.addEventListener('pointermove',e=>{if(!drag)return;box.style.left=Math.max(6,Math.min(innerWidth-box.offsetWidth-6,e.clientX-dx))+'px';box.style.top=Math.max(6,Math.min(innerHeight-box.offsetHeight-6,e.clientY-dy))+'px';box.style.right='auto'});const stop=()=>drag=false;head.addEventListener('pointerup',stop);head.addEventListener('pointercancel',stop)},0)})();
   function next(){
     if(!remaining.length)return finish();
     current={...remaining.shift(),kind:chooseKind()};
@@ -519,7 +550,7 @@ if(typeof module!=='undefined'&&module.exports)module.exports=QuickFactorCore;
     $('factor-area').hidden=current.kind!=='factor';$('roots-area').hidden=current.kind!=='roots';$('input-error').textContent='';$('feedback').hidden=true;$('give-up').hidden=false;
     $('answer').value='';$('root1').value='';$('root2').value='';
     const rootCount=C.roots(current).length;$('root2-wrap').hidden=current.kind==='roots'&&rootCount===1;
-    show('practice');updateScore();
+    show('practice');updateScore();if(!$('example-float').hidden)$('example-body').innerHTML=exampleFor(current);
     const focus=current.kind==='factor'?$('answer'):$('root1');setTimeout(()=>focus.focus({preventScroll:true}),30);
   }
   function start(){
@@ -552,6 +583,7 @@ if(typeof module!=='undefined'&&module.exports)module.exports=QuickFactorCore;
   }
   $('form').addEventListener('submit',e=>{e.preventDefault();submit(false)});
   $('start').addEventListener('click',start);$('restart').addEventListener('click',start);$('next').addEventListener('click',next);$('give-up').addEventListener('click',()=>submit(true));$('abort').addEventListener('click',finish);$('finish').addEventListener('click',finish);$('introduction').addEventListener('click',()=>show('intro'));
+  $('example-open').addEventListener('click',openExample);$('example-close').addEventListener('click',closeExample);
   [$('mode-factor'),$('mode-roots')].forEach(x=>x.addEventListener('change',readModes));
 })();
 </script>
