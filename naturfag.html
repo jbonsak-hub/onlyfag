@@ -756,6 +756,7 @@ body.dark .v40-context{background:var(--panel2)}
 
     <section class="page" id="page-binding">
       <h1>Sterke bindinger</h1>
+      <div class="module-tools"><div class="seg" id="bindingMode"><button data-mode="general" class="active">Generelt</button><button data-mode="molecules">Molekyler (utfordring)</button></div></div>
       <input type="checkbox" id="showEN" checked style="display:none" aria-hidden="true">
       <div class="card"><div id="bindingArea"></div></div>
     </section>
@@ -1154,7 +1155,7 @@ const combustionQs=[
 {q:'Hva dannes ved fullstendig forbrenning av et hydrokarbon?',o:['CO2 og H2O','CO og H2O','C og H2O','CO2 og H2'],a:'CO2 og H2O',e:'Ved god tilgang på oksygen oksideres karbon til CO₂ og hydrogen til H₂O.'},
 {q:'Magnesium varmes opp med en gassbrenner til det lyser kraftig. Hvilket stoff dannes hovedsakelig i den forenklede modellen?',o:['MgO','MgO2','Mg2O','CO2'],a:'MgO',e:'Magnesium reagerer med oksygen: 2Mg + O₂ → 2MgO.'},
 {q:'Hvorfor får magnesiumbåndet større masse når det brennes i luft?',o:['Oksygenatomer fra lufta blir en del av produktet','Magnesiumatomene får flere protoner','Varmeenergi blir omdannet direkte til masse i forsøket','Magnesium trekker til seg CO2 uten å reagere med oksygen'],a:'Oksygenatomer fra lufta blir en del av produktet',e:'Magnesium reagerer med O₂ og danner MgO. Produktet inneholder derfor både magnesium og oksygen.'},
-{q:'Hvilke bindingstyper brytes og dannes når magnesium reagerer med oksygen til MgO?',o:['Metallbinding og O=O-binding brytes; ionebinding dannes','Ionebinding og O=O-binding brytes; metallbinding dannes','Metallbinding brytes; elektronparbinding dannes mellom Mg-atomene','Bare svake bindinger mellom molekyler endres'],a:'Metallbinding og O=O-binding brytes; ionebinding dannes',e:'Magnesium går fra metall til Mg²⁺, og oksygen danner O²⁻. I MgO holdes ionene sammen av ionebinding.'},
+{q:'Hvilke bindingstyper brytes og dannes når magnesium reagerer med oksygen til MgO?',o:['Metallbinding og elektronparbinding i O₂ brytes; ionebinding dannes','Ionebinding og elektronparbinding i O₂ brytes; metallbinding dannes','Metallbinding brytes; elektronparbinding dannes mellom Mg-atomene','Bare svake bindinger mellom molekyler endres'],a:'Metallbinding og elektronparbinding i O₂ brytes; ionebinding dannes',e:'Metallbindingene i magnesium og elektronparbindingen i O₂ brytes. I MgO holdes Mg²⁺ og O²⁻ sammen av ionebinding.'},
 {q:'Hvilken likning er balansert for fullstendig forbrenning av metan?',o:['CH4 + 2O2 → CO2 + 2H2O','CH4 + O2 → CO2 + 2H2O','2CH4 + 3O2 → 2CO2 + 4H2O','CH4 + 2O2 → CO + 2H2O'],a:'CH4 + 2O2 → CO2 + 2H2O',e:'Tell C-, H- og O-atomer på begge sider.'},
 {q:'Hvilken likning er balansert for fullstendig forbrenning av propan?',o:['C3H8 + 5O2 → 3CO2 + 4H2O','C3H8 + 4O2 → 3CO2 + 4H2O','C3H8 + 5O2 → 2CO2 + 4H2O','C3H8 + 3O2 → 3CO + 4H2O'],a:'C3H8 + 5O2 → 3CO2 + 4H2O',e:'3 C gir 3 CO₂ og 8 H gir 4 H₂O. Da trengs 10 O-atomer = 5 O₂.'},
 {q:'Et hydrokarbon brenner med for lite luft. Hvilket stoff kan da dannes i større mengde enn ved fullstendig forbrenning?',o:['CO','O2','H2','CH4'],a:'CO',e:'Ved oksygenmangel kan karbon bli delvis oksidert til karbonmonoksid, CO.'},
@@ -1788,16 +1789,16 @@ spElements.forEach(e=>{const hi=highlight.includes(e.s),sel=selected&&selected.h
 for(let p=4;p<=7;p++)for(let g=3;g<=12;g++)h+=`<div class="pt-dblock ${highlight.includes('dblock')?'highlight':''} ${dim&&!highlight.includes('dblock')?'dim':''}" style="grid-column:${g+1};grid-row:${p+1}">${g===7&&p===5?'innskuddsmetaller':''}</div>`;
 h+='</div></div>';return h}
 function periodicGeneral(){const area=$('#periodicArea'),kind=rand(['structure','period','group','family','outer','shells','symbol','name','category']);let q='',a='',opts=[],high=[],ex='';if(kind==='structure'){const it=rand([
-['Hva kalles de vannrette radene i periodesystemet?','Perioder',['Perioder','Grupper','Blokker','Ioner'],'De vannrette radene kalles perioder.'],
+['Hva kalles de vannrette radene i periodesystemet?','Perioder',['Perioder','Grupper','Familier','Ioner'],'De vannrette radene kalles perioder.'],
 ['Hva kalles de loddrette kolonnene i periodesystemet?','Grupper',['Grupper','Perioder','Skall','Isotoper'],'De loddrette kolonnene kalles grupper.'],
-['Hvor finner vi innskuddsmetallene?','I gruppene 3–12',['I gruppene 3–12','Bare i gruppe 18','Bare i periode 1','I gruppene 1–2'],'Innskuddsmetallene ligger i d-blokka, hovedsakelig gruppene 3–12.']]);[q,a,opts,ex]=it;if(a==='I gruppene 3–12')high=['dblock'];}
+['Hvor finner vi innskuddsmetallene?','I gruppene 3–12',['I gruppene 3–12','Bare i gruppe 18','Bare i periode 1','I gruppene 1–2'],'Innskuddsmetallene ligger hovedsakelig i gruppene 3–12.']]);[q,a,opts,ex]=it;if(a==='I gruppene 3–12')high=['dblock'];}
 else if(kind==='period'){const p=rand([2,3,4,5,6,7]);q='Hvilken periode er markert?';a=String(p);opts=uniqueOptions(a,[1,2,3,4,5,6,7]);high=spElements.filter(e=>e.period===p).map(e=>e.s);ex=`Dette er periode ${p}.`;}
 else if(kind==='group'){const g=rand([1,2,13,14,15,16,17,18]);q='Hvilken gruppe er markert?';a=String(g);opts=uniqueOptions(a,[1,2,13,14,15,16,17,18]);high=spElements.filter(e=>e.group===g).map(e=>e.s);ex=`Dette er gruppe ${g}.`;}
 else if(kind==='family'){const fam=rand([{g:17,n:'Halogenene'},{g:18,n:'Edelgassene'}]);q='Hvilken stoffgruppe er markert?';a=fam.n;opts=[fam.n,fam.g===17?'Edelgassene':'Halogenene','Alkalimetallene','Innskuddsmetallene'];high=spElements.filter(e=>e.group===fam.g).map(e=>e.s);ex=`${fam.n} står i gruppe ${fam.g}.`;}
 else if(kind==='category'){const type=rand(['metal','nonmetal']);const els=spElements.filter(e=>e.cat===type&&(e.z<=86));q='Hvilken hovedkategori er markert med flere eksempler?';a=type==='metal'?'Metaller':'Ikke-metaller';opts=['Metaller','Ikke-metaller','Edelgasser','Innskuddsmetaller'];high=shuffle(els).slice(0,8).map(e=>e.s);ex=`De markerte grunnstoffene er ${a.toLowerCase()}.`;}
 else{const e=weightedSP();high=[e.s];if(kind==='outer'){a=String(outerElectrons(e));q=`Hvor mange elektroner har ${e.n} i ytterste skall?`;opts=uniqueOptions(a,[1,2,3,4,5,6,7,8]);ex=`${e.n} står i gruppe ${e.group}.`;}else if(kind==='shells'){a=String(e.period);q=`Hvor mange elektronskall har ${e.n}?`;opts=uniqueOptions(a,[1,2,3,4,5,6,7]);ex=`${e.n} står i periode ${e.period}.`;}else if(kind==='symbol'){a=e.s;q=`Hva er symbolet for ${e.n}?`;opts=uniqueOptions(a,spElements.map(x=>x.s));ex=`${e.n} har symbolet ${e.s}.`;}else{a=e.n;q=`Hva heter grunnstoffet med symbolet ${e.s}?`;opts=uniqueOptions(a,spElements.map(x=>x.n));ex=`${e.s} er ${e.n}.`;}}
 area.innerHTML=`<div class="pt-question"><div class="question">${q}</div><div id="periodicOpts"></div></div>${periodicTableHTML({highlight:high,dim:high.length>0})}`;mc($('#periodicOpts'),opts,a,'periodicFb',ex)}
-function periodicSetup(){ptQuiz.running=false;const area=$('#periodicArea');area.innerHTML=`<div class="pt-question"><h2>Velg grunnstoffene som skal være med</h2><p class="lead" style="margin-bottom:8px">Klikk på grunnstoffene i periodesystemet. Du får både navn og symbol i quizen.</p><div class="pt-setup-actions"><button class="btn secondary small" id="ptFirst20">Grunnstoff 1–20</button><button class="btn secondary small" id="ptAll">Alle i s- og p-blokka</button><button class="btn secondary small" id="ptClear">Tøm</button><button class="btn" id="ptStart">Start quiz</button></div><div class="tiny"><strong id="ptCount">${ptSelected.size}</strong> valgt</div></div><div id="ptSelectTable">${periodicTableHTML({selectable:true,selected:ptSelected})}</div>`;bindPtSelection();$('#ptFirst20').onclick=()=>{ptSelected.clear();spElements.filter(e=>e.z<=20).forEach(e=>ptSelected.add(e.s));periodicSetup()};$('#ptAll').onclick=()=>{ptSelected.clear();spElements.forEach(e=>ptSelected.add(e.s));periodicSetup()};$('#ptClear').onclick=()=>{ptSelected.clear();periodicSetup()};$('#ptStart').onclick=startPtQuiz}
+function periodicSetup(){ptQuiz.running=false;const area=$('#periodicArea');area.innerHTML=`<div class="pt-question"><h2>Velg grunnstoffene som skal være med</h2><p class="lead" style="margin-bottom:8px">Klikk på grunnstoffene i periodesystemet. Du får både navn og symbol i quizen.</p><div class="pt-setup-actions"><button class="btn secondary small" id="ptFirst20">Grunnstoff 1–20</button><button class="btn secondary small" id="ptAll">Alle hovedgruppegrunnstoffer</button><button class="btn secondary small" id="ptClear">Tøm</button><button class="btn" id="ptStart">Start quiz</button></div><div class="tiny"><strong id="ptCount">${ptSelected.size}</strong> valgt</div></div><div id="ptSelectTable">${periodicTableHTML({selectable:true,selected:ptSelected})}</div>`;bindPtSelection();$('#ptFirst20').onclick=()=>{ptSelected.clear();spElements.filter(e=>e.z<=20).forEach(e=>ptSelected.add(e.s));periodicSetup()};$('#ptAll').onclick=()=>{ptSelected.clear();spElements.forEach(e=>ptSelected.add(e.s));periodicSetup()};$('#ptClear').onclick=()=>{ptSelected.clear();periodicSetup()};$('#ptStart').onclick=startPtQuiz}
 function bindPtSelection(){$$('#ptSelectTable .pt-cell[data-el]').forEach(c=>c.onclick=()=>{const s=c.dataset.el;if(ptSelected.has(s))ptSelected.delete(s);else ptSelected.add(s);c.classList.toggle('selected',ptSelected.has(s));$('#ptCount').textContent=ptSelected.size})}
 function startPtQuiz(){if(!ptSelected.size){setFeedback('periodicFb','Velg minst ett grunnstoff først.',false);return}ptQuiz={order:shuffle(spElements.filter(e=>ptSelected.has(e.s))),i:0,errors:0,solved:new Set(),running:true};renderPtQuiz()}
 function renderPtQuiz(){const area=$('#periodicArea');if(ptQuiz.i>=ptQuiz.order.length){area.innerHTML=`<div class="result-box show"><div class="result-score">${ptQuiz.order.length}/${ptQuiz.order.length}</div><h2>Ferdig</h2><p class="lead" style="margin-inline:auto">Feilklikk: <strong>${ptQuiz.errors}</strong></p><button class="btn" onclick="startPtQuiz()">Samme utvalg på nytt</button><button class="btn secondary" onclick="periodicSetup()">Velg grunnstoffer</button></div>${periodicTableHTML({blank:true,solved:ptQuiz.solved})}`;return}const e=ptQuiz.order[ptQuiz.i];area.innerHTML=`<div class="pt-scoreline"><span class="stat">${ptQuiz.i+1}/${ptQuiz.order.length}</span><span class="stat">Feil: <strong>${ptQuiz.errors}</strong></span></div><div class="pt-target">Finn <strong>${e.n}</strong> (${e.s})</div><div id="ptQuizTable">${periodicTableHTML({blank:true,solved:ptQuiz.solved})}</div><div class="feedback" id="ptQuizFb"></div>`;$$('#ptQuizTable .pt-cell[data-el]').forEach(c=>c.onclick=()=>{if(c.dataset.el===e.s){ptQuiz.solved.add(e.s);ptQuiz.i++;setFeedback('ptQuizFb','Riktig.',true);setTimeout(renderPtQuiz,320)}else{ptQuiz.errors++;c.classList.remove('miss');void c.offsetWidth;c.classList.add('miss');setFeedback('ptQuizFb','Feil plass – prøv igjen.',false);const st=$('.pt-scoreline .stat strong');if(st)st.textContent=ptQuiz.errors}})}
@@ -1991,17 +1992,17 @@ const familyDefsV3=[
 function v3NameOptions(e,direction){let pool=allElementsV3.filter(x=>x.s!==e.s);if(direction==='symbol'){const sameInitial=pool.filter(x=>x.s[0]===e.s[0]);pool=[...sameInitial,...pool];return uniqueOptions(e.s,pool.map(x=>x.s))}const sameLetter=pool.filter(x=>x.n[0]===e.n[0]);pool=[...sameLetter,...pool];return uniqueOptions(e.n,pool.map(x=>x.n))}
 periodicGeneral=function(){const area=$('#periodicArea');const kind=rand(['structure','family','family','outer','periodConcept','name','name','category']);let q='',a='',opts=[],high=[],ex='';
 if(kind==='structure'){const it=rand([
-['Hva kalles de vannrette radene i periodesystemet?','Perioder',['Perioder','Grupper','Blokker','Skall'],'De vannrette radene kalles perioder.'],
+['Hva kalles de vannrette radene i periodesystemet?','Perioder',['Perioder','Grupper','Familier','Skall'],'De vannrette radene kalles perioder.'],
 ['Hva kalles de loddrette kolonnene i periodesystemet?','Grupper',['Grupper','Perioder','Skall','Isotoper'],'De loddrette kolonnene kalles grupper.'],
-['Hvilken del av periodesystemet inneholder innskuddsmetallene?','d-blokka i midten',['d-blokka i midten','De to første kolonnene','Bare gruppe 18','f-blokka nederst'],'Innskuddsmetallene ligger i d-blokka, mellom hovedgruppene.'],
-['Hva kalles de to radene som vanligvis trekkes ut nederst i periodesystemet?','Lantanider og aktinider',['Lantanider og aktinider','Halogener og edelgasser','Alkalimetaller og jordalkalimetaller','Perioder og grupper'],'De to radene nederst er lantanidene og aktinidene.']]);[q,a,opts,ex]=it;if(a==='d-blokka i midten')high=[...v3Transition];if(a==='Lantanider og aktinider')high=['lanthanides','actinides'];}
+['Hva kalles de markerte metallene i midten av periodesystemet?','Innskuddsmetallene',['Innskuddsmetallene','Halogenene','Edelgassene','Jordalkalimetallene'],'De markerte metallene kalles innskuddsmetaller.'],
+['Hva kalles de to radene som vanligvis trekkes ut nederst i periodesystemet?','Lantanider og aktinider',['Lantanider og aktinider','Halogener og edelgasser','Alkalimetaller og jordalkalimetaller','Perioder og grupper'],'De to radene nederst er lantanidene og aktinidene.']]);[q,a,opts,ex]=it;if(a==='Innskuddsmetallene')high=[...v3Transition];if(a==='Lantanider og aktinider')high=['lanthanides','actinides'];}
 else if(kind==='family'){const fam=rand(familyDefsV3);q='Hvilken stoffgruppe er markert?';a=fam.name;opts=shuffle([a,...shuffle(familyDefsV3.filter(x=>x.name!==a).map(x=>x.name)).slice(0,3)]);high=fam.els;ex=`De markerte grunnstoffene er ${fam.name.toLowerCase()}.`;}
 else if(kind==='category'){const fam=rand([familyDefsV3[3],familyDefsV3[4],familyDefsV3[5],familyDefsV3[6],familyDefsV3[7]]);q='Hva kalles de markerte grunnstoffene?';a=fam.name;opts=shuffle([a,...shuffle(familyDefsV3.filter(x=>x.name!==a).map(x=>x.name)).slice(0,3)]);high=fam.els;ex=`Dette er ${fam.name.toLowerCase()}.`;}
 else if(kind==='outer'){const g=rand([1,2,13,14,15,16,17,18]),oe=g===18?8:g===1?1:g===2?2:g-10;high=allElementsV3.filter(e=>e.group===g&&!e.series).map(e=>e.s);q='Hvor mange elektroner har grunnstoffene i den markerte hovedgruppen vanligvis i ytterste skall?';a=String(oe);opts=uniqueOptions(a,[1,2,3,4,5,6,7,8]);ex=g===18?'Edelgassene har fullt ytterste skall (helium er unntaket med 2).':`Denne hovedgruppen har ${oe} ytterelektroner.`;}
 else if(kind==='periodConcept'){const p=rand([2,3,4,5,6,7]);high=allElementsV3.filter(e=>e.period===p).map(e=>e.s);q='Hva har grunnstoffene i den markerte perioden felles?';a=`De har ${p} elektronskall`;opts=shuffle([a,'De har samme antall ytterelektroner','De danner samme ioneladning','De er alle metaller']);ex=`Periode ${p} betyr at atomene har ${p} elektronskall.`;}
 else {const e=v3BySymbol[rand(symbolChallengeV3)];high=[e.s];q=`Hva heter grunnstoffet med symbolet ${e.s}?`;a=e.n;opts=v3NameOptions(e,'name');ex=`${e.s} er ${e.n}.`;}
 area.innerHTML=`<div class="periodic-workspace"><div class="periodic-table-pane">${periodicTableV3({highlight:high,dim:high.length>0})}</div><aside class="periodic-question-pane"><div class="question">${q}</div><div id="periodicOpts"></div></aside></div>`;mc($('#periodicOpts'),opts,a,'periodicFb',ex)};
-periodicSetup=function(){ptQuiz.running=false;if(typeof ptQuizTicker!=='undefined'&&ptQuizTicker){clearInterval(ptQuizTicker);ptQuizTicker=null}const area=$('#periodicArea');area.innerHTML=`<div class="periodic-workspace"><div class="periodic-table-pane" id="ptSelectTable">${periodicTableV3({selectable:true,selected:ptSelected})}</div><aside class="periodic-question-pane pt-setup-side"><h2>Velg grunnstoffer</h2><p class="lead">Klikk direkte i periodesystemet. Alle grunnstoffer kan velges.</p><div class="tiny" style="margin-bottom:10px"><strong id="ptCount">${ptSelected.size}</strong> valgt</div><div class="pt-setup-actions"><button class="btn secondary small" id="ptFirst20">Grunnstoff 1–20</button><button class="btn secondary small" id="ptSP">s- og p-blokka</button><button class="btn secondary small" id="ptTransition">Innskuddsmetaller</button><button class="btn secondary small" id="ptFBlock">Lantanider + aktinider</button><button class="btn secondary small" id="ptAll">Alle 118</button><button class="btn secondary small" id="ptClear">Tøm</button><button class="btn" id="ptStart">Start quiz</button></div></aside></div>`;bindPtSelectionV3();$('#ptFirst20').onclick=()=>{ptSelected.clear();allElementsV3.filter(e=>e.z<=20).forEach(e=>ptSelected.add(e.s));periodicSetup()};$('#ptSP').onclick=()=>{ptSelected.clear();spElements.forEach(e=>ptSelected.add(e.s));periodicSetup()};$('#ptTransition').onclick=()=>{ptSelected.clear();v3Transition.forEach(x=>ptSelected.add(x));periodicSetup()};$('#ptFBlock').onclick=()=>{ptSelected.clear();v3FBlock.forEach(x=>ptSelected.add(x));periodicSetup()};$('#ptAll').onclick=()=>{ptSelected.clear();allElementsV3.forEach(e=>ptSelected.add(e.s));periodicSetup()};$('#ptClear').onclick=()=>{ptSelected.clear();periodicSetup()};$('#ptStart').onclick=startPtQuizV3};
+periodicSetup=function(){ptQuiz.running=false;if(typeof ptQuizTicker!=='undefined'&&ptQuizTicker){clearInterval(ptQuizTicker);ptQuizTicker=null}const area=$('#periodicArea');area.innerHTML=`<div class="periodic-workspace"><div class="periodic-table-pane" id="ptSelectTable">${periodicTableV3({selectable:true,selected:ptSelected})}</div><aside class="periodic-question-pane pt-setup-side"><h2>Velg grunnstoffer</h2><p class="lead">Klikk direkte i periodesystemet. Alle grunnstoffer kan velges.</p><div class="tiny" style="margin-bottom:10px"><strong id="ptCount">${ptSelected.size}</strong> valgt</div><div class="pt-setup-actions"><button class="btn secondary small" id="ptFirst20">Grunnstoff 1–20</button><button class="btn secondary small" id="ptSP">Hovedgruppene</button><button class="btn secondary small" id="ptTransition">Innskuddsmetaller</button><button class="btn secondary small" id="ptFBlock">Lantanider + aktinider</button><button class="btn secondary small" id="ptAll">Alle 118</button><button class="btn secondary small" id="ptClear">Tøm</button><button class="btn" id="ptStart">Start quiz</button></div></aside></div>`;bindPtSelectionV3();$('#ptFirst20').onclick=()=>{ptSelected.clear();allElementsV3.filter(e=>e.z<=20).forEach(e=>ptSelected.add(e.s));periodicSetup()};$('#ptSP').onclick=()=>{ptSelected.clear();spElements.forEach(e=>ptSelected.add(e.s));periodicSetup()};$('#ptTransition').onclick=()=>{ptSelected.clear();v3Transition.forEach(x=>ptSelected.add(x));periodicSetup()};$('#ptFBlock').onclick=()=>{ptSelected.clear();v3FBlock.forEach(x=>ptSelected.add(x));periodicSetup()};$('#ptAll').onclick=()=>{ptSelected.clear();allElementsV3.forEach(e=>ptSelected.add(e.s));periodicSetup()};$('#ptClear').onclick=()=>{ptSelected.clear();periodicSetup()};$('#ptStart').onclick=startPtQuizV3};
 function bindPtSelectionV3(){$$('#ptSelectTable .pt-cell[data-el]').forEach(c=>c.onclick=()=>{const sym=c.dataset.el;if(ptSelected.has(sym))ptSelected.delete(sym);else ptSelected.add(sym);c.classList.toggle('selected',ptSelected.has(sym));$('#ptCount').textContent=ptSelected.size})}
 let ptQuizTicker=null;
 function formatPtQuizTime(ms){
@@ -2222,7 +2223,7 @@ function runPtIshTimer(){if(ptIshTicker)clearInterval(ptIshTicker);updatePtIshTi
 function periodicSetupV13(mode){
   ptQuiz.running=false;ptIsh.running=false;if(ptQuizTicker){clearInterval(ptQuizTicker);ptQuizTicker=null}if(ptIshTicker){clearInterval(ptIshTicker);ptIshTicker=null}
   const ish=mode==='ish',area=$('#periodicArea');
-  area.innerHTML=`<div class="periodic-workspace"><div class="periodic-table-pane" id="ptSelectTable">${periodicTableV3({selectable:true,selected:ptSelected})}</div><aside class="periodic-question-pane pt-setup-side"><h2>Velg grunnstoffer</h2>${ish?'<div class="ish-explain"><strong>Grunnstoffquiz:</strong> Klikk så nær riktig plassering som mulig. Fulltreff gir 1 poeng. Hver rute vannrett eller loddrett unna trekker 0,1 poeng. 10 ruter eller mer gir 0 poeng.</div>':'<p class="lead">Klikk direkte i periodesystemet. Alle grunnstoffer kan velges.</p>'}<div class="tiny" style="margin-bottom:10px"><strong id="ptCount">${ptSelected.size}</strong> valgt</div><div class="pt-setup-actions"><button class="btn secondary small" id="ptFirst20">Grunnstoff 1–20</button><button class="btn secondary small" id="ptSP">s- og p-blokka</button><button class="btn secondary small" id="ptTransition">Innskuddsmetaller</button><button class="btn secondary small" id="ptFBlock">Lantanider + aktinider</button><button class="btn secondary small" id="ptAll">Alle 118</button><button class="btn secondary small" id="ptClear">Tøm</button><button class="btn" id="ptStart">Start ${ish?'Grunnstoffquiz':'quiz'}</button></div></aside></div>`;
+  area.innerHTML=`<div class="periodic-workspace"><div class="periodic-table-pane" id="ptSelectTable">${periodicTableV3({selectable:true,selected:ptSelected})}</div><aside class="periodic-question-pane pt-setup-side"><h2>Velg grunnstoffer</h2>${ish?'<div class="ish-explain"><strong>Grunnstoffquiz:</strong> Klikk så nær riktig plassering som mulig. Fulltreff gir 1 poeng. Hver rute vannrett eller loddrett unna trekker 0,1 poeng. 10 ruter eller mer gir 0 poeng.</div>':'<p class="lead">Klikk direkte i periodesystemet. Alle grunnstoffer kan velges.</p>'}<div class="tiny" style="margin-bottom:10px"><strong id="ptCount">${ptSelected.size}</strong> valgt</div><div class="pt-setup-actions"><button class="btn secondary small" id="ptFirst20">Grunnstoff 1–20</button><button class="btn secondary small" id="ptSP">Hovedgruppene</button><button class="btn secondary small" id="ptTransition">Innskuddsmetaller</button><button class="btn secondary small" id="ptFBlock">Lantanider + aktinider</button><button class="btn secondary small" id="ptAll">Alle 118</button><button class="btn secondary small" id="ptClear">Tøm</button><button class="btn" id="ptStart">Start ${ish?'Grunnstoffquiz':'quiz'}</button></div></aside></div>`;
   bindPtSelectionV3();
   $('#ptFirst20').onclick=()=>{ptSelected.clear();allElementsV3.filter(e=>e.z<=20).forEach(e=>ptSelected.add(e.s));periodicSetupV13(mode)};
   $('#ptSP').onclick=()=>{ptSelected.clear();spElements.forEach(e=>ptSelected.add(e.s));periodicSetupV13(mode)};
@@ -2356,13 +2357,13 @@ function hcfV13(a,b){while(b){const t=a%b;a=b;b=t}return a}
 function hydroCombustionV13(f,name,c,h){let A=1,B=c,C=h/2,D=c+h/4;const mult=Number.isInteger(C)&&Number.isInteger(D)?1:Number.isInteger(C*2)&&Number.isInteger(D*2)?2:4;A*=mult;B*=mult;C*=mult;D*=mult;const g=[A,B,C,D].reduce((x,y)=>hcfV13(x,y));A/=g;B/=g;C/=g;D/=g;const coeff=(n,s)=>`${n===1?'':n}${s}`,eq=`${coeff(A,f)} + ${coeff(D,'O2')} → ${coeff(B,'CO2')} + ${coeff(C,'H2O')}`;return{f,name,A,B,C,D,eq}}
 const hydrocarbonsV13=[hydroCombustionV13('CH4','metan',1,4),hydroCombustionV13('C2H6','etan',2,6),hydroCombustionV13('C3H8','propan',3,8),hydroCombustionV13('C4H10','butan',4,10),hydroCombustionV13('C5H12','pentan',5,12),hydroCombustionV13('C6H14','heksan',6,14),hydroCombustionV13('C7H16','heptan',7,16),hydroCombustionV13('C8H18','oktan',8,18)];
 const elementBurnV13=[
-{name:'magnesium',el:'Mg',oxide:'MgO',eq:'2Mg + O2 → 2MgO',bond:'Metallbinding og O=O-binding brytes; ionebinding dannes'},
-{name:'kalsium',el:'Ca',oxide:'CaO',eq:'2Ca + O2 → 2CaO',bond:'Metallbinding og O=O-binding brytes; ionebinding dannes'},
-{name:'aluminium',el:'Al',oxide:'Al2O3',eq:'4Al + 3O2 → 2Al2O3',bond:'Metallbinding og O=O-binding brytes; ionebinding dannes'},
-{name:'litium',el:'Li',oxide:'Li2O',eq:'4Li + O2 → 2Li2O',bond:'Metallbinding og O=O-binding brytes; ionebinding dannes'},
+{name:'magnesium',el:'Mg',oxide:'MgO',eq:'2Mg + O2 → 2MgO',bond:'Metallbinding og elektronparbinding i O2 brytes; ionebinding dannes'},
+{name:'kalsium',el:'Ca',oxide:'CaO',eq:'2Ca + O2 → 2CaO',bond:'Metallbinding og elektronparbinding i O2 brytes; ionebinding dannes'},
+{name:'aluminium',el:'Al',oxide:'Al2O3',eq:'4Al + 3O2 → 2Al2O3',bond:'Metallbinding og elektronparbinding i O2 brytes; ionebinding dannes'},
+{name:'litium',el:'Li',oxide:'Li2O',eq:'4Li + O2 → 2Li2O',bond:'Metallbinding og elektronparbinding i O2 brytes; ionebinding dannes'},
 {name:'karbon',el:'C',oxide:'CO2',eq:'C + O2 → CO2',bond:'Elektronparbindinger dannes i CO₂'},
 {name:'svovel',el:'S',oxide:'SO2',eq:'S + O2 → SO2',bond:'Elektronparbindinger dannes i SO₂'},
-{name:'hydrogen',el:'H2',oxide:'H2O',eq:'2H2 + O2 → 2H2O',bond:'H–H og O=O-bindinger brytes; O–H-bindinger dannes'}
+{name:'hydrogen',el:'H2',oxide:'H2O',eq:'2H2 + O2 → 2H2O',bond:'Elektronparbindinger i H2 og O2 brytes; O–H-bindinger dannes'}
 ];
 const moreCombustionV13=[];
 hydrocarbonsV13.forEach(h=>{
@@ -2555,9 +2556,9 @@ function v14PeriodicQuizItem(){
   const kind=rand(['structure','family','outer','shells','name','category']);
   if(kind==='structure'){
     return rand([
-      {topic:'Periodesystem',q:'Hva kalles de vannrette radene i periodesystemet?',a:'Perioder',o:['Perioder','Grupper','Blokker','Ioner'],e:'De vannrette radene kalles perioder.'},
+      {topic:'Periodesystem',q:'Hva kalles de vannrette radene i periodesystemet?',a:'Perioder',o:['Perioder','Grupper','Familier','Ioner'],e:'De vannrette radene kalles perioder.'},
       {topic:'Periodesystem',q:'Hva kalles de loddrette kolonnene i periodesystemet?',a:'Grupper',o:['Grupper','Perioder','Skall','Isotoper'],e:'De loddrette kolonnene kalles grupper.'},
-      {topic:'Periodesystem',q:'Hvor finner vi innskuddsmetallene?',a:'I gruppene 3–12',o:['I gruppene 3–12','Bare i gruppe 18','Bare i periode 1','I gruppene 1–2'],e:'Innskuddsmetallene ligger i d-blokka, hovedsakelig gruppene 3–12.'}
+      {topic:'Periodesystem',q:'Hvor finner vi innskuddsmetallene?',a:'I gruppene 3–12',o:['I gruppene 3–12','Bare i gruppe 18','Bare i periode 1','I gruppene 1–2'],e:'Innskuddsmetallene ligger hovedsakelig i gruppene 3–12.'}
     ]);
   }
   if(kind==='family'){
@@ -2576,7 +2577,7 @@ function v14PeriodicQuizItem(){
       ['Ikke-metaller','hovedsakelig øverst til høyre'],
       ['Metaller','venstre og midtre del av periodesystemet']
     ]);
-    return {topic:'Periodesystem',q:`Hvor finner vi vanligvis ${x[0].toLowerCase()}?`,a:x[1],o:shuffle([x[1],'bare i gruppe 18','bare i periode 1','utelukkende i f-blokka']),e:`${x[0]} finnes ${x[1]}.`};
+    return {topic:'Periodesystem',q:`Hvor finner vi vanligvis ${x[0].toLowerCase()}?`,a:x[1],o:shuffle([x[1],'bare i gruppe 18','bare i periode 1','bare i de to nederste radene']),e:`${x[0]} finnes ${x[1]}.`};
   }
   const e=weightedSP();
   if(kind==='outer')return {topic:'Periodesystem',q:`Hvor mange elektroner har ${e.n} (${e.s}) i ytterste skall?`,a:String(outerElectrons(e)),o:uniqueOptions(outerElectrons(e),[1,2,3,4,5,6,7,8]),e:`${e.n} står i gruppe ${e.group}.`};
@@ -3747,7 +3748,7 @@ newAtom();</script>
     if(ptIshTicker){clearInterval(ptIshTicker);ptIshTicker=null}
 
     const ish=mode==='ish',area=$('#periodicArea');
-    area.innerHTML=`<div class="periodic-workspace"><div class="periodic-table-pane" id="ptSelectTable">${periodicTableV3({selectable:true,selected:ptSelected})}</div><aside class="periodic-question-pane pt-setup-side"><h2>Velg grunnstoffer</h2>${ish?'<div class="ish-explain"><strong>Grunnstoffquiz:</strong> Klikk så nær riktig plassering som mulig. Fulltreff gir 1 poeng. Hver rute vannrett eller loddrett unna trekker 0,1 poeng. 10 ruter eller mer gir 0 poeng.</div>':'<p class="lead">Klikk på enkeltgrunnstoffer, perioder eller grupper for å slå dem av/på.</p>'}<div class="tiny" style="margin-bottom:10px"><strong id="ptCount">${ptSelected.size}</strong> valgt</div><div class="pt-setup-actions"><button class="btn secondary small" id="ptFirst20">Grunnstoff 1–20</button><button class="btn secondary small" id="ptSP">s- og p-blokka</button><button class="btn secondary small" id="ptTransition">Innskuddsmetaller</button><button class="btn secondary small" id="ptFBlock">Lantanider + aktinider</button><button class="btn secondary small" id="ptAll">Alle 118</button><button class="btn secondary small" id="ptClear">Tøm</button><button class="btn" id="ptStart">Start ${ish?'Grunnstoffquiz':'quiz'}</button></div></aside></div>`;
+    area.innerHTML=`<div class="periodic-workspace"><div class="periodic-table-pane" id="ptSelectTable">${periodicTableV3({selectable:true,selected:ptSelected})}</div><aside class="periodic-question-pane pt-setup-side"><h2>Velg grunnstoffer</h2>${ish?'<div class="ish-explain"><strong>Grunnstoffquiz:</strong> Klikk så nær riktig plassering som mulig. Fulltreff gir 1 poeng. Hver rute vannrett eller loddrett unna trekker 0,1 poeng. 10 ruter eller mer gir 0 poeng.</div>':'<p class="lead">Klikk på enkeltgrunnstoffer, perioder eller grupper for å slå dem av/på.</p>'}<div class="tiny" style="margin-bottom:10px"><strong id="ptCount">${ptSelected.size}</strong> valgt</div><div class="pt-setup-actions"><button class="btn secondary small" id="ptFirst20">Grunnstoff 1–20</button><button class="btn secondary small" id="ptSP">Hovedgruppene</button><button class="btn secondary small" id="ptTransition">Innskuddsmetaller</button><button class="btn secondary small" id="ptFBlock">Lantanider + aktinider</button><button class="btn secondary small" id="ptAll">Alle 118</button><button class="btn secondary small" id="ptClear">Tøm</button><button class="btn" id="ptStart">Start ${ish?'Grunnstoffquiz':'quiz'}</button></div></aside></div>`;
 
     bindPtSelectionV3();
 
@@ -3843,7 +3844,7 @@ newAtom();</script>
   function customActionsHTMLV25(){
     return `<div class="pt-setup-actions">
       <button class="btn secondary small" id="ptFirst20">Grunnstoff 1–20</button>
-      <button class="btn secondary small" id="ptSP">s- og p-blokka</button>
+      <button class="btn secondary small" id="ptSP">Hovedgruppene</button>
       <button class="btn secondary small" id="ptTransition">Innskuddsmetaller</button>
       <button class="btn secondary small" id="ptFBlock">Lantanider + aktinider</button>
       <button class="btn secondary small" id="ptAll">Alle 118</button>
@@ -5573,6 +5574,205 @@ function toggleNaturfagFullscreen(){
   // ikke blir liggende klar i en skjult modul.
   try{newPolar()}catch(e){}
   try{newSolubility()}catch(e){}
+})();
+</script>
+
+
+<script id="kjemi-v51-molecule-challenge">
+(function(){
+  const moleculeChallenge=[];
+  const seen=new Set();
+  const keyOf=item=>`${item?.q||''}|${item?.a||''}`;
+  const add=item=>{
+    if(!item)return;
+    const key=keyOf(item);
+    if(seen.has(key))return;
+    seen.add(key);
+    moleculeChallenge.push(item);
+  };
+
+  if(typeof bondOrderBank!=='undefined' && Array.isArray(bondOrderBank)){
+    bondOrderBank.forEach(item=>{
+      if(item?.f==='C2H2'){
+        item.q='Hva slags binding er det mellom karbonatomene i etyn, C₂H₂? (Hint: tegn atomene med valenselektroner og bruk åtteregelen.)';
+      }
+      add(item);
+    });
+  }
+
+  if(typeof bondTheory!=='undefined' && Array.isArray(bondTheory)){
+    for(let i=bondTheory.length-1;i>=0;i--){
+      const s=JSON.stringify(bondTheory[i]||{});
+      if(/dobbeltbinding|trippelbinding/i.test(s)) add(bondTheory.splice(i,1)[0]);
+    }
+  }
+
+  // Forbrenning blir i forbrenningsmodulen. Eldre O=O-formuleringer
+  // generaliseres til elektronparbinding slik at bindingsorden ikke kreves.
+  if(typeof combustionQs!=='undefined' && Array.isArray(combustionQs)){
+    combustionQs.forEach(item=>{
+      if(!item)return;
+      for(const field of ['q','a','e']){
+        if(typeof item[field]==='string') item[field]=item[field]
+          .replace(/O=O-binding(?:en|er)?/g,'elektronparbinding i O₂')
+          .replace(/O=O/g,'elektronparbinding i O₂');
+      }
+      if(Array.isArray(item.o)) item.o=item.o.map(x=>typeof x==='string'
+        ?x.replace(/O=O-binding(?:en|er)?/g,'elektronparbinding i O₂').replace(/O=O/g,'elektronparbinding i O₂')
+        :x);
+    });
+  }
+
+  // Organisk kjemi beholder metning og alkan/alken/alkyn.
+  // Bare polymeriserings-/hydrolyseoppgaver tas bort.
+  if(typeof carbonBanks!=='undefined' && Array.isArray(carbonBanks.organic)){
+    const tooAdvanced=/polymer|monomer|polyeten|polypropen|polystyren|polyvinylklorid|addisjonspolymerisering|kondensasjonspolymerisering|hydrolyse/i;
+    for(let i=carbonBanks.organic.length-1;i>=0;i--){
+      if(tooAdvanced.test(JSON.stringify(carbonBanks.organic[i]||{}))){
+        carbonBanks.organic.splice(i,1);
+      }
+    }
+  }
+
+  [
+    ['hydrogen','H','H₂'],['nitrogen','N','N₂'],['oksygen','O','O₂'],
+    ['fluor','F','F₂'],['klor','Cl','Cl₂']
+  ].forEach(([name,symbol,answer])=>add({
+    f:symbol,
+    q:`Hva er den vanligste molekylformen til ${name} i gassform ved romtemperatur?`,
+    a:answer,
+    o:[answer,symbol,`${symbol}₃`,`${symbol}₄`],
+    e:`${name[0].toUpperCase()+name.slice(1)} forekommer vanligvis som toatomige molekyler: ${answer}.`
+  }));
+
+  [
+    {
+      f:'O2',
+      q:'Hvert oksygenatom har 6 elektroner i ytterste skall. Hvor mange elektronpar må de to O-atomene dele for at begge skal oppfylle åtteregelen?',
+      a:'2 elektronpar',o:['1 elektronpar','2 elektronpar','3 elektronpar','4 elektronpar'],
+      e:'Hvert O-atom trenger to elektroner til. To delte elektronpar gir O=O.'
+    },
+    {
+      f:'N2',
+      q:'Hvert nitrogenatom har 5 elektroner i ytterste skall. Hvor mange elektronpar må de to N-atomene dele for at begge skal oppfylle åtteregelen?',
+      a:'3 elektronpar',o:['1 elektronpar','2 elektronpar','3 elektronpar','4 elektronpar'],
+      e:'Hvert N-atom trenger tre elektroner til. Tre delte elektronpar gir N≡N.'
+    },
+    {
+      f:'CO2',
+      q:'Hvilken enkel struktur gjør at både karbon og oksygen kan oppfylle åtteregelen i CO₂?',
+      a:'O=C=O',o:['O=C=O','O–C–O','O≡C–O','O–O–C'],
+      e:'Karbon deler to elektronpar med hvert oksygenatom: O=C=O.'
+    },
+    {
+      q:'Hvilket molekyl deler flest elektronpar mellom de samme to atomene?',
+      a:'N₂',o:['H₂','Cl₂','O₂','N₂'],
+      e:'H₂ og Cl₂ har enkeltbinding, O₂ har dobbeltbinding og N₂ har trippelbinding.'
+    },
+    {
+      q:'Hvilken kombinasjon er riktig?',
+      a:'H₂: enkeltbinding · O₂: dobbeltbinding · N₂: trippelbinding',
+      o:[
+        'H₂: enkeltbinding · O₂: dobbeltbinding · N₂: trippelbinding',
+        'H₂: dobbeltbinding · O₂: enkeltbinding · N₂: trippelbinding',
+        'H₂: enkeltbinding · O₂: trippelbinding · N₂: dobbeltbinding',
+        'H₂: trippelbinding · O₂: dobbeltbinding · N₂: enkeltbinding'
+      ],
+      e:'H₂ har enkeltbinding, O₂ dobbeltbinding og N₂ trippelbinding.'
+    },
+    {
+      f:'CO2',
+      q:'Hvor mange delte elektronpar finnes totalt i de to C–O-bindingene i CO₂?',
+      a:'4',o:['2','3','4','6'],
+      e:'Hver C=O-dobbeltbinding består av to delte elektronpar. To slike bindinger gir fire.'
+    }
+  ].forEach(add);
+
+  let lastChallengeKey='';
+  let lastGeneralKey='';
+  const pickDifferent=(list,lastKey)=>{
+    if(!list?.length)return null;
+    const pool=list.filter(x=>keyOf(x)!==lastKey);
+    return rand(pool.length?pool:list);
+  };
+
+  const renderMoleculeChallenge=()=>{
+    const area=$('#bindingArea');
+    const q=pickDifferent(moleculeChallenge,lastChallengeKey);
+    if(!q){
+      area.innerHTML='<div class="question">Ingen utfordringsoppgaver er tilgjengelige.</div>';
+      return;
+    }
+    lastChallengeKey=keyOf(q);
+    const visual=q.f
+      ? `<div class="molecule formula">${prettyFormula(q.f)}</div>`
+      : (q.scene?`<div class="note">${prettyFormula(q.scene)}</div>`:'');
+    area.innerHTML=`${visual}<div class="question">${prettyFormula(q.q)}</div><div id="bindingOpts"></div>`;
+    mc($('#bindingOpts'),q.o.map(prettyFormula),prettyFormula(q.a),'bindingFb',prettyFormula(q.e));
+  };
+
+  newBinding=function(){
+    const mode=currentMode('bindingMode')||'general';
+    if(mode==='molecules'){
+      renderMoleculeChallenge();
+      return;
+    }
+
+    const area=$('#bindingArea');
+    if(Math.random()<.32 && typeof bondTheory!=='undefined' && bondTheory.length){
+      const q=pickDifferent(bondTheory,lastGeneralKey);
+      lastGeneralKey=keyOf(q);
+      area.innerHTML=`<div class="question">${prettyFormula(q.q)}</div><div id="bindingOpts"></div>`;
+      mc($('#bindingOpts'),q.o.map(prettyFormula),prettyFormula(q.a),'bindingFb',prettyFormula(q.e));
+      return;
+    }
+
+    const bank=(typeof bondBank2!=='undefined'&&bondBank2.length)?bondBank2:bondBank;
+    const candidates=bank.map(x=>({
+      source:x,
+      q:`Hvilken type sterk binding er det mellom atomene i ${x.f}?`,
+      a:x.type
+    }));
+    const chosen=pickDifferent(candidates,lastGeneralKey);
+    const q=chosen.source;
+    lastGeneralKey=keyOf(chosen);
+    area.innerHTML=`<div class="molecule formula">${prettyFormula(q.f)}</div><div class="question">Hvilken type sterk binding er det mellom atomene?</div><div id="bindingOpts"></div>`;
+    mc($('#bindingOpts'),['Ionisk binding','Upolar elektronparbinding','Polar elektronparbinding','Metallbinding'],q.type,'bindingFb',prettyFormula(q.why));
+  };
+
+  const mode=$('#bindingMode');
+  if(mode){
+    mode.querySelectorAll('button').forEach(btn=>btn.onclick=()=>{
+      mode.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+      btn.classList.add('active');
+      newBinding();
+    });
+  }
+
+  window.onlyfagMoleculeChallengeCount=moleculeChallenge.length;
+  try{newBinding()}catch(e){}
+})();
+</script>
+
+
+<script id="kjemi-v52-periodic-language-cleanup">
+(function(){
+  if(typeof v14PeriodicQuizItem==='function'){
+    const base=v14PeriodicQuizItem;
+    v14PeriodicQuizItem=function(){
+      const item=base();
+      const fix=s=>typeof s==='string'
+        ?s.replace(/d-blokka(?: i midten)?/gi,'området med innskuddsmetaller i midten')
+          .replace(/f-blokka(?: nederst)?/gi,'de to nederste radene')
+          .replace(/s- og p-blokka/gi,'hovedgruppene')
+        :s;
+      if(item){
+        item.q=fix(item.q); item.a=fix(item.a); item.e=fix(item.e);
+        if(Array.isArray(item.o))item.o=item.o.map(fix);
+      }
+      return item;
+    };
+  }
 })();
 </script>
 
