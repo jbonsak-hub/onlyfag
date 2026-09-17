@@ -6442,6 +6442,152 @@ function toggleNaturfagFullscreen(){
 })();
 </script>
 
+
+<script id="kjemi-v59-element-combustion-quality">
+(function(){
+  // Bytt ut "finn det eneste alternativet som inneholder riktig grunnstoff"
+  // med oppgaver som faktisk tester formel/forhold eller relevant reaksjon.
+  const improvedElementQuestions = [
+    {
+      key:'litium',
+      q:'Litium danner Li⁺-ioner og oksygen danner O²⁻-ioner. Hvilken formel får forbindelsen som dannes når litium brenner i oksygen?',
+      o:['Li₂O','LiO','LiO₂','Li₂O₂'],
+      a:'Li₂O',
+      e:'To Li⁺ trengs for å balansere ladningen til ett O²⁻: Li₂O.'
+    },
+    {
+      key:'magnesium',
+      q:'Magnesium danner Mg²⁺-ioner og oksygen danner O²⁻-ioner. Hvilken formel får magnesiumoksid?',
+      o:['MgO','Mg₂O','MgO₂','Mg₂O₂'],
+      a:'MgO',
+      e:'Mg²⁺ og O²⁻ balanserer hverandre i forholdet 1:1: MgO.'
+    },
+    {
+      key:'kalsium',
+      q:'Kalsium danner Ca²⁺-ioner og oksygen danner O²⁻-ioner. Hvilken formel får kalsiumoksid?',
+      o:['CaO','Ca₂O','CaO₂','Ca₂O₂'],
+      a:'CaO',
+      e:'Ca²⁺ og O²⁻ balanserer hverandre i forholdet 1:1: CaO.'
+    },
+    {
+      key:'aluminium',
+      q:'Aluminium danner Al³⁺-ioner og oksygen danner O²⁻-ioner. Hvilken formel får aluminiumoksid?',
+      o:['Al₂O₃','AlO','Al₃O₂','AlO₃'],
+      a:'Al₂O₃',
+      e:'To Al³⁺ gir +6 og tre O²⁻ gir −6. Derfor blir formelen Al₂O₃.'
+    },
+    {
+      key:'karbon',
+      q:'Karbon brenner fullstendig i oksygen. Hvilket karbonoksid er hovedproduktet?',
+      o:['CO₂','CO','C₂O','C₂O₃'],
+      a:'CO₂',
+      e:'Ved fullstendig forbrenning oksideres karbon til CO₂.'
+    },
+    {
+      key:'svovel',
+      q:'I den forenklede modellen brenner svovel i oksygen og danner svoveldioksid. Hvilken formel har produktet?',
+      o:['SO₂','SO','S₂O','S₂O₃'],
+      a:'SO₂',
+      e:'Svoveldioksid har formelen SO₂.'
+    },
+    {
+      key:'hydrogen',
+      q:'Hydrogen brenner i oksygen og danner vann. Hvilken formel har produktet?',
+      o:['H₂O','H₂O₂','HO','H₃O'],
+      a:'H₂O',
+      e:'Vann har formelen H₂O.'
+    }
+  ];
+
+  if(typeof combustionQs!=='undefined' && Array.isArray(combustionQs)){
+    // Fjern ALLE gamle produktspørsmål av denne genererte typen.
+    for(let i=combustionQs.length-1;i>=0;i--){
+      const q=combustionQs[i]?.q||'';
+      if(/^Hvilket stoff dannes når .* reagerer med oksygen i den forenklede forbrenningsmodellen\?/i.test(q)){
+        combustionQs.splice(i,1);
+      }
+    }
+
+    // Fjern gamle reaksjonslikningsspørsmål med alternativer som bytter grunnstoff
+    // (f.eks. H2 i én distraktor) og erstatt med et fåtall bedre balanseringsoppgaver.
+    for(let i=combustionQs.length-1;i>=0;i--){
+      const q=combustionQs[i]?.q||'';
+      if(/^Hvilken reaksjonslikning passer når .* reagerer med oksygen\?/i.test(q)){
+        combustionQs.splice(i,1);
+      }
+    }
+
+    improvedElementQuestions.forEach(({key,...q})=>combustionQs.push(q));
+
+    combustionQs.push(
+      {
+        q:'Magnesium brenner i oksygen og danner MgO. Hvilken reaksjonslikning er balansert?',
+        o:[
+          '2Mg + O₂ → 2MgO',
+          'Mg + O₂ → MgO',
+          '2Mg + O₂ → MgO',
+          'Mg + 2O₂ → 2MgO'
+        ],
+        a:'2Mg + O₂ → 2MgO',
+        e:'Begge sider må ha 2 Mg-atomer og 2 O-atomer.'
+      },
+      {
+        q:'Aluminium brenner i oksygen og danner Al₂O₃. Hvilken reaksjonslikning er balansert?',
+        o:[
+          '4Al + 3O₂ → 2Al₂O₃',
+          '2Al + O₂ → Al₂O₃',
+          '2Al + 3O₂ → Al₂O₃',
+          '4Al + O₂ → 2Al₂O₃'
+        ],
+        a:'4Al + 3O₂ → 2Al₂O₃',
+        e:'4 Al-atomer og 6 O-atomer finnes på begge sider.'
+      }
+    );
+  }
+
+  // Samme prinsipp i karbonbanken dersom gamle "produkt"-spørsmål finnes der.
+  if(typeof carbonBanks!=='undefined' && Array.isArray(carbonBanks.combustion)){
+    for(let i=carbonBanks.combustion.length-1;i>=0;i--){
+      const item=carbonBanks.combustion[i]||{};
+      const q=item.q||'';
+      if(/^Hvilket stoff dannes når .* reagerer med oksygen/i.test(q)){
+        carbonBanks.combustion.splice(i,1);
+      }
+    }
+  }
+
+  // Ekstra sikkerhetsnett: dersom en eldre bank likevel leverer et spørsmål der
+  // bare ett alternativ inneholder grunnstoffsymbolet fra spørsmålet, hopp over det.
+  function looksLikeSymbolGiveaway(q){
+    if(!q || !Array.isArray(q.o) || q.o.length<3)return false;
+    const m=(q.q||'').match(/\b(litium|magnesium|kalsium|aluminium|karbon|svovel|hydrogen)\b/i);
+    if(!m)return false;
+    const symbols={
+      litium:'Li',magnesium:'Mg',kalsium:'Ca',aluminium:'Al',
+      karbon:'C',svovel:'S',hydrogen:'H'
+    };
+    const symbol=symbols[m[1].toLowerCase()];
+    const count=q.o.filter(opt=>new RegExp(symbol,'i').test(String(opt))).length;
+    return count===1;
+  }
+
+  // Wrap current generator so no stale legacy item of that sort can leak through.
+  const previousCombustion = newCombustion;
+  newCombustion=function(){
+    for(let tries=0;tries<12;tries++){
+      const before=$('#combustionArea')?.innerHTML||'';
+      previousCombustion();
+      const area=$('#combustionArea');
+      const question=area?.querySelector('.question')?.textContent||'';
+      const buttons=[...(area?.querySelectorAll('.options .option, #combOpts .option')||[])].map(x=>x.textContent.trim());
+      const fake={q:question,o:buttons};
+      if(!looksLikeSymbolGiveaway(fake))return;
+    }
+    previousCombustion();
+  };
+})();
+</script>
+
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "1b3cf01bc1c645a99f02736c18c9ab78"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
