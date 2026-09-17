@@ -1,17 +1,18 @@
 <!doctype html>
-<html lang="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Mandelbrot – OnlyFag</title><meta name="description" content="Utforsk Mandelbrot og Burning Ship med presis dypzoom, kartfliser og umiddelbare farger."><style>:root{--purple:#5b2d90;--ink:#241f29;--muted:#756d7d;--line:#e3dde8;--bg:#f4f2f6}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif}button,input,select{font:inherit}button,summary{cursor:pointer}.app{height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr)}.top{display:flex;align-items:center;gap:14px;padding:11px 16px;background:white;border-bottom:1px solid var(--line);min-height:60px}.brand{font-weight:900;text-decoration:none;color:var(--purple);font-size:1.3rem;white-space:nowrap}.brand span{font-size:1rem}.title{font-weight:900;font-size:1.32rem;letter-spacing:-.02em;color:var(--ink);padding-left:14px;border-left:1px solid var(--line)}.spacer{flex:1}.top label{display:flex;align-items:center;gap:7px;font-size:.74rem;color:var(--muted);font-weight:700}.top select{max-width:160px}.btn,select,input{border:1px solid var(--line);border-radius:8px;padding:8px 9px;background:white;color:var(--ink)}.btn{font-size:.78rem;font-weight:750}.btn:hover{border-color:#a98bc1;background:#faf6ff}.primary{background:var(--purple);color:white;border-color:var(--purple)}.primary:hover{background:#472270}.layout{display:grid;grid-template-columns:minmax(0,1fr) 306px;gap:10px;padding:10px;min-height:0}.viewer{position:relative;background:#09090f;border-radius:14px;overflow:hidden;min-height:0;outline:none}.viewer:focus-visible{box-shadow:0 0 0 3px #a180cb}.canvas-wrap{position:absolute;inset:0;touch-action:none;cursor:grab}.canvas-wrap:active{cursor:grabbing}canvas{display:block;width:100%;height:100%}.hud{position:absolute;left:12px;top:12px;display:flex;gap:7px;pointer-events:none}.chip,.status{color:#eee;background:#0b0911c9;border:1px solid #ffffff20;backdrop-filter:blur(6px);font-size:.7rem;padding:6px 9px}.chip{border-radius:20px;font-family:ui-monospace,Consolas,monospace}.status{position:absolute;left:12px;bottom:12px;border-radius:8px;max-width:calc(100% - 120px);pointer-events:none}.zoomBtns{position:absolute;right:12px;bottom:12px;display:flex;gap:6px}.zoomBtns button{width:38px;height:38px;background:#0b0911c9;border:1px solid #ffffff35;color:white;border-radius:9px;font-size:1.2rem}.cross{position:absolute;top:50%;left:50%;width:12px;height:12px;transform:translate(-50%,-50%);pointer-events:none;opacity:.5}.cross:before,.cross:after{content:'';position:absolute;background:white}.cross:before{width:1px;height:12px;left:6px}.cross:after{width:12px;height:1px;top:6px}.side{overflow:auto;min-height:0;display:flex;flex-direction:column;gap:10px;overscroll-behavior:contain;scrollbar-width:thin}.card{background:white;border:1px solid var(--line);border-radius:12px;padding:13px}.card h2{margin:0 0 10px;font-size:.89rem;color:var(--purple)}.meta{display:grid;gap:5px}.meta span{font-size:.65rem;color:var(--muted)}.meta code{font: .68rem/1.4 ui-monospace,Consolas,monospace;overflow-wrap:anywhere;user-select:all;max-height:8em;overflow:auto}.meta code+span{margin-top:3px}.position-edit{display:grid;gap:9px;margin-top:12px}.position-ref{display:grid;gap:4px}.position-ref span{font-size:.68rem;color:var(--muted);font-weight:700}.position-ref code{font:.68rem/1.4 ui-monospace,Consolas,monospace;overflow-wrap:anywhere}.position-card summary{list-style:none;display:flex;align-items:center;justify-content:space-between}.position-card summary::-webkit-details-marker{display:none}.position-card summary:after{content:'▸';font-size:.78rem;color:var(--muted);transition:transform .15s}.position-card details[open] summary:after{transform:rotate(90deg)}.controls{display:grid;gap:10px}.field{display:grid;gap:5px;font-size:.7rem;color:var(--muted);font-weight:650}.field input,.field select{width:100%;min-width:0;color:var(--ink);font-size:.76rem}.iter-input-wrap{position:relative;display:block}.iter-hint{position:absolute;z-index:25;top:calc(100% + 7px);left:0;width:225px;background:#fff9e8;border:1px solid #e7cc83;border-radius:9px;padding:8px 28px 8px 9px;color:#765516;font-size:.68rem;line-height:1.35;box-shadow:0 8px 22px rgba(44,31,11,.14)}.iter-hint button{position:absolute;right:6px;top:5px;border:0;background:transparent;color:#765516;font-weight:900;font-size:.9rem;line-height:1;padding:2px 4px}.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rangeRow{display:flex;align-items:center;gap:9px}.rangeRow input{padding:0;accent-color:var(--purple)}output{font-size:.74rem;color:var(--ink);white-space:nowrap}.gallery-title{font-size:.7rem;color:var(--muted);font-weight:700;margin:3px 0 8px}.separate{margin-top:17px;padding-top:12px;border-top:1px solid var(--line)}.gallery{display:grid;grid-template-columns:1fr 1fr;gap:7px}.place{background:white;border:1px solid var(--line);border-radius:8px;text-align:left;padding:8px}.place:hover{background:#f7f1fd;border-color:#b89ece}.place strong{display:block;color:var(--purple);font-size:.71rem}.place small{display:block;color:var(--muted);font-size:.62rem;line-height:1.3;margin-top:4px}summary{color:var(--purple);font-size:.8rem;font-weight:750}.details-body{margin-top:13px}.debug{font:.65rem/1.7 ui-monospace,Consolas,monospace;color:var(--muted);white-space:pre-wrap;margin:8px 0 0}.progress{height:4px;background:#f1ebf7;border-radius:4px;overflow:hidden}.progress>div{height:100%;background:var(--purple)}button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid #9b70ca;outline-offset:2px}@media(max-width:1050px){.top{gap:8px;padding:9px 10px}.title{font-size:1.05rem;padding-left:9px}.layout{grid-template-columns:minmax(0,1fr) 275px}.brand span{display:none}}@media(max-width:650px){.top{flex-wrap:wrap}.top label{flex:1}.top select{max-width:125px}.layout{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(220px,58%) minmax(0,1fr);gap:6px;padding:6px}.side{display:block}.card{margin-bottom:6px}.viewer{border-radius:10px}.gallery{grid-template-columns:repeat(3,1fr)}.status{font-size:.61rem}.meta{grid-template-columns:80px minmax(0,1fr)}.meta code+span{margin:0}.top .btn{padding:7px}.brand{font-size:1rem}}
+<html lang="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Mandelbrot – OnlyFag</title><meta name="description" content="Utforsk Mandelbrot og Burning Ship med presis dypzoom, kartfliser og umiddelbare farger."><style>:root{--purple:#5b2d90;--ink:#241f29;--muted:#756d7d;--line:#e3dde8;--bg:#f4f2f6}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif}button,input,select{font:inherit}button,summary{cursor:pointer}.app{height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr)}.top{display:flex;align-items:center;gap:14px;padding:11px 16px;background:white;border-bottom:1px solid var(--line);min-height:60px}.brand{font-weight:900;text-decoration:none;color:var(--purple);font-size:1.3rem;white-space:nowrap}.brand span{font-size:1rem}.title{font-weight:900;font-size:1.32rem;letter-spacing:-.02em;color:var(--ink);padding-left:14px;border-left:1px solid var(--line)}.spacer{flex:1}.top label{display:flex;align-items:center;gap:7px;font-size:.74rem;color:var(--muted);font-weight:700}.top select{max-width:160px}.btn,select,input{border:1px solid var(--line);border-radius:8px;padding:8px 9px;background:white;color:var(--ink)}.btn{font-size:.78rem;font-weight:750}.btn:hover{border-color:#a98bc1;background:#faf6ff}.primary{background:var(--purple);color:white;border-color:var(--purple)}.primary:hover{background:#472270}.layout{display:grid;grid-template-columns:minmax(0,1fr) 306px;gap:10px;padding:10px;min-height:0}.viewer{position:relative;background:#09090f;border-radius:14px;overflow:hidden;min-height:0;outline:none}.viewer:focus-visible{box-shadow:0 0 0 3px #a180cb}.canvas-wrap{position:absolute;inset:0;touch-action:none;cursor:grab}.canvas-wrap:active{cursor:grabbing}canvas{display:block;width:100%;height:100%}.hud{position:absolute;left:12px;top:12px;display:flex;gap:7px;pointer-events:none}.chip,.status{color:#eee;background:#0b0911c9;border:1px solid #ffffff20;backdrop-filter:blur(6px);font-size:.7rem;padding:6px 9px}.chip{border-radius:20px;font-family:ui-monospace,Consolas,monospace}.status{position:absolute;left:12px;bottom:12px;border-radius:8px;max-width:calc(100% - 120px);pointer-events:none}.zoomBtns{position:absolute;right:12px;bottom:12px;display:flex;gap:6px}.zoomBtns button{width:38px;height:38px;background:#0b0911c9;border:1px solid #ffffff35;color:white;border-radius:9px;font-size:1.2rem}.cross{position:absolute;top:50%;left:50%;width:12px;height:12px;transform:translate(-50%,-50%);pointer-events:none;opacity:.5}.cross:before,.cross:after{content:'';position:absolute;background:white}.cross:before{width:1px;height:12px;left:6px}.cross:after{width:12px;height:1px;top:6px}.side{overflow:auto;min-height:0;display:flex;flex-direction:column;gap:10px;overscroll-behavior:contain;scrollbar-width:thin}.card{background:white;border:1px solid var(--line);border-radius:12px;padding:13px}.card h2{margin:0 0 10px;font-size:.89rem;color:var(--purple)}.meta{display:grid;gap:5px}.meta span{font-size:.65rem;color:var(--muted)}.meta code{font: .68rem/1.4 ui-monospace,Consolas,monospace;overflow-wrap:anywhere;user-select:all;max-height:8em;overflow:auto}.meta code+span{margin-top:3px}.position-edit{display:grid;gap:9px;margin-top:12px}.position-ref{display:grid;gap:4px}.position-ref span{font-size:.68rem;color:var(--muted);font-weight:700}.position-ref code{font:.68rem/1.4 ui-monospace,Consolas,monospace;overflow-wrap:anywhere}.position-card summary{list-style:none;display:flex;align-items:center;justify-content:space-between}.position-card summary::-webkit-details-marker{display:none}.position-card summary:after{content:'▸';font-size:.78rem;color:var(--muted);transition:transform .15s}.position-card details[open] summary:after{transform:rotate(90deg)}.controls{display:grid;gap:10px}.field{display:grid;gap:5px;font-size:.7rem;color:var(--muted);font-weight:650}.field input,.field select{width:100%;min-width:0;color:var(--ink);font-size:.76rem}.iter-input-wrap{position:relative;display:block}.iter-hint{position:absolute;z-index:25;top:calc(100% + 7px);left:0;width:225px;background:#fff9e8;border:1px solid #e7cc83;border-radius:9px;padding:8px 28px 8px 9px;color:#765516;font-size:.68rem;line-height:1.35;box-shadow:0 8px 22px rgba(44,31,11,.14)}.iter-hint button{position:absolute;right:6px;top:5px;border:0;background:transparent;color:#765516;font-weight:900;font-size:.9rem;line-height:1;padding:2px 4px}.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rangeRow{display:flex;align-items:center;gap:9px}.rangeRow input{padding:0;accent-color:var(--purple)}output{font-size:.74rem;color:var(--ink);white-space:nowrap}.gallery-title{font-size:.7rem;color:var(--muted);font-weight:700;margin:3px 0 8px}.separate{margin-top:17px;padding-top:12px;border-top:1px solid var(--line)}.gallery-group{border-top:1px solid var(--line);padding-top:9px;margin-top:9px}.gallery-group:first-of-type{border-top:0;padding-top:0;margin-top:0}.gallery-group summary{margin-bottom:8px}.gallery-group:not([open]) summary{margin-bottom:0}.gallery{display:grid;grid-template-columns:1fr 1fr;gap:7px}.place{background:white;border:1px solid var(--line);border-radius:8px;text-align:left;padding:8px}.place:hover{background:#f7f1fd;border-color:#b89ece}.place strong{display:block;color:var(--purple);font-size:.71rem}.place small{display:none}summary{color:var(--purple);font-size:.8rem;font-weight:750}.details-body{margin-top:13px}.debug{font:.65rem/1.7 ui-monospace,Consolas,monospace;color:var(--muted);white-space:pre-wrap;margin:8px 0 0}.progress{height:4px;background:#f1ebf7;border-radius:4px;overflow:hidden}.progress>div{height:100%;background:var(--purple)}button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid #9b70ca;outline-offset:2px}@media(max-width:1050px){.top{gap:8px;padding:9px 10px}.title{font-size:1.05rem;padding-left:9px}.layout{grid-template-columns:minmax(0,1fr) 275px}.brand span{display:none}}@media(max-width:650px){.top{flex-wrap:wrap}.top label{flex:1}.top select{max-width:125px}.layout{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(220px,58%) minmax(0,1fr);gap:6px;padding:6px}.side{display:block}.card{margin-bottom:6px}.viewer{border-radius:10px}.gallery{grid-template-columns:repeat(3,1fr)}.status{font-size:.61rem}.meta{grid-template-columns:80px minmax(0,1fr)}.meta code+span{margin:0}.top .btn{padding:7px}.brand{font-size:1rem}}
 </style></head>
 <body><div class="app">
 <header class="top"><a class="brand" href="matematikk.html" title="Tilbake til matematikk">∑ <span>Matematikk</span></a><div class="title">Mandelbrot</div><div class="spacer"></div>
-<label>Fraktal <select id="formula"><option value="mandelbrot">Mandelbrot</option><option value="ship">Burning Ship</option></select></label>
-<label>Palett <select id="palette"><option value="classic">Klassisk zoom</option><option value="fire">Ild</option><option value="ocean">Hav</option><option value="bw">Svart/hvitt</option></select></label>
+<label>Fraktal <select id="formula"><option value="mandelbrot">Mandelbrot</option><option value="ship">Burning Ship</option><option value="julia">Julia</option></select></label>
+<label>Palett <select id="palette"><option value="classic">Klassisk zoom</option><option value="fire">Ild</option><option value="ocean">Hav</option><option value="psychedelic">Psykedelisk</option><option value="whitered">Hvit–rød</option><option value="greenpink">Grønn–rosa</option><option value="bw">Svart/hvitt</option></select></label>
 <button id="homeBtn" class="btn" title="Hele fraktalen">Oversikt</button><button id="copyBtn" class="btn primary">Kopier lenke</button></header>
 <main class="layout"><section class="viewer" id="viewer" tabindex="0" aria-label="Fraktal. Dra for å panorere, rull for å zoome. Piltaster flytter utsnittet."><div class="canvas-wrap" id="canvasWrap"><canvas id="canvas"></canvas></div>
 <div class="hud"><span class="chip" id="zoomChip"></span><span class="chip" id="precisionChip"></span></div><div class="cross"></div><div class="status" id="status" role="status">Beregner …</div><div class="zoomBtns"><button id="zoomOut" aria-label="Zoom ut">−</button><button id="zoomIn" aria-label="Zoom inn">+</button></div></section>
 <aside class="side">
-<section class="card"><h2>Bilde</h2><div class="controls"><div class="two"><label class="field" title="Svarte piksler har ikke unnsluppet innen denne grensen. Øk grensen for å undersøke flere detaljer.">Iterasjoner<span class="iter-input-wrap"><input id="iterations" type="number" min="100" max="100000" step="100" value="900"><span id="iterHint" class="iter-hint" hidden>Ved svært dyp zoom kan flere iterasjoner vise mer detalj.<button id="iterHintClose" type="button" aria-label="Lukk">×</button></span></span></label><label class="field">Oppløsning<select id="resolution"><option value="0.85">85 %</option><option value="1" selected>100 %</option></select></label></div>
+<section class="card"><h2>Bilde</h2><div class="controls"><div class="two"><label class="field" title="Svarte piksler har ikke unnsluppet innen denne grensen. Øk grensen for å undersøke flere detaljer.">Iterasjoner<span class="iter-input-wrap"><input id="iterations" type="number" min="100" max="100000" step="100" value="900"><span id="iterHint" class="iter-hint" hidden>Ved svært dyp zoom kan flere iterasjoner vise mer detalj.<button id="iterHintClose" type="button" aria-label="Lukk">×</button></span></span></label><label class="field">Oppløsning<select id="resolution"><option value="0.85">85 %</option><option value="1" selected>100 %</option><option value="1.25">125 %</option><option value="1.5">150 %</option></select></label></div>
+<label class="field">Intern pikselgrense<select id="pixelLimit"><option value="1000000">1 MP</option><option value="1600000" selected>1,6 MP</option><option value="2000000">2 MP</option><option value="3000000">3 MP</option></select></label><div id="juliaControls" class="two" hidden><label class="field">Julia c, Re<input id="juliaRe" spellcheck="false" value="-0.8"></label><label class="field">Julia c, Im<input id="juliaIm" spellcheck="false" value="0.156"></label></div>
 <label class="field">Fargefordeling<select id="colors"><option value="classic">Klassisk</option><option value="fit">Tilpass utsnitt</option><option value="histogram">Histogram</option></select></label><label class="field">Fargetetthet <div class="rangeRow"><input id="density" type="range" min="0.35" max="4" step="0.05" value="1.35"><output id="densityOut">1.35×</output></div></label><div class="two"><button class="btn" id="cancelBtn">Stopp</button><button class="btn primary" id="renderBtn">Render</button></div></div></section>
-<section class="card"><h2>Galleri</h2><div class="gallery-title">Mandelbrot</div><div class="gallery" id="mandelbrotGallery"></div><div class="gallery-title separate">Burning Ship</div><div class="gallery" id="shipGallery"></div></section><section class="card position-card"><details id="positionDetails"><summary>Posisjon</summary><div class="position-edit"><label class="field">Re(senter)<input id="reInput" spellcheck="false"></label><label class="field">Im(senter)<input id="imInput" spellcheck="false"></label><div class="two"><label class="field">Zoom<input id="zoomInput" spellcheck="false"></label><label class="field">Utsnitt, bredde<input id="spanInput" spellcheck="false"></label></div><div class="position-ref"><span>Render / referanse</span><code id="refOut">–</code></div><button id="positionApply" class="btn primary" type="button">Oppdater</button></div></details></section>
+<section class="card"><h2>Galleri</h2><details class="gallery-group" id="mandelbrotGalleryGroup" open><summary>Mandelbrot</summary><div class="gallery" id="mandelbrotGallery"></div></details><details class="gallery-group" id="shipGalleryGroup"><summary>Burning Ship</summary><div class="gallery" id="shipGallery"></div></details><details class="gallery-group" id="juliaGalleryGroup"><summary>Julia</summary><div class="gallery" id="juliaGallery"></div></details></section><section class="card position-card"><details id="positionDetails"><summary>Posisjon</summary><div class="position-edit"><label class="field">Re(senter)<input id="reInput" spellcheck="false"></label><label class="field">Im(senter)<input id="imInput" spellcheck="false"></label><div class="two"><label class="field">Zoom<input id="zoomInput" spellcheck="false"></label><label class="field">Utsnitt, bredde<input id="spanInput" spellcheck="false"></label></div><div class="position-ref"><span>Render / referanse</span><code id="refOut">–</code></div><button id="positionApply" class="btn primary" type="button">Oppdater</button></div></details></section>
 <section class="card"><div class="progress"><div id="bar"></div></div><pre class="debug" id="debug"></pre></section></aside></main></div>
 <script id="engine-code">/* OnlyFag fractal engine. Original implementation of the equations cited in README.md. */
 (function(root){
@@ -42,6 +43,12 @@ function direct(cr,ci,max,ship=false){
  else {for(let n=1;n<=max;n++){y=2*x*y+ci;x=xx-yy+cr;xx=x*x;yy=y*y;if(xx+yy>256)return smooth(n,xx+yy);}}
  return -1;
 }
+function directJulia(zr,zi,max,cr,ci){
+ let x=zr,y=zi,xx=x*x,yy=y*y;
+ for(let n=1;n<=max;n++){y=2*x*y+ci;x=xx-yy+cr;xx=x*x;yy=y*y;if(xx+yy>256)return smooth(n,xx+yy);}
+ return -1;
+}
+
 // Independent fixed-point path: also used to repair the last few glitch pixels.
 function exact(cr,ci,max,p,ship=false){
  const pb=BigInt(p),S=1n<<pb,limit=256n*S;let x=0n,y=0n;
@@ -96,14 +103,14 @@ function perturb(dcx,dcy,max,ref,useBLA=true){
  }return -1;
 }
 function tile(cfg,task){
- const {size,step,iter,formula,p,ref}=cfg,ship=formula==='ship',values=new Float32Array(size*size);
+ const {size,step,iter,formula,p,ref,juliaRe=-0.8,juliaIm=0.156}=cfg,ship=formula==='ship',julia=formula==='julia',values=new Float32Array(size*size);
  const cr=task.cr,ci=task.ci,stepF=parse(step.toExponential(17)),half=(size-1)/2,sign=ship?1:-1;
  const centerX=num(cr),centerY=num(ci),directMode=!ref;let glitches=[],repaired=0;
- if(directMode&&!ship&&interiorRect(centerX,centerY,size*step/2)){values.fill(-1);return {values,repaired:0,uncertain:0};}
+ if(directMode&&!ship&&!julia&&interiorRect(centerX,centerY,size*step/2)){values.fill(-1);return {values,repaired:0,uncertain:0};}
  const offX=ref?num(cr-(ref.cr<<BigInt(STORAGE_BITS-p))):0,offY=ref?num(ci-(ref.ci<<BigInt(STORAGE_BITS-p))):0;
  for(let y=0,q=0;y<size;y++)for(let x=0;x<size;x++,q++){
   const dx=(x-half)*step,dy=(y-half)*step*sign;
-  let v=directMode?direct(centerX+dx,centerY+dy,iter,ship):perturb(offX+dx,offY+dy,iter,ref,cfg.bla!==false);
+  let v=directMode?(julia?directJulia(centerX+dx,centerY+dy,iter,juliaRe,juliaIm):direct(centerX+dx,centerY+dy,iter,ship)):perturb(offX+dx,offY+dy,iter,ref,cfg.bla!==false);
   values[q]=v;if(Number.isNaN(v))glitches.push(q);
  }
  // One local reference per cluster, bounded; exact fallback keeps unresolved pixels honest.
@@ -118,10 +125,10 @@ function tile(cfg,task){
  for(const q of glitches){const x=q%size,y=Math.floor(q/size),cx=cr+parse(((x-half)*step).toExponential(17)),cy=ci+parse(((y-half)*step*sign).toExponential(17));values[q]=checkedExact(cx,cy,iter,p,ship);if(Number.isNaN(values[q]))uncertain++;else repaired++;}
  return {values,repaired,uncertain};
 }
-const PALS={classic:[[24,8,56],[45,36,138],[34,124,192],[143,229,239],[248,249,190],[250,211,45],[238,96,29],[147,24,72],[24,8,56]],fire:[[3,1,3],[64,4,4],[155,26,9],[244,95,14],[255,201,55],[255,251,218],[3,1,3]],ocean:[[0,4,24],[0,35,92],[0,108,158],[41,190,193],[179,244,236],[248,255,252],[0,4,24]],bw:[[0,0,0],[155,155,155],[255,255,255],[0,0,0]]};
+const PALS={classic:[[24,8,56],[45,36,138],[34,124,192],[143,229,239],[248,249,190],[250,211,45],[238,96,29],[147,24,72],[24,8,56]],fire:[[3,1,3],[64,4,4],[155,26,9],[244,95,14],[255,201,55],[255,251,218],[3,1,3]],ocean:[[0,4,24],[0,35,92],[0,108,158],[41,190,193],[179,244,236],[248,255,252],[0,4,24]],psychedelic:[[3,3,5],[255,255,255],[255,82,203],[201,69,255],[71,220,255],[87,255,72],[61,255,214],[94,188,255],[255,91,215],[116,34,164],[3,3,5]],whitered:[[255,255,255],[255,236,232],[255,184,171],[244,92,79],[182,20,38],[92,0,18],[255,255,255]],greenpink:[[4,24,13],[19,111,63],[91,225,139],[239,255,245],[255,170,215],[244,62,164],[106,9,75],[4,24,13]],bw:[[0,0,0],[155,155,155],[255,255,255],[0,0,0]]};
 function lut(pal){const s=PALS[pal]||PALS.classic,a=new Uint8Array(4096*3);for(let n=0;n<4096;n++){let f=n/4096*(s.length-1),i=Math.floor(f),t=f-i;for(let k=0;k<3;k++)a[n*3+k]=Math.round(s[i][k]*(1-t)+s[i+1][k]*t);}return a;}
 function color(values,table,density=1.35,fit=null){let a=new Uint8ClampedArray(values.length*4);for(let i=0;i<values.length;i++){let v=values[i],k=i*4;a[k+3]=255;if(v<0){a[k]=3;a[k+1]=3;a[k+2]=5;continue;}if(!Number.isFinite(v)){a[k]=180;a[k+1]=40;a[k+2]=180;continue;}let t=fit?fit(v)*density:v*.018*density;let j=Math.floor(((t%1+1)%1)*4096)*3;a[k]=table[j];a[k+1]=table[j+1];a[k+2]=table[j+2];}return a;}
-const api={STORAGE_BITS,MIN_SPAN,parse,num,decimal,precision,rescale,interior,interiorRect,direct,exact,checkedExact,reference,perturb,tile,lut,color};root.Fractal=api;if(typeof module!=='undefined')module.exports=api;
+const api={STORAGE_BITS,MIN_SPAN,parse,num,decimal,precision,rescale,interior,interiorRect,direct,directJulia,exact,checkedExact,reference,perturb,tile,lut,color};root.Fractal=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof self!=='undefined'?self:globalThis);
 </script><script id="worker-code" type="text/plain">'use strict';
 if(typeof Fractal==='undefined')importScripts('engine.js');
@@ -138,7 +145,7 @@ onmessage=event=>{
   {
     "id": "overview",
     "name": "Hele mengden",
-    "description": "Oversikt",
+    "description": "",
     "formula": "mandelbrot",
     "re": "-0.6556835210430527194",
     "im": "-0.0567585339966204493",
@@ -147,8 +154,8 @@ onmessage=event=>{
   },
   {
     "id": "seahorse",
-    "name": "Seahorse Valley",
-    "description": "Sjøhester og spiraler",
+    "name": "Satellite Seahorse",
+    "description": "",
     "formula": "mandelbrot",
     "re": "-0.7451968299999999",
     "im": "0.10186988500000009",
@@ -156,19 +163,29 @@ onmessage=event=>{
     "iter": 1400
   },
   {
+    "id": "seahorse-satellite",
+    "name": "Seahorse Valley",
+    "description": "",
+    "formula": "mandelbrot",
+    "re": "-0.74364386269",
+    "im": "0.13182590271",
+    "span": "1.3526e-7",
+    "iter": 5000
+  },
+  {
     "id": "elephant",
     "name": "Elephant Valley",
-    "description": "Elefanter",
+    "description": "",
     "formula": "mandelbrot",
-    "re": "0.27205033514905763",
-    "im": "0.006118038612346085",
-    "span": "0.0024031526709817415",
+    "re": "0.2701128044654007315802",
+    "im": "-0.00489122983276613372377",
+    "span": "0.00376889361749391",
     "iter": 1500
   },
   {
     "id": "triple",
     "name": "Triple Spiral",
-    "description": "Trearmet spiral",
+    "description": "",
     "formula": "mandelbrot",
     "re": "-0.0875937321188787",
     "im": "0.6550902802386774",
@@ -178,7 +195,7 @@ onmessage=event=>{
   {
     "id": "double",
     "name": "Double Spiral",
-    "description": "To armer i Seahorse Valley",
+    "description": "",
     "formula": "mandelbrot",
     "re": "-0.77568377",
     "im": "0.13646737",
@@ -188,7 +205,7 @@ onmessage=event=>{
   {
     "id": "lightning",
     "name": "Lightning",
-    "description": "Forgrenede filamenter",
+    "description": "",
     "formula": "mandelbrot",
     "re": "-1.403593",
     "im": "0.029453",
@@ -198,7 +215,7 @@ onmessage=event=>{
   {
     "id": "minibrot",
     "name": "Minibrot",
-    "description": "Liten kopi i antennen",
+    "description": "",
     "formula": "mandelbrot",
     "re": "-1.75",
     "im": "0",
@@ -208,7 +225,7 @@ onmessage=event=>{
   {
     "id": "carousel",
     "name": "Carousel",
-    "description": "Spiraler i dybden",
+    "description": "",
     "formula": "mandelbrot",
     "re": "0.35787121400640803",
     "im": "-0.10813970113434704",
@@ -218,7 +235,7 @@ onmessage=event=>{
   {
     "id": "wormhole",
     "name": "Wormhole",
-    "description": "6,15 × 10¹⁰",
+    "description": "",
     "formula": "mandelbrot",
     "re": "-1.7397156556930304",
     "im": "-9.157504622931403e-8",
@@ -228,7 +245,7 @@ onmessage=event=>{
   {
     "id": "deep62",
     "name": "Dypzoom 10⁶²",
-    "description": "Presis referanse + BLA",
+    "description": "",
     "formula": "mandelbrot",
     "re": "-1.74907816150520173167912454515663360420734509948112463480292338384",
     "im": "-0.00000550991906629096602513098567268615714673236269915508056068145",
@@ -238,7 +255,7 @@ onmessage=event=>{
   {
     "id": "ship",
     "name": "Klassisk skip",
-    "description": "Standard Burning Ship",
+    "description": "",
     "formula": "ship",
     "re": "-1.75",
     "im": "-0.035",
@@ -248,7 +265,7 @@ onmessage=event=>{
   {
     "id": "mast",
     "name": "Mast og rigg",
-    "description": "Øvre master",
+    "description": "",
     "formula": "ship",
     "re": "-1.77375",
     "im": "-0.05825",
@@ -258,7 +275,7 @@ onmessage=event=>{
   {
     "id": "smallship",
     "name": "Miniskip",
-    "description": "Venstre antenne",
+    "description": "",
     "formula": "ship",
     "re": "-1.9365",
     "im": "-0.00375",
@@ -268,7 +285,7 @@ onmessage=event=>{
   {
     "id": "shipdeep0",
     "name": "Dyp rigg",
-    "description": "10⁸ · dokumentert sted",
+    "description": "",
     "formula": "ship",
     "re": "-1.780425137323272787815501970866799220117789164950755824065998180804054216718401083082315480682414200942106597271163774688928189276668834162257864725732897228477210166344966847497073401",
     "im": "-0.06500377165325755658690171726343568470341357651166253908409608154945176557553463044202701111297831544836546730208444477432975243227800009643123524287621756484090422114572084021112115151",
@@ -278,12 +295,36 @@ onmessage=event=>{
   {
     "id": "shipdeep1",
     "name": "Mast i dybden",
-    "description": "10²⁰ · dokumentert sted",
+    "description": "",
     "formula": "ship",
     "re": "-1.780425137323272787815501970866799220117789164950755824065998180804054216718401083082315480682414200942106597271163774688928189276668834162257864725732897228477210166344966847497073401",
     "im": "-0.06500377933325755657922166726343568613341357651166253908409608154945176557553463044202701111297831544836546730208444477432975243227800009643123524287621756484090422114572084021112115151",
     "span": "3.2e-20",
     "iter": 5000
+  }
+  ,{
+    "id": "julia-rabbit", "name": "Douady Rabbit", "description": "", "formula": "julia",
+    "re": "0", "im": "0", "span": "3.2", "iter": 1200, "juliaRe": "-0.123", "juliaIm": "0.745"
+  },
+  {
+    "id": "julia-basilica", "name": "Basilica", "description": "", "formula": "julia",
+    "re": "0", "im": "0", "span": "3.2", "iter": 1000, "juliaRe": "-1", "juliaIm": "0"
+  },
+  {
+    "id": "julia-dendrite", "name": "Dendrite", "description": "", "formula": "julia",
+    "re": "0", "im": "0", "span": "3.2", "iter": 1200, "juliaRe": "0", "juliaIm": "1"
+  },
+  {
+    "id": "julia-dragon", "name": "Dragon", "description": "", "formula": "julia",
+    "re": "0", "im": "0", "span": "3.2", "iter": 1400, "juliaRe": "-0.8", "juliaIm": "0.156"
+  },
+  {
+    "id": "julia-minus1-03", "name": "Julia −1 + 0.3i", "description": "", "formula": "julia",
+    "re": "0", "im": "0", "span": "3.2", "iter": 1400, "juliaRe": "-1", "juliaIm": "0.3"
+  },
+  {
+    "id": "julia-dream", "name": "Julia Dream", "description": "", "formula": "julia",
+    "re": "0", "im": "0", "span": "3.2", "iter": 1400, "juliaRe": "0.285", "juliaIm": "0.01"
   }
 ];
 if(typeof module!=='undefined')module.exports=GALLERY;
@@ -292,16 +333,17 @@ if(typeof module!=='undefined')module.exports=GALLERY;
 'use strict';
 const F=Fractal,$=id=>document.getElementById(id),canvas=$('canvas'),ctx=canvas.getContext('2d',{alpha:false}),viewer=$('viewer');
 const SIZE=64,MAX_CACHE=1800,cache=new Map(),pool=[],pending=new Map(),workerURL=URL.createObjectURL(new Blob([$('engine-code').textContent,$('worker-code').textContent],{type:'text/javascript'}));
-let state={re:F.parse('-0.6556835210430527194'),im:F.parse('-0.0567585339966204493'),span:4.58665413,formula:'mandelbrot',iter:900},job=null,generation=0,refWorker=null,reference=null,refSerial=0,queue=[],timer=0,raf=0,gesture=null,stopped=false,table=F.lut('classic'),colorVersion=0,fit=null,fitMode='classic',lastImage=null,lastRenderStarted=0,measuredWidth=0,measuredHeight=0;
+let state={re:F.parse('-0.6556835210430527194'),im:F.parse('-0.0567585339966204493'),span:4.58665413,formula:'mandelbrot',iter:900,juliaRe:-0.8,juliaIm:0.156},job=null,generation=0,refWorker=null,reference=null,refSerial=0,queue=[],timer=0,raf=0,gesture=null,stopped=false,table=F.lut('classic'),colorVersion=0,fit=null,fitMode='classic',lastImage=null,lastRenderStarted=0,measuredWidth=0,measuredHeight=0;
 const workers=Math.max(1,Math.min(8,(navigator.hardwareConcurrency||4)-1));
 let metrics={renders:0,cacheHits:0,tiles:0,repaired:0,uncertain:0,lastMs:0,refMs:0};
 function format(x){return x>=1e5||x<1e-4?x.toExponential(3):Number(x.toPrecision(6)).toString();}
-function position(){const d=Math.max(24,Math.ceil(-Math.log10(state.span))+25);return {re:F.decimal(state.re,1200,d),im:F.decimal(state.im,1200,d),span:state.span.toExponential(17),formula:state.formula,iter:state.iter};}
+function position(){const d=Math.max(24,Math.ceil(-Math.log10(state.span))+25);return {re:F.decimal(state.re,1200,d),im:F.decimal(state.im,1200,d),span:state.span.toExponential(17),formula:state.formula,iter:state.iter,juliaRe:state.juliaRe,juliaIm:state.juliaIm};}
 let iterHintActive=false;
 function maybeIterationHint(){const hint=$('iterHint');if(!hint||iterHintActive||3.2/state.span<=1e11)return;let seen=false;try{seen=localStorage.getItem('onlyfag-mandelbrot-iterhint')==='1';}catch(e){}if(seen)return;iterHintActive=true;hint.hidden=false;try{localStorage.setItem('onlyfag-mandelbrot-iterhint','1');}catch(e){}}
-function ui(){const p=position();$('reInput').value=p.re;$('imInput').value=p.im;let zoomValue=3.2/state.span,zoom=format(zoomValue)+'×';$('zoomChip').textContent=zoom;$('zoomInput').value=zoomValue.toExponential(10);$('spanInput').value=p.span;$('iterations').value=state.iter;$('formula').value=state.formula;$('precisionChip').textContent=F.precision(state.span/Math.max(canvas.width,1))+' bit';maybeIterationHint();}
-function saveURL(){try{const p=position();p.palette=$('palette').value;p.density=$('density').value;p.colors=fitMode;history.replaceState(null,'','#'+new URLSearchParams(p));}catch(e){/* Local file history can be restricted. */}}
-function resize(){let r=viewer.getBoundingClientRect(),dpr=Math.min(2,devicePixelRatio||1),res=+$('resolution').value;measuredWidth=r.width;measuredHeight=r.height;let w=Math.round(r.width*dpr*res),h=Math.round(r.height*dpr*res);if(w*h>1600000){let f=Math.sqrt(1600000/(w*h));w=Math.round(w*f);h=Math.round(h*f);}if(canvas.width!==w||canvas.height!==h){canvas.width=Math.max(1,w);canvas.height=Math.max(1,h);}}
+function syncGallery(){for(const f of ['mandelbrot','ship','julia']){const d=$(f==='ship'?'shipGalleryGroup':f+'GalleryGroup');if(d)d.open=f===state.formula;}}
+function ui(){const p=position();$('reInput').value=p.re;$('imInput').value=p.im;let zoomValue=3.2/state.span,zoom=format(zoomValue)+'×';$('zoomChip').textContent=zoom;$('zoomInput').value=zoomValue.toExponential(10);$('spanInput').value=p.span;$('iterations').value=state.iter;$('formula').value=state.formula;$('precisionChip').textContent=F.precision(state.span/Math.max(canvas.width,1))+' bit';$('juliaControls').hidden=state.formula!=='julia';$('juliaRe').value=state.juliaRe;$('juliaIm').value=state.juliaIm;syncGallery();maybeIterationHint();}
+function saveURL(){try{const p=position();p.palette=$('palette').value;p.density=$('density').value;p.colors=fitMode;p.pixelLimit=$('pixelLimit').value;history.replaceState(null,'','#'+new URLSearchParams(p));}catch(e){/* Local file history can be restricted. */}}
+function resize(){let r=viewer.getBoundingClientRect(),dpr=Math.min(2,devicePixelRatio||1),res=+$('resolution').value;measuredWidth=r.width;measuredHeight=r.height;let w=Math.round(r.width*dpr*res),h=Math.round(r.height*dpr*res);let limit=Math.max(1000000,Math.min(3000000,Number($('pixelLimit').value)||1600000));if(w*h>limit){let f=Math.sqrt(limit/(w*h));w=Math.round(w*f);h=Math.round(h*f);}if(canvas.width!==w||canvas.height!==h){canvas.width=Math.max(1,w);canvas.height=Math.max(1,h);}}
 function drawSoon(){if(!raf)raf=requestAnimationFrame(()=>{raf=0;draw();});}
 function distance(a,b){return F.num(a-b);}
 function rect(t){let s=t.step*SIZE/state.span*canvas.width;return {x:canvas.width/2+distance(t.left,state.re)/state.span*canvas.width,y:canvas.height/2+distance(t.top,state.im)/state.span*canvas.width*(state.formula==='ship'?1:-1),s};}
@@ -309,14 +351,14 @@ function tint(t){if(t.version===colorVersion)return;t.image=t.image||document.cr
 function draw(){
  ctx.fillStyle='#09090f';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.imageSmoothingEnabled=true;
  // The retained frame is the immediate navigation preview; world-coordinate differences stay BigInt.
- if(lastImage&&lastImage.formula===state.formula){let scale=lastImage.span/state.span,x=canvas.width/2+(distance(lastImage.re,state.re)/state.span-.5*scale)*canvas.width,y=canvas.height/2+distance(lastImage.im,state.im)/state.span*canvas.width*(state.formula==='ship'?1:-1)-lastImage.h/lastImage.w*canvas.width*scale/2;ctx.drawImage(lastImage.image,x,y,canvas.width*scale,lastImage.h/lastImage.w*canvas.width*scale);}
- const list=[];for(const t of cache.values()){if(t.formula!==state.formula||t.iter!==state.iter)continue;const r=rect(t);if(r.x+r.s<0||r.y+r.s<0||r.x>canvas.width||r.y>canvas.height||r.s<8||r.s>canvas.width*8)continue;list.push([t,r]);}
+ if(lastImage&&lastImage.formula===state.formula&&(state.formula!=='julia'||(lastImage.juliaRe===state.juliaRe&&lastImage.juliaIm===state.juliaIm))){let scale=lastImage.span/state.span,x=canvas.width/2+(distance(lastImage.re,state.re)/state.span-.5*scale)*canvas.width,y=canvas.height/2+distance(lastImage.im,state.im)/state.span*canvas.width*(state.formula==='ship'?1:-1)-lastImage.h/lastImage.w*canvas.width*scale/2;ctx.drawImage(lastImage.image,x,y,canvas.width*scale,lastImage.h/lastImage.w*canvas.width*scale);}
+ const list=[];for(const t of cache.values()){if(t.formula!==state.formula||t.iter!==state.iter||(state.formula==='julia'&&(t.juliaRe!==state.juliaRe||t.juliaIm!==state.juliaIm)))continue;const r=rect(t);if(r.x+r.s<0||r.y+r.s<0||r.x>canvas.width||r.y>canvas.height||r.s<8||r.s>canvas.width*8)continue;list.push([t,r]);}
  list.sort((a,b)=>a[0].level-b[0].level||a[0].iter-b[0].iter);
  for(const [t,r]of list){tint(t);ctx.drawImage(t.image,r.x,r.y,r.s+.4,r.s+.4);}
 }
 function snapshot(){let image=document.createElement('canvas');image.width=canvas.width;image.height=canvas.height;image.getContext('2d').drawImage(canvas,0,0);lastImage={image,...state,w:canvas.width,h:canvas.height};}
 function floorDiv(a,b){let q=a/b;return a<0n&&a%b?q-1n:q;}
-function key(level,x,y){return `${state.formula}:${state.iter}:${level}:${x}:${y}`;}
+function key(level,x,y){return `${state.formula}:${state.iter}:${state.formula==='julia'?state.juliaRe+','+state.juliaIm+':':''}${level}:${x}:${y}`;}
 function setupWorkers(){if(pool.length)return;for(let i=0;i<workers;i++){const worker=new Worker(workerURL),slot={worker,busy:false,cfgID:-1};pool.push(slot);worker.onmessage=e=>received(slot,e.data);worker.onerror=e=>{slot.busy=false;stopped=true;$('status').textContent='Arbeiderfeil: '+e.message;};}}
 function received(slot,m){slot.busy=false;const t=pending.get(m.key);pending.delete(m.key);if(m.type==='error'){stopped=true;$('status').textContent='Renderfeil: '+m.error;return;}if(t){Object.assign(t,{values:m.values,version:-1,uncertain:m.uncertain||0});cache.set(t.key,t);metrics.tiles++;metrics.repaired+=m.repaired;metrics.uncertain+=m.uncertain||0;let attempts=cache.size;while(cache.size>Math.max(MAX_CACHE,job?.keys.size||0)&&attempts-->0){let k=cache.keys().next().value;if(job?.keys.has(k)){let v=cache.get(k);cache.delete(k);cache.set(k,v);}else cache.delete(k);}}
  if(job){progress();drawSoon();dispatch();}}
@@ -325,16 +367,16 @@ function progress(){if(!job)return;let done=0;for(const k of job.keys)if(cache.h
  $('debug').textContent=`${workers} arbeidere · ${cache.size} fliser i minnet\n${canvas.width} × ${canvas.height} · ${state.iter} iterasjoner\nSiste bilde: ${metrics.lastMs.toFixed(0)} ms\nReferanse: ${job.ref?metrics.refMs.toFixed(0)+' ms · '+job.ref.used+' steg':'direkte'}\nReparerte piksler: ${metrics.repaired}${metrics.uncertain?'\nLilla = numerisk usikker: '+metrics.uncertain:''}`;
  $('debug').dataset.metrics=JSON.stringify(metrics);
 }
-function dispatch(){if(stopped||!job||!job.ready)return;for(const slot of pool){if(slot.busy)continue;let t;while(queue.length){let a=queue.shift();if(!cache.has(a.key)&&!pending.has(a.key)){t=a;break;}}if(!t)continue;if(slot.cfgID!==job.id){slot.worker.postMessage({type:'init',id:job.id,size:SIZE,step:job.step,p:job.p,iter:state.iter,formula:state.formula,ref:job.ref});slot.cfgID=job.id;}slot.busy=true;pending.set(t.key,t);slot.worker.postMessage({type:'tile',id:job.id,key:t.key,cr:t.cr,ci:t.ci});}}
+function dispatch(){if(stopped||!job||!job.ready)return;for(const slot of pool){if(slot.busy)continue;let t;while(queue.length){let a=queue.shift();if(!cache.has(a.key)&&!pending.has(a.key)){t=a;break;}}if(!t)continue;if(slot.cfgID!==job.id){slot.worker.postMessage({type:'init',id:job.id,size:SIZE,step:job.step,p:job.p,iter:state.iter,formula:state.formula,ref:job.ref,juliaRe:state.juliaRe,juliaIm:state.juliaIm});slot.cfgID=job.id;}slot.busy=true;pending.set(t.key,t);slot.worker.postMessage({type:'tile',id:job.id,key:t.key,cr:t.cr,ci:t.ci});}}
 function render(){
  clearTimeout(timer);lastRenderStarted=performance.now();stopped=false;resize();ui();setupWorkers();const id=++generation,start=performance.now();
  let level=Math.ceil(2*(Math.log2(3.2/state.span)+Math.log2(canvas.width/1024))),step=3.2/1024*2**(-level/2),stepF=F.parse(step.toExponential(17)),tileF=stepF*BigInt(SIZE),p=F.precision(step),sign=state.formula==='ship'?1n:-1n;
  const halfW=F.parse((state.span/2).toExponential(17)),halfH=F.parse((state.span*canvas.height/canvas.width/2).toExponential(17));
  const x0=floorDiv(state.re-halfW,tileF)-1n,x1=floorDiv(state.re+halfW,tileF)+1n,y0=floorDiv(state.im-halfH,tileF)-1n,y1=floorDiv(state.im+halfH,tileF)+1n;queue=[];const keys=new Set();let hits=0;
- for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){let k=key(level,x,y),left=x*tileF,top=(sign===1n?y:y+1n)*tileF;keys.add(k);if(cache.has(k)){hits++;continue;}queue.push({key:k,level,step,left,top,cr:left+tileF/2n,ci:top+sign*tileF/2n,formula:state.formula,iter:state.iter});}
+ for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){let k=key(level,x,y),left=x*tileF,top=(sign===1n?y:y+1n)*tileF;keys.add(k);if(cache.has(k)){hits++;continue;}queue.push({key:k,level,step,left,top,cr:left+tileF/2n,ci:top+sign*tileF/2n,formula:state.formula,iter:state.iter,juliaRe:state.juliaRe,juliaIm:state.juliaIm});}
  queue.sort((a,b)=>Math.hypot(distance(a.cr,state.re),distance(a.ci,state.im))-Math.hypot(distance(b.cr,state.re),distance(b.ci,state.im)));
  metrics.cacheHits+=hits;job={id,start,keys,hits,step,p,ref:null,ready:false,finished:false};drawSoon();
- const deep=step<(state.formula==='ship'?1e-6:1e-10); // Ship folds need stronger roundoff control.
+ const deep=state.formula!=='julia'&&step<(state.formula==='ship'?1e-6:1e-10); // Ship folds need stronger roundoff control.
  if(!deep){job.ready=true;$('refOut').textContent='Float64 · direkte';dispatch();progress();return;}
  if(reference&&reference.formula===state.formula&&reference.iter===state.iter&&reference.p>=p&&Math.hypot(distance(state.re,reference.originRe),distance(state.im,reference.originIm))+state.span<reference.radius*.7){job.p=reference.p;job.ref=reference;job.ready=true;$('refOut').textContent=(state.formula==='ship'?'Perturbasjon · diffabs':'Perturbasjon + BLA')+' · gjenbrukt';dispatch();progress();return;}
  if(refWorker)refWorker.terminate();refWorker=new Worker(workerURL);$('status').textContent='Beregner presis referanse …';$('refOut').textContent='BigInt → perturbasjon'+(state.formula==='mandelbrot'?' + BLA':' · diffabs');
@@ -346,8 +388,8 @@ function schedule(delay=100){clearTimeout(timer);timer=setTimeout(render,Math.mi
 function interrupt(){job=null;queue=[];generation++;clearTimeout(timer);}
 function move(dx,dy){state.re+=F.parse(dx.toExponential(17));state.im+=F.parse(dy.toExponential(17));}
 function zoom(x,y,factor){interrupt();const r=viewer.getBoundingClientRect(),old=state.span,next=Math.max(F.MIN_SPAN,Math.min(6,old*factor));let fx=(x-r.left)/r.width-.5,fy=((y-r.top)/r.width-r.height/r.width/2)*(state.formula==='ship'?1:-1);move(fx*(old-next),fy*(old-next));state.span=next;ui();drawSoon();schedule(90);}
-function validate(re,im,span,iter,formula){let s=Number(span),it=Number(iter);if(!Number.isFinite(s)||s<F.MIN_SPAN||s>6)throw Error('Utsnitt må være mellom 1e-280 og 6');if(!Number.isInteger(it)||it<100||it>100000)throw Error('Bruk 100–100 000 iterasjoner');let r=F.parse(re),i=F.parse(im);if(Math.abs(F.num(r))>4||Math.abs(F.num(i))>4)throw Error('Senter må være innenfor ±4');return {re:r,im:i,span:s,iter:it,formula:formula==='ship'?'ship':'mandelbrot'};}
-function jump(re,im,span,iter,formula){try{const next=validate(re,im,span,iter,formula);interrupt();state=next;fit=null;colorVersion++;ui();render();}catch(e){$('status').textContent=e.message;}}
+function validate(re,im,span,iter,formula,juliaRe=state.juliaRe,juliaIm=state.juliaIm){let s=Number(span),it=Number(iter);if(!Number.isFinite(s)||s<F.MIN_SPAN||s>6)throw Error('Utsnitt må være mellom 1e-280 og 6');if(!Number.isInteger(it)||it<100||it>100000)throw Error('Bruk 100–100 000 iterasjoner');let r=F.parse(re),i=F.parse(im),f=formula==='ship'?'ship':formula==='julia'?'julia':'mandelbrot',jr=Number(juliaRe),ji=Number(juliaIm);if(Math.abs(F.num(r))>4||Math.abs(F.num(i))>4)throw Error('Senter må være innenfor ±4');if(!Number.isFinite(jr)||!Number.isFinite(ji)||Math.abs(jr)>4||Math.abs(ji)>4)throw Error('Julia-parameter må være innenfor ±4');return {re:r,im:i,span:s,iter:it,formula:f,juliaRe:jr,juliaIm:ji};}
+function jump(re,im,span,iter,formula,juliaRe=state.juliaRe,juliaIm=state.juliaIm){try{const next=validate(re,im,span,iter,formula,juliaRe,juliaIm);interrupt();state=next;fit=null;colorVersion++;ui();render();}catch(e){$('status').textContent=e.message;}}
 function autoFit(){let vals=[];if(!job)return;for(const k of job.keys){let t=cache.get(k);if(t)for(let i=0;i<t.values.length;i+=4)if(t.values[i]>=0)vals.push(t.values[i]);}if(vals.length<2){fit=null;return;}vals.sort((a,b)=>a-b);let lo=vals[Math.floor(vals.length*.01)],hi=vals[Math.floor(vals.length*.99)];if(hi<=lo){fit=null;return;}if(fitMode==='fit')fit=v=>.04+.88*Math.max(0,Math.min(1,(v-lo)/(hi-lo)));else {const quant=new Float32Array(1025);for(let i=0;i<=1024;i++)quant[i]=vals[Math.floor(i/1024*(vals.length-1))];fit=v=>{let a=0,b=1024;while(b-a>1){let m=(a+b)>>1;if(quant[m]<=v)a=m;else b=m;}return .04+.88*(a+(v-quant[a])/(quant[b]-quant[a]||1))/1024;};}colorVersion++;}
 function recolor(){const t=performance.now();table=F.lut($('palette').value);colorVersion++;lastImage=null;draw();$('status').textContent=`Farger oppdatert · ${(performance.now()-t).toFixed(0)} ms · ingen ny iterasjon`;saveURL();}
 const wrap=$('canvasWrap');wrap.addEventListener('wheel',e=>{e.preventDefault();zoom(e.clientX,e.clientY,Math.exp(Math.max(-150,Math.min(150,e.deltaY*(e.deltaMode===1?16:1)))*.0018));},{passive:false});wrap.addEventListener('dblclick',e=>zoom(e.clientX,e.clientY,.5));
@@ -357,21 +399,21 @@ function endPointer(e){pointers.delete(e.pointerId);if(!pointers.size){gesture=n
 viewer.addEventListener('keydown',e=>{let r=viewer.getBoundingClientRect();if(e.key==='+'||e.key==='='){zoom(r.left+r.width/2,r.top+r.height/2,.75);e.preventDefault();}else if(e.key==='-'){zoom(r.left+r.width/2,r.top+r.height/2,1.333);e.preventDefault();}else if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){interrupt();move((e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0)*state.span*.12,(e.key==='ArrowUp'?1:e.key==='ArrowDown'?-1:0)*state.span*.12*(state.formula==='ship'?-1:1));ui();drawSoon();schedule(0);e.preventDefault();}});
 for(const [id,f]of [['zoomIn',.75],['zoomOut',1.333333]])$(id).onclick=()=>{let r=viewer.getBoundingClientRect();zoom(r.left+r.width/2,r.top+r.height/2,f);};
 $('renderBtn').onclick=render;$('cancelBtn').onclick=()=>{interrupt();stopped=true;for(const s of pool)s.worker.terminate();pool.length=0;pending.clear();refWorker?.terminate();refWorker=null;$('status').textContent='Stoppet · bildet er beholdt';};
-function applyPosition(){let spanValue=$('spanInput').value;const z=Number($('zoomInput').value);if(document.activeElement===$('zoomInput')&&Number.isFinite(z)&&z>0)spanValue=(3.2/z).toExponential(17);jump($('reInput').value,$('imInput').value,spanValue,state.iter,$('formula').value);}
+function applyPosition(){let spanValue=$('spanInput').value;const z=Number($('zoomInput').value);if(document.activeElement===$('zoomInput')&&Number.isFinite(z)&&z>0)spanValue=(3.2/z).toExponential(17);jump($('reInput').value,$('imInput').value,spanValue,state.iter,$('formula').value,state.juliaRe,state.juliaIm);}
 $('positionApply').onclick=applyPosition;
 for(const id of ['reInput','imInput','zoomInput','spanInput'])$(id).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();applyPosition();}});
 $('zoomInput').addEventListener('change',()=>{const z=Number($('zoomInput').value);if(Number.isFinite(z)&&z>0)$('spanInput').value=(3.2/z).toExponential(17);});
 $('spanInput').addEventListener('change',()=>{const s=Number($('spanInput').value);if(Number.isFinite(s)&&s>0)$('zoomInput').value=(3.2/s).toExponential(10);});
 $('iterHintClose').onclick=e=>{e.preventDefault();e.stopPropagation();$('iterHint').hidden=true;iterHintActive=false;};
-$('palette').onchange=recolor;$('density').oninput=()=>{$('densityOut').textContent=(+$('density').value).toFixed(2)+'×';recolor();};$('colors').onchange=()=>{fitMode=$('colors').value;fit=null;if(fitMode!=='classic')autoFit();recolor();};$('resolution').onchange=()=>schedule(0);
-$('iterations').onchange=()=>jump(position().re,position().im,state.span,$('iterations').value,state.formula);
-$('formula').onchange=()=>{const v=GALLERY.find(v=>v.formula===$('formula').value);jump(v.re,v.im,v.span,v.iter,v.formula);};
+$('palette').onchange=recolor;$('density').oninput=()=>{$('densityOut').textContent=(+$('density').value).toFixed(2)+'×';recolor();};$('colors').onchange=()=>{fitMode=$('colors').value;fit=null;if(fitMode!=='classic')autoFit();recolor();};$('resolution').onchange=()=>schedule(0);$('pixelLimit').onchange=()=>schedule(0);$('juliaRe').onchange=$('juliaIm').onchange=()=>{if(state.formula==='julia')jump(position().re,position().im,state.span,state.iter,'julia',$('juliaRe').value,$('juliaIm').value);};
+$('iterations').onchange=()=>jump(position().re,position().im,state.span,$('iterations').value,state.formula,state.juliaRe,state.juliaIm);
+$('formula').onchange=()=>{const v=GALLERY.find(v=>v.formula===$('formula').value);jump(v.re,v.im,v.span,v.iter,v.formula,v.juliaRe,v.juliaIm);};
 $('copyBtn').onclick=async()=>{saveURL();try{await navigator.clipboard.writeText(location.href);$('status').textContent='Lenke med presise koordinater kopiert';}catch(e){$('status').textContent='Posisjonen er lagret i adressefeltet';}};
-$('homeBtn').onclick=()=>{let v=GALLERY.find(v=>v.formula===state.formula);jump(v.re,v.im,v.span,v.iter,v.formula);};
-for(const v of GALLERY){let b=document.createElement('button');b.className='place';b.dataset.place=v.id;b.innerHTML='<strong>'+v.name+'</strong><small>'+v.description+'</small>';b.title=`Re ${v.re}\nIm ${v.im}\nUtsnitt ${v.span}\n${v.iter} iterasjoner`;b.onclick=()=>jump(v.re,v.im,v.span,v.iter,v.formula);$(v.formula==='ship'?'shipGallery':'mandelbrotGallery').append(b);}
+$('homeBtn').onclick=()=>{let v=GALLERY.find(v=>v.formula===state.formula);jump(v.re,v.im,v.span,v.iter,v.formula,v.juliaRe,v.juliaIm);};
+for(const v of GALLERY){let b=document.createElement('button');b.className='place';b.dataset.place=v.id;b.innerHTML='<strong>'+v.name+'</strong>';b.title=`Re ${v.re}\nIm ${v.im}\nUtsnitt ${v.span}\n${v.iter} iterasjoner`;b.onclick=()=>jump(v.re,v.im,v.span,v.iter,v.formula,v.juliaRe,v.juliaIm);$(v.formula==='ship'?'shipGallery':v.formula==='julia'?'juliaGallery':'mandelbrotGallery').append(b);}
 addEventListener('resize',()=>{const r=viewer.getBoundingClientRect();if(Math.abs(r.width-measuredWidth)>.5||Math.abs(r.height-measuredHeight)>.5)schedule(150);});addEventListener('pagehide',()=>{pool.forEach(s=>s.worker.terminate());refWorker?.terminate();URL.revokeObjectURL(workerURL);});
-addEventListener('hashchange',()=>{try{const q=new URLSearchParams(location.hash.slice(1));if(q.has('re'))jump(q.get('re'),q.get('im'),q.get('span'),Number(q.get('iter')),q.get('formula'));}catch(e){$('status').textContent=e.message;}});
-try{const q=new URLSearchParams(location.hash.slice(1));if(q.has('re')){state=validate(q.get('re'),q.get('im'),q.get('span'),q.get('iter'),q.get('formula'));if(q.has('palette')&&['classic','fire','ocean','bw'].includes(q.get('palette')))$('palette').value=q.get('palette');if(q.has('density'))$('density').value=Math.max(.35,Math.min(4,Number(q.get('density'))||1.35));if(['classic','fit','histogram'].includes(q.get('colors'))){fitMode=q.get('colors');$('colors').value=fitMode;}}}catch(e){$('status').textContent='Ugyldig posisjon i lenken: '+e.message;}
+addEventListener('hashchange',()=>{try{const q=new URLSearchParams(location.hash.slice(1));if(q.has('re'))jump(q.get('re'),q.get('im'),q.get('span'),Number(q.get('iter')),q.get('formula'),q.get('juliaRe')??state.juliaRe,q.get('juliaIm')??state.juliaIm);}catch(e){$('status').textContent=e.message;}});
+try{const q=new URLSearchParams(location.hash.slice(1));if(q.has('re')){state=validate(q.get('re'),q.get('im'),q.get('span'),q.get('iter'),q.get('formula'),q.get('juliaRe')??state.juliaRe,q.get('juliaIm')??state.juliaIm);if(q.has('palette')&&['classic','fire','ocean','psychedelic','whitered','greenpink','bw'].includes(q.get('palette')))$('palette').value=q.get('palette');if(q.has('density'))$('density').value=Math.max(.35,Math.min(4,Number(q.get('density'))||1.35));if(q.has('pixelLimit')){const px=Number(q.get('pixelLimit'))||1600000;const allowed=[1000000,1600000,2000000,3000000];$('pixelLimit').value=allowed.reduce((a,b)=>Math.abs(b-px)<Math.abs(a-px)?b:a,1600000);}if(['classic','fit','histogram'].includes(q.get('colors'))){fitMode=q.get('colors');$('colors').value=fitMode;}}}catch(e){$('status').textContent='Ugyldig posisjon i lenken: '+e.message;}
 table=F.lut($('palette').value);ui();render();
 })();
 </script><!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "1b3cf01bc1c645a99f02736c18c9ab78"}'></script><!-- End Cloudflare Web Analytics -->
