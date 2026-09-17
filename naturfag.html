@@ -858,7 +858,7 @@ if(safeStore.get('chemTheme')==='dark')document.body.classList.add('dark');
 if(safeStore.get('chemSide')==='1'&&innerWidth>860)document.body.classList.add('side-collapsed');
 
 const homeModules=[
-['atom','⚛','Atomer & periodesystem','Atomoppbygning, skall, grupper, perioder og atomstørrelse.'],['ion','±','Ioner','Ladning, elektronantall, kationer, anioner og åtteregelen.'],['salt','▦','Ioniske forbindelser','Sett sammen ioner til nøytrale salter og skriv formel.'],['binding','⌁','Sterke bindinger','Ionisk, upolar/polar elektronparbinding og metallbinding.'],['polar','↔','Polaritet & svake bindinger','Polaritet, dipolbindinger og hydrogenbindinger.'],['solubility','◌','Løselighet','Likt løser likt, ionestyrke og utfelling.'],['balance','⇌','Reaksjonslikninger','Koeffisienter fra en stor reaksjonsbank i flere nivåer.'],['redox','e⁻','Elektronoverføring','Hvem avgir, hvem mottar og hvor mange elektroner?'],['carbon','C','Karbonkjemi','Karbonreaksjoner, karbonkretsløp, havforsuring, allotroper og organisk kjemi.'],['combustion','△','Forbrenning','Branntrekant, hydrokarboner og magnesium.'],['mix','✓','Blandet fagquiz','Sett sammen en tilfeldig fagquiz på 10–30 spørsmål.']];
+['atom','⚛','Atomer & periodesystem','Atomoppbygning, skall, grupper, perioder og atomstørrelse.'],['ion','±','Ioner','Ladning, elektronantall, kationer, anioner og åtteregelen.'],['salt','▦','Ioniske forbindelser','Sett sammen ioner til nøytrale salter og skriv formel.'],['binding','⌁','Sterke bindinger','Ionisk, upolar/polar elektronparbinding og metallbinding.'],['polar','↔','Polaritet & svake bindinger','Polaritet, dipolbindinger og hydrogenbindinger.'],['solubility','◌','Løselighet','Likt løser likt, ionestyrke og utfelling.'],['balance','⇌','Reaksjonslikninger','Koeffisienter fra en stor reaksjonsbank i flere nivåer.'],['redox','e⁻','Elektronoverføring','Hvem avgir, hvem mottar og hvor mange elektroner?'],['carbon','C','Karbonkjemi','Karbonreaksjoner, karbonkretsløp, havforsuring, allotroper og organisk kjemi.'],['combustion','△','Forbrenning','Branntrekant, fullstendig og ufullstendig forbrenning.'],['mix','✓','Blandet fagquiz','Sett sammen en tilfeldig fagquiz på 10–30 spørsmål.']];
 $('#homeGrid').innerHTML=homeModules.map(([p,i,t,d])=>`<div class="home-card" data-go="${p}"><div style="font-size:1.25rem;margin-bottom:8px">${i}</div><strong>${t}</strong><div class="mini">${d}</div></div>`).join('');$$('[data-go]').forEach(c=>c.onclick=()=>openPage(c.dataset.go));
 
 const elements=[
@@ -1926,7 +1926,7 @@ if(type==='redox'){const r=rand(redoxBank);return{topic:'Elektronoverføring',q:
 const c=rand(combustionQs);return{topic:'Forbrenning',q:prettyFormula(c.q),a:prettyFormula(c.a),o:c.o.map(prettyFormula),e:prettyFormula(c.e)}};
 
 const homeModules2=[
-['atom','⚛','Atomer','Atomoppbygning, skall og periodiske trender.'],['periodic','▤','Periodesystem','Oppbygning, grupper, perioder og plassering av grunnstoffer.'],['ion','±','Ioner','Ladning, elektronantall, åtteregelen og like elektrontall.'],['salt','▦','Ioniske forbindelser','Sett sammen ioner og tolk kjemiske formler.'],['binding','⌁','Sterke bindinger','Ionisk, elektronparbinding og metallbinding.'],['polar','↔','Polaritet & svake bindinger','Dipoler, hydrogenbindinger og upolare stoffer.'],['solubility','◌','Løselighet','Likt løser likt, ionestørrelse og utfelling.'],['balance','⇌','Reaksjonslikninger','Koeffisienter fra en stor reaksjonsbank i flere nivåer.'],['redox','e⁻','Elektronoverføring','Hvem avgir, hvem mottar og hvor mange elektroner?'],['combustion','△','Forbrenning','Branntrekant, hydrokarboner og magnesium.'],['mix','✓','Blandet fagquiz','Tilfeldig fagquiz med oppgavetyper fra øvingsprøven og modulene.']
+['atom','⚛','Atomer','Atomoppbygning, skall og periodiske trender.'],['periodic','▤','Periodesystem','Oppbygning, grupper, perioder og plassering av grunnstoffer.'],['ion','±','Ioner','Ladning, elektronantall, åtteregelen og like elektrontall.'],['salt','▦','Ioniske forbindelser','Sett sammen ioner og tolk kjemiske formler.'],['binding','⌁','Sterke bindinger','Ionisk, elektronparbinding og metallbinding.'],['polar','↔','Polaritet & svake bindinger','Dipoler, hydrogenbindinger og upolare stoffer.'],['solubility','◌','Løselighet','Likt løser likt, ionestørrelse og utfelling.'],['balance','⇌','Reaksjonslikninger','Koeffisienter fra en stor reaksjonsbank i flere nivåer.'],['redox','e⁻','Elektronoverføring','Hvem avgir, hvem mottar og hvor mange elektroner?'],['combustion','△','Forbrenning','Branntrekant, fullstendig og ufullstendig forbrenning.'],['mix','✓','Blandet fagquiz','Tilfeldig fagquiz med oppgavetyper fra øvingsprøven og modulene.']
 ];
 $('#homeGrid').innerHTML=homeModules2.map(([p,i,t,d])=>`<div class="home-card" data-go="${p}"><div style="font-size:1.25rem;margin-bottom:8px">${i}</div><strong>${t}</strong><div class="mini">${d}</div></div>`).join('');$$('[data-go]').forEach(c=>c.onclick=()=>openPage(c.dataset.go));
 
@@ -2181,7 +2181,7 @@ const homeModulesV13=[
 ['polar','↔','Polaritet & svake bindinger','Dipoler, hydrogenbindinger og kokepunkt.'],
 ['solubility','◌','Løselighet','Likt løser likt, ionestørrelse, ladning og styrke i salter.'],
 ['balance','⇌','Reaksjonslikninger','Koeffisienter fra en stor reaksjonsbank i flere nivåer.'],
-['combustion','△','Forbrenning','Branntrekant, hydrokarboner og forbrenning av flere grunnstoffer.'],
+['combustion','△','Forbrenning','Branntrekant, fullstendig og ufullstendig forbrenning.'],
 ['carbon','C','Karbonkjemi','Forbrenning, karbonallotroper, organisk kjemi, plast og olje.'],
 ['mix','✓','Blandet fagquiz','Tilfeldig fagquiz med oppgavetyper fra øvingsprøven og modulene.'],
 ['elementquiz','◎','Grunnstoffquiz','Plasser grunnstoffer i periodesystemet og få poeng etter avstand.']
@@ -5773,6 +5773,672 @@ function toggleNaturfagFullscreen(){
       return item;
     };
   }
+})();
+</script>
+
+
+<script id="kjemi-v53-combustion-cleanup">
+(function(){
+  const detailedPatterns=[
+    /fullstendig\s+forbrenning\s+av\s+(?:metan|etan|propan|butan|pentan|heksan|heptan|oktan)/i,
+    /balanserte,\s*fullstendige\s+forbrenningen\s+av/i,
+    /koeffisient\s+står\s+foran\s+O2/i,
+    /hvor\s+mange\s+CO2-molekyler/i,
+    /propanmolekyl/i,
+    /oktan/i,
+    /hvilken\s+molekylformel\s+må\s+hydrokarbonet/i,
+    /hvilken\s+likning\s+kan\s+beskrive\s+ufullstendig\s+forbrenning/i
+  ];
+  const isDetailed=s=>detailedPatterns.some(re=>re.test(s));
+
+  const removeDetailed=(arr)=>{
+    if(!Array.isArray(arr))return;
+    for(let i=arr.length-1;i>=0;i--){
+      const item=arr[i]||{};
+      const s=[item.scene,item.q,item.a,item.e,...(item.o||[])].filter(Boolean).join(' ');
+      if(isDetailed(s))arr.splice(i,1);
+    }
+  };
+
+  removeDetailed(combustionQs);
+
+  const simpleCombustion=[
+    {
+      q:'Reaksjonen CH4 + 2O2 → CO2 + 2H2O er vist. Hva slags forbrenning er dette?',
+      o:['Fullstendig forbrenning','Ufullstendig forbrenning','Celleånding','Ingen forbrenning'],
+      a:'Fullstendig forbrenning',
+      e:'Karbonet ender som CO₂ og hydrogenet som H₂O. Det kjennetegner fullstendig forbrenning.'
+    },
+    {
+      q:'Reaksjonen 2CH4 + 3O2 → 2CO + 4H2O er vist. Hva slags forbrenning er dette?',
+      o:['Ufullstendig forbrenning','Fullstendig forbrenning','Fotosyntese','Ingen forbrenning'],
+      a:'Ufullstendig forbrenning',
+      e:'Det dannes CO i stedet for bare CO₂. Det viser at forbrenningen er ufullstendig.'
+    },
+    {
+      q:'En flamme blir gul og begynner å sote når lufttilførselen reduseres. Hva har mest sannsynlig skjedd?',
+      o:['Forbrenningen er blitt mer ufullstendig','Forbrenningen er blitt mer fullstendig','Det er ikke lenger oksygen med i reaksjonen','Alt karbon blir til CO₂ raskere'],
+      a:'Forbrenningen er blitt mer ufullstendig',
+      e:'Mindre oksygen øker sjansen for CO og sot.'
+    },
+    {
+      q:'To flammer bruker samme brensel. Flamme A får rikelig med luft, mens flamme B får lite luft. Hvilken vil normalt gi mest CO og sot?',
+      o:['Flamme B','Flamme A','Begge like mye','Ingen av dem'],
+      a:'Flamme B',
+      e:'Lite oksygen favoriserer ufullstendig forbrenning.'
+    },
+    {
+      q:'Hvilket tegn passer best med fullstendig forbrenning av et stoff som inneholder karbon og hydrogen?',
+      o:['Det dannes hovedsakelig CO₂ og H₂O','Det dannes mye sot og CO','Oksygen dannes som produkt','Karbonet forsvinner uten å danne nye stoffer'],
+      a:'Det dannes hovedsakelig CO₂ og H₂O',
+      e:'Ved god oksygentilgang oksideres karbon til CO₂ og hydrogen til H₂O.'
+    }
+  ];
+
+  const key=x=>`${x.q||''}|${x.a||''}`;
+  const existing=new Set(combustionQs.map(key));
+  simpleCombustion.forEach(q=>{if(!existing.has(key(q)))combustionQs.push(q);});
+
+  if(typeof carbonBanks!=='undefined' && Array.isArray(carbonBanks.combustion)){
+    for(let i=carbonBanks.combustion.length-1;i>=0;i--){
+      const item=carbonBanks.combustion[i]||{};
+      const s=[item.scene,item.q,item.a,item.e,...(item.o||[])].filter(Boolean).join(' ');
+      if(isDetailed(s))carbonBanks.combustion.splice(i,1);
+    }
+
+    const carbonSimple=[
+      {
+        scene:'CH4 + 2O2 → CO2 + 2H2O',
+        q:'Er reaksjonen fullstendig eller ufullstendig forbrenning?',
+        o:['Fullstendig','Ufullstendig'],
+        a:'Fullstendig',
+        e:'Karbonet ender som CO₂ og hydrogenet som H₂O.'
+      },
+      {
+        scene:'2CH4 + 3O2 → 2CO + 4H2O',
+        q:'Er reaksjonen fullstendig eller ufullstendig forbrenning?',
+        o:['Ufullstendig','Fullstendig'],
+        a:'Ufullstendig',
+        e:'Dannelsen av CO viser at oksygentilgangen ikke er stor nok til fullstendig forbrenning.'
+      },
+      {
+        scene:'En blå gassflamme blir gul og sotende når luftinntaket nesten stenges.',
+        q:'Hva er den beste forklaringen?',
+        o:['Mindre oksygen gir mer ufullstendig forbrenning','Mer oksygen gir mer ufullstendig forbrenning','Brenselet har sluttet å reagere','Det dannes mer oksygen i flammen'],
+        a:'Mindre oksygen gir mer ufullstendig forbrenning',
+        e:'Oksygenmangel kan føre til CO og sot.'
+      }
+    ];
+    const carbonExisting=new Set(carbonBanks.combustion.map(key));
+    carbonSimple.forEach(q=>{if(!carbonExisting.has(key(q)))carbonBanks.combustion.push(q);});
+  }
+
+  newCombustion=function(){
+    const q=rand(combustionQs);
+    $('#combustionArea').innerHTML=`<div class="question">${prettyFormula(q.q)}</div><div id="combOpts"></div>`;
+    mc($('#combOpts'),q.o.map(prettyFormula),prettyFormula(q.a),'combFb',prettyFormula(q.e));
+  };
+
+  try{
+    const active=document.querySelector('.page.active');
+    if(active?.id==='page-combustion')newCombustion();
+  }catch(e){}
+})();
+</script>
+
+
+<script id="kjemi-v54-combustion-balance">
+(function(){
+  const key=x=>`${x?.q||''}|${x?.a||''}`;
+
+  // Naturfag: behold bare to enkle telleoppgaver, med ferdig reaksjonslikning.
+  if(typeof combustionQs!=='undefined' && Array.isArray(combustionQs)){
+    const simpleCounts=[
+      {
+        q:'Reaksjonen CH4 + 2O2 → CO2 + 2H2O er balansert. Hvor mange H2O-molekyler dannes slik likningen er skrevet?',
+        o:['1','2','3','4'],a:'2',
+        e:'Koeffisienten foran H₂O er 2.'
+      },
+      {
+        q:'Reaksjonen C3H8 + 5O2 → 3CO2 + 4H2O er balansert. Hvor mange CO2-molekyler dannes slik likningen er skrevet?',
+        o:['2','3','4','5'],a:'3',
+        e:'Koeffisienten foran CO₂ er 3.'
+      }
+    ];
+    const have=new Set(combustionQs.map(key));
+    simpleCounts.forEach(q=>{if(!have.has(key(q)))combustionQs.push(q);});
+  }
+
+  // Organisk kjemi: et lite utvalg av de mer krevende hydrokarbonoppgavene.
+  if(typeof carbonBanks!=='undefined' && Array.isArray(carbonBanks.organic)){
+    const advancedHydrocarbonCombustion=[
+      {
+        scene:'Propan har molekylformelen C3H8.',
+        q:'Hvilken likning viser balansert, fullstendig forbrenning av propan?',
+        o:['C3H8 + 5O2 → 3CO2 + 4H2O','C3H8 + 4O2 → 3CO2 + 4H2O','C3H8 + 5O2 → 2CO2 + 4H2O','C3H8 + 3O2 → 3CO + 4H2O'],
+        a:'C3H8 + 5O2 → 3CO2 + 4H2O',
+        e:'Tre C-atomer gir 3 CO₂ og åtte H-atomer gir 4 H₂O. Da trengs 5 O₂.'
+      },
+      {
+        scene:'Butan har molekylformelen C4H10.',
+        q:'Hvilken likning viser balansert, fullstendig forbrenning av butan?',
+        o:['2C4H10 + 13O2 → 8CO2 + 10H2O','C4H10 + 6O2 → 4CO2 + 5H2O','2C4H10 + 10O2 → 8CO2 + 10H2O','C4H10 + 13O2 → 4CO2 + 5H2O'],
+        a:'2C4H10 + 13O2 → 8CO2 + 10H2O',
+        e:'Likningen må ha like mange C-, H- og O-atomer på begge sider.'
+      },
+      {
+        scene:'Oktan, C8H18, kan brukes som en enkel modell for en bestanddel i bensin.',
+        q:'Hvilken likning viser balansert, fullstendig forbrenning av oktan?',
+        o:['2C8H18 + 25O2 → 16CO2 + 18H2O','2C8H18 + 17O2 → 16CO2 + 18H2O','C8H18 + 9O2 → 8CO2 + 9H2O','2C8H18 + 25O2 → 8CO2 + 18H2O'],
+        a:'2C8H18 + 25O2 → 16CO2 + 18H2O',
+        e:'16 C-atomer gir 16 CO₂ og 36 H-atomer gir 18 H₂O. Da trengs 25 O₂.'
+      },
+      {
+        scene:'C3H8 + 5O2 → 3CO2 + 4H2O',
+        q:'Hvor mange O2-molekyler trengs per propanmolekyl i denne balanserte reaksjonen?',
+        o:['3','4','5','6'],a:'5',
+        e:'Koeffisienten foran O₂ er 5 når koeffisienten foran C₃H₈ er 1.'
+      }
+    ];
+    const have=new Set(carbonBanks.organic.map(key));
+    advancedHydrocarbonCombustion.forEach(q=>{if(!have.has(key(q)))carbonBanks.organic.push(q);});
+  }
+})();
+</script>
+
+
+<script id="kjemi-v55-combustion-quality">
+(function(){
+  // Rydd bort oppgaver der svaret i praksis bare kan leses direkte av
+  // koeffisienten, og genererte likningsoppgaver med svake distraktorer.
+  if(typeof combustionQs!=='undefined' && Array.isArray(combustionQs)){
+    const removePatterns=[
+      /hvor mange .*molekyler dannes slik likningen er skrevet/i,
+      /hvor mange CO2-molekyler dannes/i,
+      /hvilken likning er balansert for fullstendig forbrenning/i,
+      /hvilken reaksjonslikning passer når .* reagerer med oksygen/i
+    ];
+    for(let i=combustionQs.length-1;i>=0;i--){
+      const q=combustionQs[i]?.q||'';
+      if(removePatterns.some(re=>re.test(q)))combustionQs.splice(i,1);
+    }
+
+    // Én ryddig magnesiumoppgave med kjemisk plausible alternativer.
+    combustionQs.push({
+      q:'Et magnesiumbånd brenner i luft med sterkt hvitt lys. Hvilken reaksjon beskriver hovedreaksjonen best?',
+      o:[
+        '2Mg + O2 → 2MgO',
+        'Mg + H2 → MgH2',
+        'Mg + Cl2 → MgCl2',
+        'Mg + S → MgS'
+      ],
+      a:'2Mg + O2 → 2MgO',
+      e:'I luft reagerer magnesium hovedsakelig med oksygen og danner magnesiumoksid, MgO.'
+    });
+  }
+
+  // Flervalgsoppgaver med flere riktige svar. Disse brukes bare i selve
+  // forbrenningsmodulen, ikke i blandet quiz som forventer ett fasitsvar.
+  const combustionMultiQs=[
+    {
+      scene:'CH4 + O2 → ?',
+      q:'Metan forbrennes fullstendig. Hvilke produkter dannes? Huk av alle riktige.',
+      o:['CO2','H2O','CO','C','H2','O2'],
+      a:['CO2','H2O'],
+      e:'Ved fullstendig forbrenning av et hydrokarbon dannes CO₂ og H₂O.'
+    },
+    {
+      scene:'? → CO2 + H2O',
+      q:'Produktene kommer fra fullstendig forbrenning av metan. Hvilke reaktanter må være med? Huk av alle riktige.',
+      o:['CH4','O2','CO','H2','Mg','C'],
+      a:['CH4','O2'],
+      e:'Metan reagerer med oksygen. Ved fullstendig forbrenning dannes CO₂ og H₂O.'
+    },
+    {
+      scene:'Metan brenner med en ren, blå flamme. En kald glassplate holdes over flammen, og det dannes små vanndråper. Flammen soter ikke.',
+      q:'Hvilke påstander kan være riktige? Huk av alle riktige.',
+      o:[
+        'Metan forbrennes',
+        'Det dannes H2O',
+        'Forbrenningen er hovedsakelig fullstendig',
+        'Det dannes CO2',
+        'Dette er forbrenning av magnesium',
+        'Sot viser at forbrenningen er svært ufullstendig',
+        'Oksygen dannes som et produkt'
+      ],
+      a:['Metan forbrennes','Det dannes H2O','Forbrenningen er hovedsakelig fullstendig','Det dannes CO2'],
+      e:'Blå, ren flamme og fravær av sot passer med god oksygentilgang. Ved fullstendig forbrenning av metan dannes CO₂ og H₂O.'
+    },
+    {
+      scene:'Metan brenner med gul, sotende flamme når lufttilførselen reduseres.',
+      q:'Hvilke påstander passer med observasjonen? Huk av alle riktige.',
+      o:[
+        'Forbrenningen er mer ufullstendig',
+        'Oksygentilgangen er begrenset',
+        'Det kan dannes CO',
+        'Det kan dannes sot',
+        'Dette viser bedre tilgang på oksygen',
+        'Magnesiumoksid er hovedproduktet'
+      ],
+      a:['Forbrenningen er mer ufullstendig','Oksygentilgangen er begrenset','Det kan dannes CO','Det kan dannes sot'],
+      e:'Ved oksygenmangel kan forbrenningen bli ufullstendig, og både CO og sot kan dannes.'
+    }
+  ];
+
+  // Unngå at samme oppgave kommer direkte to ganger.
+  let lastKey='';
+  const qKey=q=>`${q?.scene||''}|${q?.q||''}`;
+  const chooseDifferent=list=>{
+    if(list.length<2)return list[0];
+    const available=list.filter(q=>qKey(q)!==lastKey);
+    return rand(available.length?available:list);
+  };
+
+  function renderMulti(q){
+    const area=$('#combustionArea');
+    const answers=new Set(q.a.map(String));
+    const opts=shuffle(q.o.map(String));
+    area.innerHTML=
+      (q.scene?`<div class="note formula">${prettyFormula(q.scene)}</div>`:'')+
+      `<div class="question">${prettyFormula(q.q)}</div>`+
+      `<div class="options combustion-multi">${opts.map(o=>
+        `<label class="option"><input type="checkbox" value="${o.replace(/"/g,'&quot;')}"><span>${prettyFormula(o)}</span></label>`
+      ).join('')}</div>`+
+      `<div class="module-tools"><button class="btn" id="combMultiCheck">Sjekk svar</button></div>`+
+      `<div class="feedback" id="combFb"></div>`+
+      `<div class="explain" id="combFbEx">${prettyFormula(q.e)}</div>`;
+
+    const boxes=[...area.querySelectorAll('.combustion-multi input')];
+    const check=$('#combMultiCheck');
+    check.onclick=()=>{
+      const selected=new Set(boxes.filter(b=>b.checked).map(b=>b.value));
+      const ok=selected.size===answers.size && [...answers].every(v=>selected.has(v));
+      boxes.forEach(b=>{
+        const lab=b.closest('.option');
+        lab.classList.remove('correct','wrong');
+        if(answers.has(b.value))lab.classList.add('correct');
+        else if(b.checked)lab.classList.add('wrong');
+        b.disabled=true;
+      });
+      const fb=$('#combFb'),ex=$('#combFbEx');
+      fb.textContent=ok?'Riktig.':'Ikke helt.';
+      fb.className='feedback '+(ok?'good':'bad');
+      ex.classList.add('show');
+      check.disabled=true;
+    };
+  }
+
+  const style=document.createElement('style');
+  style.textContent=`
+    .combustion-multi .option{display:flex;align-items:center;gap:9px}
+    .combustion-multi .option input{width:17px;height:17px;accent-color:var(--accent);flex:0 0 auto}
+    .combustion-multi .option span{min-width:0}
+  `;
+  document.head.appendChild(style);
+
+  newCombustion=function(){
+    // Omtrent hver tredje oppgave er en "huk av alle riktige"-oppgave.
+    const useMulti=Math.random()<.34;
+    if(useMulti){
+      const q=chooseDifferent(combustionMultiQs);
+      lastKey=qKey(q);
+      renderMulti(q);
+      return;
+    }
+    const q=chooseDifferent(combustionQs);
+    lastKey=qKey(q);
+    $('#combustionArea').innerHTML=`<div class="question">${prettyFormula(q.q)}</div><div id="combOpts"></div>`;
+    mc($('#combOpts'),q.o.map(prettyFormula),prettyFormula(q.a),'combFb',prettyFormula(q.e));
+  };
+
+  try{
+    const active=document.querySelector('.page.active');
+    if(active?.id==='page-combustion')newCombustion();
+  }catch(e){}
+})();
+</script>
+
+
+<script id="kjemi-v56-combustion-distractor-cleanup">
+(function(){
+  if(typeof combustionQs!=='undefined' && Array.isArray(combustionQs)){
+    // Fjern oppgaver der fasiten kan finnes ved bare å matche grunnstoffsymbolet
+    // eller der distraktorene er åpenbart useriøse.
+    const removePatterns=[
+      /^Hvilket stoff dannes når .* reagerer med oksygen/i,
+      /^Magnesium varmes opp med en gassbrenner .* Hvilket stoff dannes/i,
+      /^Hvorfor øker massen når .* brennes i luft/i,
+      /^Hvorfor får magnesiumbåndet større masse når det brennes i luft/i,
+      /^En kald glassflate holdes over en ren flamme fra et hydrokarbon/i,
+      /^Et hydrokarbon brenner med for lite luft\. Hvilket stoff kan da dannes/i
+    ];
+    for(let i=combustionQs.length-1;i>=0;i--){
+      const q=combustionQs[i]?.q||'';
+      if(removePatterns.some(re=>re.test(q)))combustionQs.splice(i,1);
+    }
+
+    // Behold bare ett massebevaringsspørsmål av denne typen, med realistiske alternativer.
+    combustionQs.push({
+      q:'Et magnesiumbånd veier mer etter at det har brent i luft. Hvilken forklaring passer best?',
+      o:[
+        'Magnesium har reagert med oksygen fra lufta, og oksygenatomene er blitt en del av produktet',
+        'Magnesium har reagert, men oksygenet virker bare som katalysator og blir ikke med i produktet',
+        'Noe magnesium har fordampet; derfor må massen til det faste produktet være større',
+        'Magnesium har hovedsakelig tatt opp hydrogen fra lufta og dannet MgH2'
+      ],
+      a:'Magnesium har reagert med oksygen fra lufta, og oksygenatomene er blitt en del av produktet',
+      e:'Når Mg reagerer med O₂ og danner MgO, kommer ekstra masse inn i systemet som oksygen fra lufta.'
+    });
+
+    combustionQs.push({
+      q:'Et metall brenner i luft og danner et fast oksid. Hvilken opplysning trenger du for å kunne skrive riktig formel for oksidet?',
+      o:[
+        'Hvilke ioneladninger metallet og oksygen får',
+        'Fargen på flammen alene',
+        'Hvor lenge metallet brenner',
+        'Om metallet er blankt før forsøket'
+      ],
+      a:'Hvilke ioneladninger metallet og oksygen får',
+      e:'Formelen til et ionisk oksid bestemmes av ioneladningene slik at forbindelsen totalt blir elektrisk nøytral.'
+    });
+  }
+
+  // Samme kvalitetsrydding i karbonkjemiens forbrenningsbank.
+  if(typeof carbonBanks!=='undefined' && Array.isArray(carbonBanks.combustion)){
+    const weakPatterns=[
+      /En kald glassflate holdes over en ren flamme fra et hydrokarbon/i
+    ];
+    for(let i=carbonBanks.combustion.length-1;i>=0;i--){
+      const s=`${carbonBanks.combustion[i]?.scene||''} ${carbonBanks.combustion[i]?.q||''}`;
+      if(weakPatterns.some(re=>re.test(s)))carbonBanks.combustion.splice(i,1);
+    }
+  }
+})();
+</script>
+
+
+<style id="kjemi-v57-term-tip-style">
+.term-tip{
+  position:relative;
+  display:inline-block;
+  border-bottom:1px dotted currentColor;
+  cursor:help;
+  outline:none;
+}
+.term-tip-box{
+  position:absolute;
+  z-index:80;
+  left:50%;
+  bottom:calc(100% + 7px);
+  transform:translateX(-50%);
+  width:max-content;
+  max-width:min(260px,78vw);
+  padding:7px 9px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  color:var(--text);
+  box-shadow:0 8px 22px rgba(20,45,38,.14);
+  font-size:.76rem;
+  font-weight:500;
+  line-height:1.35;
+  white-space:normal;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .12s ease,visibility .12s ease;
+}
+.term-tip:hover .term-tip-box,
+.term-tip:focus .term-tip-box,
+.term-tip:focus-visible .term-tip-box{
+  opacity:1;
+  visibility:visible;
+}
+</style>
+
+<script id="kjemi-v57-hydrocarbon-tooltip">
+(function(){
+  const roots=['#combustionArea','#carbonArea'];
+  const re=/(hydrokarbon(?:ene|er|et)?)/gi;
+
+  function decorate(root){
+    if(!root)return;
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{
+      acceptNode(node){
+        const p=node.parentElement;
+        if(!p || p.closest('.term-tip') || p.matches('script,style,input,textarea,select,option')) return NodeFilter.FILTER_REJECT;
+        return re.test(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+
+    const nodes=[];
+    while(walker.nextNode()) nodes.push(walker.currentNode);
+
+    nodes.forEach(node=>{
+      re.lastIndex=0;
+      const s=node.nodeValue;
+      let last=0, m;
+      const frag=document.createDocumentFragment();
+
+      while((m=re.exec(s))){
+        if(m.index>last) frag.append(document.createTextNode(s.slice(last,m.index)));
+
+        const wrap=document.createElement('span');
+        wrap.className='term-tip';
+        wrap.tabIndex=0;
+        wrap.setAttribute('aria-label',m[0]+'. Består bare av karbon og hydrogen. Eksempler: metan CH4 og propan C3H8.');
+        wrap.append(document.createTextNode(m[0]));
+
+        const box=document.createElement('span');
+        box.className='term-tip-box';
+        box.setAttribute('role','tooltip');
+        box.innerHTML='Består bare av karbon og hydrogen.<br>Eksempler: metan (CH₄) og propan (C₃H₈).';
+        wrap.append(box);
+
+        frag.append(wrap);
+        last=re.lastIndex;
+      }
+      if(last<s.length) frag.append(document.createTextNode(s.slice(last)));
+      node.replaceWith(frag);
+    });
+  }
+
+  roots.forEach(sel=>{
+    const root=document.querySelector(sel);
+    if(!root)return;
+    decorate(root);
+    const observer=new MutationObserver(()=>decorate(root));
+    observer.observe(root,{childList:true,subtree:true});
+  });
+})();
+</script>
+
+
+<style id="kjemi-v58-multiselect-matrix-style">
+/* Flersvarsoppgaver: alltid én kolonne for bedre skanning. */
+.options.combustion-multi{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) !important;
+  gap:8px !important;
+  max-width:760px;
+}
+.options.combustion-multi .option{
+  width:100%;
+  justify-content:flex-start;
+  text-align:left;
+}
+
+/* Matrise for hvilke bindinger som brytes og dannes. */
+.bond-matrix{
+  width:min(680px,100%);
+  border:1px solid var(--line);
+  border-radius:10px;
+  overflow:hidden;
+  margin-top:12px;
+  background:#fff;
+}
+.bond-matrix-row{
+  display:grid;
+  grid-template-columns:minmax(180px,1fr) 92px 92px;
+  align-items:stretch;
+}
+.bond-matrix-row + .bond-matrix-row{border-top:1px solid var(--line)}
+.bond-matrix-cell{
+  min-height:46px;
+  display:flex;
+  align-items:center;
+  padding:9px 12px;
+}
+.bond-matrix-cell + .bond-matrix-cell{border-left:1px solid var(--line)}
+.bond-matrix-head .bond-matrix-cell{
+  min-height:38px;
+  background:var(--soft);
+  color:var(--muted);
+  font-size:.76rem;
+  font-weight:800;
+  justify-content:center;
+}
+.bond-matrix-head .bond-matrix-cell:first-child{justify-content:flex-start}
+.bond-matrix-label{font-weight:700;font-size:.86rem}
+.bond-matrix-check{justify-content:center}
+.bond-matrix-check input{
+  width:19px;
+  height:19px;
+  accent-color:var(--accent);
+}
+.bond-matrix-row.matrix-correct .bond-matrix-label{color:var(--accent)}
+.bond-matrix-check.matrix-good{background:var(--soft)}
+.bond-matrix-check.matrix-bad{background:#fff1f1}
+@media(max-width:600px){
+  .bond-matrix-row{grid-template-columns:minmax(135px,1fr) 74px 74px}
+  .bond-matrix-cell{padding:8px}
+}
+</style>
+
+<script id="kjemi-v58-multiselect-matrix">
+(function(){
+  function renderBondMatrix(area, cfg){
+    const rows=cfg.rows;
+    const correct=new Set(cfg.correct.map(([bond,action])=>bond+'|'+action));
+
+    area.innerHTML=
+      (cfg.scene?`<div class="note formula">${prettyFormula(cfg.scene)}</div>`:'')+
+      `<div class="question">${prettyFormula(cfg.q)}</div>`+
+      `<div class="bond-matrix">
+        <div class="bond-matrix-row bond-matrix-head">
+          <div class="bond-matrix-cell">Bindingstype</div>
+          <div class="bond-matrix-cell">Brytes</div>
+          <div class="bond-matrix-cell">Dannes</div>
+        </div>
+        ${rows.map(b=>`
+          <div class="bond-matrix-row" data-bond="${b}">
+            <div class="bond-matrix-cell bond-matrix-label">${prettyFormula(b)}</div>
+            <label class="bond-matrix-cell bond-matrix-check"><input type="checkbox" data-action="brytes" aria-label="${b} brytes"></label>
+            <label class="bond-matrix-cell bond-matrix-check"><input type="checkbox" data-action="dannes" aria-label="${b} dannes"></label>
+          </div>`).join('')}
+      </div>
+      <div class="module-tools"><button class="btn" id="bondMatrixCheck">Sjekk svar</button></div>
+      <div class="feedback" id="bondMatrixFb"></div>
+      <div class="explain" id="bondMatrixEx">${prettyFormula(cfg.e)}</div>`;
+
+    const boxes=[...area.querySelectorAll('.bond-matrix input')];
+    $('#bondMatrixCheck').onclick=()=>{
+      const selected=new Set(boxes.filter(x=>x.checked).map(x=>x.closest('.bond-matrix-row').dataset.bond+'|'+x.dataset.action));
+      const ok=selected.size===correct.size && [...correct].every(x=>selected.has(x));
+
+      boxes.forEach(x=>{
+        const key=x.closest('.bond-matrix-row').dataset.bond+'|'+x.dataset.action;
+        const cell=x.closest('.bond-matrix-check');
+        cell.classList.remove('matrix-good','matrix-bad');
+        if(correct.has(key)) cell.classList.add('matrix-good');
+        else if(x.checked) cell.classList.add('matrix-bad');
+        x.disabled=true;
+      });
+      const fb=$('#bondMatrixFb'),ex=$('#bondMatrixEx');
+      fb.textContent=ok?'Riktig.':'Ikke helt.';
+      fb.className='feedback '+(ok?'good':'bad');
+      ex.classList.add('show');
+      $('#bondMatrixCheck').disabled=true;
+    };
+  }
+
+  const magnesiumMatrix={
+    q:'Magnesium brenner i oksygen og danner MgO. Hvilke bindingstyper brytes og hvilke dannes? Huk av det som passer.',
+    rows:['Metallbinding','Elektronparbinding','Ionebinding','Hydrogenbinding'],
+    correct:[
+      ['Metallbinding','brytes'],
+      ['Elektronparbinding','brytes'],
+      ['Ionebinding','dannes']
+    ],
+    e:'Metallbindingene i magnesium og elektronparbindingen i O₂ brytes. I MgO dannes ionebinding mellom Mg²⁺ og O²⁻.'
+  };
+
+  const calciumFluorineMatrix={
+    q:'Kalsium reagerer med fluorgass og danner CaF₂. Hvilke bindingstyper brytes og hvilke dannes? Huk av det som passer.',
+    rows:['Metallbinding','Elektronparbinding','Ionebinding','Hydrogenbinding'],
+    correct:[
+      ['Metallbinding','brytes'],
+      ['Elektronparbinding','brytes'],
+      ['Ionebinding','dannes']
+    ],
+    e:'Metallbindingene i Ca og elektronparbindingen i F₂ brytes. I CaF₂ dannes ionebinding.'
+  };
+
+  // Fjern den gamle Mg-varianten fra vanlig svarbank, slik at den ikke dukker
+  // opp både som tekstalternativer og som matrise.
+  if(typeof combustionQs!=='undefined' && Array.isArray(combustionQs)){
+    for(let i=combustionQs.length-1;i>=0;i--){
+      if(/Hvilke bindingstyper brytes og dannes når magnesium/i.test(combustionQs[i]?.q||'')){
+        combustionQs.splice(i,1);
+      }
+    }
+  }
+
+  // Fjern den gamle CaF2-varianten fra bondTheory. Den rendres som matrise i stedet.
+  if(typeof bondTheory!=='undefined' && Array.isArray(bondTheory)){
+    for(let i=bondTheory.length-1;i>=0;i--){
+      if(/Kalsium reagerer med fluorgass.*bindinger brytes/i.test(bondTheory[i]?.q||'')){
+        bondTheory.splice(i,1);
+      }
+    }
+  }
+
+  // Ta også bort samme gamle énfasit-variant fra testInspired dersom den finnes,
+  // siden denne oppgavetypen nå er laget for matrisen.
+  if(typeof testInspired!=='undefined' && Array.isArray(testInspired)){
+    for(let i=testInspired.length-1;i>=0;i--){
+      const s=String(testInspired[i]);
+      if(/Kalsium reagerer med fluor.*bindinger brytes og dannes/i.test(s)){
+        testInspired.splice(i,1);
+      }
+    }
+  }
+
+  // Wrapper rundt den gjeldende forbrenningsgeneratoren:
+  // ca. 1 av 7 oppgaver blir binding-matrisen.
+  const previousCombustion=newCombustion;
+  newCombustion=function(){
+    if(Math.random()<.14){
+      renderBondMatrix($('#combustionArea'),magnesiumMatrix);
+      return;
+    }
+    previousCombustion();
+  };
+
+  // Wrapper rundt Sterke bindinger:
+  // i Generelt kan Ca/F2-matrisen komme inn som en egen oppgavetype.
+  const previousBinding=newBinding;
+  newBinding=function(){
+    const mode=currentMode('bindingMode')||'general';
+    if(mode==='general' && Math.random()<.16){
+      renderBondMatrix($('#bindingArea'),calciumFluorineMatrix);
+      return;
+    }
+    previousBinding();
+  };
+
+  // Eksponer for testing/debugging.
+  window.onlyfagRenderBondMatrix=renderBondMatrix;
 })();
 </script>
 
