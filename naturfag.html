@@ -1452,6 +1452,203 @@ body.side-collapsed .sidebar-info-wrap{display:none}
 }
 </style>
 
+
+<style id="onlyfag-v27-exercise-spacing">
+/* Behold kompakt toppfelt, men gi selve oppgavene mer luft. */
+#page-atom > .card,
+#page-ion > .card,
+#page-salt > .card,
+#page-ionsalts > .card,
+#page-binding > .card,
+#page-polar > .card,
+#page-solubility > .card,
+#page-balance > .card,
+#page-redox > .card,
+#page-carbon > .card,
+#page-combustion > .card{
+  padding:24px 26px 28px!important;
+}
+
+/* Tydelig rytme: visuelt materiale → spørsmål → svar. */
+#page-atom .question,
+#page-ion .question,
+#page-salt .question,
+#page-ionsalts .question,
+#page-binding .question,
+#page-polar .question,
+#page-solubility .question,
+#page-balance .question,
+#page-redox .question,
+#page-carbon .question,
+#page-combustion .question{
+  margin-top:12px!important;
+  margin-bottom:20px!important;
+  line-height:1.48!important;
+}
+
+#page-binding .molecule + .question,
+#page-polar .molecule + .question,
+#page-solubility .solubility-scene + .question,
+#page-carbon .note + .question,
+#page-carbon .carbon-scenario + .question,
+#page-combustion .note + .question{
+  margin-top:20px!important;
+}
+
+#page-binding .molecule,
+#page-polar .molecule{
+  min-height:148px!important;
+  margin-bottom:4px!important;
+}
+
+#page-solubility .beaker{
+  min-height:175px!important;
+}
+#page-solubility .solubility-scene{
+  margin-bottom:6px!important;
+}
+
+#page-balance .equation{
+  margin:18px 0 17px!important;
+}
+#page-balance .state-key{
+  margin-bottom:12px!important;
+}
+#page-balance .module-tools{
+  margin-top:17px!important;
+  margin-bottom:8px!important;
+}
+
+#page-atom .options,
+#page-ion .options,
+#page-salt .options,
+#page-ionsalts .options,
+#page-binding .options,
+#page-polar .options,
+#page-solubility .options,
+#page-redox .options,
+#page-carbon .options,
+#page-combustion .options{
+  gap:12px!important;
+}
+
+#page-atom .option,
+#page-ion .option,
+#page-salt .option,
+#page-ionsalts .option,
+#page-binding .option,
+#page-polar .option,
+#page-solubility .option,
+#page-redox .option,
+#page-carbon .option,
+#page-combustion .option{
+  min-height:54px;
+  padding:14px 16px!important;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  line-height:1.4;
+}
+
+/* Lange tekstalternativer skal fortsatt være venstrestilt der det hjelper lesingen. */
+#page-atom .option:has(.solvent-card),
+#page-carbon .option{
+  text-align:left;
+}
+
+#page-carbon .note,
+#page-combustion .note{
+  margin-bottom:18px!important;
+  padding:12px 14px!important;
+}
+
+#page-binding .bond-matrix{
+  margin-top:18px!important;
+}
+
+/* Mobil: litt mindre økning, ellers blir hver oppgave unødig lang. */
+@media(max-width:860px){
+  #page-atom > .card,
+  #page-ion > .card,
+  #page-salt > .card,
+  #page-ionsalts > .card,
+  #page-binding > .card,
+  #page-polar > .card,
+  #page-solubility > .card,
+  #page-balance > .card,
+  #page-redox > .card,
+  #page-carbon > .card,
+  #page-combustion > .card{
+    padding:19px 17px 22px!important;
+  }
+  #page-atom .question,
+  #page-ion .question,
+  #page-salt .question,
+  #page-ionsalts .question,
+  #page-binding .question,
+  #page-polar .question,
+  #page-solubility .question,
+  #page-balance .question,
+  #page-redox .question,
+  #page-carbon .question,
+  #page-combustion .question{
+    margin-bottom:16px!important;
+  }
+}
+</style>
+
+
+<style id="onlyfag-v28-state-legend">
+#balanceArea .state-task-head{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 170px;
+  gap:22px;
+  align-items:start;
+  margin-bottom:16px;
+}
+#balanceArea .state-task-head .question{
+  margin:0!important;
+  align-self:center;
+}
+#balanceArea .state-key{
+  margin:0!important;
+  padding:9px 11px!important;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:var(--panel2);
+  color:var(--muted);
+  font-size:.75rem;
+  line-height:1.45;
+  text-align:left!important;
+  display:grid;
+  gap:2px;
+}
+#balanceArea .state-key-row{
+  display:grid;
+  grid-template-columns:34px 1fr;
+  gap:5px;
+  align-items:baseline;
+}
+#balanceArea .state-key-row strong{
+  color:var(--text);
+  font-weight:850;
+}
+#balanceArea .equation{
+  margin-top:4px!important;
+}
+@media(max-width:760px){
+  #balanceArea .state-task-head{
+    grid-template-columns:1fr;
+    gap:10px;
+    margin-bottom:14px;
+  }
+  #balanceArea .state-key{
+    width:max-content;
+    max-width:100%;
+  }
+}
+</style>
+
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
@@ -1883,9 +2080,18 @@ function newBalance(){
     :stateTask
       ?'Fyll inn koeffisientene og velg riktig tilstandsform for hvert stoff.'
       :'Fyll inn koeffisientene slik at antall atomer av hvert grunnstoff er likt på begge sider.');
+  const stateLegend=stateTask
+    ? `<div class="state-key" aria-label="Tilstandsformer">
+         <div class="state-key-row"><strong>(s)</strong><span>fast stoff</span></div>
+         <div class="state-key-row"><strong>(l)</strong><span>væske</span></div>
+         <div class="state-key-row"><strong>(g)</strong><span>gass</span></div>
+         <div class="state-key-row"><strong>(aq)</strong><span>løst i vann</span></div>
+       </div>`
+    : '';
   $('#balanceArea').innerHTML=
-    `<div class="question">${prompt}</div>`+
-    (stateTask?`<div class="state-key">(s) fast stoff · (l) væske · (g) gass · (aq) løst i vann</div>`:'')+
+    (stateTask
+      ? `<div class="state-task-head"><div class="question">${prompt}</div>${stateLegend}</div>`
+      : `<div class="question">${prompt}</div>`)+
     reactionHTML(currentReaction)+
     `<div class="module-tools"><button class="btn" onclick="checkBalance()">Sjekk</button><button class="btn secondary" onclick="revealBalance()">Vis svar</button></div>`+
     `<div class="feedback" id="balFb"></div><div class="explain" id="balEx"></div>`;
@@ -2179,14 +2385,14 @@ const carbonBanks={
 ,
 
     {
-      scene:'På grotteraven i Oslo i 2020 ble mange festdeltakere syke etter at forbrenningsmotorer/generatorer ble brukt i et dårlig ventilert, underjordisk lokale.',
+      scene:'I Oslo i 2020 ble mange deltakere syke på en såkalt grotterave – en fest i et dårlig ventilert, underjordisk lokale. Forbrenningsmotorer/generatorer ble brukt inne og slapp ut eksos.',
       q:'Hva er den beste kjemiske forklaringen på at situasjonen kunne bli farlig?',
       o:['Ufullstendig forbrenning kan danne CO som hoper seg opp når ventilasjonen er dårlig','Fullstendig forbrenning danner store mengder O2 som gjør lufta giftig','CO2 omdannes til CO bare fordi lufttrykket er høyere under bakken','Nitrogen i lufta reagerer med bensin og danner CO ved romtemperatur'],
       a:'Ufullstendig forbrenning kan danne CO som hoper seg opp når ventilasjonen er dårlig',
       e:'Forbrenningsmotorer kan danne karbonmonoksid ved ufullstendig forbrenning. I et dårlig ventilert rom kan gassen hope seg opp til farlige konsentrasjoner.'
     },
     {
-      scene:'Flere på grotteraven merket ikke den farlige gassen før de ble dårlige.',
+      scene:'På en grotterave i Oslo i 2020 – en fest i et dårlig ventilert, underjordisk lokale – ble forbrenningsmotorer/generatorer brukt inne. Flere deltakere ble dårlige uten å ha merket den farlige gassen først.',
       q:'Hvorfor er karbonmonoksid spesielt vanskelig å oppdage uten måleutstyr?',
       o:['CO er fargeløs og luktfri, samtidig som den kan binde seg sterkt til hemoglobin','CO har en svak lukt som bare kan merkes ved svært høy temperatur','CO synker alltid til gulvet og kan derfor ikke merkes i pustehøyde','CO reagerer straks med vann i lufta og blir usynlig CO2'],
       a:'CO er fargeløs og luktfri, samtidig som den kan binde seg sterkt til hemoglobin',
@@ -8329,6 +8535,95 @@ function toggleNaturfagFullscreen(){
 
   const initial=document.querySelector('.page.active');
   if(initial)syncTopbar(initial.id.replace(/^page-/,''));
+})();
+</script>
+
+
+<script id="onlyfag-v27-combustion-product-quality">
+(function(){
+  if(typeof combustionQs==='undefined' || !Array.isArray(combustionQs))return;
+
+  const specs={
+    litium:{
+      names:/\blitium\b/i,
+      answer:'Li₂O',
+      options:['Li₂O','Li₂O₂','LiH','Li₃N'],
+      explain:'I den forenklede modellen reagerer litium med oksygen og danner litiumoksid, Li₂O.'
+    },
+    magnesium:{
+      names:/\bmagnesium\b/i,
+      answer:'MgO',
+      options:['MgO','MgO₂','MgH₂','Mg₃N₂'],
+      explain:'Magnesium reagerer med oksygen og danner hovedsakelig magnesiumoksid, MgO.'
+    },
+    kalsium:{
+      names:/\bkalsium\b/i,
+      answer:'CaO',
+      options:['CaO','CaO₂','CaH₂','Ca₃N₂'],
+      explain:'I den forenklede modellen danner kalsium og oksygen kalsiumoksid, CaO.'
+    },
+    aluminium:{
+      names:/\baluminium\b/i,
+      answer:'Al₂O₃',
+      options:['Al₂O₃','AlN','AlH₃','Al₄C₃'],
+      explain:'Aluminium reagerer med oksygen og danner aluminiumoksid, Al₂O₃.'
+    },
+    svovel:{
+      names:/\bsvovel\b/i,
+      answer:'SO₂',
+      options:['SO₂','SO₃','H₂S','CS₂'],
+      explain:'I den forenklede forbrenningsmodellen er hovedproduktet svoveldioksid, SO₂.'
+    },
+    karbon:{
+      names:/\bkarbon\b/i,
+      answer:'CO₂',
+      options:['CO₂','CO','CH₄','CS₂'],
+      explain:'Ved fullstendig forbrenning av karbon er hovedproduktet CO₂.'
+    },
+    hydrogen:{
+      names:/\bhydrogen\b/i,
+      answer:'H₂O',
+      options:['H₂O','H₂O₂','NH₃','CH₄'],
+      explain:'Når hydrogen forbrennes i oksygen, dannes vann, H₂O.'
+    }
+  };
+
+  function isProductQuestion(q){
+    return /hvilket stoff dannes|hvilken formel får|hvilket .*produkt/i.test(q||'');
+  }
+
+  function fixItem(item){
+    if(!item || !isProductQuestion(item.q))return;
+    const spec=Object.values(specs).find(s=>s.names.test(item.q||''));
+    if(!spec)return;
+
+    // Every alternative must contain the element the question is about.
+    item.o=[...spec.options];
+    item.a=spec.answer;
+    item.e=spec.explain;
+  }
+
+  combustionQs.forEach(fixItem);
+
+  // Remove exact duplicates introduced by older patches while retaining
+  // distinct pedagogical variants.
+  const seen=new Set();
+  for(let i=combustionQs.length-1;i>=0;i--){
+    const q=combustionQs[i]||{};
+    const key=`${q.q||''}|${q.a||''}`.replace(/\s+/g,' ').toLowerCase();
+    if(seen.has(key))combustionQs.splice(i,1);
+    else seen.add(key);
+  }
+
+  // Final renderer wrapper: also repair any item added dynamically later.
+  const previousNewCombustion=newCombustion;
+  newCombustion=function(){
+    combustionQs.forEach(fixItem);
+    previousNewCombustion();
+  };
+
+  // Kjemiquiz draws from the same bank; fixing the bank above therefore
+  // fixes the quiz too.
 })();
 </script>
 
