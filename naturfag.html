@@ -1409,13 +1409,47 @@ body.side-collapsed .sidebar-info-wrap{display:none}
 /* Once portalled to body the popup cannot be clipped by sidebar overflow. */
 #infoPop.info-pop-portal{
   position:fixed!important;
-  z-index:100000!important;
+  z-index:2147483647!important;
   display:none;
   width:min(340px,calc(100vw - 24px))!important;
   max-height:calc(100vh - 24px);
   overflow:auto;
 }
 #infoPop.info-pop-portal.show{display:block!important;}
+</style>
+
+
+<style id="onlyfag-v26-elementname-palette-force">
+#page-elementnames .element-name-pt .pt-cell.blank.cat-alkali{
+  background:#e8f7fb!important;border-color:#cdebf2!important;
+}
+#page-elementnames .element-name-pt .pt-cell.blank.cat-alkaline{
+  background:#fde8ec!important;border-color:#f8cdd6!important;
+}
+#page-elementnames .element-name-pt .pt-cell.blank.cat-transition{
+  background:#eee8ff!important;border-color:#ddd2ff!important;
+}
+#page-elementnames .element-name-pt .pt-cell.blank.cat-post{
+  background:#e5f4e8!important;border-color:#cfe8d5!important;
+}
+#page-elementnames .element-name-pt .pt-cell.blank.cat-metalloid{
+  background:#fbf0d3!important;border-color:#f3dfaa!important;
+}
+#page-elementnames .element-name-pt .pt-cell.blank.cat-nonmetal{
+  background:#e1efff!important;border-color:#c9e0fb!important;
+}
+#page-elementnames .element-name-pt .pt-cell.blank.cat-halogen{
+  background:#e5f3ff!important;border-color:#cde6fb!important;
+}
+#page-elementnames .element-name-pt .pt-cell.blank.cat-noble{
+  background:#fae5ed!important;border-color:#f3cddd!important;
+}
+#page-elementnames .element-name-pt .pt-cell.blank.cat-lanthanide{
+  background:#e4f3fb!important;border-color:#cae5f3!important;
+}
+#page-elementnames .element-name-pt .pt-cell.blank.cat-actinide{
+  background:#fde8d9!important;border-color:#f7d2b7!important;
+}
 </style>
 
 </head>
@@ -2916,18 +2950,21 @@ window.addEventListener('keydown',e=>{
   function placeInfo(){
     if(!pop.classList.contains('show'))return;
     const r=btn.getBoundingClientRect();
-    const gap=8;
+    const sidebar=document.getElementById('sidebar');
+    const sr=sidebar?sidebar.getBoundingClientRect():null;
+    const gap=10;
     const w=Math.min(340,window.innerWidth-24);
 
-    // Prefer opening to the right of the button. If there is insufficient
-    // viewport width, keep it inside the viewport instead.
-    let left=r.left;
-    if(left+w>window.innerWidth-12)left=window.innerWidth-w-12;
-    left=Math.max(12,left);
+    // Start fully to the RIGHT of the sidebar/resizer so nothing can cover
+    // the popup text.
+    let left=(sr?sr.right:r.right)+gap;
+    if(left+w>window.innerWidth-12){
+      left=Math.max(12,window.innerWidth-w-12);
+    }
 
     pop.style.left=left+'px';
     pop.style.right='auto';
-    pop.style.top=Math.min(window.innerHeight-60,r.bottom+gap)+'px';
+    pop.style.top=Math.max(12,Math.min(window.innerHeight-80,r.top))+'px';
   }
 
   function closeInfo(){
@@ -7799,6 +7836,32 @@ function toggleNaturfagFullscreen(){
     return periodicTableV3({blank:true,solved:state.solved});
   }
 
+  function elementNameCategory(e){
+    if(!e)return 'cat-post';
+    if(e.series==='lanthanide')return 'cat-lanthanide';
+    if(e.series==='actinide')return 'cat-actinide';
+    if(e.group===1 && e.s!=='H')return 'cat-alkali';
+    if(e.group===2)return 'cat-alkaline';
+    if(v3Noble.has(e.s))return 'cat-noble';
+    if(v3Halogens.has(e.s))return 'cat-halogen';
+    if(v3Metalloids.has(e.s))return 'cat-metalloid';
+    if(v3OtherNonmetals.has(e.s))return 'cat-nonmetal';
+    if(v3Transition.has(e.s))return 'cat-transition';
+    return 'cat-post';
+  }
+
+  function decorateElementNameTable(){
+    area.querySelectorAll('.element-name-pt .pt-cell[data-el]').forEach(cell=>{
+      const e=v3BySymbol[cell.dataset.el];
+      if(!e)return;
+      [
+        'cat-alkali','cat-alkaline','cat-transition','cat-post','cat-metalloid',
+        'cat-nonmetal','cat-halogen','cat-noble','cat-lanthanide','cat-actinide'
+      ].forEach(c=>cell.classList.remove(c));
+      cell.classList.add(elementNameCategory(e));
+    });
+  }
+
   function fitElementNameQuiz(){
     const pt=area.querySelector('.element-name-pt');
     if(!pt)return;
@@ -7936,6 +7999,7 @@ function toggleNaturfagFullscreen(){
         </div>
       </div>
     </div>`;
+    decorateElementNameTable();
     document.getElementById('elementNameStart').onclick=startQuiz;
     queueFit();
   }
@@ -7956,6 +8020,7 @@ function toggleNaturfagFullscreen(){
         </div>
       </div>
     </div>`;
+    decorateElementNameTable();
     const input=document.getElementById('elementNameInput');
     input.addEventListener('input',handleInput);
     input.addEventListener('keydown',e=>{
@@ -7988,6 +8053,7 @@ function toggleNaturfagFullscreen(){
         </div>
       </div>
     </div>`;
+    decorateElementNameTable();
     document.getElementById('elementNameRestart').onclick=startQuiz;
     queueFit();
   }
