@@ -677,6 +677,131 @@ body.dark .v40-context{background:var(--panel2)}
 }
 </style>
 
+
+<style id="kjemi-v64-element-name-quiz-style">
+#page-elementnames .content{max-width:none}
+.element-name-quiz-card{
+  padding:14px;
+  overflow:hidden;
+}
+.element-name-quiz-shell{
+  display:grid;
+  gap:15px;
+}
+.element-name-pt{
+  width:100%;
+  overflow-x:auto;
+  padding-bottom:2px;
+}
+.element-name-pt .pt-wrap{
+  overflow:visible;
+  padding:0;
+}
+.element-name-pt .pt-grid{
+  width:100%;
+  min-width:690px;
+  grid-template-columns:22px repeat(18,minmax(0,1fr));
+  grid-template-rows:17px repeat(7,38px) 9px 38px 38px;
+  gap:3px;
+}
+.element-name-pt .pt-cell{
+  min-width:0;
+  padding:1px;
+  border-radius:5px;
+}
+.element-name-pt .pt-cell .sym{
+  font-size:.82rem;
+  font-weight:850;
+}
+.element-name-pt .pt-cell .num,
+.element-name-pt .pt-cell .nm{
+  display:none!important;
+}
+.element-name-pt .pt-head,
+.element-name-pt .pt-period{
+  font-size:.55rem;
+}
+.element-name-pt .pt-f-label{
+  visibility:hidden;
+}
+.element-name-pt .pt-placeholder{
+  font-size:.46rem;
+  border-radius:5px;
+}
+.element-name-pt .pt-cell.blank{
+  background:color-mix(in srgb,var(--muted) 3%,var(--panel2))!important;
+  border-color:var(--line)!important;
+}
+.element-name-pt .pt-cell.solved{
+  background:var(--soft)!important;
+  border-color:color-mix(in srgb,var(--accent) 50%,var(--line))!important;
+  color:var(--accent2);
+}
+.element-name-console{
+  width:min(620px,100%);
+  margin:0 auto;
+  display:grid;
+  gap:11px;
+  text-align:center;
+}
+.element-name-stats{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.element-name-current{
+  color:var(--muted);
+  font-size:.82rem;
+  font-weight:750;
+}
+.element-name-input{
+  width:min(420px,100%);
+  margin:0 auto;
+  border:1.5px solid color-mix(in srgb,var(--accent) 55%,var(--line));
+  background:var(--panel);
+  color:var(--text);
+  border-radius:11px;
+  padding:11px 14px;
+  text-align:center;
+  font-size:1.12rem;
+  font-weight:750;
+  outline:none;
+}
+.element-name-input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 13%,transparent);
+}
+.element-name-input.failed{
+  border-color:var(--bad);
+  background:var(--badbg);
+}
+.element-name-fail{
+  min-height:26px;
+  font-size:.92rem;
+  font-weight:750;
+  color:var(--bad);
+}
+.element-name-correct-answer{
+  color:var(--text);
+  font-weight:800;
+}
+.element-name-start{
+  display:flex;
+  justify-content:center;
+}
+#floatingPtBtn:disabled{
+  opacity:.42;
+  cursor:not-allowed;
+  pointer-events:none;
+}
+@media(max-width:700px){
+  .element-name-quiz-card{padding:10px}
+  .element-name-pt .pt-grid{min-width:620px}
+  .element-name-pt .pt-cell .sym{font-size:.72rem}
+}
+</style>
+
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
@@ -696,8 +821,9 @@ body.dark .v40-context{background:var(--panel2)}
     <button class="nav-btn" data-page="carbon"><span class="nav-icon">C</span><span class="nav-txt">Karbonkjemi</span></button>
     <button class="nav-btn" data-page="combustion"><span class="nav-icon">△</span><span class="nav-txt">Forbrenning</span></button>
     <div class="nf-menu-divider" aria-hidden="true"></div>
-    <button class="nav-btn" data-page="mix"><span class="nav-icon">✓</span><span class="nav-txt">Blandet fagquiz</span></button>
-    <button class="nav-btn" data-page="elementquiz"><span class="nav-icon">◎</span><span class="nav-txt">Grunnstoffquiz</span></button>
+    <button class="nav-btn" data-page="mix"><span class="nav-icon">✓</span><span class="nav-txt">Kjemiquiz – alle tema</span></button>
+    <button class="nav-btn" data-page="elementquiz"><span class="nav-icon">◎</span><span class="nav-txt">Periodesystemquiz</span></button>
+    <button class="nav-btn" data-page="elementnames"><span class="nav-icon">H</span><span class="nav-txt">Grunnstoffquiz</span></button>
   </div>
   <div class="nf-sidebar-tools" aria-label="Sideverktøy">
     <button class="nf-tool-button" type="button" onclick="window.print()" aria-label="Lagre som PDF" title="Lagre som PDF">↓</button>
@@ -808,17 +934,26 @@ body.dark .v40-context{background:var(--panel2)}
 
     <section class="page" id="page-elementquiz">
       <div class="element-quiz-heading">
-        <h1>Hvor godt kan du periodesystemet?</h1>
+        <h1>Periodesystemquiz</h1>
         <div id="elementQuizMode" hidden>
-          <button data-mode="ish" class="active">Grunnstoffquiz</button>
+          <button data-mode="ish" class="active">Periodesystemquiz</button>
         </div>
       </div>
       
       <div class="card periodic-card"><div id="elementQuizSlot"></div></div>
     </section>
 
+
+    <section class="page" id="page-elementnames">
+      <span class="eyebrow">Quiz</span>
+      <h1>Grunnstoffquiz</h1>
+      <div class="card element-name-quiz-card">
+        <div id="elementNameQuizArea"></div>
+      </div>
+    </section>
+
     <section class="page" id="page-mix">
-      <span class="eyebrow">Quiz</span><h1>Blandet fagquiz</h1>
+      <span class="eyebrow">Quiz</span><h1>Kjemiquiz – alle tema</h1>
       <div class="card" id="quizSetupCard"><div class="quiz-setup"><div class="field"><label>Antall spørsmål</label><select id="quizCount"><option>10</option><option>15</option><option>20</option><option>30</option></select></div><div class="field"><label>Nivå</label><select id="quizLevel"><option value="basic">Grunnleggende</option><option value="mixed" selected>Blandet</option><option value="challenge">Utfordring</option></select></div><div class="field"><label>Tilbakemelding</label><select id="quizFeedback"><option value="instant" selected>Etter hvert spørsmål</option><option value="end">Bare til slutt</option></select></div><div><button class="btn" onclick="startQuiz()">Start quiz</button></div></div></div>
       <div class="card hidden" id="quizCard"><div class="stats"><span class="stat">Spørsmål <strong id="quizPos">1</strong>/<strong id="quizTotal">10</strong></span><span class="stat">Poeng <strong id="quizScore">0</strong></span><span class="stat" id="quizTopic">Tema</span></div><div class="progress"><div id="quizBar"></div></div><div id="quizArea"></div></div>
       <div class="card result-box" id="quizResult"><div class="result-score" id="resultScore">0/10</div><h2 id="resultTitle">Ferdig</h2><p class="lead" style="margin-inline:auto" id="resultText"></p><button class="btn" onclick="startQuiz()">Ny runde</button><button class="btn secondary" onclick="showQuizSetup()">Innstillinger</button></div>
@@ -848,7 +983,7 @@ function mc(container, options, answer, feedbackId, explanation=''){
 function setupSeg(id,callback){$('#'+id).querySelectorAll('button').forEach(b=>b.onclick=()=>{$('#'+id).querySelectorAll('button').forEach(x=>x.classList.remove('active'));b.classList.add('active');callback(b.dataset.mode);});}
 function currentMode(id){return $('#'+id+' button.active').dataset.mode}
 
-const titles={home:'Kjemi – oppgavebank',atom:'Atomer & periodesystem',ion:'Ioner',salt:'Ioniske forbindelser',binding:'Sterke bindinger',polar:'Polaritet & svake bindinger',solubility:'Løselighet',balance:'Reaksjonslikninger',redox:'Elektronoverføring',combustion:'Forbrenning',carbon:'Karbonkjemi',mix:'Blandet fagquiz'};
+const titles={home:'Kjemi – oppgavebank',atom:'Atomer & periodesystem',ion:'Ioner',salt:'Ioniske forbindelser',binding:'Sterke bindinger',polar:'Polaritet & svake bindinger',solubility:'Løselighet',balance:'Reaksjonslikninger',redox:'Elektronoverføring',combustion:'Forbrenning',carbon:'Karbonkjemi',mix:'Kjemiquiz – alle tema'};
 function openPage(name){$$('.page').forEach(p=>p.classList.remove('active'));$('#page-'+name).classList.add('active');$$('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===name));$('#topTitle').textContent=titles[name];document.body.classList.remove('mobile-open');window.scrollTo({top:0,behavior:'instant'});}
 $$('.nav-btn').forEach(b=>b.onclick=()=>openPage(b.dataset.page));
 const safeStore={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
@@ -858,7 +993,7 @@ if(safeStore.get('chemTheme')==='dark')document.body.classList.add('dark');
 if(safeStore.get('chemSide')==='1'&&innerWidth>860)document.body.classList.add('side-collapsed');
 
 const homeModules=[
-['atom','⚛','Atomer & periodesystem','Atomoppbygning, skall, grupper, perioder og atomstørrelse.'],['ion','±','Ioner','Ladning, elektronantall, kationer, anioner og åtteregelen.'],['salt','▦','Ioniske forbindelser','Sett sammen ioner til nøytrale salter og skriv formel.'],['binding','⌁','Sterke bindinger','Ionisk, upolar/polar elektronparbinding og metallbinding.'],['polar','↔','Polaritet & svake bindinger','Polaritet, dipolbindinger og hydrogenbindinger.'],['solubility','◌','Løselighet','Likt løser likt, ionestyrke og utfelling.'],['balance','⇌','Reaksjonslikninger','Koeffisienter fra en stor reaksjonsbank i flere nivåer.'],['redox','e⁻','Elektronoverføring','Hvem avgir, hvem mottar og hvor mange elektroner?'],['carbon','C','Karbonkjemi','Karbonreaksjoner, karbonkretsløp, havforsuring, allotroper og organisk kjemi.'],['combustion','△','Forbrenning','Branntrekant, fullstendig og ufullstendig forbrenning.'],['mix','✓','Blandet fagquiz','Sett sammen en tilfeldig fagquiz på 10–30 spørsmål.']];
+['atom','⚛','Atomer & periodesystem','Atomoppbygning, skall, grupper, perioder og atomstørrelse.'],['ion','±','Ioner','Ladning, elektronantall, kationer, anioner og åtteregelen.'],['salt','▦','Ioniske forbindelser','Sett sammen ioner til nøytrale salter og skriv formel.'],['binding','⌁','Sterke bindinger','Ionisk, upolar/polar elektronparbinding og metallbinding.'],['polar','↔','Polaritet & svake bindinger','Polaritet, dipolbindinger og hydrogenbindinger.'],['solubility','◌','Løselighet','Likt løser likt, ionestyrke og utfelling.'],['balance','⇌','Reaksjonslikninger','Koeffisienter fra en stor reaksjonsbank i flere nivåer.'],['redox','e⁻','Elektronoverføring','Hvem avgir, hvem mottar og hvor mange elektroner?'],['carbon','C','Karbonkjemi','Karbonreaksjoner, karbonkretsløp, havforsuring, allotroper og organisk kjemi.'],['combustion','△','Forbrenning','Branntrekant, fullstendig og ufullstendig forbrenning.'],['mix','✓','Kjemiquiz – alle tema','Sett sammen en tilfeldig fagquiz på 10–30 spørsmål.']];
 $('#homeGrid').innerHTML=homeModules.map(([p,i,t,d])=>`<div class="home-card" data-go="${p}"><div style="font-size:1.25rem;margin-bottom:8px">${i}</div><strong>${t}</strong><div class="mini">${d}</div></div>`).join('');$$('[data-go]').forEach(c=>c.onclick=()=>openPage(c.dataset.go));
 
 const elements=[
@@ -1426,9 +1561,9 @@ const carbonBanks={
     {
       scene:'En tykk blyantstrek kan registreres som elektrisk ledende med et følsomt multimeter.',
       q:'Hva forklarer at grafitt kan lede strøm?',
-      o:['Noen elektroner er delokaliserte og kan bevege seg langs karbonlagene','Grafitt inneholder frie Mg2+-ioner mellom karbonlagene','Karbonatomene i grafitt avgir alle fire valenselektronene','Strømmen går fordi lagene i grafitt glir mot hverandre'],
-      a:'Noen elektroner er delokaliserte og kan bevege seg langs karbonlagene',
-      e:'I grafitt er noen elektroner delokaliserte over lagene og kan transportere ladning.'
+      o:['Noen elektroner kan bevege seg langs karbonlagene','Grafitt inneholder frie Mg2+-ioner mellom karbonlagene','Karbonatomene i grafitt avgir alle fire valenselektronene','Strømmen går fordi lagene i grafitt glir mot hverandre'],
+      a:'Noen elektroner kan bevege seg langs karbonlagene',
+      e:'I grafitt kan noen elektroner bevege seg langs karbonlagene og transportere ladning.'
     },
     {
       scene:'Grafitt er mye mykere enn diamant og kan brukes som smøremiddel.',
@@ -1833,7 +1968,7 @@ const bondBank2=[
 {f:'HCl',type:'Polar elektronparbinding',why:'Hydrogen og klor er to ulike ikke-metaller.'},{f:'H2O',type:'Polar elektronparbinding',why:'Hydrogen og oksygen er ulike ikke-metaller.'},{f:'NH3',type:'Polar elektronparbinding',why:'Nitrogen og hydrogen er ulike ikke-metaller.'},{f:'SO2',type:'Polar elektronparbinding',why:'Svovel og oksygen er ulike ikke-metaller.'},{f:'HF',type:'Polar elektronparbinding',why:'Hydrogen og fluor er ulike ikke-metaller.'}
 ];
 const bondTheory=[
-{q:'Hvilken beskrivelse av metallbinding er mest riktig?',o:['Positivt ladde metallioner tiltrekkes av frie elektroner','Negativt ladde metallioner tiltrekkes av frie elektroner','Positivt ladde metallioner tiltrekkes av negative ioner','Metallatomer holdes sammen av hydrogenbindinger'],a:'Positivt ladde metallioner tiltrekkes av frie elektroner',e:'I metallmodellen ligger positive metallioner i en sjø av delokaliserte elektroner.'},
+{q:'Hvilken beskrivelse av metallbinding er mest riktig?',o:['Positivt ladde metallioner tiltrekkes av frie elektroner','Negativt ladde metallioner tiltrekkes av frie elektroner','Positivt ladde metallioner tiltrekkes av negative ioner','Metallatomer holdes sammen av hydrogenbindinger'],a:'Positivt ladde metallioner tiltrekkes av frie elektroner',e:'I metallmodellen er positive metallioner omgitt av frie elektroner som kan bevege seg gjennom metallet.'},
 {q:'Kalsium reagerer med fluorgass og danner CaF₂. Hvilke bindinger brytes og hvilke nye dannes?',o:['Metallbinding og elektronparbinding brytes, ionisk binding dannes','Ionisk binding og metallbinding brytes, ionisk binding dannes','Hydrogenbinding og metallbinding brytes, elektronparbinding dannes','Elektronparbinding og ionisk binding brytes, metallbinding dannes'],a:'Metallbinding og elektronparbinding brytes, ionisk binding dannes',e:'Metallbindingene i Ca og F–F-bindingen brytes; produktet CaF₂ er ionisk.'}
 ];
 const bondOrderBank=[
@@ -1926,7 +2061,7 @@ if(type==='redox'){const r=rand(redoxBank);return{topic:'Elektronoverføring',q:
 const c=rand(combustionQs);return{topic:'Forbrenning',q:prettyFormula(c.q),a:prettyFormula(c.a),o:c.o.map(prettyFormula),e:prettyFormula(c.e)}};
 
 const homeModules2=[
-['atom','⚛','Atomer','Atomoppbygning, skall og periodiske trender.'],['periodic','▤','Periodesystem','Oppbygning, grupper, perioder og plassering av grunnstoffer.'],['ion','±','Ioner','Ladning, elektronantall, åtteregelen og like elektrontall.'],['salt','▦','Ioniske forbindelser','Sett sammen ioner og tolk kjemiske formler.'],['binding','⌁','Sterke bindinger','Ionisk, elektronparbinding og metallbinding.'],['polar','↔','Polaritet & svake bindinger','Dipoler, hydrogenbindinger og upolare stoffer.'],['solubility','◌','Løselighet','Likt løser likt, ionestørrelse og utfelling.'],['balance','⇌','Reaksjonslikninger','Koeffisienter fra en stor reaksjonsbank i flere nivåer.'],['redox','e⁻','Elektronoverføring','Hvem avgir, hvem mottar og hvor mange elektroner?'],['combustion','△','Forbrenning','Branntrekant, fullstendig og ufullstendig forbrenning.'],['mix','✓','Blandet fagquiz','Tilfeldig fagquiz med oppgavetyper fra øvingsprøven og modulene.']
+['atom','⚛','Atomer','Atomoppbygning, skall og periodiske trender.'],['periodic','▤','Periodesystem','Oppbygning, grupper, perioder og plassering av grunnstoffer.'],['ion','±','Ioner','Ladning, elektronantall, åtteregelen og like elektrontall.'],['salt','▦','Ioniske forbindelser','Sett sammen ioner og tolk kjemiske formler.'],['binding','⌁','Sterke bindinger','Ionisk, elektronparbinding og metallbinding.'],['polar','↔','Polaritet & svake bindinger','Dipoler, hydrogenbindinger og upolare stoffer.'],['solubility','◌','Løselighet','Likt løser likt, ionestørrelse og utfelling.'],['balance','⇌','Reaksjonslikninger','Koeffisienter fra en stor reaksjonsbank i flere nivåer.'],['redox','e⁻','Elektronoverføring','Hvem avgir, hvem mottar og hvor mange elektroner?'],['combustion','△','Forbrenning','Branntrekant, fullstendig og ufullstendig forbrenning.'],['mix','✓','Kjemiquiz – alle tema','Tilfeldig fagquiz med oppgavetyper fra øvingsprøven og modulene.']
 ];
 $('#homeGrid').innerHTML=homeModules2.map(([p,i,t,d])=>`<div class="home-card" data-go="${p}"><div style="font-size:1.25rem;margin-bottom:8px">${i}</div><strong>${t}</strong><div class="mini">${d}</div></div>`).join('');$$('[data-go]').forEach(c=>c.onclick=()=>openPage(c.dataset.go));
 
@@ -2183,8 +2318,9 @@ const homeModulesV13=[
 ['balance','⇌','Reaksjonslikninger','Koeffisienter fra en stor reaksjonsbank i flere nivåer.'],
 ['combustion','△','Forbrenning','Branntrekant, fullstendig og ufullstendig forbrenning.'],
 ['carbon','C','Karbonkjemi','Forbrenning, karbonallotroper, organisk kjemi, plast og olje.'],
-['mix','✓','Blandet fagquiz','Tilfeldig fagquiz med oppgavetyper fra øvingsprøven og modulene.'],
-['elementquiz','◎','Grunnstoffquiz','Plasser grunnstoffer i periodesystemet og få poeng etter avstand.']
+['mix','✓','Kjemiquiz – alle tema','Tilfeldig fagquiz med oppgavetyper fra øvingsprøven og modulene.'],
+['elementquiz','◎','Periodesystemquiz','Plasser grunnstoffer i periodesystemet og få poeng etter avstand.'],
+['elementnames','H','Grunnstoffquiz','Skriv grunnstoffsymbolene i atomnummerrekkefølge uten å bomme.']
 ];
 $('#homeGrid').innerHTML=homeModulesV13.map(([p,i,t,d])=>`<div class="home-card" data-go="${p}"><div style="font-size:1.25rem;margin-bottom:8px">${i}</div><strong>${t}</strong><div class="mini">${d}</div></div>`).join('');
 $$('#homeGrid [data-go]').forEach(c=>c.onclick=()=>openPage(c.dataset.go));
@@ -2223,7 +2359,7 @@ function runPtIshTimer(){if(ptIshTicker)clearInterval(ptIshTicker);updatePtIshTi
 function periodicSetupV13(mode){
   ptQuiz.running=false;ptIsh.running=false;if(ptQuizTicker){clearInterval(ptQuizTicker);ptQuizTicker=null}if(ptIshTicker){clearInterval(ptIshTicker);ptIshTicker=null}
   const ish=mode==='ish',area=$('#periodicArea');
-  area.innerHTML=`<div class="periodic-workspace"><div class="periodic-table-pane" id="ptSelectTable">${periodicTableV3({selectable:true,selected:ptSelected})}</div><aside class="periodic-question-pane pt-setup-side"><h2>Velg grunnstoffer</h2>${ish?'<div class="ish-explain"><strong>Grunnstoffquiz:</strong> Klikk så nær riktig plassering som mulig. Fulltreff gir 1 poeng. Hver rute vannrett eller loddrett unna trekker 0,1 poeng. 10 ruter eller mer gir 0 poeng.</div>':'<p class="lead">Klikk direkte i periodesystemet. Alle grunnstoffer kan velges.</p>'}<div class="tiny" style="margin-bottom:10px"><strong id="ptCount">${ptSelected.size}</strong> valgt</div><div class="pt-setup-actions"><button class="btn secondary small" id="ptFirst20">Grunnstoff 1–20</button><button class="btn secondary small" id="ptSP">Hovedgruppene</button><button class="btn secondary small" id="ptTransition">Innskuddsmetaller</button><button class="btn secondary small" id="ptFBlock">Lantanider + aktinider</button><button class="btn secondary small" id="ptAll">Alle 118</button><button class="btn secondary small" id="ptClear">Tøm</button><button class="btn" id="ptStart">Start ${ish?'Grunnstoffquiz':'quiz'}</button></div></aside></div>`;
+  area.innerHTML=`<div class="periodic-workspace"><div class="periodic-table-pane" id="ptSelectTable">${periodicTableV3({selectable:true,selected:ptSelected})}</div><aside class="periodic-question-pane pt-setup-side"><h2>Velg grunnstoffer</h2>${ish?'<div class="ish-explain"><strong>Periodesystemquiz:</strong> Klikk så nær riktig plassering som mulig. Fulltreff gir 1 poeng. Hver rute vannrett eller loddrett unna trekker 0,1 poeng. 10 ruter eller mer gir 0 poeng.</div>':'<p class="lead">Klikk direkte i periodesystemet. Alle grunnstoffer kan velges.</p>'}<div class="tiny" style="margin-bottom:10px"><strong id="ptCount">${ptSelected.size}</strong> valgt</div><div class="pt-setup-actions"><button class="btn secondary small" id="ptFirst20">Grunnstoff 1–20</button><button class="btn secondary small" id="ptSP">Hovedgruppene</button><button class="btn secondary small" id="ptTransition">Innskuddsmetaller</button><button class="btn secondary small" id="ptFBlock">Lantanider + aktinider</button><button class="btn secondary small" id="ptAll">Alle 118</button><button class="btn secondary small" id="ptClear">Tøm</button><button class="btn" id="ptStart">Start ${ish?'Periodesystemquiz':'quiz'}</button></div></aside></div>`;
   bindPtSelectionV3();
   $('#ptFirst20').onclick=()=>{ptSelected.clear();allElementsV3.filter(e=>e.z<=20).forEach(e=>ptSelected.add(e.s));periodicSetupV13(mode)};
   $('#ptSP').onclick=()=>{ptSelected.clear();spElements.forEach(e=>ptSelected.add(e.s));periodicSetupV13(mode)};
@@ -2568,7 +2704,7 @@ function v14PeriodicQuizItem(){
       {n:'Halogenene',g:17},
       {n:'Edelgassene',g:18}
     ]);
-    return {topic:'Periodesystem',q:`Hvilken stoffgruppe hører gruppe ${fam.g} til?`,a:fam.n,o:shuffle([fam.n,'Alkalimetallene','Jordalkalimetallene','Halogenene','Edelgassene'].filter((x,i,a)=>a.indexOf(x)===i)).slice(0,4),e:`Gruppe ${fam.g}: ${fam.n}.`};
+    const familyWrong=['Alkalimetallene','Jordalkalimetallene','Halogenene','Edelgassene'].filter(x=>x!==fam.n);return {topic:'Periodesystem',q:`Hvilken stoffgruppe hører gruppe ${fam.g} til?`,a:fam.n,o:shuffle([fam.n,...shuffle(familyWrong).slice(0,3)]),e:`Gruppe ${fam.g}: ${fam.n}.`};
   }
   if(kind==='category'){
     const x=rand([
@@ -2596,7 +2732,14 @@ function v14IonQuizItem(){
   const i=weightedIon();
   if(kind==='electrons'){
     const p=i.z,e=i.ionElectrons,a=`${p} protoner og ${e} elektroner`;
-    return {topic:'Ioner og salter',q:`Hvor mange protoner og elektroner har ${prettyFormula(ionNotation(i))}?`,a,o:[a,`${p} protoner og ${p} elektroner`,`${e} protoner og ${p} elektroner`,`${p} protoner og ${Math.max(1,e-1)} elektroner`],e:'Protonantallet endres ikke når et atom blir et ion.'};
+    const wrong=[
+      `${p} protoner og ${p} elektroner`,
+      `${e} protoner og ${p} elektroner`,
+      `${p} protoner og ${Math.max(0,e-1)} elektroner`,
+      `${p} protoner og ${e+1} elektroner`,
+      `${Math.max(1,p-1)} protoner og ${e} elektroner`
+    ];
+    return {topic:'Ioner og salter',q:`Hvor mange protoner og elektroner har ${prettyFormula(ionNotation(i))}?`,a,o:uniqueOptions(a,wrong),e:'Protonantallet endres ikke når et atom blir et ion.'};
   }
   if(kind==='why'){
     const a=i.charge>0?'Det gir fra seg elektroner for å få fullt ytterste skall':'Det tar opp elektroner for å få fullt ytterste skall';
@@ -2616,14 +2759,14 @@ function v14SaltQuizItem(level){
   const q=mode==='hard'
     ?`Hvilken formel får forbindelsen mellom ${c.n} (${c.s}) og ${v3BySymbol[a.s]?.n||a.n} (${a.s})?`
     :`Hvilken formel får forbindelsen mellom ${prettyFormula(c.s+'^'+(c.q>1?c.q:'')+'+')} og ${prettyFormula(a.s+'^'+(a.q>1?a.q:'')+'-')}?`;
-  const wrong=[c.s+a.s,c.s+'2'+a.s,c.s+a.s+'2',c.s+'3'+a.s+'2',c.s+'2'+a.s+'3'].filter(x=>x!==f);
-  return {topic:'Ioner og salter',q,a:f,o:shuffle([f,...wrong]).slice(0,4),e:'Total ladning i saltet må bli null.'};
+  const wrong=[...new Set([c.s+a.s,c.s+'2'+a.s,c.s+a.s+'2',c.s+'3'+a.s+'2',c.s+'2'+a.s+'3'].filter(x=>x!==f))];
+  return {topic:'Ioner og salter',q,a:f,o:shuffle([f,...shuffle(wrong).slice(0,3)]),e:'Total ladning i saltet må bli null.'};
 }
 function v14TransferQuizItem(){
   const r=rand(redoxBank),ask=rand(['donor','acceptor','n']);
   if(ask==='donor')return {topic:'Elektronoverføring',q:`I reaksjonen ${prettyFormula(r.eq)}: Hvilket grunnstoff avgir elektroner?`,a:r.donor,o:[r.donor,r.acceptor,'Begge','Ingen'],e:r.half};
   if(ask==='acceptor')return {topic:'Elektronoverføring',q:`I reaksjonen ${prettyFormula(r.eq)}: Hvilket grunnstoff tar imot elektroner?`,a:r.acceptor,o:[r.donor,r.acceptor,'Begge','Ingen'],e:r.half};
-  return {topic:'Elektronoverføring',q:`Hvor mange elektroner overføres i den balanserte reaksjonen ${prettyFormula(r.eq)}?`,a:String(r.n),o:[String(r.n),String(Math.max(1,r.n/2)),String(r.n+1),'1'],e:r.half};
+  return {topic:'Elektronoverføring',q:`Hvor mange elektroner overføres i den balanserte reaksjonen ${prettyFormula(r.eq)}?`,a:String(r.n),o:uniqueOptions(String(r.n),[Math.max(1,r.n/2),Math.max(1,r.n-1),r.n+1,r.n+2,1]),e:r.half};
 }
 function v14PolarQuizItem(){
   const kind=rand(['polarity','weaktype','high','low','strong','weak']);
@@ -3403,8 +3546,8 @@ newAtom();</script>
 
 <script id="kjemi-v20-quiz-script">
 (function(){
-  titles.elementquiz='Hvor godt kan du periodesystemet?';
-  titles.mix='Blandet fagquiz';
+  titles.elementquiz='Periodesystemquiz';
+  titles.mix='Kjemiquiz – alle tema';
 
   const desc=null;
   const quizSeg=document.getElementById('elementQuizMode');
@@ -3748,7 +3891,7 @@ newAtom();</script>
     if(ptIshTicker){clearInterval(ptIshTicker);ptIshTicker=null}
 
     const ish=mode==='ish',area=$('#periodicArea');
-    area.innerHTML=`<div class="periodic-workspace"><div class="periodic-table-pane" id="ptSelectTable">${periodicTableV3({selectable:true,selected:ptSelected})}</div><aside class="periodic-question-pane pt-setup-side"><h2>Velg grunnstoffer</h2>${ish?'<div class="ish-explain"><strong>Grunnstoffquiz:</strong> Klikk så nær riktig plassering som mulig. Fulltreff gir 1 poeng. Hver rute vannrett eller loddrett unna trekker 0,1 poeng. 10 ruter eller mer gir 0 poeng.</div>':'<p class="lead">Klikk på enkeltgrunnstoffer, perioder eller grupper for å slå dem av/på.</p>'}<div class="tiny" style="margin-bottom:10px"><strong id="ptCount">${ptSelected.size}</strong> valgt</div><div class="pt-setup-actions"><button class="btn secondary small" id="ptFirst20">Grunnstoff 1–20</button><button class="btn secondary small" id="ptSP">Hovedgruppene</button><button class="btn secondary small" id="ptTransition">Innskuddsmetaller</button><button class="btn secondary small" id="ptFBlock">Lantanider + aktinider</button><button class="btn secondary small" id="ptAll">Alle 118</button><button class="btn secondary small" id="ptClear">Tøm</button><button class="btn" id="ptStart">Start ${ish?'Grunnstoffquiz':'quiz'}</button></div></aside></div>`;
+    area.innerHTML=`<div class="periodic-workspace"><div class="periodic-table-pane" id="ptSelectTable">${periodicTableV3({selectable:true,selected:ptSelected})}</div><aside class="periodic-question-pane pt-setup-side"><h2>Velg grunnstoffer</h2>${ish?'<div class="ish-explain"><strong>Periodesystemquiz:</strong> Klikk så nær riktig plassering som mulig. Fulltreff gir 1 poeng. Hver rute vannrett eller loddrett unna trekker 0,1 poeng. 10 ruter eller mer gir 0 poeng.</div>':'<p class="lead">Klikk på enkeltgrunnstoffer, perioder eller grupper for å slå dem av/på.</p>'}<div class="tiny" style="margin-bottom:10px"><strong id="ptCount">${ptSelected.size}</strong> valgt</div><div class="pt-setup-actions"><button class="btn secondary small" id="ptFirst20">Grunnstoff 1–20</button><button class="btn secondary small" id="ptSP">Hovedgruppene</button><button class="btn secondary small" id="ptTransition">Innskuddsmetaller</button><button class="btn secondary small" id="ptFBlock">Lantanider + aktinider</button><button class="btn secondary small" id="ptAll">Alle 118</button><button class="btn secondary small" id="ptClear">Tøm</button><button class="btn" id="ptStart">Start ${ish?'Periodesystemquiz':'quiz'}</button></div></aside></div>`;
 
     bindPtSelectionV3();
 
@@ -3957,11 +4100,11 @@ newAtom();</script>
         <aside class="periodic-question-pane pt-setup-side">
           <h2>Velg grunnstoffer</h2>
           <div class="quiz-preset-desc">${info.desc}</div>
-          ${ish?'<div class="ish-explain"><strong>Grunnstoffquiz:</strong> Klikk så nær riktig plassering som mulig. Fulltreff gir 1 poeng. Hver rute vannrett eller loddrett unna trekker 0,1 poeng. 10 ruter eller mer gir 0 poeng.</div>':''}
+          ${ish?'<div class="ish-explain"><strong>Periodesystemquiz:</strong> Klikk så nær riktig plassering som mulig. Fulltreff gir 1 poeng. Hver rute vannrett eller loddrett unna trekker 0,1 poeng. 10 ruter eller mer gir 0 poeng.</div>':''}
           <div class="tiny" style="margin:8px 0 10px"><strong id="ptCount">${ptSelected.size}</strong> valgt</div>
           ${ptPresetModeV25==='custom'?customActionsHTMLV25():''}
           <div class="pt-setup-actions" style="margin-top:8px">
-            <button class="btn" id="ptStart">Start ${ish?'Grunnstoffquiz':'quiz'}</button>
+            <button class="btn" id="ptStart">Start ${ish?'Periodesystemquiz':'quiz'}</button>
           </div>
         </aside>
       </div>`;
@@ -4704,14 +4847,14 @@ bindDynamicSeg('solMode', newSolubility);</script>
   bondTheory.push(
     {
       q:'Hvorfor kan mange metaller valses til plater og trekkes ut til tråder uten at bindingene straks brytes?',
-      o:['Lag av metallioner kan forskyves mens de delokaliserte elektronene fortsatt holder strukturen sammen','Metallene består av separate molekyler som ikke tiltrekker hverandre','Metallatomene er bundet med hydrogenbindinger','Alle metallionene er negative'],
-      a:'Lag av metallioner kan forskyves mens de delokaliserte elektronene fortsatt holder strukturen sammen',
+      o:['Lag av metallioner kan forskyves mens de frie elektronene fortsatt holder strukturen sammen','Metallene består av separate molekyler som ikke tiltrekker hverandre','Metallatomene er bundet med hydrogenbindinger','Alle metallionene er negative'],
+      a:'Lag av metallioner kan forskyves mens de frie elektronene fortsatt holder strukturen sammen',
       e:'Metallbindingen er ikke retningsbestemt på samme måte som et stivt molekylgitter. Det gjør metaller formbare og duktile.'
     },
     {
       q:'Hvorfor leder metaller vanligvis elektrisk strøm godt?',
-      o:['De har delokaliserte elektroner som kan bevege seg gjennom materialet','Metallionene hopper ut av metallet','Metaller består alltid av oppløste ioner','Protonene kan flytte seg mellom atomkjernene'],
-      a:'De har delokaliserte elektroner som kan bevege seg gjennom materialet',
+      o:['De har frie elektroner som kan bevege seg gjennom materialet','Metallionene hopper ut av metallet','Metaller består alltid av oppløste ioner','Protonene kan flytte seg mellom atomkjernene'],
+      a:'De har frie elektroner som kan bevege seg gjennom materialet',
       e:'I metallmodellen kan valenselektroner bevege seg gjennom strukturen og transportere elektrisk ladning.'
     },
     {
@@ -4810,8 +4953,8 @@ bindDynamicSeg('solMode', newSolubility);</script>
     ()=>({
       topic:'Sterke bindinger',
       q:'Hvorfor er grafitt en mye bedre elektrisk leder enn diamant?',
-      a:'Grafitt har delokaliserte elektroner som kan bevege seg langs lagene',
-      o:['Grafitt har delokaliserte elektroner som kan bevege seg langs lagene','Diamant mangler karbonatomer','Grafitt består av kobberioner','Diamant har ingen valenselektroner'],
+      a:'Grafitt har elektroner som kan bevege seg langs lagene',
+      o:['Grafitt har elektroner som kan bevege seg langs lagene','Diamant mangler karbonatomer','Grafitt består av kobberioner','Diamant har ingen valenselektroner'],
       e:'Bindingene og elektronstrukturen er ulike i de to karbonallotropene.'
     })
   );
@@ -5383,7 +5526,7 @@ function toggleNaturfagFullscreen(){
   wrapGenerator('newSalt','#saltArea',()=>`salt:main`);
   wrapGenerator('newRedox','#redoxArea',()=>`redox:main`);
 
-  // Blandet fagquiz: samme regel på elementnivå, også mellom to quizrunder.
+  // Kjemiquiz – alle tema: samme regel på elementnivå, også mellom to quizrunder.
   if(typeof makeQuizItem==='function'){
     const baseMakeQuizItem=makeQuizItem;
     makeQuizItem=function(level){
@@ -5552,7 +5695,7 @@ function toggleNaturfagFullscreen(){
     bindDynamicSeg('solMode',newSolubility);
   }
 
-  // Fjern dem også fra Blandet fagquiz. Organisk kjemi har sin egen modul.
+  // Fjern dem også fra Kjemiquiz – alle tema. Organisk kjemi har sin egen modul.
   if(typeof makeQuizItem==='function'){
     const baseMakeQuizItem=makeQuizItem;
     makeQuizItem=function(level){
@@ -6587,6 +6730,561 @@ function toggleNaturfagFullscreen(){
   };
 })();
 </script>
+
+
+<style id="kjemi-v60-exam-quiz-style">
+/* Kjemiquiz – alle tema – rolig, konsentrert prøvemodus. */
+#page-mix{max-width:980px}
+#page-mix>.eyebrow{letter-spacing:.11em;background:transparent;border:1px solid color-mix(in srgb,var(--accent) 28%,var(--line));padding:4px 9px}
+#page-mix>h1{font-size:2rem;letter-spacing:-.025em;margin-bottom:16px}
+#quizSetupCard.exam-setup-card{padding:0;overflow:hidden;border-color:color-mix(in srgb,var(--accent) 18%,var(--line));box-shadow:0 10px 30px rgba(21,122,101,.07)}
+.exam-cover{padding:22px 24px 17px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,color-mix(in srgb,var(--soft) 62%,var(--panel)),var(--panel))}
+.exam-cover-kicker{font-size:.7rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);margin-bottom:5px}
+.exam-cover-title{font-size:1.16rem;font-weight:850}
+.exam-cover-sub{font-size:.82rem;color:var(--muted);margin-top:4px}
+#quizSetupCard .quiz-setup{padding:18px 24px 22px;margin:0}
+#quizCard.exam-card{padding:0;overflow:hidden;border-color:color-mix(in srgb,var(--accent) 20%,var(--line));box-shadow:0 12px 34px rgba(21,122,101,.08)}
+.exam-topline{display:flex;align-items:center;gap:12px;padding:12px 18px;background:color-mix(in srgb,var(--soft) 55%,var(--panel));border-bottom:1px solid var(--line)}
+.exam-mark{font-size:.69rem;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2)}
+.exam-topline .stats{margin:0 0 0 auto;gap:7px}
+.exam-topline .stat{background:var(--panel);padding:5px 8px;font-size:.76rem}
+#quizCard .progress{height:5px;margin:0;border-radius:0;background:color-mix(in srgb,var(--line) 76%,transparent)}
+#quizCard #quizBar{height:100%;background:var(--accent);border-radius:0;transition:width .22s ease}
+.exam-question-shell{padding:27px 30px 30px;min-height:285px}
+.exam-question-number{font-size:.69rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:900;margin-bottom:7px}
+.exam-scenario{font-size:.88rem;line-height:1.45;color:var(--text);background:var(--soft);border-left:3px solid var(--accent);padding:9px 11px;border-radius:7px;margin:0 0 13px;max-width:820px}
+#quizArea .quiz-big{font-size:1.2rem;line-height:1.4;font-weight:820;margin:0 0 20px;max-width:860px;letter-spacing:-.01em}
+#quizArea #qOptions{gap:10px;max-width:880px}
+#quizArea #qOptions .option{min-height:52px;padding:12px 14px;background:var(--panel2);border-radius:9px;font-weight:720}
+#quizArea #qOptions .option:hover{background:color-mix(in srgb,var(--soft) 45%,var(--panel));transform:translateY(-1px)}
+#quizArea .feedback{margin-top:16px}
+#quizArea .explain{max-width:880px}
+#quizArea #quizNext{justify-content:flex-end;max-width:880px;margin-top:16px}
+#quizResult{border-color:color-mix(in srgb,var(--accent) 20%,var(--line));box-shadow:0 12px 34px rgba(21,122,101,.08)}
+@media(max-width:700px){
+  .exam-topline{align-items:flex-start;flex-direction:column;gap:7px}
+  .exam-topline .stats{margin-left:0}
+  .exam-question-shell{padding:20px 18px 24px}
+  #quizArea #qOptions{grid-template-columns:1fr}
+}
+</style>
+<script id="kjemi-v60-exam-quiz">
+(function(){
+  // Oppgrader eksisterende HTML uten å endre resten av sidens navigasjon.
+  const setup=$('#quizSetupCard');
+  if(setup){
+    setup.classList.add('exam-setup-card');
+    if(!setup.querySelector('.exam-cover')){
+      setup.insertAdjacentHTML('afterbegin',`<div class="exam-cover"><div class="exam-cover-kicker">Prøvemodus</div><div class="exam-cover-title">Kjemiquiz – alle tema</div><div class="exam-cover-sub">Alle ni fagområdene er representert. Ved 10 spørsmål trekkes det siste fra ioner og salter, sterke bindinger eller polaritet og svake bindinger.</div></div>`);
+    }
+  }
+  const card=$('#quizCard');
+  if(card){
+    card.classList.add('exam-card');
+    const stats=card.querySelector('.stats');
+    if(stats && !card.querySelector('.exam-topline')){
+      const top=document.createElement('div');top.className='exam-topline';
+      top.innerHTML='<span class="exam-mark">Prøvemodus</span>';
+      top.appendChild(stats);
+      card.insertBefore(top,card.firstChild);
+    }
+  }
+
+  // Kategori-generatorer. Vanlig/blandet nivå skal IKKE hente Molekyler (utfordring)
+  // eller Kjemi 1-forberedelsen i organisk kjemi.
+  function quizAtomItem(){
+    const e=weightedSP(),mode=rand(['outer','period','protons','trend']);
+    if(mode==='trend'){
+      const k=Math.random()<.5?'size':'en',p=trendPair(k),win=p[2];
+      return {topic:'Atomer',q:k==='size'?`Hvilket atom er størst: ${p[0].s} eller ${p[1].s}?`:`Hvilket atom har høyest elektronegativitet: ${p[0].s} eller ${p[1].s}?`,a:win.s,o:[p[0].s,p[1].s],e:k==='size'?'Atomstørrelse øker nedover og mot venstre.':'Elektronegativitet øker oppover og mot høyre.'};
+    }
+    if(mode==='outer')return {topic:'Atomer',q:`Hvor mange elektroner har ${e.n} (${e.s}) i ytterste skall?`,a:String(outerElectrons(e)),o:uniqueOptions(outerElectrons(e),[1,2,3,4,5,6,7,8]),e:`${e.n} står i gruppe ${e.group}.`};
+    if(mode==='period')return {topic:'Atomer',q:`Hvilken periode står ${e.n} i?`,a:String(e.period),o:uniqueOptions(e.period,[1,2,3,4,5,6,7]),e:'Antall elektronskall gir perioden.'};
+    return {topic:'Atomer',q:`Hvor mange protoner har ${e.n} (${e.s})?`,a:String(e.z),o:uniqueOptions(e.z,[e.z-2,e.z-1,e.z+1,e.z+2].filter(x=>x>0)),e:'Atomnummer = protonantall.'};
+  }
+
+  function quizIonSaltItem(level){
+    const makers=level==='basic'
+      ?[()=>v14IonQuizItem(),()=>v14SaltQuizItem(level)]
+      :[()=>v14IonQuizItem(),()=>v14SaltQuizItem(level),()=>v14TransferQuizItem()];
+    const item=rand(makers)();item.topic='Ioner og salter';return item;
+  }
+
+  function quizBondItem(level){
+    if(level==='challenge' && typeof bondOrderBank!=='undefined' && bondOrderBank.length && Math.random()<.48){
+      const b=rand(bondOrderBank);
+      return {topic:'Sterke bindinger',q:`${b.f}: ${b.q}`,a:b.a,o:b.o,e:b.e};
+    }
+    if(typeof bondTheory!=='undefined' && bondTheory.length && Math.random()<.32){
+      const b=rand(bondTheory);
+      return {topic:'Sterke bindinger',q:b.q,a:b.a,o:b.o,e:b.e};
+    }
+    const b=rand((typeof bondBank2!=='undefined'&&bondBank2.length)?bondBank2:bondBank);
+    return {topic:'Sterke bindinger',q:`Hvilken sterk bindingstype har ${b.f}?`,a:b.type,o:['Ionisk binding','Upolar elektronparbinding','Polar elektronparbinding','Metallbinding'],e:b.why};
+  }
+
+  function quizCarbonItem(level){
+    const modes=level==='challenge'?['combustion','inorganic','organic']:['combustion','inorganic'];
+    const mode=rand(modes),bank=carbonBanks[mode]||carbonBanks.inorganic||[];
+    const q=rand(bank);
+    return {topic:'Karbonkjemi',scene:q.scene||'',q:q.q,a:q.a,o:q.o,e:q.e};
+  }
+
+  function quizCombustionItem(){
+    const c=rand(combustionQs);
+    return {topic:'Forbrenning',q:c.q,a:c.a,o:c.o,e:c.e};
+  }
+
+  const categoryMakers={
+    atom:level=>quizAtomItem(level),
+    periodic:level=>v14PeriodicQuizItem(level),
+    ionsalts:level=>quizIonSaltItem(level),
+    binding:level=>quizBondItem(level),
+    polar:level=>v14PolarQuizItem(level),
+    solubility:level=>v14SolQuizItem(level),
+    balance:level=>v14BalanceQuizItem(level),
+    combustion:level=>quizCombustionItem(level),
+    carbon:level=>quizCarbonItem(level)
+  };
+  const coreCategories=['atom','periodic','ionsalts','binding','polar','solubility','balance','combustion','carbon'];
+  const bonusCategories=['ionsalts','binding','polar'];
+
+  function makeCategoryItem(cat,level,seen){
+    let item=null,key='';
+    for(let tries=0;tries<18;tries++){
+      item=categoryMakers[cat](level);
+      if(!item)continue;
+      key=`${item.topic}|${item.q}|${item.a}`.replace(/\s+/g,' ').toLowerCase();
+      if(!seen.has(key))break;
+    }
+    if(item)seen.add(key);
+    return item;
+  }
+
+  function buildBalancedQuiz(n,level){
+    const seen=new Set(),items=[],counts=Object.fromEntries(coreCategories.map(c=>[c,0]));
+    const add=cat=>{const item=makeCategoryItem(cat,level,seen);if(item){items.push(item);counts[cat]++}};
+
+    // Første ni: nøyaktig én fra hvert fagområde, i tilfeldig rekkefølge.
+    shuffle(coreCategories).forEach(add);
+
+    // Spørsmål 10: eksplisitt fra de tre ønskede hovedområdene.
+    if(items.length<n)add(rand(bonusCategories));
+
+    // Ved 15/20/30 spørsmål fylles videre så jevnt som mulig.
+    while(items.length<n){
+      const min=Math.min(...coreCategories.map(c=>counts[c]));
+      let candidates=coreCategories.filter(c=>counts[c]===min);
+      // Ved lik belastning får de tre sentrale kjemiområdene litt prioritet.
+      const preferred=candidates.filter(c=>bonusCategories.includes(c));
+      if(preferred.length && Math.random()<.5)candidates=preferred;
+      add(rand(candidates));
+    }
+    return shuffle(items);
+  }
+
+  // Bruk stratifisert uttrekk i stedet for ti uavhengige tilfeldige trekk.
+  startQuiz=function(){
+    const n=Number($('#quizCount').value),level=$('#quizLevel').value;
+    quiz={items:buildBalancedQuiz(n,level),i:0,score:0,answered:false};
+    $('#quizSetupCard').classList.add('hidden');
+    $('#quizResult').classList.remove('show');
+    $('#quizCard').classList.remove('hidden');
+    renderQuiz();
+  };
+
+  // Konsekvent kjemisk typografi i spørsmål, scenario, svar og forklaring.
+  renderQuiz=function(){
+    const it=quiz.items[quiz.i];
+    $('#quizPos').textContent=quiz.i+1;
+    $('#quizTotal').textContent=quiz.items.length;
+    $('#quizScore').textContent=quiz.score;
+    $('#quizTopic').textContent=it.topic;
+    $('#quizBar').style.width=((quiz.i)/quiz.items.length*100)+'%';
+    const scenario=it.scene?`<div class="exam-scenario formula">${prettyFormula(it.scene)}</div>`:'';
+    $('#quizArea').innerHTML=`<div class="exam-question-shell"><div class="exam-question-number">Oppgave ${String(quiz.i+1).padStart(2,'0')}</div>${scenario}<div class="quiz-big formula">${prettyFormula(it.q)}</div><div class="options" id="qOptions">${shuffle(it.o).map(o=>`<button class="option formula" data-v="${String(o).replace(/"/g,'&quot;')}">${prettyFormula(o)}</button>`).join('')}</div><div class="feedback" id="quizFb"></div><div class="explain formula" id="quizEx">${prettyFormula(it.e||'')}</div><div class="module-tools hidden" id="quizNext"><button class="btn" onclick="nextQuiz()">${quiz.i===quiz.items.length-1?'Lever prøve':'Neste oppgave'}</button></div></div>`;
+    $$('#qOptions .option').forEach(b=>b.onclick=()=>answerQuiz(b));
+  };
+
+  // Fremdriftslinjen skal nå helt fram etter siste svar/resultat.
+  const oldFinish=finishQuiz;
+  finishQuiz=function(){
+    oldFinish();
+    $('#resultTitle').textContent='Prøven er ferdig';
+  };
+
+  // Beskrivelsen på startsiden følger den nye logikken.
+  const mixCard=[...document.querySelectorAll('#homeGrid .home-card')].find(x=>/Kjemiquiz – alle tema/.test(x.textContent));
+  const mini=mixCard?.querySelector('.mini');
+  if(mini)mini.textContent='10 spørsmål dekker alle fagområdene. Lengre prøver fordeles jevnt mellom temaene.';
+})();
+</script>
+
+<style id="kjemi-v63-quiz-balancing-input">
+#quizArea .quiz-balance-equation{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  flex-wrap:wrap;
+  margin:22px 0 18px;
+  font-size:1.2rem;
+}
+#quizArea .quiz-balance-species{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+#quizArea .quiz-coef{
+  width:46px;
+  height:40px;
+  border:1px solid var(--line);
+  background:var(--panel2);
+  color:var(--text);
+  border-radius:8px;
+  text-align:center;
+  font-weight:850;
+  outline:none;
+}
+#quizArea .quiz-coef:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 14%,transparent);
+}
+#quizArea .quiz-coef.correct{
+  border-color:var(--good);
+  background:var(--goodbg);
+}
+#quizArea .quiz-coef.wrong{
+  border-color:var(--bad);
+  background:var(--badbg);
+}
+#quizArea .quiz-balance-actions{
+  display:flex;
+  justify-content:flex-start;
+  margin-top:8px;
+}
+#quizArea .quiz-balance-hint{
+  font-size:.78rem;
+  color:var(--muted);
+  margin-top:-7px;
+  margin-bottom:10px;
+}
+</style>
+
+<script id="kjemi-v63-quiz-balancing-input-script">
+(function(){
+  // Reaksjonslikninger i Kjemiquiz skal løses på samme måte som i
+  // balanseringsmodulen: eleven skriver koeffisientene selv.
+  v14BalanceQuizItem=function(level){
+    let pool=reactions.filter(r=>{
+      if(r.stateOnly)return false;
+      if(level==='basic')return r.level==='basic';
+      if(level==='challenge')return true;
+      return r.level!=='hard';
+    });
+    if(!pool.length)pool=reactions.filter(r=>!r.stateOnly);
+
+    const reaction=rand(pool);
+    const answer=coeffs(reaction).join(' – ');
+    return {
+      kind:'balanceInput',
+      topic:'Reaksjonslikninger',
+      reaction,
+      q:reaction.prompt && !/tilstandsform/i.test(reaction.prompt)
+        ? reaction.prompt
+        : 'Fyll inn koeffisientene slik at reaksjonslikningen blir balansert.',
+      a:answer,
+      o:[],
+      e:reaction.explain||`Koeffisienter fra venstre mot høyre: ${answer}.`
+    };
+  };
+
+  function quizBalanceHTML(r){
+    let idx=0;
+    const side=arr=>arr.map(([s])=>
+      `<span class="quiz-balance-species">`+
+        `<input class="quiz-coef" data-i="${idx++}" inputmode="numeric" pattern="[0-9]*" aria-label="Koeffisient foran ${s}">`+
+        `<span class="species formula">${prettyFormula(s)}</span>`+
+      `</span>`
+    ).join('<span class="eqplus">+</span>');
+
+    return `<div class="quiz-balance-equation">${side(r.r)}<span class="arroweq">→</span>${side(r.p)}</div>`;
+  }
+
+  window.checkQuizBalance=function(){
+    if(quiz.answered)return;
+    const it=quiz.items[quiz.i];
+    if(it?.kind!=='balanceInput')return;
+
+    const expected=coeffs(it.reaction);
+    const inputs=[...document.querySelectorAll('#quizArea .quiz-coef')];
+    const values=inputs.map(x=>{
+      const t=x.value.trim();
+      return t===''?1:Number(t);
+    });
+    const ok=values.length===expected.length && values.every((v,i)=>v===expected[i]);
+
+    quiz.answered=true;
+    if(ok)quiz.score++;
+    $('#quizScore').textContent=quiz.score;
+
+    const instant=$('#quizFeedback').value==='instant';
+    if(instant){
+      inputs.forEach((x,i)=>{
+        x.classList.add(values[i]===expected[i]?'correct':'wrong');
+        x.disabled=true;
+      });
+      setFeedback('quizFb',ok?'Riktig.':'Ikke helt balansert.',ok);
+      const ex=$('#quizEx');
+      ex.innerHTML=prettyFormula(it.e||`Koeffisienter: ${expected.join(' – ')}`);
+      ex.classList.add('show');
+    }else{
+      inputs.forEach(x=>x.disabled=true);
+    }
+    $('#quizNext').classList.remove('hidden');
+  };
+
+  // Override bare visningen; resten av prøvemodus/stratifisert uttrekk beholdes.
+  renderQuiz=function(){
+    const it=quiz.items[quiz.i];
+    $('#quizPos').textContent=quiz.i+1;
+    $('#quizTotal').textContent=quiz.items.length;
+    $('#quizScore').textContent=quiz.score;
+    $('#quizTopic').textContent=it.topic;
+    $('#quizBar').style.width=((quiz.i)/quiz.items.length*100)+'%';
+
+    const scenario=it.scene?`<div class="exam-scenario formula">${prettyFormula(it.scene)}</div>`:'';
+    const shellStart=`<div class="exam-question-shell"><div class="exam-question-number">Oppgave ${String(quiz.i+1).padStart(2,'0')}</div>${scenario}`;
+    const next=`<div class="module-tools hidden" id="quizNext"><button class="btn" onclick="nextQuiz()">${quiz.i===quiz.items.length-1?'Lever prøve':'Neste oppgave'}</button></div></div>`;
+
+    if(it.kind==='balanceInput'){
+      $('#quizArea').innerHTML=
+        shellStart+
+        `<div class="quiz-big">${prettyFormula(it.q)}</div>`+
+        `<div class="quiz-balance-hint">La felt stå tomme der koeffisienten er 1.</div>`+
+        quizBalanceHTML(it.reaction)+
+        `<div class="quiz-balance-actions"><button class="btn" id="quizBalanceCheck">Sjekk svar</button></div>`+
+        `<div class="feedback" id="quizFb"></div>`+
+        `<div class="explain formula" id="quizEx">${prettyFormula(it.e||'')}</div>`+
+        next;
+
+      const inputs=[...document.querySelectorAll('#quizArea .quiz-coef')];
+      inputs.forEach(inp=>inp.addEventListener('keydown',e=>{
+        if(e.key==='Enter')checkQuizBalance();
+      }));
+      $('#quizBalanceCheck').onclick=checkQuizBalance;
+      inputs[0]?.focus();
+      return;
+    }
+
+    $('#quizArea').innerHTML=
+      shellStart+
+      `<div class="quiz-big formula">${prettyFormula(it.q)}</div>`+
+      `<div class="options" id="qOptions">${shuffle(it.o).map(o=>`<button class="option formula" data-v="${String(o).replace(/"/g,'&quot;')}">${prettyFormula(o)}</button>`).join('')}</div>`+
+      `<div class="feedback" id="quizFb"></div>`+
+      `<div class="explain formula" id="quizEx">${prettyFormula(it.e||'')}</div>`+
+      next;
+
+    $$('#qOptions .option').forEach(b=>b.onclick=()=>answerQuiz(b));
+  };
+
+  // Update remaining dynamically inserted texts if an older copy is already in DOM.
+  document.querySelectorAll('.nav-btn[data-page="mix"] .nav-txt').forEach(x=>x.textContent='Kjemiquiz – alle tema');
+  const mixTitle=document.querySelector('#page-mix h1');
+  if(mixTitle)mixTitle.textContent='Kjemiquiz – alle tema';
+  if(typeof titles!=='undefined')titles.mix='Kjemiquiz – alle tema';
+
+  const cover=document.querySelector('#quizSetupCard .exam-cover-title');
+  if(cover)cover.textContent='Kjemiquiz – alle tema';
+
+  const mixCard=[...document.querySelectorAll('#homeGrid .home-card')].find(x=>/Kjemiquiz|fagquiz/i.test(x.textContent));
+  if(mixCard){
+    const strong=mixCard.querySelector('strong');
+    if(strong)strong.textContent='Kjemiquiz – alle tema';
+  }
+})();
+</script>
+
+
+<script id="kjemi-v64-element-name-quiz">
+(function(){
+  titles.elementnames='Grunnstoffquiz';
+
+  const area=document.getElementById('elementNameQuizArea');
+  const ptButton=document.getElementById('floatingPtBtn');
+  if(!area)return;
+
+  const BEST_KEY='onlyfagElementNameQuizBestV1';
+  let state={running:false,failed:false,index:0,solved:new Set(),typed:''};
+
+  function getBest(){
+    try{return Math.max(0,parseInt(localStorage.getItem(BEST_KEY)||'0',10)||0)}catch(e){return 0}
+  }
+  function setBest(v){
+    try{localStorage.setItem(BEST_KEY,String(Math.max(getBest(),v)))}catch(e){}
+  }
+
+  function normalizeName(s){
+    return String(s||'')
+      .trim()
+      .toLocaleLowerCase('nb-NO')
+      .normalize('NFC');
+  }
+
+  function closeFloatingPt(){
+    const p=document.getElementById('floatingPt');
+    if(p)p.classList.remove('show');
+    ptButton?.classList.remove('active');
+  }
+
+  function setReferenceAllowed(allowed){
+    if(!ptButton)return;
+    ptButton.disabled=!allowed;
+    ptButton.setAttribute('aria-disabled',allowed?'false':'true');
+    ptButton.title=allowed?'Åpne periodesystemet':'Periodesystemet er låst mens quizen pågår';
+    if(!allowed)closeFloatingPt();
+  }
+
+  function tableHTML(){
+    return periodicTableV3({blank:true,solved:state.solved});
+  }
+
+  function statsHTML(){
+    return `<div class="element-name-stats">
+      <span class="stat">Riktige <strong>${state.index}</strong></span>
+      <span class="stat">Beste <strong>${getBest()}</strong></span>
+    </div>`;
+  }
+
+  function renderReady(){
+    state={running:false,failed:false,index:0,solved:new Set(),typed:''};
+    setReferenceAllowed(true);
+    area.innerHTML=`<div class="element-name-quiz-shell">
+      <div class="element-name-pt">${tableHTML()}</div>
+      <div class="element-name-console">
+        ${statsHTML()}
+        <div class="element-name-start"><button class="btn" id="elementNameStart">Start quiz</button></div>
+      </div>
+    </div>`;
+    document.getElementById('elementNameStart').onclick=startQuiz;
+  }
+
+  function renderRunning(){
+    const current=allElementsV3[state.index];
+    area.innerHTML=`<div class="element-name-quiz-shell">
+      <div class="element-name-pt">${tableHTML()}</div>
+      <div class="element-name-console">
+        ${statsHTML()}
+        <div class="element-name-current">Atomnummer ${current.z} av ${allElementsV3.length}</div>
+        <input id="elementNameInput" class="element-name-input" autocomplete="off" autocapitalize="none" spellcheck="false"
+               placeholder="Skriv symbol" aria-label="Skriv symbolet til grunnstoff ${current.z}">
+        <div class="element-name-fail" id="elementNameMessage"></div>
+      </div>
+    </div>`;
+    const input=document.getElementById('elementNameInput');
+    input.addEventListener('input',handleInput);
+    input.addEventListener('keydown',e=>{
+      if(e.key==='Enter' && state.failed)startQuiz();
+    });
+    setTimeout(()=>input.focus({preventScroll:true}),0);
+  }
+
+  function startQuiz(){
+    state={running:true,failed:false,index:0,solved:new Set(),typed:''};
+    setReferenceAllowed(false);
+    renderRunning();
+  }
+
+  function finishAll(){
+    state.running=false;
+    state.failed=false;
+    setBest(allElementsV3.length);
+    setReferenceAllowed(true);
+    area.innerHTML=`<div class="element-name-quiz-shell">
+      <div class="element-name-pt">${tableHTML()}</div>
+      <div class="element-name-console">
+        ${statsHTML()}
+        <div class="feedback good">Alle ${allElementsV3.length} riktig.</div>
+        <div class="element-name-start"><button class="btn" id="elementNameRestart">Begynn på nytt</button></div>
+      </div>
+    </div>`;
+    document.getElementById('elementNameRestart').onclick=startQuiz;
+  }
+
+  function failQuiz(input,current){
+    state.running=false;
+    state.failed=true;
+    setBest(state.index);
+    setReferenceAllowed(true);
+    input.classList.add('failed');
+    input.disabled=true;
+
+    const msg=document.getElementById('elementNameMessage');
+    msg.innerHTML=`Riktig var <span class="element-name-correct-answer">${current.s} (${current.n})</span>.`;
+
+    const restart=document.createElement('button');
+    restart.type='button';
+    restart.className='btn';
+    restart.textContent='Begynn på nytt';
+    restart.onclick=startQuiz;
+    msg.insertAdjacentElement('afterend',restart);
+
+    document.addEventListener('keydown',restartOnEnter,{once:true});
+  }
+
+  function restartOnEnter(e){
+    if(e.key==='Enter' && state.failed)startQuiz();
+    else if(state.failed)document.addEventListener('keydown',restartOnEnter,{once:true});
+  }
+
+  function handleInput(e){
+    if(!state.running)return;
+    const input=e.currentTarget;
+    const current=allElementsV3[state.index];
+    const typed=String(input.value||'').trim().toLowerCase();
+    const expected=String(current.s).toLowerCase();
+    state.typed=input.value;
+
+    if(!typed)return;
+
+    // Any first impossible character ends the run immediately.
+    if(!expected.startsWith(typed)){
+      failQuiz(input,current);
+      return;
+    }
+
+    // Exact match: reveal symbol, clear field, continue instantly.
+    if(typed===expected){
+      state.solved.add(current.s);
+      state.index++;
+      setBest(state.index);
+
+      if(state.index>=allElementsV3.length){
+        finishAll();
+        return;
+      }
+      renderRunning();
+    }
+  }
+
+  // Final wrapper: initialise this page and lock/unlock the reference table appropriately.
+  const openPageElementNamesBase=openPage;
+  openPage=function(name){
+    if(name!=='elementnames')setReferenceAllowed(true);
+    openPageElementNamesBase(name);
+    if(name==='elementnames'){
+      renderReady();
+    }
+  };
+
+  // Rebind navigation because several earlier scripts wrap openPage.
+  document.querySelectorAll('.nav-btn').forEach(b=>b.onclick=()=>openPage(b.dataset.page));
+  document.querySelectorAll('#homeGrid [data-go]').forEach(c=>c.onclick=()=>openPage(c.dataset.go));
+
+  renderReady();
+})();
+</script>
+
 
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "1b3cf01bc1c645a99f02736c18c9ab78"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
