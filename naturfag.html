@@ -166,8 +166,8 @@ body.dark #page-carbon .carbon-kicker{background:#263229}
 :root{--sidebar:240px}
 .sidebar{
   width:var(--sidebar)!important;
-  min-width:240px!important;
-  max-width:680px!important;
+  min-width:var(--sidebar)!important;
+  max-width:var(--sidebar)!important;
   height:100vh!important;
   position:sticky!important;
   top:0!important;
@@ -329,8 +329,8 @@ body.dark .nf-sidebar-collapse:hover{background:var(--soft)}
 .nf-sidebar-resizer{
   position:fixed;
   top:0;
-  left:calc(var(--sidebar) - 4px);
-  width:9px;
+  left:calc(var(--sidebar) - 3px);
+  width:6px;
   height:100vh;
   z-index:3100;
   cursor:col-resize;
@@ -340,7 +340,7 @@ body.dark .nf-sidebar-collapse:hover{background:var(--soft)}
 .nf-sidebar-resizer::before{
   content:"";
   position:absolute;
-  inset:0 3px;
+  inset:0 2px;
   background:transparent;
   transition:background .15s;
 }
@@ -891,13 +891,394 @@ body.dark .v40-context{background:var(--panel2)}
     font-size:1.65rem;
   }
 }
+
+@media(min-width:701px){
+  .element-name-pt{
+    --pt-fit:1;
+    zoom:var(--pt-fit);
+  }
+  #page-elementnames{padding-bottom:8px}
+  #page-elementnames .element-name-quiz-card{margin-bottom:0}
+}
+</style>
+
+
+<style id="onlyfag-v19-compact-layout">
+@media(min-width:861px){
+  .content{padding:12px 30px 48px !important;}
+  .topbar{height:56px !important;}
+  .top-periodic-btn{left:60.5% !important;}
+  h1{margin:0 0 4px !important;}
+  .module-tools{margin:0 0 0 auto !important;}
+  .card{margin:8px 0 0 !important;}
+
+  /* H1 + modusknapper på samme rad for bedre vertikal plassutnyttelse. */
+  #page-atom.active,
+  #page-periodic.active,
+  #page-ion.active,
+  #page-salt.active,
+  #page-ionsalts.active,
+  #page-binding.active,
+  #page-polar.active,
+  #page-solubility.active,
+  #page-balance.active,
+  #page-carbon.active{
+    display:grid;
+    grid-template-columns:auto minmax(0,1fr);
+    align-items:end;
+    column-gap:18px;
+    row-gap:8px;
+  }
+  #page-atom.active > h1,
+  #page-periodic.active > h1,
+  #page-ion.active > h1,
+  #page-salt.active > h1,
+  #page-ionsalts.active > h1,
+  #page-binding.active > h1,
+  #page-polar.active > h1,
+  #page-solubility.active > h1,
+  #page-balance.active > h1,
+  #page-carbon.active > h1{grid-column:1; align-self:end;}
+  #page-atom.active > .module-tools,
+  #page-periodic.active > .module-tools,
+  #page-ion.active > .module-tools,
+  #page-salt.active > .module-tools,
+  #page-ionsalts.active > .module-tools,
+  #page-binding.active > .module-tools,
+  #page-polar.active > .module-tools,
+  #page-solubility.active > .module-tools,
+  #page-balance.active > .module-tools,
+  #page-carbon.active > .module-tools{
+    grid-column:2;
+    justify-content:flex-end;
+    align-self:center;
+    min-width:0;
+  }
+  #page-atom.active > .card,
+  #page-periodic.active > .card,
+  #page-ion.active > .card,
+  #page-salt.active > .card,
+  #page-ionsalts.active > .card,
+  #page-binding.active > .card,
+  #page-polar.active > .card,
+  #page-solubility.active > .card,
+  #page-balance.active > .card,
+  #page-carbon.active > .card{grid-column:1 / -1;}
+
+  #page-periodic .periodic-card,
+  #page-elementquiz .periodic-card,
+  #page-elementnames .element-name-quiz-card{margin-top:0 !important;}
+
+  /* Også de andre moduloverskriftene helt opp under topbaren. */
+  #page-redox.active,
+  #page-combustion.active,
+  #page-elementquiz.active,
+  #page-elementnames.active,
+  #page-mix.active{padding-top:0;}
+
+  #page-elementquiz .element-quiz-heading{margin:0 0 8px !important;}
+  #page-elementnames h1{margin:0 0 6px !important;}
+
+  /* Grunnstoffquiz: bare periodesystemet skal krympe, konsollen under står fast. */
+  .element-name-quiz-shell{row-gap:10px !important;}
+  .element-name-console{margin-top:0 !important;}
+  .element-name-run-grid,
+  .element-name-ready{grid-template-columns:minmax(0,240px) 145px !important; gap:34px !important;}
+}
+@media(min-width:861px) and (max-width:1180px){
+  .top-periodic-btn{left:62% !important;}
+}
+@media(min-width:861px) and (max-width:980px){
+  #page-carbon.active{display:block;}
+  #page-carbon.active > .module-tools{margin:4px 0 0 !important;}
+}
+</style>
+
+
+<style id="onlyfag-v20-viewport-layout">
+/* Desktop: active module title and its compact mode controls live in the topbar. */
+@media(min-width:861px){
+  .topbar{height:56px!important;padding:0 28px!important;}
+  .top-title{
+    display:block!important;
+    font-size:1.78rem;
+    line-height:1;
+    font-weight:850;
+    white-space:nowrap;
+    margin-right:20px;
+  }
+  .top-module-slot{
+    display:flex;
+    align-items:center;
+    min-width:0;
+    max-width:430px;
+    overflow:hidden;
+  }
+  .top-module-slot:empty{display:none}
+  .top-module-slot .module-tools{margin:0!important;display:flex!important;min-width:0;}
+  .top-module-slot .seg{max-width:100%;}
+  .top-module-slot .seg button{padding:5px 8px!important;font-size:.78rem!important;white-space:nowrap;}
+  .top-periodic-btn{left:65%!important;}
+
+  /* Page title is represented by #topTitle on desktop. */
+  .page.active > h1,
+  .page.active > .element-quiz-heading > h1,
+  #page-mix.active > .eyebrow,
+  #page-mix.active > h1{display:none!important;}
+
+  /* Undo the previous grid trick; moved tools no longer need a second page row. */
+  #page-atom.active,#page-periodic.active,#page-ion.active,#page-salt.active,
+  #page-ionsalts.active,#page-binding.active,#page-polar.active,#page-solubility.active,
+  #page-balance.active,#page-carbon.active{display:block!important;}
+
+  .content{padding-top:10px!important;}
+  .card{margin-top:0!important;}
+
+  /* ----- Grunnstoffquiz: viewport-filling desktop composition ----- */
+  .content:has(#page-elementnames.active){
+    max-width:none!important;
+    width:100%!important;
+    height:calc(100dvh - 56px);
+    padding:6px 14px 8px!important;
+    overflow:hidden;
+  }
+  #page-elementnames.active{
+    display:block!important;
+    height:100%;
+    min-height:0;
+  }
+  #page-elementnames .element-name-quiz-card{
+    height:100%;
+    min-height:0;
+    margin:0!important;
+    padding:10px 14px 12px!important;
+    overflow:hidden;
+  }
+  #page-elementnames .element-name-quiz-shell{
+    position:relative;
+    display:block!important;
+    height:100%;
+    min-height:0;
+  }
+  #page-elementnames .element-name-pt{
+    --pt-fit:1;
+    position:absolute;
+    top:0;
+    left:50%;
+    width:520px!important;
+    max-width:none!important;
+    margin:0!important;
+    overflow:visible!important;
+    zoom:1!important;
+    transform:translateX(-50%) scale(var(--pt-fit));
+    transform-origin:top center;
+    will-change:transform;
+  }
+  #page-elementnames .element-name-console{
+    position:absolute;
+    left:50%;
+    bottom:16px;
+    transform:translateX(-50%);
+    width:auto!important;
+    margin:0!important;
+  }
+  #page-elementnames .element-name-run-grid,
+  #page-elementnames .element-name-ready{
+    grid-template-columns:180px 126px!important;
+    justify-content:center!important;
+    align-items:end!important;
+    gap:92px!important;
+    width:max-content;
+  }
+  #page-elementnames .element-name-entry{width:180px;}
+  #page-elementnames .element-name-input{width:180px!important;}
+  #page-elementnames .element-name-best{width:126px;min-width:126px!important;}
+}
+
+/* Mobile stays on the existing full-width stacked layout. */
+@media(max-width:860px){
+  .top-module-slot{display:none!important;}
+  #page-elementnames .element-name-pt{
+    position:static!important;
+    transform:none!important;
+    zoom:1!important;
+  }
+  #page-elementnames .element-name-console{
+    position:static!important;
+    transform:none!important;
+  }
+}
+</style>
+
+
+<style id="onlyfag-v22-layout-fixes">
+@media(min-width:861px){
+  /* Periodic-table button: a little farther right and position it from
+     the right edge so long module titles do not push into it. */
+  .top-periodic-btn{
+    left:auto!important;
+    right:235px!important;
+    top:50%!important;
+    transform:translateY(-50%)!important;
+  }
+
+  /* Give the top module controls room to remain on one line. */
+  .top-module-slot{
+    max-width:none!important;
+    overflow:visible!important;
+  }
+  .top-module-slot .seg{
+    flex-wrap:nowrap!important;
+    white-space:nowrap;
+  }
+
+  /* Carbon chemistry: all three categories stay next to each other. */
+  .top-module-slot #carbonMode{
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    width:auto!important;
+  }
+  .top-module-slot #carbonMode button{
+    width:auto!important;
+    flex:0 0 auto!important;
+    padding:5px 7px!important;
+    font-size:.72rem!important;
+    white-space:nowrap!important;
+  }
+  .top-module-slot #carbonMode .prep-note{
+    font-size:.67rem!important;
+  }
+
+  /* Grunnstoffquiz: viewport frame and fixed lower controls. */
+  .content:has(#page-elementnames.active){
+    max-width:none!important;
+    width:100%!important;
+    height:calc(100dvh - 56px)!important;
+    padding:6px 12px 10px!important;
+    overflow:hidden!important;
+  }
+  #page-elementnames.active{
+    height:100%!important;
+    min-height:0!important;
+  }
+  #page-elementnames .element-name-quiz-card{
+    height:100%!important;
+    width:100%!important;
+    margin:0!important;
+    padding:10px 12px 12px!important;
+    overflow:hidden!important;
+  }
+  #page-elementnames .element-name-quiz-shell{
+    position:relative!important;
+    display:block!important;
+    height:100%!important;
+    width:100%!important;
+    min-height:0!important;
+  }
+
+  /* JS supplies exact left/top/scale. Crucially: no CSS zoom. */
+  #page-elementnames .element-name-pt{
+    position:absolute!important;
+    width:520px!important;
+    max-width:none!important;
+    margin:0!important;
+    overflow:visible!important;
+    zoom:1!important;
+    transform-origin:top left!important;
+    will-change:transform;
+  }
+
+  /* These stay anchored in exactly the same place. */
+  #page-elementnames .element-name-console{
+    position:absolute!important;
+    left:50%!important;
+    bottom:16px!important;
+    transform:translateX(-50%)!important;
+    width:auto!important;
+    margin:0!important;
+  }
+  #page-elementnames .element-name-run-grid,
+  #page-elementnames .element-name-ready{
+    grid-template-columns:180px 126px!important;
+    justify-content:center!important;
+    align-items:end!important;
+    gap:92px!important;
+    width:max-content!important;
+  }
+}
+
+/* On slightly narrower desktops keep everything on one line but tighten it. */
+@media(min-width:861px) and (max-width:1180px){
+  .top-periodic-btn{right:205px!important;}
+  .top-module-slot .seg button{padding-inline:6px!important;font-size:.73rem!important;}
+  .top-module-slot #carbonMode button{font-size:.68rem!important;padding-inline:5px!important;}
+}
+
+/* Mobile keeps its existing stacked/full-width behaviour. */
+@media(max-width:860px){
+  .sidebar{
+    min-width:0!important;
+    max-width:none!important;
+  }
+}
+</style>
+
+
+<style id="onlyfag-v23-layout-fixes">
+.nf-sidebar-title-row{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.nf-sidebar-title-row h1{margin:0!important}
+.sidebar-info-wrap{margin-left:auto;flex:0 0 auto}
+.sidebar-info-wrap .info-pop{left:0;right:auto;top:34px;width:min(340px,calc(100vw - 26px))}
+body.side-collapsed .sidebar-info-wrap{display:none}
+
+@media(min-width:861px){
+  /* Periodesystem belongs at the far right of the title bar. */
+  .topbar{padding-right:22px!important}
+  .top-periodic-btn{
+    position:static!important;
+    left:auto!important;right:auto!important;top:auto!important;
+    transform:none!important;
+    margin-left:auto!important;
+    flex:0 0 auto!important;
+  }
+  .top-spacer{display:none!important}
+
+  /* The quiz really owns the whole viewport area below the title bar. */
+  .content:has(#page-elementnames.active){
+    height:calc(100dvh - 56px)!important;
+    min-height:0!important;
+    padding:6px 12px 10px!important;
+    overflow:hidden!important;
+  }
+  #page-elementnames.active,
+  #page-elementnames .element-name-quiz-card,
+  #elementNameQuizArea,
+  #page-elementnames .element-name-quiz-shell{
+    height:100%!important;
+    min-height:0!important;
+  }
+  #page-elementnames .element-name-quiz-card{padding:8px 12px 10px!important}
+
+  /* Stable bottom row. Only the periodic table is allowed to resize. */
+  #page-elementnames .element-name-console{
+    bottom:14px!important;
+  }
+  #page-elementnames .element-name-run-grid,
+  #page-elementnames .element-name-ready{
+    grid-template-columns:180px 126px!important;
+    gap:110px!important;
+  }
+}
 </style>
 
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
   <div class="nf-sidebar-head">
-    <h1>Naturfag</h1>
+    <div class="nf-sidebar-title-row">
+      <h1>Naturfag</h1>
+      <div class="info-wrap sidebar-info-wrap"><button class="info-btn" id="infoBtn" type="button" aria-label="Om oppgavebanken" aria-expanded="false">i</button><div class="info-pop" id="infoPop" role="dialog" aria-label="Om oppgavebanken"><p>Oppgavene er basert på pensum i kjemi i <a href="https://www.udir.no/lk20/nat01-05/kompetansemaal-og-vurdering/kv1079" target="_blank" rel="noopener noreferrer">Naturfag Vg1 SF</a>.<br>Siden er utviklet som et interaktivt supplement til undervisning og øving, med fokus på korte oppgaver, variasjon og umiddelbar tilbakemelding.<br>Oppgavebanken erstatter ikke lærebok eller undervisning, men er laget som et øvingsverktøy.<br>Jack Bonsak, Elvebakken vgs.</p></div></div>
+    </div>
     <div class="nf-sidebar-sub"><span aria-hidden="true">🧪</span> Kjemi</div>
   </div>
   <div class="sidebar-scroll">
@@ -930,7 +1311,7 @@ body.dark .v40-context{background:var(--panel2)}
      tabindex="0" title="Dra for å endre menybredden. Dobbeltklikk for å tilbakestille."></div>
 <button class="nf-sidebar-collapse" id="collapseBtn" type="button" aria-label="Minimer sidemenyen" title="Minimer sidemenyen">‹</button>
 <main class="main">
-  <header class="topbar"><div class="top-title" id="topTitle">Kjemi – oppgavebank</div><button class="top-periodic-btn" id="floatingPtBtn" type="button">▤&nbsp; Periodesystem</button><div class="top-spacer"></div><span class="pill">Naturfag</span><div class="info-wrap"><button class="info-btn" id="infoBtn" type="button" aria-label="Om oppgavebanken" aria-expanded="false">i</button><div class="info-pop" id="infoPop" role="dialog" aria-label="Om oppgavebanken"><p>Oppgavene er basert på pensum i kjemi i <a href="https://www.udir.no/lk20/nat01-05/kompetansemaal-og-vurdering/kv1079" target="_blank" rel="noopener noreferrer">Naturfag Vg1 SF</a>.<br>Siden er utviklet som et interaktivt supplement til undervisning og øving, med fokus på korte oppgaver, variasjon og umiddelbar tilbakemelding.<br>Oppgavebanken erstatter ikke lærebok eller undervisning, men er laget som et øvingsverktøy.<br>Jack Bonsak, Elvebakken vgs.</p></div></div></header>
+  <header class="topbar"><div class="top-title" id="topTitle">Kjemi – oppgavebank</div><div class="top-module-slot" id="topModuleSlot"></div><div class="top-spacer"></div><button class="top-periodic-btn" id="floatingPtBtn" type="button">▤&nbsp; Periodesystem</button></header>
   <div class="content">
     <section class="page active" id="page-home">
       <h1>Kjemi - oppgavebank</h1>
@@ -2631,6 +3012,7 @@ function v14PageGenerator(pageId){
   const map={
     'page-atom':()=>newAtom(),
     'page-periodic':()=>{ if(currentMode('periodicMode')==='general') newPeriodic(); },
+    'page-elementnames':()=>{ requestAnimationFrame(()=>window.dispatchEvent(new Event('resize'))); },
     'page-ionsalts':()=>newIonSalt(),
     'page-binding':()=>newBinding(),
     'page-polar':()=>newPolar(),
@@ -7239,6 +7621,90 @@ function toggleNaturfagFullscreen(){
     return periodicTableV3({blank:true,solved:state.solved});
   }
 
+  function fitElementNameQuiz(){
+    const pt=area.querySelector('.element-name-pt');
+    if(!pt)return;
+
+    if(window.matchMedia('(max-width:860px)').matches){
+      pt.style.removeProperty('--pt-fit');
+      pt.style.left='';
+      pt.style.top='';
+      pt.style.transform='';
+      return;
+    }
+
+    const shell=area.querySelector('.element-name-quiz-shell');
+    const consoleBox=area.querySelector('.element-name-console');
+    if(!shell||!consoleBox)return;
+
+    // IMPORTANT: offsetWidth/offsetHeight ignore CSS transforms.
+    // This prevents the old feedback loop where an already scaled table
+    // could be measured and then scaled down again.
+    pt.style.transform='none';
+    pt.style.left='0px';
+    pt.style.top='0px';
+
+    const baseW=Math.max(1,pt.offsetWidth);
+    const baseH=Math.max(1,pt.offsetHeight);
+    const shellW=Math.max(1,shell.clientWidth);
+    const shellH=Math.max(1,shell.clientHeight);
+    const consoleH=Math.max(1,consoleBox.offsetHeight);
+
+    // The lower controls never move. Everything above them belongs to the table.
+    const bottomAnchor=16;
+    const tableConsoleGap=20;
+    const sideGap=14;
+    const topGap=0;
+
+    const availableW=Math.max(180,shellW-sideGap*2);
+    const availableH=Math.max(100,shellH-bottomAnchor-consoleH-tableConsoleGap-topGap);
+
+    const scaleW=availableW/baseW;
+    const scaleH=availableH/baseH;
+
+    // Blow it up as far as BOTH width and height allow.
+    const scale=Math.max(.55,Math.min(3.0,scaleW,scaleH));
+    const renderedW=baseW*scale;
+
+    const left=Math.max(sideGap,(shellW-renderedW)/2);
+    pt.style.left=left+'px';
+    pt.style.top=topGap+'px';
+    pt.style.transform=`scale(${scale})`;
+  }
+
+  function queueFit(){
+    requestAnimationFrame(()=>requestAnimationFrame(fitElementNameQuiz));
+    clearTimeout(queueFit._t);
+    queueFit._t=setTimeout(fitElementNameQuiz,80);
+  }
+
+  function updateBestCard(){
+    const best=getBest();
+    const el=best>0 ? allElementsV3.find(x=>x.z===best) : null;
+    area.querySelectorAll('.element-name-best-symbol').forEach(x=>x.textContent=el?el.s:'–');
+    area.querySelectorAll('.element-name-best-number').forEach(x=>x.textContent=el?String(el.z):'0');
+  }
+
+  function revealSolved(symbol){
+    const cell=area.querySelector(`.element-name-pt .pt-cell[data-el="${symbol}"]`);
+    if(!cell)return;
+    cell.classList.remove('blank');
+    cell.classList.add('solved');
+  }
+
+  function advanceWithoutRerender(input){
+    const next=allElementsV3[state.index];
+    const label=area.querySelector('.element-name-current');
+    if(label)label.textContent=`Grunnstoff nr. ${next.z}`;
+
+    input.value='';
+    input.classList.remove('failed');
+    input.setAttribute('aria-label',`Skriv symbolet til grunnstoff ${next.z}`);
+    state.typed='';
+    updateBestCard();
+    // Input-elementet beholdes. Ingen ny focus() => mobilens tastatur blir stående.
+  }
+
   function statsHTML(){
     return `<div class="element-name-stats">
       <span class="stat">Riktige <strong>${state.index}</strong></span>
@@ -7269,6 +7735,7 @@ function toggleNaturfagFullscreen(){
       </div>
     </div>`;
     document.getElementById('elementNameStart').onclick=startQuiz;
+    queueFit();
   }
 
   function renderRunning(){
@@ -7293,6 +7760,7 @@ function toggleNaturfagFullscreen(){
       if(e.key==='Enter' && state.failed)startQuiz();
     });
     setTimeout(()=>input.focus({preventScroll:true}),0);
+    queueFit();
   }
 
   function startQuiz(){
@@ -7319,6 +7787,7 @@ function toggleNaturfagFullscreen(){
       </div>
     </div>`;
     document.getElementById('elementNameRestart').onclick=startQuiz;
+    queueFit();
   }
 
   function failQuiz(input,current){
@@ -7338,6 +7807,7 @@ function toggleNaturfagFullscreen(){
     restart.textContent='Begynn på nytt';
     restart.onclick=startQuiz;
     msg.insertAdjacentElement('afterend',restart);
+    queueFit();
 
     document.addEventListener('keydown',restartOnEnter,{once:true});
   }
@@ -7363,9 +7833,10 @@ function toggleNaturfagFullscreen(){
       return;
     }
 
-    // Exact match: reveal symbol, clear field, continue instantly.
+    // Exact match: reveal symbol, clear the SAME input, continue instantly.
     if(typed===expected){
       state.solved.add(current.s);
+      revealSolved(current.s);
       state.index++;
       setBest(state.index);
 
@@ -7373,7 +7844,7 @@ function toggleNaturfagFullscreen(){
         finishAll();
         return;
       }
-      renderRunning();
+      advanceWithoutRerender(input);
     }
   }
 
@@ -7390,6 +7861,13 @@ function toggleNaturfagFullscreen(){
   // Rebind navigation because several earlier scripts wrap openPage.
   document.querySelectorAll('.nav-btn').forEach(b=>b.onclick=()=>openPage(b.dataset.page));
   document.querySelectorAll('#homeGrid [data-go]').forEach(c=>c.onclick=()=>openPage(c.dataset.go));
+
+  window.addEventListener('resize',queueFit,{passive:true});
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',()=>{
+      if(!window.matchMedia('(max-width:700px)').matches)queueFit();
+    },{passive:true});
+  }
 
   renderReady();
 })();
@@ -7536,6 +8014,53 @@ function toggleNaturfagFullscreen(){
   // Re-scan when switching carbon subsection: organic must remain unassisted.
   document.querySelectorAll('#carbonMode button').forEach(b=>b.addEventListener('click',queue));
   queue();
+})();
+</script>
+
+
+<script id="onlyfag-v20-topbar-layout">
+(function(){
+  const slot=document.getElementById('topModuleSlot');
+  const title=document.getElementById('topTitle');
+  const moved=new Map();
+
+  function restoreTools(){
+    for(const [tools,anchor] of moved.entries()){
+      if(anchor?.parentNode){anchor.parentNode.insertBefore(tools,anchor.nextSibling);anchor.remove();}
+    }
+    moved.clear();
+    if(slot)slot.innerHTML='';
+  }
+
+  function syncTopbar(name){
+    restoreTools();
+    if(!window.matchMedia('(min-width:861px)').matches)return;
+    if(title && typeof titles!=='undefined' && titles[name])title.textContent=titles[name];
+    const page=document.getElementById('page-'+name);
+    const tools=page?.querySelector(':scope > .module-tools');
+    if(tools && slot){
+      const anchor=document.createComment('module-tools-home');
+      tools.parentNode.insertBefore(anchor,tools);
+      moved.set(tools,anchor);
+      slot.appendChild(tools);
+    }
+  }
+
+  const previousOpenPage=openPage;
+  openPage=function(name){
+    previousOpenPage(name);
+    syncTopbar(name);
+  };
+
+  window.addEventListener('resize',()=>{
+    const active=document.querySelector('.page.active');
+    if(!active)return;
+    const name=active.id.replace(/^page-/,'');
+    syncTopbar(name);
+  },{passive:true});
+
+  const initial=document.querySelector('.page.active');
+  if(initial)syncTopbar(initial.id.replace(/^page-/,''));
 })();
 </script>
 
