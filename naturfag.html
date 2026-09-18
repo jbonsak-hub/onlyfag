@@ -1901,7 +1901,7 @@ const likeBank=[
 ];
 function newSolubility(){const mode=currentMode('solMode'),area=$('#solArea');if(mode==='like'){const q=rand(likeBank);area.innerHTML=`<div class="solubility-scene"><div class="beaker"><strong>${q.solute}</strong><div style="margin-top:20px"><span class="particle">stoff</span><span class="particle">stoff</span><span class="particle">stoff</span></div></div><div class="arrow">→</div><div class="beaker"><strong>${q.solvent}</strong><div style="margin-top:20px"><span class="particle">H₂O</span><span class="particle">H₂O</span><span class="particle">H₂O</span></div></div></div><div class="question">Vil stoffene normalt blande/løse seg godt i hverandre?</div><div id="solOpts"></div>`;mc($('#solOpts'),['Ja','Nei'],q.ans,'solFb',q.why)}
 else if(mode==='saltstrength'){const q=rand([{a:'NaCl',b:'MgO',ans:'MgO',why:'MgO har ioner med 2+ og 2−, mens NaCl har 1+ og 1−. Større ladninger gir sterkere tiltrekning.'},{a:'NaCl',b:'MgO',ans:'NaCl',ask:'Hvilket salt løses lettere i vann i modellen fra undervisningen?',why:'NaCl har svakere ionetiltrekning enn MgO og løses derfor lettere.'}]);let ask=q.ask||'Hvilket salt har sterkest ionebinding?';area.innerHTML=`<div class="ion-pair"><span class="ion-chip">${prettyFormula(q.a)}</span><span class="plus">vs.</span><span class="ion-chip">${prettyFormula(q.b)}</span></div><div class="question">${ask}</div><div id="solOpts"></div>`;mc($('#solOpts'),[q.a,q.b],q.ans,'solFb',q.why+' Coulombs lov peker også på at kortere avstand mellom ladningene gir sterkere kraft.')}
-else{area.innerHTML=`<div class="question">Hva skjer når en løsning av NaCl blandes med en løsning av AgNO₃?</div><div id="solOpts"></div>`;mc($('#solOpts'),['Det dannes et bunnfall av AgCl','Alt fordamper','Det dannes H₂-gass','Ingen ioner bytter partner'],'Det dannes et bunnfall av AgCl','solFb','Ag⁺ og Cl⁻ danner tungtløselig AgCl(s). De andre ionene blir igjen i løsningen.') }}
+else{area.innerHTML=`<div class="question">Hva vil du observere når en løsning av NaCl blandes med en løsning av AgNO₃?</div><div id="solOpts"></div>`;mc($('#solOpts'),['Det dannes et hvitt bunnfall','Alt fordamper','Det dannes H₂-gass','Ingen ioner bytter partner'],'Det dannes et hvitt bunnfall','solFb','Ag⁺ og Cl⁻ danner tungtløselig AgCl(s). De andre ionene blir igjen i løsningen.') }}
 setupSeg('solMode',newSolubility);
 
 const reactions=[
@@ -1930,7 +1930,7 @@ const reactions=[
 },
 {
   level:'basic',
-  prompt:'Magnesium reagerer med oksygen og danner magnesiumoksid. Bruk stoffenes vanlige tilstandsformer ved 20 °C.',stateOnly:true,
+  prompt:'Magnesium brenner i oksygen med et sterkt hvitt lys. Bruk stoffenes vanlige tilstandsformer ved 20 °C.',stateOnly:true,
   r:[['Mg',2],['O2',1]],p:[['MgO',2]],
   rs:['s','g'],ps:['s'],
   explain:'Magnesium og magnesiumoksid er faste stoffer, mens oksygen er gass: 2Mg(s) + O₂(g) → 2MgO(s).'
@@ -1951,7 +1951,7 @@ const reactions=[
 },
 {
   level:'basic',
-  prompt:'Sølvnitrat og saltsyre blandes. Reaksjonen gir AgCl og HNO3. Velg riktig tilstandsform for hvert stoff.',stateOnly:true,
+  prompt:'Sølvnitrat og saltsyre blandes. Det dannes et hvitt bunnfall. Velg riktig tilstandsform for hvert stoff.',stateOnly:true,
   r:[['AgNO3',1],['HCl',1]],p:[['AgCl',1],['HNO3',1]],
   rs:['aq','aq'],ps:['s','aq'],
   explain:'AgCl er tungtløselig og felles ut som fast stoff: AgNO₃(aq) + HCl(aq) → AgCl(s) + HNO₃(aq).'
@@ -1989,7 +1989,7 @@ const reactions=[
 },
 {
   level:'basic',stateOnly:true,
-  prompt:'Karbon forbrenner ufullstendig og danner CO. Bruk stoffenes vanlige tilstandsformer ved 20 °C.',
+  prompt:'Karbon forbrenner med begrenset tilgang på oksygen. Bruk stoffenes vanlige tilstandsformer ved 20 °C.',
   r:[['C',2],['O2',1]],p:[['CO',2]],
   rs:['s','g'],ps:['g'],
   explain:'Ved 20 °C er karbon fast stoff, mens O₂ og CO er gasser: 2C(s) + O₂(g) → 2CO(g).'
@@ -2003,7 +2003,7 @@ const reactions=[
 },
 {
   level:'basic',stateOnly:true,
-  prompt:'Butan forbrenner ufullstendig og danner CO. Velg tilstandsformene stoffene har under selve forbrenningen.',
+  prompt:'Butan forbrenner med begrenset tilgang på oksygen. Velg tilstandsformene stoffene har under selve forbrenningen.',
   r:[['C4H10',2],['O2',9]],p:[['CO',8],['H2O',10]],
   rs:['g','g'],ps:['g','g'],
   explain:'Under forbrenningen er butan, O₂, CO og vanndamp gasser: 2C₄H₁₀(g) + 9O₂(g) → 8CO(g) + 10H₂O(g).'
@@ -2886,7 +2886,7 @@ const saltSize=[
 function saltSizePair(){const ch=rand([1,2]),pool=saltSize.filter(x=>x.charge===ch);let a=rand(pool),b=rand(pool.filter(x=>x.name!==a.name&&x.size!==a.size));return[a,b]}
 function newSolubility(){const mode=currentMode('solMode'),area=$('#solArea');if(mode==='like'){if(Math.random()<.22){const ans='Alkohol';area.innerHTML=`<div class="question">Du skal løse opp et salt. Hvilket av disse løsemidlene vil egne seg best av alternativene?</div><div id="solOpts"></div>`;mc($('#solOpts'),['Olje','Heksan','Alkohol','Smør'],ans,'solFb','Alkohol er polart, mens olje, heksan og smør er hovedsakelig upolare.');return}const q=rand(likeBank2);area.innerHTML=`<div class="solubility-scene"><div class="beaker beaker-clean"><div class="beaker-label">${q.solute}</div></div><div class="arrow">→</div><div class="beaker beaker-clean"><div class="beaker-label">${q.solvent}</div></div></div><div class="question">Vil stoffene normalt blande/løse seg godt i hverandre?</div><div id="solOpts"></div>`;mc($('#solOpts'),['Ja','Nei'],q.ans,'solFb',q.why);return}
 if(mode==='saltstrength'){const [a,b]=saltSizePair(),strong=a.size<b.size?a:b,weak=a.size<b.size?b:a,askStrong=Math.random()<.7,ans=askStrong?strong.name:weak.name,q=askStrong?'Hvilket salt har sterkest tiltrekning mellom ionene?':'Hvilket salt vil, ut fra bare ionestørrelse, forventes å være lettere å trekke fra hverandre?';const why=`Ionene har samme ladningsstørrelse i begge saltene. ${strong.name} har kortere avstand mellom ionene enn ${weak.name}, og dermed sterkere tiltrekning.`;area.innerHTML=`<div class="ion-pair"><span class="ion-chip">${prettyFormula(a.name)}</span><span class="plus">vs.</span><span class="ion-chip">${prettyFormula(b.name)}</span></div><div class="question">${q}</div><div id="solOpts"></div>`;mc($('#solOpts'),[a.name,b.name],ans,'solFb',why);return}
-area.innerHTML=`<div class="question">Hva skjer når en løsning av NaCl blandes med en løsning av AgNO₃?</div><div id="solOpts"></div>`;mc($('#solOpts'),['Det dannes et bunnfall av AgCl','Alt fordamper','Det dannes H₂-gass','Ingen synlig reaksjon'], 'Det dannes et bunnfall av AgCl','solFb','Ag⁺ og Cl⁻ danner tungtløselig AgCl(s).')}
+area.innerHTML=`<div class="question">Hva vil du observere når en løsning av NaCl blandes med en løsning av AgNO₃?</div><div id="solOpts"></div>`;mc($('#solOpts'),['Det dannes et hvitt bunnfall','Alt fordamper','Det dannes H₂-gass','Ingen synlig reaksjon'], 'Det dannes et hvitt bunnfall','solFb','Ag⁺ og Cl⁻ danner tungtløselig AgCl(s).')}
 bindDynamicSeg('solMode',newSolubility);
 
 reactions.push({level:'basic',r:[['Na',6],['N2',1]],p:[['Na3N',2]]});
