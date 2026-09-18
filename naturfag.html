@@ -1271,6 +1271,153 @@ body.side-collapsed .sidebar-info-wrap{display:none}
 }
 </style>
 
+
+<style id="onlyfag-v24-crisp-elementquiz-info">
+/* Info popup must sit above the sidebar drag handle while open. */
+.sidebar:has(.info-pop.show){z-index:4200!important;}
+.sidebar-info-wrap .info-pop{
+  z-index:4300!important;
+  left:0!important;
+  right:auto!important;
+  top:34px!important;
+  width:min(340px,calc(100vw - 28px))!important;
+}
+
+@media(min-width:861px){
+  /* Keep the approved viewport-filling layout. Scale the actual grid natively,
+     not with transform, so text and borders stay crisp. */
+  #page-elementnames .element-name-pt{
+    --en-scale:1;
+    position:absolute!important;
+    width:var(--en-width,520px)!important;
+    max-width:none!important;
+    margin:0!important;
+    overflow:visible!important;
+    zoom:1!important;
+    transform:none!important;
+    transform-origin:initial!important;
+    will-change:auto!important;
+  }
+  #page-elementnames .element-name-pt .pt-wrap{
+    width:100%!important;
+    overflow:visible!important;
+    padding:0!important;
+  }
+  #page-elementnames .element-name-pt .pt-grid{
+    width:100%!important;
+    min-width:0!important;
+    grid-template-columns:var(--en-firstcol,12px) repeat(18,minmax(0,1fr))!important;
+    grid-template-rows:
+      var(--en-headrow,10px)
+      repeat(7,var(--en-row,22px))
+      var(--en-spacer,5px)
+      var(--en-row,22px)
+      var(--en-row,22px)!important;
+    gap:var(--en-gap,2px)!important;
+  }
+  #page-elementnames .element-name-pt .pt-cell{
+    padding:0!important;
+    border-radius:var(--en-radius,4px)!important;
+    border-width:1px!important;
+    background:var(--panel2)!important;
+    border-color:var(--line)!important;
+    color:var(--text)!important;
+    box-shadow:none!important;
+  }
+  #page-elementnames .element-name-pt .pt-cell .sym{
+    font-size:var(--en-sym-size,.55rem)!important;
+    line-height:1!important;
+    font-weight:900!important;
+  }
+  #page-elementnames .element-name-pt .pt-cell .num{
+    font-size:var(--en-num-size,.34rem)!important;
+    left:var(--en-num-left,2px)!important;
+    top:var(--en-num-top,1px)!important;
+  }
+  #page-elementnames .element-name-pt .pt-head,
+  #page-elementnames .element-name-pt .pt-period{
+    font-size:var(--en-head-size,.38rem)!important;
+    line-height:1!important;
+  }
+  #page-elementnames .element-name-pt .pt-placeholder{
+    font-size:var(--en-placeholder-size,.31rem)!important;
+    border-radius:var(--en-radius,4px)!important;
+  }
+  #page-elementnames .element-name-pt .pt-cell.blank{
+    background:var(--panel2)!important;
+    border-color:var(--line)!important;
+  }
+  /* Match the solved-state colours of Periodesystemquiz exactly. */
+  #page-elementnames .element-name-pt .pt-cell.solved{
+    background:var(--goodbg)!important;
+    border-color:var(--good)!important;
+    color:var(--text)!important;
+  }
+}
+</style>
+
+
+<style id="onlyfag-v25-elementname-palette-info">
+/* Grunnstoffquiz: use exactly the same category palette as Periodesystemquiz.
+   The symbols remain hidden until solved; only the cell category is visible. */
+#page-elementnames .element-name-pt .pt-cell.cat-alkali{
+  background:#e8f7fb!important;color:#007b95!important;border-color:#cdebf2!important;
+}
+#page-elementnames .element-name-pt .pt-cell.cat-alkaline{
+  background:#fde8ec!important;color:#e11d48!important;border-color:#f8cdd6!important;
+}
+#page-elementnames .element-name-pt .pt-cell.cat-transition{
+  background:#eee8ff!important;color:#6547e8!important;border-color:#ddd2ff!important;
+}
+#page-elementnames .element-name-pt .pt-cell.cat-post{
+  background:#e5f4e8!important;color:#24613a!important;border-color:#cfe8d5!important;
+}
+#page-elementnames .element-name-pt .pt-cell.cat-metalloid{
+  background:#fbf0d3!important;color:#98640a!important;border-color:#f3dfaa!important;
+}
+#page-elementnames .element-name-pt .pt-cell.cat-nonmetal{
+  background:#e1efff!important;color:#1261d7!important;border-color:#c9e0fb!important;
+}
+#page-elementnames .element-name-pt .pt-cell.cat-halogen{
+  background:#e5f3ff!important;color:#006ad8!important;border-color:#cde6fb!important;
+}
+#page-elementnames .element-name-pt .pt-cell.cat-noble{
+  background:#fae5ed!important;color:#dc2861!important;border-color:#f3cddd!important;
+}
+#page-elementnames .element-name-pt .pt-cell.cat-lanthanide{
+  background:#e4f3fb!important;color:#164f73!important;border-color:#cae5f3!important;
+}
+#page-elementnames .element-name-pt .pt-cell.cat-actinide{
+  background:#fde8d9!important;color:#d94d16!important;border-color:#f7d2b7!important;
+}
+
+/* Override the old neutral blank-cell paint, but keep all text hidden. */
+#page-elementnames .element-name-pt .pt-cell.blank .sym,
+#page-elementnames .element-name-pt .pt-cell.blank .nm,
+#page-elementnames .element-name-pt .pt-cell.blank .num{
+  visibility:hidden!important;
+}
+/* Solved cells reveal the symbol but retain their category colour. */
+#page-elementnames .element-name-pt .pt-cell.solved .sym{
+  visibility:visible!important;
+}
+#page-elementnames .element-name-pt .pt-cell.solved{
+  outline:2px solid color-mix(in srgb,var(--accent) 60%,transparent);
+  outline-offset:-2px;
+}
+
+/* Once portalled to body the popup cannot be clipped by sidebar overflow. */
+#infoPop.info-pop-portal{
+  position:fixed!important;
+  z-index:100000!important;
+  display:none;
+  width:min(340px,calc(100vw - 24px))!important;
+  max-height:calc(100vh - 24px);
+  overflow:auto;
+}
+#infoPop.info-pop-portal.show{display:block!important;}
+</style>
+
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
@@ -2760,19 +2907,50 @@ window.addEventListener('keydown',e=>{
   const btn=document.getElementById('infoBtn');
   const pop=document.getElementById('infoPop');
   if(!btn||!pop)return;
+
+  // Move the popup outside the scrollable sidebar. Otherwise overflow:auto
+  // clips everything extending past the sidebar's right edge.
+  pop.classList.add('info-pop-portal');
+  document.body.appendChild(pop);
+
+  function placeInfo(){
+    if(!pop.classList.contains('show'))return;
+    const r=btn.getBoundingClientRect();
+    const gap=8;
+    const w=Math.min(340,window.innerWidth-24);
+
+    // Prefer opening to the right of the button. If there is insufficient
+    // viewport width, keep it inside the viewport instead.
+    let left=r.left;
+    if(left+w>window.innerWidth-12)left=window.innerWidth-w-12;
+    left=Math.max(12,left);
+
+    pop.style.left=left+'px';
+    pop.style.right='auto';
+    pop.style.top=Math.min(window.innerHeight-60,r.bottom+gap)+'px';
+  }
+
   function closeInfo(){
     pop.classList.remove('show');
     btn.setAttribute('aria-expanded','false');
   }
+
   btn.addEventListener('click',function(e){
     e.stopPropagation();
     const open=!pop.classList.contains('show');
     pop.classList.toggle('show',open);
     btn.setAttribute('aria-expanded',open?'true':'false');
+    if(open){
+      placeInfo();
+      requestAnimationFrame(placeInfo);
+    }
   });
+
   pop.addEventListener('click',function(e){e.stopPropagation()});
   document.addEventListener('click',closeInfo);
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeInfo()});
+  window.addEventListener('resize',placeInfo,{passive:true});
+  window.addEventListener('scroll',placeInfo,{passive:true,capture:true});
 })();</script>
 
 
@@ -7626,7 +7804,7 @@ function toggleNaturfagFullscreen(){
     if(!pt)return;
 
     if(window.matchMedia('(max-width:860px)').matches){
-      pt.style.removeProperty('--pt-fit');
+      ['--en-scale','--en-width','--en-firstcol','--en-headrow','--en-row','--en-spacer','--en-gap','--en-radius','--en-sym-size','--en-num-size','--en-num-left','--en-num-top','--en-head-size','--en-placeholder-size'].forEach(v=>pt.style.removeProperty(v));
       pt.style.left='';
       pt.style.top='';
       pt.style.transform='';
@@ -7637,12 +7815,24 @@ function toggleNaturfagFullscreen(){
     const consoleBox=area.querySelector('.element-name-console');
     if(!shell||!consoleBox)return;
 
-    // IMPORTANT: offsetWidth/offsetHeight ignore CSS transforms.
-    // This prevents the old feedback loop where an already scaled table
-    // could be measured and then scaled down again.
-    pt.style.transform='none';
+    // Measure at true 1x size. No transformed dimensions are used.
+    pt.style.setProperty('--en-scale','1');
+    pt.style.setProperty('--en-width','520px');
+    pt.style.setProperty('--en-firstcol','12px');
+    pt.style.setProperty('--en-headrow','10px');
+    pt.style.setProperty('--en-row','22px');
+    pt.style.setProperty('--en-spacer','5px');
+    pt.style.setProperty('--en-gap','2px');
+    pt.style.setProperty('--en-radius','4px');
+    pt.style.setProperty('--en-sym-size','7.9px');
+    pt.style.setProperty('--en-num-size','4.9px');
+    pt.style.setProperty('--en-num-left','2px');
+    pt.style.setProperty('--en-num-top','1px');
+    pt.style.setProperty('--en-head-size','5.5px');
+    pt.style.setProperty('--en-placeholder-size','4.5px');
     pt.style.left='0px';
     pt.style.top='0px';
+    pt.style.transform='none';
 
     const baseW=Math.max(1,pt.offsetWidth);
     const baseH=Math.max(1,pt.offsetHeight);
@@ -7650,26 +7840,38 @@ function toggleNaturfagFullscreen(){
     const shellH=Math.max(1,shell.clientHeight);
     const consoleH=Math.max(1,consoleBox.offsetHeight);
 
-    // The lower controls never move. Everything above them belongs to the table.
-    const bottomAnchor=16;
-    const tableConsoleGap=20;
+    const bottomAnchor=14;
+    const tableConsoleGap=18;
     const sideGap=14;
     const topGap=0;
 
     const availableW=Math.max(180,shellW-sideGap*2);
     const availableH=Math.max(100,shellH-bottomAnchor-consoleH-tableConsoleGap-topGap);
+    const scale=Math.max(.7,Math.min(2.6,availableW/baseW,availableH/baseH));
 
-    const scaleW=availableW/baseW;
-    const scaleH=availableH/baseH;
+    const px=n=>`${Math.max(.5,n*scale)}px`;
+    pt.style.setProperty('--en-scale',String(scale));
+    pt.style.setProperty('--en-width',px(520));
+    pt.style.setProperty('--en-firstcol',px(12));
+    pt.style.setProperty('--en-headrow',px(10));
+    pt.style.setProperty('--en-row',px(22));
+    pt.style.setProperty('--en-spacer',px(5));
+    pt.style.setProperty('--en-gap',px(2));
+    pt.style.setProperty('--en-radius',px(4));
+    pt.style.setProperty('--en-sym-size',px(7.9));
+    pt.style.setProperty('--en-num-size',px(4.9));
+    pt.style.setProperty('--en-num-left',px(2));
+    pt.style.setProperty('--en-num-top',px(1));
+    pt.style.setProperty('--en-head-size',px(5.5));
+    pt.style.setProperty('--en-placeholder-size',px(4.5));
 
-    // Blow it up as far as BOTH width and height allow.
-    const scale=Math.max(.55,Math.min(3.0,scaleW,scaleH));
-    const renderedW=baseW*scale;
-
-    const left=Math.max(sideGap,(shellW-renderedW)/2);
-    pt.style.left=left+'px';
-    pt.style.top=topGap+'px';
-    pt.style.transform=`scale(${scale})`;
+    // Once native dimensions have reflowed, center the table using its real size.
+    requestAnimationFrame(()=>{
+      const actualW=pt.offsetWidth;
+      const left=Math.max(sideGap,(shell.clientWidth-actualW)/2);
+      pt.style.left=left+'px';
+      pt.style.top=topGap+'px';
+    });
   }
 
   function queueFit(){
