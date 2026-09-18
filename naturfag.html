@@ -678,20 +678,24 @@ body.dark .v40-context{background:var(--panel2)}
 </style>
 
 
-<style id="kjemi-v64-element-name-quiz-style">
-#page-elementnames .content{max-width:none}
+<style id="kjemi-v67-element-name-quiz-layout">
+#page-elementnames h1{
+  margin-bottom:10px;
+}
 .element-name-quiz-card{
-  padding:14px;
+  padding:12px 14px 14px;
   overflow:hidden;
 }
 .element-name-quiz-shell{
   display:grid;
-  gap:15px;
+  gap:12px;
 }
+
+/* Desktop: omtrent halv størrelse av forrige periodesystem. */
 .element-name-pt{
-  width:100%;
-  overflow-x:auto;
-  padding-bottom:2px;
+  width:min(520px,52%);
+  margin:0 auto;
+  overflow:visible;
 }
 .element-name-pt .pt-wrap{
   overflow:visible;
@@ -699,19 +703,20 @@ body.dark .v40-context{background:var(--panel2)}
 }
 .element-name-pt .pt-grid{
   width:100%;
-  min-width:690px;
-  grid-template-columns:22px repeat(18,minmax(0,1fr));
-  grid-template-rows:17px repeat(7,38px) 9px 38px 38px;
-  gap:3px;
+  min-width:0;
+  grid-template-columns:12px repeat(18,minmax(0,1fr));
+  grid-template-rows:10px repeat(7,22px) 5px 22px 22px;
+  gap:2px;
 }
 .element-name-pt .pt-cell{
   min-width:0;
-  padding:1px;
-  border-radius:5px;
+  padding:0;
+  border-radius:4px;
 }
 .element-name-pt .pt-cell .sym{
-  font-size:.82rem;
+  font-size:.55rem;
   font-weight:850;
+  line-height:1;
 }
 .element-name-pt .pt-cell .num,
 .element-name-pt .pt-cell .nm{
@@ -719,14 +724,15 @@ body.dark .v40-context{background:var(--panel2)}
 }
 .element-name-pt .pt-head,
 .element-name-pt .pt-period{
-  font-size:.55rem;
+  font-size:.38rem;
+  line-height:1;
 }
 .element-name-pt .pt-f-label{
   visibility:hidden;
 }
 .element-name-pt .pt-placeholder{
-  font-size:.46rem;
-  border-radius:5px;
+  font-size:.31rem;
+  border-radius:4px;
 }
 .element-name-pt .pt-cell.blank{
   background:color-mix(in srgb,var(--muted) 3%,var(--panel2))!important;
@@ -737,34 +743,40 @@ body.dark .v40-context{background:var(--panel2)}
   border-color:color-mix(in srgb,var(--accent) 50%,var(--line))!important;
   color:var(--accent2);
 }
+
+/* Feltet under periodesystemet. */
 .element-name-console{
-  width:min(620px,100%);
+  width:min(600px,100%);
   margin:0 auto;
-  display:grid;
-  gap:11px;
-  text-align:center;
 }
-.element-name-stats{
-  display:flex;
-  justify-content:center;
-  gap:8px;
-  flex-wrap:wrap;
+.element-name-run-grid{
+  display:grid;
+  grid-template-columns:minmax(0,260px) 145px;
+  justify-content:space-between;
+  align-items:end;
+  gap:54px;
+}
+.element-name-entry{
+  display:grid;
+  gap:7px;
+  text-align:left;
 }
 .element-name-current{
-  color:var(--muted);
-  font-size:.82rem;
-  font-weight:750;
+  color:var(--text);
+  font-size:.85rem;
+  font-weight:800;
 }
 .element-name-input{
-  width:min(420px,100%);
-  margin:0 auto;
+  width:180px;
+  max-width:100%;
+  margin:0;
   border:1.5px solid color-mix(in srgb,var(--accent) 55%,var(--line));
   background:var(--panel);
   color:var(--text);
-  border-radius:11px;
-  padding:11px 14px;
+  border-radius:10px;
+  padding:10px 12px;
   text-align:center;
-  font-size:1.12rem;
+  font-size:1rem;
   font-weight:750;
   outline:none;
 }
@@ -777,8 +789,8 @@ body.dark .v40-context{background:var(--panel2)}
   background:var(--badbg);
 }
 .element-name-fail{
-  min-height:26px;
-  font-size:.92rem;
+  min-height:22px;
+  font-size:.84rem;
   font-weight:750;
   color:var(--bad);
 }
@@ -786,19 +798,98 @@ body.dark .v40-context{background:var(--panel2)}
   color:var(--text);
   font-weight:800;
 }
+
+.element-name-best{
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:var(--panel2);
+  padding:9px 12px 10px;
+  text-align:center;
+  min-width:125px;
+}
+.element-name-best-title{
+  color:var(--muted);
+  font-size:.7rem;
+  font-weight:800;
+  margin-bottom:2px;
+}
+.element-name-best-symbol{
+  color:var(--accent2);
+  font-size:2rem;
+  line-height:1.05;
+  font-weight:900;
+}
+.element-name-best-number{
+  color:var(--muted);
+  font-size:.72rem;
+  font-weight:750;
+  margin-top:2px;
+}
+
+.element-name-ready{
+  display:grid;
+  grid-template-columns:minmax(0,260px) 145px;
+  justify-content:space-between;
+  align-items:center;
+  gap:54px;
+}
 .element-name-start{
   display:flex;
-  justify-content:center;
+  justify-content:flex-start;
 }
 #floatingPtBtn:disabled{
   opacity:.42;
   cursor:not-allowed;
   pointer-events:none;
 }
+
+/* Mobil: periodesystemet skal bruke hele tilgjengelige bredden. */
 @media(max-width:700px){
-  .element-name-quiz-card{padding:10px}
-  .element-name-pt .pt-grid{min-width:620px}
-  .element-name-pt .pt-cell .sym{font-size:.72rem}
+  .element-name-quiz-card{
+    padding:10px 7px 12px;
+  }
+  .element-name-pt{
+    width:100%;
+    max-width:none;
+    margin:0;
+    overflow:hidden;
+  }
+  .element-name-pt .pt-grid{
+    min-width:0;
+    width:100%;
+    grid-template-columns:9px repeat(18,minmax(0,1fr));
+    grid-template-rows:8px repeat(7,19px) 4px 19px 19px;
+    gap:1.5px;
+  }
+  .element-name-pt .pt-cell .sym{
+    font-size:.48rem;
+  }
+  .element-name-pt .pt-head,
+  .element-name-pt .pt-period{
+    font-size:.31rem;
+  }
+  .element-name-pt .pt-placeholder{
+    font-size:.25rem;
+  }
+  .element-name-console{
+    width:100%;
+    padding:0 6px;
+  }
+  .element-name-run-grid,
+  .element-name-ready{
+    grid-template-columns:minmax(0,1fr) 108px;
+    gap:16px;
+  }
+  .element-name-input{
+    width:155px;
+  }
+  .element-name-best{
+    min-width:0;
+    padding:8px;
+  }
+  .element-name-best-symbol{
+    font-size:1.65rem;
+  }
 }
 </style>
 
@@ -945,7 +1036,6 @@ body.dark .v40-context{background:var(--panel2)}
 
 
     <section class="page" id="page-elementnames">
-      <span class="eyebrow">Quiz</span>
       <h1>Grunnstoffquiz</h1>
       <div class="card element-name-quiz-card">
         <div id="elementNameQuizArea"></div>
@@ -7156,14 +7246,26 @@ function toggleNaturfagFullscreen(){
     </div>`;
   }
 
+  function bestCardHTML(){
+    const best=getBest();
+    const el=best>0 ? allElementsV3.find(x=>x.z===best) : null;
+    return `<div class="element-name-best">
+      <div class="element-name-best-title">Beste resultat</div>
+      <div class="element-name-best-symbol">${el?el.s:'–'}</div>
+      <div class="element-name-best-number">${el?el.z:'0'}</div>
+    </div>`;
+  }
+
   function renderReady(){
     state={running:false,failed:false,index:0,solved:new Set(),typed:''};
     setReferenceAllowed(true);
     area.innerHTML=`<div class="element-name-quiz-shell">
       <div class="element-name-pt">${tableHTML()}</div>
       <div class="element-name-console">
-        ${statsHTML()}
-        <div class="element-name-start"><button class="btn" id="elementNameStart">Start quiz</button></div>
+        <div class="element-name-ready">
+          <div class="element-name-start"><button class="btn" id="elementNameStart">Start quiz</button></div>
+          ${bestCardHTML()}
+        </div>
       </div>
     </div>`;
     document.getElementById('elementNameStart').onclick=startQuiz;
@@ -7174,11 +7276,15 @@ function toggleNaturfagFullscreen(){
     area.innerHTML=`<div class="element-name-quiz-shell">
       <div class="element-name-pt">${tableHTML()}</div>
       <div class="element-name-console">
-        ${statsHTML()}
-        <div class="element-name-current">Atomnummer ${current.z} av ${allElementsV3.length}</div>
-        <input id="elementNameInput" class="element-name-input" autocomplete="off" autocapitalize="none" spellcheck="false"
-               placeholder="Skriv symbol" aria-label="Skriv symbolet til grunnstoff ${current.z}">
-        <div class="element-name-fail" id="elementNameMessage"></div>
+        <div class="element-name-run-grid">
+          <div class="element-name-entry">
+            <div class="element-name-current">Grunnstoff nr. ${current.z}</div>
+            <input id="elementNameInput" class="element-name-input" autocomplete="off" autocapitalize="none" spellcheck="false"
+                   placeholder="Skriv symbol" aria-label="Skriv symbolet til grunnstoff ${current.z}">
+            <div class="element-name-fail" id="elementNameMessage"></div>
+          </div>
+          ${bestCardHTML()}
+        </div>
       </div>
     </div>`;
     const input=document.getElementById('elementNameInput');
@@ -7203,9 +7309,13 @@ function toggleNaturfagFullscreen(){
     area.innerHTML=`<div class="element-name-quiz-shell">
       <div class="element-name-pt">${tableHTML()}</div>
       <div class="element-name-console">
-        ${statsHTML()}
-        <div class="feedback good">Alle ${allElementsV3.length} riktig.</div>
-        <div class="element-name-start"><button class="btn" id="elementNameRestart">Begynn på nytt</button></div>
+        <div class="element-name-ready">
+          <div>
+            <div class="feedback good">Alle ${allElementsV3.length} riktig.</div>
+            <div class="element-name-start"><button class="btn" id="elementNameRestart">Begynn på nytt</button></div>
+          </div>
+          ${bestCardHTML()}
+        </div>
       </div>
     </div>`;
     document.getElementById('elementNameRestart').onclick=startQuiz;
@@ -7285,6 +7395,149 @@ function toggleNaturfagFullscreen(){
 })();
 </script>
 
+
+
+<style id="kjemi-v66-alcohol-structure-help-style">
+.alcohol-structure-help{
+  width:max-content;
+  max-width:100%;
+  margin:8px auto 12px;
+  padding:8px 14px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--panel2);
+  text-align:center;
+}
+.alcohol-structure-formula{
+  font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;
+  font-size:1.18rem;
+  font-weight:750;
+  letter-spacing:.01em;
+  white-space:nowrap;
+}
+.alcohol-oh{
+  color:var(--accent2);
+  background:var(--soft);
+  border-radius:5px;
+  padding:1px 3px;
+}
+.alcohol-structure-caption{
+  margin-top:3px;
+  color:var(--muted);
+  font-size:.68rem;
+  font-weight:700;
+}
+.simple-struct.alcohol-structure-enhanced .line{
+  font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;
+}
+.simple-struct.alcohol-structure-enhanced .alcohol-oh{
+  color:var(--accent2);
+  background:var(--soft);
+  border-radius:5px;
+  padding:1px 3px;
+}
+</style>
+<script id="kjemi-v66-alcohol-structure-help">
+(function(){
+  const alcoholRe=/\b(?:etanol|metanol|propanol|butanol|glyserol|alkohol(?:en|er|ene)?)\b/i;
+
+  function modeIsOrganic(page){
+    return page?.id==='page-carbon' && (typeof currentMode==='function' ? currentMode('carbonMode')==='organic' : document.querySelector('#carbonMode [data-mode="organic"]')?.classList.contains('active'));
+  }
+
+  function alcoholKind(s){
+    s=String(s||'').toLowerCase();
+    if(/glyserol/.test(s))return 'glyserol';
+    if(/metanol/.test(s))return 'metanol';
+    if(/propanol/.test(s))return 'propanol';
+    if(/butanol/.test(s))return 'butanol';
+    if(/etanol/.test(s))return 'etanol';
+    return 'alkohol';
+  }
+
+  function structureHTML(kind){
+    const map={
+      etanol:['H₃C–CH₂–<span class="alcohol-oh">OH</span>','etanol'],
+      metanol:['H₃C–<span class="alcohol-oh">OH</span>','metanol'],
+      propanol:['H₃C–CH₂–CH₂–<span class="alcohol-oh">OH</span>','propanol'],
+      butanol:['H₃C–CH₂–CH₂–CH₂–<span class="alcohol-oh">OH</span>','butanol'],
+      glyserol:['<span class="alcohol-oh">HO</span>–CH₂–CH(<span class="alcohol-oh">OH</span>)–CH₂–<span class="alcohol-oh">OH</span>','glyserol'],
+      alkohol:['H₃C–CH₂–<span class="alcohol-oh">OH</span>','eksempel: etanol']
+    };
+    const [formula,label]=map[kind]||map.alkohol;
+    return `<div class="alcohol-structure-help" aria-label="Enkel strukturformel for ${label}"><div class="alcohol-structure-formula">${formula}</div><div class="alcohol-structure-caption">${label} · –OH er den polare enden</div></div>`;
+  }
+
+  function promptText(q){
+    let s=q.textContent||'';
+    let prev=q.previousElementSibling;
+    // Include only prompt/scenario blocks immediately before the question, never answer choices.
+    while(prev && (prev.classList.contains('note') || prev.classList.contains('carbon-scenario') || prev.classList.contains('exam-scenario') || prev.classList.contains('molecule') || prev.classList.contains('solubility-scene'))){
+      s=(prev.textContent||'')+' '+s;
+      prev=prev.previousElementSibling;
+    }
+    return s;
+  }
+
+  function enhanceExisting(card,text){
+    const simple=card.querySelector('.simple-struct');
+    if(!simple || simple.dataset.alcoholHelp==='1')return false;
+    const name=(simple.querySelector('.name')?.textContent||'').toLowerCase();
+    if(!/alkohol|etanol|metanol|propanol|butanol|glyserol/.test(name) && !alcoholRe.test(text))return false;
+    const line=simple.querySelector('.line');
+    if(line && /H₃C|CH/.test(line.textContent||'')){
+      line.innerHTML='H₃C–CH₂–<span class="alcohol-oh">OH</span>';
+      const n=simple.querySelector('.name');
+      if(n)n.textContent='etanol · –OH er den polare enden';
+      simple.classList.add('alcohol-structure-enhanced');
+      simple.dataset.alcoholHelp='1';
+      return true;
+    }
+    return false;
+  }
+
+  function decorateQuestion(q){
+    if(!q || q.dataset.alcoholStructureChecked==='1')return;
+    const page=q.closest('.page');
+    if(modeIsOrganic(page)){
+      q.dataset.alcoholStructureChecked='1';
+      return;
+    }
+    const text=promptText(q);
+    if(!alcoholRe.test(text)){
+      q.dataset.alcoholStructureChecked='1';
+      return;
+    }
+    const card=q.closest('.card')||q.parentElement;
+    if(!card)return;
+    if(enhanceExisting(card,text)){
+      q.dataset.alcoholStructureChecked='1';
+      return;
+    }
+    if(card.querySelector('.alcohol-structure-help')){
+      q.dataset.alcoholStructureChecked='1';
+      return;
+    }
+    q.insertAdjacentHTML('beforebegin',structureHTML(alcoholKind(text)));
+    q.dataset.alcoholStructureChecked='1';
+  }
+
+  function scan(){
+    document.querySelectorAll('.page .question, #quizArea .quiz-big').forEach(decorateQuestion);
+  }
+
+  let queued=false;
+  const queue=()=>{
+    if(queued)return; queued=true;
+    requestAnimationFrame(()=>{queued=false;scan();});
+  };
+  new MutationObserver(queue).observe(document.body,{childList:true,subtree:true});
+
+  // Re-scan when switching carbon subsection: organic must remain unassisted.
+  document.querySelectorAll('#carbonMode button').forEach(b=>b.addEventListener('click',queue));
+  queue();
+})();
+</script>
 
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "1b3cf01bc1c645a99f02736c18c9ab78"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
