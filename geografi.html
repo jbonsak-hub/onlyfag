@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Fagside for geografi</title>
-<meta name="geo-build" content="v15">
+<meta name="geo-build" content="v18-country-aliases-all-islands-audited">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;display:flex;min-height:100vh;background:#f4f7f5;color:#232b25}
@@ -6486,28 +6486,27 @@ let worldQuestionTimer = null;
 let worldTrainerRunSeq = 0;
 let worldDataCache = null;
 function normalizeAnswer(str){
-  return (str || '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,' og ').replace(/[^a-z0-9æøå ]/g,' ').replace(/\s+/g,' ').trim();
+  return (str || '').toString().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/æ/g,'ae').replace(/ø/g,'o').replace(/å/g,'a')
+    .replace(/&/g,' og ')
+    .replace(/[^a-z0-9 ]/g,' ')
+    .replace(/\s+/g,' ').trim();
 }
+const COUNTRY_NAME_ALIASES={"Afghanistan":["Islamic Republic of Afghanistan"],"Albania":["Republic of Albania"],"Algerie":["Algeria","People's Democratic Republic of Algeria"],"Andorra":["Principality of Andorra"],"Angola":["Republic of Angola"],"Antigua og Barbuda":["Antigua and Barbuda"],"Argentina":["Argentine Republic"],"Armenia":["Republic of Armenia"],"Aserbajdsjan":["Azerbaijan","Republic of Azerbaijan"],"Australia":[],"Bahamas":["Commonwealth of the Bahamas","The Bahamas"],"Bahrain":["Kingdom of Bahrain"],"Bangladesh":["People's Republic of Bangladesh"],"Barbados":[],"Belarus":["Republic of Belarus","Hviterussland"],"Belgia":["Belgium","Kingdom of Belgium"],"Belize":[],"Benin":["Republic of Benin"],"Bhutan":["Kingdom of Bhutan"],"Bolivia":["Bolivia, Plurinational State of","Plurinational State of Bolivia"],"Bosnia-Hercegovina":["Bosnia and Herzegovina","Republic of Bosnia and Herzegovina","Bosnia and Herz.","Bosnia-Herzegovina","Bosnia"],"Botswana":["Republic of Botswana"],"Brasil":["Brazil","Federative Republic of Brazil"],"Brunei":["Brunei Darussalam"],"Bulgaria":["Republic of Bulgaria"],"Burkina Faso":[],"Burundi":["Republic of Burundi"],"Canada":[],"Chile":["Republic of Chile"],"Colombia":["Republic of Colombia"],"Costa Rica":["Republic of Costa Rica"],"Cuba":["Republic of Cuba"],"DR Kongo":["Congo, The Democratic Republic of the","Dem. Rep. Congo","Democratic Republic of the Congo","Democratic Republic of Congo","DR Congo","D.R. Congo","DRC","Congo-Kinshasa","Kongo-Kinshasa","Den demokratiske republikken Kongo"],"Danmark":["Denmark","Kingdom of Denmark"],"De forente arabiske emirater":["United Arab Emirates","UAE","U.A.E.","Emirates"],"Den dominikanske republikk":["Dominican Republic","Dominican Rep."],"Den sentralafrikanske republikk":["Central African Republic","Central African Rep.","CAR"],"Djibouti":["Republic of Djibouti"],"Dominica":["Commonwealth of Dominica"],"Ecuador":["Republic of Ecuador"],"Egypt":["Arab Republic of Egypt"],"Ekvatorial-Guinea":["Equatorial Guinea","Republic of Equatorial Guinea","Eq. Guinea"],"El Salvador":["Republic of El Salvador"],"Elfenbenskysten":["Côte d'Ivoire","Republic of Côte d'Ivoire","Ivory Coast","Cote d'Ivoire","Côte d’Ivoire"],"Eritrea":["the State of Eritrea"],"Estland":["Estonia","Republic of Estonia"],"Eswatini":["Kingdom of Eswatini","Swaziland","Swasiland"],"Etiopia":["Ethiopia","Federal Democratic Republic of Ethiopia"],"Fiji":["Republic of Fiji"],"Filippinene":["Philippines","Republic of the Philippines","The Philippines"],"Finland":["Republic of Finland"],"Frankrike":["France","French Republic"],"Gabon":["Gabonese Republic"],"Gambia":["Republic of the Gambia","The Gambia"],"Georgia":[],"Ghana":["Republic of Ghana"],"Grenada":[],"Guatemala":["Republic of Guatemala"],"Guinea":["Republic of Guinea"],"Guinea-Bissau":["Republic of Guinea-Bissau"],"Guyana":["Republic of Guyana"],"Haiti":["Republic of Haiti"],"Hellas":["Greece","Hellenic Republic"],"Honduras":["Republic of Honduras"],"India":["Republic of India"],"Indonesia":["Republic of Indonesia"],"Irak":["Iraq","Republic of Iraq"],"Iran":["Iran, Islamic Republic of","Islamic Republic of Iran"],"Irland":["Ireland","Republic of Ireland"],"Island":["Iceland","Republic of Iceland"],"Israel":["State of Israel"],"Italia":["Italy","Italian Republic"],"Jamaica":[],"Japan":[],"Jemen":["Yemen","Republic of Yemen"],"Jordan":["Hashemite Kingdom of Jordan"],"Kambodsja":["Cambodia","Kingdom of Cambodia"],"Kamerun":["Cameroon","Republic of Cameroon"],"Kapp Verde":["Cabo Verde","Republic of Cabo Verde","Cape Verde"],"Kasakhstan":["Kazakhstan","Republic of Kazakhstan"],"Kenya":["Republic of Kenya"],"Kina":["China","People's Republic of China"],"Kirgisistan":["Kyrgyzstan","Kyrgyz Republic"],"Kiribati":["Republic of Kiribati"],"Komorene":["Comoros","Union of the Comoros","The Comoros"],"Kongo-Brazzaville":["Congo","Republic of the Congo","Republic of Congo","Congo-Brazzaville","Kongo Brazzaville","Republikken Kongo"],"Kosovo":["Republic of Kosovo"],"Kroatia":["Croatia","Republic of Croatia"],"Kuwait":["State of Kuwait"],"Kypros":["Cyprus","Republic of Cyprus"],"Laos":["Lao People's Democratic Republic","Lao PDR"],"Latvia":["Republic of Latvia"],"Lesotho":["Kingdom of Lesotho"],"Libanon":["Lebanon","Lebanese Republic"],"Liberia":["Republic of Liberia"],"Libya":[],"Liechtenstein":["Principality of Liechtenstein"],"Litauen":["Lithuania","Republic of Lithuania"],"Luxemburg":["Luxembourg","Grand Duchy of Luxembourg"],"Madagaskar":["Madagascar","Republic of Madagascar"],"Malawi":["Republic of Malawi"],"Malaysia":[],"Maldivene":["Maldives","Republic of Maldives","The Maldives"],"Mali":["Republic of Mali"],"Malta":["Republic of Malta"],"Marokko":["Morocco","Kingdom of Morocco"],"Marshalløyene":["Marshall Islands","Republic of the Marshall Islands"],"Mauritania":["Islamic Republic of Mauritania"],"Mauritius":["Republic of Mauritius"],"Mexico":["United Mexican States"],"Mikronesia":["Micronesia, Federated States of","Federated States of Micronesia","Micronesia","FSM"],"Moldova":["Moldova, Republic of","Republic of Moldova"],"Monaco":["Principality of Monaco"],"Mongolia":[],"Montenegro":[],"Mosambik":["Mozambique","Republic of Mozambique"],"Myanmar":["Republic of Myanmar","Burma"],"Namibia":["Republic of Namibia"],"Nauru":["Republic of Nauru"],"Nederland":["Netherlands","Kingdom of the Netherlands","The Netherlands","Holland"],"Nepal":["Federal Democratic Republic of Nepal"],"New Zealand":["Ny-Zealand"],"Nicaragua":["Republic of Nicaragua"],"Niger":["Republic of the Niger"],"Nigeria":["Federal Republic of Nigeria"],"Nord-Korea":["Korea, Democratic People's Republic of","Democratic People's Republic of Korea","North Korea","DPR Korea","DPRK"],"Nord-Makedonia":["North Macedonia","Republic of North Macedonia","Macedonia"],"Norge":["Norway","Kingdom of Norway"],"Oman":["Sultanate of Oman"],"Pakistan":["Islamic Republic of Pakistan"],"Palau":["Republic of Palau"],"Palestina":["Palestine, State of","the State of Palestine","Palestine","State of Palestine","Palestinian Territories","Palestinian Territory"],"Panama":["Republic of Panama"],"Papua Ny-Guinea":["Papua New Guinea","Independent State of Papua New Guinea"],"Paraguay":["Republic of Paraguay"],"Peru":["Republic of Peru"],"Polen":["Poland","Republic of Poland"],"Portugal":["Portuguese Republic"],"Qatar":["State of Qatar"],"Romania":[],"Russland":["Russian Federation","Russia"],"Rwanda":["Rwandese Republic"],"Saint Kitts og Nevis":["Saint Kitts and Nevis","St Kitts and Nevis","St. Kitts and Nevis"],"Salomonøyene":["Solomon Islands","Solomon Is."],"Samoa":["Independent State of Samoa"],"San Marino":["Republic of San Marino"],"Saudi-Arabia":["Saudi Arabia","Kingdom of Saudi Arabia"],"Senegal":["Republic of Senegal"],"Serbia":["Republic of Serbia"],"Seychellene":["Seychelles","Republic of Seychelles","The Seychelles"],"Sierra Leone":["Republic of Sierra Leone"],"Singapore":["Republic of Singapore"],"Slovakia":["Slovak Republic"],"Slovenia":["Republic of Slovenia"],"Somalia":["Federal Republic of Somalia"],"Spania":["Spain","Kingdom of Spain"],"Sri Lanka":["Democratic Socialist Republic of Sri Lanka","Ceylon"],"St. Lucia":["Saint Lucia","St Lucia"],"St. Vincent og Grenadinene":["Saint Vincent and the Grenadines","St Vincent and the Grenadines","St. Vincent and the Grenadines"],"Storbritannia":["United Kingdom","United Kingdom of Great Britain and Northern Ireland","UK","U.K.","Great Britain","Britain"],"Sudan":["Republic of the Sudan"],"Surinam":["Suriname","Republic of Suriname"],"Sveits":["Switzerland","Swiss Confederation"],"Sverige":["Sweden","Kingdom of Sweden"],"Syria":["Syrian Arab Republic"],"São Tomé og Príncipe":["Sao Tome and Principe","Democratic Republic of Sao Tome and Principe","São Tomé and Príncipe","Sao Tome & Principe"],"Sør-Afrika":["South Africa","Republic of South Africa"],"Sør-Korea":["Korea, Republic of","South Korea","Republic of Korea","ROK"],"Sør-Sudan":["South Sudan","Republic of South Sudan","S. Sudan"],"Tadsjikistan":["Tajikistan","Republic of Tajikistan"],"Taiwan":["Taiwan, Province of China"],"Tanzania":["Tanzania, United Republic of","United Republic of Tanzania"],"Thailand":["Kingdom of Thailand"],"Togo":["Togolese Republic"],"Tonga":["Kingdom of Tonga"],"Trinidad og Tobago":["Trinidad and Tobago","Republic of Trinidad and Tobago"],"Tsjad":["Chad","Republic of Chad"],"Tsjekkia":["Czechia","Czech Republic"],"Tunisia":["Republic of Tunisia"],"Turkmenistan":[],"Tuvalu":[],"Tyrkia":["Türkiye","Republic of Türkiye","Turkey","Turkiye"],"Tyskland":["Germany","Federal Republic of Germany"],"USA":["United States","United States of America","US","U.S.","U.S.A.","America","De forente stater","Amerikas forente stater"],"Uganda":["Republic of Uganda"],"Ukraina":["Ukraine"],"Ungarn":["Hungary"],"Uruguay":["Eastern Republic of Uruguay"],"Usbekistan":["Uzbekistan","Republic of Uzbekistan"],"Vanuatu":["Republic of Vanuatu"],"Vatikanstaten":["Holy See (Vatican City State)","Vatican","Vatican City","Holy See","The Vatican","Vatikanet"],"Venezuela":["Venezuela, Bolivarian Republic of","Bolivarian Republic of Venezuela"],"Vietnam":["Viet Nam","Socialist Republic of Viet Nam"],"Zambia":["Republic of Zambia"],"Zimbabwe":["Republic of Zimbabwe"],"Øst-Timor":["Timor-Leste","Democratic Republic of Timor-Leste","Timor Leste","East Timor"],"Østerrike":["Austria","Republic of Austria"]};
 function answerMatches(input, answer){
-  const n = normalizeAnswer(input), a = normalizeAnswer(answer);
-  if(!n || !a) return false;
-  const aliases = {
-    'usa':['usa','de forente stater','amerikas forente stater','united states','amerika'],
-    'storbritannia':['storbritannia','united kingdom','uk','england'],
-    'vatikanstaten':['vatikanet','vatikanstaten'],
-    'elfenbenskysten':['elfenbenskysten','cote d ivoire'],
-    'kapp verde':['kapp verde','cape verde'],
-    'eswatini':['eswatini','swaziland'],
-    'myanmar':['myanmar','burma'],
-    'sri lanka':['sri lanka','ceylon'],
-    'dr kongo':['dr kongo','den demokratiske republikken kongo','kongo kinshasa'],
-    'kongo brazzaville':['kongo brazzaville','republikken kongo','republic of the congo'],
-    'jemen':['jemen','yemen']
-  };
-  if(n === a) return true;
-  for(const group of Object.values(aliases)){
-    const g = group.map(normalizeAnswer);
-    if(g.includes(n) && g.includes(a)) return true;
+  const n=normalizeAnswer(input),a=normalizeAnswer(answer);
+  if(!n||!a)return false;
+  const compact=s=>s.replace(/\s+/g,'');
+  if(n===a||compact(n)===compact(a))return true;
+
+  /* Match the answer against every known Norwegian/English country-name group.
+     Compact matching also accepts omitted hyphens/apostrophes/spaces. */
+  for(const [canonical,aliases] of Object.entries(COUNTRY_NAME_ALIASES)){
+    const group=[canonical,...aliases].map(normalizeAnswer).filter(Boolean);
+    const answerBelongs=group.some(x=>x===a||compact(x)===compact(a));
+    if(!answerBelongs)continue;
+    return group.some(x=>x===n||compact(x)===compact(n));
   }
   return false;
 }
@@ -6850,7 +6849,13 @@ function renderCountryRegionSetup(){
   </div>`;
 }
 let countryMapResizeTimer=null;
-const COUNTRY_MAP_FILL_EXTRA_FEATURES={"Danmark":["Greenland"],"Somalia":["Somaliland"],"Marokko":["W. Sahara"],"Kypros":["N. Cyprus"]};
+const COUNTRY_MAP_FILL_EXTRA_FEATURES={"Danmark":["Greenland"],"Somalia":["Somaliland"],"Marokko":["W. Sahara"],"Kypros":["N. Cyprus"],"USA":["Puerto Rico"],"Storbritannia":["Falkland Is."],"Frankrike":["New Caledonia","Fr. S. Antarctic Lands"]};
+/* Små øyer i den nøytrale landbakgrunnen som ikke finnes i den forenklede landgeometrien. */
+const COUNTRY_MAP_ISLAND_FEATURES={"Fiji":[6,768,770],"United States of America":[13,14,15,16,18,37,39,41,43,45,47,48,50,54,55,56,58,59,60,61,62,63,65,66,67,69,70,71,72,73,74,75,76,77,104,105,106,107,208,209],"Canada":[19,24,26,29,32,33,35,36,38,40,42,46,81,82,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,245,246,247,248,292,293,294,295,296,297,307],"Russia":[79,80,470,471,472,484,485,488,489,491,492,494,496,532,533,534,535,536,537,538,539,540,541,542,543,544,545,546,547,548,549,550,551,552,553,554,555,556,557,558,559,560,561,563,575,656,657,658,659,660,661,662,663,734,735,736,738,739,740,741,742,743,744,745,746,802,803,804,805,813,814,815,816,817,818,819,820],"Ecuador":[88],"Panama":[95,96,188],"Mexico":[97,99,101,103],"Cuba":[100],"Chile":[180,183,184,185,186],"Argentina":[182,187],"Venezuela":[189],"Puerto Rico":[194],"Haiti":[195],"Bahamas":[205,206,207],"Greenland":[243,244,298,299,300,301,302,303,304,305,306,308,309,310,311,312,313,314,315,316,317,318,319,320,321,322,323,324,325,326,327,328,329,330,331,409,410,411,412,414],"Brazil":[269,270],"Trinidad and Tobago":[271],"Guinea-Bissau":[335],"Tunisia":[344],"Italy":[350],"Spain":[337,340,342,346,347],"Croatia":[351,352,353,354,355,458],"Ireland":[357,358,360],"Poland":[359],"Germany":[362,365,366],"United Kingdom":[356,363,364,367,374,376,377,378,379,381,382,383,384,385,388],"Denmark":[368,370,371,372,375],"Sweden":[460,461],"Norway":[386,387,389,392,399,400,401,402,403,404,405,406,407,413,473,474,475,476,477,478,480,481,482,483],"South Africa":[419],"Madagascar":[421,423],"Tanzania":[428,429],"Eritrea":[433,434],"Saudi Arabia":[436],"Turkey":[457],"Greece":[440,442,443,447,448,449,450,451,452],"Turkmenistan":[454],"Kazakhstan":[459],"Estonia":[464,465],"Finland":[467,468,469],"Indonesia":[505,506,507,508,509,510,511,512,513,586,587,589,590,591,592,593,594,595,596,597,598,599,600,601,602,603,604,605,606,607,608,609,610,611,612,613,614,615,616,617,618,619,620,621,622,680,681,682,683,684,685,686,687,688,690,693,694,695,696,697,699,700,701,702,703,704,705,706,707,708,709,710,711],"Malaysia":[514,626],"India":[515,518],"Myanmar":[520,523,525,527],"Oman":[528],"Bangladesh":[530,531],"Australia":[583,584,585,588,667,668,669,670,671,672,673,674,675,676,758,759,761,762,763],"Philippines":[623,624,625,627,629,630,632,633,634,636,637,638,640,641,642,643,644,645,646,647,648,649,713],"Vietnam":[628],"Thailand":[631,639],"Cambodia":[635],"China":[650,654,655],"Papua New Guinea":[678,679,689,691,692,698,780,783,784,785,786,787,790,795,796,797,798],"Japan":[651,652,718,719,720,721,723,724,726,730,731,732,733,737],"South Korea":[722,727,729],"New Zealand":[756,757,760],"New Caledonia":[764,765,766],"Vanuatu":[769,771,772,773,774,775,776,777],"Solomon Is.":[779,788,789,791,792,793,794],"Malta":[345],"Eq. Guinea":[334],"Netherlands":[190,191]};
+/* Komplett kobling for de resterende øy-/landpolygonene, direkte til landnavn i quizen. */
+const COUNTRY_MAP_ISLAND_COUNTRIES={"New Zealand":[2,4,754,755],"Tonga":[3],"Frankrike":[5,10,11,276,282,418,420,422],"USA":[7,17,20,21,22,23,25,27,28,30,31,34,44,49,51,52,53,57,64,68,78,714,806,807,808,809,810],"Samoa":[8,9],"Kiribati":[12],"Chile":[87,179,181],"Ecuador":[89,90,91,92,93,94],"Storbritannia":[98,197,198,199,200,201,267,268,390,391],"Mexico":[102],"Antigua og Barbuda":[192],"Saint Kitts og Nevis":[193],"Bahamas":[196,202,203,204],"Canada":[210],"Grenada":[272],"Barbados":[273],"St. Vincent og Grenadinene":[274],"St. Lucia":[275],"Kapp Verde":[277,278,279,281,283,284,285,286],"Dominica":[280],"Portugal":[287,288,289,290,291,343],"São Tomé og Príncipe":[333],"Spania":[336,338,339,341,348,349],"Danmark":[369,373,380,393,394,395,396,397,398],"Norge":[408,479,486],"Sør-Afrika":[417],"Komorene":[424,425,426],"Seychellene":[427,431],"Tanzania":[430],"Jemen":[432],"Saudi-Arabia":[435],"Bahrain":[437],"Kuwait":[438],"Hellas":[439,441,444,445,446,453,455,456],"Sverige":[462],"Estland":[463],"Finland":[466],"Russland":[487,490,493,495,497,562,564,565,566,567,568,569,570,571,572,573,574,576,577,578,579,580,800,801,811,812],"Australia":[503,677],"Mauritius":[504],"India":[516,517,519,521,522,524,526],"Japan":[653,715,716,717,725,728],"Palau":[712],"Vanuatu":[767],"Salomonøyene":[778,782],"Papua Ny-Guinea":[781],"Mikronesia":[799]};
+/* To delte landmasser er splittet etter statsgrensen i stedet for å gis til ett land. */
+const COUNTRY_MAP_ISLAND_SPLITS={"Tyskland":[{"type":"Polygon","coordinates":[[[13.774319066147854,54.17303730830855],[14.22,53.952592975435444],[14.22,53.817450412830986],[13.845731288624393,53.85168230716411],[13.922636758983742,53.92034790569926],[13.90615701533531,53.98901350423438],[14.048981460288388,53.99450675211719],[13.972075989929039,54.06317235065234],[13.768825818265043,54.01922636758985],[13.774319066147854,54.17303730830855]],[[13.922636758983742,53.8461890592813],[13.867704280155635,53.87090867475396],[13.845731288624393,53.85168230716411],[13.922636758983742,53.8461890592813]]]}],"Polen":[{"type":"Polygon","coordinates":[[[14.285191119249248,53.92034790569926],[14.334630350194544,53.82421606775006],[14.29617761501487,53.810482948043045],[14.22,53.817450412830986],[14.22,53.952592975435444],[14.285191119249248,53.92034790569926]]]}],"India":[{"type":"Polygon","coordinates":[[[89.02082856488897,21.977111467154955],[88.98786907759211,21.89196612497139],[89.09773403524832,21.636530098420693],[89.02632181277181,21.598077363241018],[88.88899061570152,21.65575646601053],[88.86152437628749,21.776607919432365],[88.88349736781873,21.688715953307394],[88.88899061570152,21.6914625772488],[89.0318150606546,22.05676356145571],[89.17,22.03214440559532],[89.17,21.80514995167974],[89.02082856488897,21.977111467154955]]]}],"Bangladesh":[{"type":"Polygon","coordinates":[[[89.36690318150607,21.94415197985809],[89.339436942092,21.782101167315176],[89.32845044632637,21.848020141908904],[89.21858548867016,21.74914168001831],[89.17,21.80514995167974],[89.17,22.03214440559532],[89.50972762645915,21.971618219272145],[89.52071412222477,22.084229800869764],[89.50423437857631,21.905699244678416],[89.42183566033418,21.971618219272145],[89.46028839551383,21.760128175783933],[89.36140993362324,21.7436484321355],[89.36690318150607,21.94415197985809]]]}]};
 function countryMapFoundFeatureSet(foundCountries){
   const set=new Set();
   (foundCountries||[]).forEach(country=>{
@@ -7018,9 +7023,37 @@ function countryMapBuildGeoPath(geom,center){
 function countryMapVectorSet(regionId){
   const meta=COUNTRY_MAP_META[regionId]||COUNTRY_MAP_META.world,key=regionId+'|'+meta.center;
   if(countryMapVectorCache[key])return countryMapVectorCache[key];
-  const world=countryMapFillData(),neutral=countryMapLandData(),byFeature={},allCountries=new Path2D(),allBorders=new Path2D(),neutralPath=countryMapBuildGeoPath(neutral,meta.center);
+  const world=countryMapFillData(),neutral=countryMapLandData(),byFeature={},allCountries=new Path2D(),allBorders=new Path2D(),neutralPath=countryMapBuildGeoPath(neutral,meta.center),islandByFeature={},islandByCountry={};
   if(world)for(const f of world.features){const p=countryMapBuildGeoPath(f.geometry,meta.center);if(!p)continue;byFeature[f.properties.name]=p;allCountries.addPath(p);allBorders.addPath(p)}
-  const set={byFeature,allCountries,allBorders,neutralPath};countryMapVectorCache[key]=set;return set;
+  if(neutral&&neutral.type==='MultiPolygon'){
+    for(const [featureName,indices] of Object.entries(COUNTRY_MAP_ISLAND_FEATURES)){
+      const combined=new Path2D();let hasPath=false;
+      for(const idx of indices){
+        const rings=neutral.coordinates[idx];if(!rings)continue;
+        const p=countryMapBuildGeoPath({type:'Polygon',coordinates:rings},meta.center);
+        if(p){combined.addPath(p);hasPath=true}
+      }
+      if(hasPath)islandByFeature[featureName]=combined;
+    }
+    for(const [country,indices] of Object.entries(COUNTRY_MAP_ISLAND_COUNTRIES)){
+      const combined=new Path2D();let hasPath=false;
+      for(const idx of indices){
+        const rings=neutral.coordinates[idx];if(!rings)continue;
+        const p=countryMapBuildGeoPath({type:'Polygon',coordinates:rings},meta.center);
+        if(p){combined.addPath(p);hasPath=true}
+      }
+      if(hasPath)islandByCountry[country]=combined;
+    }
+  }
+  for(const [country,geoms] of Object.entries(COUNTRY_MAP_ISLAND_SPLITS)){
+    const combined=islandByCountry[country]||new Path2D();let hasPath=!!islandByCountry[country];
+    for(const geom of geoms||[]){
+      const p=countryMapBuildGeoPath(geom,meta.center);
+      if(p){combined.addPath(p);hasPath=true}
+    }
+    if(hasPath)islandByCountry[country]=combined;
+  }
+  const set={byFeature,allCountries,allBorders,neutralPath,islandByFeature,islandByCountry};countryMapVectorCache[key]=set;return set;
 }
 function countryMapTransform(ctx,w,h,meta,dpr){
   const xMin=-meta.span,xMax=meta.span,latMin=meta.latMin,latMax=meta.latMax,pad=Math.max(8,Math.min(w,h)*.025);
@@ -7058,6 +7091,16 @@ function drawCountryMap(){
     ctx.fillStyle='#39a96b';
     const featuresToFill=drawAllFeatures?Object.keys(vectors.byFeature):Array.from(new Set([...regionFeatureNames,...foundFeatureNames]));
     for(const featureName of featuresToFill){if(foundFeatureNames.has(featureName)&&vectors.byFeature[featureName])ctx.fill(vectors.byFeature[featureName],'evenodd')}
+    /* Farg også mindre øyer som ligger i bakgrunnsgeometrien, men mangler i
+       den forenklede landsgeometrien. Gjelder alle regionkart og verdenskartet. */
+    for(const featureName of foundFeatureNames){
+      if(vectors.islandByFeature&&vectors.islandByFeature[featureName])ctx.fill(vectors.islandByFeature[featureName],'evenodd');
+    }
+    /* Direkte landkobling gjør også små øystater og oversjøiske områder grønne,
+       selv når de mangler i den forenklede landgeometrien. */
+    for(const country of found){
+      if(vectors.islandByCountry&&vectors.islandByCountry[country])ctx.fill(vectors.islandByCountry[country],'evenodd');
+    }
     ctx.lineJoin='round';ctx.lineCap='round';ctx.strokeStyle='#55736a';ctx.lineWidth=.78/scale;
     if(drawAllFeatures){
       ctx.stroke(vectors.allBorders);
