@@ -4155,8 +4155,45 @@ body.dark-mode .geo-space-lab-frame{
 }
 </style>
 
+
+<style id="onlyfag-mobile-quiz-back-v1">
+/* Mobil: permanent synlig vei tilbake fra de tre spillene der Safari-baren
+   kan dekke den eksisterende topplinjen. Desktop-oppsettet endres ikke. */
+.geo-mobile-quiz-back{
+  display:none;
+}
+@media(max-width:860px){
+  body.quiz-fullscreen:has(#quiz-statle.active) .geo-mobile-quiz-back,
+  body.quiz-fullscreen:has(#quiz-flags.active) .geo-mobile-quiz-back,
+  body.quiz-fullscreen:has(#quiz-flagcapital.active) .geo-mobile-quiz-back{
+    display:inline-flex;
+    position:fixed;
+    z-index:10000;
+    left:14px;
+    top:max(104px, calc(env(safe-area-inset-top, 0px) + 64px));
+    min-height:44px;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    padding:9px 13px 9px 11px;
+    border:1px solid #4f7991;
+    border-radius:14px;
+    background:rgba(7,28,40,.96);
+    color:#e8fbff;
+    box-shadow:0 5px 18px rgba(0,0,0,.28);
+    font:900 .9rem/1.1 system-ui,-apple-system,"Segoe UI",sans-serif;
+    cursor:pointer;
+    touch-action:manipulation;
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+  }
+  .geo-mobile-quiz-back:active{transform:translateX(-1px)}
+}
+</style>
+
 </head>
 <body>
+<button class="geo-mobile-quiz-back" id="geoMobileQuizBack" type="button" onclick="exitQuizMode()" aria-label="Tilbake til quizoversikten" title="Tilbake til quizoversikten">← Oversikt</button>
 <nav class="sidebar">
 <h1>🌍 Geografi</h1>
 <div class="menu-item"><div class="menu-header" onclick="toggleMenu(this)"><span class="menu-icon">▶</span>Kart</div><div class="submenu">

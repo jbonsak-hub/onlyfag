@@ -1735,6 +1735,39 @@ body.side-collapsed .sidebar-info-wrap{display:none}
 }
 </style>
 
+
+<style id="onlyfag-mobile-navigation-v1">
+/* Egen tilbakepil for mobil. Desktop-oppsettet endres ikke. */
+.nf-mobile-back{
+  display:none;
+}
+@media(max-width:860px){
+  .topbar{
+    position:sticky!important;
+    top:0!important;
+    z-index:3400!important;
+  }
+  .nf-mobile-back{
+    display:inline-flex!important;
+    flex:0 0 auto;
+    width:42px;
+    height:42px;
+    align-items:center;
+    justify-content:center;
+    margin-right:4px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--panel2);
+    color:var(--accent2);
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+    font:900 1.65rem/1 system-ui,-apple-system,"Segoe UI",sans-serif;
+    cursor:pointer;
+    touch-action:manipulation;
+  }
+  .nf-mobile-back:active{transform:translateX(-1px)}
+}
+</style>
+
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
@@ -1775,7 +1808,7 @@ body.side-collapsed .sidebar-info-wrap{display:none}
      tabindex="0" title="Dra for å endre menybredden. Dobbeltklikk for å tilbakestille."></div>
 <button class="nf-sidebar-collapse" id="collapseBtn" type="button" aria-label="Minimer sidemenyen" title="Minimer sidemenyen">‹</button>
 <main class="main">
-  <header class="topbar"><div class="top-title" id="topTitle">Kjemi – oppgavebank</div><div class="top-module-slot" id="topModuleSlot"></div><div class="top-spacer"></div><button class="top-periodic-btn" id="floatingPtBtn" type="button">▤&nbsp; Periodesystem</button></header>
+  <header class="topbar"><button class="nf-mobile-back" id="nfMobileBack" type="button" aria-label="Tilbake" title="Tilbake">←</button><div class="top-title" id="topTitle">Kjemi – oppgavebank</div><div class="top-module-slot" id="topModuleSlot"></div><div class="top-spacer"></div><button class="top-periodic-btn" id="floatingPtBtn" type="button">▤&nbsp; Periodesystem</button></header>
   <div class="content">
     <section class="page active" id="page-home">
       <h1>Kjemi - oppgavebank</h1>
@@ -1919,8 +1952,23 @@ function setupSeg(id,callback){$('#'+id).querySelectorAll('button').forEach(b=>b
 function currentMode(id){return $('#'+id+' button.active').dataset.mode}
 
 const titles={home:'Kjemi – oppgavebank',atom:'Atomer & periodesystem',ion:'Ioner',salt:'Ioniske forbindelser',binding:'Sterke bindinger',polar:'Polaritet & svake bindinger',solubility:'Løselighet',balance:'Reaksjonslikninger',redox:'Elektronoverføring',combustion:'Forbrenning',carbon:'Karbonkjemi',mix:'Kjemiquiz – alle tema'};
-function openPage(name){$$('.page').forEach(p=>p.classList.remove('active'));$('#page-'+name).classList.add('active');$$('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===name));$('#topTitle').textContent=titles[name];document.body.classList.remove('mobile-open');window.scrollTo({top:0,behavior:'instant'});}
+function updateNaturfagMobileBack(name){
+  const b=$('#nfMobileBack');if(!b)return;
+  const atHome=name==='home';
+  b.dataset.target=atHome?'site':'home';
+  b.setAttribute('aria-label',atHome?'Tilbake til OnlyFag':'Tilbake til Kjemi – oppgavebank');
+  b.title=atHome?'Tilbake til OnlyFag':'Tilbake til Kjemi – oppgavebank';
+}
+function openPage(name){$$('.page').forEach(p=>p.classList.remove('active'));$('#page-'+name).classList.add('active');$$('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===name));$('#topTitle').textContent=titles[name];updateNaturfagMobileBack(name);document.body.classList.remove('mobile-open');window.scrollTo({top:0,behavior:'instant'});}
 $$('.nav-btn').forEach(b=>b.onclick=()=>openPage(b.dataset.page));
+const nfMobileBack=$('#nfMobileBack');
+if(nfMobileBack){
+  nfMobileBack.onclick=()=>{
+    if(nfMobileBack.dataset.target==='site'){window.location.href='index.html';return;}
+    openPage('home');
+  };
+  updateNaturfagMobileBack(document.querySelector('.page.active')?.id?.replace('page-','')||'home');
+}
 const safeStore={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 $('#collapseBtn').onclick=()=>{document.body.classList.toggle('side-collapsed');safeStore.set('chemSide',document.body.classList.contains('side-collapsed')?'1':'0')};
 $('#themeBtn').onclick=()=>{document.body.classList.toggle('dark');safeStore.set('chemTheme',document.body.classList.contains('dark')?'dark':'light')};
