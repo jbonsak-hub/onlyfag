@@ -23,7 +23,6 @@ button{cursor:pointer}
 .submenu-item{padding:9px 20px 9px 50px;color:var(--muted);cursor:pointer;transition:.15s;font-size:.92rem}
 .submenu-item:hover,.submenu-item.active{background:var(--soft2);color:var(--purple);font-weight:650}
 .submenu-item.direct{padding:11px 20px;font-size:.98rem}
-.submenu-item.direct-link{display:block;text-decoration:none}
 .pi-nav-glyph{font-family:"Cambria Math","STIX Two Math","Times New Roman",Georgia,serif;font-size:1.22em;font-weight:400;line-height:1;display:inline-block;vertical-align:-.04em}
 .onlyfag-back-arrow{position:fixed;left:16px;bottom:16px;z-index:120;display:flex;width:42px;height:42px;margin:0;align-items:center;justify-content:center;border-radius:12px;color:var(--purple);text-decoration:none;font-size:1.35rem;border:1px solid var(--line);background:var(--paper);box-shadow:0 4px 14px rgba(35,20,48,.08)}
 .onlyfag-back-arrow:hover{background:var(--soft)}
@@ -124,13 +123,129 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
   .content{padding-inline:10px}.pi-symbol{font-size:4.2rem}.pi-display{min-height:96px;padding:18px 0}.pi-digits{font-size:1.38rem}.pi-input{min-height:47px}
 }
 </style>
+
+<style id="onlyfag-math-mobile-menu-v2">
+@media(max-width:760px){
+  /* Samme hovedidé som Fysikk 2: tittel øverst og menyvalg som én
+     vertikal, tydelig liste under – ikke et tett rutenett. */
+  .sidebar{
+    display:block!important;
+    position:relative!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    height:auto!important;
+    padding:0 0 13px!important;
+    overflow:visible!important;
+    border-right:0!important;
+    border-bottom:1px solid var(--line)!important;
+    background:var(--paper)!important;
+  }
+
+  .sidebar h1{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    width:100%!important;
+    margin:0 0 7px!important;
+    padding:16px 22px 15px!important;
+    border-bottom:1px solid var(--line)!important;
+    font-size:1.34rem!important;
+    line-height:1.2!important;
+  }
+
+  .sidebar .submenu-item.direct,
+  .sidebar a.submenu-item.direct{
+    display:flex!important;
+    align-items:center!important;
+    width:100%!important;
+    min-height:49px!important;
+    padding:9px 22px!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    color:var(--ink)!important;
+    text-align:left!important;
+    text-decoration:none!important;
+    font-size:1.13rem!important;
+    line-height:1.25!important;
+    font-weight:700!important;
+  }
+
+  .sidebar .submenu-item.direct + .submenu-item.direct,
+  .sidebar .submenu-item.direct + a.submenu-item.direct,
+  .sidebar a.submenu-item.direct + .submenu-item.direct{
+    border-left:0!important;
+  }
+
+  .sidebar .submenu-item.direct:hover,
+  .sidebar .submenu-item.direct:focus-visible,
+  .sidebar a.submenu-item.direct:hover,
+  .sidebar a.submenu-item.direct:focus-visible{
+    background:var(--soft)!important;
+    color:var(--purple)!important;
+    outline:none!important;
+  }
+
+  .sidebar .submenu-item.direct.active{
+    background:var(--soft)!important;
+    color:var(--purple)!important;
+  }
+
+  /* Små ikoner til venstre gir samme visuelle rytme som Fysikk 2-menyen. */
+  .math-mobile-item::before{
+    width:25px;
+    flex:0 0 25px;
+    margin-right:8px;
+    color:var(--muted);
+    text-align:center;
+    font-size:.88em;
+    font-weight:800;
+  }
+  .math-hf::before{content:"▶";}
+  .math-mandelbrot::before{content:"◆";}
+  .math-pi::before{
+    content:"π";
+    font-family:"Cambria Math","STIX Two Math","Times New Roman",Georgia,serif;
+    font-size:1.05em;
+    font-weight:400;
+  }
+  .math-pi .pi-nav-glyph{display:none!important;}
+
+  .sidebar-resizer,.sidebar-toggle,.menu-header,.menu-icon,.submenu{display:none!important}
+
+  /* Litt samme avstand mellom meny og innhold som på Fysikk 2. */
+  .content{
+    padding:18px 12px 76px!important;
+    max-width:none!important;
+  }
+  .placeholder{
+    margin-top:0!important;
+  }
+}
+
+@media(max-width:430px){
+  .sidebar h1{
+    padding:14px 18px 13px!important;
+    font-size:1.24rem!important;
+  }
+  .sidebar .submenu-item.direct,
+  .sidebar a.submenu-item.direct{
+    min-height:46px!important;
+    padding:8px 18px!important;
+    font-size:1.08rem!important;
+  }
+  .content{padding-inline:10px!important}
+}
+</style>
+
 </head>
 <body>
 <nav class="sidebar">
   <h1><span>∑ Matematikk</span><button aria-label="Bytt mellom lys og mørk modus" class="global-theme-toggle" id="themeToggle" title="Mørk modus" type="button">◐</button></h1>
-  <div class="submenu-item direct" data-section="hurtigfaktorisering" onclick="showContent('hurtigfaktorisering',this)">Hurtigfaktorisering</div>
-  <a class="submenu-item direct direct-link" href="mandelbrot.html">Mandelbrot</a>
-  <div class="submenu-item direct" data-section="pi-trener" onclick="showContent('pi-trener',this)"><span class="pi-nav-glyph">π</span></div>
+  <div class="submenu-item direct math-mobile-item math-hf" data-section="hurtigfaktorisering" onclick="showContent('hurtigfaktorisering',this)">Hurtigfaktorisering</div>
+  <a class="submenu-item direct math-mobile-item math-mandelbrot" href="mandelbrot.html">Mandelbrot</a>
+  <div class="submenu-item direct math-mobile-item math-pi" data-section="pi-trener" onclick="showContent('pi-trener',this)"><span class="pi-nav-glyph">π</span></div>
   <a class="onlyfag-back-arrow" href="index.html" aria-label="Tilbake til hovedsiden" title="Tilbake til hovedsiden">←</a>
 </nav>
 <button aria-expanded="true" aria-label="Minimer sidemenyen" class="sidebar-toggle" id="sidebarToggle" title="Minimer sidemenyen" type="button">‹</button>
