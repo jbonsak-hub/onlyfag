@@ -8355,14 +8355,16 @@ function toggleNaturfagFullscreen(){
 
     const timers=[
       setTimeout(run,0),
-      setTimeout(run,110),
-      setTimeout(run,240),
-      setTimeout(run,430)
+      setTimeout(run,100),
+      setTimeout(run,250),
+      setTimeout(run,450),
+      setTimeout(run,700),
+      setTimeout(run,950)
     ];
 
     const cleanupTimer=setTimeout(()=>{
       stopElementNameMobileInitialAlign();
-    },560);
+    },1150);
 
     elementNameMobileAlignCleanup=()=>{
       if(!active)return;
@@ -8464,10 +8466,22 @@ function toggleNaturfagFullscreen(){
     input.addEventListener('keydown',e=>{
       if(e.key==='Enter' && state.failed)startQuiz();
     });
-    setTimeout(()=>{
-      input.focus({preventScroll:true});
-      queueElementNameMobileAlign();
-    },0);
+
+    if(window.matchMedia('(max-width:700px)').matches){
+      /* Start på nytt akkurat når eleven trykker i feltet. Da følger vi
+         Safaris tastaturanimasjon og korrigerer ETTER dens egen autoscroll. */
+      input.addEventListener('pointerdown',()=>{
+        queueElementNameMobileAlign();
+      },{passive:true});
+      input.addEventListener('focus',()=>{
+        queueElementNameMobileAlign();
+      },{passive:true});
+
+      /* Før tastaturet er åpnet legger vi også tabellen pent i utgangspunktet. */
+      setTimeout(()=>queueElementNameMobileAlign(),0);
+    }else{
+      setTimeout(()=>input.focus({preventScroll:true}),0);
+    }
     queueFit();
   }
 
