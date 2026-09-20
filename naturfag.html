@@ -8301,14 +8301,23 @@ function toggleNaturfagFullscreen(){
 
     const vv=window.visualViewport;
     const topInset=Math.max(0,vv?.offsetTop||0);
-    const breathingRoom=14;
+
+    /*
+      iOS Safari legger adresse-/verktøylinjen oppå nettsiden uten at
+      visualViewport.offsetTop alltid tar høyde for den. Derfor legger vi inn
+      en eksplisitt mobilklarering før periodesystemet. På en vanlig iPhone
+      tilsvarer dette omtrent høyden på toppfeltet + litt luft.
+    */
+    const safariTopClearance=96;
+    const breathingRoom=10;
+    const targetTop=Math.max(topInset+breathingRoom,safariTopClearance);
     const rect=pt.getBoundingClientRect();
 
     /*
-      Legg hele periodesystemet rett under den synlige toppen med litt luft.
-      Dette brukes bare i den korte oppstartsfasen når iOS-tastaturet åpnes.
+      Dette er bare en førstegangs y-forskyvning mens tastaturet åpnes.
+      Etter oppstartsfasen får brukeren scrolle helt fritt.
     */
-    const delta=rect.top-(topInset+breathingRoom);
+    const delta=rect.top-targetTop;
     if(Math.abs(delta)>2){
       window.scrollBy({top:delta,left:0,behavior:'auto'});
     }
