@@ -1768,6 +1768,22 @@ body.side-collapsed .sidebar-info-wrap{display:none}
 }
 </style>
 
+
+<style id="onlyfag-element-name-mobile-focus-v1">
+@media(max-width:700px){
+  #page-elementnames .element-name-quiz-shell{
+    overflow-anchor:none;
+  }
+  #page-elementnames .element-name-pt{
+    scroll-margin-top:14px;
+  }
+  #elementNameInput{
+    -webkit-appearance:none;
+    appearance:none;
+  }
+}
+</style>
+
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
@@ -8267,6 +8283,39 @@ function toggleNaturfagFullscreen(){
     queueFit._t=setTimeout(fitElementNameQuiz,80);
   }
 
+  function alignElementNameQuizMobile(){
+    if(!state.running || !window.matchMedia('(max-width:700px)').matches)return;
+    const pt=area.querySelector('.element-name-pt');
+    if(!pt)return;
+
+    const vv=window.visualViewport;
+    const topInset=Math.max(0,vv?.offsetTop||0);
+    const breathingRoom=14;
+    const rect=pt.getBoundingClientRect();
+
+    /*
+      getBoundingClientRect() måles mot den synlige viewporten. Flytt tabellen
+      slik at den legger seg rett under Safaris synlige topplinje, med litt luft.
+    */
+    const delta=rect.top-(topInset+breathingRoom);
+    if(Math.abs(delta)>2){
+      window.scrollBy({top:delta,left:0,behavior:'auto'});
+    }
+  }
+
+  function queueElementNameMobileAlign(){
+    if(!window.matchMedia('(max-width:700px)').matches)return;
+    cancelAnimationFrame(queueElementNameMobileAlign._raf||0);
+    queueElementNameMobileAlign._raf=requestAnimationFrame(()=>{
+      requestAnimationFrame(alignElementNameQuizMobile);
+    });
+    clearTimeout(queueElementNameMobileAlign._t1);
+    clearTimeout(queueElementNameMobileAlign._t2);
+    /* iOS endrer visualViewport i flere trinn når tastaturet åpnes. */
+    queueElementNameMobileAlign._t1=setTimeout(alignElementNameQuizMobile,120);
+    queueElementNameMobileAlign._t2=setTimeout(alignElementNameQuizMobile,320);
+  }
+
   function updateBestCard(){
     const best=getBest();
     area.querySelectorAll('[data-reset-element-best]').forEach(b=>b.disabled=state.running);
@@ -8337,7 +8386,9 @@ function toggleNaturfagFullscreen(){
         <div class="element-name-run-grid">
           <div class="element-name-entry">
             <div class="element-name-current">Grunnstoff nr. ${current.z}</div>
-            <input id="elementNameInput" class="element-name-input" autocomplete="off" autocapitalize="none" spellcheck="false"
+            <input id="elementNameInput" class="element-name-input" type="text"
+                   autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+                   inputmode="text" enterkeyhint="done"
                    placeholder="Skriv symbol" aria-label="Skriv symbolet til grunnstoff ${current.z}">
             <div class="element-name-fail" id="elementNameMessage"></div>
           </div>
@@ -8351,7 +8402,10 @@ function toggleNaturfagFullscreen(){
     input.addEventListener('keydown',e=>{
       if(e.key==='Enter' && state.failed)startQuiz();
     });
-    setTimeout(()=>input.focus({preventScroll:true}),0);
+    setTimeout(()=>{
+      input.focus({preventScroll:true});
+      queueElementNameMobileAlign();
+    },0);
     queueFit();
   }
 
@@ -8456,10 +8510,20 @@ function toggleNaturfagFullscreen(){
   document.querySelectorAll('.nav-btn').forEach(b=>b.onclick=()=>openPage(b.dataset.page));
   document.querySelectorAll('#homeGrid [data-go]').forEach(c=>c.onclick=()=>openPage(c.dataset.go));
 
-  window.addEventListener('resize',queueFit,{passive:true});
+  window.addEventListener('resize',()=>{
+    queueFit();
+    if(state.running)queueElementNameMobileAlign();
+  },{passive:true});
   if(window.visualViewport){
     window.visualViewport.addEventListener('resize',()=>{
-      if(!window.matchMedia('(max-width:700px)').matches)queueFit();
+      if(window.matchMedia('(max-width:700px)').matches){
+        if(state.running)queueElementNameMobileAlign();
+      }else{
+        queueFit();
+      }
+    },{passive:true});
+    window.visualViewport.addEventListener('scroll',()=>{
+      if(state.running)queueElementNameMobileAlign();
     },{passive:true});
   }
 
