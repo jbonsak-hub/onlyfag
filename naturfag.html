@@ -1769,8 +1769,17 @@ body.side-collapsed .sidebar-info-wrap{display:none}
 </style>
 
 
-<style id="onlyfag-element-name-mobile-focus-v1">
+<style id="onlyfag-element-name-mobile-focus-v2">
 @media(max-width:700px){
+  /* Under selve grunnstoffquizen skal ikke Naturfag-topbaren dekke tabellen. */
+  body.element-name-mobile-running .topbar{
+    display:none!important;
+  }
+
+  body.element-name-mobile-running .content{
+    padding-top:10px!important;
+  }
+
   #page-elementnames .element-name-quiz-shell{
     overflow-anchor:none;
   }
@@ -8283,6 +8292,8 @@ function toggleNaturfagFullscreen(){
     queueFit._t=setTimeout(fitElementNameQuiz,80);
   }
 
+  let elementNameMobileAlignCleanup=null;
+
   function alignElementNameQuizMobile(){
     if(!state.running || !window.matchMedia('(max-width:700px)').matches)return;
     const pt=area.querySelector('.element-name-pt');
@@ -8294,8 +8305,8 @@ function toggleNaturfagFullscreen(){
     const rect=pt.getBoundingClientRect();
 
     /*
-      getBoundingClientRect() måles mot den synlige viewporten. Flytt tabellen
-      slik at den legger seg rett under Safaris synlige topplinje, med litt luft.
+      Legg hele periodesystemet rett under den synlige toppen med litt luft.
+      Dette brukes bare i den korte oppstartsfasen når iOS-tastaturet åpnes.
     */
     const delta=rect.top-(topInset+breathingRoom);
     if(Math.abs(delta)>2){
@@ -8303,17 +8314,57 @@ function toggleNaturfagFullscreen(){
     }
   }
 
+  function stopElementNameMobileInitialAlign(){
+    if(elementNameMobileAlignCleanup){
+      elementNameMobileAlignCleanup();
+      elementNameMobileAlignCleanup=null;
+    }
+  }
+
   function queueElementNameMobileAlign(){
     if(!window.matchMedia('(max-width:700px)').matches)return;
-    cancelAnimationFrame(queueElementNameMobileAlign._raf||0);
-    queueElementNameMobileAlign._raf=requestAnimationFrame(()=>{
-      requestAnimationFrame(alignElementNameQuizMobile);
-    });
-    clearTimeout(queueElementNameMobileAlign._t1);
-    clearTimeout(queueElementNameMobileAlign._t2);
-    /* iOS endrer visualViewport i flere trinn når tastaturet åpnes. */
-    queueElementNameMobileAlign._t1=setTimeout(alignElementNameQuizMobile,120);
-    queueElementNameMobileAlign._t2=setTimeout(alignElementNameQuizMobile,320);
+
+    /* Avslutt eventuell gammel oppstartsjustering. */
+    stopElementNameMobileInitialAlign();
+
+    let active=true;
+    const run=()=>{
+      if(!active)return;
+      requestAnimationFrame(()=>requestAnimationFrame(alignElementNameQuizMobile));
+    };
+
+    /*
+      Safari endrer høyden på visualViewport flere ganger mens tastaturet
+      animeres inn. Vi følger bare disse endringene i ca. et halvt sekund.
+      Etterpå fjernes lytterne helt, slik at eleven fritt kan scrolle.
+    */
+    const onResize=()=>run();
+    window.addEventListener('resize',onResize,{passive:true});
+    if(window.visualViewport){
+      window.visualViewport.addEventListener('resize',onResize,{passive:true});
+    }
+
+    const timers=[
+      setTimeout(run,0),
+      setTimeout(run,110),
+      setTimeout(run,240),
+      setTimeout(run,430)
+    ];
+
+    const cleanupTimer=setTimeout(()=>{
+      stopElementNameMobileInitialAlign();
+    },560);
+
+    elementNameMobileAlignCleanup=()=>{
+      if(!active)return;
+      active=false;
+      timers.forEach(clearTimeout);
+      clearTimeout(cleanupTimer);
+      window.removeEventListener('resize',onResize);
+      if(window.visualViewport){
+        window.visualViewport.removeEventListener('resize',onResize);
+      }
+    };
   }
 
   function updateBestCard(){
@@ -8363,6 +8414,8 @@ function toggleNaturfagFullscreen(){
 
   function renderReady(){
     state={running:false,failed:false,index:0,solved:new Set(),typed:''};
+    stopElementNameMobileInitialAlign();
+    document.body.classList.remove('element-name-mobile-running');
     setReferenceAllowed(true);
     area.innerHTML=`<div class="element-name-quiz-shell">
       <div class="element-name-pt">${tableHTML()}</div>
@@ -8411,6 +8464,9 @@ function toggleNaturfagFullscreen(){
 
   function startQuiz(){
     state={running:true,failed:false,index:0,solved:new Set(),typed:''};
+    if(window.matchMedia('(max-width:700px)').matches){
+      document.body.classList.add('element-name-mobile-running');
+    }
     setReferenceAllowed(false);
     renderRunning();
   }
@@ -8418,6 +8474,8 @@ function toggleNaturfagFullscreen(){
   function finishAll(){
     state.running=false;
     state.failed=false;
+    stopElementNameMobileInitialAlign();
+    document.body.classList.remove('element-name-mobile-running');
     setBest(allElementsV3.length);
     setReferenceAllowed(true);
     area.innerHTML=`<div class="element-name-quiz-shell">
@@ -8440,6 +8498,8 @@ function toggleNaturfagFullscreen(){
   function failQuiz(input,current){
     state.running=false;
     state.failed=true;
+    stopElementNameMobileInitialAlign();
+    document.body.classList.remove('element-name-mobile-running');
     setBest(state.index);
     updateBestCard();
     setReferenceAllowed(true);
@@ -8499,7 +8559,11 @@ function toggleNaturfagFullscreen(){
   // Final wrapper: initialise this page and lock/unlock the reference table appropriately.
   const openPageElementNamesBase=openPage;
   openPage=function(name){
-    if(name!=='elementnames')setReferenceAllowed(true);
+    if(name!=='elementnames'){
+      stopElementNameMobileInitialAlign();
+      document.body.classList.remove('element-name-mobile-running');
+      setReferenceAllowed(true);
+    }
     openPageElementNamesBase(name);
     if(name==='elementnames'){
       renderReady();
@@ -8512,18 +8576,10 @@ function toggleNaturfagFullscreen(){
 
   window.addEventListener('resize',()=>{
     queueFit();
-    if(state.running)queueElementNameMobileAlign();
   },{passive:true});
   if(window.visualViewport){
     window.visualViewport.addEventListener('resize',()=>{
-      if(window.matchMedia('(max-width:700px)').matches){
-        if(state.running)queueElementNameMobileAlign();
-      }else{
-        queueFit();
-      }
-    },{passive:true});
-    window.visualViewport.addEventListener('scroll',()=>{
-      if(state.running)queueElementNameMobileAlign();
+      if(!window.matchMedia('(max-width:700px)').matches)queueFit();
     },{passive:true});
   }
 
