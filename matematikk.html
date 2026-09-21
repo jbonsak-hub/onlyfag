@@ -239,13 +239,499 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
 }
 </style>
 
+
+<style id="onlyfag-juniper-green-v1">
+/* Juniper Green */
+#juniper-green{
+  --jg-p1:var(--purple);
+  --jg-p2:#16856f;
+  --jg-p2-soft:#e5f5f0;
+  --jg-warn:#d99224;
+  max-width:1080px;
+}
+html[data-theme="dark"] #juniper-green{
+  --jg-p2:#70d4ba;
+  --jg-p2-soft:#17362f;
+}
+.jg-shell{max-width:1020px;margin:0 auto}
+.jg-intro{max-width:720px;margin:0 auto;text-align:center}
+.jg-kicker{
+  display:inline-flex;align-items:center;gap:7px;margin-bottom:8px;
+  border:1px solid var(--line);border-radius:999px;background:var(--soft);
+  color:var(--purple);padding:5px 10px;font-size:.76rem;font-weight:800;
+  letter-spacing:.08em;text-transform:uppercase
+}
+.jg-intro h2{font-size:clamp(1.8rem,4vw,2.7rem);margin-bottom:5px}
+.jg-lead{max-width:610px;margin:0 auto 17px;color:var(--muted);line-height:1.5}
+.jg-mini-wrap{
+  width:min(390px,92%);margin:14px auto 22px;padding:13px;
+  border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--paper) 92%,var(--soft));
+  box-shadow:0 8px 22px rgba(65,35,88,.07)
+}
+.jg-mini-board{display:grid;grid-template-columns:repeat(10,1fr);gap:3px}
+.jg-mini-cell{
+  aspect-ratio:1;display:grid;place-items:center;border:1px solid var(--line);
+  border-radius:5px;background:var(--paper);color:var(--muted);
+  font-size:.52rem;font-weight:700;font-variant-numeric:tabular-nums
+}
+.jg-mini-cell.p1{background:color-mix(in srgb,var(--purple) 18%,var(--paper));border-color:color-mix(in srgb,var(--purple) 48%,var(--line));color:var(--purple)}
+.jg-mini-cell.p2{background:var(--jg-p2-soft);border-color:color-mix(in srgb,var(--jg-p2) 48%,var(--line));color:var(--jg-p2)}
+.jg-mini-cell.last{outline:2px solid var(--ink);outline-offset:1px}
+.jg-mode-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:590px;margin:0 auto}
+.jg-mode{
+  min-height:104px;border:1px solid var(--line);border-radius:14px;background:var(--paper);
+  color:var(--ink);padding:16px;text-align:left;transition:.15s;
+  box-shadow:0 2px 8px rgba(0,0,0,.035)
+}
+.jg-mode:hover,.jg-mode:focus-visible{transform:translateY(-1px);border-color:#a27cc8;background:var(--soft);outline:none}
+.jg-mode strong{display:block;color:var(--purple);font-size:1.08rem;margin-bottom:5px}
+.jg-mode span{display:block;color:var(--muted);font-size:.88rem;line-height:1.4}
+.jg-rules{max-width:590px;margin:16px auto 0;text-align:left;border-top:1px solid var(--line);padding-top:12px}
+.jg-rules summary{cursor:pointer;color:var(--purple);font-weight:750}
+.jg-rules ol{margin:9px 0 0 22px;color:var(--muted);line-height:1.5}
+.jg-rules li+li{margin-top:4px}
+
+.jg-game[hidden]{display:none!important}
+.jg-gamebar{display:flex;align-items:center;gap:10px;margin-bottom:15px}
+.jg-back,.jg-restart{
+  min-height:40px;border:1px solid var(--line);border-radius:10px;background:var(--paper);
+  color:var(--purple);padding:8px 11px;font-weight:750
+}
+.jg-back:hover,.jg-restart:hover{background:var(--soft)}
+.jg-game-title{min-width:0;flex:1}
+.jg-game-title strong{display:block;color:var(--purple);font-size:1.12rem}
+.jg-game-title span{display:block;color:var(--muted);font-size:.82rem;margin-top:2px}
+.jg-layout{display:grid;grid-template-columns:minmax(0,1fr) 245px;gap:18px;align-items:start}
+.jg-board-wrap{
+  border:1px solid var(--line);border-radius:15px;padding:12px;background:color-mix(in srgb,var(--paper) 96%,var(--soft));
+  box-shadow:0 3px 12px rgba(0,0,0,.04)
+}
+.jg-board{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px}
+.jg-cell{
+  position:relative;aspect-ratio:1;min-width:0;border:1px solid var(--line);border-radius:8px;
+  background:var(--paper);color:var(--ink);display:grid;place-items:center;padding:0;
+  font-size:clamp(.72rem,1.35vw,.94rem);font-weight:750;font-variant-numeric:tabular-nums;
+  transition:transform .1s,background .12s,border-color .12s,opacity .12s
+}
+.jg-cell:not(:disabled):hover{transform:translateY(-1px);border-color:var(--purple);background:var(--soft)}
+.jg-cell.legal{border-color:color-mix(in srgb,var(--purple) 55%,var(--line));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--purple) 12%,transparent)}
+.jg-cell.illegal{opacity:.34}
+.jg-cell.used{opacity:1;color:#fff;border-color:transparent}
+.jg-cell.used.p1{background:var(--jg-p1)}
+.jg-cell.used.p2{background:var(--jg-p2);color:#06281f}
+html[data-theme="dark"] .jg-cell.used.p2{color:#09241d}
+.jg-cell.used.last{outline:3px solid var(--ink);outline-offset:2px;z-index:2}
+.jg-cell.used::after{
+  content:"";position:absolute;left:18%;right:18%;top:50%;height:1px;
+  background:currentColor;opacity:.38;transform:rotate(-15deg)
+}
+.jg-side{display:grid;gap:12px}
+.jg-status-card,.jg-history-card,.jg-score-card{
+  border:1px solid var(--line);border-radius:13px;background:var(--paper);padding:14px
+}
+.jg-turn{
+  display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.8rem;font-weight:750;text-transform:uppercase;letter-spacing:.05em
+}
+.jg-dot{width:10px;height:10px;border-radius:50%;background:var(--purple);box-shadow:0 0 0 3px var(--soft)}
+.jg-dot.p2{background:var(--jg-p2)}
+.jg-status{font-weight:800;font-size:1.05rem;line-height:1.35;margin-top:10px}
+.jg-substatus{color:var(--muted);font-size:.84rem;line-height:1.4;margin-top:6px}
+.jg-score{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;text-align:center}
+.jg-score strong{display:block;font-size:1.35rem;color:var(--ink)}
+.jg-score span{font-size:.75rem;color:var(--muted)}
+.jg-score-sep{color:var(--line);font-size:1.2rem}
+.jg-card-title{font-size:.79rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:9px}
+.jg-history{display:flex;gap:5px;flex-wrap:wrap;max-height:145px;overflow:auto}
+.jg-history-chip{
+  display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;
+  border-radius:8px;padding:0 6px;font-weight:800;font-size:.78rem;color:#fff;background:var(--purple)
+}
+.jg-history-chip.p2{background:var(--jg-p2);color:#06281f}
+.jg-empty{color:var(--muted);font-size:.84rem}
+.jg-legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;color:var(--muted);font-size:.77rem}
+.jg-legend span{display:flex;align-items:center;gap:5px}
+.jg-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--purple)}
+.jg-legend i.p2{background:var(--jg-p2)}
+.jg-win{
+  margin-bottom:14px;border:1px solid color-mix(in srgb,var(--purple) 35%,var(--line));
+  border-left:5px solid var(--purple);border-radius:11px;padding:13px 15px;background:var(--soft)
+}
+.jg-win strong{display:block;color:var(--purple);font-size:1.13rem;margin-bottom:3px}
+.jg-win span{color:var(--muted);font-size:.86rem}
+.jg-thinking{animation:jgPulse 1s ease-in-out infinite}@keyframes jgPulse{50%{opacity:.48}}
+
+@media(max-width:760px){
+  #juniper-green.page-section{
+    max-width:none;margin:0;background:transparent;box-shadow:none;border-radius:0;padding:14px 0 0
+  }
+  .jg-intro{padding:0 4px}
+  .jg-mode-grid{grid-template-columns:1fr;gap:9px}
+  .jg-mode{min-height:82px;padding:13px 14px}
+  .jg-mini-wrap{margin:10px auto 16px;padding:10px}
+  .jg-gamebar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);padding:8px 0;margin-bottom:8px}
+  .jg-game-title span{display:none}
+  .jg-layout{grid-template-columns:1fr;gap:10px}
+  .jg-board-wrap{padding:6px;border-radius:11px}
+  .jg-board{gap:3px}
+  .jg-cell{border-radius:5px;font-size:clamp(.64rem,2.7vw,.82rem)}
+  .jg-cell.used.last{outline-width:2px;outline-offset:1px}
+  .jg-side{grid-template-columns:1fr 1fr;gap:8px}
+  .jg-status-card{grid-column:1/-1}
+  .jg-status-card,.jg-history-card,.jg-score-card{padding:11px}
+  .jg-history{max-height:85px}
+  .jg-status{font-size:.98rem}
+  body.jg-mobile-playing .sidebar,
+  body.jg-mobile-playing .sidebar-toggle,
+  body.jg-mobile-playing .sidebar-resizer,
+  body.jg-mobile-playing .onlyfag-back-arrow{display:none!important}
+  body.jg-mobile-playing .content{padding-top:0!important}
+  body.jg-mobile-playing #juniper-green{padding-top:4px}
+}
+@media(max-width:430px){
+  .jg-board{gap:2px}
+  .jg-board-wrap{padding:4px}
+  .jg-cell{border-radius:4px}
+  .jg-gamebar{gap:7px}.jg-back,.jg-restart{padding:7px 9px}
+  .jg-side{grid-template-columns:1fr}.jg-status-card{grid-column:auto}
+}
+
+/* Menyikon */
+@media(max-width:760px){
+  .math-juniper::before{content:"×÷";font-size:.72em;font-weight:900}
+}
+</style>
+
+
+<style id="onlyfag-juniper-green-v2-patch">
+#juniper-green.page-section.active{
+  min-height:calc(100dvh - 60px);
+}
+
+/* Spilleflaten skal bruke skjermhøyden, med info til høyre. */
+#juniper-green .jg-game{
+  position:relative;
+}
+#juniper-green .jg-gamebar{
+  min-height:44px;
+}
+#juniper-green .jg-layout{
+  grid-template-columns:minmax(0,1fr) 245px!important;
+  align-items:start!important;
+}
+#juniper-green .jg-board-wrap{
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
+#juniper-green .jg-board{
+  width:min(100%, calc((100dvh - 132px) * 1.05));
+  height:min(calc(100dvh - 132px), calc(100vw - 420px));
+  max-height:calc(100dvh - 132px);
+  max-width:100%;
+  margin:0 auto;
+  grid-template-columns:repeat(10,minmax(0,1fr));
+  grid-template-rows:repeat(10,minmax(0,1fr));
+}
+#juniper-green .jg-cell{
+  aspect-ratio:auto!important;
+  width:100%;
+  height:100%;
+  min-width:0;
+  min-height:0;
+  font-size:clamp(.82rem,2.0vh,1.28rem)!important;
+  border-radius:7px;
+}
+
+/* Ikke avslør lovlige trekk før eleven ber om hjelp. */
+#juniper-green .jg-cell.legal{
+  border-color:var(--line)!important;
+  box-shadow:none!important;
+  background:var(--paper)!important;
+}
+#juniper-green.jg-show-help .jg-cell.legal{
+  border-color:color-mix(in srgb,var(--purple) 65%,var(--line))!important;
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--purple) 18%,transparent)!important;
+  background:color-mix(in srgb,var(--soft) 68%,var(--paper))!important;
+}
+#juniper-green .jg-cell.illegal{
+  opacity:1!important;
+  color:var(--ink)!important;
+  background:var(--paper)!important;
+}
+#juniper-green.jg-show-help .jg-cell.illegal{
+  opacity:.30!important;
+}
+#juniper-green .jg-help{
+  min-height:40px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--paper);
+  color:var(--purple);
+  padding:8px 11px;
+  font-weight:750;
+}
+#juniper-green .jg-help:hover,
+#juniper-green .jg-help[aria-pressed="true"]{
+  background:var(--soft);
+}
+
+/* Navnedialog for to spillere. */
+#juniper-green .jg-player-overlay{
+  position:absolute;
+  inset:0;
+  z-index:80;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+#juniper-green .jg-player-overlay[hidden]{display:none!important}
+#juniper-green .jg-player-overlay::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(245,242,248,.28);
+  backdrop-filter:blur(7px);
+  -webkit-backdrop-filter:blur(7px);
+}
+html[data-theme="dark"] #juniper-green .jg-player-overlay::before{
+  background:rgba(20,16,24,.35);
+}
+#juniper-green .jg-player-dialog{
+  position:relative;
+  z-index:1;
+  width:min(390px,92vw);
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:var(--paper);
+  box-shadow:0 20px 60px rgba(0,0,0,.18);
+  padding:22px;
+}
+#juniper-green .jg-player-dialog h3{
+  margin:0 0 5px;
+  padding:0;
+  border:0;
+  color:var(--purple);
+}
+#juniper-green .jg-player-dialog p{
+  color:var(--muted);
+  margin:0 0 16px;
+}
+#juniper-green .jg-player-dialog label{
+  display:block;
+  margin:10px 0;
+}
+#juniper-green .jg-player-dialog label span{
+  display:block;
+  margin-bottom:5px;
+  font-size:.82rem;
+  color:var(--muted);
+  font-weight:750;
+}
+#juniper-green .jg-player-dialog input{
+  width:100%;
+  min-height:44px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--paper);
+  color:var(--ink);
+  padding:9px 11px;
+  font:inherit;
+}
+#juniper-green .jg-player-dialog input:focus{
+  outline:2px solid color-mix(in srgb,var(--purple) 40%,transparent);
+  border-color:var(--purple);
+}
+#juniper-green .jg-player-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:16px;
+}
+#juniper-green .jg-dialog-cancel,
+#juniper-green .jg-dialog-start{
+  min-height:40px;
+  border-radius:10px;
+  padding:8px 12px;
+  font-weight:750;
+}
+#juniper-green .jg-dialog-cancel{
+  border:1px solid var(--line);
+  background:var(--paper);
+  color:var(--ink);
+}
+#juniper-green .jg-dialog-start{
+  border:1px solid var(--purple);
+  background:var(--purple);
+  color:white;
+}
+
+/* Sidepanelet skal følge brettet og være kompakt. */
+#juniper-green .jg-side{
+  position:sticky;
+  top:12px;
+}
+#juniper-green .jg-status-card,
+#juniper-green .jg-history-card,
+#juniper-green .jg-score-card{
+  padding:12px;
+}
+#juniper-green .jg-legend{
+  margin-top:7px;
+}
+
+/* Mobil beholder den separate responsive visningen. */
+@media(max-width:760px){
+  #juniper-green .jg-layout{
+    grid-template-columns:1fr!important;
+  }
+  #juniper-green .jg-board{
+    width:100%;
+    height:auto;
+    max-height:none;
+    grid-template-rows:none;
+    aspect-ratio:1;
+  }
+  #juniper-green .jg-cell{
+    aspect-ratio:1!important;
+    font-size:clamp(.64rem,2.7vw,.82rem)!important;
+  }
+  #juniper-green .jg-side{
+    position:static;
+  }
+  #juniper-green .jg-player-overlay{
+    position:fixed;
+    inset:0;
+  }
+}
+</style>
+
+
+<style id="onlyfag-juniper-green-v3-patch">
+#juniper-green .jg-tagline{
+  margin:-3px auto 14px;
+  color:var(--muted);
+  font-size:.95rem;
+  line-height:1.35;
+}
+
+/* Brettet litt mindre enn v2: hele spillet skal få plass uten vertikal scrolling. */
+@media(min-width:761px){
+  #juniper-green.page-section.active{
+    padding-top:18px!important;
+    padding-bottom:18px!important;
+  }
+  #juniper-green .jg-gamebar{
+    margin-bottom:9px!important;
+  }
+  #juniper-green .jg-board{
+    width:min(100%, calc((100dvh - 185px) * 1.08))!important;
+    height:min(calc(100dvh - 185px), calc(100vw - 440px))!important;
+    max-height:calc(100dvh - 185px)!important;
+  }
+  #juniper-green .jg-cell{
+    font-size:clamp(.76rem,1.75vh,1.12rem)!important;
+  }
+}
+
+/* Hjelp nederst i høyre informasjonskolonne. */
+#juniper-green .jg-help-wrap{
+  display:flex;
+  justify-content:flex-end;
+}
+#juniper-green .jg-help{
+  min-width:86px;
+}
+@media(max-width:760px){
+  #juniper-green .jg-tagline{font-size:.9rem;margin-bottom:12px}
+  #juniper-green .jg-help-wrap{justify-content:stretch}
+  #juniper-green .jg-help{width:100%}
+}
+</style>
+
+
+<style id="onlyfag-juniper-green-v4-patch">
+/* Mer luft i de to øverste infoboksene. */
+#juniper-green .jg-status-card{
+  padding:20px 17px 16px!important;
+  min-height:150px;
+}
+#juniper-green .jg-score-card{
+  padding:19px 17px!important;
+  min-height:118px;
+}
+#juniper-green .jg-status{
+  margin-top:14px!important;
+}
+#juniper-green .jg-substatus{
+  margin-top:9px!important;
+  min-height:2.35em;
+}
+#juniper-green .jg-score{
+  margin-top:12px;
+}
+#juniper-green .jg-status-actions{
+  display:flex;
+  justify-content:flex-end;
+  margin-top:12px;
+}
+#juniper-green .jg-help{
+  min-width:0!important;
+  min-height:29px!important;
+  padding:4px 9px!important;
+  border-radius:8px!important;
+  font-size:.74rem!important;
+  line-height:1!important;
+}
+
+/* Meny: fire like rader med et lite, monokromt ikon. */
+.sidebar .math-mobile-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  text-decoration:none!important;
+}
+.sidebar a.math-mobile-item,
+.sidebar a.math-mobile-item:visited,
+.sidebar a.math-mobile-item:hover{
+  text-decoration:none!important;
+}
+.math-nav-icon{
+  display:inline-flex;
+  width:18px;
+  flex:0 0 18px;
+  align-items:center;
+  justify-content:center;
+  color:var(--muted);
+  font-weight:800;
+  font-size:.92em;
+  line-height:1;
+}
+@media(max-width:760px){
+  /* De gamle pseudoikonene erstattes av de faktiske ikonene i HTML-en. */
+  .math-mobile-item::before{content:none!important;display:none!important}
+  .sidebar .math-mobile-item{gap:9px!important}
+  #juniper-green .jg-status-card{min-height:0;padding:15px!important}
+  #juniper-green .jg-score-card{min-height:0;padding:15px!important}
+}
+</style>
+
+
+<style id="onlyfag-juniper-green-v5-patch">
+#juniper-green .jg-rule-hint{
+  margin-top:10px!important;
+  color:var(--purple);
+}
+</style>
+
 </head>
 <body>
 <nav class="sidebar">
   <h1><span>∑ Matematikk</span><button aria-label="Bytt mellom lys og mørk modus" class="global-theme-toggle" id="themeToggle" title="Mørk modus" type="button">◐</button></h1>
-  <div class="submenu-item direct math-mobile-item math-hf" data-section="hurtigfaktorisering" onclick="showContent('hurtigfaktorisering',this)">Hurtigfaktorisering</div>
-  <a class="submenu-item direct math-mobile-item math-mandelbrot" href="mandelbrot.html">Mandelbrot</a>
-  <div class="submenu-item direct math-mobile-item math-pi" data-section="pi-trener" onclick="showContent('pi-trener',this)"><span class="pi-nav-glyph">π</span></div>
+  <div class="submenu-item direct math-mobile-item math-hf" data-section="hurtigfaktorisering" onclick="showContent('hurtigfaktorisering',this)"><span class="math-nav-icon" aria-hidden="true">×</span><span>Hurtigfaktorisering</span></div>
+  <a class="submenu-item direct math-mobile-item math-mandelbrot" href="mandelbrot.html"><span class="math-nav-icon" aria-hidden="true">◉</span><span>Mandelbrot</span></a>
+  <div class="submenu-item direct math-mobile-item math-pi" data-section="pi-trener" onclick="showContent('pi-trener',this)"><span class="math-nav-icon" aria-hidden="true">≈</span><span class="pi-nav-glyph">π</span></div>
+  <div class="submenu-item direct math-mobile-item math-juniper" data-section="juniper-green" onclick="showContent('juniper-green',this)"><span class="math-nav-icon" aria-hidden="true">÷</span><span>Juniper Green</span></div>
   <a class="onlyfag-back-arrow" href="index.html" aria-label="Tilbake til hovedsiden" title="Tilbake til hovedsiden">←</a>
 </nav>
 <button aria-expanded="true" aria-label="Minimer sidemenyen" class="sidebar-toggle" id="sidebarToggle" title="Minimer sidemenyen" type="button">‹</button>
@@ -343,6 +829,109 @@ body.sidebar-collapsed .sidebar-resizer{display:none}body.sidebar-collapsed .sid
       <div class="pi-actions" id="pi-actions" hidden><button type="button" class="btn" id="pi-reset">Begynn på nytt</button></div>
     </div>
   </section>
+
+  <section class="page-section" id="juniper-green">
+    <div class="jg-shell">
+      <div class="jg-intro" id="jg-intro">
+        <h2>Juniper Green</h2>
+        <p class="jg-tagline">Hvor god er du på faktorer, multipler og primtall?</p>
+        <div class="jg-mini-wrap" aria-hidden="true">
+          <div class="jg-mini-board" id="jg-mini-board"></div>
+        </div>
+
+        <div class="jg-mode-grid">
+          <button class="jg-mode" type="button" data-jg-mode="computer">
+            <strong>Mot datamaskinen</strong>
+            <span>Du starter. Datamaskinen vil prøve å stenge deg inne.</span>
+          </button>
+          <button class="jg-mode" type="button" data-jg-mode="two">
+            <strong>To spillere</strong>
+            <span>Spill på samme skjerm og bytt på å velge tall.</span>
+          </button>
+        </div>
+
+        <details class="jg-rules">
+          <summary>Regler</summary>
+          <ol>
+            <li>Spiller 1 starter med et ubrukt <strong>partall</strong>.</li>
+            <li>Deretter må hvert tall være en faktor eller et multiplum av forrige tall.</li>
+            <li>Et tall som er brukt, kan ikke velges igjen.</li>
+            <li>Den som ikke har noe lovlig trekk, taper.</li>
+            <li class="jg-rule-hint"><strong>Hint:</strong> Hvordan kan du bruke primtallene til din fordel?</li>
+          </ol>
+        </details>
+      </div>
+
+      <div class="jg-game" id="jg-game" hidden>
+        <div class="jg-gamebar">
+          <button class="jg-back" id="jg-back" type="button">← Meny</button>
+          <div class="jg-game-title">
+            <strong>Juniper Green</strong>
+            <span id="jg-mode-label">Mot datamaskinen</span>
+          </div>
+          <button class="jg-restart" id="jg-restart" type="button">Nytt spill</button>
+        </div>
+
+        <div class="jg-win" id="jg-win" hidden>
+          <strong id="jg-win-title"></strong>
+          <span id="jg-win-text"></span>
+        </div>
+
+        <div class="jg-layout">
+          <div class="jg-board-wrap">
+            <div class="jg-board" id="jg-board" aria-label="Juniper Green spillebrett med tall fra 1 til 100"></div>
+            <div class="jg-legend">
+              <span><i></i><b id="jg-legend-p1">Du</b></span>
+              <span><i class="p2"></i><b id="jg-legend-p2">Datamaskinen</b></span>
+            </div>
+          </div>
+
+          <aside class="jg-side">
+            <div class="jg-status-card">
+              <div class="jg-turn"><i class="jg-dot" id="jg-turn-dot"></i><span id="jg-turn-label">Din tur</span></div>
+              <div class="jg-status" id="jg-status">Velg et partall for å starte.</div>
+              <div class="jg-substatus" id="jg-substatus">Finn et ubrukt tall som passer regelen.</div>
+              <div class="jg-status-actions">
+                <button class="jg-help" id="jg-help" type="button" aria-pressed="false">Hjelp</button>
+              </div>
+            </div>
+            <div class="jg-score-card">
+              <div class="jg-card-title">Kamper</div>
+              <div class="jg-score">
+                <div><strong id="jg-score-p1">0</strong><span id="jg-score-name-p1">Du</span></div>
+                <div class="jg-score-sep">–</div>
+                <div><strong id="jg-score-p2">0</strong><span id="jg-score-name-p2">PC</span></div>
+              </div>
+            </div>
+            <div class="jg-history-card">
+              <div class="jg-card-title">Trekk</div>
+              <div class="jg-history" id="jg-history"><span class="jg-empty">Ingen ennå</span></div>
+            </div>
+          </aside>
+        </div>
+
+        <div class="jg-player-overlay" id="jg-player-overlay" hidden>
+          <div class="jg-player-dialog" role="dialog" aria-modal="true" aria-labelledby="jg-player-title">
+            <h3 id="jg-player-title">To spillere</h3>
+            <p>Skriv inn navnene deres før spillet starter.</p>
+            <label>
+              <span>Spiller 1</span>
+              <input id="jg-name-1" type="text" maxlength="24" autocomplete="off" placeholder="Spiller 1">
+            </label>
+            <label>
+              <span>Spiller 2</span>
+              <input id="jg-name-2" type="text" maxlength="24" autocomplete="off" placeholder="Spiller 2">
+            </label>
+            <div class="jg-player-actions">
+              <button class="jg-dialog-cancel" id="jg-player-cancel" type="button">Avbryt</button>
+              <button class="jg-dialog-start" id="jg-player-start" type="button">Start spill</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <script>
@@ -358,6 +947,8 @@ function showContent(id,el){
   history.replaceState(null,'','#'+id);
   if(id==='hurtigfaktorisering')ensureQuickFactorization();
   if(id==='pi-trener')setTimeout(()=>document.getElementById('pi-input')?.focus({preventScroll:true}),60);
+  if(id==='juniper-green')window.JuniperGreen?.enter();
+  else window.JuniperGreen?.leave();
 }
 (function setupChrome(){
   const root=document.documentElement,theme=document.getElementById('themeToggle'),toggle=document.getElementById('sidebarToggle'),handle=document.getElementById('sidebarResizer');
@@ -775,9 +1366,370 @@ if(typeof module!=='undefined'&&module.exports)module.exports=QuickFactorCore;
 })();
 </script>
 
+
+<script id="juniper-green-script">
+window.JuniperGreen=(()=>{
+  const N=100;
+  const intro=document.getElementById('jg-intro');
+  const game=document.getElementById('jg-game');
+  const board=document.getElementById('jg-board');
+  const historyEl=document.getElementById('jg-history');
+  const statusEl=document.getElementById('jg-status');
+  const substatusEl=document.getElementById('jg-substatus');
+  const turnLabel=document.getElementById('jg-turn-label');
+  const turnDot=document.getElementById('jg-turn-dot');
+  const win=document.getElementById('jg-win');
+  const winTitle=document.getElementById('jg-win-title');
+  const winText=document.getElementById('jg-win-text');
+  const modeLabel=document.getElementById('jg-mode-label');
+
+  let mode=null;
+  let used=new Set();
+  let history=[];
+  let last=null;
+  let turn=1;
+  let ended=false;
+  let thinking=false;
+  let helpStage=0;
+  let playerNames={p1:'Spiller 1',p2:'Spiller 2'};
+  let aiToken=0;
+  const matchScore={computer:[0,0],two:[0,0]};
+
+  function buildMini(){
+    const el=document.getElementById('jg-mini-board');
+    if(!el||el.children.length)return;
+    const a=[12,6,18,3,9,27,1,23];
+    for(let n=1;n<=50;n++){
+      const c=document.createElement('span');
+      c.className='jg-mini-cell';
+      c.textContent=n;
+      const i=a.indexOf(n);
+      if(i>=0)c.classList.add(i%2?'p2':'p1');
+      if(i===a.length-1)c.classList.add('last');
+      el.appendChild(c);
+    }
+  }
+
+  function names(){
+    return mode==='computer'
+      ? {p1:'Du',p2:'Datamaskinen',short1:'Du',short2:'PC'}
+      : {p1:playerNames.p1,p2:playerNames.p2,short1:playerNames.p1,short2:playerNames.p2};
+  }
+
+  function legalMoves(from=last,set=used){
+    const moves=[];
+    for(let n=1;n<=N;n++){
+      if(set.has(n))continue;
+      if(from===null){
+        if(n%2===0)moves.push(n);
+      }else if(n%from===0 || from%n===0){
+        moves.push(n);
+      }
+    }
+    return moves;
+  }
+
+  function buildBoard(){
+    if(board.children.length)return;
+    for(let n=1;n<=N;n++){
+      const b=document.createElement('button');
+      b.type='button';
+      b.className='jg-cell';
+      b.dataset.n=n;
+      b.textContent=n;
+      b.addEventListener('click',()=>playNumber(n));
+      board.appendChild(b);
+    }
+  }
+
+  function syncScore(){
+    const s=matchScore[mode]||[0,0],nm=names();
+    document.getElementById('jg-score-p1').textContent=s[0];
+    document.getElementById('jg-score-p2').textContent=s[1];
+    document.getElementById('jg-score-name-p1').textContent=nm.short1;
+    document.getElementById('jg-score-name-p2').textContent=nm.short2;
+    document.getElementById('jg-legend-p1').textContent=nm.p1;
+    document.getElementById('jg-legend-p2').textContent=nm.p2;
+  }
+
+  function renderHistory(){
+    if(!history.length){
+      historyEl.innerHTML='<span class="jg-empty">Ingen ennå</span>';
+      return;
+    }
+    historyEl.innerHTML=history.map((m,i)=>
+      `<span class="jg-history-chip ${m.player===2?'p2':''}" title="Trekk ${i+1}: ${m.number}">${m.number}</span>`
+    ).join('');
+    historyEl.scrollTop=historyEl.scrollHeight;
+  }
+
+  function render(){
+    buildBoard();
+    const section=document.getElementById('juniper-green');
+    section?.classList.toggle('jg-show-help',helpStage===2);
+    const helpBtn=document.getElementById('jg-help');
+    if(helpBtn)helpBtn.setAttribute('aria-pressed',helpStage>0?'true':'false');
+    const legal=new Set(ended||thinking?[]:legalMoves());
+    const nm=names();
+    [...board.children].forEach(b=>{
+      const n=Number(b.dataset.n),move=history.find(x=>x.number===n);
+      b.className='jg-cell';
+      b.disabled=true;
+      if(move){
+        b.classList.add('used',move.player===1?'p1':'p2');
+        if(n===last)b.classList.add('last');
+        b.setAttribute('aria-label',`${n}, brukt av ${move.player===1?nm.p1:nm.p2}${n===last?', siste trekk':''}`);
+      }else if(legal.has(n)){
+        b.classList.add('legal');
+        b.disabled=false;
+        b.setAttribute('aria-label',`${n}, lovlig trekk`);
+      }else{
+        b.classList.add('illegal');
+        b.setAttribute('aria-label',`${n}, ikke lovlig nå`);
+      }
+    });
+
+    if(thinking){
+      turnDot.className='jg-dot p2';
+      turnLabel.textContent='Datamaskinens tur';
+      statusEl.textContent='Datamaskinen tenker …';
+      statusEl.classList.add('jg-thinking');
+      substatusEl.textContent=last===null?'':'Siste tall var '+last+'.';
+    }else{
+      statusEl.classList.remove('jg-thinking');
+      turnDot.className='jg-dot'+(turn===2?' p2':'');
+      turnLabel.textContent=ended?'Spillet er over':
+        (mode==='computer'&&turn===1?'Din tur':
+        (mode==='computer'&&turn===2?'Datamaskinens tur':(turn===1?nm.p1:nm.p2)+' sin tur'));
+      if(!ended){
+        if(last===null){
+          statusEl.textContent=(turn===1?nm.p1:nm.p2)+' starter – velg et partall.';
+          substatusEl.textContent='Første trekk må være et ubrukt partall.';
+        }else{
+          statusEl.textContent='Velg en faktor eller et multiplum av '+last+'.';
+          substatusEl.textContent='Finn et ubrukt tall som passer regelen.';
+        }
+      }
+    }
+    renderHistory();
+  }
+
+  function finish(winner,loser){
+    ended=true;thinking=false;aiToken++;
+    const nm=names();
+    const wn=winner===1?nm.p1:nm.p2;
+    const ln=loser===1?nm.p1:nm.p2;
+    matchScore[mode][winner-1]++;
+    win.hidden=false;
+    if(mode==='computer'){
+      winTitle.textContent=winner===1?'Du vant!':'Datamaskinen vant.';
+    }else{
+      winTitle.textContent=wn+' vant!';
+    }
+    winText.textContent=ln+' har ingen lovlige trekk igjen.';
+    statusEl.textContent='Spillet er ferdig.';
+    substatusEl.textContent='Trykk «Nytt spill» for en ny runde.';
+    syncScore();
+    render();
+  }
+
+  function afterMove(){
+    const next=legalMoves();
+    if(!next.length){
+      const winner=turn===1?2:1;
+      const loser=turn;
+      finish(winner,loser);
+      return;
+    }
+    if(mode==='computer' && turn===2){
+      thinking=true;
+      render();
+      const token=++aiToken;
+      setTimeout(()=>{
+        if(token!==aiToken||ended||mode!=='computer')return;
+        const move=chooseComputerMove();
+        thinking=false;
+        if(move!==null)playNumber(move,true);
+      },420);
+    }else{
+      render();
+    }
+  }
+
+  function playNumber(n,fromAI=false){
+    if(ended||thinking&&!fromAI)return;
+    if(mode==='computer' && turn===2 && !fromAI)return;
+    const legal=legalMoves();
+    if(!legal.includes(n))return;
+    used.add(n);
+    history.push({number:n,player:turn});
+    last=n;
+
+    /* Hjelp gjelder bare den aktuelle spillerens tur. */
+    helpStage=0;
+    document.getElementById('juniper-green')?.classList.remove('jg-show-help');
+    const helpBtn=document.getElementById('jg-help');
+    if(helpBtn)helpBtn.setAttribute('aria-pressed','false');
+
+    turn=turn===1?2:1;
+    afterMove();
+  }
+
+  function opponentRepliesAfter(move,set){
+    const s=new Set(set);s.add(move);
+    return legalMoves(move,s);
+  }
+
+  function chooseComputerMove(){
+    const moves=legalMoves();
+    if(!moves.length)return null;
+
+    // Ta seier med én gang hvis den finnes.
+    for(const m of moves){
+      const s=new Set(used);s.add(m);
+      if(legalMoves(m,s).length===0)return m;
+    }
+
+    let best=-Infinity,bestMoves=[];
+    for(const m of moves){
+      const s1=new Set(used);s1.add(m);
+      const replies=legalMoves(m,s1);
+      let score=-replies.length*7;
+
+      // 1 åpner nesten hele brettet og er derfor som regel et dyrt trekk.
+      if(m===1)score-=55;
+
+      // Store tall med få tilgjengelige forbindelser er ofte gode sperretrekk.
+      if(m>N/2)score+=5;
+      const ownFactors=[];
+      for(let d=1;d<m;d++)if(m%d===0&&!s1.has(d))ownFactors.push(d);
+      score-=Math.max(0,ownFactors.length-3);
+
+      // Se ett svar frem: hvor godt står PC etter motstanderens beste svar?
+      let worstReply=Infinity;
+      for(const r of replies){
+        const s2=new Set(s1);s2.add(r);
+        const ourNext=legalMoves(r,s2);
+        let value=ourNext.length;
+        if(!ourNext.length)value=-120;
+        else{
+          // Bonus hvis PC deretter har et direkte vinner-trekk.
+          let directWin=false;
+          for(const x of ourNext){
+            const s3=new Set(s2);s3.add(x);
+            if(legalMoves(x,s3).length===0){directWin=true;break;}
+          }
+          if(directWin)value+=45;
+        }
+        worstReply=Math.min(worstReply,value);
+      }
+      if(Number.isFinite(worstReply))score+=worstReply*2.2;
+
+      // Liten tilfeldig tie-break gjør gjentatte spill mindre mekaniske.
+      score+=Math.random()*1.6;
+      if(score>best+0.01){best=score;bestMoves=[m]}
+      else if(Math.abs(score-best)<=0.01)bestMoves.push(m);
+    }
+    return bestMoves[Math.floor(Math.random()*bestMoves.length)]??moves[0];
+  }
+
+  function start(selectedMode){
+    mode=selectedMode;
+    used=new Set();history=[];last=null;turn=1;ended=false;thinking=false;helpStage=0;aiToken++;
+    intro.hidden=true;game.hidden=false;win.hidden=true;
+    modeLabel.textContent=mode==='computer'?'Mot datamaskinen':'To spillere';
+    syncScore();
+    if(window.matchMedia('(max-width:760px)').matches)document.body.classList.add('jg-mobile-playing');
+    render();
+    window.scrollTo({top:0,behavior:'instant'});
+  }
+
+  function restart(){
+    if(!mode)return;
+    start(mode);
+  }
+
+  function showIntro(){
+    aiToken++;thinking=false;ended=false;
+    game.hidden=true;intro.hidden=false;win.hidden=true;
+    document.body.classList.remove('jg-mobile-playing');
+    window.scrollTo({top:0,behavior:'instant'});
+  }
+
+  function enter(){
+    buildMini();
+    buildBoard();
+  }
+  function leave(){
+    document.body.classList.remove('jg-mobile-playing');
+  }
+
+  const playerOverlay=document.getElementById('jg-player-overlay');
+  const name1=document.getElementById('jg-name-1');
+  const name2=document.getElementById('jg-name-2');
+
+  function openTwoPlayerDialog(){
+    /* Vis spillet i bakgrunnen først, men ikke start turen før navn er bekreftet. */
+    start('two');
+    playerOverlay.hidden=false;
+    requestAnimationFrame(()=>name1?.focus({preventScroll:true}));
+  }
+  function closeTwoPlayerDialog(backToIntro=false){
+    playerOverlay.hidden=true;
+    if(backToIntro)showIntro();
+  }
+  function confirmTwoPlayerNames(){
+    playerNames={
+      p1:(name1?.value||'').trim()||'Spiller 1',
+      p2:(name2?.value||'').trim()||'Spiller 2'
+    };
+    playerOverlay.hidden=true;
+    syncScore();
+    render();
+  }
+
+  document.querySelectorAll('[data-jg-mode]').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.jgMode==='two')openTwoPlayerDialog();
+    else start('computer');
+  }));
+  document.getElementById('jg-back').addEventListener('click',showIntro);
+  document.getElementById('jg-restart').addEventListener('click',restart);
+  document.getElementById('jg-help').addEventListener('click',()=>{
+    if(ended||thinking)return;
+
+    helpStage=(helpStage+1)%3;
+    render();
+
+    if(helpStage===1){
+      const count=legalMoves().length;
+      substatusEl.textContent=count+' lovlig'+(count===1?'':'e')+' trekk tilgjengelig'+(count===1?'':'e')+'.';
+      return;
+    }
+
+    if(helpStage===2){
+      const count=legalMoves().length;
+      substatusEl.textContent=count+' lovlig'+(count===1?'':'e')+' trekk tilgjengelig'+(count===1?'':'e')+'. De er markert på brettet.';
+      return;
+    }
+
+    substatusEl.textContent=last===null
+      ? 'Første trekk må være et ubrukt partall.'
+      : 'Finn et ubrukt tall som passer regelen.';
+  });
+  document.getElementById('jg-player-cancel').addEventListener('click',()=>closeTwoPlayerDialog(true));
+  document.getElementById('jg-player-start').addEventListener('click',confirmTwoPlayerNames);
+  [name1,name2].forEach(inp=>inp?.addEventListener('keydown',e=>{
+    if(e.key==='Enter')confirmTwoPlayerNames();
+  }));
+  buildMini();
+
+  return {enter,leave,start,showIntro};
+})();
+</script>
+
 <script>
 (function directLink(){
-  const open=()=>{const id=location.hash.slice(1);if(['hurtigfaktorisering','pi-trener'].includes(id))showContent(id,document.querySelector('[data-section="'+id+'"]'))};
+  const open=()=>{const id=location.hash.slice(1);if(['hurtigfaktorisering','pi-trener','juniper-green'].includes(id))showContent(id,document.querySelector('[data-section="'+id+'"]'))};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',open,{once:true});else open();window.addEventListener('hashchange',open);
 })();
 </script>
@@ -785,3 +1737,4 @@ if(typeof module!=='undefined'&&module.exports)module.exports=QuickFactorCore;
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "1b3cf01bc1c645a99f02736c18c9ab78"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
+<style id="onlyfag-math-menu-icon-fix">@media(max-width:760px){.math-pi .pi-nav-glyph{display:inline-block!important}}</style>
