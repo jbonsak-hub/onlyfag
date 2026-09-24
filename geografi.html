@@ -11255,6 +11255,9 @@ function toggleExtendedGlossary(sectionId, button){
 .country-region-hs-card{display:flex;flex-direction:column;gap:6px;min-width:0}.country-region-hs-card.world{width:100%}.country-region-hs-card .country-region-btn{width:100%}.country-region-hs-button{align-self:flex-end;border:1px solid #2d7187;background:#0a2634;color:#bfe9f2;border-radius:8px;padding:6px 9px;font-size:.75rem;font-weight:850;cursor:pointer}.country-region-hs-button:hover{background:#123b50;color:#fff}.hs-button[hidden]{display:none!important}
 body.dark-mode .hs-button.light{background:#111820;color:#8df0b8;border-color:#304138}
 @media(max-width:650px){.hs-table th:nth-child(5),.hs-table td:nth-child(5){display:none}.hs-dialog{padding:12px}.hs-table th,.hs-table td{padding:7px 5px;font-size:.78rem}}
+.geo-hs-actions{display:flex;gap:8px;margin-left:auto;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.geo-hs-actions .hs-button{white-space:nowrap}
+@media(max-width:800px){.geo-hs-actions{width:100%;justify-content:flex-start;margin-left:0}}
 </style>
 
 <div class="hs-modal" id="geo-hs-modal" hidden onclick="if(event.target===this)geoHsClose()">
@@ -11281,10 +11284,10 @@ body.dark-mode .hs-button.light{background:#111820;color:#8df0b8;border-color:#3
     if(name==null)return {saved:false,qualifies:true};name=String(name).trim().slice(0,24);if(!name)return {saved:false,qualifies:true};
     const db=load(),entry={...result,name,created:Date.now()};const arr=(db[result.key]||[]).concat(entry).sort(cmp).slice(0,5);db[result.key]=arr;save(db);return {saved:true,qualifies:true};
   }
-  function specialTopTitle(key){if(key==='geoguessr2|all')return 'Topp 5 (alle kategorier)';if(key==='places|streak')return 'Topp 5 (på rad)';if(key==='countries2|world'||key==='capitals|world'||key==='flags|world'||key==='flagcapital|world'||key==='detective|world')return 'Topp 5 (hele verden)';return 'Topp 5'}
+  function specialTopTitle(key){if(key==='geoguessr2|geografifaget1')return 'Topp 5 (Geografifaget1)';if(key==='geoguessr2|all')return 'Topp 5 (alle kategorier)';if(key==='places|streak')return 'Topp 5 (på rad)';if(key==='countries2|world'||key==='capitals|world'||key==='flags|world'||key==='flagcapital|world'||key==='detective|world')return 'Topp 5 (hele verden)';return 'Topp 5'}
   window.geoHsShow=function(key,label){
     const rows=list(key),modal=document.getElementById('geo-hs-modal'),body=document.getElementById('geo-hs-body'),title=document.getElementById('geo-hs-title');if(!modal||!body)return;
-    const special=key==='geoguessr2|all'||key==='places|streak';
+    const special=key==='geoguessr2|all'||key==='geoguessr2|geografifaget1'||key==='places|streak';
     title.textContent='🏆 '+specialTopTitle(key)+(label&&!special?' · '+label:'');
     if(!rows.length)body.innerHTML='<div class="hs-empty">Ingen resultater ennå.</div>';
     else body.innerHTML='<table class="hs-table"><thead><tr><th>#</th><th>Navn</th><th>Resultat</th><th>Tid</th><th>Detaljer</th></tr></thead><tbody>'+rows.map((r,i)=>'<tr><td>'+(i+1)+'</td><td><strong>'+esc(r.name)+'</strong></td><td>'+esc(r.scoreText||'–')+'</td><td>'+fmtTime(r.timeSec)+'</td><td>'+esc([r.meta,(r.hints!=null&&Number(r.hints)>0?('Hint: '+r.hints):'')].filter(Boolean).join(' · '))+'</td></tr>').join('')+'</tbody></table>';
@@ -11366,22 +11369,36 @@ body.dark-mode .hs-button.light{background:#111820;color:#8df0b8;border-color:#3
     const box=getWorldApp('countries')?.querySelector('#country-map-complete');submitAndMini({key,label,rank:[s.finalScore||0,-h,-t],scoreText:(s.finalScore||0)+' poeng',timeSec:t,hints:h,meta:(s.found?.length||0)+' av '+(s.regionNames?.length||0)+' land'},box);
   };
 
-  // GeoGuessr: one list only, and only when every category is selected.
+  // Independent local scores for the complete selection and Geografifaget1.
   function geoAllSelected(){try{ensureGeoGuessrSelection();const opts=geoSelectionOptions();return opts.length>0&&geoGuessrSelection instanceof Set&&geoGuessrSelection.size===opts.length&&opts.every(o=>geoGuessrSelection.has(o.key))}catch(e){return false}}
-  function updateGeoHsButton(){const b=document.getElementById('geo-hs-btn');if(b)b.hidden=!geoAllSelected()}
+  window.geoWizHsModeFromSelection=function(){
+    ensureGeoGuessrSelection();
+    if(geoAllSelected())return 'all';
+    if(geoGuessrSelection.size===1&&geoGuessrSelection.has('place:Geografifaget1'))return 'geografifaget1';
+    return null;
+  };
   const oldInitGeo=window.initGeoGuessr;
-  window.initGeoGuessr=function(){oldInitGeo.apply(this,arguments);setTimeout(()=>{const setup=document.querySelector('#geo-guessr-app .geo-guessr-setup');if(setup&&!setup.querySelector('#geo-hs-btn'))setup.querySelector('.geo-selection-tools')?.insertAdjacentHTML('beforebegin','<div class="hs-setup-row"><button id="geo-hs-btn" type="button" class="hs-button" onclick="geoHsShow(\'geoguessr2|all\',\'Topp 5 (alle kategorier)\')">🏆 Topp 5 (alle kategorier)</button></div>');updateGeoHsButton()},0)};
-  const oldRefreshGeo=window.refreshGeoGuessrSelectionStatus;
-  if(typeof oldRefreshGeo==='function')window.refreshGeoGuessrSelectionStatus=function(){oldRefreshGeo.apply(this,arguments);updateGeoHsButton()};
-  const oldStartGeo=window.startGeoGuessr;
-  window.startGeoGuessr=function(){const eligible=geoAllSelected();oldStartGeo.apply(this,arguments);if(geoGuessrState){geoGuessrState.hsStartedAt=Date.now();geoGuessrState.hsHandled=false;geoGuessrState.hsEligible=eligible}};
+  window.initGeoGuessr=function(){
+    oldInitGeo.apply(this,arguments);
+    const actions=document.querySelector('#geo-guessr-app .geo-setup-actions');
+    if(actions&&!actions.querySelector('.geo-hs-actions'))actions.insertAdjacentHTML('beforeend',
+      '<div class="geo-hs-actions">'+
+      '<button type="button" class="hs-button" onclick="geoHsShow(\'geoguessr2|all\',\'Topp 5 (alle kategorier)\')">🏆 Topp 5 · Alle kategorier</button>'+
+      '<button type="button" class="hs-button" onclick="geoHsShow(\'geoguessr2|geografifaget1\',\'Topp 5 (Geografifaget1)\')">🏆 Topp 5 · Geografifaget1</button>'+
+      '</div>');
+  };
   const oldSummaryGeo=window.renderGeoGuessrSummary;
   window.renderGeoGuessrSummary=function(){
-    const s=geoGuessrState;if(s&&!s.hsEndedAt)s.hsEndedAt=Date.now();oldSummaryGeo.apply(this,arguments);if(!s||s.hsHandled||!s.hsEligible)return;s.hsHandled=true;
-    const t=Math.max(0,Math.floor(((s.hsEndedAt||Date.now())-(s.hsStartedAt||Date.now()))/1000)),key='geoguessr2|all',label='Topp 5 (alle kategorier)',hud=document.querySelector('#geo-guessr-app .geo-summary-hud');
-    const actions=hud?.querySelector('.geo-summary-actions');if(actions&&!actions.querySelector('.hs-button'))actions.insertAdjacentHTML('beforeend','<button class="hs-button" type="button" onclick="geoHsShow(\'geoguessr2|all\',\'Topp 5 (alle kategorier)\')">🏆 Topp 5 (alle kategorier)</button>');
+    const s=geoGuessrState;
+    if(s&&!s.hsEndedAt)s.hsEndedAt=Date.now();
+    oldSummaryGeo.apply(this,arguments);
+    if(!s||s.hsHandled||!s.hsMode)return;
+    s.hsHandled=true;
+    const t=Math.max(0,Math.floor(((s.hsEndedAt||Date.now())-(s.hsStartedAt||Date.now()))/1000));
+    const key=s.hsMode==='all'?'geoguessr2|all':'geoguessr2|geografifaget1';
+    const label=s.hsMode==='all'?'Topp 5 (alle kategorier)':'Topp 5 (Geografifaget1)';
     const placeNames=(Array.isArray(s.results)?s.results:[]).map(r=>r&&r.name).filter(Boolean).join(' · ');
-    submitAndMini({key,label,rank:[Number(s.total)||0,-t],scoreText:(Number(s.total)||0).toFixed(1)+' poeng',timeSec:t,hints:0,meta:placeNames||'10 steder'},hud);
+    add({key,label,rank:[Number(s.total)||0,-t],scoreText:(Number(s.total)||0).toFixed(1)+' poeng',timeSec:t,hints:0,meta:placeNames||s.rounds.length+' steder'});
   };
 })();
 </script>
@@ -11806,7 +11823,10 @@ body.dark-mode .hs-button.light{background:#111820;color:#8df0b8;border-color:#3
       results:[],
       answered:false,
       questionStarted:performance.now(),
-      norwayOnly:geoWizNorwayOnly()
+      norwayOnly:geoWizNorwayOnly(),
+      hsMode:window.geoWizHsModeFromSelection?.()||null,
+      hsStartedAt:Date.now(),
+      hsHandled:false
     };
     renderGeoGuessrRound();
   };
