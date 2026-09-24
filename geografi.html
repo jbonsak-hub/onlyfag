@@ -7434,7 +7434,7 @@ function initGeoGuessr(){
   const options=geoSelectionOptions();
   const items=options.map(o=>`<label class="geo-selection-item"><input type="checkbox" data-geo-key="${escapeGeoHtml(o.key)}" ${geoGuessrSelection.has(o.key)?'checked':''} onchange="toggleGeoGuessrSelectionCheckbox(this)"><span><strong>${escapeGeoHtml(o.label)}</strong><small>${o.count} steder</small></span></label>`).join('');
   const selectedCount=geoTargetPoolFromSelection().length;
-  app.innerHTML=`<div class="geo-guessr-setup-wrap"><div class="geo-guessr-setup"><h3>GeoWiz</h3><p>Du får 10 steder etter tur. Velg selv om hovedsteder og hvilke kategorier fra Kjente steder som skal være med. Maks er 100 geografipoeng + 10 tidsbonus per sted.</p><p style="font-size:.9rem;margin-top:6px">Tidsbonusen faller med tiden, men <strong style="color:#fff">vektes også med treffsikkerheten</strong>. Et raskt klikk på feil side av kloden gir derfor nesten ingen bonus.</p><div class="geo-selection-tools"><button type="button" onclick="setAllGeoGuessrSelections(true)">Velg alle</button><button type="button" onclick="setAllGeoGuessrSelections(false)">Fjern alle</button><span class="geo-selection-count" id="geo-selection-count">${selectedCount} steder valgt</span></div><div class="geo-selection-grid">${items}</div><div class="geo-selection-error" id="geo-selection-error"></div><div class="geo-setup-actions"><button class="geo-start-button" id="geo-start-button" onclick="startGeoGuessr()" ${selectedCount<10?'disabled':''}>Start 10 steder</button><button class="geo-setup-back" onclick="exitQuizMode()">Tilbake til testvalg</button></div></div></div>`;
+  app.innerHTML=`<div class="geo-guessr-setup-wrap"><div class="geo-guessr-setup"><h3>GeoWiz</h3><p>Klikk på kjente steder på kartet. Jo nærmere du kommer desto mer poeng får du. Maks er 100 geografipoeng + 10 tidsbonus per sted.</p><p style="font-size:.9rem;margin-top:6px">Tidsbonusen faller med tiden, men <strong style="color:#fff">vektes også med treffsikkerheten</strong>. Et raskt klikk på feil side av kloden gir derfor nesten ingen bonus.</p><div class="geo-selection-tools"><button type="button" onclick="setAllGeoGuessrSelections(true)">Velg alle</button><button type="button" onclick="setAllGeoGuessrSelections(false)">Fjern alle</button><span class="geo-selection-count" id="geo-selection-count">${selectedCount} steder valgt</span></div><div class="geo-selection-grid">${items}</div><div class="geo-selection-error" id="geo-selection-error"></div><div class="geo-setup-actions"><button class="geo-start-button" id="geo-start-button" onclick="startGeoGuessr()" ${selectedCount<10?'disabled':''}>Start 10 steder</button><button class="geo-setup-back" onclick="exitQuizMode()">Tilbake til testvalg</button></div></div></div>`;
 }
 function refreshGeoGuessrSelectionStatus(){
   const n=geoTargetPoolFromSelection().length;
@@ -10667,10 +10667,11 @@ function svgUri(svg){return "data:image/svg+xml;charset=utf-8,"+encodeURICompone
 
     const items=options.map(o=>{
       const special=o.special?" geo-norway-special":"";
+      const curriculum=o.key==="place:Geografifaget1"?" geo-curriculum-category":"";
       const sub=o.special
         ? `${o.count} steder · alene: eget Norgeskart · sammen med andre: verdenskart`
         : `${o.count} steder`;
-      return `<label class="geo-selection-item${special}">
+      return `<label class="geo-selection-item${special}${curriculum}">
         <input type="checkbox" data-geo-key="${escapeGeoHtml(o.key)}" ${geoGuessrSelection.has(o.key)?"checked":""} onchange="toggleGeoGuessrSelectionCheckbox(this)">
         <span><strong>${escapeGeoHtml(o.label)}${o.special?'<span class="geo-norway-special-note">eget kart når valgt alene</span>':""}</strong><small>${sub}</small></span>
       </label>`;
@@ -10678,15 +10679,11 @@ function svgUri(svg){return "data:image/svg+xml;charset=utf-8,"+encodeURICompone
 
     const selectedCount=geoTargetPoolFromSelection().length;
     const curriculumPlaces=geoPlayablePlaces().filter(t=>t.category==="Geografifaget1");
-    const curriculumList=curriculumPlaces.map(t=>`<li><strong>${escapeGeoHtml(t.name)}</strong> · ${escapeGeoHtml(t.explanation)} <small>(${t.lat.toFixed(2)}°, ${t.lon.toFixed(2)}°)</small></li>`).join("");
     app.innerHTML=`<div class="geo-guessr-setup-wrap"><div class="geo-guessr-setup">
       <h3>GeoWiz</h3>
-      <p>Velg steder å øve på. Når Geografifaget1 velges alene, får du alle stedene i kategorien én gang. Andre utvalg gir 10 steder. Maks er 100 geografipoeng + 10 tidsbonus per sted.</p>
-      <p style="font-size:.9rem;margin-top:6px">Elver, fjellkjeder og hav er store områder; kartnålen viser ett representativt punkt.</p>
-      <p style="font-size:.9rem;margin-top:6px">Tidsbonusen faller med tiden og vektes med treffsikkerheten. <strong style="color:#fff">Velger du bare Norge, brukes et eget kart som dekker fastlandet, Jan Mayen og Svalbard. Kombinerer du Norge med andre kategorier, brukes verdenskartet.</strong></p>
+      <p>Klikk på kjente steder på kartet. Jo nærmere du kommer desto mer poeng får du. Maks er 100 geografipoeng + 10 tidsbonus per sted.</p>
       <div class="geo-selection-tools"><button type="button" onclick="setAllGeoGuessrSelections(true)">Velg alle</button><button type="button" onclick="setAllGeoGuessrSelections(false)">Fjern alle</button><span class="geo-selection-count" id="geo-selection-count">${selectedCount} steder valgt</span></div>
       <div class="geo-selection-grid">${items}</div>
-      <details class="geo-curriculum-list"><summary>Se alle ${curriculumPlaces.length} steder i Geografifaget1</summary><ul>${curriculumList}</ul></details>
       <div class="geo-selection-error" id="geo-selection-error"></div>
       <div class="geo-setup-actions"><button class="geo-start-button" id="geo-start-button" onclick="startGeoGuessr()" ${selectedCount<10?"disabled":""}>${geoGuessrSelection.size===1&&geoGuessrSelection.has("place:Geografifaget1")?`Start alle ${curriculumPlaces.length} steder`:"Start 10 steder"}</button><button class="geo-setup-back" onclick="exitQuizMode()">Tilbake til testvalg</button></div>
     </div></div>`;
@@ -11817,11 +11814,11 @@ body.dark-mode .hs-button.light{background:#111820;color:#8df0b8;border-color:#3
 </script>
 
 <style>
-.geo-curriculum-list{margin:14px 0 0;padding:9px 12px;border:1px solid var(--border,#c9d3d6);border-radius:8px}
-.geo-curriculum-list summary{cursor:pointer;font-weight:600}
-.geo-curriculum-list ul{padding-left:22px;max-height:290px;overflow:auto;line-height:1.5}
-.geo-curriculum-list li{margin:5px 0}
-.geo-curriculum-list li small{opacity:.72}
+.geo-selection-item.geo-curriculum-category,
+.geo-selection-item.geo-curriculum-category:hover{
+  margin-left:12px;
+  border:2px solid #e04b4b;
+}
 </style>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "1b3cf01bc1c645a99f02736c18c9ab78"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
