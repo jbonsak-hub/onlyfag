@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jobb · OnlyFag</title>
+  <meta name="robots" content="noindex">
+  <style>
+    :root{
+      --bg:#f7f7f5;
+      --card:#fff;
+      --text:#171717;
+      --muted:#74746f;
+      --line:#e4e4df;
+      --accent:#176a4d;
+      --accent-soft:#edf6f1;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+    main{
+      width:min(980px,calc(100% - 36px));
+      margin:0 auto;
+      padding:54px 0 72px;
+    }
+    header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:24px;
+      margin-bottom:42px;
+    }
+    .brand{
+      color:inherit;
+      text-decoration:none;
+      font-weight:800;
+      letter-spacing:-.025em;
+    }
+    h1{
+      margin:12px 0 0;
+      font-size:clamp(2.25rem,6vw,4rem);
+      line-height:.95;
+      letter-spacing:-.055em;
+    }
+    .back{
+      color:var(--muted);
+      text-decoration:none;
+      font-size:.9rem;
+      padding-top:4px;
+    }
+    .back:hover{color:var(--text)}
+    .group{margin-top:34px}
+    .group-head{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:12px;
+    }
+    .group-head h2{
+      margin:0;
+      font-size:.78rem;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:var(--accent);
+    }
+    .group-head::after{
+      content:"";
+      height:1px;
+      background:var(--line);
+      flex:1;
+    }
+    .links{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:12px;
+    }
+    .tile{
+      min-height:118px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      padding:18px 19px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:var(--card);
+      color:inherit;
+      text-decoration:none;
+      transition:border-color 140ms ease,transform 140ms ease,background 140ms ease;
+    }
+    .tile:hover{
+      border-color:#b8c7be;
+      background:#fdfefd;
+      transform:translateY(-2px);
+    }
+    .tile:focus-visible{
+      outline:3px solid #176a4d2e;
+      outline-offset:3px;
+    }
+    .tile strong{
+      font-size:1.04rem;
+      letter-spacing:-.015em;
+    }
+    .arrow{
+      color:var(--accent);
+      font-size:1.15rem;
+      line-height:1;
+    }
+    .tile.primary{
+      border-color:#c9ddd3;
+      background:var(--accent-soft);
+    }
+    @media(max-width:720px){
+      main{padding-top:34px}
+      header{margin-bottom:30px}
+      .links{grid-template-columns:1fr}
+      .tile{min-height:92px}
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <a class="brand" href="/">OnlyFag</a>
+        <h1>Jobb</h1>
+      </div>
+      <a class="back" href="/">← Forsiden</a>
+    </header>
+
+    <section class="group" aria-labelledby="klasser">
+      <div class="group-head"><h2 id="klasser">Klasser</h2></div>
+      <div class="links">
+        <a class="tile" href="/klassekart.html">
+          <strong>Klassekart</strong>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="tile" href="/puggenavn.html">
+          <strong>Pugg navn</strong>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="tile" href="/2627.html">
+          <strong>2627</strong>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="group" aria-labelledby="prover">
+      <div class="group-head"><h2 id="prover">Prøver</h2></div>
+      <div class="links">
+        <a class="tile" href="/prove/">
+          <strong>Prøvemodus</strong>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="tile primary" href="/provelab/">
+          <strong>Prøvelab</strong>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="tile" href="https://retting.onlyfag.no/retting/">
+          <strong>Retting</strong>
+          <span class="arrow" aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Cloudflare Web Analytics -->
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"1b3cf01bc1c645a99f02736c18c9ab78"}'></script>
+  <!-- End Cloudflare Web Analytics -->
+</body>
+</html>
