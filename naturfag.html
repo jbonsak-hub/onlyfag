@@ -1793,6 +1793,37 @@ body.side-collapsed .sidebar-info-wrap{display:none}
 }
 </style>
 
+<style id="onlyfag-module-menu-overflow-fix">
+@media(min-width:861px){
+  /* Reserve space for both the title and periodic-table button; scroll only
+     the module choices when the header is too narrow to fit them all. */
+  .topbar .top-title{
+    flex:0 0 auto;
+    margin-right:0;
+  }
+  .topbar .top-module-slot{
+    flex:1 1 0;
+    min-width:0;
+    max-width:100%!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    scrollbar-width:thin;
+    scrollbar-color:var(--muted) var(--panel2);
+  }
+  .top-module-slot .module-tools,
+  .top-module-slot .seg,
+  .top-module-slot .seg button{
+    flex-shrink:0;
+  }
+  .topbar .top-spacer{display:none;}
+  .topbar .top-periodic-btn{
+    position:static!important;
+    transform:none!important;
+    flex:0 0 auto;
+    margin-left:auto;
+  }
+}
+</style>
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
@@ -7337,7 +7368,7 @@ function toggleNaturfagFullscreen(){
   padding:7px 9px;
   border:1px solid var(--line);
   border-radius:8px;
-  background:#fff;
+  background:var(--panel);
   color:var(--text);
   box-shadow:0 8px 22px rgba(20,45,38,.14);
   font-size:.76rem;
