@@ -92,6 +92,19 @@ const server = http.createServer((req, res) => {
       ...info
     });
   }
+  // Previously published root URLs remain redirects, with no intermediate beacon.
+  for (const [mode, [file]] of Object.entries(routes)) {
+    const old = 'geografi-' + file.split('/').pop();
+    const before = payloads.length;
+    await page.goto(base + old + '?legacy=1#kept');
+    await page.waitForURL(base + file + '?legacy=1#kept');
+    assert.equal(await page.locator('script[src*="beacon.min.js"]').count(), 1);
+    if (process.env.CF_BEACON_SOURCE) {
+      const events = payloads.slice(before).map(([, body]) => JSON.parse(body));
+      assert.ok(!events.some(event => new URL(event.location).pathname === '/' + old));
+    }
+    console.log('PASS old page redirect', old, '->', file);
+  }
   current = 'geografi.html';
   await page.goto(base + 'geografi.html#verden-quiz');
   assert.equal(await page.locator('.geoquiz-mode-row').count(), 14);
@@ -99,17 +112,17 @@ const server = http.createServer((req, res) => {
   await page.locator('.geoquiz-mode-row', {
     hasText: 'Flaggquiz'
   }).click();
-  await page.waitForURL('**/geografi-flaggquiz.html');
+  await page.waitForURL('**/geografi/flaggquiz.html');
   await page.goBack();
   assert.equal(await page.locator('#verden-quiz').evaluate(e => e.classList.contains('active')), true);
   for (const target of [...Object.keys(routes), ...Object.keys(routes).map(mode => 'quiz-' + mode), 'worldle', 'wordle', 'geowiz', 'flaggquiz']) {
     current = 'legacy-' + target;
     await page.goto(base + 'geografi.html#' + target);
     await page.waitForURL(url => Object.values(routes).some(([file]) => url.pathname.endsWith('/' + file)));
-    assert.equal(await page.locator('.quiz-page-back').getAttribute('href'), 'geografi.html#verden-quiz');
+    assert.equal(await page.locator('.quiz-page-back').getAttribute('href'), '../geografi.html#verden-quiz');
     console.log('PASS legacy link', target);
   }
-  for (const [key, value, file] of [['quiz','flags','geografi-flaggquiz.html'],['mode','worldle','geografi-worldle.html'],['tab','globle','geografi-globle.html']]) {
+  for (const [key, value, file] of [['quiz','flags','geografi/flaggquiz.html'],['mode','worldle','geografi/worldle.html'],['tab','globle','geografi/globle.html']]) {
     await page.goto(base + 'geografi.html?' + key + '=' + value);
     await page.waitForURL('**/' + file);
   }
@@ -122,7 +135,7 @@ const server = http.createServer((req, res) => {
     timeout: 5000
   });
   // Real interaction and scoring, using synthetic local-only data.
-  await page.goto(base + 'geografi-flaggquiz.html');
+  await page.goto(base + 'geografi/flaggquiz.html');
   await page.evaluate(() => localStorage.setItem('geoHighscoresV1', JSON.stringify({
     'flags|world': [{
       name: 'QA_ONLY_NAME',
@@ -152,7 +165,7 @@ const server = http.createServer((req, res) => {
   await page.evaluate(() => endWorldTrainer('QA complete', false));
   dialogAnswer = null;
   assert.ok(await page.evaluate(() => JSON.parse(localStorage.getItem('geoHighscoresV1'))['flags|world'].some(r => r.name === 'QA_ONLY_NAME_SAVED')));
-  for (const [mode, file] of [['capitals', 'geografi-hovedstadsquiz.html'], ['flagcapital', 'geografi-flagg-og-hovedstad.html'], ['places', 'geografi-stedsquiz.html']]) {
+  for (const [mode, file] of [['capitals', 'geografi/hovedstadsquiz.html'], ['flagcapital', 'geografi/flagg-og-hovedstad.html'], ['places', 'geografi/stedsquiz.html']]) {
     await page.goto(base + file);
     await page.getByRole('button', {
       name: 'Start',
@@ -161,14 +174,14 @@ const server = http.createServer((req, res) => {
     assert.equal(await page.locator('.world-card').count(), 1);
     console.log('PASS start', mode);
   }
-  await page.goto(base + 'geografi-landquiz.html');
+  await page.goto(base + 'geografi/landquiz.html');
   await page.locator('.country-region-btn').first().click();
   assert.ok((await page.locator('#country-map-input').count()) || (await page.locator('#country-guess').count()));
-  await page.goto(base + 'geografi-geowiz.html');
+  await page.goto(base + 'geografi/geowiz.html');
   await page.locator('#geo-start-button').click();
   assert.equal(await page.locator('#geo-map-stage').count(), 1);
   console.log('PASS GeoWiz start');
-  await page.goto(base + 'geografi-jeopardy.html');
+  await page.goto(base + 'geografi/jeopardy.html');
   assert.ok(await page.evaluate(() => jeopardyCategories.every(c => makeJeopardyQuestions(c).length === 5)), 'Every Jeopardy category has five questions');
   await page.locator('#jeopardy-category-picker input').nth(0).check();
   await page.locator('#jeopardy-category-picker input').nth(1).check();
@@ -215,7 +228,7 @@ const server = http.createServer((req, res) => {
     console.log('PASS analytics', file);
   }
   current = 'privacy';
-  await page.goto(base + 'geografi-flaggquiz.html?kandidat=QA_ONLY_CANDIDATE#QA_ONLY_ANSWER');
+  await page.goto(base + 'geografi/flaggquiz.html?kandidat=QA_ONLY_CANDIDATE#QA_ONLY_ANSWER');
   await page.waitForTimeout(250);
   await page.evaluate(() => {
     const s = document.createElement('script');
@@ -233,15 +246,15 @@ const server = http.createServer((req, res) => {
     width: 1365,
     height: 900
   });
-  await page.goto(base + 'geografi-worldle.html');
+  await page.goto(base + 'geografi/worldle.html');
   await page.locator('#worldle-answer').fill(await page.evaluate(() => worldTrainerState.target.country));
   await page.locator('.worldle-guess-btn').click();
   assert.match(await page.locator('#worldle-feedback').innerText(), /riktig/i);
-  await page.goto(base + 'geografi-statle.html');
+  await page.goto(base + 'geografi/statle.html');
   await page.locator('#statle-answer').fill('not-a-state');
   await page.locator('#statle-answer').press('Enter');
   assert.ok((await page.locator('#statle-feedback').innerText()).length > 0);
-  await page.goto(base + 'geografi-geowiz.html');
+  await page.goto(base + 'geografi/geowiz.html');
   await page.locator('#geo-start-button').click();
   await page.locator('#geo-map-stage').click({
     position: {
@@ -250,18 +263,32 @@ const server = http.createServer((req, res) => {
     }
   });
   assert.equal(await page.evaluate(() => geoGuessrState.answered), true);
-  await page.goto(base + 'geografi-globle.html');
+  await page.goto(base + 'geografi/globle.html');
   await page.frameLocator('#maplab-frame').locator('#globleStartRandom').click();
   await page.frameLocator('#maplab-frame').locator('#globleGuess').fill('Norge');
   await page.frameLocator('#maplab-frame').locator('#globleCountryMenu [data-country="Norge"]').click();
   await page.frameLocator('#maplab-frame').locator('#globleSubmit').click();
   assert.ok((await page.frameLocator('#maplab-frame').locator('#globleFeedback').innerText()).length > 0);
-  await page.goto(base + 'geografi-travle.html');
+  await page.goto(base + 'geografi/travle.html');
   await page.frameLocator('#maplab-frame').locator('#travleHintNext').click();
-  await page.goto(base + 'geografi-tradle.html');
+  await page.goto(base + 'geografi/tradle.html');
   await page.frameLocator('#maplab-frame').locator('#tradleNew').click();
-  await page.goto(base + 'geografi-geogrid.html');
+  await page.goto(base + 'geografi/geogrid.html');
   await page.frameLocator('#maplab-frame').locator('#geogridNew').click();
+  // Nested pages must resolve runtime navigation against the site root.
+  await page.goto(base + 'geografi/worldle.html');
+  await page.evaluate(() => showQuizMode('flags'));
+  await page.waitForURL(base + 'geografi/flaggquiz.html');
+  await page.locator('.quiz-page-menu').click();
+  await page.locator('.sidebar .menu-header.world').click();
+  await page.locator('.sidebar .submenu-item').filter({hasText:/^Land$/}).click();
+  await page.waitForURL(base + 'geografi.html#verden-land');
+  assert.ok(await page.locator('#verden-land').evaluate(e => e.classList.contains('active')));
+  await page.goto(base + 'geografi/flaggquiz.html');
+  await page.evaluate(() => exitQuizMode());
+  await page.waitForURL(base + 'geografi.html#verden-quiz');
+  assert.ok(await page.locator('#verden-quiz').evaluate(e => e.classList.contains('active')));
+  console.log('PASS nested quiz switch, subject link and exit');
   assert.deepEqual(errors, []);
   console.log(JSON.stringify({
     quizPages: report.length,

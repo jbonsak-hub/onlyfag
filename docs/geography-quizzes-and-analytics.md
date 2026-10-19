@@ -4,20 +4,20 @@ De 14 variantene i Geo-quiz har egne HTML-innganger. Land- og stedstabellene, ka
 
 | Quiz | Ny adresse | Kompatible geografihasher |
 | --- | --- | --- |
-| Verdens land-quiz | geografi-landquiz.html | #countries / #quiz-countries |
-| Hovedstadsquiz | geografi-hovedstadsquiz.html | #capitals / #quiz-capitals |
-| Flaggquiz | geografi-flaggquiz.html | #flags / #quiz-flags |
-| Kombiner flagg og hovedstad | geografi-flagg-og-hovedstad.html | #flagcapital / #quiz-flagcapital |
-| Kjente steder på jorda | geografi-stedsquiz.html | #places / #quiz-places |
-| Worldle | geografi-worldle.html | #detective2 / #quiz-detective2 |
-| Statle | geografi-statle.html | #statle / #quiz-statle |
-| GeoWiz | geografi-geowiz.html | #geoguessr / #quiz-geoguessr |
-| GeoGuessr | geografi-geoguessr.html | #openguessr / #quiz-openguessr |
-| Jeopardy | geografi-jeopardy.html | #jeopardy / #quiz-jeopardy |
-| Globle | geografi-globle.html | #globle / #quiz-globle |
-| Travle | geografi-travle.html | #travle / #quiz-travle |
-| Tradle | geografi-tradle.html | #tradle / #quiz-tradle |
-| GeoGrid | geografi-geogrid.html | #geogrid / #quiz-geogrid |
+| Verdens land-quiz | geografi/landquiz.html | #countries / #quiz-countries |
+| Hovedstadsquiz | geografi/hovedstadsquiz.html | #capitals / #quiz-capitals |
+| Flaggquiz | geografi/flaggquiz.html | #flags / #quiz-flags |
+| Kombiner flagg og hovedstad | geografi/flagg-og-hovedstad.html | #flagcapital / #quiz-flagcapital |
+| Kjente steder på jorda | geografi/stedsquiz.html | #places / #quiz-places |
+| Worldle | geografi/worldle.html | #detective2 / #quiz-detective2 |
+| Statle | geografi/statle.html | #statle / #quiz-statle |
+| GeoWiz | geografi/geowiz.html | #geoguessr / #quiz-geoguessr |
+| GeoGuessr | geografi/geoguessr.html | #openguessr / #quiz-openguessr |
+| Jeopardy | geografi/jeopardy.html | #jeopardy / #quiz-jeopardy |
+| Globle | geografi/globle.html | #globle / #quiz-globle |
+| Travle | geografi/travle.html | #travle / #quiz-travle |
+| Tradle | geografi/tradle.html | #tradle / #quiz-tradle |
+| GeoGrid | geografi/geogrid.html | #geogrid / #quiz-geogrid |
 
 Worldle er navnet på spillet som allerede lå i repoet. Også #worldle, #wordle, #geowiz og #flaggquiz støttes. Geografi åpner kjente seksjons-ID-er og kartfaner via hash, og quiz/mode/tab/section via query. Ukjente verdier brukes ikke som navigasjonsmål. #verden-quiz åpner oversikten.
 
@@ -63,10 +63,16 @@ Kontrollert i headless Chromium/Edge, på desktop og 390 × 844:
 - Tilgjengelig retur og ingen horisontal sideoverflyt på mobil. Lange oppsett starter øverst.
 - Én beacon-instans per inngang, også ved gjentatt loader. Med originalt beacon ble faktiske payloads fanget lokalt. Syntetiske navn, kandidatkoder og svar i lagring/query/hash forekom ikke i payloads.
 
-Begrensninger: ingen publisering eller tilgang til Cloudflare-dashboardet, så servermottak og synlighet i statistikken er ikke bekreftet. Analytics-endepunktet og øvrige eksterne tjenester blokkeres i regresjonstesten. GeoGuessr-innrammingen og Worldles satellittbilder er bevart, men eksterne leverandørers tilgjengelighet er ikke ende-til-ende-verifisert. Puggenavn sin PDF.js-avhengighet erstattes med et minimalt oppstartsobjekt i analytics-testen; PDF-import og elevfiler inngår ikke i testen. Prøvesystem, backend, tilgangsbeskyttelse og databaser er ikke endret.
+Begrensninger ved den lokale regresjonstesten: servermottak og synlighet i Cloudflare-dashboardet kontrolleres ikke. Analytics-endepunktet og øvrige eksterne tjenester blokkeres i regresjonstesten. GeoGuessr-innrammingen og Worldles satellittbilder er bevart, men eksterne leverandørers tilgjengelighet er ikke ende-til-ende-verifisert. Puggenavn sin PDF.js-avhengighet erstattes med et minimalt oppstartsobjekt i analytics-testen; PDF-import og elevfiler inngår ikke i testen. Prøvesystem, backend, tilgangsbeskyttelse og databaser er ikke endret.
 
-## Ny gjennomgang av PR #3 – 19. oktober 2026
+## Publiseringskontroll av PR #3 – 19. oktober 2026
 
-De 14 HTML-inngangene finnes på branchen codex/geography-quizzes-analytics i PR #3. PR-en er åpen og ikke merget. Den publiserte geografisiden svarte HTTP 200, mens geografi-flaggquiz.html svarte 404 før merge; dette er forventet når endringen ennå bare ligger i PR-en.
+PR #3 ble merget og publisert. De tidligere geografi-*.html-inngangene svarte HTTP 200 på onlyfag.no. Cloudflare svarte HTTP 204 på ett kontrollbesøk per quiz, med riktig token og sidesti. Dashboardet ble ikke inspisert. Den senere flyttingen til /geografi/ er en egen oppfølging beskrevet nedenfor.
 
-Den nye kontrollen bruker en fersk kopi av det offentlige Cloudflare-skriptet. For hver av de 14 quizsidene verifiseres nøyaktig én pageview (eventType 1) for sidens egen sti og det eksisterende tokenet, i tillegg til at interne kart-iframe ikke oppretter sitt eget beacon. 32 hashvarianter og tre query-varianter testes. Testtrafikken sendes fortsatt ikke til Cloudflare, og faktisk dashboard-mottak kan ikke bekreftes før publisering. Navigasjonstimeouten er skilt fra interaksjonstimeouten for å tåle kald nettleseroppstart.
+Regresjonstesten bruker lokalt fangede payloads og sender ikke testtrafikk til Cloudflare. Den kontrollerer ett eventType 1 per quizadresse, riktig token, ingen ekstra beacon fra kart-iframe, gamle lenker, spillhandlinger og mobilvisning. Navigasjon og interaksjon har separate tidsgrenser for å tåle kald nettleseroppstart.
+
+## Korte quizadresser under /geografi/
+
+Alle 14 quizinnganger er flyttet til geografi-mappen, for eksempel /geografi/worldle.html, /geografi/geowiz.html og /geografi/flaggquiz.html. Fag- og quizoversikten ligger fortsatt i /geografi.html. De tidligere publiserte geografi-*.html-adressene er små videresendingssider som bevarer query og hash, med en lenke og noscript-reserve. De laster ingen analytics. Gamle hash- og query-lenker fra geografisiden åpner også de nye adressene.
+
+Relativstier til felles kode, kart-iframe, hovedside og geografisiden er tilpasset mappeplasseringen. Opprinnelse og lagringsnøkler er uendret. Cloudflare får de nye sidestiene; historiske tall for gamle sidestier blir liggende i eksisterende statistikk. Tester dekker alle 14 gamle HTML-adresser i tillegg til øvrig quiz-, navigasjons-, mobil- og analytics-kontroll.
