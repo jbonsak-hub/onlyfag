@@ -230,11 +230,13 @@ const server = http.createServer((req, res) => {
   current = 'privacy';
   await page.goto(base + 'geografi/flaggquiz.html?kandidat=QA_ONLY_CANDIDATE#QA_ONLY_ANSWER');
   await page.waitForTimeout(250);
-  await page.evaluate(() => {
+  await page.evaluate(() => new Promise((resolve, reject) => {
     const s = document.createElement('script');
-    s.src = 'assets/analytics.js';
+    s.src = '../assets/analytics.js';
+    s.onload = resolve;
+    s.onerror = reject;
     document.head.append(s);
-  });
+  }));
   await page.waitForTimeout(100);
   assert.equal(await page.locator('script[src*="beacon.min.js"]').count(), 1);
   await page.goto(base + 'index.html');

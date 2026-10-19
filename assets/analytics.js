@@ -1,6 +1,18 @@
 /* One Cloudflare instance per top-level document, shared across Onlyfag. */
 (function () {
   if (window.top !== window.self || window.__onlyfagRedirecting || window.__onlyfagAnalytics) return;
+  // The host also serves HTML files without their extension. Use one browser
+  // address before loading Cloudflare, so /naturfag and /naturfag.html agree.
+  // Directory indexes use their directory URL; query and fragment stay local.
+  const path = location.pathname;
+  const canonicalPath = /\/index(?:\.html)?$/.test(path)
+    ? path.replace(/index(?:\.html)?$/, '')
+    : /\/[^/.]+$/.test(path) ? path + '.html' : path;
+  if (canonicalPath !== path) {
+    window.__onlyfagRedirecting = true;
+    location.replace(canonicalPath + location.search + location.hash);
+    return;
+  }
   window.__onlyfagAnalytics = true;
   if (document.querySelector('script[src*="static.cloudflareinsights.com/beacon.min.js"]') || window.__cfBeacon) return;
   const script = document.createElement('script');

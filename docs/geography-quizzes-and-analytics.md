@@ -76,3 +76,17 @@ Regresjonstesten bruker lokalt fangede payloads og sender ikke testtrafikk til C
 Alle 14 quizinnganger er flyttet til geografi-mappen, for eksempel /geografi/worldle.html, /geografi/geowiz.html og /geografi/flaggquiz.html. Fag- og quizoversikten ligger fortsatt i /geografi.html. De tidligere publiserte geografi-*.html-adressene er små videresendingssider som bevarer query og hash, med en lenke og noscript-reserve. De laster ingen analytics. Gamle hash- og query-lenker fra geografisiden åpner også de nye adressene.
 
 Relativstier til felles kode, kart-iframe, hovedside og geografisiden er tilpasset mappeplasseringen. Opprinnelse og lagringsnøkler er uendret. Cloudflare får de nye sidestiene; historiske tall for gamle sidestier blir liggende i eksisterende statistikk. Tester dekker alle 14 gamle HTML-adresser i tillegg til øvrig quiz-, navigasjons-, mobil- og analytics-kontroll.
+
+## Publiseringskontroll av mappeflyttingen
+
+PR #4 ble merget 19. oktober 2026. GitHub Pages-publiseringen lyktes, og alle 14 nye /geografi/*.html-adresser svarte HTTP 200. Ett faktisk Cloudflare-kontrollbesøk per ny quizadresse ble mottatt med HTTP 204. Dashboardet ble ikke inspisert.
+
+## Samle adresser med og uten .html
+
+Verten leverer både /naturfag og /naturfag.html med HTTP 200. Cloudflare grupperer etter sidesti, så den felles analytics-loaderen sender nå først HTML-adresser uten filendelse til samme adresse med .html. Dette gjelder også de nye quizsidene. /index og /index.html sendes til /, og /jobb/index(.html) til /jobb/. Vanlige mappeadresser beholdes. Ingen beacon lastes på mellomadressen. Den eksisterende geografirutingen til quizene har forrang.
+
+Query og hash bevares i nettleseren, og lagringen har fortsatt samme opprinnelse og nøkler. Det originale Cloudflare-skriptet utelater query/hash fra rapporterte adresser. Dette bruker samme token og tjeneste, og krever ingen ny Cloudflare-konfigurasjon. Historiske tall på ulike sidestier blir ikke slått sammen av denne kodeendringen; samlingen gjelder etter publisering. Uten JavaScript blir ingen av sidene målt av denne løsningen.
+
+Kjør node tests/analytics-canonical-paths.cjs med PLAYWRIGHT_MODULE, BROWSER_EXECUTABLE og CF_BEACON_SOURCE som ovenfor. Testserveren etterligner vertens HTML-aliaser. Testen bruker den originale beacon-koden og fanger payloads lokalt, uten å sende besøk til Cloudflare. Den kontrollerer ett pageview på riktig felles adresse, bevart query/hash og lokal lagring, gamle quizlenker og fravær av syntetiske personopplysninger i payloads.
+
+29 adressevarianter er verifisert med den originale beacon-koden: ett pageview per besøk på riktig kanonisk sidesti, ingen JavaScript-feil, og separat kontroll av gammel /geografi#worldle-lenke. Testen for gjentatt innlasting av analytics bruker nå riktig relativsti fra quizmappen og venter på at skriptet faktisk er lastet.
