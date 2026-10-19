@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Travle – Geografi – Onlyfag</title>
+<link rel="stylesheet" href="assets/geography/geography.css"><link rel="stylesheet" href="assets/geography/quiz-page.css">
+<script src="assets/geography/routes.js"></script><script src="assets/analytics.js" defer></script>
+</head><body data-quiz="travle">
+<header class="quiz-page-header"><button class="quiz-page-menu" type="button" onclick="toggleQuizSidebar()">☰ Meny</button><strong class="quiz-page-title">Travle</strong><button class="quiz-page-theme" type="button" aria-label="Bytt mellom lys og mørk modus" title="Lys/mørk modus">◐</button><a class="quiz-page-back" href="geografi.html#verden-quiz">← Oversikt</a></header>
+<nav class="sidebar">
+<h1>🌍 Geografi</h1>
+<div class="menu-item"><div class="menu-header" onclick="toggleMenu(this)"><span class="menu-icon">▶</span>Kart</div><div class="submenu">
+<div class="submenu-item maplab-menu-item" onclick="location.href='geografi.html#projection'">Kartprojeksjoner</div>
+<div class="submenu-item maplab-menu-item" onclick="location.href='geografi.html#coordinates'">Koordinater</div>
+<div class="submenu-item maplab-menu-item maplab-subitem" onclick="location.href='geografi.html#coordinatequiz'">↳ Test deg selv</div>
+<div class="submenu-item maplab-menu-item" onclick="location.href='geografi.html#routes'">Flyruter</div>
+<div class="submenu-item maplab-menu-item" onclick="location.href='geografi.html#antipodes'">Antipoder</div>
+<div class="submenu-item maplab-menu-item" onclick="location.href='geografi.html#scale'">Målestokk</div>
+<div class="submenu-item maplab-menu-item" onclick="location.href='geografi.html#terrain'">Høydekurver og terreng</div>
+<div class="submenu-item maplab-menu-item" onclick="location.href='geografi.html#daynight'">Hvor er sola?</div>
+</div></div>
+<div class="menu-item"><div class="menu-header" onclick="toggleMenu(this)"><span class="menu-icon">▶</span>Indre krefter og landformer</div><div class="submenu">
+<div class="submenu-item" onclick="location.href='geografi.html#indre-fagstoff'">Fagstoff</div>
+<div class="submenu-item" onclick="location.href='geografi.html#indre-begreper'">Begrepsliste</div>
+<div class="submenu-item" onclick="location.href='geografi.html#indre-sporsmal'">Test deg selv</div>
+</div></div>
+<div class="menu-item"><div class="menu-header" onclick="toggleMenu(this)"><span class="menu-icon">▶</span>Ytre krefter og landformer</div><div class="submenu">
+<div class="submenu-item" onclick="location.href='geografi.html#ytre-fagstoff'">Fagstoff</div>
+<div class="submenu-item" onclick="location.href='geografi.html#ytre-begreper'">Begrepsliste</div>
+<div class="submenu-item" onclick="location.href='geografi.html#ytre-sporsmal'">Test deg selv</div>
+</div></div>
+<div class="menu-item"><div class="menu-header" onclick="toggleMenu(this)"><span class="menu-icon">▶</span>Vær og klima</div><div class="submenu">
+<div class="submenu-item" onclick="location.href='geografi.html#klima-fagstoff'">Fagstoff</div>
+<div class="submenu-item" onclick="location.href='geografi.html#klima-sirkulasjon'">Global sirkulasjon</div>
+<div class="submenu-item" onclick="location.href='geografi.html#system'">Jord · måne · sol</div>
+<div class="submenu-item" onclick="location.href='geografi.html#seasons'">Årstider og solbane</div>
+<div class="submenu-item" onclick="location.href='geografi.html#milankovitch'">Milankovitch-sykluser</div>
+<div class="submenu-item" onclick="location.href='geografi.html#klima-oppvarming'">Hva varmer verden?</div>
+<div class="submenu-item" onclick="location.href='geografi.html#klima-begreper'">Begrepsliste</div>
+<div class="submenu-item" onclick="location.href='geografi.html#klima-sporsmal'">Test deg selv</div>
+</div></div>
+<div class="menu-item"><div class="menu-header" onclick="toggleMenu(this)"><span class="menu-icon">▶</span>Ressurser, næring, lokalisering og interessekonflikter</div><div class="submenu">
+<div class="submenu-item" onclick="location.href='geografi.html#ressurs-fagstoff'">Fagstoff</div>
+<div class="submenu-item" onclick="location.href='geografi.html#ressurs-begreper'">Begrepsliste</div>
+<div class="submenu-item" onclick="location.href='geografi.html#ressurs-sporsmal'">Test deg selv</div>
+</div></div>
+<div class="menu-item"><div class="menu-header" onclick="toggleMenu(this)"><span class="menu-icon">▶</span>Demografi</div><div class="submenu">
+<div class="submenu-item" onclick="location.href='geografi.html#demografi-fagstoff'">Fagstoff</div>
+<div class="submenu-item" onclick="location.href='geografi.html#demografi-overgang'">Demografisk overgang</div>
+<div class="submenu-item" onclick="location.href='geografi.html#demografi-pyramider'">Befolkningspyramider</div>
+<div class="submenu-item" onclick="location.href='geografi.html#demografi-begreper'">Begrepsliste</div>
+<div class="submenu-item" onclick="location.href='geografi.html#demografi-sporsmal'">Test deg selv</div>
+</div></div>
+<div class="menu-item"><div class="menu-header world" onclick="toggleMenu(this)"><span class="menu-icon">▶</span>Fakta og quiz</div><div class="submenu world-sub">
+<div class="submenu-item" onclick="location.href='geografi.html#verden-land'">Land</div>
+<div class="submenu-item" onclick="location.href='geografi.html#verden-landformer'">Kjente steder</div>
+<div class="submenu-item" onclick="location.href='geografi.html#verden-quiz'">Geo-quiz</div>
+</div></div>
+<div aria-label="Sideverktøy" class="sidebar-tools">
+<button aria-label="Lagre som PDF" class="tool-button" onclick="saveAsPdf()" title="Lagre som PDF" type="button">⬇</button>
+<button aria-label="Fullskjerm" class="tool-button" onclick="toggleFullscreen()" title="Fullskjerm" type="button">⛶</button>
+<button aria-label="Mørk modus" class="tool-button" id="dark-mode-toggle" onclick="toggleDarkMode()" title="Mørk modus" type="button">◐</button>
+</div>
+<div class="sidebar-resizer" id="sidebar-resizer" title="Dra for å endre bredden på menyen"></div>
+<a class="onlyfag-back-arrow" href="index.html" aria-label="Tilbake til hovedsiden" title="Tilbake til hovedsiden">←</a>
+</nav>
+<main class="content"><div id="welcome" hidden></div><section class="page-section active maplab-page-section" id="kart-laboratorium"><iframe class="maplab-frame" id="maplab-frame" title="Travle" src="assets/geography/maplab.html?quiz=travle"></iframe></section></main>
+
+<script src="assets/geography/quiz-page.js"></script>
+</body></html>
