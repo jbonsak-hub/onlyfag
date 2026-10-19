@@ -64,3 +64,9 @@ Kontrollert i headless Chromium/Edge, på desktop og 390 × 844:
 - Én beacon-instans per inngang, også ved gjentatt loader. Med originalt beacon ble faktiske payloads fanget lokalt. Syntetiske navn, kandidatkoder og svar i lagring/query/hash forekom ikke i payloads.
 
 Begrensninger: ingen publisering eller tilgang til Cloudflare-dashboardet, så servermottak og synlighet i statistikken er ikke bekreftet. Analytics-endepunktet og øvrige eksterne tjenester blokkeres i regresjonstesten. GeoGuessr-innrammingen og Worldles satellittbilder er bevart, men eksterne leverandørers tilgjengelighet er ikke ende-til-ende-verifisert. Puggenavn sin PDF.js-avhengighet erstattes med et minimalt oppstartsobjekt i analytics-testen; PDF-import og elevfiler inngår ikke i testen. Prøvesystem, backend, tilgangsbeskyttelse og databaser er ikke endret.
+
+## Ny gjennomgang av PR #3 – 19. oktober 2026
+
+De 14 HTML-inngangene finnes på branchen codex/geography-quizzes-analytics i PR #3. PR-en er åpen og ikke merget. Den publiserte geografisiden svarte HTTP 200, mens geografi-flaggquiz.html svarte 404 før merge; dette er forventet når endringen ennå bare ligger i PR-en.
+
+Den nye kontrollen bruker en fersk kopi av det offentlige Cloudflare-skriptet. For hver av de 14 quizsidene verifiseres nøyaktig én pageview (eventType 1) for sidens egen sti og det eksisterende tokenet, i tillegg til at interne kart-iframe ikke oppretter sitt eget beacon. 32 hashvarianter og tre query-varianter testes. Testtrafikken sendes fortsatt ikke til Cloudflare, og faktisk dashboard-mottak kan ikke bekreftes før publisering. Navigasjonstimeouten er skilt fra interaksjonstimeouten for å tåle kald nettleseroppstart.

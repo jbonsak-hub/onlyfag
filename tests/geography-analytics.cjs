@@ -57,10 +57,12 @@ const server = http.createServer((req, res) => {
   const routes = JSON.parse(fs.readFileSync(path.join(root, 'assets/geography/routes.js'), 'utf8').match(/window.GEO_QUIZ_ROUTES=([\s\S]*);/)[1]);
   const report = [];
   page.setDefaultTimeout(8000);
+  page.setDefaultNavigationTimeout(30000);
   let dialogAnswer = null;
   page.on('dialog', d => dialogAnswer === null ? d.dismiss() : d.accept(dialogAnswer));
   for (const [mode, [file]] of Object.entries(routes)) {
     current = file;
+    const before = payloads.length;
     await page.goto(base + file);
     await page.waitForTimeout(250);
     const info = await page.evaluate(() => ({
@@ -76,6 +78,15 @@ const server = http.createServer((req, res) => {
       info.mapActive = mode;
     } else assert.deepEqual(info.active, ['quiz-' + mode]);
     assert.equal(info.beacons, 1);
+    if (process.env.CF_BEACON_SOURCE) {
+      const events = payloads.slice(before).map(([, body]) => JSON.parse(body));
+      const visits = events.filter(event => event.eventType === 1 && new URL(event.location).pathname === '/' + file);
+      assert.equal(visits.length, 1, file + ' must emit exactly one pageview for its own path');
+      assert.equal(visits[0].siteToken, '1b3cf01bc1c645a99f02736c18c9ab78');
+      assert.equal(await page.evaluate(() => window.__cfBeacon.spa), false);
+      if (info.frames.length && mode !== 'openguessr') assert.equal(await page.frameLocator('#maplab-frame').locator('script[src*="beacon.min.js"]').count(), 0);
+    }
+    console.log('PASS quiz and analytics path', file);
     report.push({
       file,
       ...info
@@ -91,10 +102,16 @@ const server = http.createServer((req, res) => {
   await page.waitForURL('**/geografi-flaggquiz.html');
   await page.goBack();
   assert.equal(await page.locator('#verden-quiz').evaluate(e => e.classList.contains('active')), true);
-  for (const target of ['worldle', 'quiz-flags', 'geowiz', 'globle']) {
+  for (const target of [...Object.keys(routes), ...Object.keys(routes).map(mode => 'quiz-' + mode), 'worldle', 'wordle', 'geowiz', 'flaggquiz']) {
     current = 'legacy-' + target;
     await page.goto(base + 'geografi.html#' + target);
-    await page.waitForURL(/geografi-(worldle|flaggquiz|geowiz|globle)\.html$/);
+    await page.waitForURL(url => Object.values(routes).some(([file]) => url.pathname.endsWith('/' + file)));
+    assert.equal(await page.locator('.quiz-page-back').getAttribute('href'), 'geografi.html#verden-quiz');
+    console.log('PASS legacy link', target);
+  }
+  for (const [key, value, file] of [['quiz','flags','geografi-flaggquiz.html'],['mode','worldle','geografi-worldle.html'],['tab','globle','geografi-globle.html']]) {
+    await page.goto(base + 'geografi.html?' + key + '=' + value);
+    await page.waitForURL('**/' + file);
   }
   for (const section of ['verden-land', 'verden-landformer', 'klima-oppvarming', 'demografi-pyramider']) {
     await page.goto(base + 'geografi.html#' + section);
