@@ -20,10 +20,10 @@
   window.getLandRows = function () { return GEO_QUIZ_DATA.landRows; };
   window.getPlaceRowsByHeading = function (heading) { return GEO_QUIZ_DATA.places.filter(row => row.category === heading); };
   const start = window.showQuizMode;
-  window.exitQuizMode = function () { location.assign('geografi.html#verden-quiz'); };
-  window.showContent = function (id) { location.assign('geografi.html#' + encodeURIComponent(id)); };
+  window.exitQuizMode = function () { location.assign('../geografi.html#verden-quiz'); };
+  window.showContent = function (id) { location.assign('../geografi.html#' + encodeURIComponent(id)); };
   window.showQuizMode = function (next, btn) {
-    if (next !== mode && GEO_QUIZ_ROUTES[next]) return location.assign(GEO_QUIZ_ROUTES[next][0]);
+    if (next !== mode && GEO_QUIZ_ROUTES[next]) return location.assign('../' + GEO_QUIZ_ROUTES[next][0]);
     return start(next, btn);
   };
   document.addEventListener('DOMContentLoaded', () => {

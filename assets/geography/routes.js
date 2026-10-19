@@ -1,59 +1,59 @@
-// Public, fixed quiz routes; never derived from user input.
+// Quiz routes are relative to the site root.
 window.GEO_QUIZ_ROUTES={
   "countries": [
-    "geografi-landquiz.html",
+    "geografi/landquiz.html",
     "Verdens land-quiz"
   ],
   "capitals": [
-    "geografi-hovedstadsquiz.html",
+    "geografi/hovedstadsquiz.html",
     "Hovedstadsquiz"
   ],
   "flags": [
-    "geografi-flaggquiz.html",
+    "geografi/flaggquiz.html",
     "Flaggquiz"
   ],
   "flagcapital": [
-    "geografi-flagg-og-hovedstad.html",
+    "geografi/flagg-og-hovedstad.html",
     "Kombiner flagg og hovedstad"
   ],
   "places": [
-    "geografi-stedsquiz.html",
+    "geografi/stedsquiz.html",
     "Kjente steder på jorda"
   ],
   "detective2": [
-    "geografi-worldle.html",
+    "geografi/worldle.html",
     "Worldle"
   ],
   "statle": [
-    "geografi-statle.html",
+    "geografi/statle.html",
     "Statle"
   ],
   "geoguessr": [
-    "geografi-geowiz.html",
+    "geografi/geowiz.html",
     "GeoWiz"
   ],
   "openguessr": [
-    "geografi-geoguessr.html",
+    "geografi/geoguessr.html",
     "GeoGuessr"
   ],
   "jeopardy": [
-    "geografi-jeopardy.html",
+    "geografi/jeopardy.html",
     "Jeopardy"
   ],
   "globle": [
-    "geografi-globle.html",
+    "geografi/globle.html",
     "Globle"
   ],
   "travle": [
-    "geografi-travle.html",
+    "geografi/travle.html",
     "Travle"
   ],
   "tradle": [
-    "geografi-tradle.html",
+    "geografi/tradle.html",
     "Tradle"
   ],
   "geogrid": [
-    "geografi-geogrid.html",
+    "geografi/geogrid.html",
     "GeoGrid"
   ]
 };
