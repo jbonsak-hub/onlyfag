@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jeopardy – Geografi – Onlyfag</title>
+<link rel="stylesheet" href="assets/geography/geography.css"><link rel="stylesheet" href="assets/geography/quiz-page.css">
+<script src="assets/geography/routes.js"></script><script src="assets/analytics.js" defer></script>
+</head><body data-quiz="jeopardy">
+<header class="quiz-page-header"><button class="quiz-page-menu" type="button" onclick="toggleQuizSidebar()">☰ Meny</button><strong class="quiz-page-title">Jeopardy</strong><button class="quiz-page-theme" type="button" aria-label="Bytt mellom lys og mørk modus" title="Lys/mørk modus">◐</button><a class="quiz-page-back" href="geografi.html#verden-quiz">← Oversikt</a></header>
+<nav class="sidebar">
+<h1>🌍 Geografi</h1>
+<div class="menu-item"><div class="menu-header" onclick="toggleMenu(this)"><span class="menu-icon">▶</span>Kart</div><div class="submenu">
+<div class="submenu-item maplab-menu-item" onclick="location.href='geografi.html#projection'">Kartprojeksjoner</div>
+<div class="submenu-item maplab-menu-item" onclick="location.href='geografi.html#coordinates'">Koordinater</div>
+<div class="submenu-item maplab-menu-item maplab-subitem" onclick="location.href='geografi.html#coordinatequiz'">↳ Test deg selv</div>
+<div class="submenu-item maplab-menu-item" onclick="location.href='geografi.html#routes'">Flyruter</div>
+<div class="submenu-item maplab-menu-item" onclick="location.href='geografi.html#antipodes'">Antipoder</div>
+<div class="submenu-item maplab-menu-item" onclick="location.href='geografi.html#scale'">Målestokk</div>
+<div class="submenu-item maplab-menu-item" onclick="location.href='geografi.html#terrain'">Høydekurver og terreng</div>
+<div class="submenu-item maplab-menu-item" onclick="location.href='geografi.html#daynight'">Hvor er sola?</div>
+</div></div>
+<div class="menu-item"><div class="menu-header" onclick="toggleMenu(this)"><span class="menu-icon">▶</span>Indre krefter og landformer</div><div class="submenu">
+<div class="submenu-item" onclick="location.href='geografi.html#indre-fagstoff'">Fagstoff</div>
+<div class="submenu-item" onclick="location.href='geografi.html#indre-begreper'">Begrepsliste</div>
+<div class="submenu-item" onclick="location.href='geografi.html#indre-sporsmal'">Test deg selv</div>
+</div></div>
+<div class="menu-item"><div class="menu-header" onclick="toggleMenu(this)"><span class="menu-icon">▶</span>Ytre krefter og landformer</div><div class="submenu">
+<div class="submenu-item" onclick="location.href='geografi.html#ytre-fagstoff'">Fagstoff</div>
+<div class="submenu-item" onclick="location.href='geografi.html#ytre-begreper'">Begrepsliste</div>
+<div class="submenu-item" onclick="location.href='geografi.html#ytre-sporsmal'">Test deg selv</div>
+</div></div>
+<div class="menu-item"><div class="menu-header" onclick="toggleMenu(this)"><span class="menu-icon">▶</span>Vær og klima</div><div class="submenu">
+<div class="submenu-item" onclick="location.href='geografi.html#klima-fagstoff'">Fagstoff</div>
+<div class="submenu-item" onclick="location.href='geografi.html#klima-sirkulasjon'">Global sirkulasjon</div>
+<div class="submenu-item" onclick="location.href='geografi.html#system'">Jord · måne · sol</div>
+<div class="submenu-item" onclick="location.href='geografi.html#seasons'">Årstider og solbane</div>
+<div class="submenu-item" onclick="location.href='geografi.html#milankovitch'">Milankovitch-sykluser</div>
+<div class="submenu-item" onclick="location.href='geografi.html#klima-oppvarming'">Hva varmer verden?</div>
+<div class="submenu-item" onclick="location.href='geografi.html#klima-begreper'">Begrepsliste</div>
+<div class="submenu-item" onclick="location.href='geografi.html#klima-sporsmal'">Test deg selv</div>
+</div></div>
+<div class="menu-item"><div class="menu-header" onclick="toggleMenu(this)"><span class="menu-icon">▶</span>Ressurser, næring, lokalisering og interessekonflikter</div><div class="submenu">
+<div class="submenu-item" onclick="location.href='geografi.html#ressurs-fagstoff'">Fagstoff</div>
+<div class="submenu-item" onclick="location.href='geografi.html#ressurs-begreper'">Begrepsliste</div>
+<div class="submenu-item" onclick="location.href='geografi.html#ressurs-sporsmal'">Test deg selv</div>
+</div></div>
+<div class="menu-item"><div class="menu-header" onclick="toggleMenu(this)"><span class="menu-icon">▶</span>Demografi</div><div class="submenu">
+<div class="submenu-item" onclick="location.href='geografi.html#demografi-fagstoff'">Fagstoff</div>
+<div class="submenu-item" onclick="location.href='geografi.html#demografi-overgang'">Demografisk overgang</div>
+<div class="submenu-item" onclick="location.href='geografi.html#demografi-pyramider'">Befolkningspyramider</div>
+<div class="submenu-item" onclick="location.href='geografi.html#demografi-begreper'">Begrepsliste</div>
+<div class="submenu-item" onclick="location.href='geografi.html#demografi-sporsmal'">Test deg selv</div>
+</div></div>
+<div class="menu-item"><div class="menu-header world" onclick="toggleMenu(this)"><span class="menu-icon">▶</span>Fakta og quiz</div><div class="submenu world-sub">
+<div class="submenu-item" onclick="location.href='geografi.html#verden-land'">Land</div>
+<div class="submenu-item" onclick="location.href='geografi.html#verden-landformer'">Kjente steder</div>
+<div class="submenu-item" onclick="location.href='geografi.html#verden-quiz'">Geo-quiz</div>
+</div></div>
+<div aria-label="Sideverktøy" class="sidebar-tools">
+<button aria-label="Lagre som PDF" class="tool-button" onclick="saveAsPdf()" title="Lagre som PDF" type="button">⬇</button>
+<button aria-label="Fullskjerm" class="tool-button" onclick="toggleFullscreen()" title="Fullskjerm" type="button">⛶</button>
+<button aria-label="Mørk modus" class="tool-button" id="dark-mode-toggle" onclick="toggleDarkMode()" title="Mørk modus" type="button">◐</button>
+</div>
+<div class="sidebar-resizer" id="sidebar-resizer" title="Dra for å endre bredden på menyen"></div>
+<a class="onlyfag-back-arrow" href="index.html" aria-label="Tilbake til hovedsiden" title="Tilbake til hovedsiden">←</a>
+</nav>
+<main class="content"><div id="welcome" hidden></div><section class="page-section active" id="verden-quiz"><div class="quiz-mode-content" id="quiz-jeopardy">
+<div class="quiz-fullscreen-stage active">
+<div class="quiz-fullscreen-toolbar"><button class="quiz-menu-button" onclick="toggleQuizSidebar()">☰ Meny</button><span class="quiz-toolbar-title">Jeopardy</span><span class="quiz-toolbar-spacer"></span><button class="quiz-exit-button" onclick="exitQuizMode()">Tilbake til quizvalg</button></div>
+<div class="quiz-fullscreen-body">
+<div class="jeopardy-shell" id="jeopardy-shell">
+<div class="jeopardy-setup" id="jeopardy-setup">
+<div class="jeopardy-setup-header"><h3>Sett opp Jeopardy</h3><p>Velg lag, timer og 3–5 kategorier.</p><p class="fullscreen-note jeopardy-random-note">Nytt brett hver runde: spørsmål trekkes tilfeldig fra hele spørsmålsbanken, med enklere spørsmål på 100 og mer krevende spørsmål mot 500.</p></div>
+<div class="jeopardy-setup-grid"><div><div class="setup-field"><label for="team-count">Antall lag:</label><select id="team-count" onchange="renderTeamInputs()"><option>1</option><option selected="">2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div><div class="team-name-wrap" id="team-name-wrap"><div class="setup-field"><label>Lagnavn 1</label><input class="team-name" value="Lag 1"></div><div class="setup-field"><label>Lagnavn 2</label><input class="team-name" value="Lag 2"></div></div><div class="setup-field"><label for="jeopardy-timer">Timer:</label><select id="jeopardy-timer"><option selected="" value="0">∞</option><option value="10">10 sek</option><option value="20">20 sek</option><option value="30">30 sek</option></select></div><div class="jeopardy-actions"><button onclick="startJeopardyGame()">Start spill</button></div><p class="jeopardy-status" id="jeopardy-status">Du har valgt 0. Velg minst 3 og maks 5 kategorier.</p></div><div><div class="category-picker-title">Kategorier</div><div class="jeopardy-controls" id="jeopardy-category-picker" data-ready="1"><label class="jeopardy-option verden"><input type="checkbox" value="hovedsteder" onchange="updateJeopardySelectionStatus(this)"><span>Hovedsteder</span></label><label class="jeopardy-option verden"><input type="checkbox" value="flagg" onchange="updateJeopardySelectionStatus(this)"><span>Flagg</span></label><label class="jeopardy-option verden"><input type="checkbox" value="natursteder" onchange="updateJeopardySelectionStatus(this)"><span>Kjente natursteder</span></label><label class="jeopardy-option verden"><input type="checkbox" value="hav" onchange="updateJeopardySelectionStatus(this)"><span>Hav og sjøområder</span></label><label class="jeopardy-option verden"><input type="checkbox" value="stred" onchange="updateJeopardySelectionStatus(this)"><span>Stred og kanaler</span></label><label class="jeopardy-option verden"><input type="checkbox" value="fjellkjeder" onchange="updateJeopardySelectionStatus(this)"><span>Fjellkjeder</span></label><label class="jeopardy-option verden"><input type="checkbox" value="fjell-vulkaner" onchange="updateJeopardySelectionStatus(this)"><span>Fjell og vulkaner</span></label><label class="jeopardy-option verden"><input type="checkbox" value="innsjoer" onchange="updateJeopardySelectionStatus(this)"><span>Innsjøer</span></label><label class="jeopardy-option verden"><input type="checkbox" value="elver" onchange="updateJeopardySelectionStatus(this)"><span>Elver</span></label><label class="jeopardy-option verden"><input type="checkbox" value="oyer" onchange="updateJeopardySelectionStatus(this)"><span>Øyer og halvøyer</span></label><label class="jeopardy-option verden"><input type="checkbox" value="orkener" onchange="updateJeopardySelectionStatus(this)"><span>Ørkener</span></label><label class="jeopardy-option verden"><input type="checkbox" value="regioner" onchange="updateJeopardySelectionStatus(this)"><span>Regioner og områder</span></label><label class="jeopardy-option verden"><input type="checkbox" value="byggverk" onchange="updateJeopardySelectionStatus(this)"><span>Byggverk og historiske steder</span></label><label class="jeopardy-option verden"><input type="checkbox" value="historiske-navn" onchange="updateJeopardySelectionStatus(this)"><span>Historiske navn</span></label><label class="jeopardy-option verden"><input type="checkbox" value="norge-steder" onchange="updateJeopardySelectionStatus(this)"><span>Norge</span></label><label class="jeopardy-option pensum"><input type="checkbox" value="kart" onchange="updateJeopardySelectionStatus(this)"><span>Kart</span></label><label class="jeopardy-option pensum"><input type="checkbox" value="indre" onchange="updateJeopardySelectionStatus(this)"><span>Indre krefter</span></label><label class="jeopardy-option pensum"><input type="checkbox" value="ytre" onchange="updateJeopardySelectionStatus(this)"><span>Ytre krefter</span></label><label class="jeopardy-option pensum"><input type="checkbox" value="klima" onchange="updateJeopardySelectionStatus(this)"><span>Vær og klima</span></label><label class="jeopardy-option pensum"><input type="checkbox" value="ressurser" onchange="updateJeopardySelectionStatus(this)"><span>Ressurser og næring</span></label><label class="jeopardy-option pensum"><input type="checkbox" value="demografi" onchange="updateJeopardySelectionStatus(this)"><span>Demografi</span></label></div></div></div>
+</div>
+<div class="jeopardy-game" id="jeopardy-game">
+<div class="jeopardy-game-topbar"><button class="jeopardy-top-button" onclick="returnToJeopardySetup()">Avbryt / start på nytt</button><span class="jeopardy-status" id="jeopardy-game-status"></span></div>
+<div class="jeopardy-play-area"><div class="jeopardy-board-wrap"><div class="jeopardy-board" id="jeopardy-board"></div></div><aside class="jeopardy-side"><div class="scoreboard" id="jeopardy-scoreboard"></div><div class="jeopardy-card" id="jeopardy-card"><div class="jeopardy-meta" id="jeopardy-meta"></div><h3 id="jeopardy-card-title">Spørsmål <span class="timer-pill" id="timer-pill" style="display:none"></span></h3><div class="jeopardy-question" id="jeopardy-question"></div><button class="jeopardy-reveal" onclick="revealJeopardyAnswer()">Vis fasit</button><div class="jeopardy-answer" id="jeopardy-answer"></div><div class="score-actions" id="score-actions"></div><button class="jeopardy-close" id="jeopardy-card-close" onclick="closeJeopardyCard()">Ferdig</button></div></aside></div>
+</div>
+</div>
+</div>
+</div>
+</div></section></main>
+<div class="hs-modal" id="geo-hs-modal" hidden="" onclick="if(event.target===this)geoHsClose()">
+  <div class="hs-dialog" role="dialog" aria-modal="true" aria-labelledby="geo-hs-title">
+    <div class="hs-dialog-head"><h3 id="geo-hs-title">🏆 Topp 5</h3><button class="hs-close" type="button" onclick="geoHsClose()">Lukk</button></div>
+    <div id="geo-hs-body"></div>
+    <div class="hs-note">Resultatene lagres lokalt i denne nettleseren.</div>
+  </div>
+</div>
+<script src="assets/geography/quiz-data.js"></script>
+<script src="assets/geography/core.js"></script>
+<script src="assets/geography/question-difficulty.js"></script>
+<script src="assets/geography/scoreboards.js"></script>
+<script src="assets/geography/flags-simple.js"></script>
+<script src="assets/geography/flags-detailed.js"></script>
+<script src="assets/geography/geowiz.js"></script>
+<script src="assets/geography/flags-extra.js"></script>
+<script src="assets/geography/quiz-timers.js"></script>
+<script src="assets/geography/weather-jeopardy.js"></script>
+<script src="assets/geography/highscores.js"></script>
+<script src="assets/geography/geowiz-keyboard.js"></script>
+<script src="assets/geography/worldle-statle.js"></script>
+<script src="assets/geography/geowiz-categories.js"></script>
+<script src="assets/geography/quiz-page.js"></script>
+</body></html>
