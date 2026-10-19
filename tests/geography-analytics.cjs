@@ -6,7 +6,7 @@ const pw = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = path.resolve(__dirname, '..');
 const server = http.createServer((req, res) => {
   const pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
-  const file = path.join(root, pathname === '/' ? 'index.html' : pathname);
+  const file = path.join(root, pathname.endsWith('/') ? pathname + 'index.html' : pathname);
   try {
     res.setHeader('Content-Type', file.endsWith('.html') ? 'text/html; charset=utf-8' : file.endsWith('.js') ? 'text/javascript; charset=utf-8' : file.endsWith('.css') ? 'text/css' : 'application/octet-stream');
     res.end(fs.readFileSync(file));
