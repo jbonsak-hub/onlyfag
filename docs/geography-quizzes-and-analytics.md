@@ -95,6 +95,12 @@ Publisert kode ble kontrollert med alle gamle HTML-, hash- og query-lenker, spil
 
 ## Statle med klikkbare delstater
 
+### Oppdatering av CSS og JavaScript
+
+Etter endringer i `assets/geography/statle.css` eller `statle.js`: kjør `node scripts/build-statle-assets.cjs`. Skriptet lager filer med innholdshash i `statle-assets/` og oppdaterer quizsiden og prototypen. Behold tidligere publiserte versjoner, siden eldre HTML fortsatt kan referere til dem. `--check` og geografitesten kontrollerer at referansene matcher kildekoden.
+
+Dette hindrer at ny HTML kombineres med gamle CSS/JS-filer fra nettleser- eller Cloudflare-bufferen. Ressursene kan ellers være ferske i buffer i fire timer. `tests/statle-cache.cjs` gjenskaper blankt kart med gamle filer i en ekte nettleserbuffer og kontrollerer at nye filadresser gjenoppretter kart, spill og meny uten tømming av buffer. Testen sender ingen analytics.
+
 Statle på /geografi/statle.html bruker nå et kart med 50 klikkbare delstater og navnet på målstaten i høyrepanelet. Fargen følger svartid og antall feil. Feilklikk viser den klikkede statens navn i omtrent ett sekund; etter to feil pulserer en ring rundt målstaten i omtrent 1,45 sekunder. Omstart, hopping over, tastatur og ekstra klikkfelt for små delstater er tilgjengelig. Eksempelrunde og all manuell/automatisk pause er fjernet; klokka går også når menyen er åpen eller fanen er skjult.
 
 Kartet fyller vindushøyden på desktop. Fastlandet er forstørret. Alaska og Hawaii vises uten navn, med skillelinjer som ikke skjærer gjennom delstatene. Hawaii flukter nederst med Florida. På mobil ligger panelet under kartet. Kartgrunnlaget er det samme Census-grunnlaget som tidligere. Spillsvar holdes i minnet, eksisterende lokal lagring røres ikke, og siden bruker samme analytics-loader/token og sidesti som før. Andre quiz- og fagmoduler er uendret.
