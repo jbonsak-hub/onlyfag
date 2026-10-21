@@ -6,7 +6,7 @@ Modulen samler hav–kontinent-subduksjon, hav–hav-subduksjon, kontinentkollis
 
 Den synkende platens samplede bane, bevegelige materialmarkører og formidlingen av vann/magma bygger videre på brukerens vedlagte `Subduksjonsmodell.html`. Oppsettet er erstattet av en visning som tilpasses vinduet, med glideren under figuren og én utfyllende prosessforklaring av gangen. På smale skjermer åpnes forklaringene i et panel med Escape/lukkeknapp og tastaturfokus. De nummererte punktene åpner den tilhørende forklaringen. Lys/mørk-visning lagres lokalt, separat fra øvrige moduler.
 
-De to subduksjonsmodellene har et skråstilt terrenglag, skyggelagte fjellsider og et voksende prism av foldede sedimenter som kan skrapes av ved gropa. Hav–hav-modellen viser flere vulkanske øyer i en skjematisk øybue. Kontinentkollisjonen viser lag som foldes og forkortes, overskyvninger, fjellrelieff og markører som beveger seg mot hverandre. Glidegrensen har terreng, åkrer, elv og vei som følger platene: elv og vei henger sammen ved fastlåst kontakt, bøyes under spenningsoppbygging og forskyves etter brudd. Alt følger glideren; ingen detaljer beveger seg av seg selv.
+De to subduksjonsmodellene har et skråstilt terrenglag, skyggelagte fjellsider og et voksende prism av foldede sedimenter som kan skrapes av ved gropa. Hav–hav-modellen viser flere vulkanske øyer i en skjematisk øybue. Kontinentkollisjonen viser lag som foldes og forkortes, overskyvninger, fjellrelieff og markører som beveger seg mot hverandre. Glidegrensen vises nå som et skrått 3D-utsnitt med lys- og skyggelegging, forhøyet terrengrelieff, små gårdsbygninger og skårne front-/sideflater med berglag. Hele blokkene og landskapet følger den sideveis platebevegelsen: elv og vei henger sammen ved fastlåst kontakt, bøyes under spenningsoppbygging og forskyves etter brudd. Alt følger glideren; ingen detaljer beveger seg av seg selv.
 
 ## Faglige avgrensninger
 
@@ -16,7 +16,7 @@ Kontinentkollisjon har et eget sent trinn som viser **mulig delvis smelting av v
 
 Spredning vises som et skråstilt utsnitt av havbunnen med tverrsnitt i front. Ryggen bygger seg gradvis opp, en sentral riftdal blir synlig, og normalforkastninger/rygger/søkk følger den nydannede havbunnen utover. Samme materialmarkører kan følges på hver side; ingen markører pakkes rundt til midten igjen. Fargeforskjeller viser relativ alder/avkjøling, ikke magnetiske striper. Dette er en forenklet langsomt spredende rygg; raskt spredende rygger trenger ikke ha en tydelig riftdal. Vannet er skjult for å vise topografien.
 
-Transformmodellen vises ovenfra og holder veikontakten samlet under fastlåsing, før den viser forskyvning etter brudd. Skjelvsymbolene er mulige fokus, ikke en prognose.
+Transformmodellen holder veikontakten samlet under fastlåsing, før den viser forskyvning etter brudd. Det skrå perspektivet endrer bare visningen; tykkelsen er konstant og det er ingen vertikal platebevegelse i dette eksemplet. Sideflatene er kanter på modellutsnittet, ikke åpne rifter eller stup i terrenget. Skjelvsymbolene er mulige fokus, ikke en prognose.
 
 Bakgrunn: [USGS – Understanding plate motions](https://pubs.usgs.gov/gip/dynamic/understanding.html). Modellens informasjonsfelt gir eksempel og avgrensning for hver plategrense.
 
@@ -31,7 +31,7 @@ python3 -m http.server 8000 --bind 127.0.0.1
 BROWSER_EXECUTABLE=/usr/bin/chromium node tests/plate-boundaries.cjs
 ```
 
-Testen starter sin egen HTTP-server og blokkerer eksterne forespørsler. Den kontrollerer alle fem modeller, forklaring i begge gliderretninger, ulike geologiske kjennetegn, avspilling/pause/reset, faner med tastatur, mobilpanel, tema, innlenking fra geografi og synlig glider uten siderulling i fem skjermstørrelser. Sett `PLATE_SCREENSHOTS` til en mappe for skjermbilder. Fysisk mobil og Safari er ikke kontrollert av Chromium-testene.
+Testen starter sin egen HTTP-server og blokkerer eksterne forespørsler. Den kontrollerer alle fem modeller, forklaring i begge gliderretninger, ulike geologiske kjennetegn, synlige 3D-flater og forskyvning langs den projiserte transformaksen uten åpning på tvers, avspilling/pause/reset, faner med tastatur, mobilpanel, tema, innlenking fra geografi og synlig glider uten siderulling i fem skjermstørrelser. Sett `PLATE_SCREENSHOTS` til en mappe for skjermbilder. Fysisk mobil og Safari er ikke kontrollert av Chromium-testene.
 
 JS/CSS og innbyggingen (`embed.js`, `embed.css`) ligger i `assets/geography/plate-boundaries/`, atskilt fra quizbyggene. `subduction-art.js` og `collision-transform-art.js` tegner de fire tilhørende modellene, mens `model.js` styrer tilstand, glider, tekst og havbunnsspredning. Innbyggingen laster modellen ved første åpning, samkjører tema med geografisiden og stopper avspilling når seksjonen skjules. Meldinger valideres med både origin og kildevindu. Endringer krever ingen regenerering av geografiquizenes versjonerte ressurser. Nettutgaven bruker nettstedets eksisterende analytics-loader, som ikke laster et ekstra beacon i iframe; den eksporterte enkeltfilen inkluderer alle tegneskriptene og gjør ingen analytics-kall.
 

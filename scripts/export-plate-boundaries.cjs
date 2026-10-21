@@ -16,7 +16,7 @@ const js = scripts.map(file => fs.readFileSync(path.join(root, 'assets/geography
 const html = fs.readFileSync(source, 'utf8')
   .replace('<link rel="stylesheet" href="../assets/geography/plate-boundaries/model.css">', () => '<style>\n' + css + '\n</style>')
   .replace('  <script src="../assets/analytics.js" defer></script>\n', '')
-  .replace(/  <script src="\.\.\/assets\/geography\/plate-boundaries\/(?:subduction-art|collision-transform-art|model)\.js" defer><\/script>\n/g, '')
+  .replace(/  <script src="\.\.\/assets\/geography\/plate-boundaries\/(?:subduction-art|collision-transform-art|model)\.js(?:\?[^"\s]*)?" defer><\/script>\n/g, '')
   .replaceAll('../geografi.html#indre-fagstoff', 'https://onlyfag.no/geografi.html#indre-fagstoff')
   .replace('</body>', () => '<script>\n' + js.replaceAll('</script', '<\\/script') + '\n</script>\n</body>');
 fs.mkdirSync(path.dirname(target), {recursive:true});

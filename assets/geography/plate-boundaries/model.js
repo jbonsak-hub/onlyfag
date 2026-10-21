@@ -86,22 +86,22 @@
       caveat: 'Modellen viser en langsomt spredende rygg, som deler av Den midtatlantiske ryggen, med riftdal og tydelige forkastningstrinn. Raskt spredende rygger har ofte en jevnere, opphøyd akse uten stor riftdal. Havbunnens farge viser relativ alder og avkjøling, ikke magnetiske polvendinger. Toppen viser havbunnen uten vann; fronten er skåret opp for å vise lagene. Terrenget er sterkt forenklet.'
     },
     transform: {
-      title: 'Platene glir forbi hverandre', kind: 'Transform · glidegrense', view: 'Sett ovenfra',
+      title: 'Platene glir forbi hverandre', kind: 'Transform · glidegrense', view: 'Skrått 3D-utsnitt',
       summary: 'Platene beveger seg sidelengs langs en forkastning. De kan låses, lagre spenning og så gli brått.',
       stages: ['Platekontakten er låst', 'Spenningen bygger seg opp', 'Brudd – et jordskjelv utløses'],
       narration: [
-        'Her ser du platene ovenfra. De beveger seg i motsatt retning langs forkastningen, men friksjon kan holde deler av kontakten fastlåst. Veien krysser grensen.',
+        'Her ser du et skrått utsnitt av platene. De beveger seg sidelengs langs forkastningen, men friksjon kan holde kontakten fastlåst. Veien og elva krysser grensen.',
         'Kontakten holder igjen mens platene fortsetter å bevege seg. Berggrunnen bøyes og lagrer elastisk energi. Veien deformeres nær forkastningen.',
         'Den låste delen brister og platene glir brått forbi hverandre. Energi frigjøres som jordskjelvbølger. Legg merke til hvordan de to delene av veien er forskjøvet.'
       ],
       steps: [
-        ['Sidelengs bevegelse', 'Pilene viser motsatt bevegelse langs grensen. Her ser du overflaten ovenfra, ikke et tverrsnitt.'],
+        ['Sidelengs bevegelse', 'Pilene viser motsatt bevegelse langs grensen. Det skrå utsnittet viser landskapet og berglagene under. Platene forskyves sideveis, uten vertikal bevegelse i dette eksemplet.'],
         ['Fastlåsing og spenning', 'Friksjon kan låse deler av forkastningen. Berggrunnen rundt deformeres mens platene fortsetter å bevege seg.'],
         ['Plutselig glidning', 'Når en låst del brister, frigjøres energi som jordskjelvbølger. Veier og elveløp kan forskyves.']
       ],
       result: 'Sideveis forskyvning · forkastning · grunne jordskjelv',
       example: ['San Andreas-forkastningen', 'Stillehavsplaten og den nordamerikanske platen glir forbi hverandre i California.'],
-      caveat: 'Ingen litosfære dannes eller forbrukes ved en ren glidegrense. Vulkanisme er ikke et typisk resultat. Glideren viser ett tenkt forløp fra fastlåsing til brudd, ikke når neste jordskjelv vil skje. Noen forkastningsdeler glir også langsomt uten store skjelv.'
+      caveat: 'Sideflatene er skåret åpne for å vise berglagene i et begrenset modellutsnitt; de er ikke stup eller åpne sprekker i landskapet. Platene har konstant tykkelse og beveger seg bare sidelengs. Ingen litosfære dannes eller forbrukes ved en ren glidegrense. Vulkanisme er ikke et typisk resultat. Glideren viser ett tenkt forløp fra fastlåsing til brudd, ikke når neste jordskjelv vil skje. Noen forkastningsdeler glir også langsomt uten store skjelv.'
     }
   };
 

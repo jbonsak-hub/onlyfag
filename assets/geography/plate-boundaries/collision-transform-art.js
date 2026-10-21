@@ -119,76 +119,167 @@
     return art;
   };
 
-  window.PlateBoundaryArt.transform = function (p,ctx) {
-    const {Y,path,text,caption,arrow,hotspot,quake,mobile,labels,ramp,f,height} = ctx;
-    const broken=p>=.74,slip=broken?48+ramp(p,.74,1)*42:0;
-    const strain=broken?7:55*ramp(p,.08,.74);
-    const leftOffset=broken?-slip:-strain,rightOffset=broken?slip:strain;
-    const plot=points=>points.map(([x,y],i)=>`${i?'L':'M'}${f(x)} ${Y(y)}`).join(' ');
-    const roadLeft=`M0 ${Y(296)}H350Q450 ${Y(296)} 496 ${Y(296+strain)}`;
-    const roadRight=`M504 ${Y(296-strain)}Q550 ${Y(296)} 650 ${Y(296)}H1000`;
-    const riverLeft=`M-30 ${Y(141)}Q86 ${Y(164)} 154 ${Y(145)}T302 ${Y(157)}Q415 ${Y(185)} 496 ${Y(155+strain)}`;
-    const riverRight=`M504 ${Y(155-strain)}Q595 ${Y(127)} 682 ${Y(164)}T832 ${Y(179)}T1030 ${Y(151)}`;
-    let art=`<defs>
-      <linearGradient id="tf-west" x2="1" y2="1"><stop stop-color="#a0af80"/><stop offset="1" stop-color="#748b67"/></linearGradient>
-      <linearGradient id="tf-east" x2=".8" y2="1"><stop stop-color="#c4c193"/><stop offset="1" stop-color="#a7ac7e"/></linearGradient>
-      <clipPath id="tf-west-clip"><rect width="496" height="${height}"/></clipPath>
-      <clipPath id="tf-east-clip"><rect x="504" width="496" height="${height}"/></clipPath>
+  window.PlateBoundaryArt.transform = function (p, ctx) {
+    const {Y,path,text,caption,hotspot,quake,mobile,labels,ramp,f,height,clamp} = ctx;
+    const broken = p >= .74, slip = broken ? 48 + ramp(p,.74,1)*42 : 0;
+    const strain = broken ? 7 : 55*ramp(p,.08,.74);
+    const depth = 70, scaleY = (Y(540)-Y(0))/540;
+    // A fixed oblique camera. Elevation is terrain, never vertical plate motion.
+    const project = (x,y,z=0) => ({x:210+.72*x-.23*y, y:Y(80+.09*x+.43*y-z)});
+    const polygon = points => points.map(([x,y,z=0],i) => {
+      const a=project(x,y,z); return `${i?'L':'M'}${f(a.x)} ${f(a.y)}`;
+    }).join(' ');
+    const plan = points => points.map(([x,y],i)=>`${i?'L':'M'}${f(x)} ${f(y)}`).join(' ');
+    const camera = `matrix(.72 ${f(.09*scaleY)} -.23 ${f(.43*scaleY)} 210 ${Y(80)})`;
+    const sides = [{sign:-1,start:0,end:500,name:'left',offset:broken?-slip:-strain},
+      {sign:1,start:500,end:1000,name:'right',offset:broken?slip:strain}];
+    const compensation = (x,sign) => {
+      const t=clamp((220-Math.abs(x-500))/212);
+      return -sign*strain*t*t*(3-2*t);
+    };
+    const samples = (start,end,fn,n=40) => Array.from({length:n+1},(_,i)=>fn(start+(end-start)*i/n));
+    const at = (x,y,side,z=0) => [x,y+compensation(x,side.sign),z];
+    const label = (x,y,side,word,small=false,z=0) => {
+      const v=y+compensation(x,side.sign)+side.offset;
+      const a=project(x,v,z);
+      return (small?caption:text)(f(a.x),80+.09*x+.43*v-z,word);
+    };
+    let art = `<defs>
+      <linearGradient id="tf-west" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b4c28d"/><stop offset="1" stop-color="#799a70"/></linearGradient>
+      <linearGradient id="tf-east" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d0cb9b"/><stop offset="1" stop-color="#a9b781"/></linearGradient>
+      <linearGradient id="tf-front" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#b69a78"/><stop offset=".35" stop-color="#9d8067"/><stop offset="1" stop-color="#735e54"/></linearGradient>
+      <linearGradient id="tf-side" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#87735f"/><stop offset="1" stop-color="#544e48"/></linearGradient>
     </defs><rect width="1000" height="${height}" class="sky"/>`;
-    art += '<g clip-path="url(#tf-west-clip)">';
-    art += `<g transform="translate(0 ${Y(250+leftOffset)-Y(250)})" data-feature="transform-left">`;
-    art += path(`M0 ${Y(-160)}H496V${Y(720)}H0Z`,'url(#tf-west)');
-    // Hills use broad light and shadow facets, with contour lines for depth.
-    art += path(`M-20 ${Y(57)}Q91 ${Y(-14)} 201 ${Y(55)}T421 ${Y(65)}L494 ${Y(28)}V${Y(121)}Q340 ${Y(165)} 228 ${Y(110)}T-20 ${Y(128)}Z`,'#65825d','opacity=".46"');
-    art += path(`M-20 ${Y(79)}Q91 ${Y(8)} 201 ${Y(77)}T421 ${Y(87)}L494 ${Y(50)}`,'none','stroke="#d1d6aa" stroke-width="5" opacity=".46"');
-    art += path(`M56 ${Y(560)}Q61 ${Y(375)} 190 ${Y(408)}Q266 ${Y(431)} 325 ${Y(379)}L429 ${Y(472)}Q266 ${Y(535)} 181 ${Y(495)}Z`,'#5f7d57','opacity=".27"');
-    for(const shift of [0,23,46]) art += path(`M68 ${Y(505+shift)}Q125 ${Y(412+shift*.5)} 206 ${Y(457+shift*.5)}T383 ${Y(437+shift*.5)}`,'none','stroke="#d4d8ae" stroke-width="2" opacity=".38"');
-    // Fields provide landmarks that translate with the plate, not the viewport.
-    art += path(plot([[39,212],[133,199],[149,247],[49,253]])+'Z','#c9c693','stroke="#aab28a" stroke-width="2" opacity=".65"');
-    art += path(plot([[159,205],[244,221],[231,264],[166,253]])+'Z','#9fb27c','stroke="#c1c8a0" stroke-width="2" opacity=".65"');
-    art += path(riverLeft,'none','stroke="#cfddca" stroke-width="15"');
-    art += path(riverLeft,'none','stroke="#6aa5ae" stroke-width="8" data-feature="river-left"');
-    art += path(riverLeft,'none','stroke="#a6d1d5" stroke-width="2"');
-    art += path(roadLeft,'none','stroke="#e9ddbb" stroke-width="17"');
-    art += path(roadLeft,'none','stroke="#626d65" stroke-width="8" data-feature="road-left"');
-    art += path(roadLeft,'none','stroke="#efe6c9" stroke-width="1.5" stroke-dasharray="11 12"');
-    art += '</g></g>';
 
-    art += '<g clip-path="url(#tf-east-clip)">';
-    art += `<g transform="translate(0 ${Y(250+rightOffset)-Y(250)})" data-feature="transform-right">`;
-    art += path(`M504 ${Y(-160)}H1000V${Y(720)}H504Z`,'url(#tf-east)');
-    art += path(`M571 ${Y(40)}Q688 ${Y(-14)} 774 ${Y(53)}T1025 ${Y(60)}V${Y(125)}Q827 ${Y(148)} 718 ${Y(103)}T571 ${Y(118)}Z`,'#8c9f70','opacity=".42"');
-    art += path(`M580 ${Y(55)}Q688 ${Y(1)} 774 ${Y(68)}T1025 ${Y(75)}`,'none','stroke="#dedcaa" stroke-width="4" opacity=".55"');
-    art += path(`M617 ${Y(405)}Q751 ${Y(365)} 824 ${Y(427)}T1032 ${Y(426)}V${Y(518)}Q844 ${Y(458)} 742 ${Y(491)}T617 ${Y(476)}Z`,'#8b9c6c','opacity=".29"');
-    for(const shift of [0,24,48]) art += path(`M638 ${Y(424+shift)}Q751 ${Y(384+shift*.6)} 824 ${Y(446+shift*.5)}T1032 ${Y(445+shift*.5)}`,'none','stroke="#e0dfb4" stroke-width="2" opacity=".38"');
-    art += path(plot([[758,216],[859,203],[874,251],[766,262]])+'Z','#cbd0a0','stroke="#e2dfb1" stroke-width="2" opacity=".65"');
-    art += path(plot([[884,202],[979,210],[979,261],[891,254]])+'Z','#a5b17c','stroke="#c8cf9d" stroke-width="2" opacity=".7"');
-    art += path(riverRight,'none','stroke="#d8e0cc" stroke-width="15"');
-    art += path(riverRight,'none','stroke="#6aa5ae" stroke-width="8" data-feature="river-right"');
-    art += path(riverRight,'none','stroke="#a6d1d5" stroke-width="2"');
-    art += path(roadRight,'none','stroke="#e9ddbb" stroke-width="17"');
-    art += path(roadRight,'none','stroke="#626d65" stroke-width="8" data-feature="road-right"');
-    art += path(roadRight,'none','stroke="#efe6c9" stroke-width="1.5" stroke-dasharray="11 12"');
-    art += '</g></g>';
-
-    art += path(`M500 0V${height}`,'none','stroke="#263f3b" stroke-width="8" opacity=".4"');
-    art += path(`M500 0V${height}`,'none',`class="fault" style="stroke:${broken?'#edb486':'#e7d2a3'}" data-feature="fault"`);
-    if(broken){
-      for(const r of [24,44,69]) art += `<ellipse cx="500" cy="${Y(297)}" rx="${r}" ry="${r*.8}" fill="none" stroke="#fff0bc" stroke-width="2" opacity="${f(.9-r/110)}" data-feature="quake-wave"/>`;
-      art += quake(500,297);
-      art += path(plot([[500,362],[515,378],[508,388],[529,409]]),'none','stroke="#92765c" stroke-width="2" opacity=".6"');
-    } else if(p>.1) {
-      art += `<g transform="translate(500 ${Y(270)})" data-feature="locked"><rect x="-9" y="-1" width="18" height="13" rx="3" fill="#efdcb1" stroke="#6c694b" stroke-width="1.5"/><path d="M-5-1v-6a5 5 0 0 1 10 0v6" fill="none" stroke="#efdcb1" stroke-width="3"/></g>`;
+    // The shadow and exposed faces make the finite teaching cut-out legible.
+    for (const side of sides) {
+      const top=samples(side.start,side.end,x=>at(x,0,side));
+      const front=samples(side.start,side.end,x=>at(x,540,side));
+      const outline=[...top,...front.slice().reverse()];
+      art += `<g transform="translate(${f(-.23*side.offset+8)} ${f(.43*scaleY*side.offset+10)})">`;
+      art += path(polygon(outline.map(([x,y])=>[x,y,-depth]))+'Z','#172b28','opacity=".15"')+'</g>';
     }
-    art += arrow(280,400,0,-105)+arrow(741,205,0,105);
+    for (const side of sides) {
+      const top=samples(side.start,side.end,x=>at(x,0,side));
+      const front=samples(side.start,side.end,x=>at(x,540,side));
+      const outline=[...top,...front.slice().reverse()];
+      const topPlan=plan(outline)+'Z';
+      const faceBand=(upper,lower)=>polygon([...front.map(([x,y])=>[x,y,-upper]),...front.slice().reverse().map(([x,y])=>[x,y,-lower])])+'Z';
+      const sideBand=(upper,lower)=>polygon([at(side.end,0,side,-upper),at(side.end,540,side,-upper),at(side.end,540,side,-lower),at(side.end,0,side,-lower)])+'Z';
+      art += `<g transform="translate(${f(-.23*side.offset)} ${f(.43*scaleY*side.offset)})" data-feature="transform-${side.name}">`;
+      art += path(faceBand(0,depth),'url(#tf-front)','data-feature="transform-front-face" stroke="#705f51" stroke-width="1"');
+      art += path(faceBand(0,8),'#b5aa7d');
+      art += path(faceBand(12,24),'#c4ab86','opacity=".85"');
+      art += path(faceBand(40,48),'#9f8c75','opacity=".8"');
+      for (const z of [8,25,40,49]) {
+        art += path(polygon(front.map(([x,y])=>[x,y,-z])),'none','stroke="#6f6053" stroke-width="1" opacity=".5"');
+      }
+      // The right-hand wall is a cut face, not an opening in the plate boundary.
+      if(side.sign===1) {
+        art += path(sideBand(0,depth),'url(#tf-side)','data-feature="transform-side-face" stroke="#675d50" stroke-width="1"');
+        for(const z of [8,25,40,49]) art += path(polygon([at(side.end,0,side,-z),at(side.end,540,side,-z)]),'none','stroke="#b0a180" stroke-width="1.5" opacity=".5"');
+      }
+      art += `<defs><clipPath id="tf-${side.name}-clip"><path d="${topPlan}"/></clipPath></defs>`;
+      art += `<g transform="${camera}"><g clip-path="url(#tf-${side.name}-clip)">`;
+      art += path(topPlan,side.sign<0?'url(#tf-west)':'url(#tf-east)','data-feature="transform-surface" stroke="#728565" stroke-width="2"');
+      // Soft drainage lines and cultivated fields give the moving surface scale.
+      for(let i=0;i<7;i++) {
+        const y=40+i*77;
+        const contour=samples(side.start,side.end,x=>[x,y+10*Math.sin(x/74+i)+compensation(x,side.sign)]);
+        art += path(plan(contour),'none','stroke="#f4efce" stroke-width="1.7" opacity=".15"');
+      }
+      const fields=side.sign<0?[[44,200,79,43],[139,205,102,42]]:[[751,205,106,46],[880,195,85,54]];
+      for(const [x,y,w,h] of fields) {
+        const corners=[[x,y],[x+w,y+5],[x+w-5,y+h],[x+4,y+h+6]].map(([u,v])=>at(u,v,side));
+        art += path(plan(corners)+'Z',x%2?'#b7c591':'#d2cd93','stroke="#e4e0b0" stroke-width="2" opacity=".85"');
+        for(let i=1;i<6;i++) {
+          const u=x+i*w/6;
+          art += path(plan([at(u,y+4,side),at(u+2,y+h,side)]),'none','stroke="#8b9b6c" stroke-width="1.5" opacity=".6"');
+        }
+      }
+      const from=side.sign<0?-12:504, to=side.sign<0?496:1012;
+      const road=samples(from,to,x=>at(x,296,side),70);
+      const river=samples(from,to,x=>{
+        const t=clamp(Math.abs(x-500)/120);
+        return at(x,155+22*Math.sin((x-500)/110)*t*t*(3-2*t),side);
+      },80);
+      for(const [kind,points] of [['river',river],['road',road]]) {
+        const d=plan(points);
+        art += path(d,'none',`stroke="${kind==='river'?'#dde2c5':'#e9ddba'}" stroke-width="${kind==='river'?21:22}"`);
+        art += path(d,'none',`stroke="${kind==='river'?'#559ba7':'#626d63'}" stroke-width="12" data-feature="${kind}-${side.name}"`);
+        art += path(d,'none',kind==='river'?'stroke="#a9d9dc" stroke-width="2.3"':'stroke="#f6ecd0" stroke-width="2" stroke-dasharray="12 13"');
+      }
+      art += '</g></g>';
+
+      // Triangulated hills have actual elevation under the same camera as the blocks.
+      const hills=side.sign<0?[[177,66,170,64,64],[170,443,140,57,43]]:[[785,62,176,61,58],[803,440,151,62,46]];
+      for(const [cx,cy,rx,ry,peak] of hills) {
+        const vertex=(i,j)=>{
+          const u=i/8*2-1,v=j/4*2-1,x=cx+u*rx,y=cy+v*ry;
+          const z=peak*(1-u*u)**2*(1-v*v)**2*(.82+.18*Math.cos(u*6+v*2));
+          return at(x,y,side,z);
+        };
+        art += '<g data-feature="transform-relief">';
+        for(let j=0;j<4;j++) for(let i=0;i<8;i++) {
+          const a=vertex(i,j),b=vertex(i+1,j),c=vertex(i+1,j+1),d=vertex(i,j+1);
+          for(const tri of [[a,b,c],[a,c,d]]) {
+            const [t,u,v]=tri;
+            const nx=(u[1]-t[1])*(v[2]-t[2])-(u[2]-t[2])*(v[1]-t[1]);
+            const ny=(u[2]-t[2])*(v[0]-t[0])-(u[0]-t[0])*(v[2]-t[2]);
+            const nz=(u[0]-t[0])*(v[1]-t[1])-(u[1]-t[1])*(v[0]-t[0]);
+            const light=clamp((-.38*nx-.55*ny+.74*nz)/Math.hypot(nx,ny,nz));
+            const color=`rgb(${Math.round(82+97*light)},${Math.round(111+83*light)},${Math.round(74+60*light)})`;
+            art += path(polygon(tri)+'Z',color,`stroke="${color}" stroke-width=".6"`);
+          }
+        }
+        art += '</g>';
+      }
+      // Small farm buildings make the depth and surface displacement easy to read.
+      const bx=side.sign<0?122:864,by=241;
+      const corner=(x,y,z=0)=>at(x,y,side,z);
+      art += path(polygon([corner(bx,by),corner(bx+31,by),corner(bx+31,by+19),corner(bx,by+19)])+'Z','#526d4c','opacity=".24"');
+      art += path(polygon([corner(bx,by+19),corner(bx+31,by+19),corner(bx+31,by+19,14),corner(bx,by+19,14)])+'Z','#e5d5b1');
+      art += path(polygon([corner(bx+31,by),corner(bx+31,by+19),corner(bx+31,by+19,14),corner(bx+31,by,14)])+'Z','#a8987d');
+      art += path(polygon([corner(bx-3,by-2,14),corner(bx+34,by-2,14),corner(bx+34,by+9,24),corner(bx-3,by+9,24)])+'Z','#b37f62');
+      art += path(polygon([corner(bx-3,by+9,24),corner(bx+34,by+9,24),corner(bx+34,by+22,14),corner(bx-3,by+22,14)])+'Z','#875c49');
+      art += path(polygon(front),'none','stroke="#e1dbaf" stroke-width="2"');
+      art += '</g>';
+    }
+
+    const nearLeft=sides[0].offset+strain,nearRight=sides[1].offset-strain;
+    const start=Math.max(nearLeft,nearRight),end=540+Math.min(nearLeft,nearRight);
+    const fault=polygon([[500,start],[500,end]]);
+    art += path(fault,'none','stroke="#334b3d" stroke-width="7" opacity=".65"');
+    art += path(fault,'none',`class="fault" style="stroke:${broken?'#f4bb83':'#e7d3a3'}" data-feature="fault"`);
+    if(broken) {
+      art += `<g transform="${camera}">`;
+      for(const r of [30,62,102]) art += `<ellipse cx="500" cy="297" rx="${r}" ry="${r}" fill="none" stroke="#fff0bc" stroke-width="3" opacity="${f(.95-r/155)}" data-feature="quake-wave"/>`;
+      art += '</g>';
+      const a=project(500,297); art += quake(f(a.x),80+.09*500+.43*297);
+    } else if(p>.1) {
+      const a=project(500,251);
+      art += `<g transform="translate(${f(a.x)} ${f(a.y)})" data-feature="locked"><rect x="-9" y="-1" width="18" height="13" rx="3" fill="#efdcb1" stroke="#6c694b" stroke-width="1.5"/><path d="M-5-1v-6a5 5 0 0 1 10 0v6" fill="none" stroke="#efdcb1" stroke-width="3"/></g>`;
+    }
+    for(const [side,x,y,dy] of [[sides[0],285,365,-105],[sides[1],716,345,105]]) {
+      const a=project(x,y+side.offset+compensation(x,side.sign));
+      const b=project(x,y+dy+side.offset+compensation(x,side.sign));
+      const d=`M${f(a.x)} ${f(a.y)}L${f(b.x)} ${f(b.y)}`;
+      art += path(d,'none','stroke="#526b53" stroke-width="9" stroke-linecap="round" opacity=".7"');
+      art += path(d,'none','class="motion"');
+    }
     art += `<g class="diagram-labels"${labels?'':' hidden'}>`;
-    art += text(68,64,'Plate A')+text(818,64,'Plate B')+text(566,87,'Forkastning');
-    art += path(`M568 ${Y(96)}L503 ${Y(122)}`,'none','class="callout-line"');
-    art += text(65,344+leftOffset,'Vei')+text(mobile?670:709,430,broken?'Forskjøvet vei':mobile?'Spenning':'Elastisk deformasjon');
-    if(!mobile) art += caption(86,203+leftOffset,'Elveløp');
-    art += text(61,486,broken?'Brudd og glidning':'Fastlåst kontakt');
-    if(!mobile) art += caption(63,510,broken?'Landskapet er forskjøvet langs grensen':'Friksjon holder igjen mens platene beveger seg');
-    art += '</g>'+hotspot(1,322,418)+hotspot(2,418,225)+hotspot(3,610,463);
+    art += label(18,13,sides[0],'Plate A')+label(848,8,sides[1],'Plate B');
+    art += text(620,51,'Forkastning');
+    const target=project(500,Math.max(start+35,82));
+    art += path(`M650 ${Y(60)}L${f(target.x)} ${f(target.y)}`,'none','class="callout-line"');
+    art += label(47,348,sides[0],'Vei');
+    if(!mobile) art += label(44,114,sides[0],'Elveløp',true);
+    if(!mobile) art += caption(104,516,'Skåret modellutsnitt · bevegelsen er sideveis');
+    art += '</g>';
+    for(const [n,x,y,side] of [[1,227,379,sides[0]],[2,600,239,sides[1]],[3,664,449,sides[1]]]) {
+      const v=y+side.offset+compensation(x,side.sign),a=project(x,v);
+      art += hotspot(n,f(a.x),80+.09*x+.43*v);
+    }
     return art;
   };
 })();

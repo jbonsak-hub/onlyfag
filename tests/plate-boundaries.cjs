@@ -92,21 +92,40 @@ const modes = ['ocean-continent','ocean-ocean','continent-continent','divergent'
         assert.ok(Math.abs((earlier[0]+earlier[1])-(later[0]+later[1]))<.1,'The paired parcels spread symmetrically');
         await set(100);
       } else {
-        assert.equal(await page.locator('#view-kind').innerText(), 'Sett ovenfra');
+        assert.equal(await page.locator('#view-kind').innerText(), 'Skrått 3D-utsnitt');
         assert.equal(await feature('quake-wave').count(), 3);
         assert.notEqual(await feature('transform-left').getAttribute('transform'), 'translate(0 0)');
         assert.equal(await feature('magma').count(), 0);
-        const roadGap = async (kind='road') => page.evaluate(kind => {
+        assert.equal(await feature('transform-surface').count(),2,'Both plates have a projected land surface');
+        for(const name of ['transform-front-face','transform-side-face','transform-relief']) {
+          assert.ok(await feature(name).count(),name+': visible depth and terrain are present');
+          assert.ok(await feature(name).first().isVisible());
+          assert.ok(await feature(name).first().evaluate(el=>el.getBBox().height)>0,name+': geometry has visible relief');
+        }
+        // Compare displacement along the fault, independently of the viewing angle.
+        // The narrow boundary gap has a fixed cross-fault component even at 0%.
+        const landmarkOffset = async kind => page.evaluate(kind => {
           const left=document.querySelector(`[data-feature="${kind}-left"]`),right=document.querySelector(`[data-feature="${kind}-right"]`);
           const a=left.getPointAtLength(left.getTotalLength()).matrixTransform(left.getScreenCTM());
           const b=right.getPointAtLength(0).matrixTransform(right.getScreenCTM());
-          return Math.abs(a.y-b.y);
+          const fault=document.querySelector('[data-feature="fault"]');
+          const start=fault.getPointAtLength(0).matrixTransform(fault.getScreenCTM());
+          const end=fault.getPointAtLength(fault.getTotalLength()).matrixTransform(fault.getScreenCTM());
+          const length=Math.hypot(end.x-start.x,end.y-start.y);
+          const ux=(end.x-start.x)/length,uy=(end.y-start.y)/length;
+          return {along:(b.x-a.x)*ux+(b.y-a.y)*uy,across:(b.x-a.x)*-uy+(b.y-a.y)*ux};
         },kind);
-        assert.ok(await roadGap()>30,'Rupture displaces the road across the fault');
-        assert.ok(await roadGap('river')>30,'The river shifts with its plate after rupture');
+        const slipped={road:await landmarkOffset('road'),river:await landmarkOffset('river')};
+        await set(0);
+        const original={road:await landmarkOffset('road'),river:await landmarkOffset('river')};
         await set(60);
-        assert.ok(await roadGap()<.2,'Locked contact stays joined while the far field deforms');
-        assert.ok(await roadGap('river')<.2,'The river remains joined across a locked fault');
+        for(const kind of ['road','river']) {
+          const locked=await landmarkOffset(kind);
+          assert.ok(Math.abs(locked.along-original[kind].along)<.2,kind+': locked contact stays joined while the far field deforms');
+          assert.ok(Math.abs(slipped[kind].along-original[kind].along)>30,kind+': rupture shifts the landmark along the fault');
+          assert.ok(Math.abs(locked.across-original[kind].across)<.2,kind+': strain creates no opening across the fault');
+          assert.ok(Math.abs(slipped[kind].across-original[kind].across)<.2,kind+': slip creates no opening across the fault');
+        }
         await set(100);
       }
       if (shots) { await range.blur(); await page.screenshot({path:path.join(shots,mode+'.png')}); }
