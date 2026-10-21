@@ -20,14 +20,27 @@
   catch(_){if(sequence===startSequence){offline();fallback();}}finally{busy=false;}
  }
  function setupConfig(key){const [type,region]=key.split('|'),game=type==='countries2'?'countries':type;if(!['flags','capitals','flagcapital','places','countries'].includes(game))return null;const variant=document.querySelector('.world-submode')?.value||active?.config.variant;return {game,region:region==='streak'?'world':region||'world',...(variant?{variant}:{}),language:language()};}
+ function qualifies(run,rows,limit){
+  if(!run?.reply.complete||run.saved)return false;
+  if(rows.length<limit)return true;
+  const last=rows[limit-1],score=Math.round(run.reply.total*10)/10;
+  return score>Number(last.score)||(score===Number(last.score)&&run.reply.timeMs<Number(last.time_ms));
+ }
+ async function promptForScore(run,target){
+  if(run.promptChecked||!run.reply.complete||run.saved)return;run.promptChecked=true;
+  try{const result=await api('/scores?config='+encodeURIComponent(JSON.stringify(run.config))),limit=run.config.game==='mapwiz'?10:5;
+   if(active===run&&target?.isConnected&&!document.getElementById('geo-online-board')&&qualifies(run,result.rows,limit))showBoard(run.config,run,limit,run.config.game==='mapwiz'?()=>MapWizPrototype.showLocalTopTen():null);
+  }catch(_){run.promptChecked=false;}
+ }
  async function showBoard(config,run=active,limit=config.game==='mapwiz'?10:5,openLocal=null){
   document.getElementById('geo-online-board')?.remove();const dialog=document.createElement('dialog');dialog.id='geo-online-board';dialog.className='mapwiz-top-ten';dialog.setAttribute('aria-labelledby','geo-online-title');
-  dialog.innerHTML=`<div class="mapwiz-top-ten-heading"><h3 id="geo-online-title">${limit===10?'Topp 10 på nett':'Topp 5 på nett'}</h3><button class="mapwiz-top-ten-close" type="button" aria-label="Lukk">×</button></div><p>Felles resultatliste. Bruk bare kallenavn, ikke fullt navn.</p><div id="geo-online-content" aria-live="polite">Laster resultater …</div>`;
+  dialog.innerHTML=`<div class="mapwiz-top-ten-heading"><h3 id="geo-online-title">${limit===10?'Topp 10 på nett':'Topp 5 på nett'}</h3><button class="mapwiz-top-ten-close" type="button" aria-label="Lukk">×</button></div><p class="geo-online-scope">Felles liste for norsk og engelsk.</p><p>Egen liste for hvert spillvalg.</p><p>Bruk bare kallenavn, ikke fullt navn.</p><div id="geo-online-content" aria-live="polite">Laster resultater …</div>`;
   document.body.append(dialog);dialog.querySelector('button').onclick=()=>dialog.close();dialog.addEventListener('close',()=>dialog.remove());if(openLocal){const local=document.createElement('button');local.type='button';local.textContent='Resultater i denne nettleseren';local.onclick=()=>{dialog.close();openLocal();};dialog.append(local);}dialog.showModal();const content=dialog.querySelector('#geo-online-content');
   try{
    const result=await api('/scores?config='+encodeURIComponent(JSON.stringify(config)));if(!dialog.isConnected)return;
-   const canSave=run?.reply.complete&&!run.saved&&config===run.config;
+   const canSave=config===run?.config&&qualifies(run,result.rows,limit);
    content.innerHTML=(canSave?`<p>${run.reply.total.toFixed(1)} poeng</p><form class="mapwiz-score-form"><label for="geo-online-name">Kallenavn</label><div><input id="geo-online-name" maxlength="24" required autocomplete="off" placeholder="Velg et kallenavn"><button type="submit">Lagre resultat</button></div></form>`:'')+'<p class="mapwiz-score-status" role="status"></p>'+(result.rows.length?`<table><thead><tr><th>#</th><th>Navn</th><th>Poeng</th><th>Tid</th></tr></thead><tbody>${result.rows.slice(0,limit).map((r,i)=>`<tr><td>${i+1}</td><td data-no-translate>${esc(r.nickname)}</td><td>${Number(r.score).toFixed(1)}</td><td>${formatSeconds(Math.floor(r.time_ms/1000))}</td></tr>`).join('')}</tbody></table>`:'<p>Ingen resultater ennå.</p>');
+   if(canSave){const message=document.createElement('p');message.className='geo-online-qualified';message.textContent=limit===10?'Resultatet ditt er på topp 10!':'Resultatet ditt er på topp 5!';content.prepend(message);content.querySelector('input').focus({preventScroll:true});}
    content.querySelector('form')?.addEventListener('submit',async event=>{
     event.preventDefault();const button=content.querySelector('form button');button.disabled=true;
     try{await api('/publish',{nickname:content.querySelector('input').value.trim()},run);run.saved=true;dialog.close();showBoard(config,run,limit,openLocal);}
@@ -41,7 +54,7 @@
   finishLocal(result,target){
    if(!active?.reply.complete)return false;const run=active;
    if(target&&!target.querySelector('.geo-online-result')){const box=document.createElement('div');box.className='geo-online-result';const message=document.createElement('p');message.textContent='Resultatet er kontrollert på nett.';const button=document.createElement('button');button.type='button';button.className='world-button';button.textContent='Topp 5 på nett';button.onclick=()=>showBoard(run.config,run);box.append(message,button);target.append(box);if(run.config.game==='countries'){worldTrainerState.finalScore=run.reply.total;const score=document.querySelector('.country-map-result-stats span');if(score)score.textContent='Poeng: '+run.reply.total;}}
-   return true;
+   promptForScore(run,target);return true;
   }
  };
  const nativeInit=initWorldTrainer;window.initWorldTrainer=function(){startSequence++;active=null;localRun=false;return nativeInit.apply(this,arguments);};
@@ -65,6 +78,7 @@
  window.countryMapHint=async function(){if(!active||active.config.game!=='countries')return nativeCountryHint();if(busy)return;busy=true;try{active.reply=await api('/hint',{},active);}catch(_){offline();}try{nativeCountryHint();}finally{busy=false;}};
  window.finishCountryMapQuiz=async function(manual){if(active?.config.game==='countries'&&!active.reply.complete){if(busy)return;busy=true;try{active.reply=await api('/finish',{},active);}catch(_){offline();}finally{busy=false;}}return nativeCountryFinish(manual);};
  if(window.MapWizPrototype){
+  const nativeMapSummary=renderGeoGuessrSummary;window.renderGeoGuessrSummary=function(){const result=nativeMapSummary.apply(this,arguments);if(active?.config.game==='mapwiz')promptForScore(active,document.querySelector('.prototype-summary'));return result;};
   const nativeMapStart=startGeoGuessr,nativeMapClick=geoMapClick,nativeNext=nextGeoGuessrRound,nativeMapInit=initGeoGuessr;
   window.initGeoGuessr=function(){startSequence++;active=null;localRun=false;return nativeMapInit();};
   window.startGeoGuessr=function(){const categories=MapWizPrototype.selected().sort();return start({game:'mapwiz',categories,language:language()},reply=>{const targets=reply.targets.map(id=>{const [cat,name,lat,lon]=JSON.parse(id);return MapWizPrototype.pools.get(cat).find(t=>t.name===name&&t.lat===lat&&t.lon===lon);});if(targets.some(t=>!t))throw Error('reference_changed');MapWizPrototype.begin(targets);},nativeMapStart);};
