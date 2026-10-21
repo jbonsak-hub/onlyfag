@@ -8,8 +8,6 @@
   let states = [], queue = [], index = 0, phase = 'ready', locked = false;
   let results = new Map(), roundMistakes = 0, mistakes = 0, skipped = 0;
   let totalTime = 0, roundTime = 0, lastTick = performance.now(), generation = 0;
-  let isDemo = false, pendingAdvance = false;
-  let pausedScroll = {left:0,top:0};
   const timers = new Set();
   function svgNode(tag, attrs = {}) {
     const el = document.createElementNS(ns, tag);
@@ -44,13 +42,14 @@
   function fit(group, rect) {
     const b = group.getBBox(), scale = Math.min(rect.w / b.width, rect.h / b.height);
     const x = rect.x + (rect.w - b.width * scale) / 2 - b.x * scale;
-    const y = rect.y + (rect.h - b.height * scale) / 2 - b.y * scale;
+    const y = rect.y + (rect.h - b.height * scale) * (rect.bottom ? 1 : 0.5) - b.y * scale;
     group.setAttribute('transform', `translate(${x} ${y}) scale(${scale})`);
     for (const el of group.children) {
       const state = states.find(s => s.n === el.dataset.state), box = el.getBBox();
       const c = state.a === 'AK' || state.a === 'HI' ? [box.x + box.width / 2, box.y + box.height / 2] : state.c;
       centers.set(state.n, {x:c[0] * scale + x, y:c[1] * scale + y, radius:Math.max(box.width, box.height) * scale / 2 + 10});
     }
+    return {x:b.x * scale + x, y:b.y * scale + y, width:b.width * scale, height:b.height * scale};
   }
   function buildMap() {
     const groups = {main:svgNode('g'), AK:svgNode('g'), HI:svgNode('g')};
@@ -62,8 +61,12 @@
       elements.set(state.n, el);
     }
     fit(groups.main, {x:20, y:16, w:825, h:522});
-    fit(groups.AK, {x:25, y:394, w:165, h:100});
-    fit(groups.HI, {x:215, y:465, w:110, h:41});
+    const florida = elements.get('Florida').getBBox();
+    const mainlandTransform = groups.main.transform.baseVal.consolidate().matrix;
+    const southEdge = (florida.y + florida.height) * mainlandTransform.d + mainlandTransform.f;
+    const alaska = fit(groups.AK, {x:25, y:southEdge - 100, w:165, h:100, bottom:true});
+    const hawaii = fit(groups.HI, {x:215, y:southEdge - 41, w:110, h:41, bottom:true});
+    $('insetSeparators').setAttribute('d', 'M15 ' + (alaska.y - 12) + 'H202V' + (southEdge + 8) + ' M210 ' + (hawaii.y - 12) + 'H338');
     // Extra click targets for the small northeastern states. No answer labels.
     const small = ['New Hampshire','Vermont','Massachusetts','Rhode Island','Connecticut','New Jersey','Delaware','Maryland'];
     small.forEach((name, i) => {
@@ -103,7 +106,6 @@
     $('mistakes').textContent = mistakes + ' feil';
   }
   function next() {
-    if (phase === 'paused') { pendingAdvance = true; return; }
     index++; locked = false; roundMistakes = 0; roundTime = 0;
     $('hintLayer').replaceChildren(); $('labelLayer').replaceChildren();
     elements.forEach(el => el.classList.remove('correct', 'wrong'));
@@ -133,41 +135,20 @@
     setFeedback('Riktig! ' + name + ' · ' + (roundTime / 1000).toFixed(1).replace('.', ',') + ' s', 'good');
     updateStats(); later(next, 650);
   }
-  function start(demo = false) {
+  function start() {
     generation++; clearEffects();
     results = new Map(); index = 0; totalTime = 0; roundTime = 0; lastTick = performance.now();
-    roundMistakes = 0; mistakes = 0; skipped = 0; locked = false; pendingAdvance = false; isDemo = demo;
+    roundMistakes = 0; mistakes = 0; skipped = 0; locked = false;
     elements.forEach(el => { delete el.dataset.band; el.classList.remove('found'); el.setAttribute('aria-label', 'Delstat på kartet'); });
     markers.forEach(el => { delete el.dataset.band; el.setAttribute('aria-label', 'Ekstra klikkfelt for en liten delstat'); });
-    if (demo) {
-      ['California','Texas','Florida','Illinois','Alaska','Hawaii'].forEach((name, i) => {
-        const band = [0,0,1,2,3,1][i]; results.set(name,{band,ms:0,mistakes:0}); setBand(name,band);
-      });
-    }
     queue = states.filter(s => !results.has(s.n));
     for (let i = queue.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [queue[i],queue[j]] = [queue[j],queue[i]]; }
-    if (demo) { const pa = queue.findIndex(s => s.a === 'PA'); [queue[0],queue[pa]] = [queue[pa],queue[0]]; }
-    phase = 'playing'; $('overlay').hidden = true; $('pauseOverlay').hidden = true;
+    phase = 'playing'; $('overlay').hidden = true;
     $('mapViewport').scrollTo({left:0,top:0});
-    $('targetVerb').textContent = demo ? 'Eksempel · klikk på' : 'Klikk på';
+    $('targetVerb').textContent = 'Klikk på';
     $('targetName').textContent = target().n; $('elapsed').textContent = '00:00';
-    $('pause').disabled = false; $('restart').disabled = false; $('skip').disabled = false;
-    updateStats(); setFeedback(demo ? 'Eksempelrunde: Noen stater er ferdige. Prøv gjerne to feilklikk for å se hintet.' : 'Finn ' + target().n + '. Du har god tid.');
-    $('pause').textContent = 'Ⅱ'; $('pause').setAttribute('aria-label','Sett spillet på pause');
-  }
-  function pause() {
-    if (phase === 'playing') {
-      tick(); phase = 'paused'; $('pauseOverlay').hidden = false;
-      pausedScroll = {left:$('mapViewport').scrollLeft,top:$('mapViewport').scrollTop};
-      $('mapViewport').scrollTo({left:0,top:0});
-      $('pause').textContent = '▷'; $('pause').setAttribute('aria-label','Fortsett spillet'); $('resume').focus();
-    } else if (phase === 'paused') {
-      phase = 'playing'; lastTick = performance.now(); $('pauseOverlay').hidden = true;
-      $('mapViewport').scrollTo(pausedScroll);
-      $('pause').textContent = 'Ⅱ'; $('pause').setAttribute('aria-label','Sett spillet på pause');
-      if (pendingAdvance) { pendingAdvance = false; next(); }
-      $('pause').focus();
-    }
+    $('restart').disabled = false; $('skip').disabled = false;
+    updateStats(); setFeedback('Finn ' + target().n + '.');
   }
   function skip() {
     if (phase !== 'playing' || locked) return;
@@ -179,11 +160,11 @@
   }
   function finish() {
     phase = 'finished'; locked = true;
-    $('targetVerb').textContent = isDemo ? 'Eksempelrunden er ferdig' : 'Godt jobbet!';
+    $('targetVerb').textContent = 'Godt jobbet!';
     $('targetName').textContent = 'Hele USA er på plass.';
-    $('pause').disabled = true; $('skip').disabled = true;
+    $('skip').disabled = true;
     const counts = [0,0,0,0]; results.forEach(r => counts[r.band]++);
-    setFeedback((isDemo ? 'Eksempelrunde' : 'Alle 50 fullført') + ' · ' + timeText(totalTime) + ' · ' + mistakes + ' feil · ' + skipped + ' hoppet over. Grønn: ' + counts[0] + ', gul: ' + counts[1] + ', oransje: ' + counts[2] + ', rød: ' + counts[3] + '.');
+    setFeedback('Alle 50 fullført' + ' · ' + timeText(totalTime) + ' · ' + mistakes + ' feil · ' + skipped + ' hoppet over. Grønn: ' + counts[0] + ', gul: ' + counts[1] + ', oransje: ' + counts[2] + ', rød: ' + counts[3] + '.');
   }
   $('map').addEventListener('click', e => { const el = e.target.closest('[data-state]'); if (el) choose(el.dataset.state); });
   $('map').addEventListener('keydown', e => { const el = e.target.closest('[data-state]'); if (el && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); choose(el.dataset.state); } });
@@ -194,9 +175,17 @@
   $('map').addEventListener('pointerout',e => highlight(e,false));
   $('map').addEventListener('focusin',e => highlight(e,true));
   $('map').addEventListener('focusout',e => highlight(e,false));
-  $('start').addEventListener('click',() => start()); $('demo').addEventListener('click',() => start(true));
-  $('restart').addEventListener('click',() => start()); $('pause').addEventListener('click',pause); $('resume').addEventListener('click',pause); $('skip').addEventListener('click',skip);
-  document.addEventListener('visibilitychange',() => { if (document.hidden && phase === 'playing') pause(); });
+  $('start').addEventListener('click', start);
+  $('restart').addEventListener('click', start);
+  $('skip').addEventListener('click', skip);
+  const menu = $('geoMenu'), menuButton = $('geoMenuButton');
+  menuButton.addEventListener('click', () => { menu.showModal(); menuButton.setAttribute('aria-expanded', 'true'); });
+  $('geoMenuClose').addEventListener('click', () => menu.close());
+  menu.addEventListener('close', () => { menuButton.setAttribute('aria-expanded', 'false'); menuButton.focus(); });
+  menu.addEventListener('click', event => {
+    const box = menu.getBoundingClientRect();
+    if (event.target === menu && (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom)) menu.close();
+  });
   const embedded = document.getElementById('statle-map-data');
   const mapData = embedded ? Promise.resolve(JSON.parse(embedded.textContent)) : fetch('../assets/geography/us-states.json').then(response => {
     if (!response.ok) throw new Error('Kartet kunne ikke hentes'); return response.json();
@@ -204,6 +193,6 @@
   mapData.then(data => {
     states = data;
     if (states.length !== 50) throw new Error('Kartet må ha 50 delstater');
-    buildMap(); $('start').disabled = false; $('demo').disabled = false; $('start').textContent = 'Start Statle →';
+    buildMap(); $('start').disabled = false; $('start').textContent = 'Start Statle →';
   }).catch(() => { $('start').textContent = 'Kartet kunne ikke lastes'; setFeedback('Last siden på nytt for å hente kartet.','error'); });
 })();
