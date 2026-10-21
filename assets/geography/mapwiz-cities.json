@@ -1,0 +1,751 @@
+{
+  "sources": [
+    {
+      "title": "Natural Earth 5.1.2 – Populated Places (public domain)",
+      "url": "https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-populated-places/"
+    },
+    {
+      "title": "GaWC World Cities 2024 – economic significance",
+      "url": "https://gawc.lboro.ac.uk/gawc-worlds/the-world-according-to-gawc/world-cities-2024/"
+    },
+    {
+      "title": "UN World Urbanization Prospects 2025 – demographic context",
+      "url": "https://www.un.org/development/desa/pd/world-urbanization-prospects-2025"
+    },
+    {
+      "title": "UNESCO Istanbul, Venice and Agra – cultural/historical context",
+      "url": "https://whc.unesco.org/en/list/"
+    }
+  ],
+  "method": "Curated teaching selection, not a population ranking. More European/North American cities; four from China and five from India. Cities already used as capitals are excluded by the prototype builder. Coordinates from Natural Earth.",
+  "cities": [
+    {
+      "name": "New York",
+      "lat": 40.751925,
+      "lon": -73.981963,
+      "countryCode": "US",
+      "country": "United States of America",
+      "neId": 1159151575
+    },
+    {
+      "name": "Los Angeles",
+      "lat": 33.991924,
+      "lon": -118.181926,
+      "countryCode": "US",
+      "country": "United States of America",
+      "neId": 1159151569
+    },
+    {
+      "name": "Chicago",
+      "lat": 41.831937,
+      "lon": -87.752001,
+      "countryCode": "US",
+      "country": "United States of America",
+      "neId": 1159151491
+    },
+    {
+      "name": "San Francisco",
+      "lat": 37.769196,
+      "lon": -122.417169,
+      "countryCode": "US",
+      "country": "United States of America",
+      "neId": 1159151479
+    },
+    {
+      "name": "Seattle",
+      "lat": 47.571948,
+      "lon": -122.341931,
+      "countryCode": "US",
+      "country": "United States of America",
+      "neId": 1159151223
+    },
+    {
+      "name": "Boston",
+      "lat": 42.331906,
+      "lon": -71.07196,
+      "countryCode": "US",
+      "country": "United States of America",
+      "neId": 1159151239
+    },
+    {
+      "name": "Miami",
+      "lat": 25.789557,
+      "lon": -80.226052,
+      "countryCode": "US",
+      "country": "United States of America",
+      "neId": 1159151487
+    },
+    {
+      "name": "Las Vegas",
+      "lat": 36.211944,
+      "lon": -115.221952,
+      "countryCode": "US",
+      "country": "United States of America",
+      "neId": 1159150483
+    },
+    {
+      "name": "Houston",
+      "lat": 29.82192,
+      "lon": -95.341925,
+      "countryCode": "US",
+      "country": "United States of America",
+      "neId": 1159151485
+    },
+    {
+      "name": "Dallas",
+      "lat": 32.82197,
+      "lon": -96.841963,
+      "countryCode": "US",
+      "country": "United States of America",
+      "neId": 1159151235
+    },
+    {
+      "name": "New Orleans",
+      "lat": 29.996948,
+      "lon": -90.041913,
+      "countryCode": "US",
+      "country": "United States of America",
+      "neId": 1159151233
+    },
+    {
+      "name": "Detroit",
+      "lat": 42.331906,
+      "lon": -83.082002,
+      "countryCode": "US",
+      "country": "United States of America",
+      "neId": 1159151245
+    },
+    {
+      "name": "Philadelphia",
+      "lat": 40.001919,
+      "lon": -75.171942,
+      "countryCode": "US",
+      "country": "United States of America",
+      "neId": 1159151243
+    },
+    {
+      "name": "Atlanta",
+      "lat": 33.83196,
+      "lon": -84.401895,
+      "countryCode": "US",
+      "country": "United States of America",
+      "neId": 1159151489
+    },
+    {
+      "name": "Denver",
+      "lat": 39.741134,
+      "lon": -104.985962,
+      "countryCode": "US",
+      "country": "United States of America",
+      "neId": 1159151483
+    },
+    {
+      "name": "San Diego",
+      "lat": 32.82197,
+      "lon": -117.181936,
+      "countryCode": "US",
+      "country": "United States of America",
+      "neId": 1159151227
+    },
+    {
+      "name": "Honolulu",
+      "lat": 21.308822,
+      "lon": -157.859944,
+      "countryCode": "US",
+      "country": "United States of America",
+      "neId": 1159151221
+    },
+    {
+      "name": "Toronto",
+      "lat": 43.701926,
+      "lon": -79.421967,
+      "countryCode": "CA",
+      "country": "Canada",
+      "neId": 1159151557
+    },
+    {
+      "name": "Montreal",
+      "lat": 45.501945,
+      "lon": -73.585243,
+      "countryCode": "CA",
+      "country": "Canada",
+      "neId": 1159151457
+    },
+    {
+      "name": "Vancouver",
+      "lat": 49.275362,
+      "lon": -123.12359,
+      "countryCode": "CA",
+      "country": "Canada",
+      "neId": 1159151555
+    },
+    {
+      "name": "Calgary",
+      "lat": 51.084938,
+      "lon": -114.081944,
+      "countryCode": "CA",
+      "country": "Canada",
+      "neId": 1159151035
+    },
+    {
+      "name": "Manchester",
+      "lat": 53.502361,
+      "lon": -2.249933,
+      "countryCode": "GB",
+      "country": "United Kingdom",
+      "neId": 1159149119
+    },
+    {
+      "name": "Liverpool",
+      "lat": 53.417948,
+      "lon": -2.919944,
+      "countryCode": "GB",
+      "country": "United Kingdom",
+      "neId": 1159146371
+    },
+    {
+      "name": "Birmingham",
+      "lat": 52.47692,
+      "lon": -1.921943,
+      "countryCode": "GB",
+      "country": "United Kingdom",
+      "neId": 1159149367
+    },
+    {
+      "name": "Edinburgh",
+      "lat": 55.948328,
+      "lon": -3.219091,
+      "countryCode": "GB",
+      "country": "United Kingdom",
+      "neId": 1159146365
+    },
+    {
+      "name": "Glasgow",
+      "lat": 55.876351,
+      "lon": -4.252653,
+      "countryCode": "GB",
+      "country": "United Kingdom",
+      "neId": 1159150591
+    },
+    {
+      "name": "Milano",
+      "lat": 45.471921,
+      "lon": 9.203063,
+      "countryCode": "IT",
+      "country": "Italy",
+      "neId": 1159151315
+    },
+    {
+      "name": "Venezia",
+      "lat": 45.438659,
+      "lon": 12.334999,
+      "countryCode": "IT",
+      "country": "Italy",
+      "neId": 1159150277
+    },
+    {
+      "name": "Firenze",
+      "lat": 43.780001,
+      "lon": 11.25,
+      "countryCode": "IT",
+      "country": "Italy",
+      "neId": 1159149751
+    },
+    {
+      "name": "Napoli",
+      "lat": 40.841971,
+      "lon": 14.243066,
+      "countryCode": "IT",
+      "country": "Italy",
+      "neId": 1159151313
+    },
+    {
+      "name": "Torino",
+      "lat": 45.072333,
+      "lon": 7.668015,
+      "countryCode": "IT",
+      "country": "Italy",
+      "neId": 1159146875
+    },
+    {
+      "name": "Barcelona",
+      "lat": 41.385245,
+      "lon": 2.181425,
+      "countryCode": "ES",
+      "country": "Spain",
+      "neId": 1159151261
+    },
+    {
+      "name": "Sevilla",
+      "lat": 37.405015,
+      "lon": -5.980007,
+      "countryCode": "ES",
+      "country": "Spain",
+      "neId": 1159150601
+    },
+    {
+      "name": "Valencia",
+      "lat": 10.231927,
+      "lon": -67.981967,
+      "countryCode": "VE",
+      "country": "Venezuela",
+      "neId": 1159150507
+    },
+    {
+      "name": "Lyon",
+      "lat": 45.771954,
+      "lon": 4.828085,
+      "countryCode": "FR",
+      "country": "France",
+      "neId": 1159150845
+    },
+    {
+      "name": "Marseille",
+      "lat": 43.291925,
+      "lon": 5.373064,
+      "countryCode": "FR",
+      "country": "France",
+      "neId": 1159150037
+    },
+    {
+      "name": "Nice",
+      "lat": 43.716964,
+      "lon": 7.263078,
+      "countryCode": "FR",
+      "country": "France",
+      "neId": 1159147221
+    },
+    {
+      "name": "Hamburg",
+      "lat": 53.551971,
+      "lon": 9.998053,
+      "countryCode": "DE",
+      "country": "Germany",
+      "neId": 1159151353
+    },
+    {
+      "name": "München",
+      "lat": 48.131888,
+      "lon": 11.573048,
+      "countryCode": "DE",
+      "country": "Germany",
+      "neId": 1159151357
+    },
+    {
+      "name": "Frankfurt",
+      "lat": 50.099977,
+      "lon": 8.675015,
+      "countryCode": "DE",
+      "country": "Germany",
+      "neId": 1159151351
+    },
+    {
+      "name": "Köln",
+      "lat": 50.93195,
+      "lon": 6.948059,
+      "countryCode": "DE",
+      "country": "Germany",
+      "neId": 1159148451
+    },
+    {
+      "name": "Rotterdam",
+      "lat": 51.921915,
+      "lon": 4.478029,
+      "countryCode": "NL",
+      "country": "Netherlands",
+      "neId": 1159146435
+    },
+    {
+      "name": "Antwerpen",
+      "lat": 51.222319,
+      "lon": 4.413071,
+      "countryCode": "BE",
+      "country": "Belgium",
+      "neId": 1159147705
+    },
+    {
+      "name": "Zurich",
+      "lat": 47.381934,
+      "lon": 8.548064,
+      "countryCode": "CH",
+      "country": "Switzerland",
+      "neId": 1159151271
+    },
+    {
+      "name": "Geneva",
+      "lat": 46.210008,
+      "lon": 6.140028,
+      "countryCode": "CH",
+      "country": "Switzerland",
+      "neId": 1159151505
+    },
+    {
+      "name": "St. Petersburg",
+      "lat": 59.94096,
+      "lon": 30.314074,
+      "countryCode": "RU",
+      "country": "Russia",
+      "neId": 1159151291
+    },
+    {
+      "name": "Istanbul",
+      "lat": 41.106942,
+      "lon": 29.008056,
+      "countryCode": "TR",
+      "country": "Turkey",
+      "neId": 1159151579
+    },
+    {
+      "name": "Izmir",
+      "lat": 38.438096,
+      "lon": 27.149848,
+      "countryCode": "TR",
+      "country": "Turkey",
+      "neId": 1159149371
+    },
+    {
+      "name": "Bergen",
+      "lat": 60.391002,
+      "lon": 5.324522,
+      "countryCode": "NO",
+      "country": "Norway",
+      "neId": 1159150643
+    },
+    {
+      "name": "Trondheim",
+      "lat": 63.416658,
+      "lon": 10.416666,
+      "countryCode": "NO",
+      "country": "Norway",
+      "neId": 1159150641
+    },
+    {
+      "name": "Stavanger",
+      "lat": 58.970004,
+      "lon": 5.680004,
+      "countryCode": "NO",
+      "country": "Norway",
+      "neId": 1159146443
+    },
+    {
+      "name": "Göteborg",
+      "lat": 57.750001,
+      "lon": 12.000032,
+      "countryCode": "SE",
+      "country": "Sweden",
+      "neId": 1159148253
+    },
+    {
+      "name": "Malmö",
+      "lat": 55.583337,
+      "lon": 13.033302,
+      "countryCode": "SE",
+      "country": "Sweden",
+      "neId": 1159149739
+    },
+    {
+      "name": "Sydney",
+      "lat": -33.918065,
+      "lon": 151.183234,
+      "countryCode": "AU",
+      "country": "Australia",
+      "neId": 1159151623
+    },
+    {
+      "name": "Melbourne",
+      "lat": -37.818086,
+      "lon": 144.97307,
+      "countryCode": "AU",
+      "country": "Australia",
+      "neId": 1159151565
+    },
+    {
+      "name": "Brisbane",
+      "lat": -27.453085,
+      "lon": 153.033147,
+      "countryCode": "AU",
+      "country": "Australia",
+      "neId": 1159151169
+    },
+    {
+      "name": "Perth",
+      "lat": -31.953069,
+      "lon": 115.838053,
+      "countryCode": "AU",
+      "country": "Australia",
+      "neId": 1159151475
+    },
+    {
+      "name": "Auckland",
+      "lat": -36.848055,
+      "lon": 174.763027,
+      "countryCode": "NZ",
+      "country": "New Zealand",
+      "neId": 1159151703
+    },
+    {
+      "name": "Christchurch",
+      "lat": -43.535022,
+      "lon": 172.630023,
+      "countryCode": "NZ",
+      "country": "New Zealand",
+      "neId": 1159151701
+    },
+    {
+      "name": "São Paulo",
+      "lat": -23.556734,
+      "lon": -46.626966,
+      "countryCode": "BR",
+      "country": "Brazil",
+      "neId": 1159151621
+    },
+    {
+      "name": "Rio de Janeiro",
+      "lat": -22.923077,
+      "lon": -43.226967,
+      "countryCode": "BR",
+      "country": "Brazil",
+      "neId": 1159151619
+    },
+    {
+      "name": "Salvador",
+      "lat": -12.968026,
+      "lon": -38.481933,
+      "countryCode": "BR",
+      "country": "Brazil",
+      "neId": 1159151453
+    },
+    {
+      "name": "Medellín",
+      "lat": 6.276949,
+      "lon": -75.576956,
+      "countryCode": "CO",
+      "country": "Colombia",
+      "neId": 1159151343
+    },
+    {
+      "name": "Cartagena",
+      "lat": 10.401684,
+      "lon": -75.516339,
+      "countryCode": "CO",
+      "country": "Colombia",
+      "neId": 1159150857
+    },
+    {
+      "name": "Valparaíso",
+      "lat": -33.045819,
+      "lon": -71.62296,
+      "countryCode": "CL",
+      "country": "Chile",
+      "neId": 1159150931
+    },
+    {
+      "name": "Johannesburg",
+      "lat": -26.168099,
+      "lon": 28.028064,
+      "countryCode": "ZA",
+      "country": "South Africa",
+      "neId": 1159151515
+    },
+    {
+      "name": "Lagos",
+      "lat": 6.445208,
+      "lon": 3.389585,
+      "countryCode": "NG",
+      "country": "Nigeria",
+      "neId": 1159151591
+    },
+    {
+      "name": "Alexandria",
+      "lat": 31.201965,
+      "lon": 29.94805,
+      "countryCode": "EG",
+      "country": "Egypt",
+      "neId": 1159151349
+    },
+    {
+      "name": "Casablanca",
+      "lat": 33.601922,
+      "lon": -7.618313,
+      "countryCode": "MA",
+      "country": "Morocco",
+      "neId": 1159151521
+    },
+    {
+      "name": "Marrakech",
+      "lat": 31.631939,
+      "lon": -8.001933,
+      "countryCode": "MA",
+      "country": "Morocco",
+      "neId": 1159150675
+    },
+    {
+      "name": "Durban",
+      "lat": -29.863067,
+      "lon": 30.978065,
+      "countryCode": "ZA",
+      "country": "South Africa",
+      "neId": 1159151289
+    },
+    {
+      "name": "Dar es Salaam",
+      "lat": -6.798067,
+      "lon": 39.266396,
+      "countryCode": "TZ",
+      "country": "Tanzania",
+      "neId": 1159151305
+    },
+    {
+      "name": "Mumbai",
+      "lat": 19.018936,
+      "lon": 72.855043,
+      "countryCode": "IN",
+      "country": "India",
+      "neId": 1159151611
+    },
+    {
+      "name": "Kolkata",
+      "lat": 22.496915,
+      "lon": 88.32273,
+      "countryCode": "IN",
+      "country": "India",
+      "neId": 1159151617
+    },
+    {
+      "name": "Chennai",
+      "lat": 13.091934,
+      "lon": 80.278053,
+      "countryCode": "IN",
+      "country": "India",
+      "neId": 1159151431
+    },
+    {
+      "name": "Bengaluru",
+      "lat": 12.971941,
+      "lon": 77.558064,
+      "countryCode": "IN",
+      "country": "India",
+      "neId": 1159151543
+    },
+    {
+      "name": "Shanghai",
+      "lat": 31.218398,
+      "lon": 121.434559,
+      "countryCode": "CN",
+      "country": "China",
+      "neId": 1159151605
+    },
+    {
+      "name": "Hong Kong",
+      "lat": 22.306927,
+      "lon": 114.183064,
+      "countryCode": "HK",
+      "country": "Hong Kong S.A.R.",
+      "neId": 1159151629
+    },
+    {
+      "name": "Guangzhou",
+      "lat": 23.146927,
+      "lon": 113.323064,
+      "countryCode": "CN",
+      "country": "China",
+      "neId": 1159151331
+    },
+    {
+      "name": "Xi’an",
+      "lat": 34.276971,
+      "lon": 108.89305,
+      "countryCode": "CN",
+      "country": "China",
+      "neId": 1159151363
+    },
+    {
+      "name": "Osaka",
+      "lat": 34.751981,
+      "lon": 135.458199,
+      "countryCode": "JP",
+      "country": "Japan",
+      "neId": 1159151537
+    },
+    {
+      "name": "Kyoto",
+      "lat": 35.031938,
+      "lon": 135.748052,
+      "countryCode": "JP",
+      "country": "Japan",
+      "neId": 1159149967
+    },
+    {
+      "name": "Yokohama",
+      "lat": 35.430656,
+      "lon": 139.602021,
+      "countryCode": "JP",
+      "country": "Japan",
+      "neId": 1159147167
+    },
+    {
+      "name": "Busan",
+      "lat": 35.096999,
+      "lon": 129.008102,
+      "countryCode": "KR",
+      "country": "South Korea",
+      "neId": 1159149599
+    },
+    {
+      "name": "Ho Chi Minh-byen",
+      "lat": 10.781971,
+      "lon": 106.693081,
+      "countryCode": "VN",
+      "country": "Vietnam",
+      "neId": 1159151253
+    },
+    {
+      "name": "Dubai",
+      "lat": 25.231942,
+      "lon": 55.278029,
+      "countryCode": "AE",
+      "country": "United Arab Emirates",
+      "neId": 1159151497
+    },
+    {
+      "name": "Jeddah",
+      "lat": 21.518835,
+      "lon": 39.217252,
+      "countryCode": "SA",
+      "country": "Saudi Arabia",
+      "neId": 1159151277
+    },
+    {
+      "name": "Mekka",
+      "lat": 21.431967,
+      "lon": 39.818094,
+      "countryCode": "SA",
+      "country": "Saudi Arabia",
+      "neId": 1159151279
+    },
+    {
+      "name": "Karachi",
+      "lat": 24.871938,
+      "lon": 66.988063,
+      "countryCode": "PK",
+      "country": "Pakistan",
+      "neId": 1159151287
+    },
+    {
+      "name": "Lahore",
+      "lat": 31.561917,
+      "lon": 74.348079,
+      "countryCode": "PK",
+      "country": "Pakistan",
+      "neId": 1159151285
+    },
+    {
+      "name": "Agra",
+      "lat": 27.172366,
+      "lon": 78.013075,
+      "countryCode": "IN",
+      "country": "India",
+      "neId": 1159149175
+    }
+  ]
+}

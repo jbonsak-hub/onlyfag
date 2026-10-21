@@ -17,3 +17,11 @@ body:has(#overlay:not([hidden])) .game-controls{display:none}
 .geo-menu-toggle{position:fixed;top:12px;left:12px;z-index:5;border:1px solid #c6d9ce;border-radius:7px;padding:9px 12px;background:#fffef9f0;color:#285440;font-size:13px;font-weight:650;box-shadow:0 2px 8px #24564318}
 .geo-menu{position:fixed;top:0;left:0;right:auto;bottom:auto;margin:0;width:320px;max-width:calc(100vw - 20px);height:100vh;height:100dvh;max-height:100dvh;border:0;border-right:1px solid #c8d7c3;background:#fffefa;padding:0;color:#28463d;box-shadow:8px 0 30px #234f4525}
 .geo-menu[open]{display:flex;flex-direction:column}.geo-menu::backdrop{background:#244c4020}.geo-menu-head{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:20px 18px;border-bottom:1px solid #dfe7d9}.geo-menu-head>a{font-size:21px;font-weight:700}.geo-menu-head>button{border:1px solid #d9e3d2;border-radius:6px;background:#f0f5e9;color:#466844;font-size:24px;width:34px;height:34px;line-height:1}.geo-menu nav{overflow:auto;min-height:0;flex:1;padding:8px 14px 22px}.geo-menu details{border-bottom:1px solid #e3e9de}.geo-menu summary{cursor:pointer;font-weight:600;font-size:13px;line-height:1.5;padding:13px 5px}.geo-menu details a{display:block;padding:9px 12px;margin:2px 0 2px 10px;font-size:13px;line-height:1.5;border-radius:5px}.geo-menu details a:hover{background:#eaf1e2;color:#245845}.geo-menu summary:focus-visible{outline:3px solid #d99136;outline-offset:-2px}
+
+/* Navigation is part of the left game panel. */
+.game{grid-template-columns:260px minmax(0,1fr)}.game-panel{grid-column:1;grid-row:1;border-left:0;border-right:1px solid #91bac1}.map-viewport{grid-column:2;grid-row:1}.panel-header .brand{font-size:24px}.panel-header .geo-menu-toggle{position:static;z-index:auto;padding:7px 9px;font-size:12px;box-shadow:none}
+@media(max-width:700px){.game{grid-template-columns:minmax(0,1fr)}.map-viewport{grid-column:1;grid-row:1}.game-panel{grid-column:1;grid-row:2;border-right:0}}
+
+.stats>div>span,.stats small,.legend,.legend>strong,footer,footer a{color:#566a55}#feedback{color:#536a59}
+
+@media(min-width:701px){.game{grid-template-columns:var(--q-panel,260px) minmax(0,1fr)}}

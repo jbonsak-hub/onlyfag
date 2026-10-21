@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="no">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Statle – Geografi – Onlyfag</title><link rel="stylesheet" href="../assets/geography/statle-assets/statle-7a32ab31f57a.css"><script src="../assets/analytics.js" defer></script><script src="../assets/geography/statle-assets/statle-186d82e825ed.js" defer></script></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Statle – Geografi – Onlyfag</title><link rel="stylesheet" href="../assets/geography/statle-assets/statle-7a1f7800b4ea.css"><script src="../assets/analytics.js" defer></script><script src="../assets/geography/statle-assets/statle-186d82e825ed.js" defer></script><script src="../assets/geography/statle-assets/panel-resize-46099795fcb9.js" defer></script></head>
 <body>
-<button id="geoMenuButton" class="geo-menu-toggle" type="button" aria-haspopup="dialog" aria-controls="geoMenu" aria-expanded="false">☰ Meny</button>
+
 <dialog id="geoMenu" class="geo-menu" aria-label="Geografimeny"><div class="geo-menu-head"><a href="../geografi.html">Geografi</a><button id="geoMenuClose" type="button" aria-label="Lukk geografimenyen">×</button></div><nav aria-label="Geografimeny"><details><summary>Kart</summary><a href="../geografi.html#projection">Kartprojeksjoner</a><a href="../geografi.html#coordinates">Koordinater</a><a href="../geografi.html#coordinatequiz">↳ Test deg selv</a><a href="../geografi.html#routes">Flyruter</a><a href="../geografi.html#antipodes">Antipoder</a><a href="../geografi.html#scale">Målestokk</a><a href="../geografi.html#terrain">Høydekurver og terreng</a><a href="../geografi.html#daynight">Hvor er sola?</a></details>
 <details><summary>Indre krefter og landformer</summary><a href="../geografi.html#indre-fagstoff">Fagstoff</a><a href="../geografi.html#indre-begreper">Begrepsliste</a><a href="../geografi.html#indre-sporsmal">Test deg selv</a></details>
 <details><summary>Ytre krefter og landformer</summary><a href="../geografi.html#ytre-fagstoff">Fagstoff</a><a href="../geografi.html#ytre-begreper">Begrepsliste</a><a href="../geografi.html#ytre-sporsmal">Test deg selv</a></details>
@@ -22,8 +22,8 @@
           <g id="labelLayer" aria-hidden="true"></g>
         </svg></div>
   <aside class="game-panel" aria-label="Spillinformasjon og kontroller">
-    <header class="panel-header"><a class="brand" href="../index.html" aria-label="OnlyFag – hovedsiden">OnlyFag</a></header>
-    <div class="target-block"><span class="game-title">STATLE</span><span id="targetVerb">Klar for en runde?</span><strong id="targetName">USAs 50 delstater</strong></div>
+    <header class="panel-header"><button id="geoMenuButton" class="geo-menu-toggle" type="button" aria-haspopup="dialog" aria-controls="geoMenu" aria-expanded="false">☰ Meny</button><strong class="brand">Statle</strong></header>
+    <div class="target-block"><span id="targetVerb">Klar for en runde?</span><strong id="targetName">USAs 50 delstater</strong></div>
     <div class="stats"><div><span>Fullført</span><strong><span id="completed">0</span><small> / 50</small></strong></div><div><span>Tid</span><time id="elapsed">00:00</time></div><div><span>Feil</span><strong id="mistakes">0 feil</strong></div></div>
     <div class="progress-track"><i id="progressFill"></i></div>
     <div id="overlay" class="ready-actions"><button id="start" class="primary-button" disabled>Laster kart …</button></div>

@@ -11,7 +11,7 @@ De 14 variantene i Geo-quiz har egne HTML-innganger. Land- og stedstabellene, ka
 | Kjente steder på jorda | geografi/stedsquiz.html | #places / #quiz-places |
 | Worldle | geografi/worldle.html | #detective2 / #quiz-detective2 |
 | Statle | geografi/statle.html | #statle / #quiz-statle |
-| GeoWiz | geografi/geowiz.html | #geoguessr / #quiz-geoguessr |
+| MapWiz | geografi/mapwiz.html | #geoguessr / #quiz-geoguessr / #geowiz / #mapwiz |
 | GeoGuessr | geografi/geoguessr.html | #openguessr / #quiz-openguessr |
 | Jeopardy | geografi/jeopardy.html | #jeopardy / #quiz-jeopardy |
 | Globle | geografi/globle.html | #globle / #quiz-globle |
@@ -101,8 +101,77 @@ Etter endringer i `assets/geography/statle.css` eller `statle.js`: kjør `node s
 
 Dette hindrer at ny HTML kombineres med gamle CSS/JS-filer fra nettleser- eller Cloudflare-bufferen. Ressursene kan ellers være ferske i buffer i fire timer. `tests/statle-cache.cjs` gjenskaper blankt kart med gamle filer i en ekte nettleserbuffer og kontrollerer at nye filadresser gjenoppretter kart, spill og meny uten tømming av buffer. Testen sender ingen analytics.
 
-Statle på /geografi/statle.html bruker nå et kart med 50 klikkbare delstater og navnet på målstaten i høyrepanelet. Fargen følger svartid og antall feil. Feilklikk viser den klikkede statens navn i omtrent ett sekund; etter to feil pulserer en ring rundt målstaten i omtrent 1,45 sekunder. Omstart, hopping over, tastatur og ekstra klikkfelt for små delstater er tilgjengelig. Eksempelrunde og all manuell/automatisk pause er fjernet; klokka går også når menyen er åpen eller fanen er skjult.
+Statle på /geografi/statle.html bruker nå et kart med 50 klikkbare delstater og navnet på målstaten i spillpanelet. Fargen følger svartid og antall feil. Feilklikk viser den klikkede statens navn i omtrent ett sekund; etter to feil pulserer en ring rundt målstaten i omtrent 1,45 sekunder. Omstart, hopping over, tastatur og ekstra klikkfelt for små delstater er tilgjengelig. Eksempelrunde og all manuell/automatisk pause er fjernet; klokka går også når menyen er åpen eller fanen er skjult.
 
 Kartet fyller vindushøyden på desktop. Fastlandet er forstørret. Alaska og Hawaii vises uten navn, med skillelinjer som ikke skjærer gjennom delstatene. Hawaii flukter nederst med Florida. På mobil ligger panelet under kartet. Kartgrunnlaget er det samme Census-grunnlaget som tidligere. Spillsvar holdes i minnet, eksisterende lokal lagring røres ikke, og siden bruker samme analytics-loader/token og sidesti som før. Andre quiz- og fagmoduler er uendret.
 
-prototypes/statle.html deler kartkode og stil med den publiserte siden, men laster ingen analytics. tests/statle-prototype.cjs kontrollerer alle 50 delstatene gjennom en komplett runde, farger, hover, feilnavn, hint, omstart, mobil og full vindushøyde. Menyen starter lukket og åpnes over venstre del av kartet, med støtte for Escape, lukkeknapp og klikk utenfor. OnlyFag-lenken går til hovedsiden, og Quizoversikt-lenken er forstørret. Sett STATLE_PREVIEW_URL til den lokale siden og bruk PLAYWRIGHT_MODULE/BROWSER_EXECUTABLE ved behov. Den vanlige geography-analytics-testen dekker også den nye Statle-siden og de gamle adressene.
+prototypes/statle.html deler kartkode og stil med den publiserte siden, men laster ingen analytics. tests/statle-prototype.cjs kontrollerer alle 50 delstatene gjennom en komplett runde, farger, hover, feilnavn, hint, omstart, mobil og full vindushøyde. Menyen starter lukket og åpnes over venstre del av kartet, med støtte for Escape, lukkeknapp og klikk utenfor. Statle-tittelen står øverst i venstrepanelet, og Quizoversikt-lenken er forstørret. Sett STATLE_PREVIEW_URL til den lokale siden og bruk PLAYWRIGHT_MODULE/BROWSER_EXECUTABLE ved behov. Den vanlige geography-analytics-testen dekker også den nye Statle-siden og de gamle adressene.
+
+
+## Kompakte quizoppsett med Statle-palett
+
+Globle, Worldle, Travle, Tradle, GeoGrid, MapWiz, Jeopardy, Landquiz, Flaggquiz, Hovedstadsquiz, Stedsquiz og Flagg+hovedstad deler nå `quiz-layout.css` og `quiz-layout.js`. Den tidligere topplinjen er erstattet av kompakte tema-/Quizoversikt-kontroller og en sammenfoldet geografimeny over venstre billedkant. OnlyFag-raden er fjernet fra disse quizene. På PC fyller kartspillene høyden; mobilvisningen plasserer kart/brett over kontrollene og holder svaralternativer i to kolonner. Globle beholder drag, zoom og avstandsfarger. Stedsbeskrivelser, resultatvinduer og Jeopardy bruker lyse, lesbare flater. Worldle åpner ikke mobiltastaturet automatisk.
+
+Kart-iframe får den nye utformingen bare når det åpnes fra en av de fire selvstendige quizsidene. Kartverktøyene på geografi.html og øvrige fag beholder utformingen. Eksisterende spillfunksjoner, datasett og lagringsnøkler beholdes.
+
+GeoWiz heter nå MapWiz på `/geografi/mapwiz.html`. `/geografi/geowiz.html`, `/geografi-geowiz.html` og tidligere hash-/query-lenker videresender dit uten et ekstra analytics-skript. Samme Cloudflare-token brukes. Historiske tall for GeoWiz-stien blir liggende på den gamle stien i Cloudflare.
+
+Etter endringer i geografiens delte JS/CSS: kjør `node scripts/build-geography-quiz-assets.cjs`. Dette lager innholdshash-versjoner av alle direkte JS/CSS-avhengigheter for geografi.html og de 13 quizsidene. HTML peker på `assets/geography/quiz-assets/`. Kildekode redigeres utenfor denne mappen. Behold tidligere publiserte filer for eldre HTML i buffer. Statle har fortsatt sin separate, uendrede byggeprosess.
+
+Verifisering: `node tests/geography-layout.cjs` og `node tests/geography-analytics.cjs` med samme Playwright-variabler som over. Layouttesten dekker oppstart/spill i 1366×643, 390×844, 360×740 og 844×390; fullhøydekart, alle ni GeoGrid-ruter, meny/retur, lesbare stedsbeskrivelser, svaralternativer, landkart uten overlapp over svarfelt, MapWiz-kartklikk uten klikkgjennomgang fra HUD, Jeopardy-spørsmål/fasit/poeng og GeoGrid-inntasting med viewport 390×480 som tilnærming til tastaturplass. `LAYOUT_SCREENSHOTS` kan angi en mappe for visuell kontroll. Analytics-testen bruker lokalt fangede payloads fra det originale beaconet. Ingen testtrafikk sendes til Cloudflare.
+
+Mobilkontroll er utført i emulerte Chromium/Edge-visninger, ikke på fysisk iPhone/Android eller Safari. Eksterne Worldle-bilder og Cloudflare-dashboardets mottak kontrolleres ikke av den lokale testen. Ingen backend, elevdata eller tilgangsbeskyttelse er endret.
+
+
+### Tettere standardvisning ved 100 % zoom
+
+Kontroller, oppsett og forsøksrader er fortettet videre. Globle har hvit bakgrunn utenfor kloden i lys modus og svart i mørk modus, mens havfargen beholdes. Gjett, Vis fasit og Nytt land ligger på samme linje. Forsøksrader er normalt 23 px høye, og bare listen ruller når den er full. Forklaringen og avstandshjelpen ligger samlet i én lukket «Slik fungerer det» nederst. Samme prinsipp med mindre kontroller og samlet hjelp brukes i de øvrige oppdaterte quizene. Mobil beholder lesbare inntastingsfelt og egne trykkflater.
+
+GeoGuessr-innrammingen har bare to flytende kontroller: Meny og Quizoversikt. Selve det eksterne spillet er uendret. Quizoversikten har mindre kort, forhåndsvisninger og tekst ved vanlig nettleserzoom; dette er separat stil som ikke endrer fagseksjonene.
+
+Layouttesten kontrollerer også minst 20 ekte Globle-gjetninger, én linje for alle tre handlingsknappene, synlig retur uten rulling av kontrollpanelet, begge bakgrunnsfarger, samlet hjelpetekst, GeoGuessr-innramming uten topplinje og kompakte oversiktskort. `geography-layout.cjs` dekker fortsatt fire skjermstørrelser og mobilspill. Ingen CSS-zoom brukes.
+
+
+### Venstrepaneler, romslige spørsmål og resultatvisning
+
+Lokale spill bruker kontrollpanel til venstre på PC, med integrert Meny-knapp; MapWiz har flytende kontroller over hele kartet under spill. Geografimenyen åpnes over dette panelet og kan lukkes med Lukk, Escape eller klikk utenfor. På mobil ligger panelet over spørsmålene eller under kartet. GeoGuessrs to navigasjonsknapper er samlet til venstre; det eksterne spillet fyller fortsatt vinduet. Statle har tittelen «Statle» uten OnlyFag-logo.
+
+Flaggquiz, hovedsteder, flagg/hovedstad og kjente steder bruker høyere svarbokser og romslige spørsmålskort. Resultatboksen og toppresultater flyttes til spillpanelet etter et feil svar. Tilbakemelding, score, toppresultater og sekundærtekst i lys modus har mørkere farger. Jeopardy-ruter som er spilt, får skravering, tydelig ramme, gjennomstreking og «✓ Valgt», samt tilgjengelig valgt-status.
+
+Globle avviser tomme svar og mellomrom både fra Gjett-knappen og Enter. Bare startknappen legger inn det første tilfeldige landet. Endringen ligger i den delte kartfilens Globle-funksjon. Byggeskriptet legger en innholdshash som v-parameter på de fire quizenes maplab-iframe, slik at oppdatert spillkode hentes ved ny publisering.
+
+Testene dekker også venstrepaneler, integrert meny og lukking, høyere svaralternativer, resultatplassering og minst 4,5:1 kontrast for tilbakemeldinger/resultattekster i lys modus. Statle-testen gjennomfører en hel runde med alle 50 delstater og kontrollerer ny tittel og plassering; cache-testen bekrefter at eldre buffer ikke hindrer riktig lasting.
+
+
+### Større kart og justerbar panelbredde
+
+MapWiz bruker hele vinduet til kartet under en runde. Mål, poeng, tidsbonus og tilbakemelding ligger i en kompakt boks nederst i midten, med samme lyse/mørke palett som de andre spillene. Meny, tema, retur og Avslutt svever over kartet. På stående mobil kan verdenskartet dras sidelengs slik at projeksjonen beholder proporsjonene; klikk, markører og poeng følger den panorerte kartflaten. Norge-kartet beholder sin egen projeksjon.
+
+Landquiz har full karthøyde på PC. Landene som er funnet, vises i to tette kolonner i venstrepanelet; bare listen ruller når den blir lang. Kartet har en liten tekst om zoom og flytting. På mobil beholdes kart over kontrollene og en begrenset, rullbar landliste.
+
+Alle 13 lokale quizer har et breddehåndtak på venstrepanelet ved skjermbredder over 700 px. Dra håndtaket, bruk venstre/høyre piltast når det har fokus, eller dobbeltklikk/trykk Home for standardbredde. Valget lagres felles lokalt som onlyfag-geography-panel-width og begrenses til 220–480 px med plass igjen til kartet. Smale mobilvisninger beholder stablet oppsett uten håndtak. MapWiz har håndtak i oppsettet og fullskjermskart under spill; ekstern GeoGuessr har fortsatt bare sine to navigasjonsknapper.
+
+Den felles kilden assets/geography/panel-resize.js versjoneres av begge eksisterende byggeskript. Statle-bygget inkluderer nå også denne avhengigheten. Eksisterende spill- og resultatlagring er uendret.
+
+Kjør også node tests/geography-panel-resize.cjs. Den tester faktisk dragging, piltaster, reset og mobilvisning i de 12 modulene med sidepanel, lagret bredde etter omlasting, tilpasning til smalere vindu, 90 land i rullbar liste, kartzoom, en hel MapWiz-runde, panorert mobilt kartklikk og Norge-kart. Øvrige layout-, Statle- og analytics-tester kjøres som over. Testene kjøres lokalt uten testtrafikk til Cloudflare; fysisk berøringsenhet, Safari og mottak i Cloudflare-dashboardet er ikke verifisert.
+
+
+### Utvidet MapWiz
+
+Den godkjente versjonen ligger på /geografi/mapwiz.html, og gamle GeoWiz-lenker fører dit. /prototypes/mapwiz.html er fortsatt en forhåndsvisning med samme spillkode. MapWiz har 15 kategorier og ingen forhåndsvalg. Alle runder har ti spørsmål. Med flere enn fem valgte kategorier er grensen to fra hver; med færre valg fordeles spørsmålene balansert. Små kategorier bruker alle tilgjengelige mål før gjentakelser, uten to like mål etter hverandre. Norge alene bruker Norgeskart; blandede runder bruker bare mål innenfor verdenskartet.
+
+Startsiden samler tekst og valg til venstre og tre kategorikolonner til høyre i et sentrert felt. En kort, synlig forklaring ligger rett under, uten den tidligere tomme flaten. Mobil bruker to kategorikolonner. Kategorien med tre landopplysninger og tilhørende GeoGrid-predikater/data er fjernet fra MapWiz; selve GeoGrid-spillet endres ikke.
+
+Oppgaveboksen viser mål eller flagg, løpende poeng og tilbakemelding etter svaret. Dra i bakgrunnen for å flytte boksen fritt med mus eller berøring. Knapper og flaggbilder starter ikke dragging. Piltaster flytter boksen når den har fokus; Home setter den nederst til venstre. Boksen holdes innenfor vinduet og beholder valgt plassering gjennom spørsmålene. Ingen steder i Stillehavet er fjernet.
+
+Etter runden beholdes kartet med ti par av gjetning/fasit og forbindelseslinjer. Resultatboksen står nederst til venstre og er like flyttbar. Tabellen viser sted, avstandspoeng og tidspoeng, uten kilometerkolonne. Alle ti rader vises uten intern scrolling i de testede visningsstørrelsene. Tabellradens fargemerke svarer til linjen og punktene i kartet. Norgeskartets resultatpunkter følger kartutsnittet ved skjermrotasjon.
+
+Flaggoppgaver bruker 115 lokale SVG-flagg med tilgjengelig landgeometri, uten CDN-oppslag under spill. Landmål beregnes fra arealsenteret i største sammenhengende landpolygon, flyttet innenfor grensen hvis sentrum ligger utenfor. Oversjøiske øyer påvirker ikke siktepunktet. For øystater brukes største øy.
+
+Byutvalget har 91 byer og vektlegger Europa/Nord-Amerika; det er et pedagogisk utvalg, ikke en befolkningsrangering. Ingen by er allerede et mål i hovedstadslisten. Utvalget omfatter fire kinesiske byer inkludert Hongkong og fem indiske. Koordinater kommer fra [Natural Earth](https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-populated-places/). Utvalget er vurdert opp mot [GaWC 2024](https://gawc.lboro.ac.uk/gawc-worlds/the-world-according-to-gawc/world-cities-2024/), [UN WUP 2025](https://www.un.org/development/desa/pd/world-urbanization-prospects-2025) og historisk/kulturell betydning, blant annet [Istanbul](https://whc.unesco.org/en/list/356/), [Venezia](https://whc.unesco.org/en/list/394/) og [Agra](https://whc.unesco.org/en/list/252/). Byutvalg og kilder ligger i mapwiz-cities.json.
+
+Elvemål bruker omtrentlige midtpunkter langs navngitte hovedløp fra [Natural Earth](https://www.naturalearthdata.com/downloads/10m-physical-vectors/10m-rivers-lake-centerlines/). Dette er kartmål, ikke oppmålte hydrologiske kilde-til-utløp-midtpunkt. Metode, kartlagt lengde og eventuelle brudd står i mapwiz-river-midpoints.json. Øvrige områdemål bruker eksisterende representative sentralpunkter. Tidligere toppresultater beholdes i lokal lagring. Den nye rundeformen skriver ikke til de gamle resultatgruppene. Produksjonssiden bruker samme analytics-loader og Cloudflare-token som før, med én sidevisning per lasting; forhåndsvisningen har ikke analytics.
+
+Antarktis er fjernet fra landquizens land- og bakgrunnstegning, også canvas-reserven. Geografidata og småøyindekser beholdes. Andre kart-/fagverktøy endres ikke.
+
+Bygg: node scripts/build-mapwiz-prototype.cjs og node scripts/build-geography-quiz-assets.cjs. Begge støtter --check. Test: node tests/mapwiz-prototype.cjs med de vanlige Playwright-variablene. Testen dekker alle 15 kategorier med ti spørsmål hver, 300 tilfeldige runder med ett/to/fem/seks/15 kategorivalg, gjentakelser i liten kategori, mus/berøring/tastatur, begrensning til vinduet, uendret resultatlagring, ti kartlinjer og 20 markører, riktige poengkolonner, lys/mørk modus og mobil/liggende skjerm. Emulerte visninger er brukt; fysisk iPhone/Android og Safari er ikke testet.
