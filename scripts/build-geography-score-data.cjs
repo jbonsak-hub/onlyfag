@@ -1,0 +1,18 @@
+// Server reference data comes from the same public sources as the games.
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),crypto=require('node:crypto');
+const root=path.resolve(__dirname,'..'),read=f=>fs.readFileSync(path.join(root,f),'utf8').replace(/\r\n/g,'\n');
+const core=read('assets/geography/core.js');
+function declaration(name){const start=core.search(new RegExp('const '+name+'\\s*='));if(start<0)throw Error(name);let quote=null,escaped=false;for(let i=start;i<core.length;i++){const c=core[i];if(quote){if(escaped)escaped=false;else if(c==='\\')escaped=true;else if(c===quote)quote=null;}else if(c==='"'||c==="'")quote=c;else if(c===';')return core.slice(start,i+1).replace(/^const/,'var');}throw Error(name);}
+const box={window:{}};vm.createContext(box);vm.runInContext(read('assets/geography/quiz-data.js'),box);vm.runInContext(read('assets/geography/mapwiz-prototype-data.js'),box);vm.runInContext(read('assets/geography/mapwiz-river-data.js'),box);
+for(const name of ['COUNTRY_MAP_ALL','COUNTRY_MAP_REGION_COUNTRIES','GEO_CAPITAL_TARGETS','GEO_PLACE_TARGETS'])vm.runInContext(declaration(name),box);
+const source=box.window.GEO_QUIZ_DATA,reference=box.window.MAPWIZ_PROTOTYPE_DATA;
+const playable=t=>Number.isFinite(t.lat)&&Number.isFinite(t.lon)&&t.lat<=75&&t.lat>=-58.8;
+const unique=items=>items.filter((t,i,a)=>a.findIndex(x=>x.name===t.name&&x.lat===t.lat&&x.lon===t.lon)===i);
+const categories={mountains:'Fjell og vulkaner',ranges:'Fjellkjeder',deserts:'Ørkener',lakes:'Innsjøer',islands:'Øyer, øygrupper og halvøyer',regions:'Regioner og områder',seas:'Hav og sjøområder',straits:'Stred, kanaler, bukter og kapp',landmarks:'Kjente byggverk og historiske steder',nature:'Kjente natursteder','place:Norge':'Norge'};
+const pools={flags:reference.countries.filter(c=>c.flag),capitals:unique(box.GEO_CAPITAL_TARGETS.filter(t=>playable(t)&&box.COUNTRY_MAP_ALL.includes(t.country))),cities:reference.cities,rivers:box.window.MAPWIZ_RIVER_MIDPOINTS};
+for(const [key,category]of Object.entries(categories))pools[key]=unique(box.GEO_PLACE_TARGETS.filter(t=>(playable(t)||category==='Norge')&&t.category===category));
+const data={version:1,countries:source.countries.filter(c=>c.country&&c.capital).map(c=>({id:c.country,country:c.country,capital:c.capital,flagCode:c.flagCode,hasFlag:!!(c.flagCode&&c.flag)})),places:source.places.map(p=>({id:p.category+'|'+p.place,...p})),regions:{world:box.COUNTRY_MAP_ALL,...box.COUNTRY_MAP_REGION_COUNTRIES},names:JSON.parse(read('assets/geography/quiz-english-names.json')),mapwiz:Object.fromEntries(Object.entries(pools).map(([category,items])=>[category,items.map(t=>({id:JSON.stringify([category,t.name,t.lat,t.lon]),name:t.name,category,lat:t.lat,lon:t.lon}))]))};
+const files=['core.js','quiz-data.js','mapwiz-prototype-data.js','mapwiz-river-data.js','quiz-english-names.json'];data.sourceHash=crypto.createHash('sha256').update(files.map(f=>read('assets/geography/'+f)).join('\n')).digest('hex');
+const file=path.join(root,'services/geography-scores/data.json'),result=JSON.stringify(data)+'\n';
+if(process.argv.includes('--check')){if(fs.readFileSync(file,'utf8')!==result)throw Error('Run scripts/build-geography-score-data.cjs');}else{fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,result);}
+console.log(JSON.stringify({countries:data.countries.length,places:data.places.length,mapwiz:Object.fromEntries(Object.entries(data.mapwiz).map(([k,v])=>[k,v.length]))}));

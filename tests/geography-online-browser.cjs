@@ -1,0 +1,46 @@
+const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
+const {DatabaseSync}=require('node:sqlite'),pw=require(process.env.PLAYWRIGHT_MODULE||'playwright'),root=path.resolve(__dirname,'..');
+const server=http.createServer((req,res)=>{try{const file=path.join(root,new URL(req.url,'http://localhost').pathname);res.setHeader('Content-Type',file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.js')?'text/javascript; charset=utf-8':file.endsWith('.css')?'text/css':'application/octet-stream');res.end(fs.readFileSync(file));}catch(_){res.writeHead(404);res.end();}});
+(async()=>{
+ const {default:worker}=await import('../services/geography-scores/worker.mjs');const db=new DatabaseSync(':memory:');db.exec(fs.readFileSync(path.join(root,'services/geography-scores/schema.sql'),'utf8'));
+ const wrap=(sql,args=[])=>({bind(...v){return wrap(sql,v);},async first(){return db.prepare(sql).get(...args)||null;},async all(){return {results:db.prepare(sql).all(...args)};},async run(){return {meta:{changes:Number(db.prepare(sql).run(...args).changes)}};}});
+ const env={DB:{prepare:sql=>wrap(sql)},RATE_SECRET:'local-test',ALLOW_LOCAL:'true'};
+ await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port+'/',browser=await pw.chromium.launch({headless:true,executablePath:process.env.BROWSER_EXECUTABLE}),errors=[];
+ let failApi=false;
+ async function context(viewport={width:1366,height:768}){
+  const c=await browser.newContext({viewport});c.on('page',p=>p.on('pageerror',e=>errors.push(e.message)));
+  await c.route('**/*',async r=>{
+   const url=r.request().url();if(/\/score-service(?:-[a-f0-9]+)?\.js/.test(url))return r.fulfill({contentType:'text/javascript',body:"window.GEO_SCORE_API='https://scores.test';"});
+   if(url.startsWith('https://scores.test')){if(failApi)return r.fulfill({status:503,headers:{'Access-Control-Allow-Origin':new URL(base).origin},contentType:'application/json',body:'{"error":"unavailable"}'});const request=new Request(url,{method:r.request().method(),headers:{...r.request().headers(),'CF-Connecting-IP':'192.0.2.44'},...(r.request().postData()?{body:r.request().postData()}:{} )});const result=await worker.fetch(request,env);return r.fulfill({status:result.status,headers:Object.fromEntries(result.headers),body:await result.text()});}
+   if(url.startsWith(base)||/^(data|blob):/.test(url))return r.continue();return r.abort();
+  });return c;
+ }
+ const shot=async(page,name)=>{if(process.env.LAYOUT_SCREENSHOTS){fs.mkdirSync(process.env.LAYOUT_SCREENSHOTS,{recursive:true});await page.screenshot({path:path.join(process.env.LAYOUT_SCREENSHOTS,name+'.png')});}};
+ try{
+  const c=await context(),page=await c.newPage();page.on('dialog',d=>d.dismiss());
+  for(const language of ['no','en']){
+   await page.goto(base+'geografi.html#verden-quiz');await page.getByRole('button',{name:language==='en'?'English':'Norsk',exact:true}).click();
+   for(const [game,file]of [['flags','flaggquiz'],['capitals','hovedstadsquiz'],['flagcapital','flagg-og-hovedstad'],['places','stedsquiz']]){
+    for(const direction of [0,1]){
+     await page.goto(base+'geografi/'+file+'.html');await page.locator('.streak-direction-btn').nth(game==='places'?direction+2:direction).click();await page.getByRole('button',{name:'Start',exact:true}).click();await page.locator('.world-option').first().waitFor();
+     const right=await page.evaluate(()=>worldTrainerState.current.options.findIndex(o=>worldTrainerState.current.isCorrect(o)));await page.locator('.world-option').nth(right).click();await page.waitForFunction(()=>worldTrainerState.score===1&&!worldTrainerState.answerLocked);
+     const wrong=await page.evaluate(()=>worldTrainerState.current.options.findIndex(o=>!worldTrainerState.current.isCorrect(o)));await page.locator('.world-option').nth(wrong).click();await page.locator('.geo-online-result button').waitFor();assert.equal(await page.evaluate(()=>worldTrainerState.score),1);await page.locator('.geo-online-result button').click();await page.locator('#geo-online-name').fill('Pilot '+game+' '+direction);await page.locator('#geo-online-board form button').click();await page.locator('#geo-online-board tbody tr').first().waitFor();assert.equal(await page.locator('#geo-online-board form').count(),0);await shot(page,game+'-'+language);await page.keyboard.press('Escape');
+     if(game!=='places'){assert.equal(await page.locator('.quiz-page-back').getAttribute('href'),'#quiz-options','Return behavior preserved on desktop');await page.locator('.quiz-page-back').click();await page.locator('.streak-setup').waitFor();}console.log('PASS online',game,direction,language);
+    }
+   }
+  }
+  await page.goto(base+'geografi/landquiz.html');await page.locator('.country-region-btn').first().click();await page.locator('#country-guess').fill('Germany');await page.locator('#country-guess').press('Enter');await page.waitForFunction(()=>worldTrainerState.found.some(c=>c.country==='Tyskland'));await page.locator('.country-map-action.hint').click();await page.waitForFunction(()=>worldTrainerState.hints===1);await page.locator('.country-map-action.finish').click();await page.locator('.geo-online-result button').waitFor();await page.locator('.geo-online-result button').click();await page.locator('#geo-online-name').fill('Country Pilot');await page.locator('#geo-online-board form button').click();await page.locator('#geo-online-board tbody').waitFor();await page.keyboard.press('Escape');
+  for(const category of ['flags','place:Norge']){
+   await page.goto(base+'geografi/mapwiz.html');await page.locator('[data-prototype-category="'+category+'"]').check();await page.locator('#geo-start-button').click();await page.locator('.geo-map-stage').waitFor();assert.equal(await page.evaluate(()=>geoGuessrState.rounds.length),10);
+   for(let i=0;i<10;i++){
+    await page.waitForFunction(i=>geoGuessrState.index===i&&!geoGuessrState.answered,i);
+    await page.evaluate(()=>{const s=geoGuessrState,t=s.rounds[s.index],stage=document.querySelector('.geo-map-stage'),r=stage.querySelector(s.norwayOnly?'[data-no-frame]':'.geo-world-content').getBoundingClientRect(),p=s.norwayOnly?{x:(t.lon+12)/46*100,y:(81.5-t.lat)/24.3*100}:geoToPercent(t.lat,t.lon);return geoMapClick({clientX:r.left+r.width*p.x/100,clientY:r.top+r.height*p.y/100});});
+    assert.ok(await page.evaluate(()=>geoGuessrState.results.at(-1).base>99));await page.locator('.geo-next-button').click();await page.waitForFunction(i=>i===9?!!document.querySelector('.prototype-summary'):geoGuessrState.index===i+1&&!geoGuessrState.answered,i);
+   }
+   await page.locator('.prototype-summary').waitFor();assert.equal(await page.locator('.prototype-results tbody tr').count(),10);assert.ok(await page.locator('.geo-marker.answer').evaluateAll(els=>els.every(e=>Number.isFinite(parseFloat(e.style.left))&&Number.isFinite(parseFloat(e.style.top)))),'Map points remain intact');await page.locator('.prototype-summary-actions').getByRole('button',{name:'Top 10',exact:true}).click();await page.locator('#geo-online-name').fill('Map Pilot '+category);await page.locator('#geo-online-board form button').click();await page.locator('#geo-online-board tbody').waitFor();await shot(page,'mapwiz-online-'+(category==='flags'?'world':'norway'));await page.keyboard.press('Escape');
+  }
+  const second=await context({width:390,height:844}),p2=await second.newPage();await p2.goto(base+'geografi.html#verden-quiz');await p2.getByRole('button',{name:'English',exact:true}).click();await p2.goto(base+'geografi/mapwiz.html');await p2.locator('[data-prototype-category=flags]').check();await p2.locator('#mapwiz-show-top-ten').click();await p2.locator('#geo-online-board tbody').waitFor();assert.match(await p2.locator('#geo-online-board').innerText(),/Map Pilot flags/,'Another browser sees saved result');await shot(p2,'online-board-mobile');await p2.keyboard.press('Escape');
+  failApi=true;await p2.goto(base+'geografi/flaggquiz.html');await p2.getByRole('button',{name:'Start',exact:true}).click();await p2.locator('.world-option').first().waitFor();assert.ok(await p2.locator('#geo-online-notice').isVisible());assert.equal(await p2.evaluate(()=>worldTrainerState.mode),'flags');
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM scores').get().n,19);assert.deepEqual(errors,[]);console.log(JSON.stringify({globalGames:6,languageDirections:16,mapwizRounds:20,countries:true,secondBrowser:true,mobile:true,offlineFallback:true,desktopReturnPreserved:true,errors}));
+ }finally{await browser.close();db.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;}).finally(()=>server.close());

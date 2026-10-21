@@ -40,6 +40,7 @@
  function scoreRows(key){const rows=scoreDatabase()[key];return (Array.isArray(rows)?rows:[]).filter(r=>typeof r.name==='string'&&Number.isFinite(r.score)&&r.score>=0&&r.score<=1100&&Number.isFinite(r.timeSec)&&r.timeSec>=0).sort(compareScores).slice(0,10);}
  function completedScore(){const s=geoGuessrState;if(!s||s.results.length!==10||s.rounds.length!==10||!s.completedAt)return null;return {score:Math.round(s.total*10)/10,timeSec:Math.max(0,Math.round((s.completedAt-s.startedAt)/1000)),created:s.completedAt};}
  function showTopTen(){
+  if(window.GeoOnline?.showMapWiz([...selected]))return;
   document.getElementById('mapwiz-top-ten')?.remove();
   const key=boardKey(),rows=scoreRows(key),result=completedScore(),s=geoGuessrState;
   const qualifies=result&&!s.topTenSaved&&(rows.length<10||compareScores(result,rows.at(-1))<0);
@@ -54,7 +55,7 @@
   });
   dialog.showModal();
  }
- window.MapWizPrototype={definitions,pools,reference};
+ window.MapWizPrototype={definitions,pools,reference,selected:()=>[...selected],begin:questions=>beginRound(questions)};
  initGeoGuessr=function(){
   stopGeoGuessrClock();geoGuessrState=null;hudObserver?.disconnect();document.body.classList.add('mapwiz-setup');
   app().innerHTML=`<div class="geo-guessr-setup-wrap"><div class="geo-guessr-setup mapwiz-prototype-setup">
@@ -93,12 +94,13 @@
   }
   return out;
  }
- startGeoGuessr=function(){
-  const questions=rounds();if(!questions.length)return;
+ function beginRound(questions){
+  if(!questions.length)return;
   stopGeoGuessrClock();geoGuessrSelection=new Set(selected);document.body.classList.remove('mapwiz-setup');
   geoGuessrState={rounds:questions,index:0,total:0,baseTotal:0,bonusTotal:0,results:[],answered:false,questionStarted:performance.now(),startedAt:Date.now(),norwayOnly:selected.size===1&&selected.has('place:Norge'),hsMode:null,hsHandled:true};
   renderGeoGuessrRound();
- };
+ }
+ startGeoGuessr=function(){beginRound(rounds());};
  const renderOriginal=renderGeoGuessrRound,clickOriginal=geoMapClick;
  function placeBox(){
   const hud=document.getElementById('geo-hud');if(!hud)return;

@@ -1,0 +1,11 @@
+{
+ "$schema":"https://unpkg.com/wrangler/config-schema.json",
+ "name":"onlyfag-geography-scores",
+ "main":"worker.mjs",
+ "account_id":"288c455a88972467b90df3399eae62dd",
+ "compatibility_date":"2026-10-21",
+ "workers_dev":true,
+ "observability":{"enabled":false},
+ "triggers":{"crons":["17 * * * *"]},
+ "d1_databases":[{"binding":"DB","database_name":"onlyfag-geography-scores","database_id":"844d93a0-ca5b-433a-b324-f3d47d02fbda"}]
+}
