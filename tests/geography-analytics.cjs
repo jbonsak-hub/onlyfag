@@ -79,6 +79,8 @@ const server = http.createServer((req, res) => {
     } else if (mode === 'statle') {
       await page.locator('#start:enabled').waitFor();
       assert.equal(await page.locator('path.state').count(), 50);
+      await page.locator('#geoMenuButton').click();
+      await page.keyboard.press('Escape');
     } else assert.deepEqual(info.active, ['quiz-' + mode]);
     assert.equal(info.beacons, 1);
     if (process.env.CF_BEACON_SOURCE) {
