@@ -10,6 +10,10 @@ GitHub Pages leverer statiske filer. En felles liste krever en separat tjeneste 
 
 Et passende oppsett er en Cloudflare Worker med en D1-database, uten å flytte selve nettstedet fra GitHub Pages. Worker kan ligge på et eget API-domene eller en workers.dev-adresse. Nettleseren får bare tilgang til offentlige endepunkter, aldri Cloudflare API-nøkler.
 
+Det er ikke nødvendig med et nytt domene eller en betalt plan for å starte. Workers og D1 har gratisnivå; faktisk trafikk avgjør om grensene senere krever en oppgradering. Se [Workers-priser](https://developers.cloudflare.com/workers/platform/pricing/) og [D1-priser](https://developers.cloudflare.com/d1/platform/pricing/). Cloudflare-innlogging eller en begrenset utrullingstilgang kan gis når tjenesten skal opprettes; passord og hemmelige nøkler skal ikke legges i GitHub eller spillfilene.
+
+API-et kan gjenbrukes for resultatlister i de øvrige geografiquizene. Hvert spill må ha egne regler for serverkontroll og rangering. Mobil med svaralternativer bør være en egen spillvariant ved eventuell rangering mot skriveversjonen på datamaskin.
+
 Det som må konfigureres før en global liste kan aktiveres:
 
 - Tilgang til riktig Cloudflare-konto med rettigheter til å opprette/publisere en Worker og en separat D1-database.

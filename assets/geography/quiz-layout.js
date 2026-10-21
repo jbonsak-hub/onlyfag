@@ -10,6 +10,23 @@
   header.prepend(menu);
   header.addEventListener('click', event => event.stopPropagation());
   back.textContent = '← Quizoversikt';
+  const setupLabels={flags:'Flaggquiz',capitals:'Hovedsteder',flagcapital:'Flagg+Hovedstad'};
+  const mobileSetup=matchMedia('(max-width:700px),(max-width:1000px) and (max-height:500px)');
+  if(setupLabels[mode]){
+    const syncBack=()=>{
+      const local=mobileSetup.matches&&!!document.querySelector('.world-game');
+      const label=local?'← '+setupLabels[mode]:'← Quizoversikt';
+      if(back.textContent!==(window.QuizLanguage?.translate(label)||label))back.textContent=label;
+      back.href=local?'#quiz-options':'../geografi.html#verden-quiz';
+    };
+    back.addEventListener('click',event=>{
+      if(!mobileSetup.matches||!document.querySelector('.world-game'))return;
+      event.preventDefault();showQuizMode(mode,null);window.scrollTo(0,0);
+    });
+    mobileSetup.addEventListener('change',syncBack);
+    new MutationObserver(syncBack).observe(document.querySelector('main.content'),{childList:true,subtree:true});
+    syncBack();
+  }
   const footer = document.createElement('div'); footer.className = 'quiz-layout-footer'; footer.append(back);
   const rail = document.createElement('aside'); rail.className = 'quiz-control-rail';
   rail.append(header, footer); document.body.append(rail);

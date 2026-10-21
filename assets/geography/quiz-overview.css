@@ -5,6 +5,7 @@ body[data-geography-page] .sidebar{font-size:14px}
 body[data-geography-page] .sidebar h1{font-size:16px}
 body[data-geography-page] .sidebar .menu-header{padding:9px 18px}
 body[data-geography-page] .sidebar .submenu-item{font-size:13px;padding:7px 18px 7px 45px}
+@media(max-width:820px){body[data-geography-page] .sidebar-resizer{display:none!important}}
 body:has(#verden-quiz.active):not([data-quiz]) main.content{padding:26px 36px}
 body:not([data-quiz]) #verden-quiz{padding:24px}
 body:not([data-quiz]) #verden-quiz h2{font-size:22px;margin-bottom:16px}
