@@ -6,7 +6,7 @@ const server=http.createServer((req,res)=>{try{const file=path.join(root,new URL
  await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port+'/';const browser=await pw.chromium.launch({headless:true,executablePath:process.env.BROWSER_EXECUTABLE});
  try{
   const context=await browser.newContext({viewport:{width:1366,height:643}}),errors=[],external=[];
-  context.on('page',p=>p.on('pageerror',e=>errors.push(e.message)));await context.route('**/*',r=>{if(r.request().url().startsWith(base)||/^(data|blob):/.test(r.request().url()))return r.continue();external.push(r.request().url());return r.abort();});
+  context.on('page',p=>p.on('pageerror',e=>errors.push(e.message)));await context.route('**/*',r=>{if(/score-service(?:-[a-f0-9]+)?\.js/.test(r.request().url()))return r.fulfill({contentType:'text/javascript',body:'window.GEO_SCORE_API="";'});if(r.request().url().startsWith(base)||/^(data|blob):/.test(r.request().url()))return r.continue();external.push(r.request().url());return r.abort();});
   const page=await context.newPage();page.setDefaultTimeout(7000);page.on('dialog',d=>d.dismiss());
   const shot=async name=>{if(process.env.LAYOUT_SCREENSHOTS){fs.mkdirSync(process.env.LAYOUT_SCREENSHOTS,{recursive:true});await page.screenshot({path:path.join(process.env.LAYOUT_SCREENSHOTS,name+'.png')});}};
   await page.goto(base+'geografi.html#verden-quiz');

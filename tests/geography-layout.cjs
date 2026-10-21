@@ -17,7 +17,7 @@ const server = http.createServer((req,res) => {
  try {
  const context=await browser.newContext(); const errors=[];
  context.on('page',p=>p.on('pageerror',e=>errors.push(e.message)));
- await context.route('**/*',r=>r.request().url().startsWith(base)||/^(data|blob):/.test(r.request().url())?r.continue():r.abort());
+ await context.route('**/*',r=>/score-service(?:-[a-f0-9]+)?\.js/.test(r.request().url())?r.fulfill({contentType:'text/javascript',body:'window.GEO_SCORE_API="";'}):r.request().url().startsWith(base)||/^(data|blob):/.test(r.request().url())?r.continue():r.abort());
  const page=await context.newPage();page.setDefaultTimeout(8000);page.on('dialog',d=>d.dismiss());
  const checkBox = async (scope,selector,minimumWidth=1) => {
   const rect=await scope.locator(selector).first().evaluate(e=>e.getBoundingClientRect().toJSON());

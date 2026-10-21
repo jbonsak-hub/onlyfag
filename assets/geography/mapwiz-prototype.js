@@ -39,7 +39,8 @@
  function scoreDatabase(){try{const value=JSON.parse(localStorage.getItem(scoreStore)||'{}');return value&&typeof value==='object'&&!Array.isArray(value)?value:{};}catch(_){return {};}}
  function scoreRows(key){const rows=scoreDatabase()[key];return (Array.isArray(rows)?rows:[]).filter(r=>typeof r.name==='string'&&Number.isFinite(r.score)&&r.score>=0&&r.score<=1100&&Number.isFinite(r.timeSec)&&r.timeSec>=0).sort(compareScores).slice(0,10);}
  function completedScore(){const s=geoGuessrState;if(!s||s.results.length!==10||s.rounds.length!==10||!s.completedAt)return null;return {score:Math.round(s.total*10)/10,timeSec:Math.max(0,Math.round((s.completedAt-s.startedAt)/1000)),created:s.completedAt};}
- function showTopTen(){
+ function showTopTen(localOnly=false){
+  if(!localOnly&&window.GeoOnline?.showMapWiz([...selected]))return;
   document.getElementById('mapwiz-top-ten')?.remove();
   const key=boardKey(),rows=scoreRows(key),result=completedScore(),s=geoGuessrState;
   const qualifies=result&&!s.topTenSaved&&(rows.length<10||compareScores(result,rows.at(-1))<0);
@@ -49,12 +50,12 @@
   dialog.querySelector('form')?.addEventListener('submit',event=>{
    event.preventDefault();const name=dialog.querySelector('input').value.trim().slice(0,24);if(!name)return;
    const db=scoreDatabase();db[key]=scoreRows(key).concat({...result,name}).sort(compareScores).slice(0,10);
-   try{localStorage.setItem(scoreStore,JSON.stringify(db));s.topTenSaved=true;dialog.close();showTopTen();document.querySelector('.mapwiz-score-status').textContent='Resultatet er lagret.';}
+   try{localStorage.setItem(scoreStore,JSON.stringify(db));s.topTenSaved=true;dialog.close();showTopTen(true);document.querySelector('.mapwiz-score-status').textContent='Resultatet er lagret.';}
    catch(_){dialog.querySelector('.mapwiz-score-status').textContent='Kunne ikke lagre. Nettleseren tillater ikke lokal lagring.';}
   });
   dialog.showModal();
  }
- window.MapWizPrototype={definitions,pools,reference};
+ window.MapWizPrototype={definitions,pools,reference,selected:()=>[...selected],begin:questions=>beginRound(questions),showLocalTopTen:()=>showTopTen(true)};
  initGeoGuessr=function(){
   stopGeoGuessrClock();geoGuessrState=null;hudObserver?.disconnect();document.body.classList.add('mapwiz-setup');
   app().innerHTML=`<div class="geo-guessr-setup-wrap"><div class="geo-guessr-setup mapwiz-prototype-setup">
@@ -74,7 +75,7 @@
   app().querySelector('#prototype-all').onclick=()=>{selected=new Set(definitions.map(d=>d[0]));initGeoGuessr();};
   app().querySelector('#prototype-none').onclick=()=>{selected.clear();initGeoGuessr();};
   app().querySelector('#geo-start-button').onclick=startGeoGuessr;
-  app().querySelector('#mapwiz-show-top-ten').onclick=showTopTen;
+  app().querySelector('#mapwiz-show-top-ten').onclick=()=>showTopTen();
   refresh();
  };
  function refresh(){document.getElementById('prototype-selection').textContent=`${selected.size} ${selected.size===1?'kategori':'kategorier'} valgt`;document.getElementById('mapwiz-show-top-ten').disabled=!selected.size;const start=document.getElementById('geo-start-button');start.disabled=!selected.size;start.textContent=selected.size?'Start 10 spørsmål →':'Velg kategorier';}
@@ -93,12 +94,13 @@
   }
   return out;
  }
- startGeoGuessr=function(){
-  const questions=rounds();if(!questions.length)return;
+ function beginRound(questions){
+  if(!questions.length)return;
   stopGeoGuessrClock();geoGuessrSelection=new Set(selected);document.body.classList.remove('mapwiz-setup');
   geoGuessrState={rounds:questions,index:0,total:0,baseTotal:0,bonusTotal:0,results:[],answered:false,questionStarted:performance.now(),startedAt:Date.now(),norwayOnly:selected.size===1&&selected.has('place:Norge'),hsMode:null,hsHandled:true};
   renderGeoGuessrRound();
- };
+ }
+ startGeoGuessr=function(){beginRound(rounds());};
  const renderOriginal=renderGeoGuessrRound,clickOriginal=geoMapClick;
  function placeBox(){
   const hud=document.getElementById('geo-hud');if(!hud)return;
@@ -169,7 +171,7 @@
   const hud=document.getElementById('geo-hud');hud.className='geo-hud prototype-summary';
   hud.innerHTML=`<h3>${s.total.toFixed(1)} / ${s.rounds.length*110} poeng</h3><table class="prototype-results"><thead><tr><th>Sted</th><th title="Poeng for avstand">Avst.p.</th><th title="Poeng for tid">Tidsp.</th></tr></thead><tbody>${s.results.map((r,index)=>`<tr><td><span class="prototype-result-name" title="${escape(r.name)}"><i style="background:${colors[index]}" aria-hidden="true"></i><span class="prototype-result-label">${escape(r.name)}</span></span></td><td>${r.base.toFixed(1)}</td><td>${r.bonus.toFixed(1)}</td></tr>`).join('')}</tbody></table><div class="prototype-summary-actions"><button class="geo-next-button" id="prototype-again">Spill igjen</button><button class="geo-next-button" id="prototype-settings">Endre kategorier</button></div>`;
   position=null;enableDragging(hud);placeBox();
-  const topTen=document.createElement('button');topTen.type='button';topTen.className='geo-next-button';topTen.textContent='Topp 10';topTen.onclick=showTopTen;hud.querySelector('.prototype-summary-actions').append(topTen);
+  const topTen=document.createElement('button');topTen.type='button';topTen.className='geo-next-button';topTen.textContent='Topp 10';topTen.onclick=()=>showTopTen();hud.querySelector('.prototype-summary-actions').append(topTen);
   document.getElementById('prototype-again').onclick=startGeoGuessr;document.getElementById('prototype-settings').onclick=initGeoGuessr;
  };
  // Never restore the original module's remembered category selection here.

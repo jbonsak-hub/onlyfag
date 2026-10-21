@@ -6,12 +6,12 @@ const server=http.createServer((req,res)=>{try{const file=path.join(root,new URL
  const browser=await pw.chromium.launch({headless:true,executablePath:process.env.BROWSER_EXECUTABLE});
  try{
   const context=await browser.newContext({viewport:{width:390,height:844}});context.on('page',p=>p.on('pageerror',e=>errors.push(e.message)));
-  await context.route('**/*',r=>r.request().url().startsWith(base)||/^(data|blob):/.test(r.request().url())?r.continue():r.abort());
+  await context.route('**/*',r=>/score-service(?:-[a-f0-9]+)?\.js/.test(r.request().url())?r.fulfill({contentType:'text/javascript',body:'window.GEO_SCORE_API="";'}):r.request().url().startsWith(base)||/^(data|blob):/.test(r.request().url())?r.continue():r.abort());
   const page=await context.newPage();page.on('dialog',d=>d.dismiss());
   for(const language of ['no','en']){
    await page.goto(base+'geografi.html#verden-quiz');await page.getByRole('button',{name:language==='no'?'Norsk':'English',exact:true}).click();
    const order=await page.locator('.geoquiz-mode-row').evaluateAll(rows=>rows.map(r=>r.getAttribute('onclick').match(/geografi\/([^']+)/)[1]));assert.deepEqual(order.slice(4,7),['geoguessr.html','worldle.html','tradle.html']);
-   for(const [file,label]of [['flaggquiz',language==='no'?'← Flaggquiz':'← Flags'],['hovedstadsquiz',language==='no'?'← Hovedsteder':'← Capitals'],['flagg-og-hovedstad',language==='no'?'← Flagg+Hovedstad':'← Flags+Capitals']]){
+   for(const [file,label]of [['flaggquiz',language==='no'?'← Flaggquiz':'← Flags'],['hovedstadsquiz',language==='no'?'← Hovedstadsquiz':'← Capitals'],['flagg-og-hovedstad',language==='no'?'← Flagg/hovedstad':'← Flags+Capitals']]){
     await page.goto(base+'geografi/'+file+'.html');await page.getByRole('button',{name:'Start',exact:true}).click();const wrong=await page.evaluate(()=>worldTrainerState.current.options.findIndex(o=>!worldTrainerState.current.isCorrect(o)));await page.locator('.world-option').nth(wrong).click();await page.waitForFunction(()=>worldTrainerState.ended);
     await page.waitForFunction(label=>document.querySelector('.quiz-page-back').textContent===label,label);await page.locator('.quiz-page-back').click();await page.locator('.streak-setup').waitFor();assert.ok(page.url().endsWith(file+'.html'),'Setup stays in same game');assert.equal(await page.locator('.streak-region-btn').count(),7);
     await page.getByRole('button',{name:'Start',exact:true}).click();const right=await page.evaluate(()=>worldTrainerState.current.options.findIndex(o=>worldTrainerState.current.isCorrect(o)));await page.locator('.world-option').nth(right).click();assert.equal(await page.evaluate(()=>worldTrainerState.score),1);
@@ -36,7 +36,7 @@ const server=http.createServer((req,res)=>{try{const file=path.join(root,new URL
    }
    await page.setViewportSize({width:390,height:844});
   }
-  await page.setViewportSize({width:1366,height:768});await page.goto(base+'geografi/flaggquiz.html');await page.getByRole('button',{name:'Start',exact:true}).click();assert.equal(await page.locator('.quiz-page-back').getAttribute('href'),'../geografi.html#verden-quiz','Desktop overview navigation remains');
+  await page.setViewportSize({width:1366,height:768});await page.goto(base+'geografi/flaggquiz.html');await page.getByRole('button',{name:'Start',exact:true}).click();assert.equal(await page.locator('.quiz-page-back').getAttribute('href'),'/geografi/flaggquiz.html','Desktop returns to quiz setup');
   assert.deepEqual(errors,[]);console.log(JSON.stringify({mobileSetupReturn:3,languages:2,mobileViewports:3,worldleChoices:6,tradleChoices:6,stableChoices:true,normalGuessHistory:true,desktopTyping:true,order:true,errors}));
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(()=>server.close());

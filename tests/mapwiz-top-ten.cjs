@@ -6,7 +6,7 @@ const server=http.createServer((req,res)=>{try{const file=path.join(root,new URL
  const browser=await pw.chromium.launch({headless:true,executablePath:process.env.BROWSER_EXECUTABLE});
  try{
   const context=await browser.newContext({viewport:{width:1366,height:643}}),errors=[];context.on('page',p=>p.on('pageerror',e=>errors.push(e.message)));
-  await context.route('**/*',r=>r.request().url().startsWith(base)||/^(data|blob):/.test(r.request().url())?r.continue():r.abort());
+  await context.route('**/*',r=>/score-service(?:-[a-f0-9]+)?\.js/.test(r.request().url())?r.fulfill({contentType:'text/javascript',body:'window.GEO_SCORE_API="";'}):r.request().url().startsWith(base)||/^(data|blob):/.test(r.request().url())?r.continue():r.abort());
   const page=await context.newPage();
   await page.goto(base+'geografi.html#verden-quiz');
   const fonts=()=>page.evaluate(()=>Object.fromEntries(['html','.sidebar','.sidebar h1','.menu-header','.submenu-item'].map(s=>[s,getComputedStyle(document.querySelector(s)).fontSize])));

@@ -16,6 +16,7 @@
   }
   function specialTopTitle(key){if(key==='geoguessr2|geografifaget1')return 'Topp 5 (Geografifaget1)';if(key==='geoguessr2|all')return 'Topp 5 (alle kategorier)';if(key==='places|streak')return 'Topp 5 (på rad)';if(key==='countries2|world'||key==='capitals|world'||key==='flags|world'||key==='flagcapital|world'||key==='detective|world')return 'Topp 5 (hele verden)';return 'Topp 5'}
   window.geoHsShow=function(key,label){
+    if(window.GeoOnline?.showLegacy(key,label))return;
     const rows=list(key),modal=document.getElementById('geo-hs-modal'),body=document.getElementById('geo-hs-body'),title=document.getElementById('geo-hs-title');if(!modal||!body)return;
     const special=key==='geoguessr2|all'||key==='geoguessr2|geografifaget1'||key==='places|streak';
     title.textContent='🏆 '+specialTopTitle(key)+(label&&!special?' · '+label:'');
@@ -28,7 +29,7 @@
   window.addEventListener('keydown',e=>{if(e.key==='Escape')geoHsClose()});
   function miniHtml(key,label){const rows=list(key).slice(0,3),head=specialTopTitle(key);return '<div class="hs-mini"><div class="hs-mini-head"><strong>🏆 '+head+'</strong><button type="button" onclick="geoHsShow(\''+esc(key).replace(/&#39;/g,"\'")+'\',\''+esc(label||'').replace(/&#39;/g,"\'")+'\')">Vis alle</button></div>'+(rows.length?rows.map((r,i)=>'<div class="hs-mini-row"><span>'+(i+1)+'.</span><b>'+esc(r.name)+'</b><span>'+esc(r.scoreText||'')+(r.timeSec!=null?' · '+fmtTime(r.timeSec):'')+(r.hints!=null&&Number(r.hints)>0?' · '+r.hints+' hint':'')+'</span></div>').join(''):'<div class="hs-empty" style="padding:8px 0">Ingen resultater ennå.</div>')+'</div>'}
   function appendMini(target,key,label){if(!target)return;const old=target.querySelector('.hs-mini');if(old)old.remove();target.insertAdjacentHTML('beforeend',miniHtml(key,label))}
-  function submitAndMini(result,target){if(!result||!result.key)return;add(result);setTimeout(()=>appendMini(target,result.key,result.label),0)}
+  function submitAndMini(result,target){if(!result||!result.key)return;if(window.GeoOnline?.finishLocal(result,target))return;add(result);setTimeout(()=>appendMini(target,result.key,result.label),0)}
 
   function submodeLabel(v){return ({'country-capital-mc':'Land → hovedstad','capital-country-mc':'Hovedstad → land','flag-country-mc':'Flagg → land','country-flag-mc':'Land → flagg','flag-capital-mc':'Flagg → hovedstad','capital-flag-mc':'Hovedstad → flagg','shape-country-mc':'Kartutsnitt → land','country-shape-mc':'Land → kartutsnitt','desc-place-mc':'Beskrivelse → sted','place-desc-mc':'Sted → beskrivelse'})[v]||v||''}
   function shortDirection(v){return ({'country-capital-mc':'land→hovedstad','capital-country-mc':'hovedstad→land','flag-country-mc':'flagg→land','country-flag-mc':'land→flagg','flag-capital-mc':'flagg→hovedstad','capital-flag-mc':'hovedstad→flagg'})[v]||''}
