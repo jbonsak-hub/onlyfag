@@ -49,6 +49,8 @@
 
 
 <link rel="stylesheet" href="assets/geography/geography.css">
+<link rel="stylesheet" href="assets/geography/subduction.css">
+<script src="assets/geography/subduction.js" defer></script>
 <script src="assets/geography/routes.js"></script>
 <script src="assets/geography/navigation.js" defer></script>
 <script src="assets/analytics.js" defer></script>
@@ -69,6 +71,7 @@
 </div></div>
 <div class="menu-item"><div class="menu-header" onclick="toggleMenu(this)"><span class="menu-icon">▶</span>Indre krefter og landformer</div><div class="submenu">
 <div class="submenu-item" onclick="showContent('indre-fagstoff', this)">Fagstoff</div>
+<a class="submenu-item subduction-menu-link" href="#indre-subduksjon" onclick="showContent('indre-subduksjon', this)">Subduksjonsmodell</a>
 <div class="submenu-item" onclick="showContent('indre-begreper', this)">Begrepsliste</div>
 <div class="submenu-item" onclick="showContent('indre-sporsmal', this)">Test deg selv</div>
 </div></div>
@@ -218,6 +221,7 @@
 </tr>
 </table>
 <div class="geo-keyline"><strong>Subduksjon:</strong> Når en havbunnsplate synker under en annen plate. Vann fra den synkende plata senker smeltepunktet i mantelen over, slik at magma kan dannes og stige.</div>
+<a class="subduction-entry" href="#indre-subduksjon" onclick="showContent('indre-subduksjon', document.querySelector('.subduction-menu-link'))"><span aria-hidden="true">↘</span><span><strong>Utforsk en subduksjonssone</strong>Styr platebevegelsen og se sammenhengen mellom dyphavsgrop, jordskjelv og vulkaner.</span><span aria-hidden="true">→</span></a>
 </article>
 <article class="geo-concept-card">
 <strong>6. Jordskjelv og tsunami</strong>
@@ -290,6 +294,49 @@
   <a href="https://ndla.no/" rel="noopener" target="_blank">NDLA</a>,
   <a href="https://snl.no/" rel="noopener" target="_blank">Store norske leksikon (SNL)</a>
   og <a href="https://no.wikipedia.org/" rel="noopener" target="_blank">Wikipedia</a>.
+</div>
+</section>
+<section class="page-section" id="indre-subduksjon" aria-labelledby="subduction-heading">
+<span class="topic-label">Interaktiv modell · Geografi Vg1</span>
+<h2 id="subduction-heading">Når havbunnen møter et kontinent</h2>
+<p class="lead">Én plate synker. Et helt landskap forandres. Dra glideren for å utforske en subduksjonssone, slik vi finner langs vestkysten av Sør-Amerika.</p>
+<div class="subduction-lab" id="subduction-lab">
+  <div class="sd-topline"><span>Tverrsnitt gjennom en plategrense</span><span class="sd-time-note">Millioner av år</span></div>
+  <figure class="sd-figure" aria-describedby="sd-model-note">
+    <div class="sd-diagram-wrap">
+      <svg class="sd-diagram" id="sd-diagram" viewBox="0 0 1000 600" role="img" aria-labelledby="sd-svg-title sd-svg-desc">
+        <title id="sd-svg-title">Havbunnsplate som synker under en kontinentalplate</title>
+        <desc id="sd-svg-desc">Et forenklet tverrsnitt viser subduksjon. Bruk glideren og forklaringene under figuren for å utforske prosessen.</desc>
+      </svg>
+      <span class="sd-diagram-caption" aria-hidden="true">Skjematisk tverrsnitt · ikke i målestokk</span>
+    </div>
+    <figcaption class="sd-legend">
+      <span><i class="sd-swatch sd-oceanic"></i>Havbunnsplate</span><span><i class="sd-swatch sd-continental"></i>Kontinentalplate</span><span><i class="sd-swatch sd-water"></i>Vannrike væsker</span><span><i class="sd-swatch sd-magma"></i>Magma</span>
+    </figcaption>
+  </figure>
+  <div class="sd-controls">
+    <div class="sd-slider-heading"><label for="sd-progress">Styr platebevegelsen</label><output id="sd-progress-value" for="sd-progress">0 %</output></div>
+    <input id="sd-progress" class="sd-range" type="range" min="0" max="100" step="1" value="0" aria-describedby="sd-slider-help">
+    <div class="sd-range-labels" aria-hidden="true"><span>Begynnende subduksjon</span><span>Utviklet subduksjonssone</span></div>
+    <div class="sd-control-row">
+      <div class="sd-actions"><button id="sd-play" type="button" aria-pressed="false" hidden>▶ Spill av</button><button id="sd-reset" type="button" hidden>↺ Tilbakestill</button></div>
+      <fieldset class="sd-layers" hidden><legend>Vis i modellen</legend><label><input id="sd-labels" type="checkbox" checked>Betegnelser</label><label><input id="sd-quakes" type="checkbox" checked>Jordskjelv</label><label><input id="sd-fluids" type="checkbox" checked>Vann og magma</label></fieldset>
+    </div>
+    <p id="sd-slider-help" class="sd-help">Dra begge veier, eller bruk piltastene når glideren er valgt. Du spoler i utviklingen; i naturen går ikke platene tilbake.</p>
+    <noscript><p class="sd-no-script">Slå på JavaScript for å bruke modellen. Les også forklaringen på subduksjon under <a href="#indre-fagstoff">Fagstoff</a>.</p></noscript>
+  </div>
+  <div class="sd-stage" role="status" aria-live="polite" aria-atomic="true"><span id="sd-stage-number">01</span><div><strong id="sd-stage-title">Havbunnsplaten bøyes ned</strong><p id="sd-stage-text">En kald og tett havbunnsplate begynner å synke under kontinentet. Der platen bøyes ned, utvikles en dyphavsgrop.</p></div></div>
+  <div class="sd-feature-buttons" role="group" aria-label="Utforsk prosessene">
+    <button type="button" data-sd-topic="trench" aria-pressed="true"><span>1</span>Dyphavsgrop</button>
+    <button type="button" data-sd-topic="melting" aria-pressed="false"><span>2</span>Vann og magma</button>
+    <button type="button" data-sd-topic="mountains" aria-pressed="false"><span>3</span>Vulkaner og fjell</button>
+    <button type="button" data-sd-topic="earthquakes" aria-pressed="false"><span>4</span>Jordskjelv</button>
+  </div>
+  <div class="sd-explanation" id="sd-explanation" role="region" aria-label="Forklaring av valgt prosess" aria-live="polite"></div>
+  <div class="sd-quake-key" id="sd-quake-key" aria-label="Jordskjelvenes fokusdybder"><strong>Jordskjelvfokus:</strong><span><i class="sd-quake-symbol sd-shallow"></i>Grunne: under 70 km</span><span><i class="sd-quake-symbol sd-intermediate"></i>Mellomdype: 70–300 km</span><span><i class="sd-quake-symbol sd-deep"></i>Dype: 300–700 km</span></div>
+  <p class="sd-model-note" id="sd-model-note"><strong>En forenklet modell:</strong> Utviklingen foregår over millioner av år. Avstander, tykkelser og tidsforløp er ikke i målestokk. Prosessene overlapper i naturen; glideren viser en skjematisk utvikling, ikke en beregning av en bestemt plategrense. Skjelvpunktene viser mulige fokus, ikke samtidige skjelv eller en prognose.</p>
+  <details class="sd-notes"><summary>Se etter dette – og tenk selv</summary><ol><li>Følg havbunnsplaten: Hvorfor finner vi dypere jordskjelv lenger inn under kontinentet?</li><li>Finn de blå pilene og det oransje området. Hvilken bergart smelter delvis, og hvilken rolle spiller vannet?</li><li>Hvorfor ligger vulkanene et stykke innenfor dyphavsgropa?</li></ol></details>
+  <div class="sd-sources">Faggrunnlag: <a href="https://www.usgs.gov/special-topics/subduction-zone-science/science/introduction-subduction-zones-amazing-events" target="_blank" rel="noopener">USGS: subduksjonssoner</a> · <a href="https://www.usgs.gov/faqs/what-depth-do-earthquakes-occur-what-significance-depth" target="_blank" rel="noopener">USGS: jordskjelvdybder</a> · <a href="https://www.geochemicalperspectivesletters.org/article1925/" target="_blank" rel="noopener">Rustioni mfl. (2019): vann og oppsmelting</a></div>
 </div>
 </section>
 <section class="page-section" id="indre-begreper">

@@ -1,0 +1,97 @@
+/* Scoped to the subduction model; shared geography/quiz styles stay untouched. */
+.subduction-menu-link{display:block;text-decoration:none}
+.subduction-entry{display:flex;align-items:center;gap:14px;margin-top:16px;padding:15px 17px;border:1px solid #b9d8c6;border-radius:12px;background:#f0f8f3;color:#245f42;text-decoration:none;line-height:1.5;font-size:.91rem}
+.subduction-entry strong{display:block;font-size:1rem}.subduction-entry>span:first-child{font-size:2rem}.subduction-entry>span:last-child{margin-left:auto;font-size:1.4rem}
+.subduction-entry:hover{background:#e2f1e8;border-color:#428b62}
+#indre-subduksjon{--sd-ink:#233e34;--sd-muted:#53675e;--sd-line:#cfdfd5;--sd-surface:#f4f8f5;--sd-paper:#fff;--sd-accent:#216e4b;--sd-highlight:#e9f4ed}
+#indre-subduksjon .subduction-lab{border:1px solid var(--sd-line);border-radius:18px;overflow:hidden;background:var(--sd-paper);color:var(--sd-ink)}
+#indre-subduksjon .sd-topline{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:14px 20px;font-weight:650;font-size:.84rem;background:var(--sd-surface)}
+#indre-subduksjon .sd-time-note{font-size:.75rem;letter-spacing:.02em;padding:5px 10px;border:1px solid var(--sd-line);border-radius:30px;white-space:nowrap}
+#indre-subduksjon .sd-figure{margin:0}
+#indre-subduksjon .sd-diagram-wrap{position:relative;background:#101e2b;overflow:hidden;container-type:inline-size}
+#indre-subduksjon .sd-diagram{display:block;width:100%;height:auto;aspect-ratio:5/3;font-family:'Segoe UI',Tahoma,sans-serif}
+#indre-subduksjon .sd-diagram-caption{position:absolute;bottom:12px;left:20px;color:#bacad0;font-size:.7rem;letter-spacing:.03em;pointer-events:none}
+#indre-subduksjon .sd-diagram text{fill:#f4f5ec;font-size:18px;font-weight:600;paint-order:stroke;stroke:#172934;stroke-width:4px;stroke-linejoin:round}
+#indre-subduksjon .sd-diagram .sd-small-label{font-size:15px;fill:#d4dfe0;font-weight:400}
+#indre-subduksjon .sd-diagram .sd-label-line{fill:none;stroke:#d4dfe0;stroke-width:1.5;opacity:.7}
+#indre-subduksjon .sd-diagram .sd-callout circle{fill:#f4f5ec;stroke:#233e34;stroke-width:2}
+#indre-subduksjon .sd-diagram .sd-callout text{fill:#233e34;stroke:none;font-size:19px;font-weight:800;text-anchor:middle;dominant-baseline:central}
+#indre-subduksjon .sd-diagram .sd-callout.is-selected circle{fill:#bbf2cd;stroke:#f1fff5;stroke-width:3}
+#indre-subduksjon .sd-legend{display:flex;flex-wrap:wrap;gap:10px 22px;background:#172a37;padding:13px 20px;font-size:.76rem;color:#ecf2ef;line-height:1.4}
+#indre-subduksjon .sd-legend span,#indre-subduksjon .sd-quake-key span{display:inline-flex;align-items:center;gap:8px}
+#indre-subduksjon .sd-swatch{display:inline-block;width:15px;height:8px;border-radius:2px;flex:0 0 auto}
+#indre-subduksjon .sd-oceanic{background:#6fbfb6}#indre-subduksjon .sd-continental{background:#cb9a70}#indre-subduksjon .sd-water{background:#65d1fa}#indre-subduksjon .sd-magma{background:#ff9555}
+#indre-subduksjon .sd-controls{padding:22px 24px 17px}
+#indre-subduksjon .sd-slider-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:750}
+#indre-subduksjon .sd-slider-heading output{color:var(--sd-accent);font-variant-numeric:tabular-nums;font-size:.86rem;white-space:nowrap}
+#indre-subduksjon .sd-range{display:block;width:100%;height:44px;margin:5px 0 0;accent-color:#2b8558;cursor:pointer;touch-action:pan-y;background:transparent}
+#indre-subduksjon .sd-range-labels{display:flex;justify-content:space-between;gap:16px;font-size:.75rem;color:var(--sd-muted);line-height:1.4}
+#indre-subduksjon .sd-range-labels span:last-child{text-align:right}
+#indre-subduksjon .sd-control-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-top:19px}
+#indre-subduksjon .sd-actions{display:flex;gap:8px;flex-wrap:wrap}
+#indre-subduksjon button{font:inherit;cursor:pointer;touch-action:manipulation}
+#indre-subduksjon .sd-actions button{min-height:44px;border:1px solid var(--sd-line);border-radius:9px;padding:9px 13px;background:var(--sd-paper);color:var(--sd-ink);font-size:.83rem;font-weight:650}
+#indre-subduksjon .sd-actions #sd-play{background:var(--sd-accent);border-color:var(--sd-accent);color:#fff;min-width:105px}
+#indre-subduksjon .sd-actions button:hover{filter:brightness(.94)}
+#indre-subduksjon .sd-layers{display:flex;flex-wrap:wrap;gap:3px 13px;border:0;font-size:.75rem;color:var(--sd-muted)}
+#indre-subduksjon .sd-layers legend{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+#indre-subduksjon .sd-layers label{display:flex;align-items:center;gap:6px;min-height:44px;cursor:pointer}
+#indre-subduksjon .sd-layers input{accent-color:#2b8558;width:16px;height:16px}
+#indre-subduksjon .sd-help{font-size:.73rem;color:var(--sd-muted);line-height:1.5;margin-top:13px}
+#indre-subduksjon .sd-stage{display:flex;gap:15px;align-items:flex-start;margin:0 24px 20px;padding:17px 18px;background:var(--sd-highlight);border:1px solid var(--sd-line);border-radius:12px;min-height:107px}
+#indre-subduksjon .sd-stage>span{font-size:1.65rem;font-weight:350;color:var(--sd-accent);line-height:1.2;font-variant-numeric:tabular-nums}
+#indre-subduksjon .sd-stage strong{font-size:.95rem}#indre-subduksjon .sd-stage p{font-size:.85rem;line-height:1.55;margin-top:5px;color:var(--sd-muted)}
+#indre-subduksjon .sd-feature-buttons{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding:0 24px}
+#indre-subduksjon .sd-feature-buttons button{display:flex;align-items:center;gap:8px;min-height:50px;text-align:left;border-radius:10px;border:1px solid var(--sd-line);padding:9px;background:var(--sd-paper);color:var(--sd-muted);font-size:.76rem;line-height:1.25;font-weight:650}
+#indre-subduksjon .sd-feature-buttons button span{display:grid;place-items:center;flex:0 0 23px;height:23px;background:var(--sd-surface);border-radius:50%;color:var(--sd-ink);font-size:.75rem}
+#indre-subduksjon .sd-feature-buttons button[aria-pressed=true]{border-color:var(--sd-accent);color:var(--sd-accent);background:var(--sd-highlight)}
+#indre-subduksjon .sd-feature-buttons button[aria-pressed=true] span{background:var(--sd-accent);color:#fff}
+#indre-subduksjon .sd-explanation{padding:20px 25px 16px;line-height:1.65;font-size:.88rem;min-height:150px}
+#indre-subduksjon .sd-explanation h3{font-size:1.04rem;color:var(--sd-ink);margin:0 0 7px;padding:0;border:0}
+#indre-subduksjon .sd-explanation p+p{margin-top:8px}
+#indre-subduksjon .sd-explanation .sd-look{color:var(--sd-accent);font-size:.8rem;margin-top:11px}
+#indre-subduksjon .sd-quake-key{display:flex;flex-wrap:wrap;gap:10px 17px;padding:15px 24px;border-block:1px solid var(--sd-line);background:var(--sd-surface);font-size:.74rem;line-height:1.5;color:var(--sd-muted)}
+#indre-subduksjon .sd-quake-key strong{font-weight:650}
+#indre-subduksjon .sd-quake-symbol{display:inline-block;width:9px;height:9px;border:1px solid #4a5156;flex:0 0 auto}.sd-quake-symbol.sd-shallow{background:#f4d776;border-radius:50%}.sd-quake-symbol.sd-intermediate{background:#ed9a80;transform:rotate(45deg)}.sd-quake-symbol.sd-deep{background:#c4a4f3;border-radius:1px}
+#indre-subduksjon .sd-model-note{padding:18px 24px 0;font-size:.77rem;line-height:1.65;color:var(--sd-muted)}
+#indre-subduksjon .sd-model-note strong{color:var(--sd-ink)}
+#indre-subduksjon .sd-notes{margin:19px 24px 0;border:1px solid var(--sd-line);background:var(--sd-surface);border-radius:10px;padding:12px 15px;font-size:.83rem;line-height:1.6}
+#indre-subduksjon .sd-notes summary{cursor:pointer;font-weight:650;min-height:24px}
+#indre-subduksjon .sd-notes ol{padding:10px 0 0 20px}#indre-subduksjon .sd-notes li+li{margin-top:5px}
+#indre-subduksjon .sd-sources{padding:18px 24px 22px;font-size:.7rem;line-height:1.8;color:var(--sd-muted)}
+#indre-subduksjon a{color:var(--sd-accent);text-underline-offset:3px}
+#indre-subduksjon :is(button,input,a,summary):focus-visible,.subduction-entry:focus-visible,.subduction-menu-link:focus-visible{outline:3px solid #3299c1;outline-offset:4px}
+#indre-subduksjon [hidden]{display:none!important}
+#indre-subduksjon .sd-diagram.is-compact .sd-wide-label{display:none}
+#indre-subduksjon .sd-diagram.is-compact .sd-compact-label{display:block}
+#indre-subduksjon .sd-diagram.is-compact .sd-compact-label text{font-size:26px}
+#indre-subduksjon .sd-diagram.is-compact .sd-callout circle{r:19px}
+#indre-subduksjon .sd-diagram.is-compact .sd-callout text{font-size:25px}
+#indre-subduksjon .sd-compact-label{display:none}
+body.dark-mode #indre-subduksjon{--sd-ink:#e0ece4;--sd-muted:#b4c8bc;--sd-line:#375247;--sd-surface:#1b2c26;--sd-paper:#15231e;--sd-accent:#88d7a4;--sd-highlight:#203b2b}
+body.dark-mode #indre-subduksjon .sd-actions #sd-play{color:#173b28}
+body.dark-mode .subduction-entry{background:#1b3226;color:#b8e3c7;border-color:#42684d}
+@container(max-width:600px){#indre-subduksjon .sd-diagram{aspect-ratio:690/600}}
+@media(max-width:1050px){#indre-subduksjon .sd-feature-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){
+  .content:has(>#indre-subduksjon.active){padding:16px 8px}
+  #indre-subduksjon{padding:20px 10px}
+  #indre-subduksjon .sd-topline{padding:12px 14px;align-items:flex-start;font-size:.73rem;line-height:1.4}
+  #indre-subduksjon .sd-time-note{font-size:.65rem;padding:4px 7px}
+  #indre-subduksjon .sd-controls{padding:18px 15px 16px}
+  #indre-subduksjon .sd-legend{padding:12px 15px;gap:8px 15px;font-size:.69rem}
+  #indre-subduksjon .sd-slider-heading{font-size:.9rem}
+  #indre-subduksjon .sd-stage{margin:0 15px 17px;padding:14px;gap:11px}
+  #indre-subduksjon .sd-stage p{font-size:.8rem}
+  #indre-subduksjon .sd-feature-buttons{padding:0 15px}
+  #indre-subduksjon .sd-feature-buttons button{font-size:.71rem;gap:6px;padding:8px}
+  #indre-subduksjon .sd-feature-buttons button span{flex-basis:20px;height:20px}
+  #indre-subduksjon .sd-explanation{padding:18px 16px;font-size:.84rem}
+  #indre-subduksjon .sd-quake-key{padding:14px 16px;gap:10px 14px}
+  #indre-subduksjon .sd-model-note{padding:17px 16px 0}
+  #indre-subduksjon .sd-notes{margin:17px 15px 0}
+  #indre-subduksjon .sd-sources{padding:17px 16px 20px}
+  #indre-subduksjon .sd-diagram-caption{font-size:.61rem;left:15px;bottom:9px}
+}
+@media(prefers-reduced-motion:reduce){#indre-subduksjon{animation:none}}
+@media print{#indre-subduksjon .sd-actions,#indre-subduksjon .sd-layers{display:none}}
