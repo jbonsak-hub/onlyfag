@@ -33,6 +33,27 @@
  let selected=new Set(),position=null,hudObserver=null;
  const app=()=>document.getElementById('geo-guessr-app');
  const unique=items=>new Set(items.map(t=>t.name)).size;
+ const scoreStore='geoHighscoresV1';
+ const boardKey=()=> 'mapwiz3|'+[...selected].sort().join(',');
+ const compareScores=(a,b)=>b.score-a.score||a.timeSec-b.timeSec||a.created-b.created;
+ function scoreDatabase(){try{const value=JSON.parse(localStorage.getItem(scoreStore)||'{}');return value&&typeof value==='object'&&!Array.isArray(value)?value:{};}catch(_){return {};}}
+ function scoreRows(key){const rows=scoreDatabase()[key];return (Array.isArray(rows)?rows:[]).filter(r=>typeof r.name==='string'&&Number.isFinite(r.score)&&r.score>=0&&r.score<=1100&&Number.isFinite(r.timeSec)&&r.timeSec>=0).sort(compareScores).slice(0,10);}
+ function completedScore(){const s=geoGuessrState;if(!s||s.results.length!==10||s.rounds.length!==10||!s.completedAt)return null;return {score:Math.round(s.total*10)/10,timeSec:Math.max(0,Math.round((s.completedAt-s.startedAt)/1000)),created:s.completedAt};}
+ function showTopTen(){
+  document.getElementById('mapwiz-top-ten')?.remove();
+  const key=boardKey(),rows=scoreRows(key),result=completedScore(),s=geoGuessrState;
+  const qualifies=result&&!s.topTenSaved&&(rows.length<10||compareScores(result,rows.at(-1))<0);
+  const dialog=document.createElement('dialog');dialog.id='mapwiz-top-ten';dialog.className='mapwiz-top-ten';dialog.setAttribute('aria-labelledby','mapwiz-top-ten-title');
+  dialog.innerHTML=`<div class="mapwiz-top-ten-heading"><h3 id="mapwiz-top-ten-title">Topp 10</h3><button type="button" class="mapwiz-top-ten-close" aria-label="Lukk">×</button></div><p>Lagres bare i denne nettleseren. Egen liste for hvert kategorivalg.</p><div class="mapwiz-top-ten-categories">${definitions.filter(([key])=>selected.has(key)).map(([,label])=>`<span>${escape(label)}</span>`).join('')}</div>${qualifies?'<form class="mapwiz-score-form"><label for="mapwiz-score-name">Kallenavn</label><div><input id="mapwiz-score-name" name="nickname" maxlength="24" required autocomplete="off" placeholder="Velg et kallenavn"><button type="submit">Lagre resultat</button></div></form>':''}<p class="mapwiz-score-status" role="status"></p><div class="mapwiz-top-ten-table">${rows.length?`<table><thead><tr><th>#</th><th>Navn</th><th>Poeng</th><th>Tid</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i+1}</td><td data-no-translate>${escape(r.name)}</td><td>${r.score.toFixed(1)}</td><td>${Math.floor(r.timeSec/60)}:${String(r.timeSec%60).padStart(2,'0')}</td></tr>`).join('')}</tbody></table>`:'<p>Ingen resultater ennå.</p>'}</div>`;
+  document.body.append(dialog);dialog.querySelector('.mapwiz-top-ten-close').onclick=()=>dialog.close();dialog.addEventListener('close',()=>dialog.remove());
+  dialog.querySelector('form')?.addEventListener('submit',event=>{
+   event.preventDefault();const name=dialog.querySelector('input').value.trim().slice(0,24);if(!name)return;
+   const db=scoreDatabase();db[key]=scoreRows(key).concat({...result,name}).sort(compareScores).slice(0,10);
+   try{localStorage.setItem(scoreStore,JSON.stringify(db));s.topTenSaved=true;dialog.close();showTopTen();document.querySelector('.mapwiz-score-status').textContent='Resultatet er lagret.';}
+   catch(_){dialog.querySelector('.mapwiz-score-status').textContent='Kunne ikke lagre. Nettleseren tillater ikke lokal lagring.';}
+  });
+  dialog.showModal();
+ }
  window.MapWizPrototype={definitions,pools,reference};
  initGeoGuessr=function(){
   stopGeoGuessrClock();geoGuessrState=null;hudObserver?.disconnect();document.body.classList.add('mapwiz-setup');
@@ -41,6 +62,7 @@
     <div class="prototype-intro">Velg kategorier. Hver runde har 10 spørsmål.</div>
     <div class="geo-selection-tools"><button id="prototype-all" type="button">Velg alle</button><button id="prototype-none" type="button">Fjern alle</button></div>
     <div id="prototype-selection" aria-live="polite"></div>
+    <button class="mapwiz-top-ten-button" id="mapwiz-show-top-ten" type="button">Topp 10</button>
     <div class="geo-setup-actions"><button class="geo-start-button" id="geo-start-button" disabled>Velg kategorier</button></div>
    </div>
    <div class="geo-selection-grid">${definitions.map(([key,label])=>`<label class="geo-selection-item"><input type="checkbox" data-prototype-category="${key}" ${selected.has(key)?'checked':''}><span><strong>${label}</strong> <span class="prototype-category-count">(${unique(pools.get(key))})</span></span></label>`).join('')}</div>
@@ -52,9 +74,10 @@
   app().querySelector('#prototype-all').onclick=()=>{selected=new Set(definitions.map(d=>d[0]));initGeoGuessr();};
   app().querySelector('#prototype-none').onclick=()=>{selected.clear();initGeoGuessr();};
   app().querySelector('#geo-start-button').onclick=startGeoGuessr;
+  app().querySelector('#mapwiz-show-top-ten').onclick=showTopTen;
   refresh();
  };
- function refresh(){document.getElementById('prototype-selection').textContent=`${selected.size} ${selected.size===1?'kategori':'kategorier'} valgt`;const start=document.getElementById('geo-start-button');start.disabled=!selected.size;start.textContent=selected.size?'Start 10 spørsmål →':'Velg kategorier';}
+ function refresh(){document.getElementById('prototype-selection').textContent=`${selected.size} ${selected.size===1?'kategori':'kategorier'} valgt`;document.getElementById('mapwiz-show-top-ten').disabled=!selected.size;const start=document.getElementById('geo-start-button');start.disabled=!selected.size;start.textContent=selected.size?'Start 10 spørsmål →':'Velg kategorier';}
  function rounds(){
   const buckets=shuffleArray([...selected].map(key=>({key,items:shuffleArray(pools.get(key).filter(t=>selected.size===1&&key==='place:Norge'||t.lat<=GEO_MAP_TOP&&t.lat>=GEO_MAP_BOTTOM)),count:0}))),out=[],seen=new Set(),limit=selected.size>5?2:10;
   while(out.length<10&&buckets.length){
@@ -73,7 +96,7 @@
  startGeoGuessr=function(){
   const questions=rounds();if(!questions.length)return;
   stopGeoGuessrClock();geoGuessrSelection=new Set(selected);document.body.classList.remove('mapwiz-setup');
-  geoGuessrState={rounds:questions,index:0,total:0,baseTotal:0,bonusTotal:0,results:[],answered:false,questionStarted:performance.now(),norwayOnly:selected.size===1&&selected.has('place:Norge'),hsMode:null,hsHandled:true};
+  geoGuessrState={rounds:questions,index:0,total:0,baseTotal:0,bonusTotal:0,results:[],answered:false,questionStarted:performance.now(),startedAt:Date.now(),norwayOnly:selected.size===1&&selected.has('place:Norge'),hsMode:null,hsHandled:true};
   renderGeoGuessrRound();
  };
  const renderOriginal=renderGeoGuessrRound,clickOriginal=geoMapClick;
@@ -141,10 +164,12 @@
  };
  renderGeoGuessrSummary=function(){
   stopGeoGuessrClock();const s=geoGuessrState,stage=app().querySelector('.geo-map-stage');if(!stage)return;
+  if(s.results.length===10&&!s.completedAt)s.completedAt=Date.now();
   drawResults();
   const hud=document.getElementById('geo-hud');hud.className='geo-hud prototype-summary';
   hud.innerHTML=`<h3>${s.total.toFixed(1)} / ${s.rounds.length*110} poeng</h3><table class="prototype-results"><thead><tr><th>Sted</th><th title="Poeng for avstand">Avst.p.</th><th title="Poeng for tid">Tidsp.</th></tr></thead><tbody>${s.results.map((r,index)=>`<tr><td><span class="prototype-result-name" title="${escape(r.name)}"><i style="background:${colors[index]}" aria-hidden="true"></i><span class="prototype-result-label">${escape(r.name)}</span></span></td><td>${r.base.toFixed(1)}</td><td>${r.bonus.toFixed(1)}</td></tr>`).join('')}</tbody></table><div class="prototype-summary-actions"><button class="geo-next-button" id="prototype-again">Spill igjen</button><button class="geo-next-button" id="prototype-settings">Endre kategorier</button></div>`;
   position=null;enableDragging(hud);placeBox();
+  const topTen=document.createElement('button');topTen.type='button';topTen.className='geo-next-button';topTen.textContent='Topp 10';topTen.onclick=showTopTen;hud.querySelector('.prototype-summary-actions').append(topTen);
   document.getElementById('prototype-again').onclick=startGeoGuessr;document.getElementById('prototype-settings').onclick=initGeoGuessr;
  };
  // Never restore the original module's remembered category selection here.

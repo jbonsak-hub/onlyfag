@@ -173,6 +173,15 @@ body[data-quiz] .country-map-game .country-map-primary{grid-template-columns:min
 
 /* Compact controls at native browser zoom. Help never competes with attempts. */
 body[data-quiz],body[data-quiz-layout]{font-size:13px}
+.quiz-mobile-answers{display:none}
+@media(max-width:700px),(max-width:1000px) and (max-height:500px){
+ .quiz-mobile-answer-input{display:none!important}
+ .quiz-mobile-answers:not([hidden]){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:4px 0}
+ .quiz-mobile-answers button{min-width:0;min-height:44px;padding:7px 8px;border:1px solid var(--q-line);border-radius:6px;background:var(--q-soft);color:var(--q-ink);font:650 13px/1.25 'Segoe UI',sans-serif;overflow-wrap:anywhere;cursor:pointer}
+ .quiz-mobile-answers button:focus-visible{outline:2px solid var(--q-green);outline-offset:2px}
+ .quiz-mobile-answers button.is-tried{opacity:.55;text-decoration:line-through}
+ .quiz-mobile-answers button:disabled{cursor:default}
+}
 body[data-quiz] .quiz-page-header{min-height:0;justify-content:flex-end;margin:0 0 6px;gap:5px}
 body[data-quiz] .quiz-page-theme,body[data-quiz-layout] .quiz-page-theme{width:26px!important;height:26px!important;font-size:14px!important}
 body[data-quiz] .quiz-page-back,body[data-quiz-layout] .quiz-page-back{font-size:12px!important;padding:6px 8px!important;border-radius:5px!important}

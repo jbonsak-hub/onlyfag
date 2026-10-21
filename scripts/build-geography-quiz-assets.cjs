@@ -6,7 +6,12 @@ const root = path.resolve(__dirname, '..');
 const check = process.argv.includes('--check');
 const routes = JSON.parse(fs.readFileSync(path.join(root, 'assets/geography/routes.js'), 'utf8').match(/window.GEO_QUIZ_ROUTES=([\s\S]*);/)[1]);
 const pages = ['geografi.html', 'prototypes/mapwiz.html', 'prototypes/statle.html', ...Object.values(routes).map(([file]) => file)];
-const mapHash = crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'assets/geography/maplab.html'),'utf8').replace(/\r\n/g,'\n')).digest('hex').slice(0,12);
+const mobileHash=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'assets/geography/quiz-mobile-answers.js'),'utf8').replace(/\r\n/g,'\n')).digest('hex').slice(0,12);
+const mapFile=path.join(root,'assets/geography/maplab.html'),mapOriginal=fs.readFileSync(mapFile,'utf8');
+const mapUpdated=mapOriginal.replace(/quiz-mobile-answers\.js(?:\?v=[a-f0-9]+)?/g,'quiz-mobile-answers.js?v='+mobileHash);
+if(check&&mapUpdated!==mapOriginal)throw new Error('Run node scripts/build-geography-quiz-assets.cjs');
+if(!check&&mapUpdated!==mapOriginal)fs.writeFileSync(mapFile,mapUpdated);
+const mapHash = crypto.createHash('sha256').update(mapUpdated.replace(/\r\n/g,'\n')).digest('hex').slice(0,12);
 const built = new Map();
 for (const page of pages) {
   const file = path.join(root, page), original = fs.readFileSync(file, 'utf8');
