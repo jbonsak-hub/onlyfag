@@ -1,8 +1,8 @@
 # MapWiz topp 10
 
-MapWiz har nå global topp 10 på startsiden og sluttskjermen, med en separat knapp for tidligere lokale resultater. Bare fullførte runder med ti spørsmål kan lagres. Brukeren velger selv om resultatet skal publiseres, og oppgir et kallenavn. Poeng sorteres synkende, deretter total rundetid stigende. Kallenavnvinduet åpnes automatisk når resultatet kvalifiserer. Norsk og engelsk deler liste. Hvert kategorivalg har en egen liste, slik at for eksempel bare Norge ikke sammenlignes med alle kategorier.
+MapWiz har nå global topp 10 på startsiden og sluttskjermen. Bare fullførte runder med ti spørsmål kan lagres. Brukeren velger selv om resultatet skal publiseres, og oppgir et kallenavn. Poeng sorteres synkende, deretter total rundetid stigende. Kallenavnvinduet åpnes automatisk når resultatet kvalifiserer. Norsk og engelsk deler liste. Hvert kategorivalg har en egen liste, slik at for eksempel bare Norge ikke sammenlignes med alle kategorier.
 
-Lokale resultater ligger fortsatt i `geoHighscoresV1`, under `mapwiz3|<sorterte kategorier>`-nøkler. Eldre lister bevares og lastes aldri opp. Nettrunder kontrolleres av Cloudflare-API-et, og bare resultater brukeren velger å publisere får et offentlig kallenavn. Det sendes ingen resultater eller kallenavn til analytics.
+Lokale resultater ligger fortsatt i `geoHighscoresV1`, under `mapwiz3|<sorterte kategorier>`-nøkler. Eldre lister bevares og lastes aldri opp. Lenken til lokale lister er fjernet fra grensesnittet. Nettrunder kontrolleres av Cloudflare-API-et, og bare resultater brukeren velger å publisere får et offentlig kallenavn. Det sendes ingen resultater eller kallenavn til analytics.
 
 ## Den globale listen
 

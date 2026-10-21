@@ -110,6 +110,7 @@
     $('hintLayer').replaceChildren(); $('labelLayer').replaceChildren();
     elements.forEach(el => el.classList.remove('correct', 'wrong'));
     if (!target()) return finish();
+    window.GeoOnline?.statleNext();
     $('targetName').textContent = target().n;
     setFeedback('Hvor ligger ' + target().n + '?');
   }
@@ -117,6 +118,7 @@
     if (phase !== 'playing' || locked || !target()) return;
     tick();
     if (results.has(name)) { flashLabel(name, ''); setFeedback(name + ' er allerede fullført.'); return; }
+    window.GeoOnline?.statleAnswer(name);
     if (name !== target().n) {
       roundMistakes++; mistakes++; updateStats();
       const el = elements.get(name); el.classList.add('wrong');
@@ -135,14 +137,15 @@
     setFeedback('Riktig! ' + name + ' · ' + (roundTime / 1000).toFixed(1).replace('.', ',') + ' s', 'good');
     updateStats(); later(next, 650);
   }
-  function start() {
-    generation++; clearEffects();
+  function start() { if(window.GeoOnline)return GeoOnline.startStatle(begin);return begin(); }
+  function begin(names) {
+    generation++; clearEffects();if($('statle-score'))$('statle-score').hidden=true;
     results = new Map(); index = 0; totalTime = 0; roundTime = 0; lastTick = performance.now();
     roundMistakes = 0; mistakes = 0; skipped = 0; locked = false;
     elements.forEach(el => { delete el.dataset.band; el.classList.remove('found'); el.setAttribute('aria-label', 'Delstat på kartet'); });
     markers.forEach(el => { delete el.dataset.band; el.setAttribute('aria-label', 'Ekstra klikkfelt for en liten delstat'); });
-    queue = states.filter(s => !results.has(s.n));
-    for (let i = queue.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [queue[i],queue[j]] = [queue[j],queue[i]]; }
+    queue = names ? names.map(name=>states.find(s=>s.n===name)) : states.filter(s => !results.has(s.n));
+    if(!names)for (let i = queue.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [queue[i],queue[j]] = [queue[j],queue[i]]; }
     phase = 'playing'; $('overlay').hidden = true;
     $('mapViewport').scrollTo({left:0,top:0});
     $('targetVerb').textContent = 'Klikk på';
@@ -153,6 +156,7 @@
   function skip() {
     if (phase !== 'playing' || locked) return;
     const name = target().n;
+    window.GeoOnline?.statleAnswer(name,true);
     results.set(name,{band:3,ms:roundTime,mistakes:roundMistakes,skipped:true});
     skipped++; setBand(name,3); flashLabel(name,'error'); locked = true;
     $('hintLayer').replaceChildren(); setFeedback('Her ligger ' + name + '. Vi går videre.');
@@ -160,6 +164,7 @@
   }
   function finish() {
     phase = 'finished'; locked = true;
+    window.GeoOnline?.finishStatle();
     $('targetVerb').textContent = 'Godt jobbet!';
     $('targetName').textContent = 'Hele USA er på plass.';
     $('skip').disabled = true;

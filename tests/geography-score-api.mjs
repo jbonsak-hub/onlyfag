@@ -52,6 +52,18 @@ test('parallel answers score only once',async()=>{
  const responses=await Promise.all([1,2].map(()=>worker.fetch(req('/answer',{requestId:crypto.randomUUID(),question:q.id,choice:q.target},start.token),env)));assert.equal(responses.filter(r=>r.status===200).length,1);assert.equal(responses.filter(r=>[400,409].includes(r.status)).length,1);assert.equal((await (await worker.fetch(req('/status',{},start.token),env)).json()).total,1);
 });
 
+test('prefetched questions retain server validation and Statle scores all fifty states',()=>{
+ const s=create({game:'statle'},1000);assert.equal(s.plan.length,50);assert.equal(new Set(s.targets).size,50);assert.throws(()=>finish(s,1001),/incomplete/);
+ const wrong=s.targets[1];assert.equal(answer(s,{question:s.current.id,choice:wrong},1100).correct,false);
+ assert.equal(answer(s,{question:s.current.id,choice:s.current.target},1200).points,75);
+ assert.throws(()=>answer(s,{question:s.plan[1].id,choice:s.targets[1]},1300),/wrong_question/);
+ issue(s,1400);assert.equal(s.current.id,s.plan[1].id);
+ assert.equal(answer(s,{question:s.current.id,choice:s.current.target,skip:true},1500).points,0);
+ for(let i=2;i<50;i++){issue(s,2000+i*100);const q=s.current;assert.equal(answer(s,{question:q.id,choice:q.target},2001+i*100).points,100);}
+ assert.equal(s.score,4875);assert.ok(s.complete);assert.equal(s.results.length,50);
+ const mc=create({game:'flags'},0),next=mc.plan[1];assert.throws(()=>answer(mc,{question:next.id,choice:next.target},1),/wrong_question/);answer(mc,{question:mc.current.id,choice:mc.current.target},2);assert.equal(mc.current.id,next.id);
+});
+
 test('language migration preserves scores and active runs and can be repeated',()=>{
  const {db}=fixture();
  for(const game of ['flags','capitals','flagcapital','places','countries','mapwiz'])for(const language of ['no','en']){
