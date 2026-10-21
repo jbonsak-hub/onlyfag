@@ -54,7 +54,7 @@ const server=http.createServer((req,res)=>{try{const file=path.join(root,new URL
   await p.locator('#start').click();await p.waitForFunction(()=>document.querySelector('#overlay').hidden);await p.locator('#start').waitFor({state:'hidden'});
   const target=await p.locator('#targetName').innerText();await p.evaluate(()=>scrollTo(0,0));await realClick(p,target);await p.waitForFunction(()=>document.querySelector('#completed').textContent==='1');
   const marker=await p.locator('.small-marker .hit').boundingBox();assert.ok(marker.width>=24,'Small Oslo has a mobile target');
-  await shot(p,'counties-mobile-playing');await p.locator('.quiz-page-back').click();await p.waitForURL('**/geografi.html#verden-quiz');await p.locator('#verden-quiz.active').waitFor();assert.ok(await p.getByRole('button',{name:/Norwegian counties/}).isVisible());
+  await shot(p,'counties-mobile-playing');await p.locator('.quiz-page-back').click();await p.waitForURL('**/geografi.html#verden-quiz');await p.locator('#verden-quiz.active').waitFor();assert.ok(await p.locator('.geoquiz-mode-row[onclick*="geografi/kart.html"]').isVisible());
   assert.deepEqual(errors,[]);console.log(JSON.stringify({counties:15,realMapClicks:true,wrongHint:true,skip:true,completeRound:true,score:1350,max:1500,prompt:true,sharedLanguageBoard:true,separateFromStatle:true,mobile:true,panelResize:true,errors}));
  }finally{await browser.close();db.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(()=>server.close());

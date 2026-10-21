@@ -1,7 +1,8 @@
 import data from './data.json' with {type:'json'};
 export {data};
-const modes=new Set(['flags','capitals','flagcapital','places','countries','mapwiz','statle','fylker']);
-const shapeQuiz=game=>game==='statle'||game==='fylker';
+const modes=new Set(['flags','capitals','flagcapital','places','countries','mapwiz','statle','fylker','kart']);
+const shapeQuiz=game=>game==='statle'||game==='fylker'||game==='kart';
+const shapeTargets=c=>c.game==='kart'?data.kart[c.region]:data[c.game];
 const variants={flags:['flag-country-mc','country-flag-mc'],capitals:['country-capital-mc','capital-country-mc'],flagcapital:['flag-capital-mc','capital-flag-mc'],places:['desc-place-mc','place-desc-mc']};
 export const shuffle=items=>{const a=items.slice(),random=new Uint32Array(a.length);crypto.getRandomValues(random);for(let i=a.length-1;i>0;i--){const j=random[i]%(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;};
 export function config(input){
@@ -10,7 +11,8 @@ export function config(input){
  if(c.game==='mapwiz'){
   if(!Array.isArray(input.categories)||!input.categories.length||input.categories.length>15)throw Error('invalid_config');
   c.categories=[...new Set(input.categories)].sort();if(c.categories.some(k=>!Object.hasOwn(data.mapwiz,k)))throw Error('invalid_config');
- }else if(shapeQuiz(c.game)){}else if(c.game==='countries'){c.region=input.region||'world';if(!Object.hasOwn(data.regions,c.region))throw Error('invalid_config');}
+ }else if(c.game==='kart'){c.region=input.region;if(typeof c.region!=='string'||!Object.hasOwn(data.kart,c.region))throw Error('invalid_config');}
+ else if(shapeQuiz(c.game)){}else if(c.game==='countries'){c.region=input.region||'world';if(!Object.hasOwn(data.regions,c.region))throw Error('invalid_config');}
  else{c.variant=input.variant||variants[c.game][0];if(!variants[c.game].includes(c.variant))throw Error('invalid_config');c.region=input.region||'world';if(c.game!=='places'&&!Object.hasOwn(data.regions,c.region))throw Error('invalid_config');if(c.game==='places')c.region='world';}
  return c;
 }
@@ -51,7 +53,7 @@ export function issue(s,now){s.current={...(s.plan?.[s.index]||makeQuestion(s,s.
 export function publicQuestion(s){if(s.complete||s.config.game==='countries')return null;return {id:s.current.id,target:s.current.target,options:s.current.options,index:s.index};}
 export function create(input,now){
  const c=config(input),s={config:c,index:0,score:0,baseTotal:0,bonusTotal:0,startedAt:now,complete:false,found:[],hints:0,results:[],awaitingNext:false};
- s.targets=shapeQuiz(c.game)?shuffle(data[c.game]):c.game==='mapwiz'?mapRounds(c).map(t=>t.id):c.game==='countries'?data.regions[c.region]:shuffle(pool(c)).map(t=>t.id);
+ s.targets=shapeQuiz(c.game)?shuffle(shapeTargets(c)):c.game==='mapwiz'?mapRounds(c).map(t=>t.id):c.game==='countries'?data.regions[c.region]:shuffle(pool(c)).map(t=>t.id);
  if(!s.targets.length)throw Error('invalid_config');if(c.game!=='countries'){const reference=questionReference(c);s.plan=s.targets.map((_,i)=>makeQuestion(s,i,now,reference));issue(s,now);}return s;
 }
 export function distance(a,b){const r=Math.PI/180,h=Math.sin((b.lat-a.lat)*r/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin((b.lon-a.lon)*r/2)**2;return 6371.0088*2*Math.asin(Math.min(1,Math.sqrt(h)));}
@@ -66,7 +68,7 @@ export function answer(s,input,now){
  }
  if(input.question!==s.current.id||s.awaitingNext)throw Error('wrong_question');
  if(shapeQuiz(s.config.game)){
-  const name=input.choice;if(!data[s.config.game].includes(name)||s.found.includes(name))throw Error('invalid_answer');
+  const name=input.choice;if(!shapeTargets(s.config).includes(name)||s.found.includes(name))throw Error('invalid_answer');
   const correct=name===s.current.target;if(!correct&&!input.skip){s.hints++;s.mistakes=(s.mistakes||0)+1;return {correct:false};}
   if(input.skip&&name!==s.current.target)throw Error('invalid_answer');
   const seconds=Math.max(0,(now-s.current.issuedAt)/1000),band=input.skip?3:Math.max(seconds<=5?0:seconds<=10?1:2,Math.min(s.hints,3)),points=[100,75,50,0][band];

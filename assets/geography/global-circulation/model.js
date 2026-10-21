@@ -15,9 +15,7 @@
     {title:'Luftbevegelsen setter spor i klimaet.',text:'Der luft samles og stiger, finner vi ofte lavtrykk ved bakken. Der luft synker og sprer seg utover, finner vi ofte høytrykk. Det gir et mønster av våte og tørre belter.',key:'Stigende luft avkjøles og kan danne skyer og nedbør. Synkende luft varmes opp, slik at den relative fuktigheten faller.',label:'Trykk ved bakken og typisk nedbør',badge:'H = høytrykk · L = lavtrykk',desc:'Lavtrykksbelter ved ekvator og omtrent 60 grader, med stigende luft og nedbør. Høytrykk rundt 30 grader og ved polene, med synkende luft og lite nedbør. Klimafargene er skjematiske belter.'},
     {title:'Rotasjonen bøyer vinden.',text:'Trykkforskjeller setter lufta i bevegelse. Jordrotasjonen avbøyer bevegelsen mot høyre på den nordlige halvkule og mot venstre på den sørlige. Slik oppstår de dominerende vindbeltene.',key:'Vinder får navn etter hvor de kommer fra. Vestavind blåser fra vest mot øst. Nordøstpassaten blåser fra nordøst mot sørvest.',label:'Dominerende vindretning ved bakken',badge:'Retning sett fra jordoverflaten',desc:'Passatvindene blåser mot ekvator og vestover. Vestavindene blåser mot polene og østover mellom 30 og 60 grader. Polare østavinder går bort fra polene og vestover.'}
   ];
-  const p=(lat,r=R,side=1)=>[CX+side*r*Math.cos(lat*DEG),CY-r*Math.sin(lat*DEG)];
   const pt=q=>q.map(v=>v.toFixed(1)).join(',');
-  const arc=(from,to,r,side=1)=>`A${r},${r} 0 ${Math.abs(to-from)>180?1:0} ${(to-from)*side>0?0:1} ${pt(p(to,r,side))}`;
   const geo=(lon,lat)=>[CX+R*Math.cos(lat*DEG)*Math.sin(lon*DEG),CY-R*Math.sin(lat*DEG)];
   const line=(a,b)=>`M${pt(a)}L${pt(b)}`;
   const marker=(name,color)=>`<marker id="arrow-${name}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M1 1 9 5 1 9Z" fill="${color}"/></marker>`;
@@ -25,12 +23,42 @@
   function globe(thermal=false){return `<g class="globe"><circle class="atmosphere" cx="${CX}" cy="${CY}" r="${R+5}"/><circle class="earth-ocean" cx="${CX}" cy="${CY}" r="${R}"/><use href="#land" class="earth-land"/>${thermal?`<circle cx="${CX}" cy="${CY}" r="${R}" fill="url(#thermal)" opacity=".55"/>`:''}<circle cx="${CX}" cy="${CY}" r="${R}" fill="url(#shade)"/><circle class="earth-outline" cx="${CX}" cy="${CY}" r="${R}"/></g>`;}
   function latitudes(labels=true){let s='<g aria-hidden="true">';for(const lat of [-60,-30,0,30,60]){const y=CY-R*Math.sin(lat*DEG),half=R*Math.cos(lat*DEG);s+=`<path class="latitude ${lat===0?'major':''}" d="M${CX-half},${y}H${CX+half}"/>`;if(labels)s+=`<g class="latitude-label" transform="translate(${CX-25},${y-10})"><rect width="50" height="20" rx="5"/><text x="25" y="15" text-anchor="middle">${Math.abs(lat)}°${lat>0?' N':lat<0?' S':''}</text></g>`;}
     return s+`<text class="compass-label" x="${CX}" y="${CY-R-12}" text-anchor="middle">N</text><text class="compass-label" x="${CX}" y="${CY+R+21}" text-anchor="middle">S</text></g>`;}
-  function cells(single=false,faint=false){let s=`<g class="cells ${faint?'faint':''}" aria-hidden="true">`;for(const side of [-1,1])for(const hemi of [-1,1])for(const type of single?['single']:['hadley','ferrel','polar']){const config={single:[0,90,1],hadley:[0,30,1],ferrel:[30,60,-1],polar:[60,90,1]}[type], lo=(config[0]+2)*hemi, hi=(config[1]-2)*hemi, color=single?'var(--polar)':colors[type], inner=R+13,outer=R+55;
-      const boundary=`M${pt(p(lo,inner,side))}L${pt(p(lo,outer,side))}${arc(lo,hi,outer,side)}L${pt(p(hi,inner,side))}${arc(hi,lo,inner,side)}Z`;
-      const from=config[2]>0?lo:hi,to=config[2]>0?hi:lo;
-      const loop=`M${pt(p(from,inner+6,side))}L${pt(p(from,outer-6,side))}${arc(from,to,outer-6,side)}L${pt(p(to,inner+6,side))}${arc(to,from,inner+6,side)}`;
-      s+=`<g class="cell-group" data-family="${single?'single':type}" style="--cell:${color}"><path class="cell-ribbon" d="${boundary}"/><path class="cell-flow" d="M${pt(p(from,outer-6,side))}${arc(from,to,outer-6,side)}" marker-end="url(#arrow-${single?'polar':type})"/><path class="cell-flow" d="M${pt(p(to,inner+6,side))}${arc(to,from,inner+6,side)}" marker-end="url(#arrow-${single?'polar':type})"/><path class="flow-track" d="${loop}"/></g>`;}
-    return s+'</g>';}
+  // Rounded branches from the earlier model, fitted to the geographical globe.
+  // Each pair closes a cell: the lower branch follows the spherical surface,
+  // while the upper branch turns smoothly into its rising/sinking neighbour.
+  const cellBranches={
+    single:[
+      ['upper','M680 310 C719 311 741 293 739 258 C734 158 631 48 474 35','hadley'],
+      ['lower','M474 35 C456 34 445 44 445 57 C445 68 455 76 474 78 C594 91 653 181 680 310','polar']
+    ],
+    hadley:[
+      ['upper','M680 310 C717 310 730 289 724 258 C718 225 700 199 679 190 C666 184 655 186 649 192','hadley'],
+      ['lower','M649 192 C664 228 676 270 680 310','hadley']
+    ],
+    ferrel:[
+      ['lower','M649 192 C625 158 598 124 563 106','ferrel'],
+      ['upper','M563 106 C586 102 604 111 610 129 C617 150 635 179 649 192','ferrel']
+    ],
+    polar:[
+      ['lower','M445 75 C487 77 527 88 563 106','polar'],
+      ['upper','M563 106 C586 105 604 94 603 80 C602 60 535 34 474 34 C456 34 445 44 445 57 C445 68 445 72 445 75','polar']
+    ]
+  };
+  function cells(single=false,faint=false){
+    let s=`<g class="cells ${faint?'faint':''}" aria-hidden="true">`;
+    const scale=R/235;
+    for(const side of [-1,1])for(const hemi of [-1,1])for(const type of single?['single']:['hadley','ferrel','polar']){
+      const transform=`translate(${CX} ${CY}) scale(${scale*side} ${scale*hemi}) translate(-445 -310)`;
+      s+=`<g class="cell-group" data-family="${type}" data-side="${side===1?'near':'far'}" data-hemisphere="${hemi===1?'north':'south'}" transform="${transform}">`;
+      for(const [branch,d,color] of cellBranches[type]){
+        s+=`<g class="cell-branch" style="--flow:${colors[color]}"><path class="cell-bed" d="${d}"/><path class="cell-flow" data-branch="${branch}" d="${d}" marker-end="url(#arrow-${color})"/><circle class="cell-particle" r="3.8"><animateMotion path="${d}" dur="${single?'5.8':'3.8'}s" begin="${hemi===1?'0':'-1.9'}s" repeatCount="indefinite"/></circle></g>`;
+      }
+      s+='</g>';
+    }
+    s+='</g>';
+    if(single&&!faint)s+=`<g class="cell-captions" aria-hidden="true"><text x="${CX+R-66}" y="${CY-18}">Luft stiger</text><text x="${CX+42}" y="${CY-R-36}">Luft synker</text><text x="${CX+42}" y="${CY+R+43}">Luft synker</text></g>`;
+    return s;
+  }
   function solar(){let s='<g aria-hidden="true">';const rays=[[141,169,'#b68b3f'],[316,344,'#ce7e45']];s+=`<g transform="translate(65 260)"><circle r="31" fill="url(#sun)"/>${Array.from({length:12},(_,i)=>{const a=i*Math.PI/6;return `<path class="ray" d="M${Math.cos(a)*40},${Math.sin(a)*40}L${Math.cos(a)*49},${Math.sin(a)*49}"/>`;}).join('')}</g><text class="svg-note" x="65" y="324" text-anchor="middle">Sola</text>`;
     for(let i=0;i<rays.length;i++){const [y1,y2,color]=rays[i], x1=CX-Math.sqrt(R*R-(y1-CY)**2),x2=CX-Math.sqrt(R*R-(y2-CY)**2),mid=(y1+y2)/2,xmid=CX-Math.sqrt(R*R-(mid-CY)**2);s+=`<path class="solar-beam" d="M108 ${y1}H${x1}A${R} ${R} 0 0 0 ${x2} ${y2}H108Z"/><path class="ray" d="M108 ${y1}H${x1}M108 ${y2}H${x2}"/><path class="footprint" stroke="${color}" d="M${x1} ${y1}A${R} ${R} 0 0 0 ${x2} ${y2}"/><circle class="energy-dot" r="3.8"><animateMotion path="M108 ${mid}H${xmid-5}" dur="2.8s" repeatCount="indefinite"/></circle>`;}
     s+=`<text class="solar-label" x="484" y="148" fill="#9f7c39">Større areal</text><text class="svg-note" x="484" y="169">mindre energi per m²</text><path class="solar-line" d="M472 151H330L285 155"/><text class="solar-label" x="484" y="396" fill="#b66d3e">Mindre areal</text><text class="svg-note" x="484" y="417">mer energi per m²</text><path class="solar-line" d="M473 397H223L164 331"/><text class="svg-note" x="117" y="105">Like brede solbunter</text></g>`;return s;}
@@ -44,7 +72,7 @@
   function fact(title,text){return `<div class="fact"><strong>${title}</strong><p>${text}</p></div>`;}
   function choice(id,title,sub,range,color,pressureLetter=''){return `<button type="button" class="choice ${pressureLetter?'pressure-choice':''}" data-focus="${id}" aria-pressed="false" style="--swatch:${color}"><span class="${pressureLetter?'pressure-letter':'choice-dot'}" aria-hidden="true">${pressureLetter}</span><span><strong>${title}</strong><small>${sub}</small></span><span class="range">${range}</span></button>`;}
   function details(){switch(step){case 0:return fact('Nær ekvator','Strålene treffer mer rett på. Energien samles på mindre areal.')+fact('Mot polene','Strålene treffer skrått. Energien spres over større areal.');case 1:return fact('1 · Stiger ved ekvator','Oppvarmet luft stiger og strømmer mot polene i høyden.')+fact('2 · Synker ved polene','Avkjølt luft synker. Ved bakken går lufta tilbake mot ekvator.');case 2:return choice('hadley','Hadleycellen','Stiger ved ekvator · synker rundt 30°','0–30°',colors.hadley)+choice('ferrel','Ferrelcellen','Synker rundt 30° · stiger rundt 60°','30–60°',colors.ferrel)+choice('polar','Polarcellen','Stiger rundt 60° · synker ved polen','60–90°',colors.polar)+'<p class="detail-note">Ferrelcellen er et gjennomsnitt av skiftende værsystemer. Den drives indirekte av transporten i atmosfæren.</p>';case 3:return choice('equator','Ekvator','Stigende luft · mye regn','0°',colors.low,'L')+choice('subtropics','Subtropene','Synkende luft · mange ørkenområder','ca. 30°',colors.high,'H')+choice('subpolar','Subpolare områder','Stigende luft · skiftende, vått vær','ca. 60°',colors.low,'L')+choice('poles','Polområdene','Synkende, kald luft · lite nedbør','90°',colors.high,'H');case 4:return choice('hadley','Passatvindene','Nordøst i nord · sørøst i sør','0–30°',colors.hadley)+choice('ferrel','Vestavindene','Fra vest · mot polene','30–60°',colors.ferrel)+choice('polar','Polare østavinder','Fra øst · bort fra polene','60–90°',colors.polar)+`<button id="coriolis" type="button" aria-pressed="${deflected}">${deflected?'Sammenlign: bare trykkforskjell':'Vis jordrotasjonens avbøyning'}</button><p class="detail-note" id="coriolis-note">${deflected?'Velg et vindbelte for å fremheve det.':'Her holder vi trykkbeltene faste og fjerner bare avbøyningen for å vise forskjellen i retning.'}</p>`;}}
-  function legend(){return step===0?'<span><i style="--swatch:#d99d54"></i>Solenergi</span>':step===1?'<span><i style="--swatch:var(--polar)"></i>Én celle rundt hver halvkule · vist i to tverrsnitt</span>':step===2?['hadley','ferrel','polar'].map((k,i)=>`<span><i style="--swatch:${colors[k]}"></i>${['Hadley','Ferrel','Polar'][i]}</span>`).join(''):step===3?'<span><i style="--swatch:#70b083"></i>Våtere</span><span><i style="--swatch:#e3c483"></i>Tørrere</span><span><i style="--swatch:#c1d9df"></i>Kaldt og tørt</span>':'<span>Pilene viser vinden ved bakken</span>';}
+  function legend(){return step===0?'<span><i style="--swatch:#d99d54"></i>Solenergi</span>':step===1?'<span><i style="--swatch:var(--hadley)"></i>Varm luft mot polen i høyden</span><span><i style="--swatch:var(--polar)"></i>Kjøligere luft tilbake ved bakken</span>':step===2?['hadley','ferrel','polar'].map((k,i)=>`<span><i style="--swatch:${colors[k]}"></i>${['Hadley','Ferrel','Polar'][i]}</span>`).join(''):step===3?'<span><i style="--swatch:#70b083"></i>Våtere</span><span><i style="--swatch:#e3c483"></i>Tørrere</span><span><i style="--swatch:#c1d9df"></i>Kaldt og tørt</span>':'<span>Pilene viser vinden ved bakken</span>';}
   function render(){const lesson=lessons[step];document.body.dataset.step=step;$('lesson-title').textContent=lesson.title;$('lesson-text').textContent=lesson.text;$('takeaway').textContent=lesson.key;$('step-count').textContent=`TRINN ${step+1} AV 5`;$('figure-label').textContent=lesson.label;$('model-badge').textContent=lesson.badge;$('lesson-details').innerHTML=details();$('figure-legend').innerHTML=legend();$('previous').disabled=step===0;$('next').disabled=step===4;$('next').textContent=step===4?'Siste trinn':'Neste →';$('model-panel').setAttribute('aria-labelledby','step-'+step);document.querySelectorAll('button[data-step]').forEach(button=>{let active=Number(button.dataset.step)===step;button.setAttribute('aria-selected',String(active));button.tabIndex=active?0:-1;});
     svg.innerHTML=`<title id="earth-title">${lesson.title}</title><desc id="earth-description">${lesson.desc}</desc>${defs()}${globe(step===0)}${step===0?solar():''}${step===1?cells(true):''}${step===2?cells():''}${step===3?cells(false,true)+pressure():''}${step===4?cells(false,true):''}${latitudes(step>0)}${step===4?winds()+rotation():''}`;
     $('lesson-details').querySelectorAll('[data-focus]').forEach(button=>button.addEventListener('click',()=>{focus=focus===button.dataset.focus?'':button.dataset.focus;applyFocus();}));$('coriolis')?.addEventListener('click',()=>{deflected=!deflected;render();});applyFocus();syncMotion();requestSize();}

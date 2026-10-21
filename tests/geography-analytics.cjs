@@ -84,6 +84,13 @@ const server = http.createServer((req, res) => {
         timeout: 5000
       });
       info.mapActive = mode;
+    } else if (mode === 'kart') {
+      await page.locator('#kart-selection').waitFor({state:'visible'});
+      assert.equal(await page.locator('#kart-selection [data-map-region]').count(), 7);
+      assert.equal(await page.locator('#kart-selection .kart-statle-link').getAttribute('href'), 'statle.html');
+      assert.equal(await page.locator('#kart-game').isVisible(), false);
+      await page.locator('#kart-menu-button').click();
+      await page.keyboard.press('Escape');
     } else if (mode === 'statle' || mode === 'fylker') {
       await page.locator('#start:enabled').waitFor();
       assert.equal(await page.locator('path.state').count(), mode === 'fylker' ? 15 : 50);
@@ -120,7 +127,11 @@ const server = http.createServer((req, res) => {
   }
   current = 'geografi.html';
   await page.goto(base + 'geografi.html#verden-quiz');
-  assert.equal(await page.locator('.geoquiz-mode-row').count(), Object.keys(routes).length);
+  // Kart replaces the two overview tiles, while their old standalone URLs and
+  // route aliases remain available for published links.
+  const overviewModes=Object.keys(routes).filter(mode=>!['statle','fylker'].includes(mode));
+  assert.equal(await page.locator('.geoquiz-mode-row').count(), overviewModes.length);
+  assert.equal(await page.locator('.geoquiz-mode-row[onclick*="kart.html"]').count(), 1);
   assert.equal(await page.locator('.quiz-mode-content').count(), 0);
   await page.locator('.geoquiz-mode-row[onclick*="flaggquiz.html"]').click();
   await page.waitForURL('**/geografi/flaggquiz.html');
@@ -145,6 +156,24 @@ const server = http.createServer((req, res) => {
   await page.frameLocator('#maplab-frame').locator('#coordinates.active').waitFor({
     timeout: 5000
   });
+  // Choosing a map or playing a round stays on the same canonical route. It
+  // must not inject another beacon or send a separate answer/location event.
+  current='kart-interaction';
+  await page.goto(base+'geografi/kart.html');
+  await page.waitForTimeout(250);
+  const kartPayloadStart=payloads.length;
+  await page.locator('[data-map-region="europe"]').click();
+  await page.locator('#start:enabled').click();
+  const kartTarget=await page.locator('#targetName').innerText();
+  await page.locator('path.state').evaluateAll((paths,name)=>paths.find(p=>p.dataset.state===name).dispatchEvent(new MouseEvent('click',{bubbles:true})),kartTarget);
+  assert.equal(await page.locator('#completed').innerText(),'1');
+  await page.locator('#kart-change-map').click();
+  await page.locator('#kart-selection').waitFor({state:'visible'});
+  assert.equal(await page.locator('script[src*="beacon.min.js"]').count(),1);
+  if(process.env.CF_BEACON_SOURCE){
+    const additionalVisits=payloads.slice(kartPayloadStart).map(([,body])=>JSON.parse(body)).filter(event=>event.eventType===1);
+    assert.equal(additionalVisits.length,0,'Map selection and answers must not become extra pageviews');
+  }
   // Real interaction and scoring, using synthetic local-only data.
   await page.goto(base + 'geografi/flaggquiz.html');
   await page.evaluate(() => localStorage.setItem('geoHighscoresV1', JSON.stringify({
@@ -218,7 +247,7 @@ const server = http.createServer((req, res) => {
     const layout = await page.evaluate(() => ({
       scroll: document.documentElement.scrollWidth,
       width: innerWidth,
-      back: document.querySelector('.quiz-page-back').getBoundingClientRect().toJSON()
+      back: document.querySelector(document.body.dataset.quiz==='kart'?'.kart-overview':'.quiz-page-back').getBoundingClientRect().toJSON()
     }));
     mobile.push({
       file,

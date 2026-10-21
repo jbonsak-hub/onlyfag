@@ -18,8 +18,29 @@ const screenshots=process.env.SCREENSHOT_DIR;
   assert.equal(await page.getByRole('button',{name:/spill.*nytt/i}).count(),0,'no meaningless replay control');
   await page.getByRole('button',{name:'Neste →'}).click();
   assert.equal(await page.locator('.cell-group').count(),4,'one cell per hemisphere shown at two limbs');
+  assert.equal(await page.locator('.cell-flow').count(),8,'warm and cool branches remain separate');
+  assert.ok((await page.locator('#figure-legend').textContent()).includes('Kjøligere luft tilbake ved bakken'));
+  assert.equal(await page.locator('.cell-ribbon').count(),0,'smooth closed circulation replaces annular ribbons');
+  const assertLowerDirections=async()=>{
+    const lower=await page.locator('.cell-flow[data-branch="lower"]').evaluateAll(paths=>paths.map(path=>{
+      const start=path.getPointAtLength(0).matrixTransform(path.getCTM()),end=path.getPointAtLength(path.getTotalLength()).matrixTransform(path.getCTM());
+      return {family:path.closest('.cell-group').dataset.family,north:path.closest('.cell-group').dataset.hemisphere==='north',dy:end.y-start.y};
+    }));
+    for(const branch of lower){
+      const northward=branch.family==='ferrel';
+      const expectedPositive=branch.north?!northward:northward;
+      assert.equal(branch.dy>0,expectedPositive,`${branch.family} lower branch moves ${northward?'poleward':'equatorward'} on ${branch.north?'northern':'southern'} hemisphere`);
+    }
+    for(const d of await page.locator('.cell-flow').evaluateAll(paths=>paths.map(path=>path.getAttribute('d')))){
+      assert.ok(d.includes('C')&&!/[LA]/.test(d),'cell branches use rounded Bézier curves without straight radial corners');
+    }
+  };
+  await assertLowerDirections();
+  await capture('circulation-one-cell');
   await page.getByRole('tab',{name:'3 Tre celler'}).click();
   for(const id of ['hadley','ferrel','polar'])assert.equal(await page.locator(`.cell-group[data-family="${id}"]`).count(),4);
+  await assertLowerDirections();
+  assert.equal(await page.locator('.cell-particle animateMotion').count(),24,'particles follow both branches of the three cell families');
   await page.locator('[data-focus="hadley"]').click();
   assert.equal(await page.locator('[data-focus="hadley"]').getAttribute('aria-pressed'),'true');
   await page.waitForFunction(()=>Number(getComputedStyle(document.querySelector('.cell-group[data-family="polar"]')).opacity)<.2);
@@ -58,12 +79,13 @@ const screenshots=process.env.SCREENSHOT_DIR;
   await capture('circulation-winds-dark');
   for(const width of [320,390,768]){
     await page.setViewportSize({width,height:844});
-    for(const id of [0,2,3,4]){
+    for(const id of [0,1,2,3,4]){
       await page.locator('#step-'+id).click();
       assert.ok(await page.locator('body').evaluate(el=>el.scrollWidth<=innerWidth+1),`no horizontal scrolling at ${width}px, step ${id+1}`);
       assert.ok(await page.locator('#earth').isVisible());
       await page.locator('#next').scrollIntoViewIfNeeded();
       assert.ok(await page.locator('#next').isVisible());
+      if(width===390&&(id===1||id===2))await capture('circulation-mobile-step-'+(id+1));
     }
     if(width===390)await capture('circulation-mobile');
   }

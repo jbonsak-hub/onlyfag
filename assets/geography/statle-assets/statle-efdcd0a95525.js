@@ -1,11 +1,13 @@
-/* Shared click-map game for Statle and Norske fylker. */
+/* Shared click-map game for Statle, Norwegian counties and continent maps. */
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
   const ns = 'http://www.w3.org/2000/svg';
-  const counties = document.body.dataset.quiz === 'fylker';
-  const total = counties ? 15 : 50;
-  const shapeLabel = counties ? 'Fylke på kartet' : 'Delstat på kartet';
+  const kart = document.body.dataset.quiz === 'kart';
+  let counties = document.body.dataset.quiz === 'fylker';
+  let total = counties ? 15 : 50;
+  let shapeLabel = counties ? 'Fylke på kartet' : 'Delstat på kartet';
+  let regionData = null, mapGeneration = 0;
   const elements = new Map(), markers = new Map(), centers = new Map();
   let states = [], queue = [], index = 0, phase = 'ready', locked = false;
   let results = new Map(), roundMistakes = 0, mistakes = 0, skipped = 0;
@@ -54,6 +56,22 @@
     return {x:b.x * scale + x, y:b.y * scale + y, width:b.width * scale, height:b.height * scale};
   }
   function buildMap() {
+    if (kart && !counties) {
+      const view = regionData.viewBox;
+      $('map').setAttribute('viewBox',view.join(' '));
+      if (regionData.context) $('states').append(svgNode('path',{d:regionData.context,class:'map-context','fill-rule':'evenodd','aria-hidden':'true'}));
+      for (const state of states) {
+        const el=svgNode('path',{d:state.d,class:'state','fill-rule':'evenodd',role:'button',tabindex:'0','aria-label':shapeLabel});el.dataset.state=state.n;
+        $('states').append(el);elements.set(state.n,el);
+        const box=el.getBBox();centers.set(state.n,{x:state.c[0],y:state.c[1],radius:Math.max(box.width,box.height)/2+10});
+        if (state.marker) {
+          const g=svgNode('g',{class:'small-marker country-marker',role:'button',tabindex:'0','aria-label':'Ekstra klikkfelt for et lite land'});g.dataset.state=state.n;
+          g.append(svgNode('circle',{cx:state.c[0],cy:state.c[1],r:11,class:'hit'}),svgNode('circle',{cx:state.c[0],cy:state.c[1],r:4.5,class:'visible'}));
+          $('smallStates').append(g);markers.set(state.n,g);
+        }
+      }
+      return;
+    }
     if (counties) {
       const group = svgNode('g',{'fill-rule':'evenodd'}); $('states').append(group);
       for (const state of states) {
@@ -102,13 +120,13 @@
     });
   }
   function flashLabel(name, kind) {
-    const c = centers.get(name), width = Math.max(70, name.length * 7 + 22);
+    const c = centers.get(name), unit = 1 / ($('map').getScreenCTM()?.a || 1), width = Math.max(70, name.length * 7 + 22) * unit;
     const view = $('map').viewBox.baseVal;
-    const x = Math.max(view.x + width / 2 + 9, Math.min(view.x + view.width - 9 - width / 2, c.x));
-    const y = Math.max(26, Math.min(525, c.y - 21));
+    const x = Math.max(view.x + width / 2 + 9 * unit, Math.min(view.x + view.width - 9 * unit - width / 2, c.x));
+    const y = Math.max(view.y + 26 * unit, Math.min(view.y + view.height - 25 * unit, c.y - 21 * unit));
     const g = svgNode('g', {class:'flash-label ' + kind});
-    g.append(svgNode('rect', {x:x - width / 2,y:y - 13,width,height:26,rx:4}));
-    const text = svgNode('text', {x,y:y + 1}); text.textContent = name; g.append(text);
+    g.append(svgNode('rect', {x:x - width / 2,y:y - 13 * unit,width,height:26 * unit,rx:4 * unit,'vector-effect':'non-scaling-stroke',style:`filter:drop-shadow(0 ${2 * unit}px ${3 * unit}px #26453c45)`}));
+    const text = svgNode('text', {x,y:y + unit,style:`font-size:${12 * unit}px`}); text.textContent = name; g.append(text);
     $('labelLayer').replaceChildren(g);
     later(() => g.remove(), 1050);
   }
@@ -167,7 +185,7 @@
     results = new Map(); index = 0; totalTime = 0; roundTime = 0; lastTick = performance.now();
     roundMistakes = 0; mistakes = 0; skipped = 0; locked = false;
     elements.forEach(el => { delete el.dataset.band; el.classList.remove('found'); el.setAttribute('aria-label', shapeLabel); });
-    markers.forEach(el => { delete el.dataset.band; el.setAttribute('aria-label', counties ? 'Ekstra klikkfelt for et lite fylke' : 'Ekstra klikkfelt for en liten delstat'); });
+    markers.forEach(el => { delete el.dataset.band; el.setAttribute('aria-label', counties ? 'Ekstra klikkfelt for et lite fylke' : kart ? 'Ekstra klikkfelt for et lite land' : 'Ekstra klikkfelt for en liten delstat'); });
     queue = names ? names.map(name=>states.find(s=>s.n===name)) : states.filter(s => !results.has(s.n));
     if(!names)for (let i = queue.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [queue[i],queue[j]] = [queue[j],queue[i]]; }
     phase = 'playing'; $('overlay').hidden = true;
@@ -190,7 +208,7 @@
     phase = 'finished'; locked = true;
     window.GeoOnline?.finishStatle();
     $('targetVerb').textContent = 'Godt jobbet!';
-    $('targetName').textContent = counties ? 'Alle fylkene er på plass.' : 'Hele USA er på plass.';
+    $('targetName').textContent = counties ? 'Alle fylkene er på plass.' : kart ? 'Alle landene er på plass.' : 'Hele USA er på plass.';
     $('skip').disabled = true;
     const counts = [0,0,0,0]; results.forEach(r => counts[r.band]++);
     setFeedback('Alle ' + total + ' fullført' + ' · ' + timeText(totalTime) + ' · ' + mistakes + ' feil · ' + skipped + ' hoppet over. Grønn: ' + counts[0] + ', gul: ' + counts[1] + ', oransje: ' + counts[2] + ', rød: ' + counts[3] + '.');
@@ -208,13 +226,48 @@
   $('restart').addEventListener('click', start);
   $('skip').addEventListener('click', skip);
   const menu = $('geoMenu'), menuButton = $('geoMenuButton');
-  menuButton.addEventListener('click', () => { menu.showModal(); menuButton.setAttribute('aria-expanded', 'true'); });
+  let menuOpener=menuButton;
+  function openMenu(button){menuOpener=button;menu.showModal();button.setAttribute('aria-expanded','true');}
+  menuButton.addEventListener('click', () => openMenu(menuButton));
+  $('kart-menu-button')?.addEventListener('click',event=>openMenu(event.currentTarget));
   $('geoMenuClose').addEventListener('click', () => menu.close());
-  menu.addEventListener('close', () => { menuButton.setAttribute('aria-expanded', 'false'); menuButton.focus(); });
+  menu.addEventListener('close', () => { menuButton.setAttribute('aria-expanded', 'false');$('kart-menu-button')?.setAttribute('aria-expanded','false');menuOpener.focus(); });
   menu.addEventListener('click', event => {
     const box = menu.getBoundingClientRect();
     if (event.target === menu && (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom)) menu.close();
   });
+  function resetMap() {
+    generation++;clearEffects();elements.clear();markers.clear();centers.clear();
+    $('states').replaceChildren();$('smallStates').replaceChildren();$('insetSeparators').setAttribute('d','');
+    $('map').setAttribute('viewBox','0 0 900 550');
+    results=new Map();index=0;mistakes=0;totalTime=0;phase='ready';locked=false;
+    $('completed').textContent='0';$('elapsed').textContent='00:00';$('mistakes').textContent='0 feil';$('progressFill').style.width='0%';
+    $('overlay').hidden=false;$('start').disabled=true;$('skip').disabled=true;$('restart').disabled=true;$('statle-score').hidden=true;
+  }
+  const readMap=url=>fetch(url).then(response=>{if(!response.ok)throw Error('Kartet kunne ikke hentes');return response.json();});
+  let continents,countyMap;
+  async function selectMap(region) {
+    const titles={fylker:'Norske fylker',europe:'Europa',asia:'Asia',northAmerica:'Nord- og Mellom-Amerika',southAmerica:'Sør-Amerika',africa:'Afrika',oceania:'Oseania'};
+    if(!Object.hasOwn(titles,region))return;
+    const token=++mapGeneration;window.GeoOnline?.resetStatle();resetMap();document.body.dataset.region=region;counties=region==='fylker';shapeLabel=counties?'Fylke på kartet':'Land på kartet';
+    $('kart-selection').hidden=true;$('kart-game').hidden=false;$('targetName').textContent=titles[region];$('targetVerb').textContent='Klar for en runde?';$('start').textContent='Laster kart …';setFeedback('Laster kart …');
+    const url=new URL(location.href);url.searchParams.set('region',region);history.replaceState(null,'',url);
+    try {
+      if(counties){countyMap||=readMap('../assets/geography/norway-counties.json').catch(error=>{countyMap=null;throw error;});const data=await countyMap;if(token!==mapGeneration)return;states=data;regionData=null;}
+      else {continents||=readMap('../assets/geography/continent-maps.json').catch(error=>{continents=null;throw error;});const data=await continents;if(token!==mapGeneration)return;regionData=data.regions[region];states=regionData.states;}
+      if(token!==mapGeneration)return;total=states.length;
+      if(!total||new Set(states.map(s=>s.n)).size!==total)throw Error('Ufullstendig kart');
+      $('total-count').textContent=' / '+total;$('map').setAttribute('aria-label',counties?'Klikkbart kart over Norges 15 fylker':'Klikkbart kart over '+titles[region]);
+      document.querySelector('.map-credit').hidden=counties;document.querySelector('.county-credit').hidden=!counties;
+      buildMap();window.ClickMapZoom?.setBase();window.dispatchEvent(new Event('resize'));$('start').disabled=false;$('start').textContent='Start →';setFeedback(counties?'Klikk på fylket som står over.':'Klikk på landet som står over.');
+    }catch(_){if(token!==mapGeneration)return;$('start').textContent='Kartet kunne ikke lastes';setFeedback('Velg kart på nytt for å prøve igjen.','error');}
+  }
+  if(kart){
+    document.querySelectorAll('[data-map-region]').forEach(button=>button.addEventListener('click',()=>selectMap(button.dataset.mapRegion)));
+    $('kart-change-map').addEventListener('click',()=>{++mapGeneration;window.GeoOnline?.resetStatle();resetMap();$('kart-game').hidden=true;$('kart-selection').hidden=false;delete document.body.dataset.region;const url=new URL(location.href);url.searchParams.delete('region');history.replaceState(null,'',url);document.querySelector('#kart-selection h1')?.focus();});
+    const selected=new URLSearchParams(location.search).get('region');if(selected)selectMap(selected);
+    return;
+  }
   const embedded = document.getElementById('statle-map-data');
   const mapData = embedded ? Promise.resolve(JSON.parse(embedded.textContent)) : fetch(counties ? '../assets/geography/norway-counties.json' : '../assets/geography/us-states.json').then(response => {
     if (!response.ok) throw new Error('Kartet kunne ikke hentes'); return response.json();
@@ -222,6 +275,6 @@
   mapData.then(data => {
     states = data;
     if (states.length !== total || new Set(states.map(s=>s.n)).size !== total) throw new Error('Ufullstendig kart');
-    buildMap(); $('start').disabled = false; $('start').textContent = counties ? 'Start Norske fylker →' : 'Start Statle →';
+    buildMap(); window.ClickMapZoom?.setBase(); $('start').disabled = false; $('start').textContent = counties ? 'Start Norske fylker →' : 'Start Statle →';
   }).catch(() => { $('start').textContent = 'Kartet kunne ikke lastes'; setFeedback('Last siden på nytt for å hente kartet.','error'); });
 })();

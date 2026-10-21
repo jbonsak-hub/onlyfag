@@ -1,5 +1,6 @@
 // Quiz routes are relative to the site root.
 window.GEO_QUIZ_ROUTES={
+  "kart": ["geografi/kart.html", "Kart"],
   "countries": [
     "geografi/landquiz.html",
     "Verdens land-quiz"

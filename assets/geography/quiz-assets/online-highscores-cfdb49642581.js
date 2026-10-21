@@ -1,15 +1,16 @@
 /* Immediate feedback, ordered background verification, shared top ten. */
 (() => {
- const base=window.GEO_SCORE_API,mode=document.body.dataset.quiz,shapeQuiz=game=>game==='statle'||game==='fylker';
- if(!base||!['flags','capitals','flagcapital','places','countries','geoguessr','statle','fylker'].includes(mode))return;
+ const base=window.GEO_SCORE_API,mode=document.body.dataset.quiz,shapeQuiz=game=>game==='statle'||game==='fylker'||game==='kart';
+ if(!base||!['flags','capitals','flagcapital','places','countries','geoguessr','statle','fylker','kart'].includes(mode))return;
  let active=null,starting=false,sequence=0;
  const language=()=>window.QuizLanguage?.language||'no',esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const shapeConfig=()=>mode==='kart'?(document.body.dataset.region==='fylker'?{game:'fylker',language:language()}:{game:'kart',region:document.body.dataset.region,language:language()}):{game:mode,language:language()};
  const time=ms=>{const s=Math.floor(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
  async function api(path,body,run){const payload=body?{...body,requestId:crypto.randomUUID()}:null;for(let attempt=0;attempt<2;attempt++)try{const r=await fetch(base+path,{method:payload?'POST':'GET',credentials:'omit',cache:'no-store',headers:{...(payload?{'Content-Type':'application/json'}:{}),...(run?{Authorization:'Bearer '+run.token}:{})},...(payload?{body:JSON.stringify(payload)}:{}),signal:AbortSignal.timeout(6000)}),data=await r.json();if(!r.ok)throw Object.assign(Error(data.error||'unavailable'),{http:r.status});return data;}catch(e){if(attempt||e.http)throw e;}}
  function notice(text){let el=document.getElementById('geo-online-notice');if(!el){el=document.createElement('div');el.id='geo-online-notice';el.setAttribute('role','status');document.body.append(el);}el.textContent=text;}
  function enqueue(run,path,input,received){run.pending=run.pending.then(async()=>{if(run.failed)return;const reply=await api(path,input,run);run.reply=reply;received?.(reply);}).catch(()=>{run.failed=true;if(active===run)notice('Nettlisten er utilgjengelig. Runden fortsetter uten nettrangering.');});return run.pending;}
- async function start(config,begin,fallback){if(starting)return;starting=true;const id=++sequence;try{const reply=await api('/session',config);if(id!==sequence)return;active={config:reply.config,token:reply.token,reply,plan:reply.questions||[],localIndex:0,pending:Promise.resolve()};document.getElementById('geo-online-notice')?.remove();begin(reply);}catch(_){if(id===sequence){active=null;notice('Nettlisten er utilgjengelig. Runden fortsetter uten nettrangering.');fallback();}}finally{starting=false;}}
- function reset(){sequence++;active=null;document.getElementById('geo-online-save')?.close();}
+ async function start(config,begin,fallback){if(starting)return;starting=true;const id=++sequence;try{const reply=await api('/session',config);if(id!==sequence)return;active={config:reply.config,token:reply.token,reply,plan:reply.questions||[],localIndex:0,pending:Promise.resolve()};document.getElementById('geo-online-notice')?.remove();begin(reply);}catch(_){if(id===sequence){active=null;notice('Nettlisten er utilgjengelig. Runden fortsetter uten nettrangering.');fallback();}}finally{if(id===sequence)starting=false;}}
+ function reset(){sequence++;starting=false;active=null;document.getElementById('geo-online-save')?.close();document.getElementById('geo-online-board')?.close();document.getElementById('geo-online-notice')?.remove();}
  function qualifies(run,rows){if(!run?.reply.complete||run.saved||run.failed)return false;if(rows.length<10)return true;const last=rows[9],score=Math.round(run.reply.total*10)/10;return score>Number(last.score)||(score===Number(last.score)&&run.reply.timeMs<Number(last.time_ms));}
  const getRows=config=>api('/scores?config='+encodeURIComponent(JSON.stringify(config)));
  function dialog(id,title){document.getElementById(id)?.close();const el=document.createElement('dialog');el.id=id;el.className='geo-score-dialog';el.setAttribute('aria-labelledby',id+'-title');el.innerHTML=`<div class="mapwiz-top-ten-heading"><h3 id="${id}-title">${title}</h3><button class="mapwiz-top-ten-close" type="button" aria-label="Lukk">×</button></div>`;el.querySelector('button').onclick=()=>el.close();el.addEventListener('close',()=>el.remove());document.body.append(el);el.showModal();return el;}
@@ -30,10 +31,11 @@
   showMapWiz(categories){showBoard(active?.config||{game:'mapwiz',categories:[...categories].sort(),language:language()});return true;},
   showLegacy(key){const [kind,region]=key.split('|'),game=kind==='countries2'?'countries':kind;if(!['flags','capitals','flagcapital','places','countries'].includes(game))return false;showBoard(active?.config||{game,region:region==='streak'?'world':region||'world',variant:document.querySelector('.world-submode')?.value,language:language()});return true;},
   finishLocal(result,target){if(active){resultButton(target);finish();}return true;},
-  startStatle(begin){return start({game:mode,language:language()},reply=>begin(reply.questions.map(q=>q.target)),()=>begin());},
+  startStatle(begin){return start(shapeConfig(),reply=>begin(reply.questions.map(q=>q.target)),()=>begin());},
+  resetStatle(){reset();},
   statleAnswer(choice,skip=false){const run=active;if(!run||!shapeQuiz(run.config.game))return;const q=run.plan[run.localIndex];enqueue(run,'/answer',{question:q.id,choice,skip});if(skip||choice===q.target)run.localIndex++;},
   statleNext(){const run=active;if(run&&shapeQuiz(run.config.game)&&run.localIndex<run.plan.length)enqueue(run,'/next',{});},
-  finishStatle(){finish();},showStatle(){if(active?.reply.complete&&!active.saved)active.prompted=false;showBoard(active?.config||{game:mode,language:language()});}
+  finishStatle(){finish();},showStatle(){if(active?.reply.complete&&!active.saved)active.prompted=false;showBoard(active?.config||shapeConfig());}
  };
  let scheduled=false;new MutationObserver(()=>{if(scheduled||!active||active.finalizing)return;scheduled=true;queueMicrotask(()=>{scheduled=false;if(!active||(active.config.game==='countries'&&!worldTrainerState?.ended))return;const target=document.querySelector('.prototype-summary,.world-end,#country-map-complete');if(target){if(active.config.game!=='mapwiz')resultButton(target);finish();}});}).observe(document.body,{childList:true,subtree:true});
  if(shapeQuiz(mode)){document.getElementById('statle-top-ten')?.addEventListener('click',()=>GeoOnline.showStatle());return;}

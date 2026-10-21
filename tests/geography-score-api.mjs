@@ -96,6 +96,36 @@ test('county API supports next, rejects incomplete publication and shares only i
  assert.equal(rows.body.rows.length,1);assert.equal(rows.body.rows[0].score,1375);assert.equal(rows.body.rows[0].nickname,'County Player');assert.deepEqual(english.body.rows,rows.body.rows);assert.deepEqual(statle.body.rows,[]);db.close();
 });
 
+test('Kart covers all 197 countries exactly once and validates complete rounds for each continent',()=>{
+ const expected={europe:47,asia:47,northAmerica:23,southAmerica:12,africa:54,oceania:14},all=Object.values(data.kart).flat();
+ assert.deepEqual(Object.keys(data.kart).sort(),Object.keys(expected).sort());assert.equal(all.length,197);assert.equal(new Set(all).size,197);assert.deepEqual([...all].sort(),[...data.regions.world].sort());
+ for(const [region,count]of Object.entries(expected)){
+  assert.equal(data.kart[region].length,count);const s=create({game:'kart',region},1000);assert.equal(s.plan.length,count);assert.deepEqual([...s.targets].sort(),[...data.kart[region]].sort());assert.throws(()=>finish(s,1001),/incomplete/);
+  const outside=all.find(name=>!s.targets.includes(name));assert.throws(()=>answer(s,{question:s.current.id,choice:outside},1002),/invalid_answer/);
+  assert.equal(answer(s,{question:s.current.id,choice:s.targets[1]},1100).correct,false);
+  assert.equal(answer(s,{question:s.current.id,choice:s.current.target},1200).points,75);
+  for(let i=1;i<count;i++){issue(s,2000+i*100);assert.throws(()=>answer(s,{question:s.current.id,choice:s.found[0]},2001+i*100),/invalid_answer/);assert.equal(answer(s,{question:s.current.id,choice:s.current.target,...(i===1?{skip:true}:{})},2002+i*100).points,i===1?0:100);}
+  assert.ok(s.complete);assert.equal(s.score,count*100-125);assert.equal(s.results.length,count);
+  assert.equal(board({game:'kart',region,language:'no'}),board({game:'kart',region,language:'en'}));assert.notEqual(board(s.config),board({game:'fylker'}));assert.notEqual(board(s.config),board({game:'statle'}));
+ }
+ assert.equal(new Set(Object.keys(expected).map(region=>board({game:'kart',region}))).size,6);
+ for(const region of [undefined,null,42,['europe'],'world','fylker','__proto__','constructor','Europe'])assert.throws(()=>config({game:'kart',region}),/invalid_config/);
+});
+
+test('Kart API keeps continental rankings separate and prefetches only the chosen map targets',async()=>{
+ const {env,db}=fixture(),call=async(url,body,token)=>{const r=await worker.fetch(req(url,body,token),env);return {status:r.status,body:await r.json()};};
+ const start=await call('/session',{game:'kart',region:'oceania',language:'no'});assert.equal(start.status,201);assert.equal(start.body.questions.length,14);assert.deepEqual(start.body.questions.map(q=>q.target).sort(),[...data.kart.oceania].sort());const token=start.body.token;
+ const mutate=(url,body={})=>call(url,{requestId:crypto.randomUUID(),...body},token);
+ assert.equal((await mutate('/finish')).status,400);assert.equal((await mutate('/publish',{nickname:'Early'})).status,400);
+ assert.equal((await mutate('/answer',{question:start.body.question.id,choice:'Norge'})).status,400);
+ for(let i=0;i<14;i++){const q=start.body.questions[i],reply=await mutate('/answer',{question:q.id,choice:q.target});assert.equal(reply.status,200);assert.equal(reply.body.complete,i===13);if(i<13){const next=await mutate('/next');assert.equal(next.status,200);assert.equal(next.body.question.id,start.body.questions[i+1].id);}}
+ assert.equal((await mutate('/next')).status,400);assert.equal((await mutate('/publish',{nickname:'Oceania Player'})).status,200);
+ const rows=async config=>(await call('/scores?config='+encodeURIComponent(JSON.stringify(config)))).body.rows;
+ const norwegian=await rows({game:'kart',region:'oceania'});assert.equal(norwegian.length,1);assert.equal(norwegian[0].nickname,'Oceania Player');assert.equal(norwegian[0].score,1400);assert.deepEqual(await rows({game:'kart',region:'oceania',language:'en'}),norwegian);
+ for(const region of ['europe','asia','northAmerica','southAmerica','africa'])assert.deepEqual(await rows({game:'kart',region}),[]);
+ assert.deepEqual(await rows({game:'fylker'}),[]);assert.deepEqual(await rows({game:'statle'}),[]);db.close();
+});
+
 test('language migration preserves scores and active runs and can be repeated',()=>{
  const {db}=fixture();
  for(const game of ['flags','capitals','flagcapital','places','countries','mapwiz'])for(const language of ['no','en']){

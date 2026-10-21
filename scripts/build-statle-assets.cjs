@@ -5,7 +5,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const root = path.resolve(__dirname, '..');
 const checking = process.argv.includes('--check');
-const assets = ['statle.css', 'statle.js', 'panel-resize.js'].map(source => {
+const assets = ['statle.css', 'statle.js', 'panel-resize.js', 'map-zoom.js'].map(source => {
   const extension = source.split('.').pop(), stem = source.slice(0,-extension.length-1);
   const content = fs.readFileSync(path.join(root, 'assets/geography/' + source), 'utf8').replace(/\r\n/g, '\n');
   const hash = crypto.createHash('sha256').update(content).digest('hex').slice(0, 12);
@@ -20,7 +20,7 @@ for (const asset of assets) {
     fs.writeFileSync(file, asset.content);
   }
 }
-for (const page of ['geografi/statle.html', 'geografi/fylker.html', 'prototypes/statle.html']) {
+for (const page of ['geografi/statle.html', 'geografi/fylker.html', 'geografi/kart.html', 'prototypes/statle.html']) {
   const file = path.join(root, page);
   let html = fs.readFileSync(file, 'utf8');
   for (const asset of assets) {
