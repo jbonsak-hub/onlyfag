@@ -535,5 +535,9 @@
   "Resultatet ditt er på topp 10!": "Your score is in the top 10!",
   "Resultatet ditt er på topp 5!": "Your score is in the top 5!",
   "Felles liste for norsk og engelsk.": "Shared leaderboard for Norwegian and English.",
-  "Egen liste for hvert spillvalg.": "Separate rankings for each game setting."
+  "Egen liste for hvert spillvalg.": "Separate rankings for each game setting.",
+  "Du er på topp 10!": "You are in the top 10!",
+  "Lagre": "Save",
+  "Nettlisten er utilgjengelig. Runden fortsetter uten nettrangering.": "The leaderboard is unavailable. This round continues without an online ranking.",
+  "Kontrollerer resultat …": "Verifying score …"
 }

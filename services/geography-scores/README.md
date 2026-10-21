@@ -5,17 +5,18 @@ Cloudflare Worker `onlyfag-geography-scores` bruker den separate D1-databasen me
 ## Spill og rangering
 
 - MapWiz: topp 10 for fullførte runder med ti spørsmål, egen liste per kategorivalg. Serveren fordeler oppgavene og tillater maks to fra samme kategori når mer enn fem kategorier er valgt. Den beregner avstand, tidsbonus og samlet tid, med eksisterende Norge-/verdensformler.
-- Flagg, Hovedsteder og Flagg+Hovedstad: topp 5 for hele verden, egen liste per retning. Runde avsluttes ved første feil eller når alle oppgavene er løst.
-- Kjente steder: topp 5 for «på rad», egen liste per retning. Varianten med 20 spørsmål forblir lokal uten ny konkurranseregel.
-- Finn land: topp 5 per geografisk område. Serveren kontrollerer land, gjentakelser, hint og tidsbonus.
+- Flagg, Hovedsteder og Flagg+Hovedstad: topp 10, egen liste per område og retning. Runde avsluttes ved første feil eller når alle oppgavene er løst.
+- Kjente steder: topp 10 for «på rad», egen liste per retning. Varianten med 20 spørsmål forblir lokal uten ny konkurranseregel.
+- Statle: topp 10 etter fullførte 50 stater. Serveren tildeler 100/75/50/0 poeng etter grønn/gul/oransje/rød kategori, maksimalt 5000. Feil, tidsbruk og hopp over kontrolleres; ufullførte runder kan ikke publiseres.
+- Finn land: topp 10 per geografisk område. Serveren kontrollerer land, gjentakelser, hint og tidsbonus.
 
-Norsk og engelsk deler resultatliste. Språket styrer spørsmål og knapper. Når et fullført resultat kvalifiserer til topp 10/5, åpnes kallenavnvinduet automatisk. Brukeren velger fortsatt selv om resultatet skal publiseres.
+Norsk og engelsk deler resultatliste. Språket styrer spørsmål og knapper. Når et fullført resultat kvalifiserer til topp 10, åpnes kallenavnvinduet automatisk. Brukeren velger fortsatt selv om resultatet skal publiseres. Vinduet viser bare «Du er på topp 10!», kallenavn og lagreknapp. En åpen resultatliste oppdateres hvert femte sekund og når fanen blir synlig igjen. Oppdateringen stopper når listen lukkes eller fanen skjules.
 
-Tid er servermålt og inkluderer nettverksforsinkelse. Ved like poeng rangeres kortere tid foran. Gamle lokale resultater lastes ikke opp; de kan fortsatt åpnes med «Resultater i denne nettleseren». Statle, Worldle, Tradle og de andre spillene uten slike resultatlister får ingen nye rangeringer i denne endringen.
+Tid er servermålt og inkluderer nettverksforsinkelse. Ved like poeng rangeres kortere tid foran. Gamle lokale resultater lastes ikke opp; de beholdes i nettleserlagringen, men har ingen knapp i nettlistene. Worldle, Tradle og de andre spillene uten slike resultatlister får ingen nye rangeringer i denne endringen.
 
 ## Kontroll og begrensninger
 
-Serveren oppretter runder og kontrollerer hvert svar/klikk. Nettleseren kan ikke sende inn et fritt valgt poengtall. Tilfeldige sesjonstoken finnes bare i nettleserens minne; databasen lagrer SHA-256-hash. Fullførte runder kan publiseres én gang. Revisjonskontroll hindrer parallelle svar i å telle dobbelt, og identiske forespørsler kan gjentas ved nettverksfeil.
+Serveren oppretter runder og kontrollerer hvert svar/klikk. Oppgavene forhåndshentes. Spillet viser lokal tilbakemelding straks, mens en ordnet kø sender svar til serveren. Sluttskjermen venter på kontrollen før et resultat kan publiseres. Ved feil i køen blir runden ikke rangert på nett; klientpoeng stoles aldri på. Nettleseren kan ikke sende inn et fritt valgt poengtall. Tilfeldige sesjonstoken finnes bare i nettleserens minne; databasen lagrer SHA-256-hash. Fullførte runder kan publiseres én gang. Revisjonskontroll hindrer parallelle svar i å telle dobbelt, og identiske forespørsler kan gjentas ved nettverksfeil.
 
 Dette er en åpen spilltjeneste uten brukerinnlogging. Kallenavn verifiserer ikke identitet. Offentlige geografidata og automatiserte oppslag gjør tjenesten uegnet som manipulasjonssikker konkurranse med premier eller vurdering av elever. Origin-kontroll og forespørselsgrenser reduserer misbruk, men erstatter ikke identitetskontroll eller botvern. Turnstile er ikke aktivert.
 
