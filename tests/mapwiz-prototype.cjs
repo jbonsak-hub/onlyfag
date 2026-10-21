@@ -51,14 +51,17 @@ const server = http.createServer((req,res) => {
    assert.deepEqual(points,await page.evaluate(()=>geoGuessrState.results.map(r=>[Number(r.base.toFixed(1)),Number(r.bonus.toFixed(1))])));
   }
   async function drag(dx,dy){const h=await page.locator('.geo-hud').boundingBox(),x=h.x+h.width-5,y=h.y+25;await page.mouse.move(x,y);await page.mouse.down();await page.mouse.move(x+dx,y+dy,{steps:10});await page.mouse.up();return page.locator('.geo-hud').boundingBox();}
-  await page.goto(base+'prototypes/mapwiz.html');await page.locator('[data-prototype-category]').first().waitFor();
+  await page.goto(base+'geografi/mapwiz.html');await page.locator('[data-prototype-category]').first().waitFor();
   assert.equal(await page.locator('[data-prototype-category]').count(),15);assert.equal(await page.locator('[data-prototype-category]:checked').count(),0);assert.ok(await page.locator('#geo-start-button').isDisabled());
   assert.equal(await page.locator('[data-prototype-category=clues],.prototype-tag,details.prototype-notes').count(),0);
   assert.equal(await page.evaluate(()=>Object.hasOwn(MAPWIZ_PROTOTYPE_DATA,'clues')),false,'Clue data removed');
   const layout=await page.evaluate(()=>({grid:document.querySelector('.geo-selection-grid').getBoundingClientRect().toJSON(),intro:document.querySelector('.prototype-setup-intro').getBoundingClientRect().toJSON(),notes:document.querySelector('.prototype-notes').getBoundingClientRect().toJSON(),cols:getComputedStyle(document.querySelector('.geo-selection-grid')).gridTemplateColumns.split(' ').length}));
-  assert.equal(layout.cols,3);assert.ok(layout.intro.x<30,'Text uses left edge');assert.ok(layout.grid.x>layout.intro.right&&layout.grid.y<layout.intro.y+65,'Categories at upper right');assert.ok(layout.notes.bottom<=643,'Notes visible at 100%');
+  assert.equal(layout.cols,3);assert.ok(layout.intro.x>100,'Setup grouped away from viewport corners');assert.ok(layout.grid.x>layout.intro.right&&Math.abs(layout.grid.y-layout.intro.y)<16,'Text and categories aligned');assert.ok(layout.notes.top-layout.grid.bottom<32&&layout.notes.top>=layout.grid.bottom,'Notes directly below categories');assert.ok(layout.notes.bottom<=643,'Notes visible at 100%');
+  const card=await page.locator('.mapwiz-prototype-setup').boundingBox();assert.ok(Math.abs(card.x+card.width/2-683)<2&&card.width<=1121,'Centered compact setup');
+  assert.equal(await page.locator('script[src*=cloudflareinsights]').count(),1);assert.equal(await page.locator('script[src*=cloudflareinsights]').getAttribute('data-cf-beacon').then(s=>JSON.parse(s).spa),false);
   assert.ok((await page.locator('.geo-selection-item').first().boundingBox()).width<280,'Narrow category cards');
-  await shot('setup-light');
+  await shot('setup-light');await page.locator('.quiz-page-theme').click();await shot('setup-dark');await page.locator('.quiz-page-theme').click();
+  await page.setViewportSize({width:1920,height:1080});const wide=await page.locator('.mapwiz-prototype-setup').boundingBox();assert.ok(Math.abs(wide.x+wide.width/2-960)<2&&wide.width<=1121,'Setup stays grouped on large screens');await shot('setup-wide');await page.setViewportSize({width:1366,height:643});
   const dataCheck=await page.evaluate(()=>({flags:MapWizPrototype.pools.get('flags').length,cities:MapWizPrototype.pools.get('cities').length}));
   assert.ok(dataCheck.flags>100&&dataCheck.cities>=80);
   const before=await page.evaluate(()=>JSON.stringify(localStorage));
@@ -92,7 +95,7 @@ const server = http.createServer((req,res) => {
   await page.setViewportSize({width:390,height:844});await page.waitForTimeout(100);await summaryFits();
   const norwayAlignment=await page.evaluate(()=>{const target=geoGuessrState.rounds[0],frame=document.querySelector('[data-no-frame]').getBoundingClientRect(),marker=document.querySelector('.geo-marker.answer').getBoundingClientRect();return Math.hypot(marker.x+marker.width/2-(frame.x+(target.lon+12)/46*frame.width),marker.y+marker.height/2-(frame.y+(81.5-target.lat)/24.3*frame.height));});assert.ok(norwayAlignment<1,'Norway results follow the resized map');
   for(const viewport of [{width:390,height:844},{width:360,height:740},{width:844,height:390}]){
-   await page.setViewportSize(viewport);await page.goto(base+'prototypes/mapwiz.html');await page.locator('[data-prototype-category=flags]').check();await page.locator('#geo-start-button').click();await page.waitForTimeout(100);
+   await page.setViewportSize(viewport);await page.goto(base+'geografi/mapwiz.html');await page.locator('[data-prototype-category]').first().waitFor();assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Setup fits mobile width');await shot('setup-'+viewport.width);await page.locator('[data-prototype-category=flags]').check();await page.locator('#geo-start-button').click();await page.waitForTimeout(100);
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
    if(viewport.width<700){
     const h=await page.locator('.geo-hud').boundingBox(),cdp=await context.newCDPSession(page),x=h.x+h.width-5,y=h.y+25;
@@ -104,7 +107,8 @@ const server = http.createServer((req,res) => {
    await finish(6);await summaryFits();await shot('summary-'+viewport.width);
    await page.locator('.quiz-page-menu').click();await page.keyboard.press('Escape');
   }
-  assert.equal(requests.filter(u=>/cloudflareinsights|flagcdn/.test(u)).length,0);assert.deepEqual(errors,[]);
+  assert.equal(requests.filter(u=>/flagcdn/.test(u)).length,0);assert.equal(requests.filter(u=>/cloudflareinsights/.test(u)).length,requests.filter(u=>u===base+'geografi/mapwiz.html').length,'One analytics loader per published page load');
+  const tracked=requests.filter(u=>/cloudflareinsights/.test(u)).length;await page.goto(base+'prototypes/mapwiz.html');await page.locator('[data-prototype-category]').first().waitFor();assert.equal(await page.locator('[data-prototype-category]').count(),15);assert.equal(requests.filter(u=>/cloudflareinsights/.test(u)).length,tracked,'Preview remains untracked');assert.deepEqual(errors,[]);
   console.log(JSON.stringify({dataCheck,categories:counts,randomRounds,drag:true,touch:true,summaryTenLines:true,summaryWithoutScroll:true,mobile:true,errors}));
  }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);server.close();process.exitCode=1});

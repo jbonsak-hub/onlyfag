@@ -1,4 +1,4 @@
-/* Isolated experiment. Loaded only by prototypes/mapwiz.html. */
+/* Extended MapWiz. Shared by the published page and its preview. */
 (() => {
  const reference=window.MAPWIZ_PROTOTYPE_DATA;
  const escape=escapeGeoHtml;

@@ -185,6 +185,7 @@ const server = http.createServer((req, res) => {
   await page.locator('.country-region-btn').first().click();
   assert.ok((await page.locator('#country-map-input').count()) || (await page.locator('#country-guess').count()));
   await page.goto(base + 'geografi/mapwiz.html');
+  await page.locator('#prototype-all').click();
   await page.locator('#geo-start-button').click();
   assert.equal(await page.locator('#geo-map-stage').count(), 1);
   console.log('PASS GeoWiz start');
@@ -265,6 +266,7 @@ const server = http.createServer((req, res) => {
   await page.locator(`path.state[data-state="${statleTarget}"]`).dispatchEvent('click');
   assert.equal(await page.locator('#completed').innerText(), '1');
   await page.goto(base + 'geografi/mapwiz.html');
+  await page.locator('#prototype-all').click();
   await page.locator('#geo-start-button').click();
   await page.locator('#geo-map-stage').click({
     position: {

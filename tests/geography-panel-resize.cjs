@@ -24,7 +24,7 @@ const server = http.createServer((req,res) => {
    if(mode==='countries')await page.locator('.country-region-btn').first().click();
    if(mode==='jeopardy'){for(let i=0;i<3;i++)await page.locator('#jeopardy-category-picker input').nth(i).check();await page.locator('[onclick="startJeopardyGame()"]').click();}
   }
-  for(const [mode,[file]] of Object.entries(routes).filter(([m])=>m!=='openguessr')){
+  for(const [mode,[file]] of Object.entries(routes).filter(([m])=>!['openguessr','geoguessr'].includes(m))){
    await page.goto(base+file);await start(mode);
    const scope=framed.includes(mode)?page.frames().find(f=>f!==page.mainFrame()):page.mainFrame();
    const selector=framed.includes(mode)?'.'+mode+'-side':mode==='statle'?'.game-panel':mode==='geoguessr'?'.quiz-control-rail':mode==='countries'?'.country-map-bottom-bar':mode==='detective2'?'.worldle-side':mode==='jeopardy'?'.jeopardy-side':'.quiz-status-panel';
@@ -64,7 +64,7 @@ const server = http.createServer((req,res) => {
   await page.setViewportSize({width:1366,height:643});
 
   // MapWiz navigation floats above the map and never scores a guess.
-  await page.goto(base+'geografi/mapwiz.html');await page.locator('#geo-start-button').click();
+  await page.goto(base+'geografi/mapwiz.html');await page.locator('#prototype-all').click();await page.locator('#geo-start-button').click();
   assert.equal(await page.getByRole('separator').isVisible(),false);
   await page.locator('.geo-map-stage .quiz-page-menu').click();await page.keyboard.press('Escape');
   assert.equal(await page.evaluate(()=>geoGuessrState.answered),false);
@@ -76,9 +76,9 @@ const server = http.createServer((req,res) => {
    await page.locator('.geo-next-button').click();
   }
   assert.equal(await page.evaluate(()=>geoGuessrState.results.length),10);
-  assert.ok(await page.locator('.geo-summary-hud').isVisible());
+  assert.ok(await page.locator('.prototype-summary').isVisible());
 
-  await page.goto(base+'geografi/mapwiz.html');await page.setViewportSize({width:390,height:844});await page.locator('#geo-start-button').click();
+  await page.goto(base+'geografi/mapwiz.html');await page.setViewportSize({width:390,height:844});await page.locator('#prototype-all').click();await page.locator('#geo-start-button').click();
   assert.ok(await page.locator('.geo-world-scroll').evaluate(e=>e.scrollWidth>e.clientWidth*2),'Portrait map can pan instead of stretching');
   await page.waitForTimeout(100);
   const scrollBefore=await page.locator('.geo-world-scroll').evaluate(e=>e.scrollLeft);
@@ -103,7 +103,7 @@ const server = http.createServer((req,res) => {
   if(process.env.LAYOUT_SCREENSHOTS)await page.screenshot({path:path.join(process.env.LAYOUT_SCREENSHOTS,'mapwiz-portrait.png')});
   await page.setViewportSize({width:1366,height:643});
   await page.goto(base+'geografi/mapwiz.html');
-  await page.evaluate(()=>{geoGuessrSelection=new Set(['place:Norge']);startGeoGuessr();});
+  await page.locator('[data-prototype-category="place:Norge"]').check();await page.locator('#geo-start-button').click();
   assert.equal(await page.evaluate(()=>geoGuessrState.norwayOnly),true);
   const norway=await page.locator('.geo-map-stage').boundingBox();assert.ok(Math.abs(norway.width-1366)<1);assert.ok(Math.abs(norway.height-643)<1);
   await page.locator('.geo-map-stage').click({position:{x:600,y:200}});
