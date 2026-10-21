@@ -5,7 +5,7 @@ const crypto = require('node:crypto');
 const root = path.resolve(__dirname, '..');
 const check = process.argv.includes('--check');
 const routes = JSON.parse(fs.readFileSync(path.join(root, 'assets/geography/routes.js'), 'utf8').match(/window.GEO_QUIZ_ROUTES=([\s\S]*);/)[1]);
-const pages = ['geografi.html', ...Object.entries(routes).filter(([mode]) => !['statle','openguessr'].includes(mode)).map(([, [file]]) => file)];
+const pages = ['geografi.html', ...Object.entries(routes).filter(([mode]) => mode !== 'statle').map(([, [file]]) => file)];
 const built = new Map();
 for (const page of pages) {
   const file = path.join(root, page), original = fs.readFileSync(file, 'utf8');

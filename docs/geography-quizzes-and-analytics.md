@@ -110,14 +110,23 @@ prototypes/statle.html deler kartkode og stil med den publiserte siden, men last
 
 ## Kompakte quizoppsett med Statle-palett
 
-Globle, Worldle, Travle, Tradle, GeoGrid, MapWiz, Jeopardy, Landquiz, Flaggquiz, Hovedstadsquiz, Stedsquiz og Flagg+hovedstad deler nå `quiz-layout.css` og `quiz-layout.js`. Den tidligere topplinjen er erstattet av OnlyFag/tema/Quizoversikt i kontrollpanelet og en sammenfoldet geografimeny over venstre billedkant. På PC fyller kartspillene høyden; mobilvisningen plasserer kart/brett over kontrollene og holder svaralternativer i to kolonner. Globle beholder drag, zoom og avstandsfarger. Stedsbeskrivelser, resultatvinduer og Jeopardy bruker lyse, lesbare flater. Worldle åpner ikke mobiltastaturet automatisk.
+Globle, Worldle, Travle, Tradle, GeoGrid, MapWiz, Jeopardy, Landquiz, Flaggquiz, Hovedstadsquiz, Stedsquiz og Flagg+hovedstad deler nå `quiz-layout.css` og `quiz-layout.js`. Den tidligere topplinjen er erstattet av kompakte tema-/Quizoversikt-kontroller og en sammenfoldet geografimeny over venstre billedkant. OnlyFag-raden er fjernet fra disse quizene. På PC fyller kartspillene høyden; mobilvisningen plasserer kart/brett over kontrollene og holder svaralternativer i to kolonner. Globle beholder drag, zoom og avstandsfarger. Stedsbeskrivelser, resultatvinduer og Jeopardy bruker lyse, lesbare flater. Worldle åpner ikke mobiltastaturet automatisk.
 
 Kart-iframe får den nye utformingen bare når det åpnes fra en av de fire selvstendige quizsidene. Kartverktøyene på geografi.html og øvrige fag beholder utformingen. Eksisterende spillfunksjoner, datasett og lagringsnøkler beholdes.
 
 GeoWiz heter nå MapWiz på `/geografi/mapwiz.html`. `/geografi/geowiz.html`, `/geografi-geowiz.html` og tidligere hash-/query-lenker videresender dit uten et ekstra analytics-skript. Samme Cloudflare-token brukes. Historiske tall for GeoWiz-stien blir liggende på den gamle stien i Cloudflare.
 
-Etter endringer i geografiens delte JS/CSS: kjør `node scripts/build-geography-quiz-assets.cjs`. Dette lager innholdshash-versjoner av alle direkte JS/CSS-avhengigheter for geografi.html og de 12 quizsidene. HTML peker på `assets/geography/quiz-assets/`. Kildekode redigeres utenfor denne mappen. Behold tidligere publiserte filer for eldre HTML i buffer. Statle har fortsatt sin separate, uendrede byggeprosess.
+Etter endringer i geografiens delte JS/CSS: kjør `node scripts/build-geography-quiz-assets.cjs`. Dette lager innholdshash-versjoner av alle direkte JS/CSS-avhengigheter for geografi.html og de 13 quizsidene. HTML peker på `assets/geography/quiz-assets/`. Kildekode redigeres utenfor denne mappen. Behold tidligere publiserte filer for eldre HTML i buffer. Statle har fortsatt sin separate, uendrede byggeprosess.
 
 Verifisering: `node tests/geography-layout.cjs` og `node tests/geography-analytics.cjs` med samme Playwright-variabler som over. Layouttesten dekker oppstart/spill i 1366×643, 390×844, 360×740 og 844×390; fullhøydekart, alle ni GeoGrid-ruter, meny/retur, lesbare stedsbeskrivelser, svaralternativer, landkart uten overlapp over svarfelt, MapWiz-kartklikk uten klikkgjennomgang fra HUD, Jeopardy-spørsmål/fasit/poeng og GeoGrid-inntasting med viewport 390×480 som tilnærming til tastaturplass. `LAYOUT_SCREENSHOTS` kan angi en mappe for visuell kontroll. Analytics-testen bruker lokalt fangede payloads fra det originale beaconet. Ingen testtrafikk sendes til Cloudflare.
 
 Mobilkontroll er utført i emulerte Chromium/Edge-visninger, ikke på fysisk iPhone/Android eller Safari. Eksterne Worldle-bilder og Cloudflare-dashboardets mottak kontrolleres ikke av den lokale testen. Ingen backend, elevdata eller tilgangsbeskyttelse er endret.
+
+
+### Tettere standardvisning ved 100 % zoom
+
+Kontroller, oppsett og forsøksrader er fortettet videre. Globle har hvit bakgrunn utenfor kloden i lys modus og svart i mørk modus, mens havfargen beholdes. Gjett, Vis fasit og Nytt land ligger på samme linje. Forsøksrader er normalt 23 px høye, og bare listen ruller når den er full. Forklaringen og avstandshjelpen ligger samlet i én lukket «Slik fungerer det» nederst. Samme prinsipp med mindre kontroller og samlet hjelp brukes i de øvrige oppdaterte quizene. Mobil beholder lesbare inntastingsfelt og egne trykkflater.
+
+GeoGuessr-innrammingen har bare to flytende kontroller: Meny og Quizoversikt. Selve det eksterne spillet er uendret. Quizoversikten har mindre kort, forhåndsvisninger og tekst ved vanlig nettleserzoom; dette er separat stil som ikke endrer fagseksjonene.
+
+Layouttesten kontrollerer også minst 20 ekte Globle-gjetninger, én linje for alle tre handlingsknappene, synlig retur uten rulling av kontrollpanelet, begge bakgrunnsfarger, samlet hjelpetekst, GeoGuessr-innramming uten topplinje og kompakte oversiktskort. `geography-layout.cjs` dekker fortsatt fire skjermstørrelser og mobilspill. Ingen CSS-zoom brukes.

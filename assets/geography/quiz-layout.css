@@ -170,3 +170,112 @@ body[data-quiz] #quiz-jeopardy .score-team-buttons .score-button{background:#245
 
 body[data-quiz] .country-map-game .country-map-primary{grid-template-columns:minmax(0,1fr) var(--q-panel)!important;height:auto!important;min-height:0!important}
 @media(max-width:700px){body[data-quiz] .country-map-game .country-map-primary{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:45svh auto!important}}
+
+/* Compact controls at native browser zoom. Help never competes with attempts. */
+body[data-quiz],body[data-quiz-layout]{font-size:13px}
+body[data-quiz] .quiz-page-header{min-height:0;justify-content:flex-end;margin:0 0 6px;gap:5px}
+body[data-quiz] .quiz-page-theme,body[data-quiz-layout] .quiz-page-theme{width:26px!important;height:26px!important;font-size:14px!important}
+body[data-quiz] .quiz-page-back,body[data-quiz-layout] .quiz-page-back{font-size:12px!important;padding:6px 8px!important;border-radius:5px!important}
+.quiz-layout-footer{margin-top:0;padding-top:6px}
+body[data-quiz] .quiz-control-rail{top:7px;right:8px;bottom:auto;width:auto;height:auto;min-height:0;padding:0;gap:6px;flex-direction:row;align-items:center;overflow:visible;background:none;border:0;z-index:10020}
+body[data-quiz] .quiz-control-rail .quiz-page-header{margin:0}.quiz-control-rail .quiz-layout-footer{padding:0}
+body[data-quiz]:not(.quiz-integrated-nav):not(.quiz-frame-host) main.content{width:100%!important}
+body[data-quiz] .quiz-floating-menu{top:7px;left:7px;padding:6px 9px;font-size:11px}
+body[data-quiz] .quiz-help,body[data-quiz-layout] .quiz-help{font-size:11px;line-height:1.35;color:var(--q-muted)}
+body[data-quiz] .quiz-help summary,body[data-quiz-layout] .quiz-help summary{padding:4px 0;cursor:pointer}
+body[data-quiz] .quiz-help p,body[data-quiz-layout] .quiz-help p,body[data-quiz-layout] .quiz-help .geo-distance-note{font-size:11px!important;line-height:1.35!important;margin:5px 0!important;padding:0!important}
+body[data-quiz-layout] :is(.globle-side,.travle-side,.tradle-side,.geogrid-side){padding:11px!important;gap:7px!important;position:relative}
+.quiz-frame-nav{position:absolute;top:8px;right:10px;margin:0;z-index:3}
+body[data-quiz-layout] :is(.globle-side,.travle-side,.tradle-side,.geogrid-side)>div:first-of-type:not(.quiz-frame-nav){padding-right:30px}
+body[data-quiz-layout] :is(.globle-side h2,.travle-side h2,.tradle-side h2,.geogrid-side h2){font-size:18px!important;line-height:1.15!important}
+body[data-quiz-layout] .badge{font-size:9px!important;padding:2px 5px!important;margin-bottom:3px!important}
+body[data-quiz-layout] :is(.primary-btn,.soft-btn,.travle-hints button,.tradle-globe-help-btn){font-size:12px!important;line-height:1.2!important;padding:7px 8px!important;border-radius:5px!important;min-height:30px}
+body[data-quiz-layout] :is(.field input,.globle-input-box input,.travle-input-box input){font-size:14px!important;line-height:1.25;padding:8px!important;border-radius:5px!important;min-height:34px}
+body[data-quiz-layout] .game-input-space{margin-top:0!important}
+body[data-quiz-layout] .pill{font-size:11px!important;line-height:1.2!important;padding:4px 6px!important;border-radius:5px!important}
+body[data-quiz-layout] :is(.globle-stats,.travle-progress-row){gap:4px!important;flex-wrap:wrap}
+body[data-quiz-layout] :is(.feedback,.travle-feedback){font-size:12px!important;line-height:1.3!important;margin:0!important;min-height:0!important}
+body[data-quiz-layout] :is(.feedback,.travle-feedback,.travle-solution):empty{display:none}
+body[data-quiz-layout] :is(.globle-side,.travle-side,.tradle-side,.geogrid-side)>.quiz-help{margin-top:auto}
+body[data-quiz-layout] :is(.globle-row,.tradle-row){padding:3px 5px!important;font-size:11px!important;line-height:1.25!important;border-radius:3px!important;gap:4px!important;min-height:23px}
+body[data-quiz-layout] :is(.globle-history,.tradle-history){gap:2px!important;margin:0!important}
+body[data-quiz-layout=globle]{--q-space:#fff}
+body[data-quiz-layout=globle].dark{--q-space:#000}
+body[data-quiz-layout=globle] :is(.globle-map-panel,.globle-map-fit),body[data-quiz-layout=globle] #globleMap{background:var(--q-space)!important}
+body[data-quiz-layout=globle] #globlePlayControls:not([hidden]){display:flex;flex-direction:column;gap:6px;flex:1 1 auto;min-height:0}
+body[data-quiz-layout=globle] #globlePlayControls>.row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;flex-wrap:nowrap}
+body[data-quiz-layout=globle] #globlePlayControls>.row button{white-space:nowrap;padding:7px 4px!important;font-size:11px!important}
+body[data-quiz-layout=globle] #globleHistory{flex:1 1 auto;min-height:0;max-height:none!important;overflow:auto;align-content:start}
+body[data-quiz-layout] .globle-row .arrow{font-size:13px!important}
+body[data-quiz-layout] .travle-heading-row{flex-direction:row!important;gap:6px;align-items:center}
+body[data-quiz-layout] .travle-heading-row h2{font-size:16px!important}
+body[data-quiz-layout] .travle-heading-row>button{white-space:nowrap;align-self:center}
+body[data-quiz-layout] .travle-route-card{grid-template-columns:auto minmax(0,1fr) auto minmax(0,1fr)!important;padding:6px!important;gap:4px!important;font-size:11px!important}
+body[data-quiz-layout] .travle-route-card strong{font-size:12px!important}
+body[data-quiz-layout] .travle-input-row{grid-template-columns:minmax(0,1fr) auto!important;gap:4px}
+body[data-quiz-layout] .travle-side-columns{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr) auto;gap:7px!important;flex:1 1 auto;min-height:0}
+body[data-quiz-layout] .travle-history-section{min-height:0;display:flex;flex-direction:column}
+body[data-quiz-layout] .travle-history{max-height:none!important;min-height:0;overflow:auto;gap:2px!important}
+body[data-quiz-layout] .travle-guess-chip{font-size:11px!important;padding:3px 5px!important;border-radius:3px!important}
+body[data-quiz-layout] :is(.travle-column-title,.travle-hint-title){font-size:11px!important;margin-bottom:3px!important}
+body[data-quiz-layout] .travle-hints{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px!important}
+body[data-quiz-layout] .travle-hints button{font-size:10px!important;min-width:0;padding:5px 3px!important}
+body[data-quiz-layout] .tradle-history{flex:1 1 auto;min-height:0;max-height:none!important;overflow:auto;align-content:start}
+body[data-quiz-layout] .tradle-help-bottom{margin-top:0!important;gap:5px}
+body[data-quiz-layout] .geogrid-stats{gap:4px!important}
+body[data-quiz-layout] .geogrid-side-actions{display:grid!important;grid-template-columns:1fr 1fr;gap:5px!important;margin:0!important}
+body[data-quiz-layout] .tradle-chart-head{padding:7px!important;font-size:11px!important}
+/* The external game keeps its own fullscreen UI, with just two floating links. */
+body[data-quiz].quiz-external-host main.content{width:100%!important;height:100dvh!important;min-height:0!important}
+.quiz-external-host .quiz-control-rail{display:none!important}
+.quiz-external-overview{position:fixed;right:8px;top:7px;z-index:11000;margin:0;padding:0}
+body[data-quiz=openguessr] #quiz-openguessr{top:0!important;height:100dvh!important}
+/* Apply the same density to the other quiz controls, without shrinking maps. */
+body[data-quiz] :is(.worldle-side,.geo-hud,.country-map-side,.country-map-bottom-bar,.quiz-status-panel){padding:11px!important;gap:7px!important}
+body[data-quiz] :is(.worldle-side-title h3,.geo-target-label){font-size:19px!important}
+body[data-quiz] :is(.worldle-pill,.world-pill,.geo-hud-pill,.country-map-stat){font-size:11px!important;padding:5px 7px!important;line-height:1.2}
+body[data-quiz] :is(.worldle-guess-btn,.worldle-next,.worldle-hint-button,.geo-map-exit,.country-map-action,.world-button){font-size:12px!important;padding:7px 9px!important;min-height:30px}
+body[data-quiz] .worldle-side .worldle-history{flex:1 1 auto!important;min-height:0!important;max-height:none!important;grid-auto-rows:30px!important;gap:3px!important}
+body[data-quiz] .worldle-side .worldle-history-row,body[data-quiz] .worldle-side .worldle-history-row span{height:30px!important;font-size:11px!important;padding:4px!important}
+body[data-quiz] :is(.worldle-hint-panel,.worldle-hint-chip){padding:6px!important;font-size:11px!important}
+body[data-quiz] .worldle-feedback{min-height:0!important;margin:0!important;font-size:12px!important}
+body[data-quiz] .worldle-feedback:empty{display:none}
+body[data-quiz] :is(.streak-setup,.country-region-setup,.geo-guessr-setup){padding:14px!important}
+body[data-quiz] .streak-region-btn{min-height:40px!important;padding:7px!important;font-size:12px!important}
+body[data-quiz] .streak-direction-btn{min-height:36px!important;padding:7px!important;font-size:12px!important}
+body[data-quiz] :is(.streak-choice-section,.streak-start-row){margin-top:9px!important}
+body[data-quiz] .streak-choice-label{font-size:11px!important;margin-bottom:4px!important}
+body[data-quiz] .world-card{padding:14px!important}
+body[data-quiz] .world-option{font-size:14px!important;min-height:44px!important;padding:8px!important}
+body[data-quiz] .world-prompt{font-size:23px!important;margin:5px 0 10px!important}
+body[data-quiz] .geo-selection-item{padding:6px!important;min-height:38px!important;font-size:12px!important}
+body[data-quiz] .geo-selection-item strong{font-size:12px!important}
+body[data-quiz] .geo-selection-item small{font-size:10px!important}
+@media(max-width:700px){
+ body[data-quiz] .quiz-control-rail{position:fixed;top:5px;right:6px;height:auto;min-height:0;z-index:10020}
+ body[data-quiz] main.content{min-height:100dvh!important}
+ body[data-quiz-layout] :is(.globle-side,.travle-side,.tradle-side,.geogrid-side){padding:9px!important;gap:6px!important}
+ body[data-quiz-layout] :is(.field input,.globle-input-box input,.travle-input-box input){font-size:16px!important}
+ body[data-quiz-layout=globle] #globleHistory{max-height:220px!important;flex:0 1 auto}
+ body[data-quiz-layout] .tradle-history,body[data-quiz-layout] .travle-history{max-height:170px!important}
+ body[data-quiz-layout] .travle-side-columns{flex:none}
+ body[data-quiz] #verden-quiz .quiz-status-panel{padding:7px 9px 7px 76px!important;grid-template-columns:auto 1fr!important}
+ body[data-quiz] .quiz-status-panel .quiz-page-header{grid-column:1;grid-row:1}
+ body[data-quiz] .quiz-status-panel .quiz-layout-footer{grid-column:2;grid-row:1;justify-self:end}
+ body[data-quiz] .quiz-status-panel .world-statusbar{grid-column:1/-1;grid-row:2}
+ body[data-quiz] .worldle-side .worldle-history{flex:none!important;max-height:180px!important}
+ body[data-quiz] .world-prompt{font-size:20px!important}
+}
+
+body[data-quiz-layout] .travle-heading-row{padding-right:32px!important}
+body[data-quiz].quiz-external-host :is(.openguessr-actions,.openguessr-menu-button){display:none!important}
+body[data-quiz] .geo-selection-item strong{color:var(--q-ink)!important}
+
+@media(max-width:700px){body[data-quiz-layout] :is(.primary-btn,.soft-btn,.travle-hints button,.tradle-globe-help-btn){min-height:34px}body[data-quiz-layout=globle] #globlePlayControls>.row button{font-size:12px!important}}
+
+body[data-quiz] .geo-feedback strong,body[data-quiz] .geo-summary-hud strong{color:var(--q-ink)!important}
+body[data-quiz] .geo-next-button{font-size:12px!important;padding:7px 9px!important;min-height:30px;background:#245845!important;color:#fff!important;box-shadow:none!important}
+
+/* Keep the same rail width after a MapWiz answer and on the Norway map. */
+body[data-quiz] .geo-map-stage .geo-hud{left:auto!important;right:0!important;top:0!important;bottom:0!important;width:var(--q-panel)!important;transform:none!important;padding:11px!important}
+@media(max-width:700px){body[data-quiz] .geo-map-stage .geo-hud{left:0!important;right:auto!important;top:100%!important;bottom:auto!important;width:100%!important}}

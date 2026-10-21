@@ -31,7 +31,7 @@ const server = http.createServer((req,res) => {
    await page.goto(base+file);await page.waitForTimeout(100);
    const frame=framed.includes(mode)?page.frames().find(f=>f!==page.mainFrame()):page.mainFrame();
    if(framed.includes(mode))await frame.locator('[data-quiz-layout]').waitFor();
-   await checkBox(frame,'.quiz-home',60);
+   assert.equal(await frame.locator('a.quiz-home').count(),0,'No logo row in quiz controls');
    const nav=await frame.locator(framed.includes(mode)?'.quiz-frame-nav':'.quiz-page-header').evaluate(e=>getComputedStyle(e).position);
    assert.notEqual(nav,'fixed','No full-width fixed topbar');
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Host overflow '+file);
@@ -58,7 +58,7 @@ const server = http.createServer((req,res) => {
      await page.locator('[onclick="startJeopardyGame()"]').click();
     }
     await page.waitForTimeout(50);
-    await checkBox(page,'.quiz-home',60);
+    await checkBox(page,'.quiz-page-theme',20);
     if(['flags','capitals','flagcapital','places'].includes(mode)){
      const status=await checkBox(page,'.quiz-status-panel',200), card=await checkBox(page,'.world-card',200);
      if(viewport.width<=700)assert.ok(status.bottom<=card.top+1,'Status before question on mobile');
@@ -71,6 +71,7 @@ const server = http.createServer((req,res) => {
      assert.equal(await page.evaluate(()=>geoGuessrState.answered),false,'HUD actions must not submit map guesses');
      await page.locator('#geo-map-stage').click({position:{x:100,y:100}});
      assert.equal(await page.evaluate(()=>geoGuessrState.answered),true,'Mobile map click still scores');
+     if(viewport.width>700){const answered=await page.locator('.geo-hud').boundingBox();assert.ok(Math.abs(answered.x-map.right)<1,'Answer panel must not cover the map');}
      await page.locator('.geo-hud .quiz-page-theme').click();
     }
     if(mode==='detective2')await checkBox(page,'.worldle-target',200);
@@ -95,6 +96,36 @@ const server = http.createServer((req,res) => {
    console.log('PASS layout',mode,viewport.width+'x'+viewport.height);
   }
  }
+ // Verify density with real guesses rather than an empty start screen.
+ await page.setViewportSize({width:1366,height:643});await page.goto(base+'geografi/globle.html');
+ const globe=page.frames().find(f=>f!==page.mainFrame());await globe.locator('#globleStartRandom').click();
+ await globe.evaluate(()=>{for(const feature of WORLD.features.filter(f=>f!==state.globle.target).slice(0,20)){document.getElementById('globleGuess').value=feature.properties.name;submitGlobleGuess();}});
+ const density=await globe.evaluate(()=>({zoom:getComputedStyle(document.body).zoom,side:document.querySelector('.globle-side').getBoundingClientRect().toJSON(),scroll:document.querySelector('.globle-side').scrollHeight,rows:[...document.querySelectorAll('.globle-row')].map(e=>e.getBoundingClientRect().height),buttons:['globleSubmit','globleReveal','globleNew'].map(id=>document.getElementById(id).getBoundingClientRect().toJSON()),space:getComputedStyle(document.getElementById('globleMap')).backgroundColor}));
+ assert.equal(density.zoom,'1');assert.ok(density.rows.length>=20);assert.ok(density.rows.every(h=>h<=30),'Compact attempt rows');
+ assert.ok(density.buttons.every(b=>Math.abs(b.top-density.buttons[0].top)<1),'All three actions share one line');
+ assert.ok(density.scroll<=644,'No side-panel scrolling at 100% with 20 attempts');
+ assert.equal(density.space,'rgb(255, 255, 255)');
+ await globe.locator('.quiz-frame-nav .quiz-page-theme').click();
+ await globe.waitForFunction(()=>document.body.classList.contains('dark'));
+ assert.equal(await globe.locator('#globleMap').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(0, 0, 0)');
+ await globe.locator('.quiz-frame-nav .quiz-page-theme').click();
+ await globe.waitForFunction(()=>!document.body.classList.contains('dark'));
+ await globe.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+ const help=globe.locator('.globle-side>.quiz-help');assert.equal(await help.getAttribute('open'),null);assert.match(await help.textContent(),/Hvor raskt/);assert.match(await help.textContent(),/Avstandshjelp/);
+ const back=await checkBox(globe,'.globle-side .quiz-page-back');assert.ok(back.bottom<=643);
+ if(process.env.LAYOUT_SCREENSHOTS)await page.screenshot({path:path.join(process.env.LAYOUT_SCREENSHOTS,'globle-20-attempts-100pct.png')});
+ for(const viewport of [{width:1366,height:643},{width:390,height:844}]){
+  await page.setViewportSize(viewport);await page.goto(base+'geografi/geoguessr.html');
+  await page.locator('body.quiz-external-host').waitFor();
+  assert.equal(await page.locator('.quiz-page-header').count(),0);
+  const map=await checkBox(page,'#openguessr-frame',200);assert.ok(Math.abs(map.top)<1);assert.ok(Math.abs(map.height-viewport.height)<1);
+  await checkBox(page,'.quiz-floating-menu');await checkBox(page,'.quiz-external-overview .quiz-page-back');
+  assert.equal(await page.locator('.openguessr-actions:visible,.openguessr-menu-button:visible,.quiz-page-theme:visible').count(),0);
+  await page.locator('.quiz-page-menu').click();await page.keyboard.press('Escape');
+ }
+ await page.setViewportSize({width:1366,height:643});await page.goto(base+'geografi.html#verden-quiz');
+ const cards=await page.locator('.geoquiz-mode-row').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().toJSON()));assert.equal(cards.length,14);assert.ok(cards.every(r=>r.height<=78),'Overview matches compact reference at 100%');
+ if(process.env.LAYOUT_SCREENSHOTS)await page.screenshot({path:path.join(process.env.LAYOUT_SCREENSHOTS,'overview-100pct.png')});
  // A shortened viewport approximates the space left when a mobile keyboard opens.
  await page.setViewportSize({width:390,height:480});await page.goto(base+'geografi/geogrid.html');
  const grid=page.frames().find(f=>f!==page.mainFrame());await grid.locator('.geogrid-cell').first().click();
@@ -103,7 +134,7 @@ const server = http.createServer((req,res) => {
  await grid.locator('#geogridPopupClose').click();
  // Previously published GeoWiz URL preserves query and hash; tracking lives only on MapWiz.
  await page.goto(base+'geografi/geowiz.html?legacy=1#kept');await page.waitForURL(base+'geografi/mapwiz.html?legacy=1#kept');
- await page.locator('.quiz-home').click();await page.waitForURL(base+'index.html');
+ await page.locator('.quiz-page-back').click();await page.waitForURL(base+'geografi.html#verden-quiz');
  assert.deepEqual(errors,[]);console.log('PASS',pages.length,'quiz layouts in four viewports; no script errors');
  } finally {await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(()=>server.close());

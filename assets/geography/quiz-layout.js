@@ -7,9 +7,6 @@
   const theme = header.querySelector('.quiz-page-theme');
   const back = header.querySelector('.quiz-page-back');
   const cssUrl = document.querySelector('link[data-quiz-layout]').href;
-  const brand = document.createElement('a');
-  brand.className = 'quiz-home'; brand.href = '../index.html'; brand.textContent = 'OnlyFag';
-  header.prepend(brand);
   menu.classList.add('quiz-floating-menu'); document.body.append(menu);
   back.textContent = '← Quizoversikt';
   const footer = document.createElement('div'); footer.className = 'quiz-layout-footer'; footer.append(back);
@@ -27,6 +24,22 @@
   document.querySelector('.sidebar').addEventListener('click', e => {
     if (e.target.closest('.submenu-item')) document.body.classList.remove('sidebar-open');
   });
+  function collectHelp(container, selector) {
+    const notes = [...container.querySelectorAll(selector)].filter(n => !n.closest('.quiz-help'));
+    if (!notes.length) return;
+    let details = container.querySelector(':scope > .quiz-help');
+    if (!details) {
+      details = document.createElement('details'); details.className = 'quiz-help';
+      const summary = document.createElement('summary'); summary.textContent = 'Slik fungerer det';
+      details.append(summary); container.append(details);
+    }
+    notes.forEach(note => details.append(note));
+  }
+  if (mode === 'openguessr') {
+    document.body.classList.add('quiz-external-host');
+    footer.classList.add('quiz-external-overview'); document.body.append(footer);
+    rail.remove(); return;
+  }
   const mapModes = ['globle','travle','tradle','geogrid'];
   function frameLayout(frame) {
     const doc = frame.contentDocument;
@@ -36,18 +49,15 @@
     doc.body.dataset.quizLayout = mode;
     const style = doc.createElement('link'); style.rel = 'stylesheet'; style.href = cssUrl; style.dataset.quizLayoutStyle = '';
     const nav = doc.createElement('div'); nav.className = 'quiz-frame-nav';
-    const home = doc.createElement('a'); home.className = 'quiz-home'; home.href = '../../index.html'; home.target = '_top'; home.textContent = 'OnlyFag';
     const toggle = doc.createElement('button'); toggle.type = 'button'; toggle.textContent = '◐'; toggle.className = 'quiz-page-theme'; toggle.setAttribute('aria-label','Lys eller mørk modus');
-    toggle.addEventListener('click', () => theme.click()); nav.append(home, toggle);
+    toggle.addEventListener('click', () => theme.click()); nav.append(toggle);
     side.prepend(nav);
     const end = doc.createElement('div'); end.className = 'quiz-layout-footer';
     const overview = doc.createElement('a'); overview.className = 'quiz-page-back'; overview.href = '../../geografi.html#verden-quiz'; overview.target = '_top'; overview.textContent = '← Quizoversikt'; end.append(overview); side.append(end);
-    // Keep long help text available without pushing the game below the viewport.
-    side.querySelectorAll('.geo-distance-note,.geogrid-score-note').forEach(note => {
-      const details = doc.createElement('details'); details.className = 'quiz-help';
-      const summary = doc.createElement('summary'); summary.textContent = 'Slik fungerer det';
-      note.before(details); details.append(summary, note);
-    });
+    collectHelp(side, ':scope > p,.geo-distance-note,.geogrid-score-note,.travle-rules');
+    // Place every explanation inside one closed section, below the game.
+    const help = side.querySelector(':scope > .quiz-help');
+    if (help) side.insertBefore(help, end);
     const resize = () => frame.contentWindow.dispatchEvent(new frame.contentWindow.Event('resize'));
     style.addEventListener('load', resize); doc.head.append(style);
     if (window.ResizeObserver) new ResizeObserver(resize).observe(frame);
@@ -60,6 +70,9 @@
     return;
   }
   function update() {
+    document.querySelectorAll('.world-setup,.country-region-setup,.geo-guessr-setup,.jeopardy-setup').forEach(setup => {
+      collectHelp(setup, ':scope > p,.jeopardy-setup-header > p');
+    });
     // Keep status inside the engine's own app so a restart removes it atomically.
     document.querySelectorAll('.world-game').forEach(game => {
       const status = game.querySelector(':scope > .world-statusbar');
@@ -75,6 +88,11 @@
       if (header.parentElement !== target) target.prepend(header);
       if (footer.parentElement !== target) target.append(footer);
       rail.hidden = true;
+      if (mode === 'geoguessr') {
+        collectHelp(target, '.geo-hint');
+        const help = target.querySelector(':scope > .quiz-help');
+        if (help && help.nextElementSibling !== footer) target.insertBefore(help, footer);
+      }
       if (mode === 'geoguessr') {
         const exit = document.querySelector('.geo-map-exit');
         if (exit && exit.parentElement !== target) target.insertBefore(exit, footer);
