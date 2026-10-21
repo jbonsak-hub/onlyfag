@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Utforsk fem plategrenser. Dra i glideren og se hvordan jordskjelv, vulkaner, fjell og ny havbunn dannes.">
+  <title>Plategrenser – interaktiv modell | OnlyFag</title>
+  <link rel="stylesheet" href="../assets/geography/plate-boundaries/model.css">
+  <script src="../assets/analytics.js" defer></script>
+  <script src="../assets/geography/plate-boundaries/subduction-art.js" defer></script>
+  <script src="../assets/geography/plate-boundaries/collision-transform-art.js" defer></script>
+  <script src="../assets/geography/plate-boundaries/model.js" defer></script>
+</head>
+<body>
+  <main class="lab">
+    <header class="lab-header">
+      <div class="heading">
+        <a class="back" href="../geografi.html#indre-fagstoff">← Geografi <span>/ Indre krefter</span></a>
+        <h1>Der platene møtes<span class="subject">Plategrenser</span></h1>
+      </div>
+      <div class="header-tools">
+        <button id="info-toggle" class="tool mobile-info" type="button" aria-haspopup="dialog" aria-controls="explanation">Forklaring</button>
+        <button id="theme" class="tool" type="button" aria-label="Bytt til mørk visning" aria-pressed="false"><span aria-hidden="true">◐</span><span class="tool-name"> Lys / mørk</span></button>
+        <button id="fullscreen" class="tool" type="button" aria-label="Åpne fullskjerm"><span aria-hidden="true">⛶</span><span class="tool-name"> Fullskjerm</span></button>
+      </div>
+    </header>
+
+    <nav class="boundary-tabs" role="tablist" aria-label="Velg plategrense">
+      <button id="tab-ocean-continent" role="tab" aria-selected="true" aria-controls="model-panel" tabindex="0" data-mode="ocean-continent"><span class="tab-icon subduction-icon" aria-hidden="true">→<span>→</span></span><span>Hav–kontinent<small>Subduksjon</small></span></button>
+      <button id="tab-ocean-ocean" role="tab" aria-selected="false" aria-controls="model-panel" tabindex="-1" data-mode="ocean-ocean"><span class="tab-icon subduction-icon" aria-hidden="true">→<span>→</span></span><span>Hav–hav<small>Subduksjon</small></span></button>
+      <button id="tab-continent-continent" role="tab" aria-selected="false" aria-controls="model-panel" tabindex="-1" data-mode="continent-continent"><span class="tab-icon" aria-hidden="true">→←</span><span>Kontinent–kontinent<small>Kollisjon</small></span></button>
+      <button id="tab-divergent" role="tab" aria-selected="false" aria-controls="model-panel" tabindex="-1" data-mode="divergent"><span class="tab-icon" aria-hidden="true">←→</span><span>Spredningssone<small>Fra hverandre</small></span></button>
+      <button id="tab-transform" role="tab" aria-selected="false" aria-controls="model-panel" tabindex="-1" data-mode="transform"><span class="tab-icon" aria-hidden="true">↑↓</span><span>Glidegrense<small>Forbi hverandre</small></span></button>
+    </nav>
+
+    <div id="model-panel" class="workspace" role="tabpanel" aria-labelledby="tab-ocean-continent">
+      <section class="model" aria-label="Interaktiv figur og kontroller">
+        <div class="model-heading"><div><span id="boundary-kind" class="eyebrow">Konvergerende plategrense</span><h2 id="model-title">Havbunn møter kontinent</h2></div><span id="view-kind" class="view-kind">Tverrsnitt</span></div>
+        <div class="stage-caption" role="status" aria-live="polite" aria-atomic="true"><span id="stage-number" aria-hidden="true">01</span><p id="stage-explanation"></p></div>
+        <div class="scene" id="scene">
+          <svg id="diagram" viewBox="0 0 1000 540" role="group" aria-labelledby="diagram-title diagram-description">
+            <title id="diagram-title">Havbunn møter kontinent</title>
+            <desc id="diagram-description">En havbunnsplate synker under en kontinentalplate.</desc>
+            <defs>
+              <linearGradient id="water" x2="0" y2="1"><stop stop-color="#5ba7b7"/><stop offset="1" stop-color="#28677e"/></linearGradient>
+              <linearGradient id="mantle" x2="0" y2="1"><stop stop-color="#68534e"/><stop offset="1" stop-color="#3f3b42"/></linearGradient>
+              <linearGradient id="continent" x2="0" y2="1"><stop stop-color="#dcbd91"/><stop offset="1" stop-color="#af8267"/></linearGradient>
+              <linearGradient id="ocean-plate" x2="0" y2="1"><stop stop-color="#77b4b6"/><stop offset="1" stop-color="#427c89"/></linearGradient>
+              <radialGradient id="melt"><stop stop-color="#ffda83" stop-opacity=".95"/><stop offset=".45" stop-color="#ee8651" stop-opacity=".7"/><stop offset="1" stop-color="#ee8651" stop-opacity="0"/></radialGradient>
+              <pattern id="rock" width="44" height="26" patternUnits="userSpaceOnUse"><path d="M5 15q9-5 18 0M27 4h10" stroke="#fff" stroke-opacity=".09" fill="none"/></pattern>
+              <pattern id="crust-lines" width="38" height="22" patternUnits="userSpaceOnUse"><path d="M3 10h20M20 20h12" stroke="#604c40" stroke-opacity=".2"/></pattern>
+              <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#f4f8ec"/></marker>
+              <marker id="magma-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0 10 5 0 10z" fill="#ffbd72"/></marker>
+              <marker id="blue-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0 10 5 0 10z" fill="#a1e6f0"/></marker>
+            </defs>
+            <g id="drawing"></g>
+          </svg>
+        </div>
+        <div class="legend" aria-label="Tegnforklaring"><div id="legend-items"></div><button id="labels-toggle" type="button" aria-pressed="true">Skjul navn</button></div>
+        <div class="transport">
+          <div class="transport-top"><label for="progress">Utvikling <output id="progress-value" for="progress">0 %</output></label><span id="stage-name">Havbunnsplaten bøyes ned</span><span class="playback"><button id="reset" type="button" aria-label="Tilbakestill modellen" title="Tilbakestill">↺</button><button id="play" type="button" aria-label="Spill av utviklingen" aria-pressed="false"><span aria-hidden="true">▶</span> Spill av</button></span></div>
+          <input id="progress" type="range" min="0" max="100" step="1" value="0" aria-describedby="timeline-note">
+          <div class="timeline-caption"><span>Start</span><span id="timeline-note">Forenklet forløp · ikke en tidsskala</span><span>Videre utvikling</span></div>
+        </div>
+      </section>
+
+      <aside id="explanation" class="explanation" aria-labelledby="explanation-title">
+        <div class="explanation-header"><h2 id="explanation-title">Hva skjer her?</h2><button id="info-close" class="tool" type="button" aria-label="Lukk forklaringen">✕</button></div>
+        <p id="summary" class="summary"></p>
+        <div id="process-steps" class="process-steps" aria-label="Prosessene i figuren"></div>
+        <div class="result"><span class="eyebrow">Dette dannes</span><p id="result"></p></div>
+        <div class="example"><span class="eyebrow">Et sted på jorda</span><strong id="example-title"></strong><p id="example-detail"></p></div>
+        <details class="model-notes"><summary>Om modellen og fagstoffet</summary><p id="model-caveat"></p><p>Figuren er skjematisk. Tykkelser, vinkler og bevegelser er overdrevet for å vise prosessene. En plate består av jordskorpe og øverste, faste mantel. Mantelen under er også hovedsakelig fast.</p><a href="https://pubs.usgs.gov/gip/dynamic/understanding.html" target="_blank" rel="noopener">Faglig bakgrunn: USGS ↗</a><p id="collision-source" hidden><a href="https://github.com/jvanardo/Water-Melt-PT.jl#scientific-background" target="_blank" rel="noopener">Fagmodell: delvis smelting i kontinental skorpe ↗</a></p></details>
+      </aside>
+    </div>
+    <div id="info-backdrop" class="info-backdrop" hidden></div>
+  </main>
+  <noscript>Modellen trenger JavaScript. <a href="../geografi.html#indre-fagstoff">Les fagstoffet om indre krefter.</a></noscript>
+</body>
+</html>
