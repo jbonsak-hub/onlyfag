@@ -92,6 +92,7 @@ const server = http.createServer((req,res) => {
   await cdp.send('Emulation.setTouchEmulationEnabled',{enabled:false});await cdp.detach();
   // Scroll a real target into view and click it using its map coordinates.
   await page.evaluate(()=>{const s=geoGuessrState,i=s.rounds.findIndex(t=>t.lat>0&&t.lat<60);if(i>=0)[s.rounds[0],s.rounds[i]]=[s.rounds[i],s.rounds[0]];renderGeoGuessrRound();});
+  await page.waitForTimeout(100); // Let the new map's initial centering frame finish before panning to the fixture.
   const targetPoint=await page.evaluate(()=>{
    const t=geoGuessrState.rounds[0],p=geoToPercent(t.lat,t.lon),scroll=document.querySelector('.geo-world-scroll'),content=document.querySelector('.geo-world-content');
    scroll.scrollLeft=content.clientWidth*p.x/100-scroll.clientWidth/2;

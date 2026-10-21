@@ -1,0 +1,199 @@
+{
+  "source": "https://www.naturalearthdata.com/downloads/10m-physical-vectors/10m-rivers-lake-centerlines/",
+  "license": "Public domain",
+  "note": "Approximate teaching targets, not surveyed hydrological source-to-mouth midpoints. Two combined rivers are split into Eufrat and Tigris in this prototype only.",
+  "targets": [
+    {
+      "name": "Amazonas",
+      "lat": -3.8356,
+      "lon": -63.83709,
+      "mappedLengthKm": 3053,
+      "maxJoinGapKm": 0,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Brahmaputra",
+      "lat": 26.20707,
+      "lon": 91.10869,
+      "mappedLengthKm": 1228,
+      "maxJoinGapKm": 27,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Colorado",
+      "lat": 36.24811,
+      "lon": -112.40507,
+      "mappedLengthKm": 1884,
+      "maxJoinGapKm": 0,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Donau",
+      "lat": 45.77139,
+      "lon": 18.89245,
+      "mappedLengthKm": 2564,
+      "maxJoinGapKm": 0,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Elbe",
+      "lat": 51.48441,
+      "lon": 13.15096,
+      "mappedLengthKm": 964,
+      "maxJoinGapKm": 43,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Ganges",
+      "lat": 25.43551,
+      "lon": 83.54164,
+      "mappedLengthKm": 2597,
+      "maxJoinGapKm": 51,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Huang He (Gule flod)",
+      "lat": 39.68817,
+      "lon": 106.77606,
+      "mappedLengthKm": 4808,
+      "maxJoinGapKm": 1,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Indus",
+      "lat": 31.71633,
+      "lon": 70.90299,
+      "mappedLengthKm": 2876,
+      "maxJoinGapKm": 19,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Jordan",
+      "lat": 32.4361,
+      "lon": 35.55185,
+      "mappedLengthKm": 302,
+      "maxJoinGapKm": 0,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Kongo",
+      "lat": 2.17699,
+      "lon": 22.31159,
+      "mappedLengthKm": 3176,
+      "maxJoinGapKm": 1,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Mekong",
+      "lat": 19.39702,
+      "lon": 101.90192,
+      "mappedLengthKm": 4282,
+      "maxJoinGapKm": 40,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Mississippi",
+      "lat": 37.84413,
+      "lon": -89.73486,
+      "mappedLengthKm": 3398,
+      "maxJoinGapKm": 29,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Nilen",
+      "lat": 15.89859,
+      "lon": 32.55007,
+      "mappedLengthKm": 5425,
+      "maxJoinGapKm": 0,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Po",
+      "lat": 45.08591,
+      "lon": 9.75231,
+      "mappedLengthKm": 580,
+      "maxJoinGapKm": 0,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Rhinen",
+      "lat": 49.20645,
+      "lon": 8.37888,
+      "mappedLengthKm": 1092,
+      "maxJoinGapKm": 1,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Rio Grande",
+      "lat": 29.80181,
+      "lon": -104.58352,
+      "mappedLengthKm": 2426,
+      "maxJoinGapKm": 0,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Seinen",
+      "lat": 48.86598,
+      "lon": 2.3162,
+      "mappedLengthKm": 635,
+      "maxJoinGapKm": 0,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Themsen",
+      "lat": 51.45805,
+      "lon": -0.95718,
+      "mappedLengthKm": 267,
+      "maxJoinGapKm": 0,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Volga",
+      "lat": 55.11624,
+      "lon": 49.28813,
+      "mappedLengthKm": 3313,
+      "maxJoinGapKm": 0,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Yangtze",
+      "lat": 29.23124,
+      "lon": 106.16625,
+      "mappedLengthKm": 4231,
+      "maxJoinGapKm": 1,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Yukon",
+      "lat": 65.87212,
+      "lon": -149.93938,
+      "mappedLengthKm": 2573,
+      "maxJoinGapKm": 0,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Zambezi",
+      "lat": -17.44276,
+      "lon": 27.49228,
+      "mappedLengthKm": 2854,
+      "maxJoinGapKm": 45,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Eufrat",
+      "lat": 35.47402,
+      "lon": 40.03797,
+      "mappedLengthKm": 2490,
+      "maxJoinGapKm": 0,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    },
+    {
+      "name": "Tigris",
+      "lat": 35.00538,
+      "lon": 43.57674,
+      "mappedLengthKm": 1581,
+      "maxJoinGapKm": 1,
+      "method": "Half the geodesic length of the longest joined named main course in Natural Earth; gaps up to 60 km may bridge lakes/generalization."
+    }
+  ]
+}

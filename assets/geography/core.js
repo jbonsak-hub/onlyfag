@@ -985,8 +985,8 @@ function countryMapBuildGeoPath(geom,center){
 function countryMapVectorSet(regionId){
   const meta=COUNTRY_MAP_META[regionId]||COUNTRY_MAP_META.world,key=regionId+'|'+meta.center;
   if(countryMapVectorCache[key])return countryMapVectorCache[key];
-  const world=countryMapFillData(),neutral=countryMapLandData(),byFeature={},allCountries=new Path2D(),allBorders=new Path2D(),neutralPath=countryMapBuildGeoPath(neutral,meta.center),islandByFeature={},islandByCountry={};
-  if(world)for(const f of world.features){const p=countryMapBuildGeoPath(f.geometry,meta.center);if(!p)continue;byFeature[f.properties.name]=p;allCountries.addPath(p);allBorders.addPath(p)}
+  const world=countryMapFillData(),neutral=countryMapLandData(),byFeature={},allCountries=new Path2D(),allBorders=new Path2D(),neutralPath=countryMapBuildGeoPath(neutral?.type==='MultiPolygon'?{...neutral,coordinates:neutral.coordinates.filter(poly=>poly[0]?.some(point=>point[1]>-60))}:neutral,meta.center),islandByFeature={},islandByCountry={};
+  if(world)for(const f of world.features){if(f.properties.name==='Antarctica')continue;const p=countryMapBuildGeoPath(f.geometry,meta.center);if(!p)continue;byFeature[f.properties.name]=p;allCountries.addPath(p);allBorders.addPath(p)}
   if(neutral&&neutral.type==='MultiPolygon'){
     for(const [featureName,indices] of Object.entries(COUNTRY_MAP_ISLAND_FEATURES)){
       const combined=new Path2D();let hasPath=false;
@@ -1076,6 +1076,7 @@ function drawCountryMap(){
     if(world){
       const featureFilter=drawAllFeatures?null:regionFeatureNames;
       for(const f of world.features){
+        if(f.properties.name==='Antarctica')continue;
         if(featureFilter && !featureFilter.has(f.properties.name)) continue;
         ctx.beginPath();countryMapTraceGeometry(ctx,f.geometry,cssW,cssH,meta);ctx.fillStyle=foundFeatureNames.has(f.properties.name)?'#39a96b':'#edf2ef';ctx.fill('evenodd');ctx.strokeStyle='#55736a';ctx.lineWidth=.78;ctx.stroke()
       }

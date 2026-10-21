@@ -154,3 +154,22 @@ Alle 13 lokale quizer har et breddehåndtak på venstrepanelet ved skjermbredder
 Den felles kilden assets/geography/panel-resize.js versjoneres av begge eksisterende byggeskript. Statle-bygget inkluderer nå også denne avhengigheten. Eksisterende spill- og resultatlagring er uendret.
 
 Kjør også node tests/geography-panel-resize.cjs. Den tester faktisk dragging, piltaster, reset og mobilvisning i alle 13 paneler, lagret bredde etter omlasting, tilpasning til smalere vindu, 90 land i rullbar liste, kartzoom, en hel MapWiz-runde, panorert mobilt kartklikk og Norge-kart. Øvrige layout-, Statle- og analytics-tester kjøres som over. Testene kjøres lokalt uten testtrafikk til Cloudflare; fysisk berøringsenhet, Safari og mottak i Cloudflare-dashboardet er ikke verifisert.
+
+
+### Utvidet MapWiz som separat prototype
+
+Åpne /prototypes/mapwiz.html. Dagens /geografi/mapwiz.html og gamle GeoWiz-lenker beholder spilloppsett og datagrunnlag. Prototypen har 16 avkryssbare kategorier, alle avslått ved ny åpning. Én kategori gir to spørsmål; runden utvides med flere valg til maks ti, aldri mer enn to per kategori eller samme målnavn to ganger. Norge alene bruker eksisterende Norgeskart; i blandede runder brukes bare mål innenfor verdenskartets breddegrader.
+
+Flaggoppgaver bruker 115 allerede lokale SVG-flagg med tilgjengelig landgeometri, uten CDN-oppslag under spill. Landets siktepunkt beregnes fra arealsenteret i den største sammenhengende landpolygonen, flyttet innenfor grensen dersom sentrum ligger utenfor. Oversjøiske øyer påvirker dermed ikke siktepunktet. For øystater brukes største øy.
+
+Landoppgavene gjenbruker de faktiske GeoGrid-predikatene og har tre kjennetegn. Hvert par har flere mulige land; alle tre sammen gir ett. Alle 197 land kontrolleres: de 23 små øystatene som mangler i GeoGrid-tabellen, suppleres med kjente fakta fra landtabellen. Ukjente språk-/grense-/koordinatopplysninger regnes konservativt som mulige treff. Dermed oppstår ikke falsk entydighet ved at småstater utelates. Snapshotet gir 444 varianter for 129 land.
+
+Byutvalget har 91 byer og er et pedagogisk utvalg med vekt på Europa/Nord-Amerika, ikke en ren folketallsrangering. Ingen er allerede et mål i hovedstadslisten. Kina har fire og India fem byer. Koordinater kommer fra [Natural Earth Populated Places](https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-populated-places/); utvalget er vurdert opp mot [GaWC 2024](https://gawc.lboro.ac.uk/gawc-worlds/the-world-according-to-gawc/world-cities-2024/), [UN WUP 2025](https://www.un.org/development/desa/pd/world-urbanization-prospects-2025) og historisk/kulturell betydning, blant annet [Istanbul](https://whc.unesco.org/en/list/356/), [Venezia](https://whc.unesco.org/en/list/394/) og [Agra](https://whc.unesco.org/en/list/252/). Dette er et redaksjonelt utvalg basert på kildene. Byutvalget og kildehenvisninger ligger i mapwiz-cities.json.
+
+Elver har lokale siktepunkter basert på halve lengden langs sammenkoblede, navngitte hovedløp fra [Natural Earth](https://www.naturalearthdata.com/downloads/10m-physical-vectors/10m-rivers-lake-centerlines/). Dette er omtrentlige kartmål, ikke oppmålte hydrologiske kilde-til-utløp-midtpunkt; kildedata og eventuelle brudd er dokumentert i mapwiz-river-midpoints.json. Eufrat og Tigris er separate mål i prototypen. Øvrige store geografiske områder bruker eksisterende representative sentralpunkter. Prototypen skal brukes til å vurdere om slike punktmål gir ønsket spillfølelse før eventuell erstatning av dagens modul.
+
+Oppgaveboksen ligger nederst til venstre. Påskeøya og Polynesia overlapper dette området, så de er beholdt. ↔ flytter boksen til motsatt hjørne; etter svar flyttes den automatisk dersom den skjuler fasitmarkøren. Ingen eksisterende mål er slettet. Prototypen skriver ikke til toppresultater og laster ikke analytics.
+
+Antarktis er fjernet fra landquizens land- og bakgrunnstegning, inkludert canvas-reserven. Underliggende geografidata og indeksene for småøyer beholdes uendret. Øvrige kart-/fagverktøy endres ikke.
+
+Bygg etter dataendringer: node scripts/build-mapwiz-prototype.cjs og deretter node scripts/build-geography-quiz-assets.cjs. Begge støtter --check. Kjør node tests/mapwiz-prototype.cjs med de vanlige Playwright-variablene. Testen dekker alle 16 kategorier, ingen forhåndsvalg, lokale flagg uten avslørende alt-tekst, samtlige tredelte oppgaver, 300 tilfeldige runder med kategorigrense, poeng/fasit/resultat, uendret lagring, flyttbar boks, Antarktis, navigasjon og tre mobil-/landskapsstørrelser.
