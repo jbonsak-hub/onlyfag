@@ -1,0 +1,64 @@
+const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict'),cp=require('node:child_process');
+const pw=require(process.env.PLAYWRIGHT_MODULE||'playwright'),root=path.resolve(__dirname,'..');
+for(const script of ['build-quiz-language','build-geography-quiz-assets','build-statle-assets'])cp.execFileSync(process.execPath,[path.join(root,'scripts/'+script+'.cjs'),'--check']);
+const server=http.createServer((req,res)=>{try{const file=path.join(root,new URL(req.url,'http://localhost').pathname);res.setHeader('Content-Type',file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.js')?'text/javascript; charset=utf-8':file.endsWith('.css')?'text/css':'application/octet-stream');res.end(fs.readFileSync(file));}catch{res.writeHead(404);res.end('missing');}});
+(async()=>{
+ await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port+'/';const browser=await pw.chromium.launch({headless:true,executablePath:process.env.BROWSER_EXECUTABLE});
+ try{
+  const context=await browser.newContext({viewport:{width:1366,height:643}}),errors=[],external=[];
+  context.on('page',p=>p.on('pageerror',e=>errors.push(e.message)));await context.route('**/*',r=>{if(r.request().url().startsWith(base)||/^(data|blob):/.test(r.request().url()))return r.continue();external.push(r.request().url());return r.abort();});
+  const page=await context.newPage();page.setDefaultTimeout(7000);page.on('dialog',d=>d.dismiss());
+  const shot=async name=>{if(process.env.LAYOUT_SCREENSHOTS){fs.mkdirSync(process.env.LAYOUT_SCREENSHOTS,{recursive:true});await page.screenshot({path:path.join(process.env.LAYOUT_SCREENSHOTS,name+'.png')});}};
+  await page.goto(base+'geografi.html#verden-quiz');
+  assert.deepEqual(await page.locator('.geoquiz-copy strong').allTextContents().then(a=>a.slice(0,4)),['Flagg','Hovedsteder','Flagg+Hovedstad','MapWiz']);
+  await page.evaluate(()=>localStorage.setItem('geoHighscoresV1',JSON.stringify({'flags|world':[{name:'Norge',rank:[99],scoreText:'99 på rad',timeSec:10}]})));
+  await page.getByRole('button',{name:'English',exact:true}).click();await page.waitForFunction(()=>document.querySelector('.geoquiz-copy strong').textContent==='Flags');
+  assert.deepEqual(await page.locator('.geoquiz-copy strong').allTextContents().then(a=>a.slice(0,4)),['Flags','Capitals','Flags+Capitals','MapWiz']);
+  assert.equal(await page.getByRole('button',{name:'English',exact:true}).getAttribute('aria-pressed'),'true');
+  const subject=await page.locator('#klima-fagstoff').textContent();assert.match(subject,/klima/i,'Subject material is not translated');await shot('overview-english');
+  await page.reload();assert.equal(await page.evaluate(()=>QuizLanguage.language),'en');
+  await page.goto(base+'geografi/landquiz.html');await page.locator('.country-region-btn').first().click();await page.locator('#country-guess').fill('Germany');await page.locator('#country-guess').press('Enter');await page.waitForFunction(()=>document.querySelector('#country-found').textContent.includes('Germany'));assert.ok(await page.evaluate(()=>worldTrainerState.found.some(c=>c.country==='Tyskland')));
+  await page.evaluate(()=>finishCountryMapQuiz(true));await page.waitForTimeout(50);assert.doesNotMatch(await page.locator('#country-map-complete').innerText(),/\b(Manglet|Velg|Poeng|Tid)\b/);
+  const saved=await page.evaluate(()=>localStorage.getItem('geoHighscoresV1'));
+  for(const mode of ['flags','capitals','flagcapital','places']){
+   const files={flags:'flaggquiz',capitals:'hovedstadsquiz',flagcapital:'flagg-og-hovedstad',places:'stedsquiz'};
+   for(let direction=0;direction<2;direction++){
+    await page.goto(base+'geografi/'+files[mode]+'.html');await page.locator('.streak-direction-btn').nth(mode==='places'?direction+2:direction).click();await page.getByRole('button',{name:'Start',exact:true}).click();
+    const english=await page.locator('.world-card').innerText();assert.doesNotMatch(english,/\b(Hvilke[nt]?|Hva|Riktig|Feil|beskrivelse|hovedstaden)\b/);
+    const correct=await page.evaluate(()=>worldTrainerState.current.options.findIndex(o=>worldTrainerState.current.isCorrect(o)));await page.locator('.world-option').nth(correct).click();assert.equal(await page.evaluate(()=>worldTrainerState.score),1);
+    await page.waitForTimeout(20);assert.doesNotMatch(await page.locator('.world-feedback').innerText(),/\b(Riktig|Feil|tilhører)\b/);await page.evaluate(()=>endWorldTrainer('Du bommet.',false));await page.waitForTimeout(20);assert.doesNotMatch(await page.locator('.world-end').innerText(),/\b(Du|Tid|Spill|bommet|klarte)\b/);
+   }
+  }
+  await page.goto(base+'geografi/jeopardy.html');const bank=await page.evaluate(()=>jeopardyCategories.map(cat=>({id:cat.id,questions:makeJeopardyQuestions(cat).map(q=>[QuizLanguage.translate(q.q||q.html.match(/<div>(.*?)<\/div>/)[1]),QuizLanguage.translate(q.a)])})));assert.ok(bank.every(c=>c.questions.length===5));for(const c of bank)for(const [q,a]of c.questions){assert.doesNotMatch(QuizEnglish(q),/\b(Hva|Hvilke[nt]?|Hvor|Forklar|Hvorfor|Hva heter)\b/,c.id);}
+  function QuizEnglish(text){return text;}
+  assert.equal(await page.evaluate(()=>GEO_QUIZ_EN.academic.klima.length),15);
+  await page.locator('.team-name').first().fill('Norge');for(let i=0;i<3;i++)await page.locator('#jeopardy-category-picker input').nth(i).check();await page.locator('[onclick="startJeopardyGame()"]').click();assert.equal(await page.locator('.score-card strong').first().innerText(),'Norge','Custom team names stay unchanged');assert.equal(await page.locator('.score-card strong').nth(1).innerText(),'Team 2');await page.locator('.jeopardy-value').first().click();await page.getByRole('button',{name:'Show answer',exact:true}).click();assert.match(await page.locator('.jeopardy-value.done').first().evaluate(e=>getComputedStyle(e,'::after').content),/Used/);assert.match(await page.locator('#jeopardy-answer').evaluate(e=>getComputedStyle(e,'::before').content),/Answer/);
+  // All source descriptions have explicit English translations.
+  assert.equal(await page.evaluate(()=>GEO_QUIZ_DATA.places.filter(p=>QuizLanguage.translate(p.explanation)===p.explanation).length),0);
+  assert.equal(await page.evaluate(()=>{const pool=[{n:'Ceylon'},{n:'Seylon'},{n:'Paris'},{n:'Oslo'},{n:'London'},{n:'Madrid'}],options=makeOptions(pool[0],pool,x=>x.n,4);return new Set(options.map(o=>QuizLanguage.translate(o.n))).size===options.length;}),true,'No duplicate translated choices');
+  await page.goto(base+'geografi/worldle.html');assert.equal(await page.locator('#worldle-answer').getAttribute('placeholder'),'Type a country …');await page.locator('#worldle-answer').fill(await page.evaluate(()=>QuizLanguage.name(worldTrainerState.target.country)));await page.locator('.worldle-guess-btn').click();assert.ok(await page.evaluate(()=>worldTrainerState.locked));await page.waitForTimeout(20);assert.doesNotMatch(await page.locator('#worldle-feedback').innerText(),/\b(Riktig|Du|landet|løst|Feil)\b/);
+  for(const [file,mode]of [['globle','globle'],['travle','travle'],['tradle','tradle'],['geogrid','geogrid']]){
+   await page.goto(base+'geografi/'+file+'.html');const frame=page.frames().find(f=>f!==page.mainFrame());await frame.waitForFunction(()=>window.QuizLanguage?.language==='en'&&document.documentElement.hasAttribute('data-kartlab-ready'));
+   assert.equal(await frame.evaluate(()=>QuizLanguage.language),'en');
+   if(mode==='globle'){await frame.evaluate(()=>{state.globle.target=findCountry('Germany');document.getElementById('globleGuess').value='Germany';submitGlobleGuess();});assert.equal(await frame.evaluate(()=>state.globle.solved),true);}
+   if(mode==='tradle'){await frame.evaluate(()=>{const t=TRADLE_DATA.find(t=>QuizLanguage.name(t.country)!==t.country)||TRADLE_DATA[0];state.tradle.target=t;document.getElementById('tradleGuess').value=QuizLanguage.name(t.country);submitTradleGuess();});assert.equal(await frame.evaluate(()=>state.tradle.solved),true);}
+   if(mode==='geogrid'){
+    const languageRules=await frame.evaluate(()=>{const germany=GEO_GRID_COUNTRIES.find(m=>m.country==='Tyskland'),usa=GEO_GRID_COUNTRIES.find(m=>m.country==='USA'),p=geoCriterionPool();return {germanStartsT:p.find(c=>c.id==='nameT').test(germany),usaLong:p.find(c=>c.id==='longname').test(usa),englishLookup:geoFindAnswer('Germany')?.country};});assert.deepEqual(languageRules,{germanStartsT:false,usaLong:true,englishLookup:'Tyskland'});
+    const answer=await frame.evaluate(()=>{let idx=state.geogrid.cells.findIndex(c=>c.some(m=>QuizLanguage.name(m.country)!==m.country));const m=state.geogrid.cells[idx].find(m=>QuizLanguage.name(m.country)!==m.country);return{idx,name:QuizLanguage.name(m.country)};});await frame.locator('.geogrid-cell').nth(answer.idx).click();await frame.locator('#geogridGuess').fill(answer.name);await frame.locator('#geogridGuess').press('Enter');assert.equal(await frame.evaluate(()=>state.geogrid.solved),1);
+   }
+   await page.waitForTimeout(30);assert.doesNotMatch(await frame.locator('#'+mode).innerText(),/\b(Riktig|Feil|hovedstad|Landet|Gjetninger|Nærmest|Vanskelig|Poeng|velg|finn|landet)\b/);console.log('PASS English',file);
+  }
+  await page.goto(base+'geografi/statle.html');await page.locator('#start:enabled').click();assert.equal(await page.locator('#targetVerb').innerText(),'Click on');assert.match(await page.locator('#feedback').innerText(),/Find/);
+  for(const viewport of [{width:390,height:844},{width:360,height:740},{width:844,height:390}]){
+   await page.setViewportSize(viewport);await page.goto(base+'geografi/mapwiz.html');await page.locator('[data-prototype-category="place:Norge"]').check();await page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight));
+   const visible=await page.locator('#geo-start-button').evaluate(el=>{const r=el.getBoundingClientRect(),top=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return r.y>=0&&r.bottom<=innerHeight&&(top===el||el.contains(top));});assert.ok(visible,'Start stays visible after scrolling '+viewport.width);await shot('mapwiz-start-'+viewport.width);await page.locator('#geo-start-button').click();assert.equal(await page.evaluate(()=>geoGuessrState.rounds.length),10);assert.ok(await page.evaluate(()=>geoGuessrState.norwayOnly));await page.locator('.geo-map-stage').click({position:{x:viewport.width-30,y:viewport.height/2}});await page.waitForTimeout(20);assert.doesNotMatch(await page.locator('.geo-feedback').innerText(),/\b(unna|geografi|tidsbonus|poeng)\b/);if(viewport.width===390){for(let i=1;i<10;i++){await page.locator('.geo-next-button').click();await page.evaluate(()=>geoMapClick({clientX:innerWidth-20,clientY:innerHeight/2}));}await page.locator('.geo-next-button').click();assert.equal(await page.locator('.prototype-results tbody tr').count(),10);assert.deepEqual(await page.locator('.prototype-results th').allTextContents(),['Place','Distance pts','Time pts']);}
+   await page.goto(base+'geografi/flaggquiz.html');await page.getByRole('button',{name:'Start',exact:true}).click();
+   for(const code of ['fr','ch','np']){
+    await page.locator('.world-prompt').evaluate((el,code)=>{const c=getWorldData().countries.find(c=>c.flagCode===code);el.innerHTML=flagHtml(c,135);},code);await page.locator('.world-prompt img').evaluate(img=>img.complete?Promise.resolve():new Promise(resolve=>{img.onload=resolve;img.onerror=resolve;}));
+    const image=await page.locator('.world-prompt img').evaluate(img=>({rect:img.getBoundingClientRect().toJSON(),native:[img.naturalWidth,img.naturalHeight],bg:getComputedStyle(img).backgroundColor,padding:getComputedStyle(img).padding}));assert.ok(image.native[0]>0);assert.ok(Math.abs(image.rect.width/image.rect.height-image.native[0]/image.native[1])<.02,'Flag has its natural ratio '+code);assert.equal(image.bg,'rgba(0, 0, 0, 0)');assert.equal(image.padding,'0px');if(code==='np')assert.ok(Math.abs(image.native[0]/image.native[1]-455/530)<.02,'Nepal has no transparent frame');
+   }await shot('flag-mobile-'+viewport.width);
+  }
+  await page.goto(base+'geografi.html#verden-quiz');await page.getByRole('button',{name:'Norsk',exact:true}).click();await page.goto(base+'geografi/hovedstadsquiz.html');assert.equal(await page.evaluate(()=>QuizLanguage.language),'no');assert.equal(await page.locator('.world-setup h3').innerText(),'Hovedsteder');assert.equal(await page.evaluate(()=>localStorage.getItem('geoHighscoresV1')),saved,'Language does not modify highscore storage');
+  assert.deepEqual(errors,[]);assert.ok(external.every(u=>!u.includes('translate')));console.log(JSON.stringify({languages:2,places:398,academicEnglish:84,englishAnswers:true,gridLanguageRules:true,mobileStart:true,naturalFlagRatio:true,errors}));
+ }finally{await browser.close();server.close();}
+})().catch(e=>{console.error(e);server.close();process.exitCode=1});

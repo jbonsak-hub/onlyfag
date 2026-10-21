@@ -1,0 +1,590 @@
+[
+  {
+    "q": "Hva viser ekvidistanse på et kart?",
+    "a": "Den virkelige høydeforskjellen mellom to høydekurver ved siden av hverandre.",
+    "enQ": "What does the contour interval on a map show?",
+    "enA": "The actual difference in elevation between two neighbouring contour lines.",
+    "category": "kart"
+  },
+  {
+    "q": "Hva markerer breddegrader?",
+    "a": "Hvor langt nord eller sør man er på jorda, målt fra ekvator.",
+    "enQ": "What does latitude measure?",
+    "enA": "How far north or south a place is from the equator.",
+    "category": "kart"
+  },
+  {
+    "q": "Hva markerer lengdegrader?",
+    "a": "Hvor langt øst eller vest man er på jorda, målt fra nullmeridianen i Greenwich.",
+    "enQ": "What does longitude measure?",
+    "enA": "How far east or west a place is from the prime meridian at Greenwich.",
+    "category": "kart"
+  },
+  {
+    "q": "Hva betyr det når høydekurvene ligger svært tett?",
+    "a": "Terrenget er bratt.",
+    "enQ": "What do closely spaced contour lines indicate?",
+    "enA": "Steep terrain.",
+    "category": "kart"
+  },
+  {
+    "q": "Hva er hovedproblemet med Mercatorprojeksjonen?",
+    "a": "Områder nær polene blir kraftig forstørret sammenlignet med områder nær ekvator.",
+    "enQ": "What is the main problem with the Mercator projection?",
+    "enA": "Areas near the poles are greatly enlarged compared with areas near the equator.",
+    "category": "kart"
+  },
+  {
+    "q": "Hva kalles linjene på kartet som viser lik høyde over havet?",
+    "a": "Høydekurver.",
+    "enQ": "What are the lines joining points of equal elevation called?",
+    "enA": "Contour lines.",
+    "category": "kart"
+  },
+  {
+    "q": "Hva betyr målestokk 1:50 000?",
+    "a": "1 cm på kartet tilsvarer 50 000 cm, altså 500 meter, i virkeligheten.",
+    "enQ": "What does a scale of 1:50,000 mean?",
+    "enA": "1 cm on the map represents 50,000 cm, or 500 metres, on the ground.",
+    "category": "kart"
+  },
+  {
+    "q": "Hva kalles en karttype som viser ett bestemt tema, for eksempel befolkning eller nedbør?",
+    "a": "Temakart.",
+    "enQ": "What type of map shows one particular theme, such as population or rainfall?",
+    "enA": "A thematic map.",
+    "category": "kart"
+  },
+  {
+    "q": "Hva kalles et kart som viser terreng, høyder, vann, veier og bosetning?",
+    "a": "Topografisk kart.",
+    "enQ": "What type of map shows terrain, elevation, water, roads and settlements?",
+    "enA": "A topographic map.",
+    "category": "kart"
+  },
+  {
+    "q": "Hva er en kartprojeksjon?",
+    "a": "En metode for å overføre den krumme jordoverflaten til et flatt kart.",
+    "enQ": "What is a map projection?",
+    "enA": "A method of representing Earth's curved surface on a flat map.",
+    "category": "kart"
+  },
+  {
+    "q": "Hvor ligger nullmeridianen?",
+    "a": "Gjennom Greenwich i London.",
+    "enQ": "Where is the prime meridian?",
+    "enA": "It passes through Greenwich in London.",
+    "category": "kart"
+  },
+  {
+    "q": "Hvilken breddegrad ligger ekvator på?",
+    "a": "0° bredde.",
+    "enQ": "What is the latitude of the equator?",
+    "enA": "0° latitude.",
+    "category": "kart"
+  },
+  {
+    "q": "Hva skjer ofte med størrelsen på Grønland i Mercatorprojeksjonen?",
+    "a": "Grønland blir vist altfor stort.",
+    "enQ": "How does Mercator often distort Greenland's size?",
+    "enA": "Greenland is shown much too large.",
+    "category": "kart"
+  },
+  {
+    "q": "Hva heter teorien om hvordan litosfæreplatene beveger seg?",
+    "a": "Platetektonikk.",
+    "enQ": "What theory explains the movement of lithospheric plates?",
+    "enA": "Plate tectonics.",
+    "category": "indre"
+  },
+  {
+    "q": "Hva er forskjellen på magma og lava?",
+    "a": "Magma er smeltet stein under jordoverflaten. Lava er magma som har kommet ut på overflaten.",
+    "enQ": "What is the difference between magma and lava?",
+    "enA": "Magma is molten rock below Earth's surface. Lava is magma that has reached the surface.",
+    "category": "indre"
+  },
+  {
+    "q": "Hva skjer i en subduksjonssone?",
+    "a": "En havbunnsplate presses ned under en annen plate og ned i mantelen.",
+    "enQ": "What happens in a subduction zone?",
+    "enA": "An oceanic plate is forced beneath another plate into the mantle.",
+    "category": "indre"
+  },
+  {
+    "q": "Hvorfor finner vi mange vulkaner rundt Stillehavet?",
+    "a": "Fordi området har mange plategrenser og subduksjonssoner, kjent som Ildringen/Ring of Fire.",
+    "enQ": "Why are there many volcanoes around the Pacific?",
+    "enA": "There are many plate boundaries and subduction zones, known as the Ring of Fire.",
+    "category": "indre"
+  },
+  {
+    "q": "Forklar hvordan Andesfjellene er dannet.",
+    "a": "Nazcaplaten subduseres under den søramerikanske platen, som presser jordskorpa opp og danner fjellkjeden.",
+    "enQ": "Explain how the Andes formed.",
+    "enA": "The Nazca Plate subducts beneath the South American Plate, pushing the crust upwards to form mountains.",
+    "category": "indre"
+  },
+  {
+    "q": "Hva heter det seige laget i øvre mantel der det foregår langsomme strømninger?",
+    "a": "Astenosfæren.",
+    "enQ": "What is the ductile layer in the upper mantle where slow flow occurs called?",
+    "enA": "The asthenosphere.",
+    "category": "indre"
+  },
+  {
+    "q": "Hva heter jordas ytterste faste skall?",
+    "a": "Litosfæren.",
+    "enQ": "What is Earth's rigid outer shell called?",
+    "enA": "The lithosphere.",
+    "category": "indre"
+  },
+  {
+    "q": "Hva slags plategrense finner vi ved midthavsrygger?",
+    "a": "Spredningssone/divergerende plategrense.",
+    "enQ": "What type of plate boundary occurs at mid-ocean ridges?",
+    "enA": "A spreading zone or divergent plate boundary.",
+    "category": "indre"
+  },
+  {
+    "q": "Hva slags plategrense finner vi ved San Andreas-forkastningen?",
+    "a": "Glidegrense/transform plategrense.",
+    "enQ": "What type of plate boundary occurs at the San Andreas Fault?",
+    "enA": "A transform plate boundary.",
+    "category": "indre"
+  },
+  {
+    "q": "Hva kalles punktet på jordoverflaten rett over jordskjelvets fokus?",
+    "a": "Episenter.",
+    "enQ": "What is the point on Earth's surface directly above an earthquake's focus called?",
+    "enA": "The epicentre.",
+    "category": "indre"
+  },
+  {
+    "q": "Hva kalles smeltet stein under jordoverflaten?",
+    "a": "Magma.",
+    "enQ": "What is molten rock below Earth's surface called?",
+    "enA": "Magma.",
+    "category": "indre"
+  },
+  {
+    "q": "Hva slags vulkan er ofte bratt, kjegleformet og eksplosiv?",
+    "a": "Stratovulkan.",
+    "enQ": "What type of volcano is typically steep, cone-shaped and explosive?",
+    "enA": "A stratovolcano.",
+    "category": "indre"
+  },
+  {
+    "q": "Hva slags vulkan er ofte flat og bred, dannet av lettflytende lava?",
+    "a": "Skjoldvulkan.",
+    "enQ": "What type of volcano is typically broad and gently sloping, built by fluid lava?",
+    "enA": "A shield volcano.",
+    "category": "indre"
+  },
+  {
+    "q": "Hvilken tysk forsker lanserte teorien om kontinentaldrift?",
+    "a": "Alfred Wegener.",
+    "enQ": "Which German scientist proposed continental drift?",
+    "enA": "Alfred Wegener.",
+    "category": "indre"
+  },
+  {
+    "q": "Hva var Pangea?",
+    "a": "Et superkontinent der alle kontinentene var samlet.",
+    "enQ": "What was Pangaea?",
+    "enA": "A supercontinent joining all the continents.",
+    "category": "indre"
+  },
+  {
+    "q": "Hva er erosjon?",
+    "a": "Prosess som sliter ned landskapet og transporterer materiale vekk.",
+    "enQ": "What is erosion?",
+    "enA": "The wearing away of a landscape and transport of material elsewhere.",
+    "category": "ytre"
+  },
+  {
+    "q": "Hva slags dalform lager isbreer ofte?",
+    "a": "U-dal.",
+    "enQ": "What shape of valley do glaciers often create?",
+    "enA": "A U-shaped valley.",
+    "category": "ytre"
+  },
+  {
+    "q": "Hva er en kroksjø?",
+    "a": "En gammel elvesving som ikke lenger er en del av elveløpet.",
+    "enQ": "What is an oxbow lake?",
+    "enA": "A former river bend cut off from the main channel.",
+    "category": "ytre"
+  },
+  {
+    "q": "Hva er marin grense?",
+    "a": "Det høyeste nivået havet nådde etter at innlandsisen forsvant.",
+    "enQ": "What is the marine limit?",
+    "enA": "The highest sea level reached after the continental ice sheet disappeared.",
+    "category": "ytre"
+  },
+  {
+    "q": "Hvordan dannes ravinelandskap?",
+    "a": "Elver og bekker graver V-daler i marin leire, slik at landskapet blir oppskåret og bølgete.",
+    "enQ": "How do ravine landscapes form?",
+    "enA": "Rivers and streams cut V-shaped valleys into marine clay, creating an incised, undulating landscape.",
+    "category": "ytre"
+  },
+  {
+    "q": "Hva er mekanisk forvitring?",
+    "a": "Berg brytes ned uten kjemiske reaksjoner.",
+    "enQ": "What is mechanical weathering?",
+    "enA": "Rock breaking down without chemical reactions.",
+    "category": "ytre"
+  },
+  {
+    "q": "Hva er kjemisk forvitring?",
+    "a": "Bergarter løses opp eller omdannes gjennom kjemiske reaksjoner, ofte med vann.",
+    "enQ": "What is chemical weathering?",
+    "enA": "Rock dissolving or changing through chemical reactions, often involving water.",
+    "category": "ytre"
+  },
+  {
+    "q": "Hva kalles avsetninger der en elv renner ut i hav eller innsjø?",
+    "a": "Delta.",
+    "enQ": "What deposit forms where a river enters a sea or lake?",
+    "enA": "A delta.",
+    "category": "ytre"
+  },
+  {
+    "q": "Hva kalles en S-formet elvesving?",
+    "a": "Meander.",
+    "enQ": "What is an S-shaped river bend called?",
+    "enA": "A meander.",
+    "category": "ytre"
+  },
+  {
+    "q": "Hva slags dalform lager elver ofte?",
+    "a": "V-dal.",
+    "enQ": "What shape of valley do rivers often create?",
+    "enA": "A V-shaped valley.",
+    "category": "ytre"
+  },
+  {
+    "q": "Hva er skuringsstriper?",
+    "a": "Merker i fjell laget av steiner fastfrosset i isbreen.",
+    "enQ": "What are glacial striations?",
+    "enA": "Scratches in bedrock made by stones frozen into a glacier.",
+    "category": "ytre"
+  },
+  {
+    "q": "Hva er en flyttblokk?",
+    "a": "En steinblokk som er transportert og lagt igjen av en isbre.",
+    "enQ": "What is a glacial erratic?",
+    "enA": "A boulder transported and deposited by a glacier.",
+    "category": "ytre"
+  },
+  {
+    "q": "Hva kalles fjelltopper som stakk opp av innlandsisen?",
+    "a": "Nunataker.",
+    "enQ": "What are peaks that protruded above an ice sheet called?",
+    "enA": "Nunataks.",
+    "category": "ytre"
+  },
+  {
+    "q": "Hva er en botnbre?",
+    "a": "En liten bre som ligger i en skålform høyt i fjellet.",
+    "enQ": "What is a cirque glacier?",
+    "enA": "A small glacier in a bowl-shaped hollow high in the mountains.",
+    "category": "ytre"
+  },
+  {
+    "q": "Hva er kvikkleire?",
+    "a": "Marin leire som plutselig kan bli flytende ved belastning eller risting.",
+    "enQ": "What is quick clay?",
+    "enA": "Marine clay that can suddenly liquefy under loading or shaking.",
+    "category": "ytre"
+  },
+  {
+    "q": "Hva er klima?",
+    "a": "Gjennomsnittsværet over en periode på omtrent 30 år.",
+    "enQ": "What is climate?",
+    "enA": "Average weather over a period of about 30 years.",
+    "category": "klima"
+  },
+  {
+    "q": "Hva driver værprosessene på jorda?",
+    "a": "Sola.",
+    "enQ": "What drives Earth's weather processes?",
+    "enA": "The Sun.",
+    "category": "klima"
+  },
+  {
+    "q": "Hva er vind?",
+    "a": "Luft i bevegelse fra høytrykk mot lavtrykk.",
+    "enQ": "What is wind?",
+    "enA": "Air moving from high pressure towards low pressure.",
+    "category": "klima"
+  },
+  {
+    "q": "Hva er orografisk nedbør?",
+    "a": "Nedbør som dannes når fuktig luft presses opp over fjell, avkjøles og kondenserer.",
+    "enQ": "What is orographic rainfall?",
+    "enA": "Rainfall produced when moist air rises over mountains, cools and condenses.",
+    "category": "klima"
+  },
+  {
+    "q": "Forklar kort sommermonsun.",
+    "a": "Land varmes opp, lavtrykk dannes over land, og fuktig luft blåser inn fra havet og gir regnsesong.",
+    "enQ": "Briefly explain the summer monsoon.",
+    "enA": "Land heats up, low pressure develops over it, and moist ocean air blows inland, bringing a rainy season.",
+    "category": "klima"
+  },
+  {
+    "q": "Hva er vær?",
+    "a": "Det vi opplever av temperatur, vind, nedbør, skydekke, lufttrykk og luftfuktighet på et bestemt tidspunkt.",
+    "enQ": "What is weather?",
+    "enA": "Temperature, wind, precipitation, cloud cover, air pressure and humidity at a particular time.",
+    "category": "klima"
+  },
+  {
+    "q": "Hva skjer med luft som varmes opp?",
+    "a": "Den stiger.",
+    "enQ": "What happens to air when it is heated?",
+    "enA": "It rises.",
+    "category": "klima"
+  },
+  {
+    "q": "Hva skjer med kald luft?",
+    "a": "Den synker.",
+    "enQ": "What happens to cold air?",
+    "enA": "It sinks.",
+    "category": "klima"
+  },
+  {
+    "q": "Hva er drivhuseffekten?",
+    "a": "Gasser i atmosfæren tar opp varmestråling og sender noe av varmen tilbake mot jorda.",
+    "enQ": "What is the greenhouse effect?",
+    "enA": "Atmospheric gases absorb thermal radiation and send some heat back towards Earth.",
+    "category": "klima"
+  },
+  {
+    "q": "Hva er Corioliseffekten?",
+    "a": "Jordrotasjonens påvirkning på vindretninger og havstrømmer.",
+    "enQ": "What is the Coriolis effect?",
+    "enA": "The influence of Earth's rotation on winds and ocean currents.",
+    "category": "klima"
+  },
+  {
+    "q": "Hva kalles vindene mellom 30 og 60 breddegrader?",
+    "a": "Vestavinder.",
+    "enQ": "What are the prevailing winds between 30° and 60° latitude called?",
+    "enA": "Westerlies.",
+    "category": "klima"
+  },
+  {
+    "q": "Hva er kystklima?",
+    "a": "Klima med mye nedbør og relativt små temperaturforskjeller gjennom året.",
+    "enQ": "What is a maritime climate?",
+    "enA": "A climate with plentiful rainfall and relatively small seasonal temperature differences.",
+    "category": "klima"
+  },
+  {
+    "q": "Hva er innlandsklima?",
+    "a": "Klima med stor forskjell på sommer- og vintertemperatur og ofte mindre nedbør.",
+    "enQ": "What is a continental climate?",
+    "enA": "A climate with large summer–winter temperature differences and often less precipitation.",
+    "category": "klima"
+  },
+  {
+    "q": "Hva er fønvind?",
+    "a": "Varm og tørr vind som synker på lesiden av fjell.",
+    "enQ": "What is a foehn wind?",
+    "enA": "A warm, dry wind descending the leeward side of mountains.",
+    "category": "klima"
+  },
+  {
+    "q": "Hva er El Niño?",
+    "a": "Et omfattende værfenomen der hav- og vindforhold i Stillehavet endres og påvirker vær globalt.",
+    "enQ": "What is El Niño?",
+    "enA": "A large-scale change in Pacific Ocean and wind conditions that affects weather worldwide.",
+    "category": "klima"
+  },
+  {
+    "q": "Hva er en naturressurs?",
+    "a": "Noe fra naturen mennesker kan bruke, for eksempel vann, jord, skog, fisk, olje eller mineraler.",
+    "enQ": "What is a natural resource?",
+    "enA": "Something from nature that people can use, such as water, soil, forests, fish, oil or minerals.",
+    "category": "ressurser"
+  },
+  {
+    "q": "Hva menes med lokaliseringsfaktorer?",
+    "a": "Forhold som påvirker hvor næringsvirksomhet plasseres, som råvarer, arbeidskraft, transport og marked.",
+    "enQ": "What are location factors?",
+    "enA": "Conditions influencing where economic activity is located, such as raw materials, labour, transport and markets.",
+    "category": "ressurser"
+  },
+  {
+    "q": "Hva er en interessekonflikt?",
+    "a": "Når ulike grupper ønsker forskjellig bruk av samme område eller ressurs.",
+    "enQ": "What is a conflict of interest over resources?",
+    "enA": "Different groups wanting different uses of the same area or resource.",
+    "category": "ressurser"
+  },
+  {
+    "q": "Gi et eksempel på konflikt mellom naturvern og næringsutvikling.",
+    "a": "Vindkraft, gruvedrift, hyttebygging eller kraftutbygging i naturområder.",
+    "enQ": "Give an example of conflict between conservation and economic development.",
+    "enA": "Wind farms, mining, holiday-home construction or hydropower development in natural areas.",
+    "category": "ressurser"
+  },
+  {
+    "q": "Hvorfor kan strategiske stred være viktige for globalisering?",
+    "a": "Fordi mye handel og energi transporteres gjennom smale havpassasjer, og forstyrrelser kan påvirke verdensøkonomien.",
+    "enQ": "Why can strategic straits be important for globalisation?",
+    "enA": "Much trade and energy passes through narrow sea routes, so disruptions can affect the global economy.",
+    "category": "ressurser"
+  },
+  {
+    "q": "Hva er fornybare ressurser?",
+    "a": "Ressurser som kan fornyes på kort tid, som vannkraft, vind, skog og fisk hvis de forvaltes godt.",
+    "enQ": "What are renewable resources?",
+    "enA": "Resources replenished relatively quickly, such as hydropower, wind, forests and fish when managed well.",
+    "category": "ressurser"
+  },
+  {
+    "q": "Hva er ikke-fornybare ressurser?",
+    "a": "Ressurser som brukes raskere enn de dannes, som olje, gass, kull og mange mineraler.",
+    "enQ": "What are non-renewable resources?",
+    "enA": "Resources used faster than they form, such as oil, gas, coal and many minerals.",
+    "category": "ressurser"
+  },
+  {
+    "q": "Hva menes med primærnæring?",
+    "a": "Næring som henter råvarer direkte fra naturen, som jordbruk, fiske og skogbruk.",
+    "enQ": "What is the primary sector?",
+    "enA": "Activities obtaining raw materials directly from nature, such as farming, fishing and forestry.",
+    "category": "ressurser"
+  },
+  {
+    "q": "Hva menes med sekundærnæring?",
+    "a": "Næring som bearbeider råvarer, for eksempel industri og bygg.",
+    "enQ": "What is the secondary sector?",
+    "enA": "Activities processing raw materials, such as manufacturing and construction.",
+    "category": "ressurser"
+  },
+  {
+    "q": "Hva menes med tertiærnæring?",
+    "a": "Tjenesteytende næring, som handel, transport, helse og utdanning.",
+    "enQ": "What is the tertiary sector?",
+    "enA": "Services such as retail, transport, health care and education.",
+    "category": "ressurser"
+  },
+  {
+    "q": "Hvorfor kan mineraler skape interessekonflikter?",
+    "a": "Fordi gruvedrift kan gi arbeidsplasser og inntekter, men også naturinngrep og forurensning.",
+    "enQ": "Why can minerals cause conflicts of interest?",
+    "enA": "Mining can provide jobs and income but also damage habitats and cause pollution.",
+    "category": "ressurser"
+  },
+  {
+    "q": "Hvorfor er vann en strategisk ressurs?",
+    "a": "Fordi mennesker, matproduksjon, energi og industri er avhengige av tilgang på ferskvann.",
+    "enQ": "Why is water a strategic resource?",
+    "enA": "People, food production, energy and industry depend on fresh water.",
+    "category": "ressurser"
+  },
+  {
+    "q": "Hva menes med ressursforbannelse?",
+    "a": "At land med store naturressurser likevel kan få korrupsjon, konflikt og svak økonomisk utvikling.",
+    "enQ": "What is the resource curse?",
+    "enA": "Countries rich in natural resources can still suffer corruption, conflict and weak economic development.",
+    "category": "ressurser"
+  },
+  {
+    "q": "Hva er demografi?",
+    "a": "Læren om befolkningens størrelse, sammensetning og utvikling.",
+    "enQ": "What is demography?",
+    "enA": "The study of population size, composition and change.",
+    "category": "demografi"
+  },
+  {
+    "q": "Hva er naturlig tilvekst?",
+    "a": "Fødselsrate minus dødsrate.",
+    "enQ": "What is natural population increase?",
+    "enA": "The birth rate minus the death rate.",
+    "category": "demografi"
+  },
+  {
+    "q": "Hva viser en befolkningspyramide?",
+    "a": "Hvordan befolkningen er fordelt etter alder og kjønn.",
+    "enQ": "What does a population pyramid show?",
+    "enA": "The distribution of a population by age and sex.",
+    "category": "demografi"
+  },
+  {
+    "q": "Hva betyr reproduksjonsnivå?",
+    "a": "Antallet barn hver kvinne i gjennomsnitt må få for at befolkningen skal opprettholdes uten innvandring, ofte rundt 2,1 i rike land.",
+    "enQ": "What is replacement-level fertility?",
+    "enA": "The average number of children per woman needed to maintain a population without immigration, often about 2.1 in wealthy countries.",
+    "category": "demografi"
+  },
+  {
+    "q": "Hvorfor kan lav fruktbarhet gi utfordringer for et samfunn?",
+    "a": "Det kan gi aldrende befolkning, færre i arbeidsfør alder og press på velferdsordninger.",
+    "enQ": "Why can low fertility create challenges for society?",
+    "enA": "It can lead to population ageing, fewer working-age people and pressure on welfare systems.",
+    "category": "demografi"
+  },
+  {
+    "q": "Hva er fødselsrate?",
+    "a": "Antall fødsler per 1000 innbyggere per år.",
+    "enQ": "What is the birth rate?",
+    "enA": "Births per 1,000 inhabitants per year.",
+    "category": "demografi"
+  },
+  {
+    "q": "Hva er dødsrate?",
+    "a": "Antall dødsfall per 1000 innbyggere per år.",
+    "enQ": "What is the death rate?",
+    "enA": "Deaths per 1,000 inhabitants per year.",
+    "category": "demografi"
+  },
+  {
+    "q": "Hva er fruktbarhetstall?",
+    "a": "Gjennomsnittlig antall barn en kvinne får i løpet av livet.",
+    "enQ": "What is the fertility rate?",
+    "enA": "The average number of children a woman has during her lifetime.",
+    "category": "demografi"
+  },
+  {
+    "q": "Hva betyr urbanisering?",
+    "a": "At en større andel av befolkningen bor i byer og tettsteder.",
+    "enQ": "What is urbanisation?",
+    "enA": "An increasing share of the population living in towns and cities.",
+    "category": "demografi"
+  },
+  {
+    "q": "Hva er migrasjon?",
+    "a": "Flytting fra ett område til et annet.",
+    "enQ": "What is migration?",
+    "enA": "Moving from one area to another.",
+    "category": "demografi"
+  },
+  {
+    "q": "Hva er nettoinnvandring?",
+    "a": "Innvandring minus utvandring.",
+    "enQ": "What is net immigration?",
+    "enA": "Immigration minus emigration.",
+    "category": "demografi"
+  },
+  {
+    "q": "Hva kjennetegner en aldrende befolkning?",
+    "a": "En økende andel eldre i befolkningen.",
+    "enQ": "What characterises an ageing population?",
+    "enA": "An increasing proportion of older people.",
+    "category": "demografi"
+  },
+  {
+    "q": "Hva kan en bred base i en befolkningspyramide vise?",
+    "a": "Høy fødselsrate og mange barn/unge.",
+    "enQ": "What can a broad base in a population pyramid indicate?",
+    "enA": "A high birth rate and many children and young people.",
+    "category": "demografi"
+  }
+]
