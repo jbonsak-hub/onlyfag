@@ -29,8 +29,8 @@ window.GEO_QUIZ_ROUTES={
     "Statle"
   ],
   "geoguessr": [
-    "geografi/geowiz.html",
-    "GeoWiz"
+    "geografi/mapwiz.html",
+    "MapWiz"
   ],
   "openguessr": [
     "geografi/geoguessr.html",

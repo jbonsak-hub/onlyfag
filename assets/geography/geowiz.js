@@ -108,7 +108,7 @@
     const selectedCount=geoTargetPoolFromSelection().length;
     const curriculumPlaces=geoPlayablePlaces().filter(t=>t.category==="Geografifaget1");
     app.innerHTML=`<div class="geo-guessr-setup-wrap"><div class="geo-guessr-setup">
-      <h3>GeoWiz</h3>
+      <h3>MapWiz</h3>
       <p>Klikk på kjente steder på kartet. Jo nærmere du kommer desto mer poeng får du. Maks er 100 geografipoeng + 10 tidsbonus per sted.</p>
       <div class="geo-selection-tools"><button type="button" onclick="setAllGeoGuessrSelections(true)">Velg alle</button><button type="button" onclick="setAllGeoGuessrSelections(false)">Fjern alle</button><span class="geo-selection-count" id="geo-selection-count">${selectedCount} steder valgt</span></div>
       <div class="geo-selection-grid">${items}</div>

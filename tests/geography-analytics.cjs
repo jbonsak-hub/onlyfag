@@ -5,6 +5,7 @@ const fs = require('fs'),
 const pw = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = path.resolve(__dirname, '..');
 require('node:child_process').execFileSync(process.execPath, [path.join(root, 'scripts/build-statle-assets.cjs'), '--check']);
+require('node:child_process').execFileSync(process.execPath, [path.join(root, 'scripts/build-geography-quiz-assets.cjs'), '--check']);
 const server = http.createServer((req, res) => {
   const pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
   const file = path.join(root, pathname.endsWith('/') ? pathname + 'index.html' : pathname);
@@ -100,7 +101,7 @@ const server = http.createServer((req, res) => {
   }
   // Previously published root URLs remain redirects, with no intermediate beacon.
   for (const [mode, [file]] of Object.entries(routes)) {
-    const old = 'geografi-' + file.split('/').pop();
+    const old = 'geografi-' + (mode === 'geoguessr' ? 'geowiz.html' : file.split('/').pop());
     const before = payloads.length;
     await page.goto(base + old + '?legacy=1#kept');
     await page.waitForURL(base + file + '?legacy=1#kept');
@@ -121,7 +122,7 @@ const server = http.createServer((req, res) => {
   await page.waitForURL('**/geografi/flaggquiz.html');
   await page.goBack();
   assert.equal(await page.locator('#verden-quiz').evaluate(e => e.classList.contains('active')), true);
-  for (const target of [...Object.keys(routes), ...Object.keys(routes).map(mode => 'quiz-' + mode), 'worldle', 'wordle', 'geowiz', 'flaggquiz']) {
+  for (const target of [...Object.keys(routes), ...Object.keys(routes).map(mode => 'quiz-' + mode), 'worldle', 'wordle', 'geowiz', 'mapwiz', 'flaggquiz']) {
     current = 'legacy-' + target;
     await page.goto(base + 'geografi.html#' + target);
     await page.waitForURL(url => Object.values(routes).some(([file]) => url.pathname.endsWith('/' + file)));
@@ -183,7 +184,7 @@ const server = http.createServer((req, res) => {
   await page.goto(base + 'geografi/landquiz.html');
   await page.locator('.country-region-btn').first().click();
   assert.ok((await page.locator('#country-map-input').count()) || (await page.locator('#country-guess').count()));
-  await page.goto(base + 'geografi/geowiz.html');
+  await page.goto(base + 'geografi/mapwiz.html');
   await page.locator('#geo-start-button').click();
   assert.equal(await page.locator('#geo-map-stage').count(), 1);
   console.log('PASS GeoWiz start');
@@ -221,7 +222,7 @@ const server = http.createServer((req, res) => {
     assert.ok(layout.scroll <= layout.width, file + ' overflows on mobile');
     assert.ok(layout.back.x >= 0 && layout.back.right <= 390);
     if (mode === 'flags') {
-      assert.ok(await page.locator('.world-setup h3').evaluate(e => e.getBoundingClientRect().top >= 48));
+      assert.ok(await page.locator('.world-setup h3').evaluate(e => e.getBoundingClientRect().top >= 0));
     }
     console.log('PASS mobile', file, layout.scroll);
   }
@@ -263,7 +264,7 @@ const server = http.createServer((req, res) => {
   const statleTarget = await page.locator('#targetName').innerText();
   await page.locator(`path.state[data-state="${statleTarget}"]`).dispatchEvent('click');
   assert.equal(await page.locator('#completed').innerText(), '1');
-  await page.goto(base + 'geografi/geowiz.html');
+  await page.goto(base + 'geografi/mapwiz.html');
   await page.locator('#geo-start-button').click();
   await page.locator('#geo-map-stage').click({
     position: {

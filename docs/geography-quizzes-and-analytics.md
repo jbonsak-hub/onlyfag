@@ -11,7 +11,7 @@ De 14 variantene i Geo-quiz har egne HTML-innganger. Land- og stedstabellene, ka
 | Kjente steder på jorda | geografi/stedsquiz.html | #places / #quiz-places |
 | Worldle | geografi/worldle.html | #detective2 / #quiz-detective2 |
 | Statle | geografi/statle.html | #statle / #quiz-statle |
-| GeoWiz | geografi/geowiz.html | #geoguessr / #quiz-geoguessr |
+| MapWiz | geografi/mapwiz.html | #geoguessr / #quiz-geoguessr / #geowiz / #mapwiz |
 | GeoGuessr | geografi/geoguessr.html | #openguessr / #quiz-openguessr |
 | Jeopardy | geografi/jeopardy.html | #jeopardy / #quiz-jeopardy |
 | Globle | geografi/globle.html | #globle / #quiz-globle |
@@ -106,3 +106,18 @@ Statle på /geografi/statle.html bruker nå et kart med 50 klikkbare delstater o
 Kartet fyller vindushøyden på desktop. Fastlandet er forstørret. Alaska og Hawaii vises uten navn, med skillelinjer som ikke skjærer gjennom delstatene. Hawaii flukter nederst med Florida. På mobil ligger panelet under kartet. Kartgrunnlaget er det samme Census-grunnlaget som tidligere. Spillsvar holdes i minnet, eksisterende lokal lagring røres ikke, og siden bruker samme analytics-loader/token og sidesti som før. Andre quiz- og fagmoduler er uendret.
 
 prototypes/statle.html deler kartkode og stil med den publiserte siden, men laster ingen analytics. tests/statle-prototype.cjs kontrollerer alle 50 delstatene gjennom en komplett runde, farger, hover, feilnavn, hint, omstart, mobil og full vindushøyde. Menyen starter lukket og åpnes over venstre del av kartet, med støtte for Escape, lukkeknapp og klikk utenfor. OnlyFag-lenken går til hovedsiden, og Quizoversikt-lenken er forstørret. Sett STATLE_PREVIEW_URL til den lokale siden og bruk PLAYWRIGHT_MODULE/BROWSER_EXECUTABLE ved behov. Den vanlige geography-analytics-testen dekker også den nye Statle-siden og de gamle adressene.
+
+
+## Kompakte quizoppsett med Statle-palett
+
+Globle, Worldle, Travle, Tradle, GeoGrid, MapWiz, Jeopardy, Landquiz, Flaggquiz, Hovedstadsquiz, Stedsquiz og Flagg+hovedstad deler nå `quiz-layout.css` og `quiz-layout.js`. Den tidligere topplinjen er erstattet av OnlyFag/tema/Quizoversikt i kontrollpanelet og en sammenfoldet geografimeny over venstre billedkant. På PC fyller kartspillene høyden; mobilvisningen plasserer kart/brett over kontrollene og holder svaralternativer i to kolonner. Globle beholder drag, zoom og avstandsfarger. Stedsbeskrivelser, resultatvinduer og Jeopardy bruker lyse, lesbare flater. Worldle åpner ikke mobiltastaturet automatisk.
+
+Kart-iframe får den nye utformingen bare når det åpnes fra en av de fire selvstendige quizsidene. Kartverktøyene på geografi.html og øvrige fag beholder utformingen. Eksisterende spillfunksjoner, datasett og lagringsnøkler beholdes.
+
+GeoWiz heter nå MapWiz på `/geografi/mapwiz.html`. `/geografi/geowiz.html`, `/geografi-geowiz.html` og tidligere hash-/query-lenker videresender dit uten et ekstra analytics-skript. Samme Cloudflare-token brukes. Historiske tall for GeoWiz-stien blir liggende på den gamle stien i Cloudflare.
+
+Etter endringer i geografiens delte JS/CSS: kjør `node scripts/build-geography-quiz-assets.cjs`. Dette lager innholdshash-versjoner av alle direkte JS/CSS-avhengigheter for geografi.html og de 12 quizsidene. HTML peker på `assets/geography/quiz-assets/`. Kildekode redigeres utenfor denne mappen. Behold tidligere publiserte filer for eldre HTML i buffer. Statle har fortsatt sin separate, uendrede byggeprosess.
+
+Verifisering: `node tests/geography-layout.cjs` og `node tests/geography-analytics.cjs` med samme Playwright-variabler som over. Layouttesten dekker oppstart/spill i 1366×643, 390×844, 360×740 og 844×390; fullhøydekart, alle ni GeoGrid-ruter, meny/retur, lesbare stedsbeskrivelser, svaralternativer, landkart uten overlapp over svarfelt, MapWiz-kartklikk uten klikkgjennomgang fra HUD, Jeopardy-spørsmål/fasit/poeng og GeoGrid-inntasting med viewport 390×480 som tilnærming til tastaturplass. `LAYOUT_SCREENSHOTS` kan angi en mappe for visuell kontroll. Analytics-testen bruker lokalt fangede payloads fra det originale beaconet. Ingen testtrafikk sendes til Cloudflare.
+
+Mobilkontroll er utført i emulerte Chromium/Edge-visninger, ikke på fysisk iPhone/Android eller Safari. Eksterne Worldle-bilder og Cloudflare-dashboardets mottak kontrolleres ikke av den lokale testen. Ingen backend, elevdata eller tilgangsbeskyttelse er endret.

@@ -1,0 +1,18 @@
+/* The extracted pages share one compact navigation bar above the original game. */
+:root{--quiz-nav-height:48px}
+.quiz-page-header{position:fixed;inset:0 0 auto;height:var(--quiz-nav-height);z-index:10020;display:flex;align-items:center;gap:10px;padding:6px 12px;background:#071c28;color:#e8fbff;border-bottom:1px solid #2d7187;font:14px 'Segoe UI',sans-serif}
+.quiz-page-title{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.quiz-page-back,.quiz-page-theme,.quiz-page-menu{flex:0 0 auto;border:1px solid #2d7187;border-radius:7px;padding:7px 10px;background:#113544;color:#e8fbff;text-decoration:none;font:600 14px 'Segoe UI',sans-serif;cursor:pointer}
+.quiz-page-theme{font-size:17px;padding:4px 10px}
+body[data-quiz] .content{margin-top:var(--quiz-nav-height)!important;width:100%!important;max-width:none!important;padding:0!important;height:calc(100dvh - var(--quiz-nav-height))!important}
+body[data-quiz].quiz-fullscreen #verden-quiz.page-section,body[data-quiz] .quiz-fullscreen-stage,body[data-quiz] #quiz-geoguessr.active,body[data-quiz] .geo-guessr-shell{height:calc(100dvh - var(--quiz-nav-height))!important;min-height:0!important}
+body[data-quiz] .quiz-fullscreen-toolbar{display:none}
+body[data-quiz] #quiz-openguessr.quiz-mode-content.active{top:var(--quiz-nav-height);height:calc(100dvh - var(--quiz-nav-height))}
+body[data-quiz].sidebar-open .sidebar{top:var(--quiz-nav-height);height:calc(100dvh - var(--quiz-nav-height))}
+.standalone-map-quiz .sidebar,.standalone-map-quiz .quiz-page-menu{display:none}
+.standalone-map-quiz .maplab-frame{height:calc(100dvh - var(--quiz-nav-height));min-height:0}
+.geo-guessr-setup{max-width:100%;max-height:calc(100dvh - var(--quiz-nav-height) - 28px)}
+@media(max-width:700px){.quiz-page-header{gap:6px;padding:6px}.quiz-page-back,.quiz-page-menu{font-size:12px;padding:7px}.quiz-page-title{font-size:13px}.geo-guessr-setup-wrap{padding:10px}.geo-guessr-setup{padding:16px}}
+
+/* Long setup forms must start at the top when they exceed the viewport. */
+body[data-quiz] .quiz-fullscreen-body{align-items:safe center!important;justify-content:safe center!important}

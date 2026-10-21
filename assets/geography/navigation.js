@@ -3,7 +3,7 @@
   const routes = window.GEO_QUIZ_ROUTES;
   const mapTabs = ['projection','coordinates','coordinatequiz','routes','antipodes','scale','terrain','daynight'];
   const spaceTabs = ['system','seasons','milankovitch'];
-  const aliases = {wordle:'detective2',worldle:'detective2',geowiz:'geoguessr',flaggquiz:'flags'};
+  const aliases = {wordle:'detective2',worldle:'detective2',geowiz:'geoguessr',mapwiz:'geoguessr',flaggquiz:'flags'};
   function quizKey(value) { const key = value.replace(/^quiz-/, ''); return aliases[key] || key; }
   window.showQuizMode = function (mode) { if (routes[mode]) location.assign(routes[mode][0]); };
   window.openMapLabFromGeoQuiz = function (mode) { if (routes[mode]) location.assign(routes[mode][0]); };
