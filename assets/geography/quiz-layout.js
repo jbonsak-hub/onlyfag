@@ -7,7 +7,7 @@
   const theme = header.querySelector('.quiz-page-theme');
   const back = header.querySelector('.quiz-page-back');
   const cssUrl = document.querySelector('link[data-quiz-layout]').href;
-  menu.classList.add('quiz-floating-menu'); document.body.append(menu);
+  header.prepend(menu);
   back.textContent = '← Quizoversikt';
   const footer = document.createElement('div'); footer.className = 'quiz-layout-footer'; footer.append(back);
   const rail = document.createElement('aside'); rail.className = 'quiz-control-rail';
@@ -15,12 +15,19 @@
   // Map-only host documents do not load core.js, so provide the same drawer actions.
   menu.setAttribute('aria-label', 'Åpne eller lukk geografimenyen');
   menu.setAttribute('aria-expanded', 'false');
+  const drawer = document.querySelector('.sidebar');
+  const closeDrawer = document.createElement('button'); closeDrawer.type = 'button'; closeDrawer.className = 'quiz-drawer-close'; closeDrawer.textContent = 'Lukk ×'; closeDrawer.setAttribute('aria-label','Lukk geografimenyen'); drawer.prepend(closeDrawer);
+  const shade = document.createElement('button'); shade.type = 'button'; shade.className = 'quiz-drawer-shade'; shade.setAttribute('aria-label','Lukk geografimenyen'); document.body.append(shade);
+  closeDrawer.addEventListener('click', () => window.toggleQuizSidebar());
+  shade.addEventListener('click', () => window.toggleQuizSidebar());
   window.toggleQuizSidebar = () => {
     const open = document.body.classList.toggle('sidebar-open');
     menu.setAttribute('aria-expanded', String(open));
+    document.querySelectorAll('iframe').forEach(frame => {try{frame.contentDocument?.querySelector('.quiz-frame-nav .quiz-page-menu')?.setAttribute('aria-expanded',String(open));}catch(_){}});
+    if (open) closeDrawer.focus();
   };
   if (typeof window.toggleMenu !== 'function') window.toggleMenu = el => el.nextElementSibling.classList.toggle('open');
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') {document.body.classList.remove('sidebar-open'); menu.setAttribute('aria-expanded', 'false');} });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.body.classList.contains('sidebar-open')) window.toggleQuizSidebar(); });
   document.querySelector('.sidebar').addEventListener('click', e => {
     if (e.target.closest('.submenu-item')) document.body.classList.remove('sidebar-open');
   });
@@ -37,6 +44,7 @@
   }
   if (mode === 'openguessr') {
     document.body.classList.add('quiz-external-host');
+    menu.classList.add('quiz-floating-menu'); document.body.append(menu);
     footer.classList.add('quiz-external-overview'); document.body.append(footer);
     rail.remove(); return;
   }
@@ -50,7 +58,11 @@
     const style = doc.createElement('link'); style.rel = 'stylesheet'; style.href = cssUrl; style.dataset.quizLayoutStyle = '';
     const nav = doc.createElement('div'); nav.className = 'quiz-frame-nav';
     const toggle = doc.createElement('button'); toggle.type = 'button'; toggle.textContent = '◐'; toggle.className = 'quiz-page-theme'; toggle.setAttribute('aria-label','Lys eller mørk modus');
-    toggle.addEventListener('click', () => theme.click()); nav.append(toggle);
+    const localMenu = doc.createElement('button'); localMenu.type = 'button'; localMenu.className = 'quiz-page-menu'; localMenu.textContent = '☰ Meny';
+    localMenu.setAttribute('aria-label', 'Åpne geografimenyen'); localMenu.addEventListener('click', () => {window.toggleQuizSidebar(); localMenu.setAttribute('aria-expanded', String(document.body.classList.contains('sidebar-open')));});
+    doc.addEventListener('keydown', event => {if(event.key === 'Escape'){document.body.classList.remove('sidebar-open');menu.setAttribute('aria-expanded','false');localMenu.setAttribute('aria-expanded','false');}});
+    toggle.addEventListener('click', () => theme.click()); nav.append(localMenu, toggle);
+    menu.hidden = true;
     side.prepend(nav);
     const end = doc.createElement('div'); end.className = 'quiz-layout-footer';
     const overview = doc.createElement('a'); overview.className = 'quiz-page-back'; overview.href = '../../geografi.html#verden-quiz'; overview.target = '_top'; overview.textContent = '← Quizoversikt'; end.append(overview); side.append(end);
@@ -70,6 +82,9 @@
     return;
   }
   function update() {
+    document.querySelectorAll('.jeopardy-value.done,.jeopardy-value.used').forEach(cell => {
+      if (!cell.hasAttribute('aria-disabled')) {cell.setAttribute('aria-disabled','true');cell.setAttribute('aria-label',cell.textContent.trim()+' poeng, allerede valgt');}
+    });
     document.querySelectorAll('.world-setup,.country-region-setup,.geo-guessr-setup,.jeopardy-setup').forEach(setup => {
       collectHelp(setup, ':scope > p,.jeopardy-setup-header > p');
     });
@@ -86,6 +101,10 @@
     document.body.classList.toggle('quiz-integrated-nav', !!target);
     if (target) {
       if (header.parentElement !== target) target.prepend(header);
+      if (target.classList.contains('quiz-status-panel')) {
+        const game = target.closest('.world-game');
+        game.querySelectorAll('#world-play > .world-end').forEach(result => target.insertBefore(result, footer.parentElement === target ? footer : null));
+      }
       if (footer.parentElement !== target) target.append(footer);
       rail.hidden = true;
       if (mode === 'geoguessr') {

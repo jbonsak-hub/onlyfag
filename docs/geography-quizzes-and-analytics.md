@@ -101,11 +101,11 @@ Etter endringer i `assets/geography/statle.css` eller `statle.js`: kjør `node s
 
 Dette hindrer at ny HTML kombineres med gamle CSS/JS-filer fra nettleser- eller Cloudflare-bufferen. Ressursene kan ellers være ferske i buffer i fire timer. `tests/statle-cache.cjs` gjenskaper blankt kart med gamle filer i en ekte nettleserbuffer og kontrollerer at nye filadresser gjenoppretter kart, spill og meny uten tømming av buffer. Testen sender ingen analytics.
 
-Statle på /geografi/statle.html bruker nå et kart med 50 klikkbare delstater og navnet på målstaten i høyrepanelet. Fargen følger svartid og antall feil. Feilklikk viser den klikkede statens navn i omtrent ett sekund; etter to feil pulserer en ring rundt målstaten i omtrent 1,45 sekunder. Omstart, hopping over, tastatur og ekstra klikkfelt for små delstater er tilgjengelig. Eksempelrunde og all manuell/automatisk pause er fjernet; klokka går også når menyen er åpen eller fanen er skjult.
+Statle på /geografi/statle.html bruker nå et kart med 50 klikkbare delstater og navnet på målstaten i spillpanelet. Fargen følger svartid og antall feil. Feilklikk viser den klikkede statens navn i omtrent ett sekund; etter to feil pulserer en ring rundt målstaten i omtrent 1,45 sekunder. Omstart, hopping over, tastatur og ekstra klikkfelt for små delstater er tilgjengelig. Eksempelrunde og all manuell/automatisk pause er fjernet; klokka går også når menyen er åpen eller fanen er skjult.
 
 Kartet fyller vindushøyden på desktop. Fastlandet er forstørret. Alaska og Hawaii vises uten navn, med skillelinjer som ikke skjærer gjennom delstatene. Hawaii flukter nederst med Florida. På mobil ligger panelet under kartet. Kartgrunnlaget er det samme Census-grunnlaget som tidligere. Spillsvar holdes i minnet, eksisterende lokal lagring røres ikke, og siden bruker samme analytics-loader/token og sidesti som før. Andre quiz- og fagmoduler er uendret.
 
-prototypes/statle.html deler kartkode og stil med den publiserte siden, men laster ingen analytics. tests/statle-prototype.cjs kontrollerer alle 50 delstatene gjennom en komplett runde, farger, hover, feilnavn, hint, omstart, mobil og full vindushøyde. Menyen starter lukket og åpnes over venstre del av kartet, med støtte for Escape, lukkeknapp og klikk utenfor. OnlyFag-lenken går til hovedsiden, og Quizoversikt-lenken er forstørret. Sett STATLE_PREVIEW_URL til den lokale siden og bruk PLAYWRIGHT_MODULE/BROWSER_EXECUTABLE ved behov. Den vanlige geography-analytics-testen dekker også den nye Statle-siden og de gamle adressene.
+prototypes/statle.html deler kartkode og stil med den publiserte siden, men laster ingen analytics. tests/statle-prototype.cjs kontrollerer alle 50 delstatene gjennom en komplett runde, farger, hover, feilnavn, hint, omstart, mobil og full vindushøyde. Menyen starter lukket og åpnes over venstre del av kartet, med støtte for Escape, lukkeknapp og klikk utenfor. Statle-tittelen står øverst i venstrepanelet, og Quizoversikt-lenken er forstørret. Sett STATLE_PREVIEW_URL til den lokale siden og bruk PLAYWRIGHT_MODULE/BROWSER_EXECUTABLE ved behov. Den vanlige geography-analytics-testen dekker også den nye Statle-siden og de gamle adressene.
 
 
 ## Kompakte quizoppsett med Statle-palett
@@ -130,3 +130,14 @@ Kontroller, oppsett og forsøksrader er fortettet videre. Globle har hvit bakgru
 GeoGuessr-innrammingen har bare to flytende kontroller: Meny og Quizoversikt. Selve det eksterne spillet er uendret. Quizoversikten har mindre kort, forhåndsvisninger og tekst ved vanlig nettleserzoom; dette er separat stil som ikke endrer fagseksjonene.
 
 Layouttesten kontrollerer også minst 20 ekte Globle-gjetninger, én linje for alle tre handlingsknappene, synlig retur uten rulling av kontrollpanelet, begge bakgrunnsfarger, samlet hjelpetekst, GeoGuessr-innramming uten topplinje og kompakte oversiktskort. `geography-layout.cjs` dekker fortsatt fire skjermstørrelser og mobilspill. Ingen CSS-zoom brukes.
+
+
+### Venstrepaneler, romslige spørsmål og resultatvisning
+
+Alle lokale spill har nå kontrollpanelet til venstre på PC, med integrert Meny-knapp. Geografimenyen åpnes over dette panelet og kan lukkes med Lukk, Escape eller klikk utenfor. På mobil ligger panelet over spørsmålene eller under kartet. GeoGuessrs to navigasjonsknapper er samlet til venstre; det eksterne spillet fyller fortsatt vinduet. Statle har tittelen «Statle» uten OnlyFag-logo.
+
+Flaggquiz, hovedsteder, flagg/hovedstad og kjente steder bruker høyere svarbokser og romslige spørsmålskort. Resultatboksen og toppresultater flyttes til spillpanelet etter et feil svar. Tilbakemelding, score, toppresultater og sekundærtekst i lys modus har mørkere farger. Jeopardy-ruter som er spilt, får skravering, tydelig ramme, gjennomstreking og «✓ Valgt», samt tilgjengelig valgt-status.
+
+Globle avviser tomme svar og mellomrom både fra Gjett-knappen og Enter. Bare startknappen legger inn det første tilfeldige landet. Endringen ligger i den delte kartfilens Globle-funksjon. Byggeskriptet legger en innholdshash som v-parameter på de fire quizenes maplab-iframe, slik at oppdatert spillkode hentes ved ny publisering.
+
+Testene dekker også venstrepaneler, integrert meny og lukking, høyere svaralternativer, resultatplassering og minst 4,5:1 kontrast for tilbakemeldinger/resultattekster i lys modus. Statle-testen gjennomfører en hel runde med alle 50 delstater og kontrollerer ny tittel og plassering; cache-testen bekrefter at eldre buffer ikke hindrer riktig lasting.

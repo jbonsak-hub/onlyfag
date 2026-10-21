@@ -1,7 +1,7 @@
 /* Statle palette and compact chrome. Scoped so geography reference modules keep
    their layout; framed games receive this stylesheet only on their own pages. */
 :root{--quiz-nav-height:0px}
-body[data-quiz],body[data-quiz-layout]{--q-bg:#f6f7f3;--q-paper:#fffefa;--q-ink:#28463d;--q-muted:#6d7c6d;--q-line:#d8e2d3;--q-soft:#eaf1e2;--q-green:#245845;--q-water:#abd2d9;--q-panel:280px;font-family:Inter,"Segoe UI",sans-serif;background:var(--q-bg);color:var(--q-ink)}
+body[data-quiz],body[data-quiz-layout]{--q-bg:#f6f7f3;--q-paper:#fffefa;--q-ink:#28463d;--q-muted:#586b5b;--q-line:#d8e2d3;--q-soft:#eaf1e2;--q-green:#245845;--q-water:#abd2d9;--q-panel:280px;font-family:Inter,"Segoe UI",sans-serif;background:var(--q-bg);color:var(--q-ink)}
 body[data-quiz].dark-mode,body[data-quiz-layout].dark{--q-bg:#15251d;--q-paper:#1c3025;--q-ink:#e7f1e5;--q-muted:#b1c2ac;--q-line:#3c5540;--q-soft:#2c4633;--q-green:#80bb8d}
 body[data-quiz] .quiz-page-header{position:static;inset:auto;display:flex;height:auto;min-height:32px;gap:8px;padding:0;margin:0 0 16px;background:transparent;color:var(--q-ink);border:0;z-index:auto}
 body[data-quiz] .quiz-page-title{display:none}.quiz-home{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:28px;font-weight:700;line-height:1;letter-spacing:-.055em;color:var(--q-ink);text-decoration:none;margin-right:auto}
@@ -279,3 +279,77 @@ body[data-quiz] .geo-next-button{font-size:12px!important;padding:7px 9px!import
 /* Keep the same rail width after a MapWiz answer and on the Norway map. */
 body[data-quiz] .geo-map-stage .geo-hud{left:auto!important;right:0!important;top:0!important;bottom:0!important;width:var(--q-panel)!important;transform:none!important;padding:11px!important}
 @media(max-width:700px){body[data-quiz] .geo-map-stage .geo-hud{left:0!important;right:auto!important;top:100%!important;bottom:auto!important;width:100%!important}}
+
+/* Integrated navigation and a left-hand game panel in every local quiz. */
+body[data-quiz] .quiz-page-header{display:flex;align-items:center;justify-content:space-between;width:100%;gap:7px;margin:0 0 10px}
+body[data-quiz] .quiz-page-header .quiz-page-menu,body[data-quiz-layout] .quiz-frame-nav .quiz-page-menu{display:inline-flex;align-items:center;position:static;border:1px solid var(--q-line);background:var(--q-paper);color:var(--q-green);font:650 12px 'Segoe UI',sans-serif;padding:6px 9px;border-radius:5px;min-height:28px;cursor:pointer}
+body[data-quiz] .quiz-page-menu[hidden]{display:none!important}
+body[data-quiz-layout] .quiz-frame-nav{position:static;display:flex;align-items:center;justify-content:space-between;width:100%;margin:0 0 4px;min-height:28px}
+body[data-quiz-layout] .travle-heading-row{padding-right:0!important}
+body[data-quiz] .quiz-status-panel .quiz-layout-footer{margin-top:auto}
+body[data-quiz] .quiz-status-panel .world-end{flex:none;width:100%;margin:18px 0 0!important;padding:13px!important;background:var(--q-soft)!important;font-size:13px;line-height:1.5}
+/* Results and feedback use the same readable palette as questions. */
+body[data-quiz] #verden-quiz :is(.world-feedback,.world-end,.world-end strong,.hs-mini-head strong,.hs-mini-head button,.hs-mini-row b,.hs-mini-row span){color:var(--q-ink)!important}
+body[data-quiz] #verden-quiz .world-card:has(.world-option.wrong) .world-feedback{color:#8b3e35!important}
+body[data-quiz] #verden-quiz .world-card:has(.world-option.correct):not(:has(.world-option.wrong)) .world-feedback{color:#225b32!important}
+body[data-quiz] #verden-quiz .hs-mini{padding:10px!important;margin-top:12px!important;background:var(--q-paper)!important;border-color:var(--q-line)!important}
+body[data-quiz] #verden-quiz .hs-mini-row{grid-template-columns:16px minmax(0,1fr) auto;gap:4px;font-size:11px}
+body[data-quiz] #verden-quiz .hs-mini-row b,body[data-quiz] #verden-quiz .hs-mini-row span:last-child{white-space:normal;overflow-wrap:anywhere}
+body[data-quiz] #verden-quiz .world-end>strong{display:inline-block;font-size:22px;margin-bottom:6px}
+/* Give questions breathing room; compact navigation does not mean flat answers. */
+body[data-quiz] #verden-quiz #world-play{align-items:safe center!important;padding:28px!important}
+body[data-quiz] #verden-quiz .world-card{display:flex;flex-direction:column;justify-content:center;gap:22px;min-height:min(570px,calc(100dvh - 56px));max-width:900px!important;padding:30px!important;border-radius:17px!important}
+body[data-quiz] #verden-quiz .world-prompt{font-size:clamp(26px,2.4vw,34px)!important;line-height:1.25!important;margin:0!important}
+body[data-quiz] #verden-quiz .world-option-grid{gap:14px!important}
+body[data-quiz] #verden-quiz .world-option{min-height:76px!important;padding:16px!important;font-size:18px!important;border-radius:11px!important;line-height:1.35!important;text-align:center;justify-content:center}
+body[data-quiz] #verden-quiz .world-feedback{min-height:27px!important;margin:0!important;font-size:15px!important;line-height:1.4!important}
+body[data-quiz] #verden-quiz .world-place-question-desc{font-size:20px!important;line-height:1.5!important}
+body[data-quiz] #verden-quiz .world-question-heading{font-size:12px!important;letter-spacing:.06em}
+/* A used Jeopardy square has an explicit mark and a different surface. */
+body[data-quiz] #quiz-jeopardy #jeopardy-board .jeopardy-value:is(.done,.used){position:relative;flex-direction:column;gap:7px;background:repeating-linear-gradient(135deg,#d6dfd2,#d6dfd2 9px,#e2e8df 9px,#e2e8df 18px)!important;color:#465a42!important;border:2px solid #81967a!important;opacity:1!important;text-decoration:line-through!important;box-shadow:inset 0 0 0 1px #fff!important;cursor:default;pointer-events:none}
+body[data-quiz] #quiz-jeopardy #jeopardy-board .jeopardy-value:is(.done,.used)::after{content:'✓ Valgt';font-size:11px;line-height:1.2;font-weight:750;letter-spacing:.03em;text-decoration:none;background:#405e3b;color:#fff;padding:3px 7px;border-radius:4px}
+@media(min-width:701px){
+ body[data-quiz] .quiz-control-rail{left:0;right:auto;top:0;bottom:0;display:flex;flex-direction:column;align-items:stretch;width:var(--q-panel);height:100dvh;padding:12px;background:var(--q-paper);border:0;border-right:1px solid var(--q-line);overflow:auto}
+ body[data-quiz] .quiz-control-rail .quiz-layout-footer{margin-top:auto}
+ body[data-quiz]:not(.quiz-integrated-nav):not(.quiz-frame-host):not(.quiz-external-host) main.content{width:calc(100% - var(--q-panel))!important;margin-left:var(--q-panel)!important}
+ body[data-quiz] .quiz-integrated-nav main.content{margin-left:0!important}
+ body[data-quiz] #verden-quiz .world-game,body[data-quiz] .worldle-game{grid-template-columns:var(--q-panel) minmax(0,1fr)!important}
+ body[data-quiz] #verden-quiz .quiz-status-panel,body[data-quiz] .worldle-side{grid-column:1!important;grid-row:1!important;border-left:0;border-right:1px solid var(--q-line)}
+ body[data-quiz] #verden-quiz #world-play,body[data-quiz] .worldle-target{grid-column:2!important;grid-row:1!important}
+ body[data-quiz-layout] :is(.globle-layout,.travle-lab-layout,.tradle-layout,.geogrid-layout){grid-template-columns:var(--q-panel) minmax(0,1fr)!important}
+ body[data-quiz-layout] :is(.globle-side,.travle-side,.tradle-side,.geogrid-side){grid-column:1!important;grid-row:1!important;border-left:0!important;border-right:1px solid var(--q-line)!important}
+ body[data-quiz-layout] :is(.globle-map-panel,.travle-map-panel,.tradle-chart-panel,.geogrid-board-panel){grid-column:2!important;grid-row:1!important}
+ body[data-quiz] .geo-map-stage{left:var(--q-panel)!important;right:0!important;width:calc(100% - var(--q-panel))!important}
+ body[data-quiz] .geo-map-stage .geo-hud{left:0!important;right:auto!important;border-left:0!important;border-right:1px solid var(--q-line)!important}
+ body[data-quiz] .country-map-game .country-map-primary{grid-template-columns:var(--q-panel) minmax(0,1fr)!important}
+ body[data-quiz] .country-map-game :is(.country-map-side,.country-map-bottom-bar){grid-column:1!important;border-left:0;border-right:1px solid var(--q-line)}
+ body[data-quiz] .country-map-game .country-map-wrap{grid-column:2!important}
+ body[data-quiz] #quiz-jeopardy .jeopardy-play-area{grid-template-columns:320px minmax(0,1fr)!important}
+ body[data-quiz] #quiz-jeopardy .jeopardy-side{grid-column:1;grid-row:1}
+ body[data-quiz] #quiz-jeopardy .jeopardy-board-wrap{grid-column:2;grid-row:1}
+ body[data-quiz] #quiz-jeopardy .jeopardy-actions{padding-left:0!important}
+}
+body[data-quiz].quiz-external-host .quiz-external-overview{left:84px;right:auto}
+@media(max-width:700px){
+ body[data-quiz] .quiz-control-rail{left:6px;right:auto;top:5px;bottom:auto;width:calc(100% - 12px);justify-content:space-between}
+ body[data-quiz] #verden-quiz .quiz-status-panel{padding:9px!important;grid-template-columns:minmax(0,1fr) auto!important}
+ body[data-quiz] #verden-quiz .quiz-status-panel .world-statusbar{margin-left:0!important}
+ body[data-quiz] #verden-quiz .world-card{min-height:0;padding:19px!important;gap:16px;border-radius:12px!important}
+ body[data-quiz] #verden-quiz #world-play{padding:12px!important}
+ body[data-quiz] #verden-quiz .world-option{min-height:62px!important;font-size:16px!important;padding:12px 10px!important}
+ body[data-quiz] #verden-quiz .world-option-grid{gap:11px!important}
+ body[data-quiz] #verden-quiz .world-prompt{font-size:23px!important}
+ body[data-quiz] #verden-quiz .world-place-question-desc{font-size:17px!important}
+ body[data-quiz] .quiz-status-panel .world-end{grid-column:1/-1;grid-row:3;margin-top:8px!important}
+ body[data-quiz] .quiz-status-panel .quiz-layout-footer{grid-column:2;grid-row:1;margin-top:0}
+ body[data-quiz] #quiz-jeopardy #jeopardy-board .jeopardy-value:is(.done,.used){gap:3px}
+ body[data-quiz] #quiz-jeopardy #jeopardy-board .jeopardy-value:is(.done,.used)::after{font-size:9px;padding:2px 4px}
+}
+
+body[data-quiz] #quiz-jeopardy #jeopardy-answer::before,body[data-quiz] #quiz-jeopardy #score-actions::before{color:var(--q-muted)!important}
+@media(max-width:700px){body[data-quiz] #verden-quiz #world-play{align-items:flex-start!important}}
+
+body[data-quiz] .quiz-drawer-close{position:absolute;top:10px;right:10px;border:1px solid var(--q-line);border-radius:5px;background:var(--q-soft);color:var(--q-ink);padding:6px 10px;font:650 12px 'Segoe UI',sans-serif;cursor:pointer}
+.quiz-drawer-shade{display:none;position:fixed;inset:0;z-index:10980;border:0;background:#244c4020;cursor:default}body[data-quiz].sidebar-open .quiz-drawer-shade{display:block}
+
+body[data-quiz].sidebar-open .sidebar{z-index:11010!important}

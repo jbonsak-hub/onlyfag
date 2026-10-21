@@ -51,7 +51,7 @@ const server = http.createServer((req, res) => {
     await page.goto(base + '/geografi/statle.html?visit=fixed');
     await page.locator('#start:enabled').waitFor();
     assert.equal(await page.locator('path.state').count(), 50);
-    assert.equal(await page.locator('#geoMenuButton').evaluate(e => getComputedStyle(e).position), 'fixed');
+    assert.equal(await page.locator('#geoMenuButton').evaluate(e => getComputedStyle(e).position), 'static');
     assert.deepEqual(errors.filter(e => e.stage === 'fixed'), []);
     await page.locator('#start').click();
     const target = await page.locator('#targetName').innerText();

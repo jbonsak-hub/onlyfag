@@ -13,8 +13,8 @@ assert.ok(process.env.STATLE_PREVIEW_URL, 'Set STATLE_PREVIEW_URL to the prototy
  assert.equal(await page.locator('path.state').count(),50);
  await page.screenshot({path:path.join(screenshots,'statle-ready.png'),fullPage:true});
  assert.equal(await page.locator('#demo, #pause, #resume').count(),0);
- assert.equal(await page.locator('.brand').innerText(),'OnlyFag');
- assert.equal(await page.locator('.brand').getAttribute('href'),'../index.html');
+ assert.equal(await page.locator('.brand').innerText(),'Statle');
+ assert.equal(await page.locator('.brand').getAttribute('href'),null);
  assert.equal(await page.locator('#map text').count(),0);
  const insetAlignment=await page.evaluate(()=>Math.abs(document.querySelector('path.state[data-state="Florida"]').getBoundingClientRect().bottom-document.querySelector('path.state[data-state="Hawaii"]').getBoundingClientRect().bottom));
  assert.ok(insetAlignment<0.1,'Hawaii must align with the southern tip of Florida');
@@ -73,16 +73,16 @@ assert.ok(process.env.STATLE_PREVIEW_URL, 'Set STATLE_PREVIEW_URL to the prototy
  assert.ok(await page.locator('#geoMenu').evaluate(e=>e.getBoundingClientRect().right<=innerWidth));
  await page.keyboard.press('Escape');
  for(const viewport of [{width:1366,height:520},{width:1366,height:643},{width:1440,height:900},{width:1920,height:1080}]){
-  await page.setViewportSize(viewport);const layout=await page.evaluate(()=>{const map=document.getElementById('mapViewport').getBoundingClientRect(),panel=document.querySelector('.game-panel').getBoundingClientRect();return {top:map.top,bottom:map.bottom,height:map.height,width:map.width,panelX:panel.x,scrollHeight:document.documentElement.scrollHeight,innerHeight,scrollWidth:document.documentElement.scrollWidth,innerWidth};});assert.equal(layout.top,0);assert.equal(layout.height,viewport.height);assert.equal(layout.panelX,layout.width);assert.ok(layout.scrollHeight<=layout.innerHeight);assert.ok(layout.scrollWidth<=layout.innerWidth);await page.screenshot({path:path.join(screenshots,'statle-layout-'+viewport.width+'x'+viewport.height+'.png')});
+  await page.setViewportSize(viewport);const layout=await page.evaluate(()=>{const map=document.getElementById('mapViewport').getBoundingClientRect(),panel=document.querySelector('.game-panel').getBoundingClientRect();return {top:map.top,bottom:map.bottom,height:map.height,width:map.width,panelX:panel.x,scrollHeight:document.documentElement.scrollHeight,innerHeight,scrollWidth:document.documentElement.scrollWidth,innerWidth};});assert.equal(layout.top,0);assert.equal(layout.height,viewport.height);assert.equal(layout.panelX,0);assert.equal(layout.top,0);assert.ok(layout.scrollHeight<=layout.innerHeight);assert.ok(layout.scrollWidth<=layout.innerWidth);await page.screenshot({path:path.join(screenshots,'statle-layout-'+viewport.width+'x'+viewport.height+'.png')});
  }
  await page.locator('#geoMenuButton').click();
  await page.locator('#geoMenu summary').filter({hasText:'Fakta og quiz'}).click();
  await page.locator('#geoMenu a').filter({hasText:/^Land$/}).click();
  await page.waitForURL('**/geografi.html#verden-land');
  await page.locator('#verden-land.active').waitFor();
- await page.goto(url);await page.locator('.brand').click();
- await page.waitForURL(u=>u.pathname.endsWith('/index.html')||u.pathname==='/');
- assert.equal(await page.title(),'OnlyFag');
+ await page.goto(url);await page.locator('.quiz-page-back').click();
+ await page.waitForURL('**/geografi.html#verden-quiz');
+ assert.ok(await page.locator('#verden-quiz.active').isVisible());
  assert.deepEqual(errors,[]);console.log(JSON.stringify({states:50,wholeRound:true,hover:true,wrongLabel:true,twoMistakeHint:true,fourColorBands:true,pauseRemoved:true,menu:true,restart:true,skip:true,mobile:true,fullHeightLayout:true,errors}));
  await browser.close();
 })().catch(e=>{console.error(e);process.exit(1);});
