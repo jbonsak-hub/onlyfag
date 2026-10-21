@@ -22,3 +22,5 @@ body:has(#verden-quiz.active):not([data-quiz]) .sidebar{font-size:14px}
 body:has(#verden-quiz.active):not([data-quiz]) .sidebar h1{font-size:16px}
 body:has(#verden-quiz.active):not([data-quiz]) .sidebar .menu-header{padding:9px 18px}
 body:has(#verden-quiz.active):not([data-quiz]) .sidebar .submenu-item{font-size:13px;padding:7px 18px 7px 45px}
+
+.geoquiz-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.geoquiz-heading h2{margin:0!important}.geoquiz-language{display:flex;gap:7px}.geoquiz-language button{display:flex;align-items:center;justify-content:center;width:40px;height:32px;padding:5px;border:1px solid #b7cbbd;border-radius:6px;background:transparent;cursor:pointer}.geoquiz-language button[aria-pressed=true]{border:2px solid #245944;background:#e5eee3}.geoquiz-language button:focus-visible{outline:2px solid #245944;outline-offset:3px}.geoquiz-language svg{display:block;width:27px;height:19px;filter:drop-shadow(0 1px 1px #0002)}

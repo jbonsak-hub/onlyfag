@@ -175,3 +175,17 @@ Elvemål bruker omtrentlige midtpunkter langs navngitte hovedløp fra [Natural E
 Antarktis er fjernet fra landquizens land- og bakgrunnstegning, også canvas-reserven. Geografidata og småøyindekser beholdes. Andre kart-/fagverktøy endres ikke.
 
 Bygg: node scripts/build-mapwiz-prototype.cjs og node scripts/build-geography-quiz-assets.cjs. Begge støtter --check. Test: node tests/mapwiz-prototype.cjs med de vanlige Playwright-variablene. Testen dekker alle 15 kategorier med ti spørsmål hver, 300 tilfeldige runder med ett/to/fem/seks/15 kategorivalg, gjentakelser i liten kategori, mus/berøring/tastatur, begrensning til vinduet, uendret resultatlagring, ti kartlinjer og 20 markører, riktige poengkolonner, lys/mørk modus og mobil/liggende skjerm. Emulerte visninger er brukt; fysisk iPhone/Android og Safari er ikke testet.
+
+### Mobil og norsk/engelsk i quizene
+
+MapWiz har fast startknapp nederst på mobil, med plass til telefonens sikre skjermkant. Kategorien nederst kan velges uten å måtte rulle tilbake til startknappen. Flaggene beholder eget sideforhold og har gjennomsiktig bakgrunn. Skyggen følger selve flaggformen; bare den gjennomsiktige ytterkanten i den lokale Nepal-SVG-en beskjæres i flaggspillene. Referansetabellenes flaggfiler og motivene endres ikke.
+
+Rekkefølgen i quizoversikten og tastaturnavigasjonen begynner med Flagg, Hovedsteder, Flagg+Hovedstad og MapWiz. Norske adresser og lagringsnøkler beholdes. Språkvelgeren bruker bare britisk og norsk flagg, med tilgjengelige navn og markert valgt språk. Valget lagres i onlyfag-geo-language og gjelder quizene og kartspillenes iframe. Øvrig fagstoff oversettes ikke.
+
+Engelsk tekst leveres som én lokal, versjonert språkpakke, uten oversettelsestjeneste eller ekstra oppslag mens man spiller. Pakken omfatter menyer, knapper, spørsmål, hint, resultater, land-/hovedstads-/stedsnavn, eksportgrupper, alle 398 stedsbeskrivelser og GeoGrid-kriterier. Engelske land- og hovedstadsnavn godtas i svaroppslag uten å bytte de kanoniske spillverdiene. GeoGrid vurderer bokstav- og lengderegler etter det engelske navnet når engelsk er valgt. Like oversatte svaralternativer filtreres bort.
+
+For fagkategoriene i Jeopardy brukes en egen engelsk bank med 84 oversatte grunnspørsmål, fordelt på kart, indre/ytre krefter, klima, ressurser og demografi. Den større norske fagbanken er uendret. Hovedstads-, flagg- og stedskategoriene bruker de samme referansedataene på begge språk. GeoGuessrs eksterne spill er allerede på engelsk; denne sidens meny følger språkvalget, mens leverandørens iframe har egne språkvalg.
+
+Brukernavn i toppresultater oversettes ikke, og eksisterende resultatlagring beholdes. Ingen nye analytics-hendelser, tokens, nettverkstjenester eller personopplysninger er lagt til.
+
+Bygg språkpakken med node scripts/build-quiz-language.cjs før node scripts/build-geography-quiz-assets.cjs. Begge støtter --check. node tests/geography-language.cjs tester språkvalg begge veier, rekkefølge, engelsk svarinntasting, flervalg i begge retninger, Jeopardy, alle stedsbeskrivelser, GeoGrid-bokstavregler, engelske kartspill, uendret resultatlagring, fast mobilknapp og naturlig flaggformat (også Nepal og Sveits). Mobil er kontrollert i emulert Edge/Chromium, ikke på fysiske iOS-enheter eller Safari.

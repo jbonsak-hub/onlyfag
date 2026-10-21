@@ -439,8 +439,8 @@ const COUNTRY_MAP_POINTS={"Afghanistan":[69.1725,34.5289],"Albania":[19.8189,41.
 const COUNTRY_MAP_META={"world":{"label":"Hele verden","center":0,"span":180,"latMin":-60,"latMax":84,"layout":"world","zoom":1.055},"africa":{"label":"Afrika","center":20,"span":45,"latMin":-38,"latMax":39,"layout":"region","zoom":1.08},"asia":{"label":"Asia","center":96,"span":82,"latMin":-12,"latMax":63,"layout":"region","zoom":1.1},"europe":{"label":"Europa","center":11,"span":49,"latMin":29,"latMax":74,"layout":"region","zoom":1.08},"northamerica":{"label":"Nord- og Mellom-Amerika","center":-103,"span":92,"latMin":0,"latMax":85,"layout":"region","zoom":1.05},"oceania":{"label":"Oseania","center":163,"span":76,"latMin":-51,"latMax":25,"layout":"region","zoom":1.2},"southamerica":{"label":"Sør-Amerika","center":-61,"span":36,"latMin":-58,"latMax":16,"layout":"region","zoom":1.08}};
 
 const WORLD_MODE_TITLES = {
-  countries:'Verdens land-quiz', capitals:'Hovedstadsquiz', flags:'Flaggquiz',
-  flagcapital:'Kombiner flagg og hovedstad', places:'Kjente steder på jorda', detective:'Worldle'
+  countries:'Verdens land-quiz', capitals:'Hovedsteder', flags:'Flagg',
+  flagcapital:'Flagg+Hovedstad', places:'Kjente steder på jorda', detective:'Worldle'
 };
 let worldTrainerState = null;
 let worldTrainerTimer = null;
@@ -1552,7 +1552,7 @@ function renderTeamInputs(){
   for(let i=0;i<count;i++){
     const div = document.createElement('div');
     div.className = 'setup-field';
-    div.innerHTML = `<label>Lagnavn ${i+1}</label><input class="team-name" value="${oldValues[i] || 'Lag ' + (i+1)}">`;
+    div.innerHTML = `<label>Lagnavn ${i+1}</label><input class="team-name" value="${oldValues[i] || (window.QuizLanguage?.translate('Lag '+(i+1)) || 'Lag '+(i+1))}">`;
     wrap.appendChild(div);
   }
 }
@@ -1598,7 +1598,7 @@ function startJeopardyGame(){
   document.body.classList.remove('sidebar-open','jeopardy-fullscreen');
   const shell = document.getElementById('jeopardy-shell'); if(shell) shell.classList.add('playing');
   const gameStatus = document.getElementById('jeopardy-game-status'); if(gameStatus) gameStatus.textContent = selected.length + ' kategorier · ' + document.getElementById('team-count').value + ' lag';
-  jeopardyTeams = Array.from(document.querySelectorAll('.team-name')).map((input, i)=>({name: input.value.trim() || `Lag ${i+1}`, score: 0}));
+  jeopardyTeams = Array.from(document.querySelectorAll('.team-name')).map((input, i)=>({name: input.value.trim() || (window.QuizLanguage?.translate('Lag '+(i+1)) || 'Lag '+(i+1)), score: 0}));
   activeJeopardyCategories = selected.map(cat => ({...cat, questions: makeJeopardyQuestions(cat)}));
   renderScoreboard();
   if(status) status.textContent = 'Spillet er i gang. Klikk på poengsummene for spørsmål. Nye tilfeldige spørsmål er trukket.';

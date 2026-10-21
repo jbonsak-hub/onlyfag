@@ -1,0 +1,2390 @@
+[
+  {
+    "source": "Amazonas",
+    "description": "Har verdens største nedbørsfelt og er verdens mest vannrike",
+    "name": "Amazon",
+    "en": "Has the world's largest drainage basin and greatest water discharge."
+  },
+  {
+    "source": "Brahmaputra",
+    "description": "Renner gjennom Tibet, India og Bangladesh",
+    "name": "Brahmaputra",
+    "en": "Flows through Tibet, India and Bangladesh."
+  },
+  {
+    "source": "Colorado",
+    "description": "Elv i USA og Mexico, har skapt Grand Canyon",
+    "name": "Colorado",
+    "en": "River in the USA and Mexico that carved the Grand Canyon."
+  },
+  {
+    "source": "Donau",
+    "description": "Europas nest lengste elv (renner gjennom Sentral- og Øst-Europa)",
+    "name": "Danube",
+    "en": "Europe's second-longest river, flowing through Central and Eastern Europe."
+  },
+  {
+    "source": "Elbe",
+    "description": "Elv som renner gjennom Tsjekkia og Tyskland",
+    "name": "Elbe",
+    "en": "River flowing through Czechia and Germany."
+  },
+  {
+    "source": "Eufrat & Tigris",
+    "description": "Historisk elvesystem i Midtøsten.",
+    "name": "Euphrates & Tigris",
+    "en": "Historic river system in the Middle East."
+  },
+  {
+    "source": "Ganges",
+    "description": "Hellig elv i India",
+    "name": "Ganges",
+    "en": "Sacred river in India."
+  },
+  {
+    "source": "Glomma",
+    "description": "Norges lengste elv",
+    "name": "Glomma",
+    "en": "Norway's longest river."
+  },
+  {
+    "source": "Huang He (Gule flod)",
+    "description": "Kinas nest lengste elv",
+    "name": "Huang He (Yellow River)",
+    "en": "China's second-longest river."
+  },
+  {
+    "source": "Indus",
+    "description": "Stor elv i Sør-Asia, viktig for Pakistan",
+    "name": "Indus",
+    "en": "Major South Asian river, important to Pakistan."
+  },
+  {
+    "source": "Jordan",
+    "description": "Hellig elv i Midtøsten (fra Syria til Dødehavet)",
+    "name": "Jordan",
+    "en": "Sacred Middle Eastern river flowing from Syria to the Dead Sea."
+  },
+  {
+    "source": "Kongo",
+    "description": "Afrikas nest lengste elv",
+    "name": "Congo",
+    "en": "Africa's second-longest river."
+  },
+  {
+    "source": "Mekong",
+    "description": "Stor elv i Sørøst-Asia, renner ut i Vietnam",
+    "name": "Mekong",
+    "en": "Major Southeast Asian river reaching the sea in Vietnam."
+  },
+  {
+    "source": "Mississippi",
+    "description": "\"Old Man River\" - har det største nedbørsfeltet i USA",
+    "name": "Mississippi",
+    "en": "\"Old Man River\", with the largest drainage basin in the USA."
+  },
+  {
+    "source": "Nilen",
+    "description": "Verdens lengste (renner gjennom Øst-Afrika)",
+    "name": "Nile",
+    "en": "The world's longest river, flowing through East Africa."
+  },
+  {
+    "source": "Po",
+    "description": "Lengste elv i Italia",
+    "name": "Po",
+    "en": "Italy's longest river."
+  },
+  {
+    "source": "Rhinen",
+    "description": "Viktig elv i Vest-Europa, renner fra Sveits til Nederland",
+    "name": "Rhine",
+    "en": "Important Western European river flowing from Switzerland to the Netherlands."
+  },
+  {
+    "source": "Rio Grande",
+    "description": "Elv som danner grensen mellom USA og Mexico",
+    "name": "Rio Grande",
+    "en": "River forming the border between the USA and Mexico."
+  },
+  {
+    "source": "Seinen",
+    "description": "Elv i Frankrike, renner gjennom Paris",
+    "name": "Seine",
+    "en": "French river flowing through Paris."
+  },
+  {
+    "source": "Themsen",
+    "description": "Elv i England, renner gjennom London",
+    "name": "Thames",
+    "en": "English river flowing through London."
+  },
+  {
+    "source": "Volga",
+    "description": "Europas lengste elv (Russland)",
+    "name": "Volga",
+    "en": "Europe's longest river, in Russia."
+  },
+  {
+    "source": "Yangtze",
+    "description": "Kinas og Asias lengste elv",
+    "name": "Yangtze",
+    "en": "The longest river in China and Asia."
+  },
+  {
+    "source": "Yukon",
+    "description": "Elv i Nordvest-Canada og Alaska",
+    "name": "Yukon",
+    "en": "River in northwestern Canada and Alaska."
+  },
+  {
+    "source": "Zambezi",
+    "description": "Stor elv i Afrika, kjent for Victoriafallene",
+    "name": "Zambezi",
+    "en": "Major African river known for Victoria Falls."
+  },
+  {
+    "source": "Aconcagua",
+    "description": "Fjell i Argentina, høyeste i Sør-Amerika (6962 m).",
+    "name": "Aconcagua",
+    "en": "Mountain in Argentina, the highest in South America (6,962 m)."
+  },
+  {
+    "source": "Ararat",
+    "description": "Fjell i Tyrkia, kjent for legenden om Noahs ark (5137 m).",
+    "name": "Ararat",
+    "en": "Mountain in Turkey associated with Noah's Ark (5,137 m)."
+  },
+  {
+    "source": "Chimborazo",
+    "description": "Utslokt vulkan i Ecuador; toppen er jordoverflatens punkt lengst fra jordas sentrum.",
+    "name": "Chimborazo",
+    "en": "Extinct Ecuadorian volcano whose summit is the surface point farthest from Earth's centre."
+  },
+  {
+    "source": "Cotopaxi",
+    "description": "Høy og aktiv stratovulkan i Andesfjellene i Ecuador.",
+    "name": "Cotopaxi",
+    "en": "High active stratovolcano in the Ecuadorian Andes."
+  },
+  {
+    "source": "Denali",
+    "description": "Fjell i USA, høyeste i Nord-Amerika (6190 m).",
+    "name": "Denali",
+    "en": "Mountain in the USA, the highest in North America (6,190 m)."
+  },
+  {
+    "source": "Elbrus",
+    "description": "Fjell i Russland, høyeste i Europa (5642 m).",
+    "name": "Elbrus",
+    "en": "Russian mountain, the highest in Europe (5,642 m)."
+  },
+  {
+    "source": "Etna",
+    "description": "Fjell i Italia, aktiv vulkan på Sicilia (3326 m).",
+    "name": "Etna",
+    "en": "Active volcano on Sicily in Italy (3,326 m)."
+  },
+  {
+    "source": "Everest",
+    "description": "Verdens høyeste fjell (8848 m).",
+    "name": "Everest",
+    "en": "The world's highest mountain (8,848 m)."
+  },
+  {
+    "source": "Fuji",
+    "description": "Aktiv vulkan i Japan (3776 m).",
+    "name": "Fuji",
+    "en": "Active volcano in Japan (3,776 m)."
+  },
+  {
+    "source": "Galdhøpiggen",
+    "description": "Fjell i Norge, høyeste i landet (2469 m).",
+    "name": "Galdhøpiggen",
+    "en": "Norway's highest mountain (2,469 m)."
+  },
+  {
+    "source": "Glittertind",
+    "description": "Nest høyeste fjell i Norge (2452 m)",
+    "name": "Glittertind",
+    "en": "Norway's second-highest mountain (2,452 m)."
+  },
+  {
+    "source": "Halti",
+    "description": "Høyeste fjell i Finland (1324 m)",
+    "name": "Halti",
+    "en": "Finland's highest mountain (1,324 m)."
+  },
+  {
+    "source": "K2",
+    "description": "Nest høyeste fjell i verden (8611 m).",
+    "name": "K2",
+    "en": "The world's second-highest mountain (8,611 m)."
+  },
+  {
+    "source": "Kebnekaise",
+    "description": "Høyeste fjell i Sverige (2096 m).",
+    "name": "Kebnekaise",
+    "en": "Sweden's highest mountain (2,096 m)."
+  },
+  {
+    "source": "Kilimanjaro",
+    "description": "Høyeste fjell i Afrika (5895 m).",
+    "name": "Kilimanjaro",
+    "en": "Africa's highest mountain (5,895 m)."
+  },
+  {
+    "source": "Krakatau",
+    "description": "Vulkan mellom Java og Sumatra, kjent for det katastrofale utbruddet i 1883.",
+    "name": "Krakatoa",
+    "en": "Volcano between Java and Sumatra, known for its catastrophic 1883 eruption."
+  },
+  {
+    "source": "Matterhorn",
+    "description": "Tobleronefjellet, mellom Sveits og Italia (4478 m).",
+    "name": "Matterhorn",
+    "en": "The \"Toblerone mountain\" between Switzerland and Italy (4,478 m)."
+  },
+  {
+    "source": "Mauna Kea",
+    "description": "Høy vulkan på Hawaii; målt fra havbunnen er den blant jordas høyeste fjell.",
+    "name": "Mauna Kea",
+    "en": "High Hawaiian volcano; measured from the seabed, one of Earth's tallest mountains."
+  },
+  {
+    "source": "Mauna Loa",
+    "description": "En av verdens største aktive skjoldvulkaner, på Hawaii.",
+    "name": "Mauna Loa",
+    "en": "One of the world's largest active shield volcanoes, in Hawaii."
+  },
+  {
+    "source": "Mont Blanc",
+    "description": "Høyeste fjellet i Alpene (4807 m).",
+    "name": "Mont Blanc",
+    "en": "The highest mountain in the Alps (4,807 m)."
+  },
+  {
+    "source": "Mount Kenya",
+    "description": "Kenyas høyeste fjell og Afrikas nest høyeste, like sør for ekvator.",
+    "name": "Mount Kenya",
+    "en": "Kenya's highest mountain and Africa's second-highest, just south of the equator."
+  },
+  {
+    "source": "Mount St. Helens",
+    "description": "Aktiv stratovulkan i Washington i USA, kjent for det eksplosive utbruddet i 1980.",
+    "name": "Mount St. Helens",
+    "en": "Active stratovolcano in Washington, USA, known for its explosive 1980 eruption."
+  },
+  {
+    "source": "Pinatubo",
+    "description": "Vulkan på Luzon i Filippinene; det store utbruddet i 1991 kjølte klimaet midlertidig.",
+    "name": "Pinatubo",
+    "en": "Volcano on Luzon in the Philippines whose 1991 eruption temporarily cooled the climate."
+  },
+  {
+    "source": "Tambora",
+    "description": "Vulkan på Sumbawa i Indonesia; utbruddet i 1815 var et av de kraftigste i historisk tid.",
+    "name": "Tambora",
+    "en": "Volcano on Sumbawa, Indonesia; its 1815 eruption was among the most powerful in recorded history."
+  },
+  {
+    "source": "Vesuv",
+    "description": "Vulkan i Italia, ødela Pompeii (1281 m).",
+    "name": "Vesuvius",
+    "en": "Italian volcano that destroyed Pompeii (1,281 m)."
+  },
+  {
+    "source": "Alpene",
+    "description": "Fjellområde i Sentral-Europa.",
+    "name": "Alps",
+    "en": "Mountain range in Central Europe."
+  },
+  {
+    "source": "Altai",
+    "description": "Fjellområde i Sentral-Asia.",
+    "name": "Altai",
+    "en": "Mountain range in Central Asia."
+  },
+  {
+    "source": "Andes",
+    "description": "Fjellområde langs vestkysten av Sør-Amerika.",
+    "name": "Andes",
+    "en": "Mountain range along the west coast of South America."
+  },
+  {
+    "source": "Appalachene",
+    "description": "Fjellområde på østkysten av USA.",
+    "name": "Appalachians",
+    "en": "Mountain range in the eastern USA."
+  },
+  {
+    "source": "Appenninene",
+    "description": "Fjellområde langs Italia.",
+    "name": "Apennines",
+    "en": "Mountain range running along Italy."
+  },
+  {
+    "source": "Atlas",
+    "description": "Fjellområde i Nordvest-Afrika.",
+    "name": "Atlas",
+    "en": "Mountain range in northwestern Africa."
+  },
+  {
+    "source": "Dinarene",
+    "description": "Fjellområde i Vestlige Balkan.",
+    "name": "Dinaric Alps",
+    "en": "Mountain range in the western Balkans."
+  },
+  {
+    "source": "Great Dividing Range",
+    "description": "Fjellområde på østkysten av Australia.",
+    "name": "Great Dividing Range",
+    "en": "Mountain range on Australia's east coast."
+  },
+  {
+    "source": "Himalaya",
+    "description": "Fjellområde mellom India og Tibet.",
+    "name": "Himalayas",
+    "en": "Mountain range between India and Tibet."
+  },
+  {
+    "source": "Hindu Kush",
+    "description": "Fjellområde mellom Afghanistan og Pakistan.",
+    "name": "Hindu Kush",
+    "en": "Mountain range between Afghanistan and Pakistan."
+  },
+  {
+    "source": "Karakoram",
+    "description": "Fjellområde nord for Himalaya.",
+    "name": "Karakoram",
+    "en": "Mountain range north of the Himalayas."
+  },
+  {
+    "source": "Karpatene",
+    "description": "Fjellområde i Øst-Sentral-Europa.",
+    "name": "Carpathians",
+    "en": "Mountain range in East-Central Europe."
+  },
+  {
+    "source": "Kaukasus",
+    "description": "Fjellområde mellom Svartehavet og Kaspiske hav.",
+    "name": "Caucasus",
+    "en": "Mountain range between the Black Sea and Caspian Sea."
+  },
+  {
+    "source": "Kunlun",
+    "description": "Fjellområde nord for Tibetplatået.",
+    "name": "Kunlun",
+    "en": "Mountain range north of the Tibetan Plateau."
+  },
+  {
+    "source": "Pamir",
+    "description": "Fjellområde i Sentral-Asia.",
+    "name": "Pamir",
+    "en": "Mountain range in Central Asia."
+  },
+  {
+    "source": "Penninene",
+    "description": "Fjellområde i Nord-England.",
+    "name": "Pennines",
+    "en": "Mountain range in northern England."
+  },
+  {
+    "source": "Pyreneene",
+    "description": "Fjellområde mellom Frankrike og Spania.",
+    "name": "Pyrenees",
+    "en": "Mountain range between France and Spain."
+  },
+  {
+    "source": "Rocky Mountains",
+    "description": "Fjellområde i vestlige Nord-Amerika.",
+    "name": "Rocky Mountains",
+    "en": "Mountain range in western North America."
+  },
+  {
+    "source": "Sierra Nevada",
+    "description": "Fjellområde i vestlige USA.",
+    "name": "Sierra Nevada",
+    "en": "Mountain range in the western USA."
+  },
+  {
+    "source": "Tian Shan",
+    "description": "Fjellområde mellom Kina og Kirgisistan.",
+    "name": "Tian Shan",
+    "en": "Mountain range between China and Kyrgyzstan."
+  },
+  {
+    "source": "Ural",
+    "description": "Fjellområde mellom Europa og Asia.",
+    "name": "Urals",
+    "en": "Mountain range between Europe and Asia."
+  },
+  {
+    "source": "Adenbukta",
+    "description": "Havområde mellom Jemen og Somalia som forbinder Arabiahavet med Rødehavet via Bab el-Mandeb.",
+    "name": "Gulf of Aden",
+    "en": "Sea area between Yemen and Somalia linking the Arabian Sea to the Red Sea through Bab el-Mandeb."
+  },
+  {
+    "source": "Adriaterhavet",
+    "description": "Mellom Italia og Balkan-halvøya.",
+    "name": "Adriatic Sea",
+    "en": "Between Italy and the Balkan Peninsula."
+  },
+  {
+    "source": "Arabiske hav",
+    "description": "Sør for den arabiske halvøy.",
+    "name": "Arabian Sea",
+    "en": "South of the Arabian Peninsula."
+  },
+  {
+    "source": "Atlanterhavet",
+    "description": "Mellom Amerika og Europa/Afrika.",
+    "name": "Atlantic Ocean",
+    "en": "Between the Americas and Europe/Africa."
+  },
+  {
+    "source": "Baltiske hav",
+    "description": "Mellom Skandinavia, Finland, Baltikum og Polen.",
+    "name": "Baltic Sea",
+    "en": "Between Scandinavia, Finland, the Baltic states and Poland."
+  },
+  {
+    "source": "Barentshavet",
+    "description": "Nord for Norge og Russland.",
+    "name": "Barents Sea",
+    "en": "North of Norway and Russia."
+  },
+  {
+    "source": "Beringhavet",
+    "description": "Mellom Alaska og Russland.",
+    "name": "Bering Sea",
+    "en": "Between Alaska and Russia."
+  },
+  {
+    "source": "Egeerhavet",
+    "description": "Mellom Hellas og Tyrkia.",
+    "name": "Aegean Sea",
+    "en": "Between Greece and Turkey."
+  },
+  {
+    "source": "Gulehavet",
+    "description": "Mellom Kina og Korea.",
+    "name": "Yellow Sea",
+    "en": "Between China and Korea."
+  },
+  {
+    "source": "Indiske hav",
+    "description": "Mellom Afrika, Asia, Australia og Sørishavet.",
+    "name": "Indian Ocean",
+    "en": "Between Africa, Asia, Australia and the Southern Ocean."
+  },
+  {
+    "source": "Japanhavet",
+    "description": "Mellom Japan, Korea og Russland.",
+    "name": "Sea of Japan",
+    "en": "Between Japan, Korea and Russia."
+  },
+  {
+    "source": "Joniske hav",
+    "description": "Mellom Italia og Hellas.",
+    "name": "Ionian Sea",
+    "en": "Between Italy and Greece."
+  },
+  {
+    "source": "Karibiske hav",
+    "description": "Øst for Mellom-Amerika og nord for Sør-Amerika.",
+    "name": "Caribbean Sea",
+    "en": "East of Central America and north of South America."
+  },
+  {
+    "source": "Kattegat",
+    "description": "Mellom Danmark og Sverige.",
+    "name": "Kattegat",
+    "en": "Between Denmark and Sweden."
+  },
+  {
+    "source": "Marmarahavet",
+    "description": "Lite område mellom Egeerhavet og Svartehavet i Tyrkia.",
+    "name": "Sea of Marmara",
+    "en": "Small sea between the Aegean Sea and Black Sea in Turkey."
+  },
+  {
+    "source": "Nordishavet",
+    "description": "Rundt Nordpolen.",
+    "name": "Arctic Ocean",
+    "en": "Around the North Pole."
+  },
+  {
+    "source": "Nordsjøen",
+    "description": "Mellom Storbritannia og Norge.",
+    "name": "North Sea",
+    "en": "Between the United Kingdom and Norway."
+  },
+  {
+    "source": "Norskehavet",
+    "description": "Mellom Norge og Grønland.",
+    "name": "Norwegian Sea",
+    "en": "Between Norway and Greenland."
+  },
+  {
+    "source": "Persiabukta",
+    "description": "Grunt havområde mellom Iran og Den arabiske halvøy, sentralt for verdens olje- og gasstransport.",
+    "name": "Persian Gulf",
+    "en": "Shallow sea between Iran and the Arabian Peninsula, central to global oil and gas transport."
+  },
+  {
+    "source": "Rødehavet",
+    "description": "Mellom Afrika og Den arabiske halvøy.",
+    "name": "Red Sea",
+    "en": "Between Africa and the Arabian Peninsula."
+  },
+  {
+    "source": "Sargassohavet",
+    "description": "Del av Atlanterhavet, der ålen drar for å gyte.",
+    "name": "Sargasso Sea",
+    "en": "Part of the Atlantic where eels migrate to spawn."
+  },
+  {
+    "source": "Skagerak",
+    "description": "Mellom Norge, Danmark og Sverige.",
+    "name": "Skagerrak",
+    "en": "Between Norway, Denmark and Sweden."
+  },
+  {
+    "source": "Stillehavet",
+    "description": "Verdens største hav",
+    "name": "Pacific Ocean",
+    "en": "The world's largest ocean."
+  },
+  {
+    "source": "Svartehavet",
+    "description": "Mellom Øst-Europa og Vest-Asia.",
+    "name": "Black Sea",
+    "en": "Between Eastern Europe and Western Asia."
+  },
+  {
+    "source": "Sørishavet",
+    "description": "Rundt Antarktis.",
+    "name": "Southern Ocean",
+    "en": "Around Antarctica."
+  },
+  {
+    "source": "Tyrrenske hav",
+    "description": "Mellom Italia og øyene Sicilia og Sardinia.",
+    "name": "Tyrrhenian Sea",
+    "en": "Between Italy and the islands of Sicily and Sardinia."
+  },
+  {
+    "source": "Østersjøen",
+    "description": "Mellom Sverige, Finland, Baltikum og Polen.",
+    "name": "Baltic Sea",
+    "en": "Between Sweden, Finland, the Baltic states and Poland."
+  },
+  {
+    "source": "Assyriske riket",
+    "description": "Eldgammelt imperium i midtøsten, på samme sted som, men før Persia",
+    "name": "Assyrian Empire",
+    "en": "Ancient Middle Eastern empire in the region that later became Persia."
+  },
+  {
+    "source": "Babylonia",
+    "description": "Historisk kongerike i midtøsten, kjent for sine hengende hager",
+    "name": "Babylonia",
+    "en": "Historic Middle Eastern kingdom known for its hanging gardens."
+  },
+  {
+    "source": "Burma",
+    "description": "Tidligere navn på Myanmar",
+    "name": "Burma",
+    "en": "Former name of Myanmar."
+  },
+  {
+    "source": "Bysants",
+    "description": "Et gammel navn på det Østromerske riket",
+    "name": "Byzantium",
+    "en": "An old name for the Eastern Roman Empire."
+  },
+  {
+    "source": "Ceylon",
+    "description": "Tidligere navn på Sri Lanka",
+    "name": "Ceylon",
+    "en": "Former name of Sri Lanka."
+  },
+  {
+    "source": "Kartago",
+    "description": "Bystat i Nord-Afrika under Romerriket",
+    "name": "Carthage",
+    "en": "North African city-state during the Roman era."
+  },
+  {
+    "source": "Konstantinopel",
+    "description": "Tidligere navn på Istanbul",
+    "name": "Constantinople",
+    "en": "Former name of Istanbul."
+  },
+  {
+    "source": "Levanten",
+    "description": "Historisk navn på Østlige Middelhavsområdet",
+    "name": "Levant",
+    "en": "Historic name for the eastern Mediterranean region."
+  },
+  {
+    "source": "Mesopotamia",
+    "description": "Tidlig sivilisasjon mellom Eufrat og Tigris",
+    "name": "Mesopotamia",
+    "en": "Early civilisation between the Euphrates and Tigris."
+  },
+  {
+    "source": "Osmanske riket",
+    "description": "Stort imperium i Tyrkia, Midtøsten og Europa (fra 1200- til 1900-tallet)",
+    "name": "Ottoman Empire",
+    "en": "Large empire in Turkey, the Middle East and Europe from the 13th to the 20th century."
+  },
+  {
+    "source": "Persia",
+    "description": "Historisk navn på Iran",
+    "name": "Persia",
+    "en": "Historic name of Iran."
+  },
+  {
+    "source": "Preussen",
+    "description": "Tidligere tysk kongerike",
+    "name": "Prussia",
+    "en": "Former German kingdom."
+  },
+  {
+    "source": "Seylon",
+    "description": "Tidligere navn på Sri Lanka",
+    "name": "Ceylon",
+    "en": "Former name of Sri Lanka."
+  },
+  {
+    "source": "Siam",
+    "description": "Tidligere navn på Thailand",
+    "name": "Siam",
+    "en": "Former name of Thailand."
+  },
+  {
+    "source": "Sparta",
+    "description": "Antikk gresk bystat (kjent fra historien om de \"300\")",
+    "name": "Sparta",
+    "en": "Ancient Greek city-state associated with the story of the \"300\"."
+  },
+  {
+    "source": "Teotihuacan",
+    "description": "Eldgammel by i Mexico",
+    "name": "Teotihuacan",
+    "en": "Ancient city in Mexico."
+  },
+  {
+    "source": "Zaire",
+    "description": "Tidligere navn på Den demokratiske republikken Kongo",
+    "name": "Zaire",
+    "en": "Former name of the Democratic Republic of the Congo."
+  },
+  {
+    "source": "Aralsjøen",
+    "description": "Tidligere stor innsjø i Sentral-Asia, nå kraftig redusert.",
+    "name": "Aral Sea",
+    "en": "Formerly a large Central Asian lake, now greatly reduced."
+  },
+  {
+    "source": "Bajkal",
+    "description": "Verdens dypeste innsjø, i Sibir.",
+    "name": "Lake Baikal",
+    "en": "The world's deepest lake, in Siberia."
+  },
+  {
+    "source": "Comosjøen",
+    "description": "Dyp innsjø i Nord-Italia ved foten av Alpene.",
+    "name": "Lake Como",
+    "en": "Deep lake in northern Italy at the foot of the Alps."
+  },
+  {
+    "source": "Dødehavet",
+    "description": "Saltvannssjø mellom Jordan og Israel (430 m under havnivå)",
+    "name": "Dead Sea",
+    "en": "Salt lake between Jordan and Israel, 430 m below sea level."
+  },
+  {
+    "source": "Great Bear Lake",
+    "description": "Største innsjø vest i Canada",
+    "name": "Great Bear Lake",
+    "en": "The largest lake in western Canada."
+  },
+  {
+    "source": "Great Salt Lake",
+    "description": "Vestlige USA, kjent for høy saltinnhold.",
+    "name": "Great Salt Lake",
+    "en": "Lake in the western USA known for its high salinity."
+  },
+  {
+    "source": "Hornindalsvatnet",
+    "description": "Europas dypeste innsjø (Norge)",
+    "name": "Hornindalsvatnet",
+    "en": "Europe's deepest lake, in Norway."
+  },
+  {
+    "source": "Kaspiske hav",
+    "description": "Verdens største innlandssjø",
+    "name": "Caspian Sea",
+    "en": "The world's largest inland body of water."
+  },
+  {
+    "source": "Ladoga",
+    "description": "Europas største innsjø (Russland)",
+    "name": "Lake Ladoga",
+    "en": "Europe's largest lake, in Russia."
+  },
+  {
+    "source": "Lake Superior",
+    "description": "Nord-Amerikas største ferskvannssjø.",
+    "name": "Lake Superior",
+    "en": "North America's largest freshwater lake."
+  },
+  {
+    "source": "Loch Ness",
+    "description": "Lang og dyp innsjø i det skotske høylandet, kjent for legenden om «Nessie».",
+    "name": "Loch Ness",
+    "en": "Long, deep lake in the Scottish Highlands, known for the legend of \"Nessie\"."
+  },
+  {
+    "source": "Mjøsa",
+    "description": "Norges største innsjø.",
+    "name": "Mjøsa",
+    "en": "Norway's largest lake."
+  },
+  {
+    "source": "Tanganyika",
+    "description": "Afrikas lengste og nest dypeste innsjø.",
+    "name": "Lake Tanganyika",
+    "en": "Africa's longest and second-deepest lake."
+  },
+  {
+    "source": "Titicaca",
+    "description": "Sør-Amerikas største innsjø (Peru og Bolivia)",
+    "name": "Lake Titicaca",
+    "en": "South America's largest lake, shared by Peru and Bolivia."
+  },
+  {
+    "source": "Vänern",
+    "description": "Sveriges største innsjø.",
+    "name": "Vänern",
+    "en": "Sweden's largest lake."
+  },
+  {
+    "source": "Victoria",
+    "description": "Afrikas største innsjø.",
+    "name": "Lake Victoria",
+    "en": "Africa's largest lake."
+  },
+  {
+    "source": "Akropolis",
+    "description": "Historisk høyborg i Athen",
+    "name": "Acropolis",
+    "en": "Historic citadel in Athens."
+  },
+  {
+    "source": "Alhambra",
+    "description": "Palass i Granada, Spania",
+    "name": "Alhambra",
+    "en": "Palace in Granada, Spain."
+  },
+  {
+    "source": "Angkor Vat",
+    "description": "Tempelkompleks i Kambodsja",
+    "name": "Angkor Wat",
+    "en": "Temple complex in Cambodia."
+  },
+  {
+    "source": "Bagan",
+    "description": "Historisk tempellandskap i Myanmar med tusenvis av buddhistiske pagoder.",
+    "name": "Bagan",
+    "en": "Historic temple landscape in Myanmar with thousands of Buddhist pagodas."
+  },
+  {
+    "source": "Big Ben",
+    "description": "Klokketårn i London",
+    "name": "Big Ben",
+    "en": "Clock tower in London."
+  },
+  {
+    "source": "Brandenburger Tor",
+    "description": "Monumental byport i Berlin, symbol på både delingen og gjenforeningen av Tyskland.",
+    "name": "Brandenburg Gate",
+    "en": "Monumental city gate in Berlin, symbolising Germany's division and reunification."
+  },
+  {
+    "source": "Burj Khalifa",
+    "description": "Verdens høyeste bygning i Dubai",
+    "name": "Burj Khalifa",
+    "en": "The world's tallest building, in Dubai."
+  },
+  {
+    "source": "Chichen Itza",
+    "description": "Maya-ruiner i Mexico",
+    "name": "Chichen Itza",
+    "en": "Maya ruins in Mexico."
+  },
+  {
+    "source": "CN Tower",
+    "description": "553 meter høyt kommunikasjonstårn og landemerke i Toronto i Canada.",
+    "name": "CN Tower",
+    "en": "553-metre communications tower and landmark in Toronto, Canada."
+  },
+  {
+    "source": "Colosseum",
+    "description": "Romersk amfiteater i Roma",
+    "name": "Colosseum",
+    "en": "Roman amphitheatre in Rome."
+  },
+  {
+    "source": "Delfi",
+    "description": "Antikt gresk helligsted ved Parnassos, kjent for orakelet i Delfi.",
+    "name": "Delphi",
+    "en": "Ancient Greek sanctuary near Mount Parnassus, known for its oracle."
+  },
+  {
+    "source": "Den forbudte by",
+    "description": "Keiserpalass i Beijing",
+    "name": "Forbidden City",
+    "en": "Imperial palace in Beijing."
+  },
+  {
+    "source": "Den kinesiske mur",
+    "description": "Omfattende forsvarssystem i Nord-Kina, bygget og utvidet gjennom flere kinesiske dynastier.",
+    "name": "Great Wall of China",
+    "en": "Extensive defensive system in northern China, built and expanded across several dynasties."
+  },
+  {
+    "source": "Den røde plass",
+    "description": "Sentral plass i Moskva",
+    "name": "Red Square",
+    "en": "Central square in Moscow."
+  },
+  {
+    "source": "Det hvite hus",
+    "description": "Offisiell bolig og arbeidssted for USAs president i Washington, D.C.",
+    "name": "White House",
+    "en": "Official residence and workplace of the US president in Washington, D.C."
+  },
+  {
+    "source": "Det skjeve tårn i Pisa",
+    "description": "Skjevt klokketårn ved domkirken i Pisa i Italia.",
+    "name": "Leaning Tower of Pisa",
+    "en": "Leaning bell tower beside the cathedral in Pisa, Italy."
+  },
+  {
+    "source": "Efesos",
+    "description": "Ruinby ved vestkysten av Tyrkia, en av antikkens viktigste gresk-romerske byer.",
+    "name": "Ephesus",
+    "en": "Ruined city on Turkey's west coast, one of antiquity's major Greco-Roman cities."
+  },
+  {
+    "source": "Eiffeltårnet",
+    "description": "Bygning av jern i Paris",
+    "name": "Eiffel Tower",
+    "en": "Iron tower in Paris."
+  },
+  {
+    "source": "Empire State Building",
+    "description": "Skyskraper i New York",
+    "name": "Empire State Building",
+    "en": "Skyscraper in New York."
+  },
+  {
+    "source": "Frihetsgudinnen",
+    "description": "Statue på Liberty Island, New York",
+    "name": "Statue of Liberty",
+    "en": "Statue on Liberty Island, New York."
+  },
+  {
+    "source": "Giza",
+    "description": "Område med gamle pyramider i Egypt",
+    "name": "Giza",
+    "en": "Area of ancient pyramids in Egypt."
+  },
+  {
+    "source": "Golden Gate",
+    "description": "Bro i San Francisco",
+    "name": "Golden Gate",
+    "en": "Bridge in San Francisco."
+  },
+  {
+    "source": "Greenwich",
+    "description": "Sted for nullmeridianen (Lengdegrad 0°) i London",
+    "name": "Greenwich",
+    "en": "Site of the prime meridian (0° longitude) in London."
+  },
+  {
+    "source": "Hagia Sofia",
+    "description": "Historisk moské og museum i Istanbul",
+    "name": "Hagia Sophia",
+    "en": "Historic mosque and museum in Istanbul."
+  },
+  {
+    "source": "Kristusstatuen",
+    "description": "Stor Jesus-statue på Corcovadofjellet over Rio de Janeiro i Brasil.",
+    "name": "Christ the Redeemer",
+    "en": "Large statue of Jesus on Mount Corcovado above Rio de Janeiro, Brazil."
+  },
+  {
+    "source": "La Sagrada Familia",
+    "description": "Kirke i Barcelona",
+    "name": "La Sagrada Familia",
+    "en": "Church in Barcelona."
+  },
+  {
+    "source": "Lhasa",
+    "description": "Hovedstaden i Tibet",
+    "name": "Lhasa",
+    "en": "Capital of Tibet."
+  },
+  {
+    "source": "Louvre",
+    "description": "Museum i Paris",
+    "name": "Louvre",
+    "en": "Museum in Paris."
+  },
+  {
+    "source": "Machu Picchu",
+    "description": "Inkaby i Peru",
+    "name": "Machu Picchu",
+    "en": "Inca city in Peru."
+  },
+  {
+    "source": "Mount Rushmore",
+    "description": "Fjellskulptur av Jefferson, Washington, Roosevelt og Lincoln (i Sør-Dakota, USA)",
+    "name": "Mount Rushmore",
+    "en": "Mountain sculpture of Jefferson, Washington, Roosevelt and Lincoln in South Dakota, USA."
+  },
+  {
+    "source": "Notre-Dame",
+    "description": "Gotisk katedral på Île de la Cité i Paris.",
+    "name": "Notre-Dame",
+    "en": "Gothic cathedral on the Île de la Cité in Paris."
+  },
+  {
+    "source": "Palmyra",
+    "description": "Antikk karavaneby og ruinområde i den syriske ørkenen.",
+    "name": "Palmyra",
+    "en": "Ancient caravan city and ruins in the Syrian desert."
+  },
+  {
+    "source": "Persepolis",
+    "description": "Seremonielt sentrum i det persiske akamenideriket, nær Shiraz i Iran.",
+    "name": "Persepolis",
+    "en": "Ceremonial centre of the Achaemenid Persian Empire near Shiraz, Iran."
+  },
+  {
+    "source": "Petra",
+    "description": "Historisk by i Jordan",
+    "name": "Petra",
+    "en": "Historic city in Jordan."
+  },
+  {
+    "source": "Pompeii",
+    "description": "Romersk by ved Vesuv som ble begravd av vulkanutbruddet i år 79.",
+    "name": "Pompeii",
+    "en": "Roman city near Vesuvius, buried by the eruption of AD 79."
+  },
+  {
+    "source": "Sphinxen",
+    "description": "Stor statue i Egypt med løvekropp og menneskehode",
+    "name": "Great Sphinx",
+    "en": "Large Egyptian statue with a lion's body and a human head."
+  },
+  {
+    "source": "St. Basil-katedralen",
+    "description": "Fargerik russisk-ortodoks katedral på Den røde plass i Moskva.",
+    "name": "Saint Basil's Cathedral",
+    "en": "Colourful Russian Orthodox cathedral on Moscow's Red Square."
+  },
+  {
+    "source": "Stonehenge",
+    "description": "Forhistorisk steinmonument i England",
+    "name": "Stonehenge",
+    "en": "Prehistoric stone monument in England."
+  },
+  {
+    "source": "Sydney Opera House",
+    "description": "Ikonisk operahus ved havna i Sydney, kjent for sitt seilformede tak.",
+    "name": "Sydney Opera House",
+    "en": "Iconic waterfront opera house in Sydney, known for its sail-shaped roof."
+  },
+  {
+    "source": "Taj Mahal",
+    "description": "Marmor-mausoleum i India",
+    "name": "Taj Mahal",
+    "en": "Marble mausoleum in India."
+  },
+  {
+    "source": "Tikal",
+    "description": "Stor mayaby med tempelpyramider i regnskogen i Guatemala.",
+    "name": "Tikal",
+    "en": "Large Maya city with pyramid temples in Guatemala's rainforest."
+  },
+  {
+    "source": "Timbuktu",
+    "description": "Historisk handels- og lærdomsby ved Sahara i Mali.",
+    "name": "Timbuktu",
+    "en": "Historic trading and scholarly city near the Sahara in Mali."
+  },
+  {
+    "source": "Tower Bridge",
+    "description": "Kjent klaffebro over Themsen i London.",
+    "name": "Tower Bridge",
+    "en": "Famous bascule bridge across the Thames in London."
+  },
+  {
+    "source": "Troja",
+    "description": "Arkeologisk sted i nordvestlige Tyrkia knyttet til fortellingene om Trojakrigen.",
+    "name": "Troy",
+    "en": "Archaeological site in northwestern Turkey associated with the Trojan War."
+  },
+  {
+    "source": "Versailles",
+    "description": "Kongelig slott i Frankrike",
+    "name": "Versailles",
+    "en": "Royal palace in France."
+  },
+  {
+    "source": "Angel falls",
+    "description": "Verdens høyeste foss, ligger i Venezuela.",
+    "name": "Angel Falls",
+    "en": "The world's highest waterfall, in Venezuela."
+  },
+  {
+    "source": "Cliffs of Moher",
+    "description": "Dramatiske havklipper på Irlands vestkyst mot Atlanterhavet.",
+    "name": "Cliffs of Moher",
+    "en": "Dramatic Atlantic sea cliffs on Ireland's west coast."
+  },
+  {
+    "source": "Copacabana",
+    "description": "Strand i Rio de Janeiro, Brasil.",
+    "name": "Copacabana",
+    "en": "Beach in Rio de Janeiro, Brazil."
+  },
+  {
+    "source": "Death Valley",
+    "description": "Ørkenområde i California, et av de varmeste stedene på jorden og 86 meter under havoverflaten",
+    "name": "Death Valley",
+    "en": "Desert area in California, one of Earth's hottest places and 86 m below sea level."
+  },
+  {
+    "source": "Grand Canyon",
+    "description": "Stort og kjent område med gamle elvegjel i Arizona, USA.",
+    "name": "Grand Canyon",
+    "en": "Large, famous river canyon in Arizona, USA."
+  },
+  {
+    "source": "Great Barrier Reef",
+    "description": "Verdens største korallområde utenfor kysten av Australia.",
+    "name": "Great Barrier Reef",
+    "en": "The world's largest coral reef system, off Australia's coast."
+  },
+  {
+    "source": "Ha Long-bukta",
+    "description": "Bukt i Nord-Vietnam med tusenvis av kalksteinsøyer og bratte karsttårn.",
+    "name": "Ha Long Bay",
+    "en": "Bay in northern Vietnam with thousands of limestone islands and steep karst towers."
+  },
+  {
+    "source": "Iguazu",
+    "description": "Stort fossefall på grensen mellom Argentina og Brasil.",
+    "name": "Iguazu Falls",
+    "en": "Large waterfalls on the border between Argentina and Brazil."
+  },
+  {
+    "source": "Jostedalsbreen",
+    "description": "Største isbre på det europeiske fastlandet (i Norge)",
+    "name": "Jostedalsbreen",
+    "en": "The largest glacier on mainland Europe, in Norway."
+  },
+  {
+    "source": "Mount Everest",
+    "description": "Verdens høyeste fjell (i Himalaya)",
+    "name": "Mount Everest",
+    "en": "The world's highest mountain, in the Himalayas."
+  },
+  {
+    "source": "Niagara",
+    "description": "Fossefall mellom USA og Canada.",
+    "name": "Niagara Falls",
+    "en": "Waterfalls between the USA and Canada."
+  },
+  {
+    "source": "Okavango",
+    "description": "Stort innlandsdelta i Botswana.",
+    "name": "Okavango",
+    "en": "Large inland delta in Botswana."
+  },
+  {
+    "source": "Pampas",
+    "description": "Gressletter i Argentina og Uruguay.",
+    "name": "Pampas",
+    "en": "Grasslands in Argentina and Uruguay."
+  },
+  {
+    "source": "Salar de Uyuni",
+    "description": "Verdens største saltslette (i Bolivia)",
+    "name": "Salar de Uyuni",
+    "en": "The world's largest salt flat, in Bolivia."
+  },
+  {
+    "source": "Serengeti",
+    "description": "Nasjonalpark og savanneområde i Tanzania.",
+    "name": "Serengeti",
+    "en": "National park and savanna region in Tanzania."
+  },
+  {
+    "source": "Sognefjorden",
+    "description": "Norges lengste og dypeste av sitt slag. Gravd ut av isbre.",
+    "name": "Sognefjorden",
+    "en": "Norway's longest and deepest fjord, carved by glaciers."
+  },
+  {
+    "source": "Uluru",
+    "description": "Ayers rock - Stor rød monolitt i Australia.",
+    "name": "Uluru",
+    "en": "Ayers Rock: a large red monolith in Australia."
+  },
+  {
+    "source": "Vatnajökull",
+    "description": "Islands største isbre.",
+    "name": "Vatnajökull",
+    "en": "Iceland's largest glacier."
+  },
+  {
+    "source": "Victoriafallene",
+    "description": "Fossefall på grensen mellom Zambia og Zimbabwe.",
+    "name": "Victoria Falls",
+    "en": "Waterfalls on the border between Zambia and Zimbabwe."
+  },
+  {
+    "source": "Wadi Rum",
+    "description": "Ørkenlandskap i Jordan med røde sandsteinsfjell, klipper og vide daler.",
+    "name": "Wadi Rum",
+    "en": "Jordanian desert landscape with red sandstone mountains, cliffs and broad valleys."
+  },
+  {
+    "source": "Yellowstone",
+    "description": "Første nasjonalpark i USA, kjent for geotermiske kilder.",
+    "name": "Yellowstone",
+    "en": "The first US national park, known for geothermal springs."
+  },
+  {
+    "source": "Yosemite",
+    "description": "Nasjonalpark i California med granittklipper og fossefall.",
+    "name": "Yosemite",
+    "en": "National park in California with granite cliffs and waterfalls."
+  },
+  {
+    "source": "Afrikas Horn",
+    "description": "Halvøy i Afrika (med Eritrea, Etiopia, Djibouti og Somalia)",
+    "name": "Horn of Africa",
+    "en": "African peninsula containing Eritrea, Ethiopia, Djibouti and Somalia."
+  },
+  {
+    "source": "Anatolia",
+    "description": "Den asiatiske delen av Tyrkia - også kalt Lille-Asia",
+    "name": "Anatolia",
+    "en": "The Asian part of Turkey, also called Asia Minor."
+  },
+  {
+    "source": "Antarktis",
+    "description": "Sørpolen, isdekket kontinent",
+    "name": "Antarctica",
+    "en": "Ice-covered continent at the South Pole."
+  },
+  {
+    "source": "Arktis",
+    "description": "Nordpolområdet",
+    "name": "Arctic",
+    "en": "The North Polar region."
+  },
+  {
+    "source": "Balkan",
+    "description": "Halvøy i Sørøst-Europa",
+    "name": "Balkans",
+    "en": "Peninsula in southeastern Europe."
+  },
+  {
+    "source": "Baltikum",
+    "description": "Estland, Latvia og Litauen",
+    "name": "Baltic states",
+    "en": "Estonia, Latvia and Lithuania."
+  },
+  {
+    "source": "Benelux",
+    "description": "Belgia, Nederland og Luxembourg",
+    "name": "Benelux",
+    "en": "Belgium, the Netherlands and Luxembourg."
+  },
+  {
+    "source": "Deccanplatået",
+    "description": "Stort høylandsplatå som dekker mye av det sørlige India.",
+    "name": "Deccan Plateau",
+    "en": "Large upland plateau covering much of southern India."
+  },
+  {
+    "source": "Den fruktbare halvmåne",
+    "description": "Bueformet område fra Levanten gjennom Mesopotamia, et tidlig sentrum for jordbruk og bysamfunn.",
+    "name": "Fertile Crescent",
+    "en": "Arc from the Levant through Mesopotamia, an early centre of farming and cities."
+  },
+  {
+    "source": "Dronning Mauds land",
+    "description": "Norsk territorium i Antarktis",
+    "name": "Queen Maud Land",
+    "en": "Norwegian territory in Antarctica."
+  },
+  {
+    "source": "Ganges–Brahmaputra-deltaet",
+    "description": "Enormt delta i Bangladesh og India, blant verdens største og tettest befolkede deltaområder.",
+    "name": "Ganges–Brahmaputra Delta",
+    "en": "Huge delta in Bangladesh and India, among the world's largest and most densely populated."
+  },
+  {
+    "source": "Gaza",
+    "description": "Palestinsk kystområde ved Middelhavet",
+    "name": "Gaza",
+    "en": "Palestinian coastal area on the Mediterranean."
+  },
+  {
+    "source": "Great Plains",
+    "description": "Vidstrakt slettelandskap øst for Rocky Mountains i USA og Canada.",
+    "name": "Great Plains",
+    "en": "Extensive plains east of the Rocky Mountains in the USA and Canada."
+  },
+  {
+    "source": "Iberiske halvøy",
+    "description": "I Sørvest-Europa, inkluderer Spania og Portugal",
+    "name": "Iberian Peninsula",
+    "en": "Southwestern European peninsula containing Spain and Portugal."
+  },
+  {
+    "source": "Indokina",
+    "description": "Region i Sørøst-Asia (Vietnam, Laos og Kambodsja)",
+    "name": "Indochina",
+    "en": "Southeast Asian region including Vietnam, Laos and Cambodia."
+  },
+  {
+    "source": "Kappadokia",
+    "description": "Region i sentrale Tyrkia kjent for tuffformasjoner, huleboliger og underjordiske byer.",
+    "name": "Cappadocia",
+    "en": "Central Turkish region known for tuff formations, cave dwellings and underground cities."
+  },
+  {
+    "source": "Karibia",
+    "description": "Øyregion i Det karibiske hav",
+    "name": "Caribbean",
+    "en": "Island region in the Caribbean Sea."
+  },
+  {
+    "source": "Levanten",
+    "description": "Gammelt begrep på det østlige Middelhavsområdet",
+    "name": "Levant",
+    "en": "Old term for the eastern Mediterranean region."
+  },
+  {
+    "source": "Loessplatået",
+    "description": "Høylandsområde i Nord-Kina med tykke løssavsetninger og svært sterk jorderosjon.",
+    "name": "Loess Plateau",
+    "en": "Northern Chinese uplands with thick loess deposits and severe soil erosion."
+  },
+  {
+    "source": "Mekongdeltaet",
+    "description": "Fruktbart delta sør i Vietnam der Mekong munner ut i Sør-Kinahavet.",
+    "name": "Mekong Delta",
+    "en": "Fertile delta in southern Vietnam where the Mekong enters the South China Sea."
+  },
+  {
+    "source": "Mesopotamia",
+    "description": "Historisk region i midtøsten mellom Eufrat og Tigris",
+    "name": "Mesopotamia",
+    "en": "Historic Middle Eastern region between the Euphrates and Tigris."
+  },
+  {
+    "source": "Nildeltaet",
+    "description": "Fruktbart delta der Nilen deler seg og munner ut i Middelhavet nord i Egypt.",
+    "name": "Nile Delta",
+    "en": "Fertile delta where the Nile divides and enters the Mediterranean in northern Egypt."
+  },
+  {
+    "source": "Nubia",
+    "description": "Historisk region langs Nilen, i dagens Sudan og Sør-Egypt",
+    "name": "Nubia",
+    "en": "Historic region along the Nile in present-day Sudan and southern Egypt."
+  },
+  {
+    "source": "Patagonia",
+    "description": "Region sør i Argentina og Chile",
+    "name": "Patagonia",
+    "en": "Region in southern Argentina and Chile."
+  },
+  {
+    "source": "Polynesia",
+    "description": "Øygruppe i det sentrale og sørlige Stillehavet",
+    "name": "Polynesia",
+    "en": "Island region in the central and southern Pacific."
+  },
+  {
+    "source": "Riftdalen",
+    "description": "Geologisk sprekk i Øst-Afrika",
+    "name": "Great Rift Valley",
+    "en": "Geological rift in East Africa."
+  },
+  {
+    "source": "Ruhr-området",
+    "description": "Tettbefolket industriområde i Vest-Tyskland, historisk basert på kull, stål og tungindustri.",
+    "name": "Ruhr",
+    "en": "Densely populated industrial region in western Germany, historically based on coal, steel and heavy industry."
+  },
+  {
+    "source": "Sahel",
+    "description": "Overgangssone mellom Sahara-ørkenen og savannen i sør",
+    "name": "Sahel",
+    "en": "Transition zone between the Sahara and the savanna to its south."
+  },
+  {
+    "source": "Sibir",
+    "description": "Vidstrakt region nordøst i Russland",
+    "name": "Siberia",
+    "en": "Vast region in northeastern Russia."
+  },
+  {
+    "source": "Silicon Valley",
+    "description": "Teknologiregion sør for San Francisco rundt Santa Clara-dalen i California.",
+    "name": "Silicon Valley",
+    "en": "Technology region south of San Francisco around California's Santa Clara Valley."
+  },
+  {
+    "source": "Tibet",
+    "description": "Høylandsplatå i Asia",
+    "name": "Tibet",
+    "en": "High plateau in Asia."
+  },
+  {
+    "source": "Vestbredden",
+    "description": "Omstridt område vest for Jordan-elven",
+    "name": "West Bank",
+    "en": "Disputed territory west of the Jordan River."
+  },
+  {
+    "source": "Bab el-Mandeb",
+    "description": "Strategisk stred mellom Jemen og Djibouti/Eritrea som forbinder Rødehavet med Adenbukta.",
+    "name": "Bab el-Mandeb",
+    "en": "Strategic strait between Yemen and Djibouti/Eritrea connecting the Red Sea to the Gulf of Aden."
+  },
+  {
+    "source": "Beringstredet",
+    "description": "Mellom Alaska og Russland.",
+    "name": "Bering Strait",
+    "en": "Between Alaska and Russia."
+  },
+  {
+    "source": "Biscayabukta",
+    "description": "Vest for Frankrike og Spania.",
+    "name": "Bay of Biscay",
+    "en": "West of France and Spain."
+  },
+  {
+    "source": "Bosporus",
+    "description": "Skiller Europa fra Asia i Tyrkia.",
+    "name": "Bosporus",
+    "en": "Separates Europe from Asia in Turkey."
+  },
+  {
+    "source": "Bottenvika",
+    "description": "Mellom Sverige og Finland.",
+    "name": "Gulf of Bothnia",
+    "en": "Between Sweden and Finland."
+  },
+  {
+    "source": "Doverstredet",
+    "description": "Den smaleste delen av Den engelske kanal, mellom Sør-England og Nord-Frankrike.",
+    "name": "Strait of Dover",
+    "en": "The narrowest part of the English Channel, between southern England and northern France."
+  },
+  {
+    "source": "Engelske kanal",
+    "description": "Mellom Storbritannia og Frankrike.",
+    "name": "English Channel",
+    "en": "Between the United Kingdom and France."
+  },
+  {
+    "source": "Gibraltarstredet",
+    "description": "Mellom Spania og Nord-Afrika.",
+    "name": "Strait of Gibraltar",
+    "en": "Between Spain and North Africa."
+  },
+  {
+    "source": "Hormuz",
+    "description": "Smalt stred som forbinder Persiabukta og Arabiahavet. Omtrent 20 % av verdens olje transporteres gjennom her.",
+    "name": "Strait of Hormuz",
+    "en": "Narrow strait connecting the Persian Gulf and Arabian Sea; about 20% of global oil passes through it."
+  },
+  {
+    "source": "Kapp det gode håp",
+    "description": "Sørspissen av Afrika.",
+    "name": "Cape of Good Hope",
+    "en": "The southern tip of Africa."
+  },
+  {
+    "source": "Kapp Horn",
+    "description": "Sydspissen av Sør-Amerika.",
+    "name": "Cape Horn",
+    "en": "The southern tip of South America."
+  },
+  {
+    "source": "Kielkanalen",
+    "description": "Kanal i Nord-Tyskland som forbinder Nordsjøen og Østersjøen.",
+    "name": "Kiel Canal",
+    "en": "Canal in northern Germany connecting the North Sea and Baltic Sea."
+  },
+  {
+    "source": "Magellanstredet",
+    "description": "Mellom Sør-Amerika og Ildlandet.",
+    "name": "Strait of Magellan",
+    "en": "Between South America and Tierra del Fuego."
+  },
+  {
+    "source": "Malakkastredet",
+    "description": "Smalt havområde mellom Sumatra og Malayahalvøya i Sørøst-Asia. Verdens mest trafikkerte farvann.",
+    "name": "Strait of Malacca",
+    "en": "Narrow waters between Sumatra and the Malay Peninsula in Southeast Asia; a very busy shipping route."
+  },
+  {
+    "source": "Messinastredet",
+    "description": "Mellom Italia og Sicilia",
+    "name": "Strait of Messina",
+    "en": "Between Italy and Sicily."
+  },
+  {
+    "source": "Panamakanalen",
+    "description": "Forbinder Atlanterhavet med Stillehavet.",
+    "name": "Panama Canal",
+    "en": "Connects the Atlantic and Pacific oceans."
+  },
+  {
+    "source": "Suezkanalen",
+    "description": "Forbinder Middelhavet med Rødehavet.",
+    "name": "Suez Canal",
+    "en": "Connects the Mediterranean and Red Sea."
+  },
+  {
+    "source": "Øresund",
+    "description": "Mellom Danmark og Sverige.",
+    "name": "Øresund",
+    "en": "Between Denmark and Sweden."
+  },
+  {
+    "source": "Atacama",
+    "description": "Ørken i Chile",
+    "name": "Atacama",
+    "en": "Desert in Chile."
+  },
+  {
+    "source": "Gobi",
+    "description": "Ørken i Mongolia og Kina",
+    "name": "Gobi",
+    "en": "Desert in Mongolia and China."
+  },
+  {
+    "source": "Kalahari",
+    "description": "Ørken i det sørlige Afrika",
+    "name": "Kalahari",
+    "en": "Desert in southern Africa."
+  },
+  {
+    "source": "Mojave",
+    "description": "Ørken i det sørvestlige USA",
+    "name": "Mojave",
+    "en": "Desert in the southwestern USA."
+  },
+  {
+    "source": "Namib",
+    "description": "Svært gammel kystørken langs Namibia, kjent for enorme sanddyner.",
+    "name": "Namib",
+    "en": "Ancient coastal desert in Namibia known for enormous sand dunes."
+  },
+  {
+    "source": "Sahara",
+    "description": "Verdens største ørken (Nord-Afrika)",
+    "name": "Sahara",
+    "en": "The world's largest desert, in North Africa."
+  },
+  {
+    "source": "Taklamakan",
+    "description": "Stor ørken i det vestlige Kina",
+    "name": "Taklamakan",
+    "en": "Large desert in western China."
+  },
+  {
+    "source": "Balearene",
+    "description": "Spansk øygruppe i Middelhavet",
+    "name": "Balearic Islands",
+    "en": "Spanish island group in the Mediterranean."
+  },
+  {
+    "source": "Bora Bora",
+    "description": "Vulkanøy med stor lagune i Fransk Polynesia i Stillehavet.",
+    "name": "Bora Bora",
+    "en": "Volcanic island with a large lagoon in French Polynesia in the Pacific."
+  },
+  {
+    "source": "Borneo",
+    "description": "Verdens tredje største øy (Indonesia, Malaysia og Brunei)",
+    "name": "Borneo",
+    "en": "The world's third-largest island, shared by Indonesia, Malaysia and Brunei."
+  },
+  {
+    "source": "Corsica",
+    "description": "Fransk øy i Middelhavet",
+    "name": "Corsica",
+    "en": "French island in the Mediterranean."
+  },
+  {
+    "source": "Falklandsøyene",
+    "description": "Britisk øygruppe utenfor Argentina",
+    "name": "Falkland Islands",
+    "en": "British island group off Argentina."
+  },
+  {
+    "source": "Færøyene",
+    "description": "Øygruppe i Nord-Atlanteren, del av Kongeriket Danmark",
+    "name": "Faroe Islands",
+    "en": "North Atlantic island group within the Kingdom of Denmark."
+  },
+  {
+    "source": "Galapagos",
+    "description": "Øygruppe i Stillehavet, kjent for sitt unike dyreliv",
+    "name": "Galápagos Islands",
+    "en": "Pacific island group known for its unique wildlife."
+  },
+  {
+    "source": "Grønland",
+    "description": "Verdens største øy, del av Kongeriket Danmark",
+    "name": "Greenland",
+    "en": "The world's largest island, within the Kingdom of Denmark."
+  },
+  {
+    "source": "Hawaii",
+    "description": "Amerikansk øygruppe i Stillehavet, dannet ved hot-spotvulkanisme",
+    "name": "Hawaii",
+    "en": "US Pacific island group formed by hotspot volcanism."
+  },
+  {
+    "source": "Hinnøya",
+    "description": "Norges største øy",
+    "name": "Hinnøya",
+    "en": "Norway's largest island."
+  },
+  {
+    "source": "Ildlandet (Tierra del Fuego)",
+    "description": "Øygruppe ved Sør-Amerikas sørspiss",
+    "name": "Tierra del Fuego",
+    "en": "Island group at the southern tip of South America."
+  },
+  {
+    "source": "Jan Mayen",
+    "description": "Norsk øy i Nord-Atlanteren",
+    "name": "Jan Mayen",
+    "en": "Norwegian island in the North Atlantic."
+  },
+  {
+    "source": "Java",
+    "description": "Tett befolket indonesisk øy med Jakarta og en rekke aktive vulkaner.",
+    "name": "Java",
+    "en": "Densely populated Indonesian island with Jakarta and several active volcanoes."
+  },
+  {
+    "source": "Jylland",
+    "description": "Stor halvøy i Danmark",
+    "name": "Jutland",
+    "en": "Large peninsula in Denmark."
+  },
+  {
+    "source": "Kanariøyene",
+    "description": "Spansk øygruppe i Atlanterhavet",
+    "name": "Canary Islands",
+    "en": "Spanish island group in the Atlantic."
+  },
+  {
+    "source": "Kola",
+    "description": "Halvøy i nordvestlige Russland",
+    "name": "Kola",
+    "en": "Peninsula in northwestern Russia."
+  },
+  {
+    "source": "Kreta",
+    "description": "Den største greske øya, i det østlige Middelhavet.",
+    "name": "Crete",
+    "en": "The largest Greek island, in the eastern Mediterranean."
+  },
+  {
+    "source": "Krim",
+    "description": "Halvøy ved Svartehavet, annektert av Russland",
+    "name": "Crimea",
+    "en": "Black Sea peninsula annexed by Russia."
+  },
+  {
+    "source": "Madagaskar",
+    "description": "Stor øy utenfor Afrikas østkyst",
+    "name": "Madagascar",
+    "en": "Large island off Africa's east coast."
+  },
+  {
+    "source": "Maldivene",
+    "description": "Øygruppe i Det indiske hav",
+    "name": "Maldives",
+    "en": "Island group in the Indian Ocean."
+  },
+  {
+    "source": "Ny-Guinea",
+    "description": "Verdens nest største øy, delt mellom Indonesia og Papua Ny-Guinea.",
+    "name": "New Guinea",
+    "en": "The world's second-largest island, shared by Indonesia and Papua New Guinea."
+  },
+  {
+    "source": "Påskeøya",
+    "description": "Chilensk øy i Stillehavet, kjent for steinstatuer",
+    "name": "Easter Island",
+    "en": "Chilean Pacific island known for stone statues."
+  },
+  {
+    "source": "Santorini",
+    "description": "Gresk vulkanøy i Egeerhavet, formet av en stor kaldera.",
+    "name": "Santorini",
+    "en": "Greek volcanic island in the Aegean Sea, shaped by a large caldera."
+  },
+  {
+    "source": "Sardinia",
+    "description": "Den nordligste av de italienske øyene i Middelhavet",
+    "name": "Sardinia",
+    "en": "The northern of the Italian Mediterranean islands."
+  },
+  {
+    "source": "Senja",
+    "description": "Norges nest største øy",
+    "name": "Senja",
+    "en": "Norway's second-largest island."
+  },
+  {
+    "source": "Shetland",
+    "description": "Øygruppe nord for Skottland",
+    "name": "Shetland",
+    "en": "Island group north of Scotland."
+  },
+  {
+    "source": "Sicilia",
+    "description": "Største øya i Middelhavet, tilhører Italia",
+    "name": "Sicily",
+    "en": "The largest Mediterranean island, belonging to Italy."
+  },
+  {
+    "source": "Sinaihalvøya",
+    "description": "Trekantet halvøy i Egypt mellom Middelhavet og Rødehavet, som danner landbro mellom Afrika og Asia.",
+    "name": "Sinai Peninsula",
+    "en": "Triangular Egyptian peninsula between the Mediterranean and Red Sea, linking Africa and Asia."
+  },
+  {
+    "source": "Sumatra",
+    "description": "Stor indonesisk øy vest i øyriket, med regnskog, vulkaner og stor jordskjelvfare.",
+    "name": "Sumatra",
+    "en": "Large Indonesian island in the west of the archipelago, with rainforest, volcanoes and earthquake hazards."
+  },
+  {
+    "source": "Svalbard",
+    "description": "Norsk øygruppe i Arktis",
+    "name": "Svalbard",
+    "en": "Norwegian Arctic island group."
+  },
+  {
+    "source": "Tahiti",
+    "description": "Den største øya i Fransk Polynesia, med hovedstaden Papeete.",
+    "name": "Tahiti",
+    "en": "The largest island in French Polynesia, with the capital Papeete."
+  },
+  {
+    "source": "Tasmania",
+    "description": "Australsk øy sør for fastlandet",
+    "name": "Tasmania",
+    "en": "Australian island south of the mainland."
+  },
+  {
+    "source": "Yucatan",
+    "description": "Halvøy i Mexico, kjent for Maya-ruiner og meteorittnedslag",
+    "name": "Yucatán",
+    "en": "Mexican peninsula known for Maya ruins and an asteroid impact."
+  },
+  {
+    "source": "Zanzibar",
+    "description": "Øygruppe utenfor Tanzania i Indiahavet, historisk knutepunkt for handel.",
+    "name": "Zanzibar",
+    "en": "Island group off Tanzania in the Indian Ocean, a historic trading centre."
+  },
+  {
+    "source": "Agder",
+    "description": "Fylke lengst sør i Norge, med Kristiansand som største by.",
+    "name": "Agder",
+    "en": "Norway's southernmost county, with Kristiansand as its largest city."
+  },
+  {
+    "source": "Akershus",
+    "description": "Fylke rundt store deler av Oslo, med blant annet Romerike, Follo og Asker/Bærum.",
+    "name": "Akershus",
+    "en": "County around much of Oslo, including Romerike, Follo and Asker/Bærum."
+  },
+  {
+    "source": "Ålesund",
+    "description": "Kystby i Møre og Romsdal, kjent for jugendarkitektur og fiskeri/maritime næringer.",
+    "name": "Ålesund",
+    "en": "Coastal town in Møre og Romsdal, known for Art Nouveau architecture, fishing and maritime industries."
+  },
+  {
+    "source": "Altaelva",
+    "description": "Elv i Finnmark som renner gjennom Alta canyon og ut ved Alta.",
+    "name": "Altaelva",
+    "en": "River in Finnmark flowing through Alta Canyon to the sea near Alta."
+  },
+  {
+    "source": "Arendal",
+    "description": "Kystby i Agder og et viktig bysentrum på Sørlandet.",
+    "name": "Arendal",
+    "en": "Coastal town in Agder and an important centre in southern Norway."
+  },
+  {
+    "source": "Bergen",
+    "description": "Norges nest største by",
+    "name": "Bergen",
+    "en": "Norway's second-largest city."
+  },
+  {
+    "source": "Besseggen",
+    "description": "Berømt fjelltur langs Jotunheimen.",
+    "name": "Besseggen",
+    "en": "Famous hiking ridge in Jotunheimen."
+  },
+  {
+    "source": "Bodø",
+    "description": "By og fylkessenter i Nordland, like nord for polarsirkelen.",
+    "name": "Bodø",
+    "en": "Town and county centre in Nordland, just north of the Arctic Circle."
+  },
+  {
+    "source": "Buskerud",
+    "description": "Fylke fra Drammensområdet og vestover mot Hallingdal og Hardangervidda.",
+    "name": "Buskerud",
+    "en": "County stretching from Drammen west towards Hallingdal and Hardangervidda."
+  },
+  {
+    "source": "Dovrefjell",
+    "description": "Fjellområde mellom Østlandet og Trøndelag, kjent for Snøhetta, villrein og moskus.",
+    "name": "Dovrefjell",
+    "en": "Mountain area between eastern Norway and Trøndelag, known for Snøhetta, wild reindeer and musk oxen."
+  },
+  {
+    "source": "Drammen",
+    "description": "By i Buskerud ved Drammenselva og Drammensfjorden.",
+    "name": "Drammen",
+    "en": "Town in Buskerud beside the Drammen River and Drammensfjord."
+  },
+  {
+    "source": "Drammenselva",
+    "description": "Elv gjennom Drammen som munner ut i Drammensfjorden.",
+    "name": "Drammenselva",
+    "en": "River through Drammen entering the Drammensfjord."
+  },
+  {
+    "source": "Femunden",
+    "description": "Stor fjellsjø nær svenskegrensen i Innlandet.",
+    "name": "Femunden",
+    "en": "Large mountain lake near the Swedish border in Innlandet."
+  },
+  {
+    "source": "Femundsmarka",
+    "description": "Nasjonalpark og villmarksområde ved Femunden langs svenskegrensen.",
+    "name": "Femundsmarka",
+    "en": "National park and wilderness area beside Lake Femunden along the Swedish border."
+  },
+  {
+    "source": "Finnmark",
+    "description": "Norges nordøstligste og arealmessig største fylke.",
+    "name": "Finnmark",
+    "en": "Norway's northeasternmost and largest county by area."
+  },
+  {
+    "source": "Finnmarksvidda",
+    "description": "Stort viddeområde i indre Finnmark, viktig for reindrift.",
+    "name": "Finnmarksvidda",
+    "en": "Extensive plateau in inland Finnmark, important for reindeer herding."
+  },
+  {
+    "source": "Folgefonna",
+    "description": "Stor platåbre på Folgefonnhalvøya ved Hardangerfjorden.",
+    "name": "Folgefonna",
+    "en": "Large plateau glacier on the Folgefonn Peninsula beside the Hardangerfjord."
+  },
+  {
+    "source": "Fredrikstad",
+    "description": "By i Østfold; inngår sammen med Sarpsborg i et av Norges største sammenhengende tettsteder.",
+    "name": "Fredrikstad",
+    "en": "Town in Østfold forming one of Norway's largest urban areas with Sarpsborg."
+  },
+  {
+    "source": "Galdhøpiggen",
+    "description": "Norges høyeste fjell, 2469 meter over havet, i Jotunheimen.",
+    "name": "Galdhøpiggen",
+    "en": "Norway's highest mountain, 2,469 m above sea level, in Jotunheimen."
+  },
+  {
+    "source": "Gaula",
+    "description": "Stor elv sør for Trondheim, kjent for laksefiske og flomfare.",
+    "name": "Gaula",
+    "en": "Large river south of Trondheim, known for salmon fishing and flood hazards."
+  },
+  {
+    "source": "Gaustatoppen",
+    "description": "Fjell ved Rjukan, kjent for utsikt til 1/6 av Norge. (1883 moh)",
+    "name": "Gaustatoppen",
+    "en": "Mountain near Rjukan, known for views over one-sixth of Norway (1,883 m)."
+  },
+  {
+    "source": "Geirangerfjorden",
+    "description": "Bratt vestlandsfjord i Møre og Romsdal, del av UNESCOs vestnorske fjordlandskap.",
+    "name": "Geirangerfjorden",
+    "en": "Steep fjord in Møre og Romsdal, part of UNESCO's West Norwegian Fjords."
+  },
+  {
+    "source": "Gjøvik",
+    "description": "By i Innlandet på vestsiden av Mjøsa.",
+    "name": "Gjøvik",
+    "en": "Town in Innlandet on the western shore of Lake Mjøsa."
+  },
+  {
+    "source": "Glittertind",
+    "description": "Et av Norges høyeste fjell, i Jotunheimen.",
+    "name": "Glittertind",
+    "en": "One of Norway's highest mountains, in Jotunheimen."
+  },
+  {
+    "source": "Glomma",
+    "description": "Norges lengste elv, fra Trøndelag gjennom Østerdalen og ut i Oslofjorden ved Fredrikstad.",
+    "name": "Glomma",
+    "en": "Norway's longest river, from Trøndelag through Østerdalen to the Oslofjord at Fredrikstad."
+  },
+  {
+    "source": "Gudbrandsdalen",
+    "description": "Lang dal nord for Lillehammer, formet av isbreer og Gudbrandsdalslågen.",
+    "name": "Gudbrandsdalen",
+    "en": "Long valley north of Lillehammer, shaped by glaciers and the Gudbrandsdalslågen River."
+  },
+  {
+    "source": "Gudbrandsdalslågen",
+    "description": "Stor elv gjennom Gudbrandsdalen som renner sørover til Mjøsa.",
+    "name": "Gudbrandsdalslågen",
+    "en": "Large river flowing south through Gudbrandsdalen into Lake Mjøsa."
+  },
+  {
+    "source": "Halden",
+    "description": "By i Østfold nær svenskegrensen, kjent for Fredriksten festning.",
+    "name": "Halden",
+    "en": "Town in Østfold near the Swedish border, known for Fredriksten Fortress."
+  },
+  {
+    "source": "Hamar",
+    "description": "By i Innlandet på østsiden av Mjøsa.",
+    "name": "Hamar",
+    "en": "Town in Innlandet on the eastern shore of Lake Mjøsa."
+  },
+  {
+    "source": "Hardangerfjorden",
+    "description": "Stor fjord i Vestland, kjent for bratte fjellsider, fruktdyrking og Folgefonna.",
+    "name": "Hardangerfjorden",
+    "en": "Large fjord in Vestland, known for steep mountainsides, fruit growing and Folgefonna."
+  },
+  {
+    "source": "Hardangervidda",
+    "description": "Nord-Europas største høyfjellsplatå, mellom Østlandet og Vestlandet.",
+    "name": "Hardangervidda",
+    "en": "Northern Europe's largest mountain plateau, between eastern and western Norway."
+  },
+  {
+    "source": "Hårteigen",
+    "description": "Karakteristisk bordformet fjell som rager over Hardangervidda.",
+    "name": "Hårteigen",
+    "en": "Distinctive flat-topped mountain rising above Hardangervidda."
+  },
+  {
+    "source": "Haugesund",
+    "description": "By i Rogaland på Haugalandet, med sterk maritim historie.",
+    "name": "Haugesund",
+    "en": "Town in Rogaland on Haugalandet, with a strong maritime history."
+  },
+  {
+    "source": "Helgelandskysten",
+    "description": "Kystområde i Nordland med tusenvis av øyer, bratte fjell og polarsirkelen gjennom regionen.",
+    "name": "Helgeland Coast",
+    "en": "Coastal area in Nordland with thousands of islands, steep mountains and the Arctic Circle."
+  },
+  {
+    "source": "Hinnøya",
+    "description": "Norges største øy utenom Svalbard, delt mellom Nordland og Troms.",
+    "name": "Hinnøya",
+    "en": "Norway's largest island outside Svalbard, shared by Nordland and Troms."
+  },
+  {
+    "source": "Hornindalsvatnet",
+    "description": "Norges og Europas dypeste innsjø, i Vestland.",
+    "name": "Hornindalsvatnet",
+    "en": "Norway's and Europe's deepest lake, in Vestland."
+  },
+  {
+    "source": "Innlandet",
+    "description": "Stort innlandsfylke med blant annet Mjøsa, Gudbrandsdalen og deler av Jotunheimen.",
+    "name": "Innlandet",
+    "en": "Large inland county including Lake Mjøsa, Gudbrandsdalen and parts of Jotunheimen."
+  },
+  {
+    "source": "Jostedalsbreen",
+    "description": "Den største isbreen på det europeiske fastlandet, i Vestland.",
+    "name": "Jostedalsbreen",
+    "en": "The largest glacier on mainland Europe, in Vestland."
+  },
+  {
+    "source": "Jotunheimen",
+    "description": "Fjellområde med de 23 høyeste fjellene i Norge",
+    "name": "Jotunheimen",
+    "en": "Mountain area containing Norway's 23 highest mountains."
+  },
+  {
+    "source": "Kautokeino",
+    "description": "Senter for samisk kultur i Finnmark",
+    "name": "Kautokeino",
+    "en": "Centre of Sámi culture in Finnmark."
+  },
+  {
+    "source": "Kjeragbolten",
+    "description": "Kjent stein fastklemt i fjellet, populært turmål.",
+    "name": "Kjeragbolten",
+    "en": "Famous boulder wedged between rock faces, a popular hiking destination."
+  },
+  {
+    "source": "Kristiansand",
+    "description": "Største by i Agder og et viktig sentrum på Sørlandet.",
+    "name": "Kristiansand",
+    "en": "The largest city in Agder and an important centre in southern Norway."
+  },
+  {
+    "source": "Langfoss",
+    "description": "Høy foss som stuper ned mot Åkrafjorden i Vestland.",
+    "name": "Langfoss",
+    "en": "High waterfall plunging towards Åkrafjord in Vestland."
+  },
+  {
+    "source": "Larvik",
+    "description": "Kystby i Vestfold ved Larviksfjorden.",
+    "name": "Larvik",
+    "en": "Coastal town in Vestfold beside the Larviksfjord."
+  },
+  {
+    "source": "Låtefossen",
+    "description": "Kjent tvillingfoss ved riksvei 13 sør for Odda i Vestland.",
+    "name": "Låtefossen",
+    "en": "Famous twin waterfall beside Route 13 south of Odda in Vestland."
+  },
+  {
+    "source": "Lindesnes",
+    "description": "Norges sørligste punkt",
+    "name": "Lindesnes",
+    "en": "Norway's southernmost point."
+  },
+  {
+    "source": "Lofoten",
+    "description": "Øygruppe i Nordland kjent for spektakulær natur og fiskevær.",
+    "name": "Lofoten",
+    "en": "Island group in Nordland known for spectacular scenery and fishing villages."
+  },
+  {
+    "source": "Lyngsalpene",
+    "description": "Alpint fjellområde øst for Tromsø med bratte topper, breer og fjorder.",
+    "name": "Lyngen Alps",
+    "en": "Alpine mountain area east of Tromsø with steep peaks, glaciers and fjords."
+  },
+  {
+    "source": "Lysefjorden",
+    "description": "Smal fjord i Rogaland med Preikestolen og Kjerag langs de bratte fjordsidene.",
+    "name": "Lysefjorden",
+    "en": "Narrow fjord in Rogaland with Preikestolen and Kjerag on its steep sides."
+  },
+  {
+    "source": "Mjøsa",
+    "description": "Norges største innsjø, mellom blant annet Lillehammer, Gjøvik og Hamar.",
+    "name": "Mjøsa",
+    "en": "Norway's largest lake, between Lillehammer, Gjøvik and Hamar."
+  },
+  {
+    "source": "Moss",
+    "description": "By i Østfold ved Oslofjorden.",
+    "name": "Moss",
+    "en": "Town in Østfold beside the Oslofjord."
+  },
+  {
+    "source": "Møre og Romsdal",
+    "description": "Vestlandsfylke med Ålesund, Molde og Kristiansund, fjorder og alpine fjell.",
+    "name": "Møre og Romsdal",
+    "en": "Western Norwegian county with Ålesund, Molde and Kristiansund, fjords and alpine mountains."
+  },
+  {
+    "source": "Namsen",
+    "description": "Stor elv i Trøndelag som renner gjennom Namdalen og er kjent som lakseelv.",
+    "name": "Namsen",
+    "en": "Large river through Namdalen in Trøndelag, known for salmon fishing."
+  },
+  {
+    "source": "Nordfjord",
+    "description": "Fjord i Vestland mellom Stad og Jostedalsbreen.",
+    "name": "Nordfjord",
+    "en": "Fjord in Vestland between Stad and Jostedalsbreen."
+  },
+  {
+    "source": "Nordkapp",
+    "description": "Europas nordligste punkt.",
+    "name": "North Cape",
+    "en": "Europe's northernmost point."
+  },
+  {
+    "source": "Nordland",
+    "description": "Langstrakt fylke i Nord-Norge med blant annet Helgeland, Lofoten og Bodø.",
+    "name": "Nordland",
+    "en": "Long county in northern Norway including Helgeland, Lofoten and Bodø."
+  },
+  {
+    "source": "Numedalslågen",
+    "description": "Lang elv fra Hardangervidda gjennom Numedal til Larvik.",
+    "name": "Numedalslågen",
+    "en": "Long river from Hardangervidda through Numedal to Larvik."
+  },
+  {
+    "source": "Nærøyfjorden",
+    "description": "Smal sidefjord til Sognefjorden og del av UNESCOs vestnorske fjordlandskap.",
+    "name": "Nærøyfjorden",
+    "en": "Narrow branch of Sognefjord, part of UNESCO's West Norwegian Fjords."
+  },
+  {
+    "source": "Oslo",
+    "description": "Norges hovedstad og samtidig eget fylke.",
+    "name": "Oslo",
+    "en": "Norway's capital and also a county in its own right."
+  },
+  {
+    "source": "Oslofjorden",
+    "description": "Fjordområdet som strekker seg nordover til Oslo og skiller Østfold fra Vestfold.",
+    "name": "Oslofjord",
+    "en": "Fjord stretching north to Oslo, separating Østfold from Vestfold."
+  },
+  {
+    "source": "Otra",
+    "description": "Sørlandets lengste elv, gjennom Setesdal og ut i havet ved Kristiansand.",
+    "name": "Otra",
+    "en": "Southern Norway's longest river, through Setesdal to the sea at Kristiansand."
+  },
+  {
+    "source": "Porsangerfjorden",
+    "description": "Stor fjord i Finnmark som skjærer sørover fra Barentshavet.",
+    "name": "Porsangerfjorden",
+    "en": "Large fjord in Finnmark extending south from the Barents Sea."
+  },
+  {
+    "source": "Porsgrunn",
+    "description": "By i Telemark; inngår sammen med Skien i tettstedet Porsgrunn/Skien.",
+    "name": "Porsgrunn",
+    "en": "Town in Telemark forming the Porsgrunn/Skien urban area with Skien."
+  },
+  {
+    "source": "Preikestolen",
+    "description": "Verdenskjent fjellformasjon over Lysefjorden med en firkantet, flat topp",
+    "name": "Pulpit Rock",
+    "en": "World-famous rock formation above Lysefjord with a square, flat top."
+  },
+  {
+    "source": "Rjukan",
+    "description": "Historisk industriområde og stedet for Gaustatoppen.",
+    "name": "Rjukan",
+    "en": "Historic industrial town near Gaustatoppen."
+  },
+  {
+    "source": "Rogaland",
+    "description": "Sørvestlig fylke med Stavanger, Jæren og store petroleumsrelaterte næringer.",
+    "name": "Rogaland",
+    "en": "Southwestern county with Stavanger, Jæren and major petroleum industries."
+  },
+  {
+    "source": "Romsdalen",
+    "description": "Bratt dal i Møre og Romsdal mellom Åndalsnes og Dovrefjell.",
+    "name": "Romsdalen",
+    "en": "Steep valley in Møre og Romsdal between Åndalsnes and Dovrefjell."
+  },
+  {
+    "source": "Romsdalsfjorden",
+    "description": "Fjord i Møre og Romsdal ved Molde, Åndalsnes og de bratte Romsdalsfjellene.",
+    "name": "Romsdalsfjorden",
+    "en": "Fjord in Møre og Romsdal beside Molde, Åndalsnes and the steep Romsdal mountains."
+  },
+  {
+    "source": "Romsdalshorn",
+    "description": "Markant fjell ved Romsdalen og Trollveggen i Møre og Romsdal.",
+    "name": "Romsdalshorn",
+    "en": "Distinctive mountain near Romsdalen and Trollveggen in Møre og Romsdal."
+  },
+  {
+    "source": "Rondane",
+    "description": "Norges første nasjonalpark. Fjellområde og villreinhabitat.",
+    "name": "Rondane",
+    "en": "Norway's first national park, a mountain area and wild reindeer habitat."
+  },
+  {
+    "source": "Røros",
+    "description": "Historisk bergstad i Trøndelag, bygget opp rundt kobbergruvedrift og på UNESCOs verdensarvliste.",
+    "name": "Røros",
+    "en": "Historic mining town in Trøndelag, built around copper mining and listed by UNESCO."
+  },
+  {
+    "source": "Røssvatnet",
+    "description": "Norges nest største innsjø, på Helgeland i Nordland.",
+    "name": "Røssvatnet",
+    "en": "Norway's second-largest lake, in Helgeland, Nordland."
+  },
+  {
+    "source": "Saltfjellet",
+    "description": "Fjellområde i Nordland der polarsirkelen krysser Norge.",
+    "name": "Saltfjellet",
+    "en": "Mountain area in Nordland crossed by the Arctic Circle."
+  },
+  {
+    "source": "Saltstraumen",
+    "description": "Verdens sterkeste tidevannsstrøm.",
+    "name": "Saltstraumen",
+    "en": "The world's strongest tidal current."
+  },
+  {
+    "source": "Sandefjord",
+    "description": "By i Vestfold ved Oslofjorden, historisk knyttet til hvalfangst og sjøfart.",
+    "name": "Sandefjord",
+    "en": "Town in Vestfold beside the Oslofjord, historically associated with whaling and shipping."
+  },
+  {
+    "source": "Sandnes",
+    "description": "By i Rogaland; har vokst sammen med Stavanger til ett stort tettsted.",
+    "name": "Sandnes",
+    "en": "Town in Rogaland that has merged with Stavanger into one large urban area."
+  },
+  {
+    "source": "Sarpsborg",
+    "description": "By i Østfold; inngår sammen med Fredrikstad i et stort sammenhengende tettsted.",
+    "name": "Sarpsborg",
+    "en": "Town in Østfold forming a large continuous urban area with Fredrikstad."
+  },
+  {
+    "source": "Senja",
+    "description": "Norges nest største øy, i Troms, kjent for bratte fjell og oppskåret kyst.",
+    "name": "Senja",
+    "en": "Norway's second-largest island, in Troms, known for steep mountains and an indented coast."
+  },
+  {
+    "source": "Setesdalsheiene",
+    "description": "Stort hei- og fjellområde vest for Setesdal i Agder.",
+    "name": "Setesdalsheiene",
+    "en": "Extensive upland and mountain area west of Setesdal in Agder."
+  },
+  {
+    "source": "Skien",
+    "description": "By i Telemark; inngår sammen med Porsgrunn i et av Norges største tettsteder.",
+    "name": "Skien",
+    "en": "Town in Telemark forming one of Norway's largest urban areas with Porsgrunn."
+  },
+  {
+    "source": "Snåsavatnet",
+    "description": "Stor innsjø i Trøndelag langs E6 og Nordlandsbanen.",
+    "name": "Snåsavatnet",
+    "en": "Large lake in Trøndelag beside the E6 road and Nordland railway."
+  },
+  {
+    "source": "Snøhetta",
+    "description": "Kjent fjellmassiv på Dovrefjell, 2286 meter over havet.",
+    "name": "Snøhetta",
+    "en": "Well-known mountain massif in Dovrefjell, 2,286 m above sea level."
+  },
+  {
+    "source": "Sognefjorden",
+    "description": "Norges lengste og dypeste fjord, som skjærer langt inn i Vestland.",
+    "name": "Sognefjorden",
+    "en": "Norway's longest and deepest fjord, reaching far inland in Vestland."
+  },
+  {
+    "source": "Stavanger",
+    "description": "By i Rogaland; inngår sammen med Sandnes i Norges tredje største tettsted.",
+    "name": "Stavanger",
+    "en": "City in Rogaland forming Norway's third-largest urban area with Sandnes."
+  },
+  {
+    "source": "Store Skagastølstind",
+    "description": "Spisst fjell i Hurrungane i Jotunheimen, blant Norges høyeste topper.",
+    "name": "Store Skagastølstind",
+    "en": "Sharp peak in Hurrungane, Jotunheimen, among Norway's highest summits."
+  },
+  {
+    "source": "Sunnmørsalpene",
+    "description": "Alpint fjellområde på Sunnmøre med bratte topper som stiger fra fjordene.",
+    "name": "Sunnmøre Alps",
+    "en": "Alpine mountains in Sunnmøre with steep peaks rising from the fjords."
+  },
+  {
+    "source": "Svalbard",
+    "description": "Norsk øygruppe i Arktis, kjent for isbjørn og forskning.",
+    "name": "Svalbard",
+    "en": "Norwegian Arctic island group known for polar bears and research."
+  },
+  {
+    "source": "Svartisen",
+    "description": "Norges nest største isbre, i Nordland nær polarsirkelen.",
+    "name": "Svartisen",
+    "en": "Norway's second-largest glacier, in Nordland near the Arctic Circle."
+  },
+  {
+    "source": "Tanaelva",
+    "description": "Stor grenseelv mellom Norge og Finland i Finnmark, kjent for laksefiske.",
+    "name": "Tana River",
+    "en": "Large border river between Norway and Finland in Finnmark, known for salmon fishing."
+  },
+  {
+    "source": "Telemark",
+    "description": "Fylke i Sør-Norge fra Skien/Porsgrunn til fjellområdene mot Hardangervidda.",
+    "name": "Telemark",
+    "en": "County in southern Norway from Skien/Porsgrunn to the mountains near Hardangervidda."
+  },
+  {
+    "source": "Tinnsjø",
+    "description": "Dyp innsjø i Telemark mellom Tinn og Notodden.",
+    "name": "Tinnsjø",
+    "en": "Deep lake in Telemark between Tinn and Notodden."
+  },
+  {
+    "source": "Torghatten",
+    "description": "Fjell på øya Torget i Nordland med et stort naturlig hull tvers gjennom fjellet.",
+    "name": "Torghatten",
+    "en": "Mountain on Torget island in Nordland with a large natural hole through it."
+  },
+  {
+    "source": "Trollheimen",
+    "description": "Fjellområde mellom Trøndelag og Møre og Romsdal.",
+    "name": "Trollheimen",
+    "en": "Mountain area between Trøndelag and Møre og Romsdal."
+  },
+  {
+    "source": "Trolltunga",
+    "description": "Spektakulær fjellhylle over Ringedalsvatnet ved Odda i Vestland.",
+    "name": "Trolltunga",
+    "en": "Spectacular rock ledge above Ringedalsvatnet near Odda in Vestland."
+  },
+  {
+    "source": "Trollveggen",
+    "description": "Europas høyeste loddrette fjellvegg.",
+    "name": "Troll Wall",
+    "en": "Europe's highest vertical rock face."
+  },
+  {
+    "source": "Troms",
+    "description": "Fylke i Nord-Norge med Tromsø, Senja og Lyngsalpene.",
+    "name": "Troms",
+    "en": "County in northern Norway with Tromsø, Senja and the Lyngen Alps."
+  },
+  {
+    "source": "Tromsø",
+    "description": "Største by i Nord-Norge og et viktig sentrum for forskning, utdanning og reiseliv.",
+    "name": "Tromsø",
+    "en": "Northern Norway's largest city and an important centre for research, education and tourism."
+  },
+  {
+    "source": "Trondheim",
+    "description": "Historisk by med Nidarosdomen.",
+    "name": "Trondheim",
+    "en": "Historic city with Nidaros Cathedral."
+  },
+  {
+    "source": "Trondheimsfjorden",
+    "description": "Stor fjord i Trøndelag med Trondheim på sørsiden.",
+    "name": "Trondheim Fjord",
+    "en": "Large fjord in Trøndelag with Trondheim on its southern shore."
+  },
+  {
+    "source": "Trøndelag",
+    "description": "Fylke i Midt-Norge med Trondheim og store jordbruksområder rundt Trondheimsfjorden.",
+    "name": "Trøndelag",
+    "en": "County in central Norway with Trondheim and major farming areas around Trondheim Fjord."
+  },
+  {
+    "source": "Tyrifjorden",
+    "description": "Stor innsjø i Buskerud, vest for Oslo.",
+    "name": "Tyrifjorden",
+    "en": "Large lake in Buskerud, west of Oslo."
+  },
+  {
+    "source": "Tønsberg",
+    "description": "By i Vestfold ved Oslofjorden.",
+    "name": "Tønsberg",
+    "en": "Town in Vestfold beside the Oslofjord."
+  },
+  {
+    "source": "Varangerfjorden",
+    "description": "Bred fjord øst i Finnmark mot Barentshavet.",
+    "name": "Varangerfjord",
+    "en": "Broad fjord in eastern Finnmark opening into the Barents Sea."
+  },
+  {
+    "source": "Vefsna",
+    "description": "Stor elv på Helgeland som munner ut ved Mosjøen.",
+    "name": "Vefsna",
+    "en": "Large river in Helgeland reaching the sea at Mosjøen."
+  },
+  {
+    "source": "Vegaøyan",
+    "description": "Øyrike på Helgelandskysten med UNESCO-status, kjent for tradisjonell ærfugldrift.",
+    "name": "Vega Archipelago",
+    "en": "UNESCO-listed islands on the Helgeland Coast, known for traditional eider farming."
+  },
+  {
+    "source": "Vesterålen",
+    "description": "Øygruppe nord for Lofoten i Nordland, med fiskevær, fjell og hvalsafari.",
+    "name": "Vesterålen",
+    "en": "Island group north of Lofoten in Nordland, with fishing villages, mountains and whale watching."
+  },
+  {
+    "source": "Vestfold",
+    "description": "Kystfylke vest for Oslofjorden med blant annet Tønsberg, Sandefjord og Larvik.",
+    "name": "Vestfold",
+    "en": "Coastal county west of the Oslofjord with Tønsberg, Sandefjord and Larvik."
+  },
+  {
+    "source": "Vestland",
+    "description": "Vestlandsfylke med Bergen, Sognefjorden, Hardangerfjorden og store fjellområder.",
+    "name": "Vestland",
+    "en": "Western Norwegian county with Bergen, Sognefjord, Hardangerfjord and large mountain areas."
+  },
+  {
+    "source": "Vøringsfossen",
+    "description": "Stor foss i Måbødalen i Eidfjord, blant Norges mest kjente fossefall.",
+    "name": "Vøringsfossen",
+    "en": "Large waterfall in Måbødalen, Eidfjord, among Norway's best-known waterfalls."
+  },
+  {
+    "source": "Østfold",
+    "description": "Fylke øst for Oslofjorden mot svenskegrensen, med Fredrikstad, Sarpsborg og Moss.",
+    "name": "Østfold",
+    "en": "County east of the Oslofjord towards Sweden, with Fredrikstad, Sarpsborg and Moss."
+  }
+]

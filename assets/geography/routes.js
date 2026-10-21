@@ -6,15 +6,15 @@ window.GEO_QUIZ_ROUTES={
   ],
   "capitals": [
     "geografi/hovedstadsquiz.html",
-    "Hovedstadsquiz"
+    "Hovedsteder"
   ],
   "flags": [
     "geografi/flaggquiz.html",
-    "Flaggquiz"
+    "Flagg"
   ],
   "flagcapital": [
     "geografi/flagg-og-hovedstad.html",
-    "Kombiner flagg og hovedstad"
+    "Flagg+Hovedstad"
   ],
   "places": [
     "geografi/stedsquiz.html",

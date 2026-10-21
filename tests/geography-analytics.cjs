@@ -116,9 +116,7 @@ const server = http.createServer((req, res) => {
   await page.goto(base + 'geografi.html#verden-quiz');
   assert.equal(await page.locator('.geoquiz-mode-row').count(), 14);
   assert.equal(await page.locator('.quiz-mode-content').count(), 0);
-  await page.locator('.geoquiz-mode-row', {
-    hasText: 'Flaggquiz'
-  }).click();
+  await page.locator('.geoquiz-mode-row[onclick*="flaggquiz.html"]').click();
   await page.waitForURL('**/geografi/flaggquiz.html');
   await page.goBack();
   assert.equal(await page.locator('#verden-quiz').evaluate(e => e.classList.contains('active')), true);

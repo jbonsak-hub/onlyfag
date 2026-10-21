@@ -404,3 +404,15 @@ body[data-quiz].quiz-mapwiz-playing .geo-world-content .geo-map-image{position:a
  body[data-quiz].quiz-mapwiz-playing .geo-world-content{width:200dvh}
  body[data-quiz].quiz-mapwiz-playing .geo-mobile-pan-tip{display:block;position:absolute;left:10px;top:57px;z-index:20;pointer-events:none;font:600 10px/1.4 'Segoe UI',sans-serif;color:var(--q-ink);background:var(--q-paper);padding:4px 6px;border:1px solid var(--q-line);border-radius:4px}
 }
+
+/* Size the image itself to its intrinsic ratio, without a letterboxed white canvas. */
+body[data-quiz] #verden-quiz :is(.world-prompt,.world-option) img.quiz-flag-img{width:auto!important;height:auto!important;aspect-ratio:auto!important;max-width:min(220px,100%)!important;max-height:150px!important;padding:0!important;background:transparent!important;border:0!important;border-radius:2px!important;outline:0!important;box-shadow:none!important;filter:drop-shadow(0 0 .6px #48675880) drop-shadow(0 3px 5px #173b3330)}
+body[data-quiz] #verden-quiz .world-option img.quiz-flag-img{max-height:80px!important}
+@media(max-width:700px){body[data-quiz] #verden-quiz .world-prompt img.quiz-flag-img{max-height:100px!important}body[data-quiz] #verden-quiz .world-option img.quiz-flag-img{max-height:62px!important}}
+
+html[lang=en] body[data-quiz] #quiz-jeopardy #jeopardy-board .jeopardy-value:is(.done,.used)::after{content:'✓ Used'}
+html[lang=en] body[data-quiz=jeopardy] #jeopardy-answer::before{content:'Answer'}
+html[lang=en] body[data-quiz=jeopardy] #score-actions:not(:empty)::before{content:'Points'}
+html[lang=en] body[data-quiz=jeopardy] #jeopardy-setup .jeopardy-setup-grid>div:first-child::before{content:'Game setup'}
+html[lang=en] body[data-quiz=jeopardy] #jeopardy-setup .jeopardy-option.pensum span::after{content:'Curriculum'!important}
+html[lang=en] body[data-quiz=jeopardy] .jeopardy-card:not(.open)::before{content:'Choose a cell on the board'}
