@@ -4,6 +4,7 @@ const fs = require('fs'),
   assert = require('assert/strict');
 const pw = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = path.resolve(__dirname, '..');
+require('node:child_process').execFileSync(process.execPath, [path.join(root, 'scripts/build-statle-assets.cjs'), '--check']);
 const server = http.createServer((req, res) => {
   const pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
   const file = path.join(root, pathname.endsWith('/') ? pathname + 'index.html' : pathname);
