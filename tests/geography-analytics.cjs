@@ -76,6 +76,9 @@ const server = http.createServer((req, res) => {
         timeout: 5000
       });
       info.mapActive = mode;
+    } else if (mode === 'statle') {
+      await page.locator('#start:enabled').waitFor();
+      assert.equal(await page.locator('path.state').count(), 50);
     } else assert.deepEqual(info.active, ['quiz-' + mode]);
     assert.equal(info.beacons, 1);
     if (process.env.CF_BEACON_SOURCE) {
@@ -253,9 +256,10 @@ const server = http.createServer((req, res) => {
   await page.locator('.worldle-guess-btn').click();
   assert.match(await page.locator('#worldle-feedback').innerText(), /riktig/i);
   await page.goto(base + 'geografi/statle.html');
-  await page.locator('#statle-answer').fill('not-a-state');
-  await page.locator('#statle-answer').press('Enter');
-  assert.ok((await page.locator('#statle-feedback').innerText()).length > 0);
+  await page.locator('#start:enabled').click();
+  const statleTarget = await page.locator('#targetName').innerText();
+  await page.locator(`path.state[data-state="${statleTarget}"]`).dispatchEvent('click');
+  assert.equal(await page.locator('#completed').innerText(), '1');
   await page.goto(base + 'geografi/geowiz.html');
   await page.locator('#geo-start-button').click();
   await page.locator('#geo-map-stage').click({

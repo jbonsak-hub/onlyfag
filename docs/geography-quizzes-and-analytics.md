@@ -92,3 +92,11 @@ Kjør node tests/analytics-canonical-paths.cjs med PLAYWRIGHT_MODULE, BROWSER_EX
 29 adressevarianter er verifisert med den originale beacon-koden: ett pageview per besøk på riktig kanonisk sidesti, ingen JavaScript-feil, og separat kontroll av gammel /geografi#worldle-lenke. Testen for gjentatt innlasting av analytics bruker nå riktig relativsti fra quizmappen og venter på at skriptet faktisk er lastet.
 
 Publisert kode ble kontrollert med alle gamle HTML-, hash- og query-lenker, spillhandlinger, toppresultater, navigasjon og mobilbredde 390 px. En gjennomkjøring fikk to midlertidige HTTP 502 for scoreboards.js og highscores.js. Begge svarte HTTP 200 ved målrettet gjentest; toppresultater og riktig flaggsvar/poeng fungerte da uten side- eller ressursfeil. GeoGuessr er fortsatt avhengig av ekstern innramming; selve det eksterne spillet er ikke bekreftet. Den lokale regresjonsserveren støtter nå mappeindekser som /jobb/, slik produksjonsverten gjør.
+
+## Statle med klikkbare delstater
+
+Statle på /geografi/statle.html bruker nå et kart med 50 klikkbare delstater og navnet på målstaten i høyrepanelet. Fargen følger svartid og antall feil. Feilklikk viser den klikkede statens navn i omtrent ett sekund; etter to feil pulserer en ring rundt målstaten i omtrent 1,45 sekunder. Pause, omstart, hopping over, eksempelrunde, tastatur og ekstra klikkfelt for små delstater er tilgjengelig.
+
+Kartet fyller vindushøyden på desktop. Alaska og Hawaii er løftet opp, og fastlandet er forstørret. På mobil ligger panelet under kartet. Kartgrunnlaget er det samme Census-grunnlaget som tidligere. Spillsvar holdes i minnet, eksisterende lokal lagring røres ikke, og siden bruker samme analytics-loader/token og sidesti som før. Andre quiz- og fagmoduler er uendret.
+
+prototypes/statle.html deler kartkode og stil med den publiserte siden, men laster ingen analytics. tests/statle-prototype.cjs kontrollerer alle 50 delstatene gjennom en komplett runde, farger, hover, feilnavn, hint, pause, omstart, mobil og full vindushøyde. Sett STATLE_PREVIEW_URL til den lokale siden og bruk PLAYWRIGHT_MODULE/BROWSER_EXECUTABLE ved behov. Den vanlige geography-analytics-testen dekker også den nye Statle-siden og de gamle adressene.
