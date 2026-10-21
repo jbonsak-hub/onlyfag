@@ -530,5 +530,10 @@
   "Bruk et kallenavn på maks 24 tegn uten e-post eller lenker.": "Use a nickname of up to 24 characters without email addresses or links.",
   "Kunne ikke lagre på nett. Prøv igjen.": "Could not save online. Please try again.",
   "Nettlisten er utilgjengelig akkurat nå. Prøv igjen senere.": "The leaderboard is currently unavailable. Please try again later.",
-  "Resultatet er kontrollert på nett.": "This score was verified online."
+  "Resultatet er kontrollert på nett.": "This score was verified online.",
+  "Bruk bare kallenavn, ikke fullt navn.": "Use a nickname, not your full name.",
+  "Resultatet ditt er på topp 10!": "Your score is in the top 10!",
+  "Resultatet ditt er på topp 5!": "Your score is in the top 5!",
+  "Felles liste for norsk og engelsk.": "Shared leaderboard for Norwegian and English.",
+  "Egen liste for hvert spillvalg.": "Separate rankings for each game setting."
 }

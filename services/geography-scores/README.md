@@ -4,10 +4,12 @@ Cloudflare Worker `onlyfag-geography-scores` bruker den separate D1-databasen me
 
 ## Spill og rangering
 
-- MapWiz: topp 10 for fullførte runder med ti spørsmål, egen liste per kategorivalg og språk. Serveren fordeler oppgavene og tillater maks to fra samme kategori når mer enn fem kategorier er valgt. Den beregner avstand, tidsbonus og samlet tid, med eksisterende Norge-/verdensformler.
-- Flagg, Hovedsteder og Flagg+Hovedstad: topp 5 for hele verden, egen liste per retning og språk. Runde avsluttes ved første feil eller når alle oppgavene er løst.
-- Kjente steder: topp 5 for «på rad», egen liste per retning og språk. Varianten med 20 spørsmål forblir lokal uten ny konkurranseregel.
-- Finn land: topp 5 per geografisk område og språk. Serveren kontrollerer land, gjentakelser, hint og tidsbonus.
+- MapWiz: topp 10 for fullførte runder med ti spørsmål, egen liste per kategorivalg. Serveren fordeler oppgavene og tillater maks to fra samme kategori når mer enn fem kategorier er valgt. Den beregner avstand, tidsbonus og samlet tid, med eksisterende Norge-/verdensformler.
+- Flagg, Hovedsteder og Flagg+Hovedstad: topp 5 for hele verden, egen liste per retning. Runde avsluttes ved første feil eller når alle oppgavene er løst.
+- Kjente steder: topp 5 for «på rad», egen liste per retning. Varianten med 20 spørsmål forblir lokal uten ny konkurranseregel.
+- Finn land: topp 5 per geografisk område. Serveren kontrollerer land, gjentakelser, hint og tidsbonus.
+
+Norsk og engelsk deler resultatliste. Språket styrer spørsmål og knapper. Når et fullført resultat kvalifiserer til topp 10/5, åpnes kallenavnvinduet automatisk. Brukeren velger fortsatt selv om resultatet skal publiseres.
 
 Tid er servermålt og inkluderer nettverksforsinkelse. Ved like poeng rangeres kortere tid foran. Gamle lokale resultater lastes ikke opp; de kan fortsatt åpnes med «Resultater i denne nettleseren». Statle, Worldle, Tradle og de andre spillene uten slike resultatlister får ingen nye rangeringer i denne endringen.
 
@@ -32,3 +34,5 @@ Ingen spilldata, kallenavn eller token sendes til Web Analytics. API-et har inge
 Wrangler 4.151.3 ble brukt ved oppsett. `RATE_SECRET` opprettes som en Worker-secret, aldri som en variabel i nettleseren. API-adressen i `assets/geography/score-service.js` er offentlig. Hvis API-et svikter, vises beskjed og runden fortsetter lokalt uten å sende inn en uverifisert score. Ved lagringsfeil på sluttskjermen kan brukeren prøve igjen innen sesjonen utløper.
 
 Databasesletting/moderering utføres av kontoeieren i D1, med betingelser for den aktuelle resultat-ID-en. Ingen offentlig slette- eller administrasjons-API er tilgjengelig.
+
+Ved oppgradering fra språkdelte lister kjøres `migrations/0001-shared-language-rankings.sql` mot den separate geografi-databasen etter Worker-deploy. Migreringen beholder alle poeng, kallenavn, tider og aktive runder; bare listeinndelingen endres. Den kan kjøres flere ganger.
