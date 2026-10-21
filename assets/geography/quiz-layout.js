@@ -8,6 +8,7 @@
   const back = header.querySelector('.quiz-page-back');
   const cssUrl = document.querySelector('link[data-quiz-layout]').href;
   header.prepend(menu);
+  header.addEventListener('click', event => event.stopPropagation());
   back.textContent = '← Quizoversikt';
   const footer = document.createElement('div'); footer.className = 'quiz-layout-footer'; footer.append(back);
   const rail = document.createElement('aside'); rail.className = 'quiz-control-rail';
@@ -73,6 +74,7 @@
     const resize = () => frame.contentWindow.dispatchEvent(new frame.contentWindow.Event('resize'));
     style.addEventListener('load', resize); doc.head.append(style);
     if (window.ResizeObserver) new ResizeObserver(resize).observe(frame);
+    window.OnlyfagPanelResize({document:doc});
   }
   if (mapModes.includes(mode)) {
     document.body.classList.add('quiz-frame-host');
@@ -81,6 +83,7 @@
     if (frame.contentDocument?.readyState === 'complete') frameLayout(frame);
     return;
   }
+  const panelResize = window.OnlyfagPanelResize({active:() => !document.body.classList.contains('quiz-mapwiz-playing')});
   function update() {
     document.querySelectorAll('.jeopardy-value.done,.jeopardy-value.used').forEach(cell => {
       if (!cell.hasAttribute('aria-disabled')) {cell.setAttribute('aria-disabled','true');cell.setAttribute('aria-label',cell.textContent.trim()+' poeng, allerede valgt');}
@@ -96,6 +99,16 @@
         game.append(panel); panel.append(status);
       }
     });
+    const stage = mode === 'geoguessr' && document.querySelector('.geo-map-stage');
+    document.body.classList.toggle('quiz-mapwiz-playing', !!stage);
+    if (stage) {
+      document.body.classList.add('quiz-integrated-nav');
+      if (header.parentElement !== stage) stage.prepend(header);
+      if (footer.parentElement !== header) header.append(footer);
+      rail.hidden = true;
+      panelResize.refresh();
+      return;
+    }
     let target = document.querySelector('.worldle-side,.geo-hud,.country-map-side,.country-map-bottom-bar,.quiz-status-panel');
     if (mode === 'jeopardy') target = document.querySelector('#jeopardy-shell.playing .jeopardy-side');
     document.body.classList.toggle('quiz-integrated-nav', !!target);
@@ -107,6 +120,15 @@
       }
       if (footer.parentElement !== target) target.append(footer);
       rail.hidden = true;
+      if (mode === 'countries') {
+        const found = document.querySelector('.country-found-section');
+        if (found && found.parentElement !== target) target.insertBefore(found, footer);
+        const wrap = document.querySelector('.country-map-wrap');
+        if (wrap && !wrap.querySelector('.country-zoom-tip')) {
+          const tip = document.createElement('span'); tip.className = 'country-zoom-tip';
+          tip.textContent = 'Scroll for å zoome · dra for å flytte'; wrap.append(tip);
+        }
+      }
       if (mode === 'geoguessr') {
         collectHelp(target, '.geo-hint');
         const help = target.querySelector(':scope > .quiz-help');
@@ -121,6 +143,7 @@
       if (header.parentElement !== rail) rail.prepend(header);
       if (footer.parentElement !== rail) rail.append(footer);
     }
+    panelResize.refresh();
   }
   const content = document.querySelector('main.content');
   new MutationObserver(update).observe(content, {childList:true,subtree:true});

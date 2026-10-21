@@ -353,3 +353,54 @@ body[data-quiz] .quiz-drawer-close{position:absolute;top:10px;right:10px;border:
 .quiz-drawer-shade{display:none;position:fixed;inset:0;z-index:10980;border:0;background:#244c4020;cursor:default}body[data-quiz].sidebar-open .quiz-drawer-shade{display:block}
 
 body[data-quiz].sidebar-open .sidebar{z-index:11010!important}
+
+/* MapWiz keeps the whole map visible, with compact controls above it. */
+body[data-quiz].quiz-mapwiz-playing .geo-guessr-shell{padding:0!important;overflow:hidden!important}
+body[data-quiz].quiz-mapwiz-playing .geo-map-stage{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;min-height:0!important;max-height:none!important;overflow:hidden!important}
+body[data-quiz].quiz-mapwiz-playing .geo-map-stage .geo-hud{position:absolute!important;left:50%!important;right:auto!important;top:auto!important;bottom:10px!important;transform:translateX(-50%)!important;width:min(420px,calc(100vw - 20px))!important;min-width:0!important;height:auto!important;min-height:0!important;max-height:calc(100dvh - 66px)!important;overflow:auto!important;padding:10px 12px!important;gap:5px!important;background:var(--q-paper)!important;border:1px solid var(--q-line)!important;border-radius:10px!important;box-shadow:0 3px 16px #173b3330!important}
+body[data-quiz].quiz-mapwiz-playing .geo-hud .geo-hud-top{display:flex;flex-wrap:nowrap!important;gap:5px!important}
+body[data-quiz].quiz-mapwiz-playing .geo-hud .geo-hud-pill{font-size:10px!important;white-space:nowrap;padding:4px 5px!important}
+body[data-quiz].quiz-mapwiz-playing .geo-hud .geo-target-label{font-size:21px!important;margin:0!important}
+body[data-quiz].quiz-mapwiz-playing .geo-hud :is(.geo-hint,.geo-feedback){font-size:12px!important;color:var(--q-ink)!important;line-height:1.35;margin:0!important}
+body[data-quiz].quiz-mapwiz-playing .geo-hud .geo-next-button{margin-top:5px}
+body[data-quiz].quiz-mapwiz-playing .geo-map-stage>.quiz-page-header{position:absolute!important;left:10px;top:10px;width:auto!important;margin:0;gap:7px;z-index:30;background:var(--q-paper);padding:5px;border:1px solid var(--q-line);border-radius:7px;box-shadow:0 2px 8px #173b3320}
+body[data-quiz].quiz-mapwiz-playing .quiz-page-header .quiz-layout-footer{margin:0;padding:0}
+body[data-quiz].quiz-mapwiz-playing .quiz-page-back{font-size:12px!important;padding:6px 8px!important}
+body[data-quiz].quiz-mapwiz-playing .geo-map-exit{position:absolute!important;top:15px!important;right:10px!important;left:auto!important;bottom:auto!important;z-index:30;border:1px solid var(--q-line)!important;border-radius:5px}
+body[data-quiz].quiz-mapwiz-playing .geo-hud .geo-summary{max-height:45dvh;overflow:auto}
+@media(max-width:700px){
+ body[data-quiz].quiz-mapwiz-playing .geo-map-stage>.quiz-page-header{left:5px;top:5px;gap:4px;padding:3px}
+ body[data-quiz].quiz-mapwiz-playing .geo-map-exit{top:9px!important;right:5px!important;font-size:11px!important;padding:6px!important}
+ body[data-quiz].quiz-mapwiz-playing .geo-map-stage .geo-hud{bottom:max(7px,env(safe-area-inset-bottom))!important;padding:8px 10px!important;max-height:calc(100dvh - 64px)!important}
+}
+/* Found countries share the left panel instead of taking height from the map. */
+body[data-quiz=countries] .country-found-section{display:flex;flex-direction:column;flex:1 1 auto;min-height:70px!important;max-height:none!important;padding:8px 0 0!important;border-top:1px solid var(--q-line);overflow:hidden}
+body[data-quiz=countries] .country-found-section h4{font-size:12px;color:var(--q-ink);flex:none}
+body[data-quiz=countries] .country-found-list-map{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:min-content;align-content:start;gap:3px!important;min-height:0;overflow:auto;scrollbar-width:thin;padding-right:3px}
+body[data-quiz=countries] .country-found-list-map .world-chip{font-size:11px!important;line-height:1.25;padding:4px 6px!important;border-radius:4px!important;white-space:normal;overflow-wrap:anywhere;text-align:left;color:var(--q-ink)!important;background:var(--q-soft)!important}
+body[data-quiz=countries] .country-map-primary{min-height:0!important}
+body[data-quiz=countries] :is(.country-map-side,.country-map-bottom-bar){min-height:0!important;max-height:100dvh;overflow:auto}
+body[data-quiz=countries] .country-map-feedback{color:var(--q-green)!important;font-size:12px!important}
+body[data-quiz=countries] .country-map-wrap{border:0!important}
+.country-zoom-tip{position:absolute;left:10px;bottom:10px;z-index:3;pointer-events:none;font:600 11px/1.4 'Segoe UI',sans-serif;color:var(--q-ink);background:var(--q-paper);padding:5px 8px;border-radius:5px;border:1px solid var(--q-line)}
+@media(min-width:701px){
+ body[data-quiz] #quiz-jeopardy .jeopardy-play-area{grid-template-columns:var(--q-panel) minmax(0,1fr)!important}
+ body[data-quiz=countries] .country-map-game .country-map-wrap{height:100dvh!important;max-height:none!important}
+}
+@media(max-width:700px){
+ body[data-quiz=countries] :is(.country-map-side,.country-map-bottom-bar){max-height:none;overflow:visible}
+ body[data-quiz=countries] .country-found-section{flex:none;min-height:0!important;max-height:210px!important}
+ body[data-quiz=countries] .country-found-list-map{max-height:170px}
+ .country-zoom-tip{bottom:7px;left:7px;font-size:10px}
+}
+
+/* Keep the world projection readable on portrait phones instead of stretching it. */
+body[data-quiz].quiz-mapwiz-playing .geo-world-scroll{position:absolute;inset:0;overflow:hidden}
+body[data-quiz].quiz-mapwiz-playing .geo-world-content{position:relative;width:100%;height:100%}
+body[data-quiz].quiz-mapwiz-playing .geo-world-content .geo-map-image{position:absolute;inset:0;width:100%;height:100%;max-width:none;user-select:none;-webkit-user-drag:none}
+.geo-mobile-pan-tip{display:none}
+@media(max-width:700px) and (orientation:portrait){
+ body[data-quiz].quiz-mapwiz-playing .geo-world-scroll{overflow-x:auto;overflow-y:hidden;touch-action:pan-x;scrollbar-width:thin}
+ body[data-quiz].quiz-mapwiz-playing .geo-world-content{width:200dvh}
+ body[data-quiz].quiz-mapwiz-playing .geo-mobile-pan-tip{display:block;position:absolute;left:10px;top:57px;z-index:20;pointer-events:none;font:600 10px/1.4 'Segoe UI',sans-serif;color:var(--q-ink);background:var(--q-paper);padding:4px 6px;border:1px solid var(--q-line);border-radius:4px}
+}

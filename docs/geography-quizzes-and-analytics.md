@@ -134,10 +134,23 @@ Layouttesten kontrollerer også minst 20 ekte Globle-gjetninger, én linje for a
 
 ### Venstrepaneler, romslige spørsmål og resultatvisning
 
-Alle lokale spill har nå kontrollpanelet til venstre på PC, med integrert Meny-knapp. Geografimenyen åpnes over dette panelet og kan lukkes med Lukk, Escape eller klikk utenfor. På mobil ligger panelet over spørsmålene eller under kartet. GeoGuessrs to navigasjonsknapper er samlet til venstre; det eksterne spillet fyller fortsatt vinduet. Statle har tittelen «Statle» uten OnlyFag-logo.
+Lokale spill bruker kontrollpanel til venstre på PC, med integrert Meny-knapp; MapWiz har flytende kontroller over hele kartet under spill. Geografimenyen åpnes over dette panelet og kan lukkes med Lukk, Escape eller klikk utenfor. På mobil ligger panelet over spørsmålene eller under kartet. GeoGuessrs to navigasjonsknapper er samlet til venstre; det eksterne spillet fyller fortsatt vinduet. Statle har tittelen «Statle» uten OnlyFag-logo.
 
 Flaggquiz, hovedsteder, flagg/hovedstad og kjente steder bruker høyere svarbokser og romslige spørsmålskort. Resultatboksen og toppresultater flyttes til spillpanelet etter et feil svar. Tilbakemelding, score, toppresultater og sekundærtekst i lys modus har mørkere farger. Jeopardy-ruter som er spilt, får skravering, tydelig ramme, gjennomstreking og «✓ Valgt», samt tilgjengelig valgt-status.
 
 Globle avviser tomme svar og mellomrom både fra Gjett-knappen og Enter. Bare startknappen legger inn det første tilfeldige landet. Endringen ligger i den delte kartfilens Globle-funksjon. Byggeskriptet legger en innholdshash som v-parameter på de fire quizenes maplab-iframe, slik at oppdatert spillkode hentes ved ny publisering.
 
 Testene dekker også venstrepaneler, integrert meny og lukking, høyere svaralternativer, resultatplassering og minst 4,5:1 kontrast for tilbakemeldinger/resultattekster i lys modus. Statle-testen gjennomfører en hel runde med alle 50 delstater og kontrollerer ny tittel og plassering; cache-testen bekrefter at eldre buffer ikke hindrer riktig lasting.
+
+
+### Større kart og justerbar panelbredde
+
+MapWiz bruker hele vinduet til kartet under en runde. Mål, poeng, tidsbonus og tilbakemelding ligger i en kompakt boks nederst i midten, med samme lyse/mørke palett som de andre spillene. Meny, tema, retur og Avslutt svever over kartet. På stående mobil kan verdenskartet dras sidelengs slik at projeksjonen beholder proporsjonene; klikk, markører og poeng følger den panorerte kartflaten. Norge-kartet beholder sin egen projeksjon.
+
+Landquiz har full karthøyde på PC. Landene som er funnet, vises i to tette kolonner i venstrepanelet; bare listen ruller når den blir lang. Kartet har en liten tekst om zoom og flytting. På mobil beholdes kart over kontrollene og en begrenset, rullbar landliste.
+
+Alle 13 lokale quizer har et breddehåndtak på venstrepanelet ved skjermbredder over 700 px. Dra håndtaket, bruk venstre/høyre piltast når det har fokus, eller dobbeltklikk/trykk Home for standardbredde. Valget lagres felles lokalt som onlyfag-geography-panel-width og begrenses til 220–480 px med plass igjen til kartet. Smale mobilvisninger beholder stablet oppsett uten håndtak. MapWiz har håndtak i oppsettet og fullskjermskart under spill; ekstern GeoGuessr har fortsatt bare sine to navigasjonsknapper.
+
+Den felles kilden assets/geography/panel-resize.js versjoneres av begge eksisterende byggeskript. Statle-bygget inkluderer nå også denne avhengigheten. Eksisterende spill- og resultatlagring er uendret.
+
+Kjør også node tests/geography-panel-resize.cjs. Den tester faktisk dragging, piltaster, reset og mobilvisning i alle 13 paneler, lagret bredde etter omlasting, tilpasning til smalere vindu, 90 land i rullbar liste, kartzoom, en hel MapWiz-runde, panorert mobilt kartklikk og Norge-kart. Øvrige layout-, Statle- og analytics-tester kjøres som over. Testene kjøres lokalt uten testtrafikk til Cloudflare; fysisk berøringsenhet, Safari og mottak i Cloudflare-dashboardet er ikke verifisert.

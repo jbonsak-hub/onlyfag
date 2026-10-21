@@ -188,9 +188,11 @@
       : `<img class="geo-map-image" alt="Fysisk verdenskart" src="${GEO_MAP_DATA}">`;
 
     app.innerHTML=`<div class="geo-map-stage ${s.norwayOnly?"norway-continuous-mode":""}" id="geo-map-stage" onclick="geoMapClick(event)">
+      ${s.norwayOnly?"":'<div class="geo-world-scroll"><div class="geo-world-content">'}
       ${bg}
       <svg class="geo-line-layer" id="geo-line-layer" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
       <div id="geo-markers"></div>
+      ${s.norwayOnly?"":'</div></div><span class="geo-mobile-pan-tip">Dra kartet sidelengs</span>'}
       <button class="geo-map-exit" onclick="event.stopPropagation();initGeoGuessr()">Avslutt</button>
       <div class="geo-hud" id="geo-hud" onclick="event.stopPropagation()">
         <div class="geo-hud-top"><span class="geo-hud-pill">${s.index+1} / ${s.rounds.length}</span><span class="geo-hud-pill">Poeng: ${s.total.toFixed(1)}</span><span class="geo-hud-spacer"></span><span class="geo-hud-pill" id="geo-time-pill">Mulig tidsbonus: 10.0</span></div>
@@ -199,6 +201,8 @@
         <div class="geo-feedback" id="geo-feedback" style="display:none"></div>
       </div>
     </div>`;
+    const scroll=app.querySelector(".geo-world-scroll");
+    if(scroll)requestAnimationFrame(()=>{if(scroll.isConnected)scroll.scrollLeft=(scroll.scrollWidth-scroll.clientWidth)/2;});
     geoGuessrClock=setInterval(updateGeoGuessrClock,100);
   };
 
@@ -214,7 +218,7 @@
       guessPct={x:p.x,y:p.y};
       targetPct=noTargetPct(stage,target);
     }else{
-      const r=stage.getBoundingClientRect();
+      const r=(stage.querySelector(".geo-world-content")||stage).getBoundingClientRect();
       const x=(ev.clientX-r.left)/r.width*100;
       const y=(ev.clientY-r.top)/r.height*100;
       if(x<0||x>100||y<0||y>100)return;

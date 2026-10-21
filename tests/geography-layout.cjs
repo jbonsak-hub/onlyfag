@@ -67,18 +67,22 @@ const server = http.createServer((req,res) => {
     }
     if(mode==='geoguessr'){
      const map=await checkBox(page,'.geo-map-stage',200),hud=await checkBox(page,'.geo-hud',200);
-     if(viewport.width<=700)assert.ok(hud.top>=map.bottom-1,'HUD below map');
-     await page.locator('.geo-hud .quiz-page-theme').click();
+     assert.ok(Math.abs(map.x)<1&&Math.abs(map.y)<1&&Math.abs(map.width-viewport.width)<1&&Math.abs(map.height-viewport.height)<1,'MapWiz map fills viewport');
+     assert.ok(hud.top>map.top&&hud.bottom<=viewport.height,'Floating HUD stays inside map');
+     await page.locator('.geo-map-stage .quiz-page-theme').click();
      assert.equal(await page.evaluate(()=>geoGuessrState.answered),false,'HUD actions must not submit map guesses');
      await page.locator('#geo-map-stage').click({position:{x:100,y:100}});
      assert.equal(await page.evaluate(()=>geoGuessrState.answered),true,'Mobile map click still scores');
-     if(viewport.width>700){const answered=await page.locator('.geo-hud').boundingBox();assert.ok(Math.abs(answered.x+answered.width-map.x)<1,'Answer panel must not cover the map');}
-     await page.locator('.geo-hud .quiz-page-theme').click();
+     const answered=await page.locator('.geo-hud').boundingBox();assert.ok(answered.y+answered.height<=viewport.height&&answered.height<viewport.height-60,'Answer box stays compact over map');
+     await page.locator('.geo-map-stage .quiz-page-theme').click();
     }
     if(mode==='detective2')await checkBox(page,'.worldle-target',200);
     if(mode==='countries'){
      const map=await checkBox(page,'.country-map-wrap',200),input=await checkBox(page,'.country-map-input',200);
      if(viewport.width<=700)assert.ok(map.bottom<=input.top,'Country input below map');
+     else assert.ok(Math.abs(map.height-viewport.height)<1,'Country map uses full height');
+     assert.equal(await page.locator('.country-map-primary .country-found-section').count(),1,'Found countries inside left game controls');
+     assert.equal(await page.locator('.country-map-wrap .country-zoom-tip').count(),1);
      assert.ok(await page.locator('.country-map-input').evaluate(e=>{const r=e.getBoundingClientRect();return document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)===e;}),'Country input must not be covered by map');
     }
     if(mode==='places')assert.notEqual(await page.locator('.world-place-question-desc').evaluate(e=>getComputedStyle(e).color),'rgb(255, 255, 255)','Place clues must be readable');
