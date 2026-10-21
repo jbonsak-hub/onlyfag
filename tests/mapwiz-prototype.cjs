@@ -19,7 +19,7 @@ const server = http.createServer((req,res) => {
  try{
   const context=await browser.newContext({viewport:{width:1366,height:643}}),errors=[],requests=[];
   context.on('page',p=>p.on('pageerror',e=>errors.push(e.message)));
-  await context.route('**/*',r=>{requests.push(r.request().url());return r.request().url().startsWith(base)||/^(data|blob):/.test(r.request().url())?r.continue():r.abort()});
+  await context.route('**/*',r=>{if(/score-service(?:-[a-f0-9]+)?\.js/.test(r.request().url()))return r.fulfill({contentType:'text/javascript',body:'window.GEO_SCORE_API="";'});requests.push(r.request().url());return r.request().url().startsWith(base)||/^(data|blob):/.test(r.request().url())?r.continue():r.abort()});
   const page=await context.newPage();page.on('dialog',d=>d.dismiss());
   const shot=async name=>{if(process.env.LAYOUT_SCREENSHOTS){fs.mkdirSync(process.env.LAYOUT_SCREENSHOTS,{recursive:true});await page.screenshot({path:path.join(process.env.LAYOUT_SCREENSHOTS,name+'.png')});}};
   async function reset(){await page.evaluate(()=>initGeoGuessr());await page.locator('#prototype-none').click();}

@@ -1,10 +1,10 @@
 # MapWiz topp 10
 
-Den nye MapWiz-versjonen har lokal topp 10 på startsiden og sluttskjermen. Bare fullførte runder med ti spørsmål kan lagres. Brukeren velger selv om resultatet skal lagres, og oppgir et kallenavn. Poeng sorteres synkende, deretter total rundetid stigende. Hvert kategorivalg har en egen liste, slik at for eksempel bare Norge ikke sammenlignes med alle kategorier.
+MapWiz har nå global topp 10 på startsiden og sluttskjermen, med en separat knapp for tidligere lokale resultater. Bare fullførte runder med ti spørsmål kan lagres. Brukeren velger selv om resultatet skal publiseres, og oppgir et kallenavn. Poeng sorteres synkende, deretter total rundetid stigende. Hvert kategorivalg og språk har en egen liste, slik at for eksempel bare Norge ikke sammenlignes med alle kategorier.
 
-Resultatene lagres i den eksisterende `geoHighscoresV1`-lagringen, under nye `mapwiz3|<sorterte kategorier>`-nøkler. Eldre lister bevares. De blandes ikke med den nye varianten fordi utvalg og spilleregler er endret. Det sendes ingen resultater eller kallenavn til analytics eller noen server.
+Lokale resultater ligger fortsatt i `geoHighscoresV1`, under `mapwiz3|<sorterte kategorier>`-nøkler. Eldre lister bevares og lastes aldri opp. Nettrunder kontrolleres av Cloudflare-API-et, og bare resultater brukeren velger å publisere får et offentlig kallenavn. Det sendes ingen resultater eller kallenavn til analytics.
 
-## En global liste
+## Den globale listen
 
 GitHub Pages leverer statiske filer. En felles liste krever en separat tjeneste som kan ta imot og lagre resultater. Cloudflare Web Analytics er ikke en slik tjeneste.
 
@@ -14,7 +14,7 @@ Det er ikke nødvendig med et nytt domene eller en betalt plan for å starte. Wo
 
 API-et kan gjenbrukes for resultatlister i de øvrige geografiquizene. Hvert spill må ha egne regler for serverkontroll og rangering. Mobil med svaralternativer bør være en egen spillvariant ved eventuell rangering mot skriveversjonen på datamaskin.
 
-Det som må konfigureres før en global liste kan aktiveres:
+Oppsettet omfatter:
 
 - Tilgang til riktig Cloudflare-konto med rettigheter til å opprette/publisere en Worker og en separat D1-database.
 - En D1-binding til Worker og API-adresse, med tillatte nettsted-opprinnelser.
@@ -23,6 +23,6 @@ Det som må konfigureres før en global liste kan aktiveres:
 - Innsendingsgrenser og eventuelt Turnstile mot spam; dette erstatter ikke kontroll av selve poengene.
 - Regler for kallenavn, sletting, moderering og lagringstid. Bruk kallenavn fremfor elevnavn. Kartklikk brukes bare til kontroll av spillresultatet, aldri i analytics. Unngå unødvendig langtidslagring av klikk og nettverksidentifikatorer.
 
-Denne endringen oppretter ingen skytjenester og endrer ikke prøvesystemet eller analytics.
+Worker og D1-databasen `onlyfag-geography-scores` er opprettet separat fra andre systemer. Prøvesystemet og analytics er uendret. Detaljer om spill, regler, lagring, drift og begrensninger finnes i [servicebeskrivelsen](../services/geography-scores/README.md).
 
 Offisiell dokumentasjon: [D1 og Worker-binding](https://developers.cloudflare.com/d1/get-started/), [Turnstile-validering på server](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/).

@@ -1,4 +1,4 @@
-/* Shared presentation only. Existing game engines, IDs and storage stay intact. */
+/* Shared presentation and navigation. Game engines, IDs and storage stay intact. */
 (() => {
   const mode = document.body.dataset.quiz;
   if (!mode) return;
@@ -6,6 +6,7 @@
   const menu = header.querySelector('.quiz-page-menu');
   const theme = header.querySelector('.quiz-page-theme');
   const back = header.querySelector('.quiz-page-back');
+  const overviewHref=back.getAttribute('href');
   const cssUrl = document.querySelector('link[data-quiz-layout]').href;
   header.prepend(menu);
   header.addEventListener('click', event => event.stopPropagation());
@@ -16,11 +17,11 @@
       const local=!!document.querySelector('.world-game');
       const label=local?'← '+setupLabels[mode]:'← Quizoversikt';
       if(back.textContent!==(window.QuizLanguage?.translate(label)||label))back.textContent=label;
-      back.href=local?'#quiz-options':'../geografi.html#verden-quiz';
+      const href=local?location.pathname+location.search:overviewHref;if(back.getAttribute('href')!==href)back.setAttribute('href',href);
     };
     back.addEventListener('click',event=>{
-      if(!document.querySelector('.world-game'))return;
-      event.preventDefault();showQuizMode(mode,null);window.scrollTo(0,0);
+      if(!document.querySelector('.world-game')||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+      event.preventDefault();initWorldTrainer(mode);window.scrollTo(0,0);document.querySelector('.world-setup .selected')?.focus();
     });
     new MutationObserver(syncBack).observe(document.querySelector('main.content'),{childList:true,subtree:true});
     syncBack();

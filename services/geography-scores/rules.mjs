@@ -13,7 +13,7 @@ export function config(input){
  else{c.variant=input.variant||variants[c.game][0];if(!variants[c.game].includes(c.variant))throw Error('invalid_config');c.region=input.region||'world';if(c.game!=='places'&&!Object.hasOwn(data.regions,c.region))throw Error('invalid_config');if(c.game==='places')c.region='world';}
  return c;
 }
-export const board=c=>'v1:'+JSON.stringify(config(c));
+export const board=c=>'v'+data.version+':'+JSON.stringify(config(c));
 export function pool(c){
  if(c.game==='places')return data.places;
  const names=new Set(data.regions[c.region]||data.regions.world);
