@@ -48,13 +48,14 @@
 
 
 
-<link rel="stylesheet" href="assets/geography/quiz-assets/geography-95a8aef4d90f.css">
-<script src="assets/geography/quiz-assets/routes-5452b5f99186.js"></script>
+<link rel="stylesheet" href="assets/geography/quiz-assets/geography-50db260e6ac8.css">
+<script src="assets/geography/quiz-assets/routes-55ac50c49d8e.js"></script>
 <script src="assets/geography/quiz-assets/navigation-816a963b45ba.js" defer></script>
 <script src="assets/analytics.js" defer></script>
-<link rel="stylesheet" href="assets/geography/quiz-assets/quiz-overview-267aec46f693.css">
+<link rel="stylesheet" href="assets/geography/quiz-assets/quiz-overview-6a02ba8fc5a2.css">
 <link rel="stylesheet" href="assets/geography/plate-boundaries/embed.css">
 <script src="assets/geography/plate-boundaries/embed.js" defer></script>
+<link rel="stylesheet" href="assets/geography/global-circulation/embed.css?v=c33ea2d6908e">
 </head>
 <body data-geography-page>
 <button class="geo-mobile-quiz-back" id="geoMobileQuizBack" type="button" onclick="exitQuizMode()" aria-label="Tilbake til quizoversikten" title="Tilbake til quizoversikten">← Oversikt</button>
@@ -719,209 +720,7 @@
 </div>
 </section>
 <section class="page-section" id="klima-sirkulasjon">
-<div class="gsc-head">
-<div><span class="topic-label">Atmosfæren</span><h2>Global sirkulasjon</h2></div>
-<p>Bygg modellen trinn for trinn – fra ulik soloppvarming til sirkulasjonsceller, trykkbelter, vegetasjon og globale vinder.</p>
-</div>
-<div class="gsc-stepper" role="tablist" aria-label="Trinn i modellen">
-<button class="gsc-step active" type="button" role="tab" aria-selected="true" data-gsc-step="0"><b>Trinn 1</b><span>Ulik oppvarming</span></button>
-<button class="gsc-step" type="button" role="tab" aria-selected="false" data-gsc-step="1"><b>Trinn 2</b><span>Én celle</span></button>
-<button class="gsc-step" type="button" role="tab" aria-selected="false" data-gsc-step="2"><b>Trinn 3</b><span>Tre celler</span></button>
-<button class="gsc-step" type="button" role="tab" aria-selected="false" data-gsc-step="3"><b>Trinn 4</b><span>Trykk og klima</span></button>
-<button class="gsc-step" type="button" role="tab" aria-selected="false" data-gsc-step="4"><b>Trinn 5</b><span>Vindbelter</span></button>
-</div>
-<div class="gsc-layout">
-<div class="gsc-stage">
-<button class="gsc-replay" id="gsc-replay" type="button" title="Spill animasjonen på nytt">↻ Spill trinnet på nytt</button>
-<svg id="gsc-svg" role="img" aria-labelledby="gsc-svg-title gsc-svg-desc" viewBox="0 0 1080 620" preserveAspectRatio="xMidYMid meet">
-<title id="gsc-svg-title">Trinnvis modell av den globale atmosfæriske sirkulasjonen</title>
-<desc id="gsc-svg-desc">Fem animerte trinn viser ulik soloppvarming, sirkulasjonsceller, trykk- og klimabelter og hvordan jordrotasjonen skaper globale vindbelter.</desc>
-<defs>
-<clipPath id="gsc-globe-clip-v2"><circle cx="445" cy="310" r="235"/></clipPath>
-<radialGradient id="gsc-ocean-v2" cx="34%" cy="28%" r="78%"><stop offset="0" stop-color="#e4f5f6"/><stop offset=".58" stop-color="#b8dde4"/><stop offset="1" stop-color="#83bccb"/></radialGradient>
-<linearGradient id="gsc-thermal-v2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#79add0"/><stop offset=".22" stop-color="#d7c873"/><stop offset=".41" stop-color="#ef9857"/><stop offset=".5" stop-color="#ed6045"/><stop offset=".59" stop-color="#ef9857"/><stop offset=".78" stop-color="#d7c873"/><stop offset="1" stop-color="#79add0"/></linearGradient>
-<linearGradient id="gsc-climate-v3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d8edf3"/><stop offset=".075" stop-color="#d8edf3"/><stop offset=".12" stop-color="#99c58f"/><stop offset=".285" stop-color="#83b87d"/><stop offset=".34" stop-color="#e8c974"/><stop offset=".43" stop-color="#deb95f"/><stop offset=".455" stop-color="#55b578"/><stop offset=".545" stop-color="#3da769"/><stop offset=".57" stop-color="#55b578"/><stop offset=".66" stop-color="#deb95f"/><stop offset=".715" stop-color="#e8c974"/><stop offset=".88" stop-color="#83b87d"/><stop offset=".925" stop-color="#d8edf3"/><stop offset="1" stop-color="#d8edf3"/></linearGradient>
-<linearGradient id="gsc-globe-shade-v3" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#143f4a" stop-opacity=".32"/><stop offset=".18" stop-color="#fff" stop-opacity=".06"/><stop offset=".62" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#123b47" stop-opacity=".38"/></linearGradient>
-<radialGradient id="gsc-sun-v2"><stop offset="0" stop-color="#fff1a0"/><stop offset=".7" stop-color="#ffd356"/><stop offset="1" stop-color="#f7ae2b"/></radialGradient>
-<marker id="gsc-arrow-warm-v2" markerWidth="5.5" markerHeight="5.5" refX="5" refY="2.75" orient="auto"><path d="M0,0 L5.5,2.75 L0,5.5 Z" fill="#e75b40"/></marker>
-<marker id="gsc-arrow-cool-v2" markerWidth="5.5" markerHeight="5.5" refX="5" refY="2.75" orient="auto"><path d="M0,0 L5.5,2.75 L0,5.5 Z" fill="#2f83b8"/></marker>
-<marker id="gsc-arrow-wind-v2" markerWidth="5.5" markerHeight="5.5" refX="5" refY="2.75" orient="auto"><path d="M0,0 L5.5,2.75 L0,5.5 Z" fill="#087f67"/></marker>
-<marker id="gsc-arrow-purple-v2" markerWidth="5.5" markerHeight="5.5" refX="5" refY="2.75" orient="auto"><path d="M0,0 L5.5,2.75 L0,5.5 Z" fill="#8268b8"/></marker>
-<marker id="gsc-arrow-rotation-v2" markerWidth="5.5" markerHeight="5.5" refX="5" refY="2.75" orient="auto"><path d="M0,0 L5.5,2.75 L0,5.5 Z" fill="#266eac"/></marker>
-<filter id="gsc-soft-shadow-v2" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#285d4b" flood-opacity=".18"/></filter>
-<filter id="gsc-sun-glow-v2" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="9"/></filter>
-<g id="gsc-earth-surface-v2"><circle class="gsc-globe-halo" cx="445" cy="310" r="241"/><circle class="gsc-earth" cx="445" cy="310" r="235" filter="url(#gsc-soft-shadow-v2)"/></g>
-<g id="gsc-earth-grid-v2" aria-hidden="true">
-<circle cx="445" cy="310" r="235" fill="none" stroke="#2d6d74" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
-<ellipse class="gsc-graticule" cx="445" cy="192.5" rx="203.5" ry="18"/><ellipse class="gsc-graticule" cx="445" cy="427.5" rx="203.5" ry="18"/>
-<ellipse class="gsc-graticule" cx="445" cy="106.5" rx="117.5" ry="10"/><ellipse class="gsc-graticule" cx="445" cy="513.5" rx="117.5" ry="10"/>
-<ellipse class="gsc-graticule gsc-equator" cx="445" cy="310" rx="235" ry="30"/>
-<path class="gsc-graticule" d="M445 75 C335 145 335 475 445 545 M445 75 C555 145 555 475 445 545"/>
-<text class="gsc-lat-label" x="216" y="304">0°</text><text class="gsc-lat-label" x="250" y="187">30° N</text><text class="gsc-lat-label" x="336" y="101">60° N</text><text class="gsc-lat-label" x="250" y="434">30° S</text><text class="gsc-lat-label" x="336" y="520">60° S</text>
-</g>
-</defs>
-
-<g class="gsc-scene active" data-gsc-scene="0">
-<use href="#gsc-earth-surface-v2"/>
-<circle cx="445" cy="310" r="233" fill="url(#gsc-thermal-v2)" opacity=".82"/>
-<g aria-hidden="true"><circle cx="61" cy="310" r="54" fill="#ffc84a" opacity=".25" filter="url(#gsc-sun-glow-v2)"/><circle cx="61" cy="310" r="37" fill="url(#gsc-sun-v2)" stroke="#f2ac2f" stroke-width="2"/><circle cx="61" cy="310" r="22" fill="#ffe986"/></g>
-<path class="gsc-beam" d="M112 78 H397 L293 126 H112 Z"/><path class="gsc-beam" d="M112 285 H211 L213 335 H112 Z"/>
-<g stroke="#efa42b" stroke-width="2.8" stroke-linecap="round" opacity=".9"><line x1="112" y1="78" x2="397" y2="78"/><line x1="112" y1="126" x2="293" y2="126"/><line x1="112" y1="285" x2="211" y2="285"/><line x1="112" y1="335" x2="213" y2="335"/></g>
-<path class="gsc-footprint-cool" d="M397 78 Q338 91 293 126"/><path class="gsc-footprint-hot" d="M211 285 Q207 310 213 335"/>
-<g fill="#f6ac2e">
-<circle class="gsc-solar-packet" cx="112" cy="102" r="5"><animate attributeName="cx" from="112" to="334" dur="2.1s" repeatCount="indefinite"/></circle>
-<circle class="gsc-solar-packet" cx="112" cy="310" r="5"><animate attributeName="cx" from="112" to="210" dur="1.45s" repeatCount="indefinite"/></circle>
-<circle class="gsc-solar-packet" cx="112" cy="102" r="3.5"><animate attributeName="cx" from="112" to="334" begin="-1.05s" dur="2.1s" repeatCount="indefinite"/></circle>
-<circle class="gsc-solar-packet" cx="112" cy="310" r="3.5"><animate attributeName="cx" from="112" to="210" begin="-.72s" dur="1.45s" repeatCount="indefinite"/></circle>
-</g>
-<use href="#gsc-earth-grid-v2"/>
-<g transform="translate(730 132)"><rect class="gsc-measure" x="0" y="0" width="282" height="82" rx="12"/><circle cx="23" cy="25" r="8" fill="#e0ae3b"/><text class="gsc-measure-title" x="42" y="29">Skrå innstråling</text><text class="gsc-measure-copy" x="18" y="52">Samme energi spres over et større</text><text class="gsc-measure-copy" x="18" y="69">område: mindre energi per m².</text></g>
-<path class="gsc-leader" d="M710 174 C640 168 568 126 388 102"/>
-<g transform="translate(730 330)"><rect class="gsc-measure" x="0" y="0" width="282" height="82" rx="12"/><circle cx="23" cy="25" r="8" fill="#ef6548"/><text class="gsc-measure-title" x="42" y="29">Rett innstråling</text><text class="gsc-measure-copy" x="18" y="52">Samme energi samles på et mindre</text><text class="gsc-measure-copy" x="18" y="69">område: mer energi per m².</text></g>
-<path class="gsc-leader" d="M710 371 C620 366 520 331 222 310"/>
-<text x="118" y="61" fill="#8a6a20" font-size="12" font-weight="900">LIKE BREDE SOLBUNTER</text>
-</g>
-
-<g class="gsc-scene" data-gsc-scene="1">
-<use href="#gsc-earth-surface-v2"/><use href="#gsc-earth-grid-v2"/>
-<g class="gsc-far-side" transform="translate(890 0) scale(-1 1)">
-<path class="gsc-flow" d="M680 310 C719 311 741 293 739 258 C734 158 631 48 474 35" stroke="#e75b40"/><path class="gsc-flow" d="M474 35 C456 34 445 44 445 57 C445 68 455 76 474 78 C594 91 653 181 680 310" stroke="#2f83b8"/>
-<path class="gsc-flow" d="M680 310 C719 309 741 327 739 362 C734 462 631 572 474 585" stroke="#e75b40"/><path class="gsc-flow" d="M474 585 C456 586 445 576 445 563 C445 552 455 544 474 542 C594 529 653 439 680 310" stroke="#2f83b8"/>
-</g>
-<path class="gsc-flow" d="M680 310 C719 311 741 293 739 258 C734 158 631 48 474 35" stroke="#e75b40" marker-end="url(#gsc-arrow-warm-v2)"/>
-<path class="gsc-flow" d="M474 35 C456 34 445 44 445 57 C445 68 455 76 474 78 C594 91 653 181 680 310" stroke="#2f83b8" marker-end="url(#gsc-arrow-cool-v2)"/>
-<path class="gsc-flow" d="M680 310 C719 309 741 327 739 362 C734 462 631 572 474 585" stroke="#e75b40" marker-end="url(#gsc-arrow-warm-v2)"/>
-<path class="gsc-flow" d="M474 585 C456 586 445 576 445 563 C445 552 455 544 474 542 C594 529 653 439 680 310" stroke="#2f83b8" marker-end="url(#gsc-arrow-cool-v2)"/>
-<g>
-<circle class="gsc-particle" r="5" fill="#f06b4b"><animateMotion path="M680 310 C719 311 741 293 739 258 C734 158 631 48 474 35" dur="3.2s" repeatCount="indefinite"/></circle>
-<circle class="gsc-particle" r="5" fill="#3c91c3"><animateMotion path="M474 35 C456 34 445 44 445 57 C445 68 455 76 474 78 C594 91 653 181 680 310" dur="3.2s" repeatCount="indefinite"/></circle>
-<circle class="gsc-particle" r="5" fill="#f06b4b"><animateMotion path="M680 310 C719 309 741 327 739 362 C734 462 631 572 474 585" begin="-.8s" dur="3.2s" repeatCount="indefinite"/></circle>
-<circle class="gsc-particle" r="5" fill="#3c91c3"><animateMotion path="M474 585 C456 586 445 576 445 563 C445 552 455 544 474 542 C594 529 653 439 680 310" begin="-.8s" dur="3.2s" repeatCount="indefinite"/></circle>
-</g>
-<g transform="translate(812 238)"><rect class="gsc-measure" width="216" height="137" rx="12"/><text class="gsc-measure-title" x="16" y="27">Én celle per halvkule</text><circle cx="22" cy="56" r="5" fill="#e75b40"/><text class="gsc-measure-copy" x="36" y="60">varm luft stiger ved 0°</text><circle cx="22" cy="84" r="5" fill="#e75b40"/><text class="gsc-measure-copy" x="36" y="88">luft strømmer mot polen</text><circle cx="22" cy="112" r="5" fill="#2f83b8"/><text class="gsc-measure-copy" x="36" y="116">kald luft går tilbake</text></g>
-<path class="gsc-leader" d="M795 304 H746"/>
-<text class="gsc-zone-label" x="611" y="296">luft stiger</text><text class="gsc-zone-label" x="464" y="61">luft synker</text><text class="gsc-zone-label" x="464" y="570">luft synker</text>
-</g>
-
-<g class="gsc-scene" data-gsc-scene="2">
-<use href="#gsc-earth-surface-v2"/><use href="#gsc-earth-grid-v2"/>
-<g class="gsc-far-side" transform="translate(890 0) scale(-1 1)">
-<path class="gsc-cell-loop hadley" d="M680 310 C717 310 730 289 724 258 C718 225 700 199 679 190 C666 184 655 186 649 192"/><path class="gsc-cell-loop hadley" d="M649 192 C664 228 676 270 680 310"/>
-<path class="gsc-cell-loop ferrel" d="M649 192 C625 158 598 124 563 106"/><path class="gsc-cell-loop ferrel" d="M563 106 C586 102 604 111 610 129 C617 150 635 179 649 192"/>
-<path class="gsc-cell-loop polar" d="M445 75 C487 77 527 88 563 106"/><path class="gsc-cell-loop polar" d="M563 106 C586 105 604 94 603 80 C602 60 535 34 474 34 C456 34 445 44 445 57 C445 68 445 72 445 75"/>
-<path class="gsc-cell-loop hadley" d="M680 310 C717 310 730 331 724 362 C718 395 700 421 679 430 C666 436 655 434 649 428"/><path class="gsc-cell-loop hadley" d="M649 428 C664 392 676 350 680 310"/>
-<path class="gsc-cell-loop ferrel" d="M649 428 C625 462 598 496 563 514"/><path class="gsc-cell-loop ferrel" d="M563 514 C586 518 604 509 610 491 C617 470 635 441 649 428"/>
-<path class="gsc-cell-loop polar" d="M445 545 C487 543 527 532 563 514"/><path class="gsc-cell-loop polar" d="M563 514 C586 515 604 526 603 540 C602 560 535 586 474 586 C456 586 445 576 445 563 C445 552 445 548 445 545"/>
-</g>
-<path class="gsc-cell-loop hadley" d="M680 310 C717 310 730 289 724 258 C718 225 700 199 679 190 C666 184 655 186 649 192" marker-end="url(#gsc-arrow-warm-v2)"/><path class="gsc-cell-loop hadley" d="M649 192 C664 228 676 270 680 310" marker-end="url(#gsc-arrow-warm-v2)"/>
-<path class="gsc-cell-loop ferrel" d="M649 192 C625 158 598 124 563 106" marker-end="url(#gsc-arrow-purple-v2)"/><path class="gsc-cell-loop ferrel" d="M563 106 C586 102 604 111 610 129 C617 150 635 179 649 192" marker-end="url(#gsc-arrow-purple-v2)"/>
-<path class="gsc-cell-loop polar" d="M445 75 C487 77 527 88 563 106" marker-end="url(#gsc-arrow-cool-v2)"/><path class="gsc-cell-loop polar" d="M563 106 C586 105 604 94 603 80 C602 60 535 34 474 34 C456 34 445 44 445 57 C445 68 445 72 445 75" marker-end="url(#gsc-arrow-cool-v2)"/>
-<path class="gsc-cell-loop hadley" d="M680 310 C717 310 730 331 724 362 C718 395 700 421 679 430 C666 436 655 434 649 428" marker-end="url(#gsc-arrow-warm-v2)"/><path class="gsc-cell-loop hadley" d="M649 428 C664 392 676 350 680 310" marker-end="url(#gsc-arrow-warm-v2)"/>
-<path class="gsc-cell-loop ferrel" d="M649 428 C625 462 598 496 563 514" marker-end="url(#gsc-arrow-purple-v2)"/><path class="gsc-cell-loop ferrel" d="M563 514 C586 518 604 509 610 491 C617 470 635 441 649 428" marker-end="url(#gsc-arrow-purple-v2)"/>
-<path class="gsc-cell-loop polar" d="M445 545 C487 543 527 532 563 514" marker-end="url(#gsc-arrow-cool-v2)"/><path class="gsc-cell-loop polar" d="M563 514 C586 515 604 526 603 540 C602 560 535 586 474 586 C456 586 445 576 445 563 C445 552 445 548 445 545" marker-end="url(#gsc-arrow-cool-v2)"/>
-<g><path class="gsc-leader" d="M773 88 H623"/><text class="gsc-cell-label" x="792" y="94">Polarcellen</text><path class="gsc-leader" d="M773 145 H684"/><text class="gsc-cell-label" x="792" y="151">Ferrelcellen</text><path class="gsc-leader" d="M773 242 H725"/><text class="gsc-cell-label" x="792" y="248">Hadleycellen</text><path class="gsc-leader" d="M773 378 H725"/><text class="gsc-cell-label" x="792" y="384">Hadleycellen</text><path class="gsc-leader" d="M773 475 H684"/><text class="gsc-cell-label" x="792" y="481">Ferrelcellen</text><path class="gsc-leader" d="M773 532 H623"/><text class="gsc-cell-label" x="792" y="538">Polarcellen</text></g>
-<g transform="translate(790 271)"><rect class="gsc-measure" width="236" height="72" rx="11"/><circle cx="19" cy="21" r="5" fill="#e95c43"/><text class="gsc-measure-copy" x="31" y="25">Hadley</text><circle cx="91" cy="21" r="5" fill="#8268b8"/><text class="gsc-measure-copy" x="103" y="25">Ferrel</text><circle cx="163" cy="21" r="5" fill="#2f83b8"/><text class="gsc-measure-copy" x="175" y="25">Polar</text><text class="gsc-measure-copy" x="15" y="50">Bevegelsen følger jordoverflaten</text></g>
-</g>
-
-<g style="display:none" aria-hidden="true">
-<use href="#gsc-earth-surface-v2"/>
-<g clip-path="url(#gsc-globe-clip-v2)"><rect x="210" y="75" width="470" height="32" fill="#d7eef5"/><rect x="210" y="107" width="470" height="85" fill="#9ec590"/><rect x="210" y="192" width="470" height="72" fill="#e8ca76"/><rect x="210" y="264" width="470" height="92" fill="#43aa70"/><rect x="210" y="356" width="470" height="72" fill="#e8ca76"/><rect x="210" y="428" width="470" height="85" fill="#9ec590"/><rect x="210" y="513" width="470" height="32" fill="#d7eef5"/></g>
-<use href="#gsc-earth-grid-v2"/>
-<text class="gsc-zone-label" x="393" y="314">tropisk regnskog</text><text class="gsc-zone-label" x="420" y="230">ørken</text><text class="gsc-zone-label" x="420" y="398">ørken</text><text class="gsc-zone-label" x="408" y="154">temperert</text><text class="gsc-zone-label" x="408" y="474">temperert</text>
-<g aria-label="Trykkbelter"><path class="gsc-leader" d="M445 75 H750"/><circle class="gsc-pressure-dot" cx="777" cy="75" r="17" fill="#db604a"/><text class="gsc-pressure-letter" x="777" y="76">H</text><text class="gsc-pressure-name" x="805" y="80">polarhøytrykk</text><path class="gsc-leader" d="M563 106 H750"/><circle class="gsc-pressure-dot" cx="777" cy="106" r="17" fill="#3282b6"/><text class="gsc-pressure-letter" x="777" y="107">L</text><text class="gsc-pressure-name" x="805" y="111">subpolart lavtrykk</text><path class="gsc-leader" d="M649 192 H750"/><circle class="gsc-pressure-dot" cx="777" cy="192" r="17" fill="#db604a"/><text class="gsc-pressure-letter" x="777" y="193">H</text><text class="gsc-pressure-name" x="805" y="197">subtropisk høytrykk</text><path class="gsc-leader" d="M680 310 H750"/><circle class="gsc-pressure-dot" cx="777" cy="310" r="17" fill="#3282b6"/><text class="gsc-pressure-letter" x="777" y="311">L</text><text class="gsc-pressure-name" x="805" y="315">ekvatorialt lavtrykk</text><path class="gsc-leader" d="M649 428 H750"/><circle class="gsc-pressure-dot" cx="777" cy="428" r="17" fill="#db604a"/><text class="gsc-pressure-letter" x="777" y="429">H</text><text class="gsc-pressure-name" x="805" y="433">subtropisk høytrykk</text><path class="gsc-leader" d="M563 514 H750"/><circle class="gsc-pressure-dot" cx="777" cy="514" r="17" fill="#3282b6"/><text class="gsc-pressure-letter" x="777" y="515">L</text><text class="gsc-pressure-name" x="805" y="519">subpolart lavtrykk</text><path class="gsc-leader" d="M445 545 H750"/><circle class="gsc-pressure-dot" cx="777" cy="545" r="17" fill="#db604a"/><text class="gsc-pressure-letter" x="777" y="546">H</text><text class="gsc-pressure-name" x="805" y="550">polarhøytrykk</text></g>
-<g><path class="gsc-rise" d="M701 338 C707 322 707 301 702 281" marker-end="url(#gsc-arrow-cool-v2)"/><path class="gsc-sink" d="M665 158 C672 177 672 197 665 216" marker-end="url(#gsc-arrow-warm-v2)"/><path class="gsc-sink" d="M665 462 C672 443 672 423 665 404" marker-end="url(#gsc-arrow-warm-v2)"/><path class="gsc-rise" d="M580 134 C586 118 586 101 580 84" marker-end="url(#gsc-arrow-cool-v2)"/><path class="gsc-rise" d="M580 486 C586 502 586 519 580 536" marker-end="url(#gsc-arrow-cool-v2)"/></g>
-<g fill="#eff8fb" stroke="#6699aa" stroke-width="1.2"><g transform="translate(652 278)"><circle cx="0" cy="5" r="10"/><circle cx="14" cy="0" r="14"/><circle cx="29" cy="6" r="10"/><rect x="-5" y="5" width="43" height="10" rx="5"/></g><g transform="translate(535 89) scale(.72)"><circle cx="0" cy="5" r="10"/><circle cx="14" cy="0" r="14"/><circle cx="29" cy="6" r="10"/><rect x="-5" y="5" width="43" height="10" rx="5"/></g><g transform="translate(535 515) scale(.72)"><circle cx="0" cy="5" r="10"/><circle cx="14" cy="0" r="14"/><circle cx="29" cy="6" r="10"/><rect x="-5" y="5" width="43" height="10" rx="5"/></g></g>
-<g class="gsc-rain"><line x1="658" y1="299" x2="653" y2="309"/><line x1="672" y1="299" x2="667" y2="309"/><line x1="687" y1="299" x2="682" y2="309"/><line x1="540" y1="106" x2="536" y2="114"/><line x1="550" y1="106" x2="546" y2="114"/><line x1="540" y1="532" x2="536" y2="540"/><line x1="550" y1="532" x2="546" y2="540"/></g>
-</g>
-
-<g class="gsc-scene phase-0" data-gsc-scene="3">
-<use href="#gsc-earth-surface-v2"/>
-<circle class="gsc-climate-band gsc-phase gsc-phase-2" cx="445" cy="310" r="233" fill="url(#gsc-climate-v3)"/>
-<g class="gsc-phase gsc-phase-0" aria-label="Stigende og synkende luft">
-<path class="gsc-air-ribbon" d="M676 340 C704 323 706 296 679 277" stroke="#3189b9"/><path class="gsc-air-core gsc-rise" d="M676 340 C704 323 706 296 679 277" stroke="#3189b9" marker-end="url(#gsc-arrow-cool-v2)"/>
-<path class="gsc-air-ribbon" d="M653 158 C676 176 677 202 651 222" stroke="#e36548"/><path class="gsc-air-core gsc-sink" d="M653 158 C676 176 677 202 651 222" stroke="#e36548" marker-end="url(#gsc-arrow-warm-v2)"/>
-<path class="gsc-air-ribbon" d="M653 462 C676 444 677 418 651 398" stroke="#e36548"/><path class="gsc-air-core gsc-sink" d="M653 462 C676 444 677 418 651 398" stroke="#e36548" marker-end="url(#gsc-arrow-warm-v2)"/>
-<path class="gsc-air-ribbon" d="M558 132 C578 118 579 99 560 84" stroke="#3189b9"/><path class="gsc-air-core gsc-rise" d="M558 132 C578 118 579 99 560 84" stroke="#3189b9" marker-end="url(#gsc-arrow-cool-v2)"/>
-<path class="gsc-air-ribbon" d="M558 488 C578 502 579 521 560 536" stroke="#3189b9"/><path class="gsc-air-core gsc-rise" d="M558 488 C578 502 579 521 560 536" stroke="#3189b9" marker-end="url(#gsc-arrow-cool-v2)"/>
-<circle class="gsc-air-pulse" r="5" fill="#46a0cc"><animateMotion path="M676 340 C704 323 706 296 679 277" dur="1.8s" repeatCount="indefinite"/></circle><circle class="gsc-air-pulse" r="5" fill="#ee7758"><animateMotion path="M653 158 C676 176 677 202 651 222" dur="1.8s" repeatCount="indefinite"/></circle><circle class="gsc-air-pulse" r="5" fill="#ee7758"><animateMotion path="M653 462 C676 444 677 418 651 398" begin="-.7s" dur="1.8s" repeatCount="indefinite"/></circle>
-</g>
-<g class="gsc-phase gsc-phase-1" aria-label="Trykkbelter">
-<path class="gsc-belt-line" d="M445 75 H710" stroke="#d95d47"/><path class="gsc-belt-line" d="M563 106 H710" stroke="#3282b6"/><path class="gsc-belt-line" d="M649 192 H710" stroke="#d95d47"/><path class="gsc-belt-line" d="M680 310 H710" stroke="#3282b6"/><path class="gsc-belt-line" d="M649 428 H710" stroke="#d95d47"/><path class="gsc-belt-line" d="M563 514 H710" stroke="#3282b6"/><path class="gsc-belt-line" d="M445 545 H710" stroke="#d95d47"/>
-<g class="gsc-belt-tag" transform="translate(718 58)"><rect width="66" height="34" rx="17"/><circle cx="18" cy="17" r="12" fill="#d95d47"/><text x="18" y="18" fill="#fff">H</text><text x="48" y="18" fill="#a44739">90°</text></g><g class="gsc-belt-tag" transform="translate(790 89)"><rect width="66" height="34" rx="17"/><circle cx="18" cy="17" r="12" fill="#3282b6"/><text x="18" y="18" fill="#fff">L</text><text x="48" y="18" fill="#276991">60°</text></g><g class="gsc-belt-tag" transform="translate(718 175)"><rect width="66" height="34" rx="17"/><circle cx="18" cy="17" r="12" fill="#d95d47"/><text x="18" y="18" fill="#fff">H</text><text x="48" y="18" fill="#a44739">30°</text></g><g class="gsc-belt-tag" transform="translate(790 293)"><rect width="66" height="34" rx="17"/><circle cx="18" cy="17" r="12" fill="#3282b6"/><text x="18" y="18" fill="#fff">L</text><text x="48" y="18" fill="#276991">0°</text></g><g class="gsc-belt-tag" transform="translate(718 411)"><rect width="66" height="34" rx="17"/><circle cx="18" cy="17" r="12" fill="#d95d47"/><text x="18" y="18" fill="#fff">H</text><text x="48" y="18" fill="#a44739">30°</text></g><g class="gsc-belt-tag" transform="translate(790 497)"><rect width="66" height="34" rx="17"/><circle cx="18" cy="17" r="12" fill="#3282b6"/><text x="18" y="18" fill="#fff">L</text><text x="48" y="18" fill="#276991">60°</text></g><g class="gsc-belt-tag" transform="translate(718 528)"><rect width="66" height="34" rx="17"/><circle cx="18" cy="17" r="12" fill="#d95d47"/><text x="18" y="18" fill="#fff">H</text><text x="48" y="18" fill="#a44739">90°</text></g>
-</g>
-<g class="gsc-phase gsc-phase-2" aria-label="Klima og nedbør">
-<g class="gsc-climate-symbol" transform="translate(385 280)"><g fill="#f3fafc" stroke="#6e9daa"><circle cx="0" cy="8" r="12"/><circle cx="17" cy="1" r="17"/><circle cx="36" cy="9" r="12"/><rect x="-6" y="8" width="50" height="12" rx="6"/></g><g class="gsc-rain" stroke="#3189b9"><line x1="2" y1="28" x2="-3" y2="39"/><line x1="17" y1="28" x2="12" y2="39"/><line x1="32" y1="28" x2="27" y2="39"/></g></g>
-<g class="gsc-climate-symbol" transform="translate(411 191)" fill="#e3aa3d"><circle cx="0" cy="0" r="11"/><g stroke="#e3aa3d" stroke-width="3"><line x1="0" y1="-19" x2="0" y2="-28"/><line x1="0" y1="19" x2="0" y2="28"/><line x1="-19" y1="0" x2="-28" y2="0"/><line x1="19" y1="0" x2="28" y2="0"/></g></g><g class="gsc-climate-symbol" transform="translate(411 429)" fill="#e3aa3d"><circle cx="0" cy="0" r="11"/><g stroke="#e3aa3d" stroke-width="3"><line x1="0" y1="-19" x2="0" y2="-28"/><line x1="0" y1="19" x2="0" y2="28"/><line x1="-19" y1="0" x2="-28" y2="0"/><line x1="19" y1="0" x2="28" y2="0"/></g></g>
-<text class="gsc-zone-label" x="445" y="337" text-anchor="middle">fuktig tropisk klima</text><text class="gsc-zone-label" x="445" y="238" text-anchor="middle">tørt subtropisk klima</text><text class="gsc-zone-label" x="445" y="390" text-anchor="middle">tørt subtropisk klima</text><text class="gsc-zone-label" x="445" y="148" text-anchor="middle">temperert</text><text class="gsc-zone-label" x="445" y="482" text-anchor="middle">temperert</text>
-<g transform="translate(864 213)"><rect class="gsc-measure" width="180" height="194" rx="13"/><text class="gsc-measure-title" x="16" y="27">Fra luft til klima</text><path d="M22 52 V76" stroke="#3189b9" stroke-width="4" marker-end="url(#gsc-arrow-cool-v2)"/><text class="gsc-measure-copy" x="40" y="60">stiger og kjøles</text><text class="gsc-measure-copy" x="40" y="77">→ skyer og regn</text><path d="M22 105 V129" stroke="#e36548" stroke-width="4" marker-end="url(#gsc-arrow-warm-v2)"/><text class="gsc-measure-copy" x="40" y="113">synker og varmes</text><text class="gsc-measure-copy" x="40" y="130">→ tørt og klart</text><text class="gsc-measure-copy" x="16" y="165">Beltene flytter seg med</text><text class="gsc-measure-copy" x="16" y="181">årstidene.</text></g>
-</g>
-<use href="#gsc-earth-grid-v2"/>
-</g>
-
-<g style="display:none" aria-hidden="true">
-<use href="#gsc-earth-surface-v2"/><use href="#gsc-earth-grid-v2"/>
-<g class="gsc-stage-badge" transform="translate(30 28)"><rect width="194" height="34" rx="17"/><text class="gsc-mode-off" x="97" y="22" text-anchor="middle">UTEN JORDROTASJON</text><text class="gsc-mode-on" x="97" y="22" text-anchor="middle">MED JORDROTASJON</text></g>
-<g class="gsc-straight-winds" clip-path="url(#gsc-globe-clip-v2)">
-<path class="gsc-direct-wind" d="M355 192 V294" marker-end="url(#gsc-arrow-cool-v2)"/><path class="gsc-direct-wind" d="M445 192 V118" marker-end="url(#gsc-arrow-cool-v2)"/><path class="gsc-direct-wind" d="M535 82 V101" marker-end="url(#gsc-arrow-cool-v2)"/>
-<path class="gsc-direct-wind" d="M355 428 V326" marker-end="url(#gsc-arrow-cool-v2)"/><path class="gsc-direct-wind" d="M445 428 V502" marker-end="url(#gsc-arrow-cool-v2)"/><path class="gsc-direct-wind" d="M535 538 V519" marker-end="url(#gsc-arrow-cool-v2)"/>
-<g font-size="14" font-weight="950" text-anchor="middle"><text x="355" y="181" fill="#d95d47">H</text><text x="355" y="314" fill="#2f83b8">L</text><text x="445" y="181" fill="#d95d47">H</text><text x="445" y="111" fill="#2f83b8">L</text><text x="355" y="445" fill="#d95d47">H</text><text x="355" y="319" fill="#2f83b8">L</text><text x="445" y="445" fill="#d95d47">H</text><text x="445" y="519" fill="#2f83b8">L</text></g>
-<g transform="translate(735 246)"><rect class="gsc-measure" width="285" height="117" rx="12"/><text class="gsc-measure-title" x="17" y="28">Trykkgradienten starter vinden</text><text class="gsc-measure-copy" x="17" y="54">Uten jordrotasjon går lufta nokså rett</text><text class="gsc-measure-copy" x="17" y="72">fra høytrykk (H) mot lavtrykk (L).</text><text class="gsc-measure-copy" x="17" y="98">Trykk på knappen for å rotere jorda.</text></g>
-</g>
-<g class="gsc-curved-winds">
-<g aria-hidden="true">
-<path class="gsc-pressure-guide" d="M445 75 H690" stroke="#d95d47"/><circle class="gsc-pressure-dot" cx="683" cy="75" r="12" fill="#d95d47"/><text class="gsc-pressure-letter" x="683" y="76" font-size="12">H</text>
-<path class="gsc-pressure-guide" d="M563 106 H690" stroke="#3282b6"/><circle class="gsc-pressure-dot" cx="683" cy="106" r="12" fill="#3282b6"/><text class="gsc-pressure-letter" x="683" y="107" font-size="12">L</text>
-<path class="gsc-pressure-guide" d="M649 192 H690" stroke="#d95d47"/><circle class="gsc-pressure-dot" cx="683" cy="192" r="12" fill="#d95d47"/><text class="gsc-pressure-letter" x="683" y="193" font-size="12">H</text>
-<path class="gsc-pressure-guide" d="M680 310 H695" stroke="#3282b6"/><circle class="gsc-pressure-dot" cx="683" cy="310" r="12" fill="#3282b6"/><text class="gsc-pressure-letter" x="683" y="311" font-size="12">L</text>
-<path class="gsc-pressure-guide" d="M649 428 H690" stroke="#d95d47"/><circle class="gsc-pressure-dot" cx="683" cy="428" r="12" fill="#d95d47"/><text class="gsc-pressure-letter" x="683" y="429" font-size="12">H</text>
-<path class="gsc-pressure-guide" d="M563 514 H690" stroke="#3282b6"/><circle class="gsc-pressure-dot" cx="683" cy="514" r="12" fill="#3282b6"/><text class="gsc-pressure-letter" x="683" y="515" font-size="12">L</text>
-<path class="gsc-pressure-guide" d="M445 545 H690" stroke="#d95d47"/><circle class="gsc-pressure-dot" cx="683" cy="545" r="12" fill="#d95d47"/><text class="gsc-pressure-letter" x="683" y="546" font-size="12">H</text>
-</g>
-<g clip-path="url(#gsc-globe-clip-v2)"><path class="gsc-wind-path" d="M585 84 Q470 89 350 111" marker-end="url(#gsc-arrow-wind-v2)"/><path class="gsc-wind-path" d="M300 178 Q455 144 612 119" marker-end="url(#gsc-arrow-wind-v2)"/><path class="gsc-wind-path" d="M596 207 Q455 245 298 286" marker-end="url(#gsc-arrow-wind-v2)"/><path class="gsc-wind-path" d="M596 413 Q455 375 298 334" marker-end="url(#gsc-arrow-wind-v2)"/><path class="gsc-wind-path" d="M300 442 Q455 476 612 501" marker-end="url(#gsc-arrow-wind-v2)"/><path class="gsc-wind-path" d="M585 536 Q470 531 350 509" marker-end="url(#gsc-arrow-wind-v2)"/></g>
-<path class="gsc-rotation" d="M260 565 C360 600 560 600 660 559" marker-end="url(#gsc-arrow-rotation-v2)"/><text x="365" y="601" fill="#266eac" font-size="13" font-weight="900">jorda roterer østover</text>
-<g><path class="gsc-leader" d="M704 96 H640"/><text class="gsc-cell-label" x="724" y="101">Polare østavinder</text><path class="gsc-leader" d="M704 153 H624"/><text class="gsc-cell-label" x="724" y="158">Vestavinder</text><path class="gsc-leader" d="M704 243 H615"/><text class="gsc-cell-label" x="724" y="248">Nordøstpassaten</text><path class="gsc-leader" d="M704 377 H615"/><text class="gsc-cell-label" x="724" y="382">Sørøstpassaten</text><path class="gsc-leader" d="M704 467 H624"/><text class="gsc-cell-label" x="724" y="472">Vestavinder</text><path class="gsc-leader" d="M704 524 H640"/><text class="gsc-cell-label" x="724" y="529">Polare østavinder</text></g>
-<g transform="translate(720 273)"><rect class="gsc-measure" width="320" height="76" rx="12"/><text class="gsc-measure-title" x="16" y="27">Corioliseffekten bøyer banen</text><text class="gsc-measure-copy" x="16" y="51">mot høyre i nord · mot venstre i sør</text></g>
-</g>
-</g>
-
-<g class="gsc-scene phase-0" data-gsc-scene="4">
-<use href="#gsc-earth-surface-v2"/>
-<g clip-path="url(#gsc-globe-clip-v2)">
-<circle cx="445" cy="310" r="233" fill="url(#gsc-climate-v3)" opacity=".35"/>
-<g class="gsc-rotating-surface" opacity=".72">
-<g fill="#75aa83" stroke="#4f8468" stroke-width="1.1"><path d="M257 151 C291 125 327 128 348 151 C366 170 359 193 377 211 C392 226 391 250 370 261 C348 272 341 296 322 301 C299 307 293 278 275 271 C250 260 235 235 245 213 C253 196 234 173 257 151Z"/><path d="M478 133 C503 119 538 128 548 151 C556 170 580 175 576 198 C572 219 548 221 539 244 C531 266 505 276 491 258 C475 238 453 240 448 218 C443 197 463 185 457 163 C453 150 464 140 478 133Z"/><path d="M521 322 C548 300 583 307 594 333 C603 353 627 368 616 390 C604 413 580 411 565 431 C550 451 520 443 515 419 C510 397 486 385 494 361 C499 345 507 333 521 322Z"/><path d="M371 392 C392 376 419 382 431 400 C440 414 458 419 455 438 C452 458 430 461 421 478 C408 502 377 500 366 478 C355 455 335 446 341 423 C346 407 358 401 371 392Z"/></g>
-<g fill="#75aa83" stroke="#4f8468" stroke-width="1.1" transform="translate(470 0)"><path d="M257 151 C291 125 327 128 348 151 C366 170 359 193 377 211 C392 226 391 250 370 261 C348 272 341 296 322 301 C299 307 293 278 275 271 C250 260 235 235 245 213 C253 196 234 173 257 151Z"/><path d="M478 133 C503 119 538 128 548 151 C556 170 580 175 576 198 C572 219 548 221 539 244 C531 266 505 276 491 258 C475 238 453 240 448 218 C443 197 463 185 457 163 C453 150 464 140 478 133Z"/><path d="M521 322 C548 300 583 307 594 333 C603 353 627 368 616 390 C604 413 580 411 565 431 C550 451 520 443 515 419 C510 397 486 385 494 361 C499 345 507 333 521 322Z"/><path d="M371 392 C392 376 419 382 431 400 C440 414 458 419 455 438 C452 458 430 461 421 478 C408 502 377 500 366 478 C355 455 335 446 341 423 C346 407 358 401 371 392Z"/></g>
-</g>
-<circle cx="445" cy="310" r="233" fill="url(#gsc-globe-shade-v3)"/>
-</g>
-<g class="gsc-phase gsc-phase-0" aria-label="Trykkgradient">
-<path class="gsc-wind-ribbon" d="M356 194 C354 231 355 266 359 294"/><path class="gsc-wind-core" d="M356 194 C354 231 355 266 359 294" marker-end="url(#gsc-arrow-wind-v2)"/><path class="gsc-wind-ribbon" d="M453 194 C449 165 448 140 449 112"/><path class="gsc-wind-core" d="M453 194 C449 165 448 140 449 112" marker-end="url(#gsc-arrow-wind-v2)"/><path class="gsc-wind-ribbon" d="M356 426 C354 389 355 354 359 326"/><path class="gsc-wind-core" d="M356 426 C354 389 355 354 359 326" marker-end="url(#gsc-arrow-wind-v2)"/><path class="gsc-wind-ribbon" d="M453 426 C449 455 448 480 449 508"/><path class="gsc-wind-core" d="M453 426 C449 455 448 480 449 508" marker-end="url(#gsc-arrow-wind-v2)"/>
-<g class="gsc-belt-tag" transform="translate(275 176)"><rect width="48" height="32" rx="16"/><circle cx="16" cy="16" r="11" fill="#d95d47"/><text x="16" y="17" fill="#fff">H</text><text x="36" y="17" fill="#a44739">30°</text></g><g class="gsc-belt-tag" transform="translate(275 294)"><rect width="48" height="32" rx="16"/><circle cx="16" cy="16" r="11" fill="#3282b6"/><text x="16" y="17" fill="#fff">L</text><text x="36" y="17" fill="#276991">0°</text></g>
-<g transform="translate(735 238)"><rect class="gsc-measure" width="286" height="128" rx="13"/><text class="gsc-measure-title" x="17" y="29">1 · Trykkforskjellen starter vinden</text><text class="gsc-measure-copy" x="17" y="57">Luft settes i bevegelse fra H mot L.</text><text class="gsc-measure-copy" x="17" y="77">På en jord uten rotasjon ville banen</text><text class="gsc-measure-copy" x="17" y="97">vært nesten rett nord–sør.</text></g>
-</g>
-<g class="gsc-phase gsc-phase-1 gsc-spin-glow" aria-label="Jordrotasjon og corioliseffekt">
-<path class="gsc-rotation" d="M264 567 C357 600 557 600 652 562" marker-end="url(#gsc-arrow-rotation-v2)"/><text x="355" y="603" fill="#266eac" font-size="13" font-weight="900">jorda roterer østover</text>
-<g transform="translate(735 238)"><rect class="gsc-measure" width="286" height="128" rx="13"/><text class="gsc-measure-title" x="17" y="29">2 · Underlaget roterer</text><text class="gsc-measure-copy" x="17" y="57">Jorda dreier østover under lufta.</text><text class="gsc-measure-copy" x="17" y="77">Banen avbøyes mot høyre i nord</text><text class="gsc-measure-copy" x="17" y="97">og mot venstre i sør.</text></g>
-</g>
-<g class="gsc-phase gsc-phase-2" aria-label="Globale vindbelter">
-<g clip-path="url(#gsc-globe-clip-v2)"><path class="gsc-wind-path" d="M588 84 Q469 91 344 113" marker-end="url(#gsc-arrow-wind-v2)"/><path class="gsc-wind-path" d="M301 178 Q454 146 611 120" marker-end="url(#gsc-arrow-wind-v2)"/><path class="gsc-wind-path" d="M598 208 Q455 245 296 287" marker-end="url(#gsc-arrow-wind-v2)"/><path class="gsc-wind-path" d="M598 412 Q455 375 296 333" marker-end="url(#gsc-arrow-wind-v2)"/><path class="gsc-wind-path" d="M301 442 Q454 474 611 500" marker-end="url(#gsc-arrow-wind-v2)"/><path class="gsc-wind-path" d="M588 536 Q469 529 344 507" marker-end="url(#gsc-arrow-wind-v2)"/></g>
-<g class="gsc-wind-legend" transform="translate(715 94)"><rect width="329" height="404" rx="14"/><text x="18" y="31" class="gsc-measure-title">3 · Seks sammenhengende vindbelter</text><g stroke="#087f67" stroke-width="4" stroke-linecap="round"><line x1="20" y1="67" x2="68" y2="58"/><line x1="20" y1="125" x2="68" y2="134"/><line x1="20" y1="183" x2="68" y2="168"/><line x1="20" y1="241" x2="68" y2="256"/><line x1="20" y1="299" x2="68" y2="290"/><line x1="20" y1="357" x2="68" y2="366"/></g><text x="84" y="64">Polare østavinder</text><text x="84" y="132">Vestavinder</text><text x="84" y="180">Nordøstpassaten</text><text x="84" y="248">Sørøstpassaten</text><text x="84" y="296">Vestavinder</text><text x="84" y="364">Polare østavinder</text><text class="gsc-mini-caption" x="18" y="389">Navnet forteller hvor vinden kommer fra.</text></g>
-</g>
-<use href="#gsc-earth-grid-v2"/>
-</g>
-</svg>
-</div>
-<aside class="gsc-explainer" aria-live="polite">
-<div class="gsc-count" id="gsc-count">Trinn 1 av 5</div>
-<h3 id="gsc-title">Samme solenergi – ulikt areal</h3>
-<p id="gsc-text">Solstrålene kommer nesten parallelt mot jorda. Ved ekvator treffer de mer rett på og fordeles over et lite areal. På høye breddegrader treffer de skrått, og den samme energimengden spres utover et større areal.</p>
-<div class="gsc-key" id="gsc-key">Dermed får tropene energioverskudd, mens polområdene får energiunderskudd.</div>
-<div class="gsc-substeps" id="gsc-substeps" aria-label="Deltrinn"><button class="gsc-substep active" type="button" data-gsc-phase="0">1</button><button class="gsc-substep" type="button" data-gsc-phase="1">2</button><button class="gsc-substep" type="button" data-gsc-phase="2">3</button></div>
-<div class="gsc-rotation-control" id="gsc-rotation-control"><button class="gsc-coriolis-button" id="gsc-rotation-button" type="button" aria-pressed="false">▶ Start jordrotasjonen</button><small class="gsc-rotation-hint" id="gsc-rotation-hint">Før rotasjonen starter, går lufta rett fra H mot L.</small></div>
-<div class="gsc-nav"><button id="gsc-prev" type="button" disabled>← Forrige</button><button id="gsc-next" class="gsc-next" type="button">Neste →</button></div>
-</aside>
-</div>
-<p class="gsc-note">Modellen viser idealiserte gjennomsnittsbelter. Årstider, kontinenter, hav, fjell og skiftende værsystemer flytter og bryter opp mønsteret i virkeligheten.</p>
+<iframe id="global-circulation-frame" class="global-circulation-frame" data-src="geografi/global-sirkulasjon.html?v=2ae6668a10cb" title="Global sirkulasjon – interaktiv modell" loading="lazy"></iframe>
 </section>
 
 <section class="page-section geo-space-lab-page" id="klima-romlab">
@@ -1842,6 +1641,11 @@
 <span class="geoquiz-copy"><strong>Statle</strong><span>Hvilken amerikansk stat er markert?</span></span>
 <b>›</b>
 </button>
+<button class="geoquiz-mode-row game-order-10" onclick="location.href='geografi/fylker.html'">
+<span class="geoquiz-preview preview-fylker" aria-hidden="true"><span>🇳🇴</span><small>15 fylker</small></span>
+<span class="geoquiz-copy"><strong>Norske fylker</strong><span>Finn Norges 15 fylker på kartet.</span></span>
+<b>›</b>
+</button>
 <button class="geoquiz-mode-row maplab-quiz-card game-order-11" onclick="location.href='geografi/geogrid.html'">
 <span class="geoquiz-preview image-preview"><img alt="" src="data:image/webp;base64,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"/></span>
 <span class="geoquiz-copy"><strong>GeoGrid</strong><span>Kan du nok geografi til å fylle brettet?</span></span>
@@ -2049,193 +1853,7 @@ applyDarkMode=function(isDark){
   try{if(localStorage.getItem('geoSidebarCollapsed')==='1')apply(true)}catch(e){}
 })();
 </script>
-<script>
 
-(function(){
-  const section=document.getElementById('klima-sirkulasjon');
-  if(!section)return;
-  const scenes=[...section.querySelectorAll('[data-gsc-scene]')];
-  const buttons=[...section.querySelectorAll('[data-gsc-step]')];
-  const count=document.getElementById('gsc-count');
-  const title=document.getElementById('gsc-title');
-  const text=document.getElementById('gsc-text');
-  const key=document.getElementById('gsc-key');
-  const prev=document.getElementById('gsc-prev');
-  const next=document.getElementById('gsc-next');
-  const replay=document.getElementById('gsc-replay');
-  const rotationControl=document.getElementById('gsc-rotation-control');
-  const rotationButton=document.getElementById('gsc-rotation-button');
-  const rotationHint=document.getElementById('gsc-rotation-hint');
-  const substeps=document.getElementById('gsc-substeps');
-  const phaseButtons=[...section.querySelectorAll('[data-gsc-phase]')];
-  const copy=[
-    {
-      title:'Samme solenergi – ulikt areal',
-      text:'Solstrålene kommer nesten parallelt mot jorda. Ved ekvator treffer de mer rett på og fordeles over et lite areal. På høye breddegrader treffer de skrått, og den samme energimengden spres utover et større areal.',
-      key:'Dermed får tropene energioverskudd, mens polområdene får energiunderskudd.'
-    },
-    {
-      title:'Først en jord uten rotasjon',
-      text:'I den enkleste modellen stiger varm luft ved ekvator. Den strømmer mot polene i høyden, avkjøles og synker. Nær bakken går kaldere luft tilbake mot ekvator. Hver halvkule får da én stor sirkulasjonscelle.',
-      key:'Cellene flytter varme fra tropene mot polene og demper temperaturforskjellen.'
-    },
-    {
-      title:'Tre celler på hver halvkule',
-      text:'På den roterende jorda deles sirkulasjonen i Hadleycellen, Ferrelcellen og polarcellen. Ferrelcellen er en indirekte celle som i stor grad opprettholdes av lavtrykk og andre værsystemer på midlere bredder.',
-      key:'Luft stiger hovedsakelig ved 0° og 60°, og synker hovedsakelig ved 30° og polene.'
-    },
-    {
-      title:'Trykkbeltene former klimaet',
-      text:'Stigende luft gir lavtrykk, avkjøling, skyer og ofte mye nedbør. Synkende luft gir høytrykk, oppvarming og tørre forhold. Derfor ligger tropisk regnskog ofte nær ekvator, mens mange store ørkener ligger rundt 30°.',
-      key:'Luft opp → lavtrykk og fuktig. Luft ned → høytrykk og tørt.'
-    },
-    {
-      title:'Jordrotasjonen bøyer luftbanene',
-      text:'Trykkforskjeller setter luft i bevegelse. Uten jordrotasjon ville overflatevinden gått nokså rett fra høytrykk mot lavtrykk. Når jorda roterer, bøyes banen mot høyre på nordlige halvkule og mot venstre på sørlige.',
-      key:'Start jordrotasjonen nedenfor og se de rette luftbanene bli til passater, vestavinder og polare østavinder.'
-    }
-  ];
-  let current=0;
-  let rotating=false;
-  let phase=0;
-  let phaseTimers=[];
-  const phaseData={
-    3:[
-      {label:'Luftbevegelse',title:'1 · Luft stiger og synker',text:'Ved ekvator og omkring 60° stiger lufta. Rundt 30° og ved polene synker den. Den vertikale bevegelsen er selve motoren bak de globale trykkbeltene.',key:'Stigende luft utvider seg og avkjøles. Synkende luft komprimeres og varmes.'},
-      {label:'Trykkbelter',title:'2 · Bevegelsen lager trykkbelter',text:'Der luft stiger, blir det underskudd av luft nær bakken og lavtrykk. Der luft synker, samles mer luft nær bakken og det dannes høytrykk.',key:'L ved 0° og 60° · H ved 30° og 90°.'},
-      {label:'Klima',title:'3 · Trykkbeltene preger klimaet',text:'Stigende luft avkjøles, vanndamp kondenserer og det dannes skyer og nedbør. Synkende luft varmes og blir relativt tørr. Derfor følger brede klimasoner trykkbeltene.',key:'Luft opp → lavtrykk og fuktig. Luft ned → høytrykk og tørt.'}
-    ],
-    4:[
-      {label:'Trykkgradient',title:'1 · Trykkforskjellen starter vinden',text:'Luft settes i bevegelse fra høytrykk mot lavtrykk. Uten jordrotasjon ville overflatevinden gått nokså rett nord–sør mellom trykkbeltene.',key:'Trykkgradientkraften setter lufta i bevegelse.'},
-      {label:'Jordrotasjon',title:'2 · Jorda roterer under lufta',text:'Jordoverflaten beveger seg østover mens lufta er i bevegelse. Sett fra bakken ser banen derfor ut til å bøye av: mot høyre i nord og mot venstre i sør.',key:'Dette er corioliseffekten – en virkning av at vi observerer bevegelsen fra en roterende jord.'},
-      {label:'Vindbelter',title:'3 · De globale vindbeltene',text:'Avbøyingen organiserer overflatevinden i nordøst- og sørøstpassaten, vestavindene og de polare østavindene. Partiklene viser hvilken vei lufta faktisk strømmer.',key:'Vindene navngis etter retningen de kommer fra.'}
-    ]
-  };
-
-  function enhanceAirflow(){
-    const paths=section.querySelectorAll(
-      '[data-gsc-scene="1"] .gsc-flow, [data-gsc-scene="2"] .gsc-cell-loop, [data-gsc-scene="4"] .gsc-wind-path'
-    );
-    paths.forEach(path=>{
-      const bed=path.cloneNode(false);
-      bed.classList.add('gsc-stream-bed');
-      bed.removeAttribute('marker-end');
-      bed.setAttribute('aria-hidden','true');
-      path.before(bed);
-    });
-    const svgNS='http://www.w3.org/2000/svg';
-    [...paths]
-      .filter(path=>path.closest('[data-gsc-scene="2"]')&&!path.closest('.gsc-far-side'))
-      .forEach((path,pathIndex)=>{
-        const fill=path.classList.contains('hadley')?'#e95c43':path.classList.contains('ferrel')?'#8268b8':'#2f83b8';
-        for(let particleIndex=0;particleIndex<2;particleIndex++){
-          const particle=document.createElementNS(svgNS,'circle');
-          particle.setAttribute('class','gsc-particle gsc-particle-echo');
-          particle.setAttribute('r','4.2');
-          particle.setAttribute('fill',fill);
-          const motion=document.createElementNS(svgNS,'animateMotion');
-          motion.setAttribute('path',path.getAttribute('d'));
-          motion.setAttribute('dur','3s');
-          motion.setAttribute('begin',`${-((pathIndex*.19)+(particleIndex*1.5)).toFixed(2)}s`);
-          motion.setAttribute('repeatCount','indefinite');
-          particle.appendChild(motion);
-          path.after(particle);
-        }
-      });
-    const particles=[...section.querySelectorAll(
-      '[data-gsc-scene="1"] .gsc-particle'
-    )];
-    particles.forEach(particle=>{
-      const originalMotion=particle.querySelector('animateMotion');
-      const duration=parseFloat(originalMotion?.getAttribute('dur'))||3;
-      for(let copyIndex=1;copyIndex<=2;copyIndex++){
-        const echo=particle.cloneNode(true);
-        echo.classList.add('gsc-particle-echo');
-        const motion=echo.querySelector('animateMotion');
-        if(motion)motion.setAttribute('begin',`${-(duration*copyIndex/3).toFixed(2)}s`);
-        particle.parentNode.insertBefore(echo,particle.nextSibling);
-      }
-    });
-  }
-
-  function clearPhaseTimers(){phaseTimers.forEach(clearTimeout);phaseTimers=[]}
-  function setPhase(value,fromUser=false){
-    if(!(current in phaseData))return;
-    phase=Math.max(0,Math.min(2,value));
-    const scene=scenes[current];
-    scene.classList.remove('phase-0','phase-1','phase-2');
-    scene.classList.add(`phase-${phase}`);
-    rotating=current===4&&phase>=1;
-    scene.classList.toggle('earth-spinning',rotating);
-    const data=phaseData[current][phase];
-    title.textContent=data.title;text.textContent=data.text;key.textContent=data.key;
-    phaseButtons.forEach((button,i)=>{button.textContent=`${i+1} · ${phaseData[current][i].label}`;button.classList.toggle('active',i===phase);button.setAttribute('aria-pressed',i===phase?'true':'false')});
-    if(fromUser)clearPhaseTimers();
-  }
-  function playPhases(){
-    clearPhaseTimers();
-    if(!(current in phaseData))return;
-    setPhase(0);
-    phaseTimers.push(setTimeout(()=>setPhase(1),1800));
-    phaseTimers.push(setTimeout(()=>setPhase(2),3900));
-  }
-  function setRotation(value){
-    if(current!==4)return;
-    setPhase(value?1:0,true);
-  }
-  function restartAnimations(scene){
-    scene.querySelectorAll('animate,animateMotion,animateTransform').forEach(animation=>{
-      try{animation.beginElement()}catch(error){}
-    });
-    scene.classList.remove('active');
-    requestAnimationFrame(()=>requestAnimationFrame(()=>scene.classList.add('active')));
-  }
-  function setStep(index,restart){
-    clearPhaseTimers();
-    current=Math.max(0,Math.min(copy.length-1,index));
-    scenes.forEach((scene,i)=>scene.classList.toggle('active',i===current));
-    buttons.forEach((button,i)=>{
-      const active=i===current;
-      button.classList.toggle('active',active);
-      button.setAttribute('aria-selected',active?'true':'false');
-      button.tabIndex=active?0:-1;
-    });
-    count.textContent=`Trinn ${current+1} av ${copy.length}`;
-    title.textContent=copy[current].title;
-    text.textContent=copy[current].text;
-    key.textContent=copy[current].key;
-    prev.disabled=current===0;
-    next.disabled=current===copy.length-1;
-    next.textContent=current===copy.length-1?'Ferdig':'Neste →';
-    rotationControl.classList.remove('visible');
-    substeps.classList.toggle('visible',current===3||current===4);
-    scenes[4].classList.remove('earth-spinning');
-    if(restart)restartAnimations(scenes[current]);
-    if(current in phaseData)playPhases();
-  }
-  buttons.forEach(button=>button.addEventListener('click',()=>setStep(+button.dataset.gscStep,true)));
-  prev.addEventListener('click',()=>setStep(current-1,true));
-  next.addEventListener('click',()=>{if(current<copy.length-1)setStep(current+1,true)});
-  replay.addEventListener('click',()=>{restartAnimations(scenes[current]);if(current in phaseData)playPhases()});
-  rotationButton.addEventListener('click',()=>setRotation(!rotating));
-  phaseButtons.forEach(button=>button.addEventListener('click',()=>setPhase(+button.dataset.gscPhase,true)));
-  section.addEventListener('keydown',event=>{
-    if(event.key==='ArrowRight'&&current<copy.length-1){setStep(current+1,true);event.preventDefault()}
-    if(event.key==='ArrowLeft'&&current>0){setStep(current-1,true);event.preventDefault()}
-  });
-  const priorShowContent=window.showContent;
-  if(typeof priorShowContent==='function'){
-    window.showContent=function(id,item){
-      const result=priorShowContent.apply(this,arguments);
-      if(id==='klima-sirkulasjon')requestAnimationFrame(()=>{setRotation(false);setStep(0,true)});
-      return result;
-    };
-  }
-  enhanceAirflow();
-  setStep(0,false);
-  window.globalCirculationModel={setStep,setPhase,setRotation};
-})();
-</script>
 <script>
 
 (function(){
@@ -2761,5 +2379,6 @@ function toggleExtendedGlossary(sectionId, button){
 
 
 
-<script src="assets/geography/quiz-assets/quiz-language-d6fde46fa31d.js"></script></body>
+<script src="assets/geography/quiz-assets/quiz-language-564b4917138b.js"></script><script src="assets/geography/global-circulation/embed.js?v=f578a3b5fbcf"></script>
+</body>
 </html>

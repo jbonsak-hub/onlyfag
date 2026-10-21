@@ -1,9 +1,11 @@
-/* Clickable Statle, shared by the quiz page and local preview.
-   Census geometry; game answers remain in memory. */
+/* Shared click-map game for Statle and Norske fylker. */
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
   const ns = 'http://www.w3.org/2000/svg';
+  const counties = document.body.dataset.quiz === 'fylker';
+  const total = counties ? 15 : 50;
+  const shapeLabel = counties ? 'Fylke på kartet' : 'Delstat på kartet';
   const elements = new Map(), markers = new Map(), centers = new Map();
   let states = [], queue = [], index = 0, phase = 'ready', locked = false;
   let results = new Map(), roundMistakes = 0, mistakes = 0, skipped = 0;
@@ -52,6 +54,27 @@
     return {x:b.x * scale + x, y:b.y * scale + y, width:b.width * scale, height:b.height * scale};
   }
   function buildMap() {
+    if (counties) {
+      const group = svgNode('g',{'fill-rule':'evenodd'}); $('states').append(group);
+      for (const state of states) {
+        const el = svgNode('path', {d:state.d, class:'state', role:'button', tabindex:'0', 'aria-label':shapeLabel});
+        el.dataset.state = state.n; group.append(el); elements.set(state.n,el);
+      }
+      const bounds = fit(group, {x:28,y:18,w:844,h:514});
+      $('map').setAttribute('viewBox',`${bounds.x - 32} 0 ${bounds.width + 64} 550`);
+      // Oslo stays in its geographical position, with a second accessible target
+      // outside the coast so the smallest county is usable on a touch screen.
+      const oslo = centers.get('Oslo');
+      if (oslo) {
+        const x = Math.min(855,oslo.x + 95), y = Math.min(510,oslo.y + 28);
+        $('smallStates').append(svgNode('path', {class:'small-connector',d:`M${oslo.x} ${oslo.y}L${x - 14} ${y}`}));
+        const marker = svgNode('g', {class:'small-marker',role:'button',tabindex:'0','aria-label':'Ekstra klikkfelt for et lite fylke'});
+        marker.dataset.state='Oslo';
+        marker.append(svgNode('circle',{cx:x,cy:y,r:21,class:'hit'}),svgNode('circle',{cx:x,cy:y,r:11,class:'visible'}));
+        $('smallStates').append(marker); markers.set('Oslo',marker);
+      }
+      return;
+    }
     const groups = {main:svgNode('g'), AK:svgNode('g'), HI:svgNode('g')};
     $('states').append(groups.main, groups.AK, groups.HI);
     for (const state of states) {
@@ -80,7 +103,8 @@
   }
   function flashLabel(name, kind) {
     const c = centers.get(name), width = Math.max(70, name.length * 7 + 22);
-    const x = Math.max(width / 2 + 9, Math.min(891 - width / 2, c.x));
+    const view = $('map').viewBox.baseVal;
+    const x = Math.max(view.x + width / 2 + 9, Math.min(view.x + view.width - 9 - width / 2, c.x));
     const y = Math.max(26, Math.min(525, c.y - 21));
     const g = svgNode('g', {class:'flash-label ' + kind});
     g.append(svgNode('rect', {x:x - width / 2,y:y - 13,width,height:26,rx:4}));
@@ -102,7 +126,7 @@
   }
   function updateStats() {
     $('completed').textContent = results.size;
-    $('progressFill').style.width = results.size * 2 + '%';
+    $('progressFill').style.width = results.size / total * 100 + '%';
     $('mistakes').textContent = mistakes + ' feil';
   }
   function next() {
@@ -142,8 +166,8 @@
     generation++; clearEffects();if($('statle-score'))$('statle-score').hidden=true;
     results = new Map(); index = 0; totalTime = 0; roundTime = 0; lastTick = performance.now();
     roundMistakes = 0; mistakes = 0; skipped = 0; locked = false;
-    elements.forEach(el => { delete el.dataset.band; el.classList.remove('found'); el.setAttribute('aria-label', 'Delstat på kartet'); });
-    markers.forEach(el => { delete el.dataset.band; el.setAttribute('aria-label', 'Ekstra klikkfelt for en liten delstat'); });
+    elements.forEach(el => { delete el.dataset.band; el.classList.remove('found'); el.setAttribute('aria-label', shapeLabel); });
+    markers.forEach(el => { delete el.dataset.band; el.setAttribute('aria-label', counties ? 'Ekstra klikkfelt for et lite fylke' : 'Ekstra klikkfelt for en liten delstat'); });
     queue = names ? names.map(name=>states.find(s=>s.n===name)) : states.filter(s => !results.has(s.n));
     if(!names)for (let i = queue.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [queue[i],queue[j]] = [queue[j],queue[i]]; }
     phase = 'playing'; $('overlay').hidden = true;
@@ -166,10 +190,10 @@
     phase = 'finished'; locked = true;
     window.GeoOnline?.finishStatle();
     $('targetVerb').textContent = 'Godt jobbet!';
-    $('targetName').textContent = 'Hele USA er på plass.';
+    $('targetName').textContent = counties ? 'Alle fylkene er på plass.' : 'Hele USA er på plass.';
     $('skip').disabled = true;
     const counts = [0,0,0,0]; results.forEach(r => counts[r.band]++);
-    setFeedback('Alle 50 fullført' + ' · ' + timeText(totalTime) + ' · ' + mistakes + ' feil · ' + skipped + ' hoppet over. Grønn: ' + counts[0] + ', gul: ' + counts[1] + ', oransje: ' + counts[2] + ', rød: ' + counts[3] + '.');
+    setFeedback('Alle ' + total + ' fullført' + ' · ' + timeText(totalTime) + ' · ' + mistakes + ' feil · ' + skipped + ' hoppet over. Grønn: ' + counts[0] + ', gul: ' + counts[1] + ', oransje: ' + counts[2] + ', rød: ' + counts[3] + '.');
   }
   $('map').addEventListener('click', e => { const el = e.target.closest('[data-state]'); if (el) choose(el.dataset.state); });
   $('map').addEventListener('keydown', e => { const el = e.target.closest('[data-state]'); if (el && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); choose(el.dataset.state); } });
@@ -192,12 +216,12 @@
     if (event.target === menu && (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom)) menu.close();
   });
   const embedded = document.getElementById('statle-map-data');
-  const mapData = embedded ? Promise.resolve(JSON.parse(embedded.textContent)) : fetch('../assets/geography/us-states.json').then(response => {
+  const mapData = embedded ? Promise.resolve(JSON.parse(embedded.textContent)) : fetch(counties ? '../assets/geography/norway-counties.json' : '../assets/geography/us-states.json').then(response => {
     if (!response.ok) throw new Error('Kartet kunne ikke hentes'); return response.json();
   });
   mapData.then(data => {
     states = data;
-    if (states.length !== 50) throw new Error('Kartet må ha 50 delstater');
-    buildMap(); $('start').disabled = false; $('start').textContent = 'Start Statle →';
+    if (states.length !== total || new Set(states.map(s=>s.n)).size !== total) throw new Error('Ufullstendig kart');
+    buildMap(); $('start').disabled = false; $('start').textContent = counties ? 'Start Norske fylker →' : 'Start Statle →';
   }).catch(() => { $('start').textContent = 'Kartet kunne ikke lastes'; setFeedback('Last siden på nytt for å hente kartet.','error'); });
 })();

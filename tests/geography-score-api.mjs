@@ -64,6 +64,38 @@ test('prefetched questions retain server validation and Statle scores all fifty 
  const mc=create({game:'flags'},0),next=mc.plan[1];assert.throws(()=>answer(mc,{question:next.id,choice:next.target},1),/wrong_question/);answer(mc,{question:mc.current.id,choice:mc.current.target},2);assert.equal(mc.current.id,next.id);
 });
 
+test('Norwegian counties validate all fifteen targets with the Statle time/error bands',()=>{
+ assert.equal(data.fylker.length,15);assert.equal(new Set(data.fylker).size,15);
+ assert.deepEqual([...data.fylker].sort(),['Agder','Akershus','Buskerud','Finnmark','Innlandet','Møre og Romsdal','Nordland','Oslo','Rogaland','Telemark','Troms','Trøndelag','Vestfold','Vestland','Østfold'].sort());
+ const s=create({game:'fylker',language:'en'},1000);assert.equal(s.plan.length,15);assert.equal(new Set(s.targets).size,15);assert.throws(()=>finish(s,1001),/incomplete/);
+ assert.throws(()=>answer(s,{question:s.current.id,choice:'Ohio'},1002),/invalid_answer/);
+ assert.equal(answer(s,{question:s.current.id,choice:s.targets[1]},1100).correct,false);
+ assert.equal(answer(s,{question:s.current.id,choice:s.current.target},1200).points,75);
+ assert.throws(()=>answer(s,{question:s.plan[1].id,choice:s.targets[1]},1300),/wrong_question/);
+ issue(s,1400);assert.throws(()=>answer(s,{question:s.current.id,choice:s.found[0]},1450),/invalid_answer/);
+ assert.equal(answer(s,{question:s.current.id,choice:s.current.target,skip:true},1500).points,0);
+ for(let i=2;i<15;i++){issue(s,2000+i*100);const q=s.current;assert.equal(answer(s,{question:q.id,choice:q.target},2001+i*100).points,100);}
+ assert.equal(s.score,1375);assert.equal(s.results.length,15);assert.equal(s.index,15);assert.ok(s.complete);
+ const slow=create({game:'fylker'},0);assert.equal(answer(slow,{question:slow.current.id,choice:slow.current.target},11000).points,50);
+ assert.equal(board({game:'fylker',language:'no'}),board({game:'fylker',language:'en'}));assert.notEqual(board({game:'fylker'}),board({game:'statle'}));
+});
+
+test('county API supports next, rejects incomplete publication and shares only its own language-independent board',async()=>{
+ const {env,db}=fixture(),call=async(url,body,token)=>{const r=await worker.fetch(req(url,body,token),env);return {status:r.status,body:await r.json()};};
+ const start=await call('/session',{game:'fylker',language:'no'});assert.equal(start.status,201);assert.equal(start.body.questions.length,15);assert.equal(start.body.questions[0].id,start.body.question.id);const token=start.body.token;
+ const mutate=(url,body={})=>call(url,{requestId:crypto.randomUUID(),...body},token);
+ assert.equal((await mutate('/finish')).status,400);assert.equal((await mutate('/publish',{nickname:'Early'})).status,400);
+ for(let i=0;i<15;i++){
+  const q=start.body.questions[i];if(i===0)assert.equal((await mutate('/answer',{question:q.id,choice:start.body.questions[1].target})).body.feedback.correct,false);
+  const reply=await mutate('/answer',{question:q.id,choice:q.target,...(i===1?{skip:true}:{})});assert.equal(reply.status,200);assert.equal(reply.body.complete,i===14);
+  if(i<14){assert.equal(reply.body.awaitingNext,true);const next=await mutate('/next');assert.equal(next.status,200);assert.equal(next.body.question.id,start.body.questions[i+1].id);}
+ }
+ const status=await call('/status',{},token);assert.equal(status.body.total,1375);assert.equal(status.body.index,15);assert.equal((await mutate('/next')).status,400);
+ assert.equal((await mutate('/publish',{nickname:'County Player'})).status,200);
+ const rows=await call('/scores?config='+encodeURIComponent(JSON.stringify({game:'fylker'}))),english=await call('/scores?config='+encodeURIComponent(JSON.stringify({game:'fylker',language:'en'}))),statle=await call('/scores?config='+encodeURIComponent(JSON.stringify({game:'statle'})));
+ assert.equal(rows.body.rows.length,1);assert.equal(rows.body.rows[0].score,1375);assert.equal(rows.body.rows[0].nickname,'County Player');assert.deepEqual(english.body.rows,rows.body.rows);assert.deepEqual(statle.body.rows,[]);db.close();
+});
+
 test('language migration preserves scores and active runs and can be repeated',()=>{
  const {db}=fixture();
  for(const game of ['flags','capitals','flagcapital','places','countries','mapwiz'])for(const language of ['no','en']){

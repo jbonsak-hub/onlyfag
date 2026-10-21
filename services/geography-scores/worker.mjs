@@ -53,7 +53,7 @@ async function handler(request,env){
   let feedback={};
   if(url.pathname==='/answer')feedback=answer(s,input,now);
   else if(url.pathname==='/next'){
-   if(!['mapwiz','statle'].includes(s.config.game)||s.complete)throw Error('invalid_action');
+   if(!['mapwiz','statle','fylker'].includes(s.config.game)||s.complete)throw Error('invalid_action');
    // Repeating next cannot reset the clock for an already issued question.
    if(s.awaitingNext)issue(s,now);
   }else if(url.pathname==='/hint'){

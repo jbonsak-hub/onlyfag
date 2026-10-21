@@ -1,7 +1,7 @@
 /* Immediate feedback, ordered background verification, shared top ten. */
 (() => {
- const base=window.GEO_SCORE_API,mode=document.body.dataset.quiz;
- if(!base||!['flags','capitals','flagcapital','places','countries','geoguessr','statle'].includes(mode))return;
+ const base=window.GEO_SCORE_API,mode=document.body.dataset.quiz,shapeQuiz=game=>game==='statle'||game==='fylker';
+ if(!base||!['flags','capitals','flagcapital','places','countries','geoguessr','statle','fylker'].includes(mode))return;
  let active=null,starting=false,sequence=0;
  const language=()=>window.QuizLanguage?.language||'no',esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const time=ms=>{const s=Math.floor(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
@@ -19,10 +19,10 @@
   const focus=()=>refresh();addEventListener('focus',focus);document.addEventListener('visibilitychange',focus);el.addEventListener('close',()=>{clearTimeout(timer);removeEventListener('focus',focus);document.removeEventListener('visibilitychange',focus);});refresh();return el;
  }
  function showSave(run){if(run.saved||run.prompted||active!==run)return;run.prompted=true;const el=dialog('geo-online-save','Du er på topp 10!');el.insertAdjacentHTML('beforeend','<form class="mapwiz-score-form"><div><input id="geo-online-name" aria-label="Kallenavn" placeholder="Kallenavn" maxlength="24" required autocomplete="off"><button type="submit">Lagre</button></div><p class="mapwiz-score-status" role="status"></p></form>');const input=el.querySelector('input');input.focus({preventScroll:true});el.querySelector('form').onsubmit=async event=>{event.preventDefault();const button=el.querySelector('form button');button.disabled=true;try{await api('/publish',{nickname:input.value.trim()},run);run.saved=true;el.close();document.getElementById('geo-online-board')?.close();showBoard(run.config,run);}catch(e){el.querySelector('[role=status]').textContent=e.message==='invalid_nickname'?'Bruk et kallenavn på maks 24 tegn uten e-post eller lenker.':'Kunne ikke lagre på nett. Prøv igjen.';button.disabled=false;}};}
- async function finish(run=active){if(!run||run.finalizing||run.failed)return;run.finalizing=true;const target=document.querySelector('.prototype-summary,.world-end,#country-map-complete')||(mode==='statle'?document.querySelector('.game-panel'):null),status=document.createElement('span');status.className='geo-online-checking';status.setAttribute('role','status');status.textContent='Kontrollerer resultat …';target?.append(status);await run.pending;status.remove();if(active!==run||run.failed||!run.reply.complete){run.finalizing=false;return;}
+ async function finish(run=active){if(!run||run.finalizing||run.failed)return;run.finalizing=true;const target=document.querySelector('.prototype-summary,.world-end,#country-map-complete')||(shapeQuiz(mode)?document.querySelector('.game-panel'):null),status=document.createElement('span');status.className='geo-online-checking';status.setAttribute('role','status');status.textContent='Kontrollerer resultat …';target?.append(status);await run.pending;status.remove();if(active!==run||run.failed||!run.reply.complete){run.finalizing=false;return;}
   if(run.config.game==='mapwiz'&&typeof geoGuessrState!=='undefined'){geoGuessrState.total=run.reply.total;geoGuessrState.baseTotal=run.reply.baseTotal;geoGuessrState.bonusTotal=run.reply.bonusTotal;const title=document.querySelector('.prototype-summary h3');if(title)title.textContent=run.reply.total.toFixed(1)+' / 1100 poeng';document.querySelectorAll('.prototype-results tbody tr').forEach((row,i)=>{const result=geoGuessrState.results[i];if(result){row.cells[1].textContent=result.base.toFixed(1);row.cells[2].textContent=result.bonus.toFixed(1);}});}
   if(run.config.game==='countries'){worldTrainerState.finalScore=run.reply.total;const score=document.querySelector('.country-map-result-stats span');if(score)score.textContent='Poeng: '+run.reply.total;}
-  if(run.config.game==='statle'){const score=document.getElementById('statle-score');if(score){score.hidden=false;score.textContent=run.reply.total+' / 5000 poeng';}}
+  if(shapeQuiz(run.config.game)){const score=document.getElementById('statle-score');if(score){score.hidden=false;score.textContent=run.reply.total+' / '+(run.plan.length*100)+' poeng';}}
   for(let attempt=0;attempt<3;attempt++)try{const result=await getRows(run.config);if(active===run&&qualifies(run,result.rows))showSave(run);return;}catch(_){await new Promise(r=>setTimeout(r,500*(attempt+1)));}run.finalizing=false;
  }
  function resultButton(target){if(!target||target.querySelector('.geo-online-result')||!active)return;const box=document.createElement('div');box.className='geo-online-result';const button=document.createElement('button');button.type='button';button.className='world-button';button.textContent='Topp 10';const run=active;button.onclick=()=>{if(run.reply.complete&&!run.saved)run.prompted=false;showBoard(run.config,run);};box.append(button);target.append(box);}
@@ -30,13 +30,13 @@
   showMapWiz(categories){showBoard(active?.config||{game:'mapwiz',categories:[...categories].sort(),language:language()});return true;},
   showLegacy(key){const [kind,region]=key.split('|'),game=kind==='countries2'?'countries':kind;if(!['flags','capitals','flagcapital','places','countries'].includes(game))return false;showBoard(active?.config||{game,region:region==='streak'?'world':region||'world',variant:document.querySelector('.world-submode')?.value,language:language()});return true;},
   finishLocal(result,target){if(active){resultButton(target);finish();}return true;},
-  startStatle(begin){return start({game:'statle',language:language()},reply=>begin(reply.questions.map(q=>q.target)),()=>begin());},
-  statleAnswer(choice,skip=false){const run=active;if(!run||run.config.game!=='statle')return;const q=run.plan[run.localIndex];enqueue(run,'/answer',{question:q.id,choice,skip});if(skip||choice===q.target)run.localIndex++;},
-  statleNext(){const run=active;if(run?.config.game==='statle'&&run.localIndex<50)enqueue(run,'/next',{});},
-  finishStatle(){finish();},showStatle(){if(active?.reply.complete&&!active.saved)active.prompted=false;showBoard(active?.config||{game:'statle',language:language()});}
+  startStatle(begin){return start({game:mode,language:language()},reply=>begin(reply.questions.map(q=>q.target)),()=>begin());},
+  statleAnswer(choice,skip=false){const run=active;if(!run||!shapeQuiz(run.config.game))return;const q=run.plan[run.localIndex];enqueue(run,'/answer',{question:q.id,choice,skip});if(skip||choice===q.target)run.localIndex++;},
+  statleNext(){const run=active;if(run&&shapeQuiz(run.config.game)&&run.localIndex<run.plan.length)enqueue(run,'/next',{});},
+  finishStatle(){finish();},showStatle(){if(active?.reply.complete&&!active.saved)active.prompted=false;showBoard(active?.config||{game:mode,language:language()});}
  };
  let scheduled=false;new MutationObserver(()=>{if(scheduled||!active||active.finalizing)return;scheduled=true;queueMicrotask(()=>{scheduled=false;if(!active||(active.config.game==='countries'&&!worldTrainerState?.ended))return;const target=document.querySelector('.prototype-summary,.world-end,#country-map-complete');if(target){if(active.config.game!=='mapwiz')resultButton(target);finish();}});}).observe(document.body,{childList:true,subtree:true});
- if(mode==='statle'){document.getElementById('statle-top-ten')?.addEventListener('click',()=>GeoOnline.showStatle());return;}
+ if(shapeQuiz(mode)){document.getElementById('statle-top-ten')?.addEventListener('click',()=>GeoOnline.showStatle());return;}
  const nativeInit=initWorldTrainer;window.initWorldTrainer=function(){reset();return nativeInit.apply(this,arguments);};
  const nativeStart=startWorldTrainer,nativeBuild=buildWorldQuestion,nativeChoose=chooseWorldOption;
  window.startWorldTrainer=function(game){const app=getWorldApp(game),region=app.querySelector('.world-region')?.value||'world',pace=app.querySelector('.world-pace')?.value||'sudden';if(!['flags','capitals','flagcapital','places'].includes(game)||pace!=='sudden'){reset();return nativeStart.apply(this,arguments);}return start({game,region,variant:app.querySelector('.world-submode')?.value,language:language()},()=>nativeStart(game),()=>nativeStart(game));};

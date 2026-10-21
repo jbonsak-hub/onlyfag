@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Bygg en modell av den globale atmosfæriske sirkulasjonen, fra soloppvarming til celler, trykkbelter og vind.">
+  <title>Global sirkulasjon | OnlyFag</title>
+  <link rel="stylesheet" href="../assets/geography/global-circulation/model.css?v=7eb17454ea5b">
+  <script src="../assets/analytics.js" defer></script>
+  <script src="../assets/geography/global-circulation/earth-land.js?v=effe2d1698fe" defer></script>
+  <script src="../assets/geography/global-circulation/model.js?v=c5302315a74a" defer></script>
+</head>
+<body>
+  <main class="circulation">
+    <header class="lab-head">
+      <div><a id="back" href="../geografi.html#klima-fagstoff">← Vær og klima</a><h1>Global sirkulasjon</h1></div>
+      <div class="tools"><button id="motion" type="button" aria-pressed="false" aria-label="Pause bevegelsen">Ⅱ <span>Pause</span></button><button id="theme" type="button" aria-label="Bytt til mørk visning" aria-pressed="false">◐</button><button id="fullscreen" type="button" aria-label="Åpne fullskjerm">⛶</button></div>
+    </header>
+    <nav class="steps" role="tablist" aria-label="Bygg modellen trinn for trinn">
+      <button id="step-0" type="button" role="tab" aria-selected="true" aria-controls="model-panel" data-step="0"><b>1</b><span>Soloppvarming</span></button>
+      <button id="step-1" type="button" role="tab" aria-selected="false" aria-controls="model-panel" data-step="1" tabindex="-1"><b>2</b><span>Én celle</span></button>
+      <button id="step-2" type="button" role="tab" aria-selected="false" aria-controls="model-panel" data-step="2" tabindex="-1"><b>3</b><span>Tre celler</span></button>
+      <button id="step-3" type="button" role="tab" aria-selected="false" aria-controls="model-panel" data-step="3" tabindex="-1"><b>4</b><span>Trykk og klima</span></button>
+      <button id="step-4" type="button" role="tab" aria-selected="false" aria-controls="model-panel" data-step="4" tabindex="-1"><b>5</b><span>Vindbelter</span></button>
+    </nav>
+    <div id="model-panel" class="workspace" role="tabpanel" aria-labelledby="step-0">
+      <section class="figure" aria-label="Modell av atmosfæren">
+        <div class="figure-top"><span id="figure-label">Solenergi ved jordoverflaten</span><span id="model-badge">Ulik innstrålingsvinkel</span></div>
+        <svg id="earth" viewBox="0 0 760 660" role="img" aria-labelledby="earth-title earth-description"><title id="earth-title">Ulik soloppvarming</title><desc id="earth-description"></desc></svg>
+        <div id="figure-legend" class="figure-legend" aria-hidden="true"></div>
+      </section>
+      <aside class="explanation" aria-live="polite" aria-atomic="false">
+        <div class="step-count" id="step-count">TRINN 1 AV 5</div>
+        <h2 id="lesson-title"></h2><p id="lesson-text"></p>
+        <div id="lesson-details" class="lesson-details"></div>
+        <div id="takeaway" class="takeaway"></div>
+        <div class="nav-buttons"><button id="previous" type="button" disabled>← Forrige</button><button id="next" type="button">Neste →</button></div>
+      </aside>
+    </div>
+    <footer><span>En idealisert modell: beltene flytter seg med årstidene. Hav, land, fjell og værsystemer gir lokale forskjeller. Høyden på atmosfæren er overdrevet.</span><a href="https://weather.metoffice.gov.uk/learn-about/weather/atmosphere/global-circulation-patterns" target="_blank" rel="noopener">Faglig bakgrunn ↗</a></footer>
+  </main>
+</body>
+</html>

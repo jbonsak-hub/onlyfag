@@ -32,6 +32,12 @@ const server = http.createServer((req, res) => {
   context.on('page', p => p.on('pageerror', e => errors.push([current, e.message])));
   await context.route('**/*', async r => {
     const u = r.request().url();
+    // Scoring/network verification has its own isolated API/browser tests.
+    // Keep this native interaction + analytics test independent of production.
+    if (/\/score-service(?:-[a-f0-9]+)?\.js(?:[?#]|$)/.test(u)) return r.fulfill({
+      contentType: 'application/javascript',
+      body: ''
+    });
     if (u.includes('cdnjs.cloudflare.com/ajax/libs/pdf.js/')) return r.fulfill({
       contentType: 'application/javascript',
       body: 'window.pdfjsLib={GlobalWorkerOptions:{}};'
@@ -78,9 +84,9 @@ const server = http.createServer((req, res) => {
         timeout: 5000
       });
       info.mapActive = mode;
-    } else if (mode === 'statle') {
+    } else if (mode === 'statle' || mode === 'fylker') {
       await page.locator('#start:enabled').waitFor();
-      assert.equal(await page.locator('path.state').count(), 50);
+      assert.equal(await page.locator('path.state').count(), mode === 'fylker' ? 15 : 50);
       await page.locator('#geoMenuButton').click();
       await page.keyboard.press('Escape');
     } else assert.deepEqual(info.active, ['quiz-' + mode]);
@@ -114,7 +120,7 @@ const server = http.createServer((req, res) => {
   }
   current = 'geografi.html';
   await page.goto(base + 'geografi.html#verden-quiz');
-  assert.equal(await page.locator('.geoquiz-mode-row').count(), 14);
+  assert.equal(await page.locator('.geoquiz-mode-row').count(), Object.keys(routes).length);
   assert.equal(await page.locator('.quiz-mode-content').count(), 0);
   await page.locator('.geoquiz-mode-row[onclick*="flaggquiz.html"]').click();
   await page.waitForURL('**/geografi/flaggquiz.html');
@@ -151,7 +157,7 @@ const server = http.createServer((req, res) => {
   })));
   await page.reload();
   await page.getByRole('button', {
-    name: '🏆 Topp 5 (hele verden)',
+    name: '🏆 Topp 10 (hele verden)',
     exact: true
   }).click();
   assert.match(await page.locator('#geo-hs-body').innerText(), /QA_ONLY_NAME/);

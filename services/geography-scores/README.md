@@ -8,6 +8,7 @@ Cloudflare Worker `onlyfag-geography-scores` bruker den separate D1-databasen me
 - Flagg, Hovedsteder og Flagg+Hovedstad: topp 10, egen liste per område og retning. Runde avsluttes ved første feil eller når alle oppgavene er løst.
 - Kjente steder: topp 10 for «på rad», egen liste per retning. Varianten med 20 spørsmål forblir lokal uten ny konkurranseregel.
 - Statle: topp 10 etter fullførte 50 stater. Serveren tildeler 100/75/50/0 poeng etter grønn/gul/oransje/rød kategori, maksimalt 5000. Feil, tidsbruk og hopp over kontrolleres; ufullførte runder kan ikke publiseres.
+- Norske fylker: egen topp 10 etter fullførte 15 fylker, med samme regler som Statle og maksimalt 1500 poeng. Norsk og engelsk deler listen. Krever oppdatert Worker ved publisering; ingen databaseendring eller migrering er nødvendig.
 - Finn land: topp 10 per geografisk område. Serveren kontrollerer land, gjentakelser, hint og tidsbonus.
 
 Norsk og engelsk deler resultatliste. Språket styrer spørsmål og knapper. Når et fullført resultat kvalifiserer til topp 10, åpnes kallenavnvinduet automatisk. Brukeren velger fortsatt selv om resultatet skal publiseres. Vinduet viser bare «Du er på topp 10!», kallenavn og lagreknapp. En åpen resultatliste oppdateres hvert femte sekund og når fanen blir synlig igjen. Oppdateringen stopper når listen lukkes eller fanen skjules.

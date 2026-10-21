@@ -28,6 +28,10 @@ window.GEO_QUIZ_ROUTES={
     "geografi/statle.html",
     "Statle"
   ],
+  "fylker": [
+    "geografi/fylker.html",
+    "Norske fylker"
+  ],
   "geoguessr": [
     "geografi/mapwiz.html",
     "MapWiz"

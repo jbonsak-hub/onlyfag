@@ -25,3 +25,7 @@ body:has(#overlay:not([hidden])) .game-controls{display:none}
 .stats>div>span,.stats small,.legend,.legend>strong,footer,footer a{color:#566a55}#feedback{color:#536a59}
 
 @media(min-width:701px){.game{grid-template-columns:var(--q-panel,260px) minmax(0,1fr)}}
+body[data-quiz="fylker"] .brand{font-size:19px;letter-spacing:-.035em}
+body[data-quiz="fylker"] footer span a{font-size:inherit;text-decoration:underline}
+body[data-quiz="fylker"] .state{stroke-width:.8}
+@media(max-width:700px){body[data-quiz="fylker"] .legend{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:8px}body[data-quiz="fylker"] .legend>strong,body[data-quiz="fylker"] #statle-top-ten{grid-column:1/-1}body[data-quiz="fylker"] footer{align-items:flex-start;flex-direction:column;gap:8px}body[data-quiz="fylker"] footer span{text-align:left}}
