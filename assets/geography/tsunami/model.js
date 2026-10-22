@@ -24,42 +24,14 @@
   const svg=$('tsunami-scene'),root=$('scene-content'),range=$('progress');
   const embedded=new URLSearchParams(location.search).get('embedded')==='1';
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
-  let stage=0,mainFrame=1,elapsed=0,playing=false,raf=0,last=0,lastPaint=0;
+  let stage=0,mainFrame=1,elapsed=0,playing=false,raf=0,last=0,lastPaint=0,speed=1;
   let hostVisible=!embedded;
   const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
   function fitLayout() {
     const lab=document.querySelector('.tsunami');
-    const maximum=Math.min(innerWidth,innerWidth>=1550&&innerHeight>=850?1480:1240);
-    const minimum=Math.min(maximum,300);
-    lab.classList.remove('fit-compact');
-    const fits=width=>{
-      lab.style.setProperty('--fit-width',width+'px');
-      const box=lab.getBoundingClientRect();
-      return box.height<=innerHeight-.5 && lab.scrollWidth<=Math.ceil(box.width)+1;
-    };
-    function chooseWidth(){
-      if(fits(maximum))return true;
-      // Wrapping changes in steps, so sample downward before refining the first
-      // fitting interval. The figure always keeps its original proportions.
-      let best=0,upper=maximum;
-      for(let width=maximum-24;width>=minimum;width-=24){
-        if(fits(width)){best=width;break;}
-        upper=width;
-      }
-      if(!best&&fits(minimum))best=minimum;
-      if(!best)return false;
-      for(let i=0;i<8&&upper-best>1;i++){
-        const width=(upper+best)/2;
-        if(fits(width))best=width;else upper=width;
-      }
-      lab.style.setProperty('--fit-width',Math.floor(best)+'px');
-      return true;
-    }
-    if(!chooseWidth()){
-      lab.classList.add('fit-compact');
-      if(!chooseWidth())lab.style.setProperty('--fit-width',maximum+'px');
-    }
-    // Changing the focused range's layout must not scroll the title out of view.
+    // CSS fits the scene and explanation to the viewport. No repeated forced
+    // measurements of the SVG are needed when a step or window size changes.
+    lab.style.setProperty('--fit-width',Math.min(innerWidth,1680)+'px');
     scrollTo(0,0);
   }
   $('reference-defs').innerHTML=reference.defs || '';
@@ -91,23 +63,31 @@
   function tick(now) {
     if(!playing)return;
     if(!last)last=now;
-    const delta=Math.min(250,now-last)/1000;
+    // Keep source time tied to elapsed time even if a busy browser misses a
+    // frame. Hidden tabs pause explicitly instead of discarding visible time.
+    const delta=Math.max(0,now-last)/1000*speed;
     last=now;
     mainFrame=Math.min(stages[stage].end,mainFrame+delta*reference.fps);
     elapsed+=delta*reference.fps;
     // Use the original frame rate; the main timeline holds at each explanation
     // while nested rings, smoke, magma and arrows can keep moving.
-    if(now-lastPaint>=1000/reference.fps-1){render();lastPaint=now;}
+    const interval=1000/reference.fps;
+    if(now-lastPaint>=interval){
+      render();
+      // Carry the remainder so 60 Hz screens average the original 25 fps,
+      // instead of rounding every update up to three refreshes (20 fps).
+      lastPaint=now-((now-lastPaint)%interval);
+    }
     raf=requestAnimationFrame(tick);
   }
   function play() {
     if(playing || document.hidden)return;
-    playing=true;last=0;lastPaint=0;playbackUI();raf=requestAnimationFrame(tick);
+    playing=true;last=performance.now();lastPaint=last-1000/reference.fps;playbackUI();raf=requestAnimationFrame(tick);
   }
   function selectStage(next,autoplay=!reduced.matches,updateHash=true) {
     pause();stage=clamp(next,0,stages.length-1);
     const current=stages[stage];mainFrame=current.start;elapsed=0;
-    $('stage-title').textContent=`Slik oppstår en tsunami – ${stage+1}: ${current.title}`;
+    $('stage-title').textContent=current.title;
     $('stage-text').textContent=current.text;
     $('scene-description').textContent=`${current.title}. ${current.text} Avstander, høyder og tid er skjematiske.`;
     $('stage-counter').textContent=`Trinn ${stage+1} av ${stages.length}`;
@@ -127,6 +107,12 @@
   $('next').addEventListener('click',()=>selectStage(stage+1));
   $('replay').addEventListener('click',()=>selectStage(stage,true));
   $('stage-select').addEventListener('change',event=>selectStage(Number(event.target.value)-1));
+  $('playback-speed').addEventListener('change',event=>{
+    const value=Number(event.target.value);
+    if([1,1.5,2].includes(value))speed=value;
+    // A speed change starts a fresh clock interval; previous elapsed time stays.
+    if(playing)last=performance.now();
+  });
   $('play').addEventListener('click',()=>{
     if(playing)return pause();
     if(mainFrame>=stages[stage].end && stages[stage].end>stages[stage].start){mainFrame=stages[stage].start;elapsed=0;render();}

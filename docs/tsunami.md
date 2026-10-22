@@ -6,13 +6,15 @@ Brukeren leverte `tsunamiFullscreen02B.exe`, en eldre Flash-projektor med forskn
 
 ## Forløp og kontroller
 
-De elleve trinnene følger originalen: verdenskart, Indiahavet, jordskjelv, platebevegelse, snittlinje, dreining til subduksjonssnitt, fastlåsing, brudd, bølgespredning, bølgevekst mot kysten og betydningen av «tsunami». Grafikkens opprinnelige farger og animasjonsrammer er bevart. Forrige, spill dette trinnet på nytt og neste har samme plassering og sirkeluttrykk som referansen.
+De elleve trinnene følger originalen: verdenskart, Indiahavet, jordskjelv, platebevegelse, snittlinje, dreining til subduksjonssnitt, fastlåsing, brudd, bølgespredning, bølgevekst mot kysten og betydningen av «tsunami». Grafikkens opprinnelige farger og animasjonsrammer er bevart. Grensesnittet bruker Onlyfags grønne palett, avrundede paneler og knapper med tydelige etiketter. På større skjermer ligger forklaringen ved siden av figuren; på mobil stables innholdet.
 
-Hvert valgt trinn starter ved begynnelsen og animeres i originalens 25 bilder per sekund. Hovedtidslinjen stopper ved forklaringen, mens blant annet skjelvringer, piler, magma og røyk fortsetter i nestede løkker. Pause stopper begge deler. Glideren spoler deterministisk i gjeldende trinn og setter animasjonen på pause. Trinn 1 er et stillbilde uten aktiv glider. Trinnvalg og lenker som `#trinn-8` gir direkte tilgang. Redusert bevegelse starter hvert trinn pauset; avspilling kan fortsatt startes eksplisitt.
+Hvert valgt trinn starter ved begynnelsen og animeres i originalens 25 bilder per sekund. Hastigheten kan velges mellom 1×, 1,5× og 2×. Hovedtidslinjen stopper ved forklaringen, mens blant annet skjelvringer, piler, magma og røyk fortsetter i nestede løkker. Pause stopper begge deler. Glideren spoler deterministisk i gjeldende trinn og setter animasjonen på pause. Trinn 1 er et stillbilde uten aktiv glider. Trinnvalg og lenker som `#trinn-8` gir direkte tilgang. Redusert bevegelse starter hvert trinn pauset; avspilling kan fortsatt startes eksplisitt.
 
 Både bytte av nettleserfane og skjuling av modulen på geografisiden pauser avspillingen. Når Tsunami åpnes igjen i geografimenyen, starter den på trinn 1. Meldinger mellom nettsiden og modellen valideres med både origin og kildevindu. Fullskjerm er tilgjengelig for undervisning.
 
 Figuren beholder originalens bildeformat 440:251, med en eksplisitt SVG-klippemaske rundt grafikken. Originalens øvrige knapper og tekst utenfor figuren gjengis ikke. Layouten tilpasses vindushøyde, tekstlengde og mobilskjerm uten å forvrenge figurene.
+
+SVG-elementene beholdes mellom bilder. Bevegelser oppdaterer matriser, farger og de formene som faktisk endres, fremfor å bygge opp kart, tekst og masker på nytt ved hvert bilde. Klokken følger faktisk forløpt tid, slik at et tregt bilde ikke gjør hele forløpet langsommere. Oppdateringene beholder tidsresten mellom skjermoppfriskninger for å unngå at 25 bilder per sekund avrundes ned til 20 på en 60 Hz-skjerm. CSS håndterer layouten uten gjentatte synkrone målinger av hele figuren ved trinnbytte.
 
 ## Faglige oppdateringer
 
@@ -39,4 +41,4 @@ BROWSER_EXECUTABLE=/usr/bin/chromium node tests/tsunami.cjs
 node scripts/export-tsunami.cjs /tmp/Tsunami.html
 ```
 
-Testene dekker alle elleve trinn, reversibel spoling, de faktiske klippene for ringer/piler/magma/røyk, vedvarende løkker på hold, avspilling/pause, fem skjermstørrelser, innbygging og gjenåpning. Enfil-eksporten testes separat med bare dokumentforespørselen og uten analytics eller andre ressurser. Nettleserkontrollene er kjørt i Chromium med emulert mobilvisning; fysisk mobil og Safari er ikke kontrollert.
+Testene dekker alle elleve trinn, reversibel spoling, de faktiske klippene for ringer/piler/magma/røyk, vedvarende løkker på hold, gjenbruk av SVG-elementer, klokkens innhenting etter en treg nettleseroppgave, hastighetsvalg, avspilling/pause, fem skjermstørrelser, innbygging og gjenåpning. Enfil-eksporten testes separat med bare dokumentforespørselen og uten analytics eller andre ressurser. Nettleserkontrollene er kjørt i Chromium med emulert mobilvisning; fysisk mobil og Safari er ikke kontrollert.

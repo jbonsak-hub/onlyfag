@@ -115,10 +115,12 @@ const server = http.createServer((req,res) => {
     const held=await page.locator('#scene-content').innerHTML();
     const loops=new Map();
     for(const [id,name] of [[103,'white subduction arrows'],[107,'rising magma'],[113,'volcanic smoke']])loops.set(id,{name,svg:await featureSnapshot(id)});
+    await page.locator('[data-reference-id="103"]').first().evaluate(el=>window.retainedPlateArrows=el);
     await page.waitForTimeout(240);
     assert.equal(Number(await scene.getAttribute('data-frame')),220,'The step holds its final camera position');
     assert.notEqual(await page.locator('#scene-content').innerHTML(),held,'Volcano, magma or plate arrows keep moving on the held step');
     for(const [id,feature] of loops)assert.notEqual(await featureSnapshot(id),feature.svg,feature.name+' retain the original nested animation');
+    assert.ok(await page.evaluate(()=>window.retainedPlateArrows.isConnected),'Playback retains existing SVG nodes instead of rebuilding the scene every frame');
     await page.locator('#play').click();
     const heldPaused=await page.locator('#scene-content').innerHTML();
     await page.waitForTimeout(160);
@@ -129,6 +131,34 @@ const server = http.createServer((req,res) => {
     await range.fill('55');
     assert.equal(await page.locator('#play').getAttribute('aria-pressed'),'false');
     console.log('PASS autoplay, expanding-ring motion, final-frame loops, pause and replay');
+
+    // A slow frame must skip ahead in source time rather than slow the movie.
+    await select.selectOption('10');
+    await page.waitForFunction(()=>Number(document.querySelector('#tsunami-scene').dataset.elapsed)>1);
+    const clock=await page.evaluate(async()=>{
+      const scene=document.querySelector('#tsunami-scene');
+      const started=performance.now(),before=Number(scene.dataset.elapsed);
+      while(performance.now()-started<450){} // Simulate a busy browser task.
+      await new Promise(requestAnimationFrame);
+      await new Promise(requestAnimationFrame);
+      return {seconds:(performance.now()-started)/1000,frames:Number(scene.dataset.elapsed)-before};
+    });
+    assert.ok(clock.frames>=clock.seconds*25*.8 && clock.frames<=clock.seconds*25*1.3,'Playback follows elapsed time after a slow frame '+JSON.stringify(clock));
+    const sampleSpeed=async speed=>{
+      await page.locator('#playback-speed').selectOption(String(speed));
+      await select.selectOption('10');
+      await page.waitForFunction(()=>Number(document.querySelector('#tsunami-scene').dataset.elapsed)>0);
+      return page.evaluate(async()=>{
+        const scene=document.querySelector('#tsunami-scene'),before=Number(scene.dataset.elapsed),started=performance.now();
+        await new Promise(resolve=>setTimeout(resolve,650));
+        return (Number(scene.dataset.elapsed)-before)/((performance.now()-started)/1000);
+      });
+    };
+    const normalSpeed=await sampleSpeed(1),doubleSpeed=await sampleSpeed(2);
+    assert.ok(doubleSpeed/normalSpeed>1.6 && doubleSpeed/normalSpeed<2.4,'2× doubles source-time progression '+JSON.stringify({normalSpeed,doubleSpeed}));
+    await page.locator('#playback-speed').selectOption('1');
+    await page.locator('#play').click();
+    console.log('PASS retained SVG nodes, elapsed-time playback and speed controls');
 
     // Keep original-style figure, explanation and three round navigation buttons in view.
     await page.emulateMedia({reducedMotion:'reduce'});
@@ -141,7 +171,7 @@ const server = http.createServer((req,res) => {
       for(let stage=1;stage<=11;stage++) {
         await select.selectOption(String(stage));if(stage>1)await range.fill('100');
         const fit=await page.evaluate(()=>{
-          const ids=['stage-title','tsunami-scene','stage-text','previous','replay','next','progress','stage-select'];
+          const ids=['stage-title','tsunami-scene','stage-text','previous','replay','next','progress','stage-select','playback-speed'];
           return {width:innerWidth,height:innerHeight,scrollWidth:document.documentElement.scrollWidth,scrollHeight:document.documentElement.scrollHeight,boxes:Object.fromEntries(ids.map(id=>[id,document.getElementById(id).getBoundingClientRect().toJSON()]))};
         });
         assert.ok(fit.scrollWidth<=fit.width+1 && fit.scrollHeight<=fit.height+1,'No page scrolling '+JSON.stringify({stage,...fit}));
