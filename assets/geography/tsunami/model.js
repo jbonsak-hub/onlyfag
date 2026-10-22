@@ -24,7 +24,7 @@
   const svg=$('tsunami-scene'),root=$('scene-content'),range=$('progress');
   const embedded=new URLSearchParams(location.search).get('embedded')==='1';
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
-  let stage=0,mainFrame=1,elapsed=0,playing=false,raf=0,last=0,lastPaint=0,speed=1;
+  let stage=0,mainFrame=1,elapsed=0,playing=false,raf=0,last=0,lastPaint=0;
   let hostVisible=!embedded;
   const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
   function fitLayout() {
@@ -65,7 +65,7 @@
     if(!last)last=now;
     // Keep source time tied to elapsed time even if a busy browser misses a
     // frame. Hidden tabs pause explicitly instead of discarding visible time.
-    const delta=Math.max(0,now-last)/1000*speed;
+    const delta=Math.max(0,now-last)/1000;
     last=now;
     mainFrame=Math.min(stages[stage].end,mainFrame+delta*reference.fps);
     elapsed+=delta*reference.fps;
@@ -107,12 +107,6 @@
   $('next').addEventListener('click',()=>selectStage(stage+1));
   $('replay').addEventListener('click',()=>selectStage(stage,true));
   $('stage-select').addEventListener('change',event=>selectStage(Number(event.target.value)-1));
-  $('playback-speed').addEventListener('change',event=>{
-    const value=Number(event.target.value);
-    if([1,1.5,2].includes(value))speed=value;
-    // A speed change starts a fresh clock interval; previous elapsed time stays.
-    if(playing)last=performance.now();
-  });
   $('play').addEventListener('click',()=>{
     if(playing)return pause();
     if(mainFrame>=stages[stage].end && stages[stage].end>stages[stage].start){mainFrame=stages[stage].start;elapsed=0;render();}

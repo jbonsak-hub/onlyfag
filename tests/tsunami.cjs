@@ -42,6 +42,8 @@ const server = http.createServer((req,res) => {
     await page.goto(base+'/geografi/tsunami.html');
     const scene=page.locator('#tsunami-scene'),range=page.locator('#progress'),select=page.locator('#stage-select');
     assert.equal(await select.locator('option').count(),11);
+    assert.equal(await page.locator('.eyebrow').textContent(),'Slik oppstår en tsunami');
+    assert.equal(await page.locator('#playback-speed').count(),0);
     assert.equal(await select.inputValue(),'1');
     assert.equal(await range.inputValue(),'0','Initial load starts at the beginning');
     assert.equal(await page.locator('#play').getAttribute('aria-pressed'),'false','Reduced motion starts paused');
@@ -144,21 +146,8 @@ const server = http.createServer((req,res) => {
       return {seconds:(performance.now()-started)/1000,frames:Number(scene.dataset.elapsed)-before};
     });
     assert.ok(clock.frames>=clock.seconds*25*.8 && clock.frames<=clock.seconds*25*1.3,'Playback follows elapsed time after a slow frame '+JSON.stringify(clock));
-    const sampleSpeed=async speed=>{
-      await page.locator('#playback-speed').selectOption(String(speed));
-      await select.selectOption('10');
-      await page.waitForFunction(()=>Number(document.querySelector('#tsunami-scene').dataset.elapsed)>0);
-      return page.evaluate(async()=>{
-        const scene=document.querySelector('#tsunami-scene'),before=Number(scene.dataset.elapsed),started=performance.now();
-        await new Promise(resolve=>setTimeout(resolve,650));
-        return (Number(scene.dataset.elapsed)-before)/((performance.now()-started)/1000);
-      });
-    };
-    const normalSpeed=await sampleSpeed(1),doubleSpeed=await sampleSpeed(2);
-    assert.ok(doubleSpeed/normalSpeed>1.6 && doubleSpeed/normalSpeed<2.4,'2× doubles source-time progression '+JSON.stringify({normalSpeed,doubleSpeed}));
-    await page.locator('#playback-speed').selectOption('1');
     await page.locator('#play').click();
-    console.log('PASS retained SVG nodes, elapsed-time playback and speed controls');
+    console.log('PASS retained SVG nodes and elapsed-time playback');
 
     // Keep original-style figure, explanation and three round navigation buttons in view.
     await page.emulateMedia({reducedMotion:'reduce'});
@@ -171,7 +160,7 @@ const server = http.createServer((req,res) => {
       for(let stage=1;stage<=11;stage++) {
         await select.selectOption(String(stage));if(stage>1)await range.fill('100');
         const fit=await page.evaluate(()=>{
-          const ids=['stage-title','tsunami-scene','stage-text','previous','replay','next','progress','stage-select','playback-speed'];
+          const ids=['stage-title','tsunami-scene','stage-text','previous','replay','next','progress','stage-select'];
           return {width:innerWidth,height:innerHeight,scrollWidth:document.documentElement.scrollWidth,scrollHeight:document.documentElement.scrollHeight,boxes:Object.fromEntries(ids.map(id=>[id,document.getElementById(id).getBoundingClientRect().toJSON()]))};
         });
         assert.ok(fit.scrollWidth<=fit.width+1 && fit.scrollHeight<=fit.height+1,'No page scrolling '+JSON.stringify({stage,...fit}));
@@ -189,6 +178,9 @@ const server = http.createServer((req,res) => {
     // Geography integration loads lazily, pauses hidden playback, and reopens from step one.
     await page.setViewportSize({width:1366,height:646});
     await page.goto(base+'/geografi.html#indre-tsunami');
+    const tsunamiMenu=page.locator('.submenu-item').filter({hasText:/^Tsunami$/});
+    assert.equal(await tsunamiMenu.count(),1);
+    assert.equal(await tsunamiMenu.evaluate(el=>el.previousElementSibling.textContent.trim()),'Plategrenser');
     const model=page.frameLocator('#tsunami-model-frame');
     await model.locator('#stage-select').waitFor();
     assert.equal(await model.locator('#stage-select').inputValue(),'1');
