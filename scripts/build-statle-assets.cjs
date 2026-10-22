@@ -7,7 +7,14 @@ const root = path.resolve(__dirname, '..');
 const checking = process.argv.includes('--check');
 const assets = ['statle.css', 'statle.js', 'panel-resize.js', 'map-zoom.js'].map(source => {
   const extension = source.split('.').pop(), stem = source.slice(0,-extension.length-1);
-  const content = fs.readFileSync(path.join(root, 'assets/geography/' + source), 'utf8').replace(/\r\n/g, '\n');
+  let content = fs.readFileSync(path.join(root, 'assets/geography/' + source), 'utf8').replace(/\r\n/g, '\n');
+  if (source === 'statle.js') {
+    for (const dataFile of ['us-states.json', 'norway-counties.json', 'continent-maps.json', 'physical-maps/world-water.json', 'physical-maps/mountain-europe.json']) {
+      const data = fs.readFileSync(path.join(root, 'assets/geography', dataFile), 'utf8').replace(/\r\n/g, '\n');
+      const revision = crypto.createHash('sha256').update(data).digest('hex').slice(0,12);
+      content = content.split(dataFile).join(dataFile + '?v=' + revision);
+    }
+  }
   const hash = crypto.createHash('sha256').update(content).digest('hex').slice(0, 12);
   return {extension, stem, content, relative:'assets/geography/statle-assets/' + stem + '-' + hash + '.' + extension};
 });

@@ -55,7 +55,7 @@ function geographicBounds(target) {
 
 
 test('three world maps include the revised inventories and water groups',()=>{
- assert.deepEqual(Object.fromEntries(Object.entries(regions).map(([id,r])=>[id,r.states.length])),{rivers:49,lakes:107,mountains:34});
+ assert.deepEqual(Object.fromEntries(Object.entries(regions).map(([id,r])=>[id,r.states.length])),{rivers:49,lakes:119,mountains:34});
  assert.equal(regions.lakes.states.filter(s=>s.group==='lakes').length,33);
  assert(regions.lakes.states.filter(s=>s.group==='seas').length>=30);
  assert(regions.lakes.states.filter(s=>s.group==='gulfsStraits').length>=30);
@@ -98,4 +98,21 @@ test('tiny lakes and straits retain real outlines and visible markers',()=>{
 });
 test('both physical map builders reproduce the committed offline geometry',()=>{
  for(const file of ['build-world-water-maps.cjs','build-mountain-europe-maps.cjs'])execFileSync(process.execPath,[path.join(__dirname,'../scripts',file),'--check'],{stdio:'pipe'});
+});
+
+test('new named marine regions and all former catalogue holes belong to quiz targets',()=>{
+ const map=regions.lakes,added=map.coverage.added;assert.equal(added.length,12);for(const t of added)assert(map.states.some(s=>s.n===t.n&&s.en===t.en));
+ const parents=Object.fromEntries(map.coverage.assignments.map(a=>[a.source,a.target]));for(const [name,parent]of Object.entries({'Bristol Channel':'Celtic Sea','North Channel':'Irish Sea','James Bay':'Hudson Bay','Hudson Strait':'Hudson Bay','Bo Hai':'Yellow Sea','Laccadive Sea':'Indian Ocean','Great Australian Bight':'Indian Ocean','Gulf of Tonkin':'South China Sea','Bali Sea':'Java Sea','Yangtze River':'East China Sea','Savu Sea':'Indian Ocean','The North Western Passages':'Arctic Ocean'}))assert.equal(parents[name],parent);
+ for(const assignment of map.coverage.assignments)assert(map.states.some(s=>s.en===assignment.target),'Known parent '+assignment.target);
+ assert(map.extraLand.length>0,'Antarctica is land at the southern edge, not ocean catchment');
+});
+
+test('the complete sea selection covers an independent 21,600-point ocean reference',()=>{
+ const reference=require('./fixtures/marine-water-reference.json'),bits=Buffer.from(reference.waterBits,'base64'),seas=regions.lakes.states.filter(s=>s.kind==='sea').map(s=>paths(s.d));let checked=0;assert(reference.waterCount>10000);
+ for(let ix=0;ix<reference.columns;ix++)for(let iy=0;iy<reference.rows;iy++){const i=ix*reference.rows+iy;if(!(bits[i>>3]&(1<<(i&7))))continue;const p=[reference.offset+ix*reference.step,reference.offset+iy*reference.step];assert(seas.some(shapes=>insideEvenOdd(p,shapes)),'Unassigned ocean position '+p);checked++;}
+ assert.equal(checked,reference.waterCount);
+});
+
+test('marine coastal repair never labels deep inland lakes as ocean',()=>{
+ const seas=regions.lakes.states.filter(s=>s.kind==='sea').map(s=>paths(s.d));for(const en of ['Lake Baikal','Lake Victoria','Lake Eyre','Great Slave Lake'])assert(!seas.some(shapes=>insideEvenOdd(find('lakes',en).c,shapes)),en+' stays outside ocean catchments');
 });

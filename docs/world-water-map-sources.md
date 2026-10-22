@@ -1,6 +1,6 @@
 # World rivers, lakes and marine areas
 
-The offline builder creates 49 rivers and a water map with 33 lakes plus 74
+The offline builder creates 49 rivers and a water map with 33 lakes plus 86
 marine areas. Lake, sea/ocean and gulf/strait categories are independently
 selectable before a round; lakes are selected initially. An empty selection
 disables Start. Selection changes the visible targets, complete round and
@@ -76,6 +76,25 @@ hint containment and reproducible builds. Browser tests make real clicks on
 every target, test nested regions and small markers, drag the panel, exercise
 water selections and complete a server-verified round with shared-language
 ranking.
+
+## Complete marine coverage
+
+The 86 marine targets now cover all visible ocean water. Formerly unselected
+Natural Earth sea, gulf and channel polygons are unioned into their nearest
+logical retained target; the packed snapshot also records every source-to-parent
+assignment. Small residual coastal gaps use an ocean-basin catchment beneath
+named seas. The coastal residual is derived from sea-connected water in the rendered
+country coastlines, after excluding inland lakes. The basin divides follow
+continental interiors, the Indonesian arc,
+Cape Agulhas, 70°N and 60°S; they are fallback classification, not legal
+maritime boundaries. These polygons are clipped against land and an independent
+lake-exclusion clip. The southern Antarctic coastline is shown as land so its
+interior cannot become Southern Ocean. The other map modules keep their framing.
+
+Named additions and all assignments are in [marine-coverage.md](marine-coverage.md).
+Content hashes in built map-data URLs ensure a new question list cannot use an
+older cached map. Checks sample 21,600 positions, every geographic target and
+20 former coastal gaps. A raster audit checks offshore water separately from unasked inland lakes.
 
 ## Rivers
 
@@ -167,62 +186,74 @@ ranking.
 - Mjøsa — Lake Mjøsa
 - Gardasjøen — Lake Garda
 
-### seas (44)
+### seas (55)
 
 - Stillehavet — Pacific Ocean
-- Atlanterhavet — Atlantic Ocean
 - Indiske hav — Indian Ocean
+- Atlanterhavet — Atlantic Ocean
 - Sørishavet — Southern Ocean
 - Arktiske hav — Arctic Ocean
 - Filippinerhavet — Philippine Sea
 - Barentshavet — Barents Sea
 - Grønlandshavet — Greenland Sea
+- Beringhavet — Bering Sea
 - Tasmanhavet — Tasman Sea
 - Arabiske hav — Arabian Sea
-- Korallhavet — Coral Sea
 - Norskehavet — Norwegian Sea
-- Beringhavet — Bering Sea
-- Sargassohavet — Sargasso Sea
+- Korallhavet — Coral Sea
+- Karahavet — Kara Sea
 - Sør-Kinahavet — South China Sea
+- Sargassohavet — Sargasso Sea
 - Karibiske hav — Caribbean Sea
 - Okhotskhavet — Sea of Okhotsk
+- Østsibirhavet — East Siberian Sea
+- Laptevhavet — Laptev Sea
 - Middelhavet — Mediterranean Sea
 - Labradorhavet — Labrador Sea
+- Beauforthavet — Beaufort Sea
 - Japanhavet — Sea of Japan
-- Nordsjøen — North Sea
+- Bandasjøen — Banda Sea
+- Tsjuktsjerhavet — Chukchi Sea
 - Øst-Kinahavet — East China Sea
+- Nordsjøen — North Sea
+- Javasjøen — Java Sea
 - Arafurahavet — Arafura Sea
+- Salomonsjøen — Solomon Sea
 - Andamanhavet — Andaman Sea
 - Svartehavet — Black Sea
-- Rødehavet — Red Sea
 - Gulehavet — Yellow Sea
+- Rødehavet — Red Sea
+- Celebessjøen — Celebes Sea
+- Sulusjøen — Sulu Sea
 - Timorhavet — Timor Sea
 - Østersjøen — Baltic Sea
-- Tyrrenhavet — Tyrrhenian Sea
+- Bismarcksjøen — Bismarck Sea
 - Keltiske hav — Celtic Sea
+- Tyrrenhavet — Tyrrhenian Sea
 - Kvitsjøen — White Sea
 - Det joniske hav — Ionian Sea
 - Adriaterhavet — Adriatic Sea
 - Egeerhavet — Aegean Sea
-- Balearhavet — Balearic Sea
-- Kretahavet — Sea of Crete
 - Hebriderhavet — Sea of the Hebrides
 - Irskesjøen — Irish Sea
+- Balearhavet — Balearic Sea
+- Kretahavet — Sea of Crete
 - Alboransjøen — Alboran Sea
 - Azovhavet — Sea of Azov
 - Liguriabukta — Ligurian Sea
 - Marmarahavet — Sea of Marmara
 - Bab el-Mandab — Bab el Mandeb
 
-### gulfsStraits (30)
+### gulfsStraits (31)
 
-- Bengalbukta — Bay of Bengal
 - Baffinbukta — Baffin Bay
-- Mexicogulfen — Gulf of Mexico
 - Hudsonbukta — Hudson Bay
+- Bengalbukta — Bay of Bengal
+- Mexicogulfen — Gulf of Mexico
 - Mozambikkanalen — Mozambique Channel
 - Alaskabukta — Gulf of Alaska
 - Guineabukta — Gulf of Guinea
+- Saint Lawrence-bukta — Gulf of Saint Lawrence
 - Biscayabukta — Bay of Biscay
 - Thailandbukta — Gulf of Thailand
 - Carpentariabukta — Gulf of Carpentaria
@@ -236,10 +267,10 @@ ranking.
 - Skagerrak — Skagerrak
 - Finskebukta — Gulf of Finland
 - Kattegat — Kattegat
+- Magellanstredet — Strait of Magellan
 - Rigabukta — Gulf of Riga
 - Beringstredet — Bering Strait
 - Veneziabukta — Gulf of Venice
-- Magellanstredet — Strait of Magellan
 - Hormuzstredet — Strait of Hormuz
 - Doverstredet — Strait of Dover
 - Dardanellene — Dardanelles

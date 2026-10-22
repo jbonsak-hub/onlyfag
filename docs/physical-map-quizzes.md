@@ -7,13 +7,17 @@ counties and the original Statle link:
 | --- | ---: |
 | World rivers | 49 |
 | Mountain ranges and highlands | 34: 27 ranges, 7 highland regions |
-| Lakes and marine areas | 107: 33 lakes, 44 seas/oceans, 30 gulfs/straits |
+| Lakes and marine areas | 119: 33 lakes, 55 seas/oceans, 31 gulfs/straits |
 
 The water map offers three independent checkboxes directly above Start. Lakes
 are checked initially; the selection persists while changing maps. An empty
 selection disables Start and the leaderboard. Only selected targets are drawn,
 assigned and accepted by the score service. European waters are covered here;
 there is no separate European water quiz.
+
+Marine coverage has no unassigned offshore patches. Smaller unasked water
+bodies are attached to their logical neighbours; twelve substantial missing
+seas/gulfs are now separate targets. See [marine-coverage.md](marine-coverage.md).
 
 The supplied PDFs and reference quizzes informed inventories and interaction.
 The implementation uses local geographic SVG vectors, without third-party quiz
@@ -63,11 +67,12 @@ River corridor overlaps select the nearest mapped course.
 ```sh
 node --test tests/physical-map-geometry.cjs tests/continent-maps.cjs tests/geography-score-api.mjs
 node tests/physical-map-browser.cjs
+node tests/marine-coverage-browser.cjs
 node tests/kart-zoom.cjs
 node tests/kart-online.cjs
 ```
 
 Browser checks use PLAYWRIGHT_MODULE and optionally BROWSER_EXECUTABLE and
-SCREENSHOT_DIR. They make real geographic clicks on all 190 physical targets,
+SCREENSHOT_DIR. They make real geographic clicks on all 202 physical targets,
 exercise free panel dragging, category changes, complete server-verified
 rounds, automatic nickname prompt, shared-language ranking and mobile zoom.

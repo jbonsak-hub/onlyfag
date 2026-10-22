@@ -61,14 +61,20 @@
       const land=(regionData.background||[]).filter(layer=>layer.kind==='land'),v=regionData.viewBox;
       const clip=svgNode('clipPath',{id:'physical-water-clip',clipPathUnits:'userSpaceOnUse'});
       clip.append(svgNode('path',{d:`M${v[0]} ${v[1]}h${v[2]}v${v[3]}h${-v[2]}Z`+land.map(l=>l.d).join(''),'clip-rule':'evenodd'}));$('states').append(clip);
+      // Intersect two clips: adding lake rings to the land clip's even-odd path
+      // would toggle lakes back on wherever the country polygon already covers them.
+      const lakeClip=svgNode('clipPath',{id:'physical-lake-exclusion',clipPathUnits:'userSpaceOnUse'});
+      lakeClip.append(svgNode('path',{d:`M${v[0]} ${v[1]}h${v[2]}v${v[3]}h${-v[2]}Z`+(regionData.background||[]).filter(l=>l.kind==='lake').map(l=>l.d).join(''),'clip-rule':'evenodd'}));$('states').append(lakeClip);
       for(const layer of regionData.background||[])$('states').append(svgNode('path',{d:layer.d,class:'physical-background '+layer.kind,'fill-rule':'evenodd','aria-hidden':'true'}));
       // Large marine areas sit below their smaller component seas and rivers.
       for (const state of states) {
         const group=svgNode('g',{class:'physical-target '+state.kind,role:'button',tabindex:'0','aria-label':'Sted på kartet'});group.dataset.state=state.n;
         if(state.kind==='sea')group.setAttribute('clip-path','url(#physical-water-clip)');
         const path=svgNode('path',{d:state.d,class:'physical-shape','fill-rule':'evenodd','vector-effect':'non-scaling-stroke'});
+        if(state.kind==='sea')path.setAttribute('clip-path','url(#physical-lake-exclusion)');
         group.append(path);
         const hit=svgNode('path',{d:state.d,class:'physical-hit','fill-rule':'evenodd','vector-effect':'non-scaling-stroke',style:'stroke-width:'+(state.hitWidth||12)+'px'});group.append(hit);
+        if(state.kind==='sea')hit.setAttribute('clip-path','url(#physical-lake-exclusion)');
         $('states').append(group);elements.set(state.n,group);
         const b=path.getBBox();centers.set(state.n,{x:state.c[0],y:state.c[1],radius:Math.max(b.width,b.height)/2+10});
         if(state.marker){const marker=svgNode('g',{class:'small-marker physical-marker '+state.kind,role:'button',tabindex:'0','aria-label':'Ekstra treffelt for et lite sted'});marker.dataset.state=state.n;marker.append(svgNode('circle',{cx:state.c[0],cy:state.c[1],r:11,class:'hit'}),svgNode('circle',{cx:state.c[0],cy:state.c[1],r:4.5,class:'visible'}));$('smallStates').append(marker);markers.set(state.n,marker);}
@@ -241,9 +247,12 @@
     if(!physical)return element.dataset.state;
     if(element.classList.contains('small-marker')){let nearest=null,distance=Infinity;for(const [name,marker] of markers){const circle=marker.querySelector('.visible'),matrix=marker.getScreenCTM(),local=new DOMPoint(event.clientX,event.clientY).matrixTransform(matrix.inverse());if(!circle.isPointInFill(local))continue;const center=new DOMPoint(circle.cx.baseVal.value,circle.cy.baseVal.value).matrixTransform(matrix),d=(event.clientX-center.x)**2+(event.clientY-center.y)**2;if(d<distance){distance=d;nearest=name;}}if(nearest)return nearest;}
     const p=new DOMPoint(event.clientX,event.clientY).matrixTransform($('map').getScreenCTM().inverse()),clicked=elements.get(element.dataset.state);let painted;
+    // Ocean catchments include masked land/coastal slivers. isPointInFill does
+    // not apply SVG clips, so these invisible areas must not steal a lake hit.
+    const maskedWater=[...$('states').querySelectorAll('.physical-background.land,.physical-background.lake')].some(path=>path.isPointInFill(p));
     // A neighbour's enlarged touch corridor must never steal a click on the
     // actual lake/strait/river beneath it. Respect the visible painting order.
-    for(const [name,group] of elements){const shape=group.querySelector('.physical-shape');if(group.classList.contains('river')?shape.isPointInStroke(p):shape.isPointInFill(p))painted=name;}
+    for(const [name,group] of elements){if(maskedWater&&group.classList.contains('sea'))continue;const shape=group.querySelector('.physical-shape');if(group.classList.contains('river')?shape.isPointInStroke(p):shape.isPointInFill(p))painted=name;}
     if(painted)return painted;
     if(!clicked.classList.contains('river'))return element.dataset.state;
     let best=Infinity,name=element.dataset.state;
@@ -309,7 +318,7 @@
       else if(physical){
         let data;if(['rivers','lakes'].includes(region)){worldWater||=readMap('../assets/geography/physical-maps/world-water.json').catch(e=>{worldWater=null;throw e;});data=await worldWater;}
         else{mountainEurope||=readMap('../assets/geography/physical-maps/mountain-europe.json').catch(e=>{mountainEurope=null;throw e;});data=await mountainEurope;}
-        if(token!==mapGeneration)return;regionData={...data.regions[region],background:data.regions[region].background||data.background};states=regionData.states.filter(s=>region!=='lakes'||waterCategories().includes(s.group));document.body.dataset.waterCategories=waterCategories().join(',');
+        if(token!==mapGeneration)return;regionData={...data.regions[region],background:(data.regions[region].background||data.background).concat(data.regions[region].extraLand||[])};states=regionData.states.filter(s=>region!=='lakes'||waterCategories().includes(s.group));document.body.dataset.waterCategories=waterCategories().join(',');
         if(window.GEO_QUIZ_EN)for(const state of states)if(state.en)window.GEO_QUIZ_EN.names[state.n]=state.en;
       }else {continents||=readMap('../assets/geography/continent-maps.json').catch(error=>{continents=null;throw error;});const data=await continents;if(token!==mapGeneration)return;regionData=data.regions[region];states=regionData.states;}
       if(token!==mapGeneration)return;total=states.length;

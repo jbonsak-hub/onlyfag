@@ -36,11 +36,11 @@ og kategoriorden påvirker ikke listeidentiteten. Gamle verdensdelslister behold
 | Verdens elver | 49 | 4900 |
 | Fjellkjeder og høyland | 34 | 3400 |
 | Innsjøer | 33 | 3300 |
-| Hav og sjøområder | 44 | 4400 |
-| Bukter og stred | 30 | 3000 |
+| Hav og sjøområder | 55 | 5500 |
+| Bukter og stred | 31 | 3100 |
 
 Oppdatert Worker må publiseres sammen med nettsiden. Det kreves ingen ny
-D1-tabell eller migrering.
+D1-tabell eller migrering. Havkartets utvidede dekning og tolv nye navn er dokumentert i `docs/marine-coverage.md`.
 
 Kartgruppene følger nettstedets eksisterende quizområder. Armenia, Aserbajdsjan og Georgia er lagt til Asia slik at alle 197 land er med. Russland, Tyrkia og Kypros ligger i Europa. Serverens mål er hentet fra de samme kartfilene som klienten, og byggeprosessen avviser manglende land eller gjentakelser. Territoriene er egne Kart-mål med metadata i kontinentkartene; de endrer ikke landkatalogen i Finn land eller andre spill. De fysiske kartene hentes fra `physical-maps/world-water.json` og `physical-maps/mountain-europe.json`.
 
