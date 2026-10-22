@@ -37,10 +37,10 @@ og kategoriorden påvirker ikke listeidentiteten. Gamle verdensdelslister behold
 | Fjellkjeder og høyland | 34 | 3400 |
 | Innsjøer | 33 | 3300 |
 | Hav og sjøområder | 44 | 4400 |
-| Bukter og stred | 30 | 3000 |
+| Bukter og stred | 29 | 2900 |
 
 Oppdatert Worker må publiseres sammen med nettsiden. Det kreves ingen ny
-D1-tabell eller migrering.
+D1-tabell eller migrering. Havkartets forenklede inndeling og innlemmede navn er dokumentert i `docs/marine-coverage.md`.
 
 Kartgruppene følger nettstedets eksisterende quizområder. Armenia, Aserbajdsjan og Georgia er lagt til Asia slik at alle 197 land er med. Russland, Tyrkia og Kypros ligger i Europa. Serverens mål er hentet fra de samme kartfilene som klienten, og byggeprosessen avviser manglende land eller gjentakelser. Territoriene er egne Kart-mål med metadata i kontinentkartene; de endrer ikke landkatalogen i Finn land eller andre spill. De fysiske kartene hentes fra `physical-maps/world-water.json` og `physical-maps/mountain-europe.json`.
 
@@ -74,3 +74,5 @@ For fylker og Kart skal referansedata bygges og Worker publiseres før de nye ne
 Databasesletting/moderering utføres av kontoeieren i D1, med betingelser for den aktuelle resultat-ID-en. Ingen offentlig slette- eller administrasjons-API er tilgjengelig.
 
 Ved oppgradering fra språkdelte lister kjøres `migrations/0001-shared-language-rankings.sql` mot den separate geografi-databasen etter Worker-deploy. Migreringen beholder alle poeng, kallenavn, tider og aktive runder; bare listeinndelingen endres. Den kan kjøres flere ganger.
+
+Innsjøer og hav er egne Kart-valg. Innsjøer bruker fortsatt region=lakes med standardkategorien lakes. Hav bruker region=seas, med kategoriene seas/gulfsStraits. Eldre kombinasjoner av region=lakes beholdes i API-et for kompatibilitet med publiserte klienter. Kontinentvis øving i elver/fjell/innsjøer sender ingen API-kall og gir ingen rangering.

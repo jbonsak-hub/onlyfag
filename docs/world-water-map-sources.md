@@ -1,12 +1,6 @@
 # World rivers, lakes and marine areas
 
-The offline builder creates 49 rivers and a water map with 33 lakes plus 74
-marine areas. Lake, sea/ocean and gulf/strait categories are independently
-selectable before a round; lakes are selected initially. An empty selection
-disables Start. Selection changes the visible targets, complete round and
-server-validated leaderboard together. Pacific and Atlantic each combine their
-northern and southern source polygons into one target. The separate European
-water quiz has been removed.
+The offline builder creates 49 rivers, a separate map of 33 lakes and a map of 73 marine areas. The marine page offers seas/oceans and gulfs/straits, initially both selected. Lakes are never included there. An empty marine selection disables Start. Each page has its own server-validated ranking. The separate European water quiz has been removed.
 
 ## Sources
 
@@ -22,13 +16,13 @@ on 22 October 2026:
 - [10m rivers and lake centerlines](https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_10m_rivers_lake_centerlines.geojson).
 - [10m lakes](https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_10m_lakes.geojson).
 - [10m marine polygons](https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_10m_geography_marine_polys.geojson).
-- The existing local country/coastline snapshot in core.js supplies the shared background.
+- The original compact country geometry bundled in `core.js` supplies the background coast and country borders. The detailed 10m replacement has been removed; only the 33 quiz lakes are drawn, without thousands of incidental lakes.
 
 The packed geographic extract in scripts/build-world-water-maps.cjs is sufficient
 for a deterministic offline rebuild. No external tiles, geographic API or map
 server is contacted during play. The builder emits geographic SVG paths with
 three decimal places, on a 1000×540 canvas spanning 180°W–180°E, 70°S–84°N.
-Antarctica is omitted; the Southern Ocean is visible south of 60°S.
+The southern Antarctic coast is land, and the Southern Ocean is visible south of 60°S.
 
 ## Source corrections and interpretation
 
@@ -39,7 +33,7 @@ Antarctica is omitted; the Southern Ocean is visible south of 60°S.
   shortcut is drawn across the missing middle course.
 - Yangtze retains its differently named upper sections; Mekong retains Lancang
   and Za. Existing detailed courses and lake shorelines remain vectors.
-- Glomma, Thames, Po and Elbe are added. Yarlung Tsangpo, Darling, Arkansas and
+- Glomma now uses the complete NVE ELVIS main stem (620.9 km), queried on 22 October 2026 as elvenavn=Glommavassdraget, vnrnfelt=002.Z, outSR=4326. It reaches Fredrikstad (10.956666°E, 59.176492°N); the former Natural Earth course stopped inland. Its geographic line is simplified to 660 vertices. Thames, Po and Elbe are also included. Yarlung Tsangpo, Darling, Arkansas and
   Columbia are removed from this river quiz.
 - Superior uses that short Norwegian display name. Mjøsa and Garda use actual
   lake polygons. Lake Tana and Lake Van are removed. Black Sea is a marine
@@ -51,7 +45,7 @@ Antarctica is omitted; the Southern Ocean is visible south of 60°S.
   These indicate the straits' locations, not legal maritime boundaries.
 - Natural Earth's marine data already splits features at the date line. The
   Arctic polar cap retains its explicit 90° edge, preventing a diagonal seam.
-- Marine polygons are clipped against land in the browser. Broad oceans are
+- Marine polygons are simplified and clipped against the same compact land and quiz lake geometry during source preparation. Coastal residuals are assigned to adjacent retained seas. Broad oceans are
   drawn below smaller named seas and gulfs. Tiny lakes and narrow straits retain
   real outlines plus screen-sized markers. Overlapping visible markers resolve
   to the nearest center; invisible touch corridors cannot steal a click on a
@@ -64,7 +58,7 @@ Discovery clicks show names without opening a ranked session. Rounds use the
 same time/error bands as Statle: 100/75/50/0, unlimited corrective attempts and
 optional skip. There are no practice/test/strict variants. Every assigned target
 must be completed before publication. Norwegian and English share each list;
-water category combinations have separate lists.
+water category combinations have separate lists. After a completed round, the panel offers another practice round containing only targets that were not green. Previously mastered targets stay light green; the remaining targets restart white. This can be repeated until all are green. Retry rounds never create or publish an online session, and do not alter the first round's score. A full restart clears mastery and begins a fresh ordinary round. The shared engine applies this to states, counties, continents and all physical maps.
 
 The world map fills the viewport, with a compact resizable panel floating in
 the southwest ocean. Its non-interactive surfaces support dragging. The camera
@@ -76,6 +70,15 @@ hint containment and reproducible builds. Browser tests make real clicks on
 every target, test nested regions and small markers, drag the panel, exercise
 water selections and complete a server-verified round with shared-language
 ranking.
+
+
+## Glomma source and attribution
+
+Kilde: NVE, [ELVIS hovedelv service](https://kart.nve.no/enterprise/rest/services/Elvenett1/MapServer/1). The [ELVIS dataset](https://www.nve.no/kart/kartdata/vassdragsdata/elvenettverk-elvis/) is made available under [NLOD](https://www.nve.no/kart/kartdata/), with NVE attribution in the river map. Coordinates are a generalized main stem, including mathematical centerlines through lakes, not a copied image. The user’s basin illustration was used only to check the course.
+
+## Complete marine coverage
+
+The twelve provisional extra questions have been absorbed into neighbouring seas. Inland Caspian and Aral water is explicitly excluded. See [marine-coverage.md](marine-coverage.md) for the Scandinavian cleanup, parent assignments and tests.
 
 ## Rivers
 
@@ -129,9 +132,7 @@ ranking.
 - Po — Po
 - Elbe — Elbe
 
-## Water categories
-
-### lakes (33)
+## Lakes (33)
 
 - Store Bjørnesjø — Great Bear Lake
 - Store Slavesjø — Great Slave Lake
@@ -167,65 +168,67 @@ ranking.
 - Mjøsa — Lake Mjøsa
 - Gardasjøen — Lake Garda
 
+## Marine categories
+
 ### seas (44)
 
 - Stillehavet — Pacific Ocean
 - Atlanterhavet — Atlantic Ocean
 - Indiske hav — Indian Ocean
-- Sørishavet — Southern Ocean
 - Arktiske hav — Arctic Ocean
+- Sørishavet — Southern Ocean
 - Filippinerhavet — Philippine Sea
 - Barentshavet — Barents Sea
 - Grønlandshavet — Greenland Sea
+- Beringhavet — Bering Sea
 - Tasmanhavet — Tasman Sea
 - Arabiske hav — Arabian Sea
-- Korallhavet — Coral Sea
 - Norskehavet — Norwegian Sea
-- Beringhavet — Bering Sea
-- Sargassohavet — Sargasso Sea
+- Korallhavet — Coral Sea
 - Sør-Kinahavet — South China Sea
+- Sargassohavet — Sargasso Sea
 - Karibiske hav — Caribbean Sea
 - Okhotskhavet — Sea of Okhotsk
 - Middelhavet — Mediterranean Sea
 - Labradorhavet — Labrador Sea
 - Japanhavet — Sea of Japan
-- Nordsjøen — North Sea
 - Øst-Kinahavet — East China Sea
+- Nordsjøen — North Sea
 - Arafurahavet — Arafura Sea
 - Andamanhavet — Andaman Sea
 - Svartehavet — Black Sea
-- Rødehavet — Red Sea
 - Gulehavet — Yellow Sea
-- Timorhavet — Timor Sea
 - Østersjøen — Baltic Sea
-- Tyrrenhavet — Tyrrhenian Sea
+- Rødehavet — Red Sea
+- Timorhavet — Timor Sea
 - Keltiske hav — Celtic Sea
+- Tyrrenhavet — Tyrrhenian Sea
 - Kvitsjøen — White Sea
 - Det joniske hav — Ionian Sea
 - Adriaterhavet — Adriatic Sea
 - Egeerhavet — Aegean Sea
-- Balearhavet — Balearic Sea
-- Kretahavet — Sea of Crete
 - Hebriderhavet — Sea of the Hebrides
+- Balearhavet — Balearic Sea
 - Irskesjøen — Irish Sea
+- Kretahavet — Sea of Crete
 - Alboransjøen — Alboran Sea
 - Azovhavet — Sea of Azov
 - Liguriabukta — Ligurian Sea
 - Marmarahavet — Sea of Marmara
 - Bab el-Mandab — Bab el Mandeb
 
-### gulfsStraits (30)
+### gulfsStraits (29)
 
-- Bengalbukta — Bay of Bengal
 - Baffinbukta — Baffin Bay
-- Mexicogulfen — Gulf of Mexico
 - Hudsonbukta — Hudson Bay
+- Bengalbukta — Bay of Bengal
+- Mexicogulfen — Gulf of Mexico
 - Mozambikkanalen — Mozambique Channel
 - Alaskabukta — Gulf of Alaska
 - Guineabukta — Gulf of Guinea
 - Biscayabukta — Bay of Biscay
-- Thailandbukta — Gulf of Thailand
 - Carpentariabukta — Gulf of Carpentaria
+- Thailandbukta — Gulf of Thailand
 - Persiske gulf — Persian Gulf
 - Adenbukta — Gulf of Aden
 - Bottenviken — Gulf of Bothnia
@@ -236,10 +239,9 @@ ranking.
 - Skagerrak — Skagerrak
 - Finskebukta — Gulf of Finland
 - Kattegat — Kattegat
-- Rigabukta — Gulf of Riga
+- Magellanstredet — Strait of Magellan
 - Beringstredet — Bering Strait
 - Veneziabukta — Gulf of Venice
-- Magellanstredet — Strait of Magellan
 - Hormuzstredet — Strait of Hormuz
 - Doverstredet — Strait of Dover
 - Dardanellene — Dardanelles

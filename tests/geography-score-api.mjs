@@ -129,7 +129,7 @@ test('Kart API keeps continental rankings separate and prefetches only the chose
 
 
 test('physical Kart shares Statle rules and has normalized, language-independent water category boards',()=>{
- assert.deepEqual([...data.kartPhysical].sort(),['rivers','lakes','mountains'].sort());
+ assert.deepEqual([...data.kartPhysical].sort(),['rivers','lakes','seas','mountains'].sort());
  assert.deepEqual(config({game:'kart',region:'rivers',variant:'strict'}),{game:'kart',region:'rivers',language:'no'});
  assert.deepEqual(config({game:'kart',region:'lakes'}).categories,['lakes']);
  const all=['lakes','seas','gulfsStraits'];assert.equal(board({game:'kart',region:'lakes',categories:all}),board({game:'kart',region:'lakes',categories:all.slice().reverse(),language:'en'}));
@@ -161,7 +161,7 @@ test('physical Kart API validates full rounds, skips, replay safety, shared lang
   for(let i=1;i<questions.length;i++){await mutate('/next');const r=await mutate('/answer',{question:questions[i].id,choice:questions[i].target});assert.equal(r.status,200);assert.equal(r.body.feedback.points,100);assert.equal(r.body.complete,i===questions.length-1);}
   assert.equal((await mutate('/publish',{nickname:'Map '+region})).status,200);const rows=async c=>(await call('/scores?config='+encodeURIComponent(JSON.stringify(c)))).body.rows,ranked=await rows({game:'kart',region});assert.equal(ranked.length,1);assert.equal(ranked[0].score,(questions.length-1)*100);assert.deepEqual(await rows({game:'kart',region,language:'en'}),ranked);if(region==='lakes')assert.deepEqual(await rows({game:'kart',region,categories:['seas']}),[]);
  }
- assert.equal(db.prepare('SELECT COUNT(*) n FROM scores').get().n,3);db.close();
+ assert.equal(db.prepare('SELECT COUNT(*) n FROM scores').get().n,4);db.close();
 });
 
 test('language migration preserves scores and active runs and can be repeated',()=>{

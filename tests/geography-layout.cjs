@@ -3,7 +3,8 @@ const pw = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = path.resolve(__dirname, '..');
 require('node:child_process').execFileSync(process.execPath, [path.join(root,'scripts/build-geography-quiz-assets.cjs'),'--check']);
 const routes = JSON.parse(fs.readFileSync(path.join(root,'assets/geography/routes.js'),'utf8').match(/window.GEO_QUIZ_ROUTES=([\s\S]*);/)[1]);
-const pages = Object.entries(routes).filter(([mode]) => !['statle','openguessr'].includes(mode));
+// Click-map pages have their own navigation and dedicated Kart/Statle tests.
+const pages = Object.entries(routes).filter(([mode]) => !['statle','fylker','kart','openguessr'].includes(mode));
 const framed = ['globle','travle','tradle','geogrid'];
 const server = http.createServer((req,res) => {
  const file = path.join(root,decodeURIComponent(new URL(req.url,'http://localhost').pathname));
@@ -38,7 +39,10 @@ const server = http.createServer((req,res) => {
    assert.ok(await frame.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Frame overflow '+file);
    await frame.locator('.quiz-page-menu').click();assert.ok(await page.locator('body').evaluate(e=>e.classList.contains('sidebar-open')));await page.locator('.quiz-drawer-close').click();assert.equal(await page.locator('body').evaluate(e=>e.classList.contains('sidebar-open')),false);
    await frame.locator('.quiz-page-menu').click();await page.keyboard.press('Escape');
-   if(framed.includes(mode)){
+   if(await frame.locator('body').evaluate(el=>el.classList.contains('quiz-mobile-streak'))){
+    await checkBox(frame,'.mobile-streak-visual',150);await checkBox(frame,'.quiz-mobile-answers',200);
+    assert.equal(await frame.locator('.quiz-mobile-answers button').count(),4,'Four mobile choices');
+   }else if(framed.includes(mode)){
     const panel=await checkBox(frame,mode==='globle'?'.globle-map-panel':mode==='travle'?'.travle-map-panel':mode==='tradle'?'.tradle-chart-panel':'.geogrid-board-panel',200);
     if(viewport.width>700){assert.ok(Math.abs(panel.height-viewport.height)<2,'Full-height map '+mode);const side=await frame.locator('.'+mode+'-side').boundingBox();assert.ok(Math.abs(side.x)<1&&side.x+side.width<=panel.x+1,'Game panel stays left '+mode);}
     else {

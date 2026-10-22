@@ -1,4 +1,9 @@
 {
+  "Øve en gang til?": "Practise again?",
+  "Øv på de som ikke ble grønne": "Practise the ones that weren't green",
+  "Øvingsrunde · klikk på": "Practice round · click on",
+  "Alle er grønne!": "All green!",
+  "Øvingsrunden er fullført.": "Practice round completed.",
   "Norske fylker": "Norwegian counties",
   "Norges 15 fylker": "Norway’s 15 counties",
   "Finn Norges 15 fylker på kartet.": "Find Norway’s 15 counties on the map.",
@@ -293,7 +298,7 @@
   "Neste kontur": "Next outline",
   "Alle konturer": "All outlines",
   "Initialer": "Initials",
-  "Hvilket land eksporterer dette?": "Which country exports these products?",
+  "Hvilket land eksporterer dette?": "Which country exports this?",
   "🌐 Vis globus": "🌐 Show globe",
   "Feltene viser de største varegruppene i landets eksport. Størrelsen viser omtrent hvor stor andel varegruppen utgjør.": "The areas show the country's largest export product groups. Their size represents each group's approximate share of exports.",
   "Eksportprofil 2024": "Export profile 2024",
@@ -597,5 +602,8 @@
   "Innsjøer og havområder": "Lakes and seas",
   "Ta med": "Include",
   "Bukter og stred": "Gulfs and straits",
-  "Velg minst én kategori": "Select at least one category"
+  "Velg minst én kategori": "Select at least one category",
+  "Havområder, bukter og stred": "Seas, gulfs and straits",
+  "Kontinent for kontinent · øving uten highscore": "Continent by continent · practice without ranking",
+  "Kan du verdens land, fjell, sjøer og elver?": "Do you know the world’s countries, mountains, lakes, seas and rivers?"
 }

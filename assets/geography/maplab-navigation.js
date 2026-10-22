@@ -9,4 +9,5 @@
     if (!isQuiz && quizzes.includes(button.dataset.tab)) button.disabled = true;
   });
   if (isQuiz) document.querySelector('.tab[data-tab="' + mode + '"]').click();
+  delete document.documentElement.dataset.quizBoot;
 })();
