@@ -12,4 +12,12 @@ symbols.push('<symbol id="lakes" viewBox="0 0 200 100"><path d="M0 65 43 18 76 5
 symbols.push('<symbol id="seas" viewBox="0 0 200 100"><path d="M0 45Q20 24 40 45T80 45T120 45T160 45T200 45V100H0Z" fill="currentColor" opacity=".45"/><path d="M0 65Q20 44 40 65T80 65T120 65T160 65T200 65V100H0Z" fill="currentColor"/><path d="M0 83Q20 62 40 83T80 83T120 83T160 83T200 83" stroke="#fff" fill="none" stroke-width="4" opacity=".6"/></symbol>');
 const svg='<svg xmlns="http://www.w3.org/2000/svg">'+symbols.join('')+'</svg>\n',file=path.join(root,'assets/geography/kart-cards.svg');
 if(process.argv.includes('--check'))assert.equal(fs.readFileSync(file,'utf8').replace(/\r\n/g,'\n'),svg);else fs.writeFileSync(file,svg);
+// Inline the artwork: external SVG <use> can silently disappear with a wrong
+// MIME type or restrictive hosting policy. No extra requests are needed here.
+const htmlFile=path.join(root,'geografi/kart.html'),html=fs.readFileSync(htmlFile,'utf8').replace(/\r\n/g,'\n');
+const artwork=new Map(symbols.map(symbol=>{const match=symbol.match(/^<symbol id="([^"]+)" viewBox="([^"]+)">([\s\S]*)<\/symbol>$/);return[match[1],{viewBox:match[2],content:match[3]}];}));
+let count=0;
+const inline=html.replace(/(<(?:button|a)\b[^>]*data-card="([^"]+)"[^>]*>[\s\S]*?)<svg class="kart-card-art"[\s\S]*?<\/svg>/g,(_,prefix,id)=>{const art=artwork.get(id);assert(art,'Known Kart card '+id);count++;return prefix+`<svg class="kart-card-art" viewBox="${art.viewBox}"${['usa','fylker'].includes(id)?' preserveAspectRatio="xMidYMid slice"':''} aria-hidden="true" focusable="false">${art.content}</svg>`;});
+assert.equal(count,12,'All Kart cards have inline artwork');
+if(process.argv.includes('--check'))assert.equal(html,inline,'Rebuild inline Kart card artwork');else fs.writeFileSync(htmlFile,inline);
 console.log('Built Kart flags, six continent silhouettes and four landscape motifs');

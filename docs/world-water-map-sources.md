@@ -16,7 +16,7 @@ on 22 October 2026:
 - [10m rivers and lake centerlines](https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_10m_rivers_lake_centerlines.geojson).
 - [10m lakes](https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_10m_lakes.geojson).
 - [10m marine polygons](https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_10m_geography_marine_polys.geojson).
-- [10m countries and detailed coastlines](https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_10m_admin_0_countries.geojson). Country geometry is unioned before simplification to avoid border slivers.
+- The original compact country geometry bundled in `core.js` supplies the background coast and country borders. The detailed 10m replacement has been removed; only the 33 quiz lakes are drawn, without thousands of incidental lakes.
 
 The packed geographic extract in scripts/build-world-water-maps.cjs is sufficient
 for a deterministic offline rebuild. No external tiles, geographic API or map
@@ -45,7 +45,7 @@ The southern Antarctic coast is land, and the Southern Ocean is visible south of
   These indicate the straits' locations, not legal maritime boundaries.
 - Natural Earth's marine data already splits features at the date line. The
   Arctic polar cap retains its explicit 90° edge, preventing a diagonal seam.
-- Marine polygons are clipped against detailed land and inland lakes during source preparation. Broad oceans are
+- Marine polygons are simplified and clipped against the same compact land and quiz lake geometry during source preparation. Coastal residuals are assigned to adjacent retained seas. Broad oceans are
   drawn below smaller named seas and gulfs. Tiny lakes and narrow straits retain
   real outlines plus screen-sized markers. Overlapping visible markers resolve
   to the nearest center; invisible touch corridors cannot steal a click on a
@@ -58,7 +58,7 @@ Discovery clicks show names without opening a ranked session. Rounds use the
 same time/error bands as Statle: 100/75/50/0, unlimited corrective attempts and
 optional skip. There are no practice/test/strict variants. Every assigned target
 must be completed before publication. Norwegian and English share each list;
-water category combinations have separate lists.
+water category combinations have separate lists. After a completed round, the panel offers another practice round containing only targets that were not green. Previously mastered targets stay light green; the remaining targets restart white. This can be repeated until all are green. Retry rounds never create or publish an online session, and do not alter the first round's score. A full restart clears mastery and begins a fresh ordinary round. The shared engine applies this to states, counties, continents and all physical maps.
 
 The world map fills the viewport, with a compact resizable panel floating in
 the southwest ocean. Its non-interactive surfaces support dragging. The camera

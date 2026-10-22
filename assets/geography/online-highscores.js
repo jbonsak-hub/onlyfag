@@ -35,7 +35,7 @@
   resetStatle(){reset();},
   statleAnswer(choice,skip=false){const run=active;if(!run||!shapeQuiz(run.config.game))return;const q=run.plan[run.localIndex];enqueue(run,'/answer',{question:q.id,choice,skip});if(skip||choice===q.target)run.localIndex++;},
   statleNext(){const run=active;if(run&&shapeQuiz(run.config.game)&&run.localIndex<run.plan.length)enqueue(run,'/next',{});},
-  finishStatle(){finish();},showStatle(){if(active?.reply.complete&&!active.saved)active.prompted=false;showBoard(active?.config||shapeConfig());}
+  finishStatle(){return finish();},showStatle(){if(active?.reply.complete&&!active.saved)active.prompted=false;showBoard(active?.config||shapeConfig());}
  };
  let scheduled=false;new MutationObserver(()=>{if(scheduled||!active||active.finalizing)return;scheduled=true;queueMicrotask(()=>{scheduled=false;if(!active||(active.config.game==='countries'&&!worldTrainerState?.ended))return;const target=document.querySelector('.prototype-summary,.world-end,#country-map-complete');if(target){if(active.config.game!=='mapwiz')resultButton(target);finish();}});}).observe(document.body,{childList:true,subtree:true});
  if(shapeQuiz(mode)){document.getElementById('statle-top-ten')?.addEventListener('click',()=>GeoOnline.showStatle());return;}

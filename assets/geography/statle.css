@@ -85,6 +85,14 @@ body[data-physical="true"][data-phase="playing"] footer>span{display:none}
 .continent-practice-option input{margin:1px 0 0;accent-color:#245845;flex-shrink:0}
 #target-continent{font-size:11px;color:#d9e4f4;font-weight:500;letter-spacing:0}
 body[data-practice="true"] #statle-top-ten{display:none!important}
+#repeat-practice{display:grid;gap:8px;padding:10px 0;border-top:1px solid #b8cdbd;grid-column:1/-1;font-size:12px}
+#repeat-practice .primary-button{white-space:normal;line-height:1.35}
+body[data-retry="true"] .state.retry-pending{fill:#fffefa}
+body[data-retry="true"] .state.mastered{fill:#b9dfc3}
+body[data-retry="true"] .physical-target.retry-pending{--feature:#fffefa}
+body[data-retry="true"] .physical-target.mastered{--feature:#b9dfc3}
+body[data-retry="true"] .small-marker.retry-pending .visible{fill:#fffefa}
+body[data-retry="true"] .small-marker.mastered .visible{fill:#b9dfc3}
 .kart-cards>[data-card]{position:relative;isolation:isolate;overflow:hidden;min-height:78px;background:var(--card-tint,#fffefa)}
 .kart-cards>[data-card] strong{position:relative;z-index:1;max-width:72%}
 .kart-card-art{position:absolute;right:3px;top:6px;height:calc(100% - 12px);width:30%;color:var(--card-art,#6f96a0);opacity:.55;pointer-events:none}
@@ -102,6 +110,8 @@ body[data-region="seas"] .physical-target.sea:hover{--feature:#608fa4}
 body[data-region="seas"] .physical-target.sea[data-band="0"]{--feature:var(--green)}body[data-region="seas"] .physical-target.sea[data-band="1"]{--feature:var(--yellow)}body[data-region="seas"] .physical-target.sea[data-band="2"]{--feature:var(--orange)}body[data-region="seas"] .physical-target.sea[data-band="3"]{--feature:var(--red)}
 body[data-region="seas"] .physical-target.sea.wrong{--feature:#c8564c}
 body[data-region="seas"] .physical-target.sea.hinted{--feature:#f2af38}
+body[data-region="seas"][data-retry="true"] .physical-target.sea.retry-pending{--feature:#fffefa}
+body[data-region="seas"][data-retry="true"] .physical-target.sea.mastered{--feature:#b9dfc3}
 @media(max-width:700px){
  body[data-physical="true"] .map-viewport{padding:5px}
  body[data-physical="true"] .game-panel{left:8px;bottom:8px;width:196px;min-width:175px;max-height:49dvh;padding:10px;gap:8px;resize:none;max-width:calc(100vw - 16px)}

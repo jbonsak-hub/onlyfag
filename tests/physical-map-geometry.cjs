@@ -98,7 +98,10 @@ test('new named marine regions and all former catalogue holes belong to quiz tar
  const map=regions.seas;assert.equal(map.coverage.added.length,0);assert.equal(map.coverage.merged.length,13);for(const t of map.coverage.merged){assert(!map.states.some(s=>s.en===t.source));assert(map.states.some(s=>s.en===t.target));}
  const parents=Object.fromEntries(map.coverage.assignments.map(a=>[a.source,a.target]));for(const [name,parent]of Object.entries({'Bristol Channel':'Celtic Sea','North Channel':'Irish Sea','James Bay':'Hudson Bay','Hudson Strait':'Hudson Bay','Bo Hai':'Yellow Sea','Laccadive Sea':'Indian Ocean','Great Australian Bight':'Indian Ocean','Gulf of Tonkin':'South China Sea','Bali Sea':'Indian Ocean','Yangtze River':'East China Sea','Savu Sea':'Indian Ocean','The North Western Passages':'Arctic Ocean'}))assert.equal(parents[name],parent);
  for(const assignment of map.coverage.assignments)assert(map.states.some(s=>s.en===assignment.target),'Known parent '+assignment.target);
- assert(water.background.some(s=>s.kind==='land'),'Detailed coastline masks inland land and Antarctica');
+ assert(water.background.some(s=>s.kind==='land'),'Original compact coastline masks inland land and Antarctica');
+ assert.equal(water.background.filter(s=>s.kind==='lake').length,33,'Only quiz lakes appear in the background');
+ assert(!water.background.some(s=>s.kind==='border'),'No separate detailed country-border layer');
+ assert(JSON.stringify(water).length<4_000_000,'World water map remains smaller than its former detailed replacement');
 });
 
 test('the complete sea selection covers an independent 21,600-point ocean reference',()=>{

@@ -8,7 +8,8 @@
   let total = counties ? 15 : 50;
   let shapeLabel = counties ? 'Fylke på kartet' : 'Delstat på kartet';
   let regionData = null, mapGeneration = 0, physical = false;
-  let practice = false;
+  let practice = false, continentPractice = false, retrying = false;
+  const mastered = new Set();
   const continentOrder=['northAmerica','southAmerica','europe','asia','africa','oceania'];
   const continentNames={northAmerica:'Nord-Amerika',southAmerica:'Sør-Amerika',europe:'Europa',asia:'Asia',africa:'Afrika',oceania:'Oseania'};
   const elements = new Map(), markers = new Map(), centers = new Map();
@@ -16,6 +17,25 @@
   let results = new Map(), roundMistakes = 0, mistakes = 0, skipped = 0;
   let totalTime = 0, roundTime = 0, lastTick = performance.now(), generation = 0;
   const timers = new Set();
+  // Shared by the standalone state/county games and every Kart region. Keep
+  // this offer in the panel so it never competes with the score-name dialog.
+  const repeatOffer = document.createElement('section');
+  repeatOffer.id = 'repeat-practice'; repeatOffer.hidden = true;
+  const repeatQuestion = document.createElement('strong');
+  repeatQuestion.textContent = 'Øve en gang til?';
+  const repeatButton = document.createElement('button');
+  repeatButton.id = 'repeat-practice-start'; repeatButton.type = 'button';
+  repeatButton.className = 'primary-button';
+  repeatButton.textContent = 'Øv på de som ikke ble grønne';
+  repeatButton.addEventListener('click', () => {
+    if (phase !== 'finished' || mastered.size === states.length) return;
+    retrying = true; practice = true;
+    document.body.dataset.practice = 'true';
+    window.GeoOnline?.resetStatle();
+    begin();
+  });
+  repeatOffer.append(repeatQuestion, repeatButton);
+  $('feedback').after(repeatOffer);
   function svgNode(tag, attrs = {}) {
     const el = document.createElementNS(ns, tag);
     for (const [key, value] of Object.entries(attrs)) el.setAttribute(key, value);
@@ -168,17 +188,18 @@
   }
   function setBand(name, band) {
     const el = elements.get(name);
+    el.classList.remove('retry-pending');
     el.dataset.band = String(band); el.classList.add('found');
     el.setAttribute('aria-label', name + ' – fullført');
-    if (markers.has(name)) { markers.get(name).dataset.band = String(band); markers.get(name).setAttribute('aria-label', name + ' – fullført'); }
+    if (markers.has(name)) { markers.get(name).classList.remove('retry-pending'); markers.get(name).dataset.band = String(band); markers.get(name).setAttribute('aria-label', name + ' – fullført'); }
   }
   function updateStats() {
     $('completed').textContent = results.size;
-    $('progressFill').style.width = results.size / Math.max(1,total) * 100 + '%';
+    $('progressFill').style.width = results.size / Math.max(1,phase === 'ready' ? total : queue.length) * 100 + '%';
     $('mistakes').textContent = physical ? String(mistakes) : mistakes + ' feil';
   }
   function setPhase(value){phase=value;document.body.dataset.phase=value;}
-  function prompt(){$('targetVerb').textContent='Klikk på';const subtitle=$('target-continent');if(subtitle){subtitle.hidden=!practice;subtitle.textContent=practice?continentNames[target()?.continent]||'':'';}}
+  function prompt(){$('targetVerb').textContent=retrying?'Øvingsrunde · klikk på':'Klikk på';const subtitle=$('target-continent');if(subtitle){subtitle.hidden=!continentPractice;subtitle.textContent=continentPractice?continentNames[target()?.continent]||'':'';}}
   function next() {
     index++; locked = false; roundMistakes = 0; roundTime = 0;
     $('hintLayer').replaceChildren(); $('labelLayer').replaceChildren();
@@ -192,7 +213,7 @@
     if (phase === 'ready' || phase === 'finished') {flashLabel(name,'',2800);setFeedback(name);return;}
     if (phase !== 'playing' || locked || !target()) return;
     tick();
-    if (results.has(name)) { flashLabel(name, ''); setFeedback(name + ' er allerede fullført.'); return; }
+    if (results.has(name) || mastered.has(name)) { flashLabel(name, ''); setFeedback(name + ' er allerede fullført.'); return; }
     if(!practice)window.GeoOnline?.statleAnswer(name);
     if (name !== target().n) {
       roundMistakes++; mistakes++; updateStats();
@@ -212,16 +233,18 @@
     setFeedback('Riktig! ' + name + ' · ' + (roundTime / 1000).toFixed(1).replace('.', ',') + ' s', 'good');
     updateStats(); later(next, 650);
   }
-  function start(){document.querySelectorAll('[name="water-category"]').forEach(input=>input.disabled=true);practice=!!$('continent-practice')?.checked&&['rivers','lakes','mountains'].includes(document.body.dataset.region);document.body.dataset.practice=String(practice);if($('continent-practice'))$('continent-practice').disabled=true;if(practice){window.GeoOnline?.resetStatle();return begin();}if(window.GeoOnline)return GeoOnline.startStatle(begin);return begin();}
+  function start(){retrying=false;mastered.clear();document.querySelectorAll('[name="water-category"]').forEach(input=>input.disabled=true);continentPractice=!!$('continent-practice')?.checked&&['rivers','lakes','mountains'].includes(document.body.dataset.region);practice=continentPractice;document.body.dataset.practice=String(practice);if($('continent-practice'))$('continent-practice').disabled=true;if(practice){window.GeoOnline?.resetStatle();return begin();}if(window.GeoOnline)return GeoOnline.startStatle(begin);return begin();}
   function begin(names) {
     generation++; clearEffects();if($('statle-score'))$('statle-score').hidden=true;
     results = new Map(); index = 0; totalTime = 0; roundTime = 0; lastTick = performance.now();
     roundMistakes = 0; mistakes = 0; skipped = 0; locked = false;
-    elements.forEach(el => { delete el.dataset.band; el.classList.remove('found'); el.setAttribute('aria-label', shapeLabel); });
-    markers.forEach(el => { delete el.dataset.band; el.setAttribute('aria-label', counties ? 'Ekstra klikkfelt for et lite fylke' : kart ? 'Ekstra klikkfelt for et lite land' : 'Ekstra klikkfelt for en liten delstat'); });
-    queue = names ? names.map(name=>states.find(s=>s.n===name)) : states.filter(s => !results.has(s.n));
+    repeatOffer.hidden = true; repeatButton.disabled = false; document.body.dataset.retry = String(retrying);
+    elements.forEach((el,name) => { delete el.dataset.band; el.classList.remove('found'); el.classList.toggle('mastered',retrying&&mastered.has(name));el.classList.toggle('retry-pending',retrying&&!mastered.has(name));el.setAttribute('aria-label', mastered.has(name) ? name + ' – fullført' : shapeLabel); });
+    markers.forEach((el,name) => { delete el.dataset.band;el.classList.toggle('mastered',retrying&&mastered.has(name));el.classList.toggle('retry-pending',retrying&&!mastered.has(name)); el.setAttribute('aria-label', mastered.has(name) ? name + ' – fullført' : counties ? 'Ekstra klikkfelt for et lite fylke' : kart ? 'Ekstra klikkfelt for et lite land' : 'Ekstra klikkfelt for en liten delstat'); });
+    queue = names ? names.map(name=>states.find(s=>s.n===name)) : states.filter(s => !mastered.has(s.n));
     if(!names)for (let i = queue.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [queue[i],queue[j]] = [queue[j],queue[i]]; }
-    if(practice)queue.sort((a,b)=>continentOrder.indexOf(a.continent)-continentOrder.indexOf(b.continent));
+    if(continentPractice)queue.sort((a,b)=>continentOrder.indexOf(a.continent)-continentOrder.indexOf(b.continent));
+    ($('total-count')||$('completed').parentElement.querySelector('small')).textContent=' / '+queue.length;
     setPhase('playing'); $('overlay').hidden = true;if($('water-options'))$('water-options').hidden=true;
     if($('continent-practice-option'))$('continent-practice-option').hidden=true;
     $('mapViewport').scrollTo({left:0,top:0});
@@ -241,13 +264,23 @@
   }
   function finish() {
     setPhase('finished'); locked = true;
-    if(!practice)window.GeoOnline?.finishStatle();
+    // Let the original score check/name prompt finish before a retry detaches
+    // its session. Practice itself never waits for or contacts the service.
+    if(!practice){
+      repeatButton.disabled = true;
+      const run = generation;
+      Promise.resolve(window.GeoOnline?.finishStatle()).catch(()=>{}).finally(()=>{if(run===generation)repeatButton.disabled=false;});
+    }
     if($('target-continent'))$('target-continent').hidden=true;
     $('targetVerb').textContent = 'Godt jobbet!';
     $('targetName').textContent = physical ? 'Alle stedene er fullført.' : counties ? 'Alle fylkene er på plass.' : kart ? 'Alle landene er på plass.' : 'Hele USA er på plass.';
     $('skip').disabled = true;
     const counts = [0,0,0,0]; results.forEach(r => counts[r.band]++);
-    setFeedback(('Alle ' + total + ' fullført' + ' · ' + timeText(totalTime) + ' · ' + mistakes + ' feil · ' + skipped + ' hoppet over. Grønn: ' + counts[0] + ', gul: ' + counts[1] + ', oransje: ' + counts[2] + ', rød: ' + counts[3] + '.'));
+    results.forEach((r,name) => { if(r.band === 0)mastered.add(name); });
+    repeatOffer.hidden = mastered.size === states.length;
+    if(retrying)$('targetName').textContent=repeatOffer.hidden?'Alle er grønne!':'Øvingsrunden er fullført.';
+    setFeedback(('Alle ' + queue.length + ' fullført' + ' · ' + timeText(totalTime) + ' · ' + mistakes + ' feil · ' + skipped + ' hoppet over. Grønn: ' + counts[0] + ', gul: ' + counts[1] + ', oransje: ' + counts[2] + ', rød: ' + counts[3] + '.'));
+    if(!repeatOffer.hidden)repeatOffer.scrollIntoView({block:'nearest'});
   }
   function clickedName(event,element){
     if(!physical)return element.dataset.state;
@@ -292,6 +325,7 @@
     if (event.target === menu && (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom)) menu.close();
   });
   function resetMap() {
+    mastered.clear();retrying=false;continentPractice=false;repeatOffer.hidden=true;delete document.body.dataset.retry;
     generation++;clearEffects();elements.clear();markers.clear();centers.clear();
     $('states').replaceChildren();$('smallStates').replaceChildren();$('insetSeparators').setAttribute('d','');
     $('map').setAttribute('viewBox','0 0 900 550');
@@ -326,7 +360,7 @@
     try {
       if(counties){countyMap||=readMap('../assets/geography/norway-counties.json?v=a785cd12272f').catch(error=>{countyMap=null;throw error;});const data=await countyMap;if(token!==mapGeneration)return;states=data;regionData=null;}
       else if(physical){
-        let data;if(['rivers','lakes','seas'].includes(region)){worldWater||=readMap('../assets/geography/physical-maps/world-water.json?v=e61fe137d557').catch(e=>{worldWater=null;throw e;});data=await worldWater;}
+        let data;if(['rivers','lakes','seas'].includes(region)){worldWater||=readMap('../assets/geography/physical-maps/world-water.json?v=e70efb54a9af').catch(e=>{worldWater=null;throw e;});data=await worldWater;}
         else{mountainEurope||=readMap('../assets/geography/physical-maps/mountain-europe.json?v=e41fa6514b87').catch(e=>{mountainEurope=null;throw e;});data=await mountainEurope;}
         if(token!==mapGeneration)return;regionData={...data.regions[region],background:(data.regions[region].background||data.background).concat(data.regions[region].extraLand||[])};states=regionData.states.filter(s=>region!=='seas'||waterCategories().includes(s.group));document.body.dataset.waterCategories=waterCategories().join(',');
         if(window.GEO_QUIZ_EN)for(const state of states)if(state.en)window.GEO_QUIZ_EN.names[state.n]=state.en;
