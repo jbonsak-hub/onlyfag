@@ -1,0 +1,7 @@
+body.tsunami-model-open{overflow:hidden}
+body.tsunami-model-open .content{max-width:none!important;min-width:0;width:auto;height:100vh;height:100svh;padding:0!important;overflow:hidden}
+#indre-tsunami.page-section{padding:0;margin:0;border-radius:0;box-shadow:none;background:transparent;overflow:hidden}
+#indre-tsunami.active{height:100vh;height:100svh;animation:none}
+.tsunami-model-frame{display:block;width:100%;height:100%;border:0;background:#fff}
+@media(max-width:1000px){body.tsunami-model-open .sidebar,body.tsunami-model-open .sidebar-collapse-toggle{display:none!important}body.tsunami-model-open .content{width:100%}}
+@media print{#indre-tsunami{display:none!important}}

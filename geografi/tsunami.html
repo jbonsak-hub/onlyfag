@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Følg hvordan et undersjøisk jordskjelv kan danne en tsunami, fra platebevegelse til bølgen når kysten.">
+  <title>Slik oppstår en tsunami | OnlyFag</title>
+  <link rel="stylesheet" href="../assets/geography/tsunami/model.css?v=fefa232deb73">
+  <script src="../assets/analytics.js" defer></script>
+  <script src="../assets/geography/tsunami/reference-data.js?v=4ea6c5f23cf6" defer></script>
+  <script src="../assets/geography/tsunami/reference-renderer.js?v=85961cf55502" defer></script>
+  <script src="../assets/geography/tsunami/model.js?v=e3c017851f92" defer></script>
+</head>
+<body>
+  <main class="tsunami" aria-labelledby="stage-title">
+    <div class="topbar">
+      <a id="back" class="back" href="../geografi.html#indre-fagstoff">← Geografi <span>/ Indre krefter</span></a>
+      <div class="stage-picker">
+        <output id="stage-counter" for="stage-select">Trinn 1 av 11</output>
+        <label class="sr-only" for="stage-select">Velg trinn i animasjonen</label>
+        <select id="stage-select" aria-label="Velg trinn i animasjonen">
+          <option value="1">1 · Jordas plater</option>
+          <option value="2">2 · Det indiske hav</option>
+          <option value="3">3 · Jordskjelvet</option>
+          <option value="4">4 · Platene møtes</option>
+          <option value="5">5 · Et tverrsnitt</option>
+          <option value="6">6 · Subduksjonssone</option>
+          <option value="7">7 · Spenning i jordskorpa</option>
+          <option value="8">8 · Spenningen utløses</option>
+          <option value="9">9 · Tsunamien brer seg</option>
+          <option value="10">10 · Tsunamien treffer land</option>
+          <option value="11">11 · Havnebølgen</option>
+        </select>
+        <button id="fullscreen" class="fullscreen-control" type="button" aria-label="Åpne fullskjerm" title="Fullskjerm"><span aria-hidden="true">⛶</span><span class="fullscreen-label">Fullskjerm</span></button>
+      </div>
+    </div>
+
+    <h1 id="stage-title">Slik oppstår en tsunami – 1: Jordas plater</h1>
+
+    <div class="scene" aria-label="Animert modell">
+      <svg id="tsunami-scene" viewBox="0 30.6 440 251" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="stage-title scene-description">
+        <desc id="scene-description">Et verdenskart viser de viktigste plategrensene. Velg neste trinn for å følge utviklingen av en tsunami.</desc>
+        <defs id="reference-defs"></defs>
+        <g id="scene-content"></g>
+      </svg>
+    </div>
+
+    <div class="narrative-row">
+      <p id="stage-text" aria-live="polite" aria-atomic="true">Jordskorpa og den øverste, faste delen av mantelen er delt inn i store plater. Kartet viser de viktigste plategrensene, sterkt forenklet. Mange jordskjelv oppstår langs disse grensene.</p>
+      <nav class="step-controls" aria-label="Bla mellom trinnene">
+        <button id="previous" class="round-control" type="button" aria-label="Forrige trinn" title="Forrige trinn" disabled>
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M32 10 11 24 32 38Z"/></svg>
+        </button>
+        <button id="replay" class="round-control" type="button" aria-label="Spill dette trinnet på nytt" title="Spill dette trinnet på nytt">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 19a11 11 0 1 1 8 16M14 11v9h9M22 35l5-7M22 35l7 4"/></svg>
+        </button>
+        <button id="next" class="round-control" type="button" aria-label="Neste trinn" title="Neste trinn">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M16 10 37 24 16 38Z"/></svg>
+        </button>
+      </nav>
+    </div>
+
+    <div class="timeline" aria-label="Styr animasjonen">
+      <button id="play" class="play-control" type="button" aria-label="Spill av animasjonen" aria-pressed="false"><span aria-hidden="true">▷</span><span id="play-label">Spill av</span></button>
+      <label class="sr-only" for="progress">Animasjonsforløp i dette trinnet</label>
+      <input id="progress" type="range" min="0" max="100" step="1" value="0" aria-label="Animasjonsforløp i dette trinnet" aria-valuetext="0 prosent">
+      <output id="progress-value" for="progress">0 %</output>
+    </div>
+
+    <footer class="module-footer">
+      <small class="credit">Originalanimasjon: <a href="https://www.forskning.no/" target="_blank" rel="noopener">forskning.no</a></small>
+      <details id="about" class="source-details">
+        <summary>Om modellen og fagstoffet</summary>
+        <div class="source-content">
+          <p>Nettversjon laget etter den vedlagte originalanimasjonen «Slik oppstår en tsunami» fra forskning.no. Illustrasjoner, farger, trinn og bevegelser følger originalen; forklaringene er faglig oppdatert.</p>
+          <p>Figurene er skjematiske. Platebevegelser, bølgehøyder, avstander og tid er ikke i samme målestokk. Jordskjelvet i Indiahavet i 2004 brukes som eksempel.</p>
+          <p>En tsunami kan oppstå når havbunnen forskyver store vannmasser. Mantelen består hovedsakelig av fast bergart; magma ved subduksjon dannes ved delvis smelting over den synkende platen.</p>
+          <a href="https://www.noaa.gov/education/resource-collections/ocean-coasts/tsunamis" target="_blank" rel="noopener">Faglig bakgrunn: NOAA ↗</a>
+        </div>
+      </details>
+    </footer>
+  </main>
+  <noscript>Denne modellen trenger JavaScript for å vise animasjonene. <a href="../geografi.html#indre-fagstoff">Tilbake til fagstoffet om indre krefter.</a></noscript>
+</body>
+</html>
