@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="Bygg en modell av den globale atmosfæriske sirkulasjonen, fra soloppvarming til celler, trykkbelter og vind.">
   <title>Global sirkulasjon | OnlyFag</title>
-  <link rel="stylesheet" href="../assets/geography/global-circulation/model.css?v=1633fcb852d2">
+  <link rel="stylesheet" href="../assets/geography/global-circulation/model.css?v=9cb49797a843">
   <script src="../assets/analytics.js" defer></script>
   <script src="../assets/geography/global-circulation/earth-land.js?v=effe2d1698fe" defer></script>
-  <script src="../assets/geography/global-circulation/model.js?v=2bdea8b354b9" defer></script>
+  <script src="../assets/geography/global-circulation/globe-surface.js?v=a5fe1c146e3f" defer></script>
+  <script src="../assets/geography/global-circulation/model.js?v=1fd90001f7eb" defer></script>
 </head>
 <body>
   <main class="circulation">
@@ -25,9 +26,10 @@
     </nav>
     <div id="model-panel" class="workspace" role="tabpanel" aria-labelledby="step-0">
       <section class="figure" aria-label="Modell av atmosfæren">
-        <div class="figure-top"><span id="figure-label">Solenergi ved jordoverflaten</span><span id="model-badge">Ulik innstrålingsvinkel</span></div>
+        <div class="figure-top"><span id="figure-label">Solenergi ved jordoverflaten</span><span id="model-badge" hidden>Ulik innstrålingsvinkel</span><button id="surface-toggle" type="button" aria-pressed="false" hidden>Fysisk kart</button></div>
         <svg id="earth" viewBox="0 0 760 660" role="img" aria-labelledby="earth-title earth-description"><title id="earth-title">Ulik soloppvarming</title><desc id="earth-description"></desc></svg>
         <div id="figure-legend" class="figure-legend" aria-hidden="true"></div>
+        <div class="globe-controls" role="group" aria-label="Roter jordkloden"><button id="rotate-left" type="button" aria-label="Vis lenger vest">←</button><input id="longitude" type="range" min="-180" max="180" value="10" step="1" aria-label="Lengdegrad midt i visningen"><button id="rotate-right" type="button" aria-label="Vis lenger øst">→</button><output id="longitude-value">10° Ø</output><button id="rotate-reset" type="button">Nullstill</button></div><p id="surface-status" role="status"></p>
       </section>
       <aside class="explanation" aria-live="polite" aria-atomic="false">
         <div class="step-count" id="step-count">TRINN 1 AV 5</div>
@@ -37,7 +39,7 @@
         <div class="nav-buttons"><button id="previous" type="button" disabled>← Forrige</button><button id="next" type="button">Neste →</button></div>
       </aside>
     </div>
-    <footer><span>En idealisert modell: beltene flytter seg med årstidene. Hav, land, fjell og værsystemer gir lokale forskjeller. Høyden på atmosfæren er overdrevet.</span><a href="https://weather.metoffice.gov.uk/learn-about/weather/atmosphere/global-circulation-patterns" target="_blank" rel="noopener">Faglig bakgrunn ↗</a></footer>
+    <footer><span>Idealisert modell. Beltene flytter seg med årstidene; hav, land og fjell gir lokale forskjeller. Atmosfærens høyde er overdrevet.</span><span id="surface-credit" hidden>Fysisk kart: <a href="https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/base-map/" target="_blank" rel="noopener">NASA Blue Marble</a> · august 2004</span><a href="https://weather.metoffice.gov.uk/learn-about/weather/atmosphere/global-circulation-patterns" target="_blank" rel="noopener">Faglig bakgrunn ↗</a></footer>
   </main>
 </body>
 </html>

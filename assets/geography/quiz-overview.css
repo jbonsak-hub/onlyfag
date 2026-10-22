@@ -26,5 +26,6 @@ body:not([data-quiz]) #verden-quiz .geoquiz-copy>span{font-size:12px;line-height
 
 body:not([data-quiz]) #verden-quiz{scroll-margin-top:26px}
 .preview-fylker{display:flex;align-items:center;justify-content:center;gap:10px;background:#dfeee6}.preview-fylker>span{font-size:30px}.preview-fylker small{color:#245845;font-size:12px;font-weight:750}
+.preview-kart{background:#e6f0ea}.preview-kart svg{display:block;width:94px;height:52px;max-width:100%}
 
 .geoquiz-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.geoquiz-heading h2{margin:0!important}.geoquiz-language{display:flex;gap:7px}.geoquiz-language button{display:flex;align-items:center;justify-content:center;width:40px;height:32px;padding:5px;border:1px solid #b7cbbd;border-radius:6px;background:transparent;cursor:pointer}.geoquiz-language button[aria-pressed=true]{border:2px solid #245944;background:#e5eee3}.geoquiz-language button:focus-visible{outline:2px solid #245944;outline-offset:3px}.geoquiz-language svg{display:block;width:27px;height:19px;filter:drop-shadow(0 1px 1px #0002)}

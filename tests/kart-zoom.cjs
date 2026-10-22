@@ -48,6 +48,18 @@ async function cameraChecks(page){
 }
 async function load(page,url){await page.goto(base+url);await page.locator('#start:enabled').waitFor();}
 async function startLocal(page){await page.locator('#start').click();await page.waitForFunction(()=>document.getElementById('targetVerb').textContent==='Klikk på');}
+async function previewName(page){
+  const name=await page.locator('path.state').first().getAttribute('data-state'),point=await pointFor(page,name);
+  await page.mouse.click(point.x,point.y);
+  assert.equal(await page.locator('#labelLayer text').last().textContent(),name,'pre-start click reveals the name on the map');
+  assert.equal(await page.locator('#feedback').textContent(),name);
+  assert.equal(await page.locator('#completed').textContent(),'0');
+  assert.equal(await page.locator('#elapsed').textContent(),'00:00','exploring names does not start the clock');
+  assert.equal(await page.locator('#mistakes').textContent(),'0 feil');
+  await page.locator('path.state').last().focus();await page.keyboard.press('Enter');
+  const last=await page.locator('path.state').last().getAttribute('data-state');
+  assert.equal(await page.locator('#labelLayer text').last().textContent(),last,'keyboard exploration also reveals the name');
+}
 async function answerAfterZoom(page){
   await startLocal(page);
   const target=await page.locator('#targetName').textContent(),point=await pointFor(page,target);
@@ -94,7 +106,7 @@ async function answerAfterZoom(page){
       assert.ok(await handle.evaluate(el=>Math.abs(el.getBoundingClientRect().x+4-document.querySelector('.game-panel').getBoundingClientRect().right)<2),'resize handle follows the revealed left panel');
       await handle.focus();const width=Number(await handle.getAttribute('aria-valuenow'));await page.keyboard.press('ArrowRight');assert.equal(Number(await handle.getAttribute('aria-valuenow')),width+16);await handle.dblclick();
     }
-    await cameraChecks(page);await capture(page,'kart-'+region);
+    await previewName(page);await cameraChecks(page);await capture(page,'kart-'+region);
     await answerAfterZoom(page);
     await page.locator('#kart-change-map').click();
     assert.equal(await page.locator('#kart-selection').isVisible(),true);assert.equal(new URL(page.url()).searchParams.has('region'),false);
@@ -124,13 +136,16 @@ async function answerAfterZoom(page){
   await page.locator('#map-zoom-reset').click();
   const correct=await pointFor(page,target);await page.mouse.click(correct.x,correct.y);assert.equal(await page.locator('#completed').textContent(),'1','normal answers resume after a drag');
   for(const [url,count] of [['/geografi/statle.html',50],['/geografi/fylker.html',15],['/geografi/kart.html?region=fylker',15]]){
-    await load(page,url);assert.equal(await page.locator('path.state').count(),count);await cameraChecks(page);await answerAfterZoom(page);
+    await load(page,url);assert.equal(await page.locator('path.state').count(),count);await previewName(page);await cameraChecks(page);await answerAfterZoom(page);
   }
   const mobile=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,deviceScaleFactor:1});
   const phone=await mobile.newPage();await prepare(phone);
   await phone.goto(base+'/geografi/kart.html');await capture(phone,'kart-selection-mobile');
   assert.ok(await phone.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'mobile chooser fits its screen');
-  await load(phone,'/geografi/kart.html?region=africa');await startLocal(phone);await phone.evaluate(()=>scrollTo(0,0));
+  await load(phone,'/geografi/kart.html?region=africa');
+  const previewCountry=await phone.locator('path.state').first().getAttribute('data-state'),previewPoint=await pointFor(phone,previewCountry);
+  await phone.touchscreen.tap(previewPoint.x,previewPoint.y);assert.equal(await phone.locator('#labelLayer text').last().textContent(),previewCountry,'mobile pre-start tap reveals the name');
+  await startLocal(phone);await phone.evaluate(()=>scrollTo(0,0));
   const mapBox=await phone.locator('#map').boundingBox(),x=mapBox.x+mapBox.width/2,y=mapBox.y+mapBox.height/2;
   const cdp=await mobile.newCDPSession(phone),touches=(distance)=>[{x:x-distance,y,id:0,radiusX:2,radiusY:2},{x:x+distance,y,id:1,radiusX:2,radiusY:2}];
   await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:touches(28)});

@@ -10,10 +10,10 @@ const server=http.createServer((req,res)=>{try{const file=path.join(root,new URL
   const page=await context.newPage();page.setDefaultTimeout(7000);page.on('dialog',d=>d.dismiss());
   const shot=async name=>{if(process.env.LAYOUT_SCREENSHOTS){fs.mkdirSync(process.env.LAYOUT_SCREENSHOTS,{recursive:true});await page.screenshot({path:path.join(process.env.LAYOUT_SCREENSHOTS,name+'.png')});}};
   await page.goto(base+'geografi.html#verden-quiz');
-  assert.deepEqual(await page.locator('.geoquiz-copy strong').allTextContents().then(a=>a.slice(0,4)),['Flagg','Hovedsteder','Flagg+Hovedstad','MapWiz']);
+  assert.deepEqual(await page.locator('.geoquiz-copy strong').allTextContents().then(a=>a.slice(0,4)),['Flagg','Hovedsteder','Flagg+Hovedstad','Kart']);
   await page.evaluate(()=>localStorage.setItem('geoHighscoresV1',JSON.stringify({'flags|world':[{name:'Norge',rank:[99],scoreText:'99 på rad',timeSec:10}]})));
   await page.getByRole('button',{name:'English',exact:true}).click();await page.waitForFunction(()=>document.querySelector('.geoquiz-copy strong').textContent==='Flags');
-  assert.deepEqual(await page.locator('.geoquiz-copy strong').allTextContents().then(a=>a.slice(0,4)),['Flags','Capitals','Flags+Capitals','MapWiz']);
+  assert.deepEqual(await page.locator('.geoquiz-copy strong').allTextContents().then(a=>a.slice(0,4)),['Flags','Capitals','Flags+Capitals','Map']);
   assert.equal(await page.getByRole('button',{name:'English',exact:true}).getAttribute('aria-pressed'),'true');
   const subject=await page.locator('#klima-fagstoff').textContent();assert.match(subject,/klima/i,'Subject material is not translated');await shot('overview-english');
   await page.reload();assert.equal(await page.evaluate(()=>QuizLanguage.language),'en');

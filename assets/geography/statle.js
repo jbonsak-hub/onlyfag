@@ -60,6 +60,7 @@
       const view = regionData.viewBox;
       $('map').setAttribute('viewBox',view.join(' '));
       if (regionData.context) $('states').append(svgNode('path',{d:regionData.context,class:'map-context','fill-rule':'evenodd','aria-hidden':'true'}));
+      if (regionData.territory) $('states').append(svgNode('path',{d:regionData.territory,class:'map-context',style:'stroke:none','fill-rule':'evenodd','aria-hidden':'true'}));
       for (const state of states) {
         const el=svgNode('path',{d:state.d,class:'state','fill-rule':'evenodd',role:'button',tabindex:'0','aria-label':shapeLabel});el.dataset.state=state.n;
         $('states').append(el);elements.set(state.n,el);
@@ -119,7 +120,7 @@
       $('smallStates').append(g); markers.set(name, g);
     });
   }
-  function flashLabel(name, kind) {
+  function flashLabel(name, kind, duration = 1050) {
     const c = centers.get(name), unit = 1 / ($('map').getScreenCTM()?.a || 1), width = Math.max(70, name.length * 7 + 22) * unit;
     const view = $('map').viewBox.baseVal;
     const x = Math.max(view.x + width / 2 + 9 * unit, Math.min(view.x + view.width - 9 * unit - width / 2, c.x));
@@ -128,7 +129,7 @@
     g.append(svgNode('rect', {x:x - width / 2,y:y - 13 * unit,width,height:26 * unit,rx:4 * unit,'vector-effect':'non-scaling-stroke',style:`filter:drop-shadow(0 ${2 * unit}px ${3 * unit}px #26453c45)`}));
     const text = svgNode('text', {x,y:y + unit,style:`font-size:${12 * unit}px`}); text.textContent = name; g.append(text);
     $('labelLayer').replaceChildren(g);
-    later(() => g.remove(), 1050);
+    later(() => g.remove(), duration);
   }
   function showHint() {
     const c = centers.get(target().n), radius = Math.max(25, Math.min(120, c.radius));
@@ -157,6 +158,7 @@
     setFeedback('Hvor ligger ' + target().n + '?');
   }
   function choose(name) {
+    if (phase === 'ready' || phase === 'finished') {flashLabel(name,'',2800);setFeedback(name);return;}
     if (phase !== 'playing' || locked || !target()) return;
     tick();
     if (results.has(name)) { flashLabel(name, ''); setFeedback(name + ' er allerede fullført.'); return; }

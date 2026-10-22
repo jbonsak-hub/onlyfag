@@ -6,6 +6,8 @@ All rounds use the same click-map game engine and time/error color bands.
 The shared SVG camera supports wheel zoom, two-finger pinch, drag, plus/minus,
 keyboard +/−/0 and a fit button. A drag or pinch never submits a country answer.
 Changing maps cancels the previous online run before a new round can start.
+Before starting, clicking or keyboard-activating a country, county or state shows
+its name on the map and in the panel without starting the timer or adding an answer.
 
 `scripts/build-continent-map-assets.cjs` builds the six country maps entirely
 offline. It reuses the public Natural Earth country geometry already embedded in
@@ -37,6 +39,10 @@ longitudes around the Pacific, so Fiji and the islands on either side of the
 date line stay together. Geographic clipping avoids overseas possessions
 forcing a whole-world crop. Neighbouring countries and territories are muted
 context and are never separate answers. Antarctica is not drawn.
+Western Sahara is neutral context across the complete disputed territory. The
+source's de-facto control split is not shown as a jagged playable Moroccan strip;
+Morocco's click target is clipped at the northern boundary of Western Sahara.
+This does not add or remove a country from the existing 197-country catalogue.
 
 The simplified source lacks 29 microstates and small island countries. These use
 the existing game's local `COUNTRY_MAP_POINTS` coordinates and visible circular

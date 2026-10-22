@@ -73,6 +73,9 @@ function project(lon, lat, center) {
 }
 function projectedFeature(feature, definition) {
   if (!feature || feature.properties.name === 'Antarctica') return [];
+  // Separate the disputed Western Sahara territory from Morocco. The source's
+  // de-facto split otherwise leaves a jagged, differently colored berm corridor.
+  if (feature.properties.name === 'Morocco' && !definition.saharaContext) definition={...definition,crop:[definition.crop[0],definition.crop[1],Math.max(definition.crop[2],27.6667),definition.crop[3]]};
   return polygons(feature.geometry).map(poly => poly.map(ring => {
     // Unwrap continuously, never join two vertices across the antipodal seam.
     // Independent normalization would stretch Australia across South America
@@ -145,7 +148,12 @@ for(const [key,definition] of Object.entries(definitions)) {
   const transform=p=>[offsetX+(p[0]-left)*scale,offsetY+(p[1]-top)*scale];
   const activeFeatures=new Set(rows.flatMap(row=>row.featureNames));
   // Context only: neighbouring countries and territories never become answers.
-  const context=world.features.filter(f=>!activeFeatures.has(f.properties.name)&&f.properties.name!=='Antarctica').flatMap(f=>projectedFeature(f,definition));
+  const context=world.features.filter(f=>!activeFeatures.has(f.properties.name)&&!['Antarctica','W. Sahara'].includes(f.properties.name)).flatMap(f=>projectedFeature(f,definition));
+  // Same neutral fill on both sides of the source's de-facto control line,
+  // without stroking that internal line as a country border.
+  const territory=projectedFeature(featureByName.get('W. Sahara'),definition);
+  const morocco=featureByName.get('Morocco');
+  if(morocco&&definition.crop[2]<27.6667)territory.push(...projectedFeature(morocco,{...definition,saharaContext:true,crop:[definition.crop[0],definition.crop[1],definition.crop[2],Math.min(definition.crop[3],27.6667)]}));
   const states=rows.map(row=>{
     const c=transform(row.c).map(round),d=pathData(row.polys,transform),projectedArea=row.polys.reduce((a,p)=>a+area(p[0])*scale*scale,0);
     const marker=!d||projectedArea<90;
@@ -156,7 +164,7 @@ for(const [key,definition] of Object.entries(definitions)) {
     if(row.polys.length)assert(row.polys.some(poly=>inPolygon(row.c,poly)),'Hint is outside '+row.name);
     return state;
   });
-  regions[key]={title:definition.title,viewBox:[0,0,width,height],projection:{name:'Lambert azimuthal equal-area',center:definition.center,crop:definition.crop},states,context:pathData(context,transform)};
+  regions[key]={title:definition.title,viewBox:[0,0,width,height],projection:{name:'Lambert azimuthal equal-area',center:definition.center,crop:definition.crop},states,context:pathData(context,transform),territory:pathData(territory,transform)};
 }
 const assigned=Object.values(regions).flatMap(region=>region.states.map(row=>row.n));
 assert.equal(new Set(assigned).size,assigned.length,'Duplicate country in continent pools');
