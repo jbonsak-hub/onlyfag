@@ -14,4 +14,4 @@
 .geo-score-dialog th{background:var(--q-soft)!important}.geo-score-dialog :is(th,td):nth-child(n+3){text-align:right;white-space:nowrap}.geo-score-dialog td:nth-child(2){font-weight:650}
 
 #geo-online-save{width:min(340px,calc(100vw - 24px))}#geo-online-save form{margin:0}#geo-online-save .mapwiz-score-status:empty{display:none}
-body[data-quiz="statle"]{--q-paper:#fffefa;--q-ink:#28463d;--q-muted:#536a59;--q-soft:#eaf1e2;--q-line:#cedbc7}
+body[data-quiz="statle"],body[data-quiz="fylker"],body[data-quiz="kart"]{--q-paper:#fffefa;--q-ink:#28463d;--q-muted:#536a59;--q-soft:#eaf1e2;--q-line:#cedbc7}
