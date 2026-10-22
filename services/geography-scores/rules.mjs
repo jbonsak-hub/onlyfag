@@ -3,6 +3,7 @@ export {data};
 const modes=new Set(['flags','capitals','flagcapital','places','countries','mapwiz','statle','fylker','kart']);
 const shapeQuiz=game=>game==='statle'||game==='fylker'||game==='kart';
 const shapeTargets=c=>c.game==='kart'?data.kart[c.region]:data[c.game];
+const physicalQuiz=c=>c.game==='kart'&&(data.kartPhysical||[]).includes(c.region);
 const variants={flags:['flag-country-mc','country-flag-mc'],capitals:['country-capital-mc','capital-country-mc'],flagcapital:['flag-capital-mc','capital-flag-mc'],places:['desc-place-mc','place-desc-mc']};
 export const shuffle=items=>{const a=items.slice(),random=new Uint32Array(a.length);crypto.getRandomValues(random);for(let i=a.length-1;i>0;i--){const j=random[i]%(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;};
 export function config(input){
@@ -11,7 +12,7 @@ export function config(input){
  if(c.game==='mapwiz'){
   if(!Array.isArray(input.categories)||!input.categories.length||input.categories.length>15)throw Error('invalid_config');
   c.categories=[...new Set(input.categories)].sort();if(c.categories.some(k=>!Object.hasOwn(data.mapwiz,k)))throw Error('invalid_config');
- }else if(c.game==='kart'){c.region=input.region;if(typeof c.region!=='string'||!Object.hasOwn(data.kart,c.region))throw Error('invalid_config');}
+ }else if(c.game==='kart'){c.region=input.region;if(typeof c.region!=='string'||!Object.hasOwn(data.kart,c.region))throw Error('invalid_config');if(physicalQuiz(c)){c.variant=input.variant===undefined?'practice':input.variant;if(!['practice','test','strict'].includes(c.variant))throw Error('invalid_config');}}
  else if(shapeQuiz(c.game)){}else if(c.game==='countries'){c.region=input.region||'world';if(!Object.hasOwn(data.regions,c.region))throw Error('invalid_config');}
  else{c.variant=input.variant||variants[c.game][0];if(!variants[c.game].includes(c.variant))throw Error('invalid_config');c.region=input.region||'world';if(c.game!=='places'&&!Object.hasOwn(data.regions,c.region))throw Error('invalid_config');if(c.game==='places')c.region='world';}
  return c;
@@ -69,6 +70,16 @@ export function answer(s,input,now){
  if(input.question!==s.current.id||s.awaitingNext)throw Error('wrong_question');
  if(shapeQuiz(s.config.game)){
   const name=input.choice;if(!shapeTargets(s.config).includes(name)||s.found.includes(name))throw Error('invalid_answer');
+  if(physicalQuiz(s.config)){
+   const skip=input.skip===true;if(skip&&name!==s.current.target)throw Error('invalid_answer');
+   const correct=!skip&&name===s.current.target,maxAttempts=s.config.variant==='strict'?1:3;
+   if(!correct&&!skip){s.hints++;s.mistakes=(s.mistakes||0)+1;if(s.hints<maxAttempts)return {correct:false,attemptsLeft:maxAttempts-s.hints};}
+   const band=correct?Math.min(s.hints,2):3,points=correct?(maxAttempts===1?1:3-s.hints):0;
+   // A final incorrect click completes the assigned target, never the clicked
+   // neighbour. Client-supplied advance/score flags do not affect these rules.
+   const targetName=s.current.target;s.score+=points;s.results.push({name:targetName,band,points});s.found.push(targetName);s.hints=0;s.index++;
+   if(s.index===s.targets.length)finish(s,now);else s.awaitingNext=true;return {correct,band,points,advanced:true};
+  }
   const correct=name===s.current.target;if(!correct&&!input.skip){s.hints++;s.mistakes=(s.mistakes||0)+1;return {correct:false};}
   if(input.skip&&name!==s.current.target)throw Error('invalid_answer');
   const seconds=Math.max(0,(now-s.current.issuedAt)/1000),band=input.skip?3:Math.max(seconds<=5?0:seconds<=10?1:2,Math.min(s.hints,3)),points=[100,75,50,0][band];

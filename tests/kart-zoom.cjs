@@ -5,7 +5,7 @@ const path=require('node:path');
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const base=process.env.BASE_URL||'http://127.0.0.1:58390';
 const screenshotDir=process.env.SCREENSHOT_DIR;
-const regions={europe:47,asia:47,northAmerica:23,southAmerica:12,africa:54,oceania:14};
+const regions={europe:47,asia:47,northAmerica:23,southAmerica:13,africa:55,oceania:15};
 const readView=page=>page.locator('#map').evaluate(svg=>{const v=svg.viewBox.baseVal;return [v.x,v.y,v.width,v.height];});
 const percent=async page=>parseInt(await page.locator('#map-zoom-value').textContent(),10);
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
@@ -83,7 +83,7 @@ async function answerAfterZoom(page){
   await page.goto(base+'/geografi/kart.html');
   assert.equal(await page.locator('#kart-selection').isVisible(),true);
   assert.equal(await page.locator('#kart-game').isVisible(),false);
-  assert.equal(await page.locator('[data-map-region]').count(),7);
+  assert.equal(await page.locator('[data-map-region]').count(),11);
   assert.equal(await page.locator('.kart-statle-link').getAttribute('href'),'statle.html','USA keeps its original Statle page');
   await page.locator('#kart-menu-button').click();assert.equal(await page.locator('#geoMenu').isVisible(),true);
   await page.keyboard.press('Escape');assert.equal(await page.locator('#kart-menu-button').getAttribute('aria-expanded'),'false');
@@ -108,7 +108,7 @@ async function answerAfterZoom(page){
     }
     await previewName(page);await cameraChecks(page);await capture(page,'kart-'+region);
     await answerAfterZoom(page);
-    await page.locator('#kart-change-map').click();
+    await page.locator('#kart-back').click();
     assert.equal(await page.locator('#kart-selection').isVisible(),true);assert.equal(new URL(page.url()).searchParams.has('region'),false);
     assert.equal(await page.locator('#completed').textContent(),'0','changing map clears score and pending transitions');
   }

@@ -96,9 +96,10 @@ test('county API supports next, rejects incomplete publication and shares only i
  assert.equal(rows.body.rows.length,1);assert.equal(rows.body.rows[0].score,1375);assert.equal(rows.body.rows[0].nickname,'County Player');assert.deepEqual(english.body.rows,rows.body.rows);assert.deepEqual(statle.body.rows,[]);db.close();
 });
 
-test('Kart covers all 197 countries exactly once and validates complete rounds for each continent',()=>{
- const expected={europe:47,asia:47,northAmerica:23,southAmerica:12,africa:54,oceania:14},all=Object.values(data.kart).flat();
- assert.deepEqual(Object.keys(data.kart).sort(),Object.keys(expected).sort());assert.equal(all.length,197);assert.equal(new Set(all).size,197);assert.deepEqual([...all].sort(),[...data.regions.world].sort());
+test('Kart preserves 197 sovereign countries, includes three regional territories and validates complete continental rounds',()=>{
+ const expected={europe:47,asia:47,northAmerica:23,southAmerica:13,africa:55,oceania:15},all=Object.keys(expected).flatMap(region=>data.kart[region]);
+ assert.deepEqual(Object.keys(data.kart).filter(k=>!data.kartPhysical.includes(k)).sort(),Object.keys(expected).sort());assert.equal(all.length,200);assert.equal(new Set(all).size,200);
+ const geometry=JSON.parse(fs.readFileSync(new URL('../assets/geography/continent-maps.json',import.meta.url),'utf8')),sovereign=Object.values(geometry.regions).flatMap(r=>r.states.filter(s=>!s.territory).map(s=>s.n));assert.equal(sovereign.length,197);assert.deepEqual(sovereign.sort(),[...data.regions.world].sort());
  for(const [region,count]of Object.entries(expected)){
   assert.equal(data.kart[region].length,count);const s=create({game:'kart',region},1000);assert.equal(s.plan.length,count);assert.deepEqual([...s.targets].sort(),[...data.kart[region]].sort());assert.throws(()=>finish(s,1001),/incomplete/);
   const outside=all.find(name=>!s.targets.includes(name));assert.throws(()=>answer(s,{question:s.current.id,choice:outside},1002),/invalid_answer/);
@@ -114,16 +115,96 @@ test('Kart covers all 197 countries exactly once and validates complete rounds f
 
 test('Kart API keeps continental rankings separate and prefetches only the chosen map targets',async()=>{
  const {env,db}=fixture(),call=async(url,body,token)=>{const r=await worker.fetch(req(url,body,token),env);return {status:r.status,body:await r.json()};};
- const start=await call('/session',{game:'kart',region:'oceania',language:'no'});assert.equal(start.status,201);assert.equal(start.body.questions.length,14);assert.deepEqual(start.body.questions.map(q=>q.target).sort(),[...data.kart.oceania].sort());const token=start.body.token;
+ const start=await call('/session',{game:'kart',region:'oceania',language:'no'});assert.equal(start.status,201);assert.equal(start.body.questions.length,15);assert.deepEqual(start.body.questions.map(q=>q.target).sort(),[...data.kart.oceania].sort());const token=start.body.token;
  const mutate=(url,body={})=>call(url,{requestId:crypto.randomUUID(),...body},token);
  assert.equal((await mutate('/finish')).status,400);assert.equal((await mutate('/publish',{nickname:'Early'})).status,400);
  assert.equal((await mutate('/answer',{question:start.body.question.id,choice:'Norge'})).status,400);
- for(let i=0;i<14;i++){const q=start.body.questions[i],reply=await mutate('/answer',{question:q.id,choice:q.target});assert.equal(reply.status,200);assert.equal(reply.body.complete,i===13);if(i<13){const next=await mutate('/next');assert.equal(next.status,200);assert.equal(next.body.question.id,start.body.questions[i+1].id);}}
+ for(let i=0;i<15;i++){const q=start.body.questions[i],reply=await mutate('/answer',{question:q.id,choice:q.target});assert.equal(reply.status,200);assert.equal(reply.body.complete,i===14);if(i<14){const next=await mutate('/next');assert.equal(next.status,200);assert.equal(next.body.question.id,start.body.questions[i+1].id);}}
  assert.equal((await mutate('/next')).status,400);assert.equal((await mutate('/publish',{nickname:'Oceania Player'})).status,200);
  const rows=async config=>(await call('/scores?config='+encodeURIComponent(JSON.stringify(config)))).body.rows;
- const norwegian=await rows({game:'kart',region:'oceania'});assert.equal(norwegian.length,1);assert.equal(norwegian[0].nickname,'Oceania Player');assert.equal(norwegian[0].score,1400);assert.deepEqual(await rows({game:'kart',region:'oceania',language:'en'}),norwegian);
+ const norwegian=await rows({game:'kart',region:'oceania'});assert.equal(norwegian.length,1);assert.equal(norwegian[0].nickname,'Oceania Player');assert.equal(norwegian[0].score,1500);assert.deepEqual(await rows({game:'kart',region:'oceania',language:'en'}),norwegian);
  for(const region of ['europe','asia','northAmerica','southAmerica','africa'])assert.deepEqual(await rows({game:'kart',region}),[]);
  assert.deepEqual(await rows({game:'fylker'}),[]);assert.deepEqual(await rows({game:'statle'}),[]);db.close();
+});
+
+test('physical Kart configuration separates map and mode while sharing language and retaining old board identities',()=>{
+ assert.deepEqual([...data.kartPhysical].sort(),['rivers','lakes','mountains','europeWater'].sort());
+ const boards=[];
+ for(const region of data.kartPhysical){
+  assert(data.kart[region].length>=2);
+  assert.equal(config({game:'kart',region}).variant,'practice');
+  assert.equal(board({game:'kart',region}),board({game:'kart',region,variant:'practice'}));
+  for(const variant of ['practice','test','strict']){
+   boards.push(board({game:'kart',region,variant}));
+   assert.equal(board({game:'kart',region,variant,language:'no'}),board({game:'kart',region,variant,language:'en'}));
+  }
+  for(const variant of [null,'',false,0,[],{},'timed','Practice'])assert.throws(()=>config({game:'kart',region,variant}),/invalid_config/);
+ }
+ assert.equal(new Set(boards).size,12);
+ assert.equal(board({game:'kart',region:'europe'}),'v1:{"game":"kart","region":"europe"}');
+ assert.equal(board({game:'statle'}),'v1:{"game":"statle"}');
+ assert.equal(board({game:'fylker'}),'v1:{"game":"fylker"}');
+});
+
+test('physical practice and test count attempts on the server, award 3/2/1 and complete the correct target on a third miss',()=>{
+ for(const region of data.kartPhysical)for(const variant of ['practice','test']){
+  for(const misses of [0,1,2,3]){
+   const s=create({game:'kart',region,variant},1000),first=s.current,wrong=s.targets[1];
+   assert.throws(()=>finish(s,1001),/incomplete/);
+   assert.throws(()=>answer(s,{question:first.id,choice:'Imaginary River'},1002),/invalid_answer/);
+   assert.throws(()=>answer(s,{question:first.id,choice:wrong,skip:true},1003),/invalid_answer/);
+   assert.equal(s.hints,0,'Rejected choices must not consume an attempt');
+   for(let attempt=0;attempt<misses;attempt++){
+    const reply=answer(s,{question:first.id,choice:wrong,advance:true,score:999999},1100+attempt);
+    assert.equal(reply.correct,false);
+    assert.equal(s.mistakes,attempt+1);
+    if(attempt<2){assert.equal(s.index,0,'Client advance flag cannot bypass attempts');assert.equal(s.hints,attempt+1);assert.equal(reply.attemptsLeft,2-attempt);assert.equal(s.awaitingNext,false);}
+    else{assert.equal(s.index,1);assert.equal(s.hints,0);assert.equal(s.awaitingNext,true);assert.equal(reply.points,0);assert.equal(reply.band,3);assert.equal(reply.advanced,true);}
+   }
+   if(misses<3){const reply=answer(s,{question:first.id,choice:first.target,score:999999},20000);assert.equal(reply.points,3-misses);assert.equal(reply.band,misses);assert.equal(reply.correct,true);}
+   assert.deepEqual(s.found,[first.target]);assert.equal(s.results[0].name,first.target);assert.equal(s.score,misses===3?0:3-misses);assert(!s.found.includes(wrong));
+   assert.throws(()=>answer(s,{question:first.id,choice:first.target},20001),/wrong_question/);
+   issue(s,21000);assert.throws(()=>answer(s,{question:s.current.id,choice:first.target},21001),/invalid_answer/);
+  }
+  const skipped=create({game:'kart',region,variant},0),reply=answer(skipped,{question:skipped.current.id,choice:skipped.current.target,skip:true},1);assert.equal(reply.points,0);assert.equal(reply.band,3);assert.equal(skipped.index,1);assert.equal(skipped.mistakes||0,0);
+ }
+});
+
+test('physical strict mode permits one attempt and all physical rounds require every assigned target',()=>{
+ for(const region of data.kartPhysical)for(const variant of ['practice','test','strict']){
+  const s=create({game:'kart',region,variant},0),max=variant==='strict'?1:3;
+  assert.equal(s.targets.length,data.kart[region].length);assert.equal(new Set(s.targets).size,s.targets.length);
+  const first=s.current,wrong=s.targets[1];
+  if(variant==='strict'){const reply=answer(s,{question:first.id,choice:wrong},100);assert.equal(reply.correct,false);assert.equal(reply.points,0);assert.equal(reply.band,3);assert.equal(s.index,1);assert.deepEqual(s.found,[first.target]);}
+  else answer(s,{question:first.id,choice:first.target},20000);
+  assert.throws(()=>finish(s,20001),/incomplete/);
+  for(let i=1;i<s.targets.length;i++){issue(s,21000+i*100);const reply=answer(s,{question:s.current.id,choice:s.current.target},21001+i*100);assert.equal(reply.points,max);}
+  assert(s.complete);assert.equal(s.results.length,s.targets.length);assert.equal(s.score,max*s.targets.length-(variant==='strict'?1:0));assert.equal(s.found.length,s.targets.length);assert.throws(()=>answer(s,{},30000),/complete/);
+ }
+});
+
+test('physical Kart API enforces final-miss advancement, replay protection, complete publication and separate shared-language boards',async()=>{
+ const {env,db}=fixture(),call=async(url,body,token)=>{const r=await worker.fetch(req(url,body,token),env);return {status:r.status,body:await r.json()};};
+ for(const region of data.kartPhysical){
+  assert.equal((await call('/session',{game:'kart',region,variant:'invented'})).status,400);
+  const start=await call('/session',{game:'kart',region,variant:'test',language:'no'});assert.equal(start.status,201);assert.equal(start.body.questions.length,data.kart[region].length);
+  const token=start.body.token,questions=start.body.questions,mutate=(url,body={})=>call(url,{requestId:crypto.randomUUID(),...body},token);
+  assert.equal((await mutate('/finish')).status,400);assert.equal((await mutate('/publish',{nickname:'Too early'})).status,400);
+  assert.equal((await mutate('/answer',{question:questions[1].id,choice:questions[1].target})).status,400);
+  assert.equal((await mutate('/answer',{question:questions[0].id,choice:'California'})).status,400);
+  const first=questions[0],wrong=questions[1].target;
+  for(let attempt=0;attempt<2;attempt++){const reply=await mutate('/answer',{question:first.id,choice:wrong,advance:true});assert.equal(reply.body.index,0);assert.equal(reply.body.awaitingNext,false);assert.equal(reply.body.feedback.correct,false);const noBypass=await mutate('/next');assert.equal(noBypass.body.index,0);assert.equal(noBypass.body.question.id,first.id);assert.equal(noBypass.body.hints,attempt+1,'Next cannot reset the attempt allowance');}
+  const finalRequest={requestId:crypto.randomUUID(),question:first.id,choice:wrong,score:999999},final=await call('/answer',finalRequest,token);assert.equal(final.status,200);assert.equal(final.body.index,1);assert.equal(final.body.feedback.points,0);assert.equal(final.body.awaitingNext,true);
+  assert.deepEqual((await call('/answer',finalRequest,token)).body,final.body,'An identical final-miss request is safely replayable');
+  assert.equal((await mutate('/answer',{question:first.id,choice:first.target})).status,400);
+  const savedState=JSON.parse(db.prepare('SELECT state_json FROM sessions ORDER BY rowid DESC LIMIT 1').get().state_json);assert.deepEqual(savedState.found,[first.target]);assert(!savedState.found.includes(wrong));
+  for(let i=1;i<questions.length;i++){assert.equal((await mutate('/next')).body.question.id,questions[i].id);const reply=await mutate('/answer',{question:questions[i].id,choice:questions[i].target});assert.equal(reply.status,200);assert.equal(reply.body.complete,i===questions.length-1);assert.equal(reply.body.feedback.points,3);}
+  const status=await call('/status',{},token);assert.equal(status.body.total,(questions.length-1)*3);assert.equal(status.body.found,questions.length);assert.equal((await mutate('/next')).status,400);
+  const nickname='Map '+region;assert.equal((await mutate('/publish',{nickname})).status,200);await mutate('/publish',{nickname:'Duplicate'});
+  const rows=async config=>(await call('/scores?config='+encodeURIComponent(JSON.stringify(config)))).body.rows,ranked=await rows({game:'kart',region,variant:'test'});assert.equal(ranked.length,1);assert.equal(ranked[0].nickname,nickname);assert.equal(ranked[0].score,(questions.length-1)*3);assert.deepEqual(await rows({game:'kart',region,variant:'test',language:'en'}),ranked);
+  assert.deepEqual(await rows({game:'kart',region,variant:'practice'}),[]);assert.deepEqual(await rows({game:'kart',region,variant:'strict'}),[]);assert.deepEqual(await rows({game:'kart',region:'europe'}),[]);
+ }
+ assert.equal(db.prepare('SELECT COUNT(*) n FROM scores').get().n,4);db.close();
 });
 
 test('language migration preserves scores and active runs and can be repeated',()=>{

@@ -9,21 +9,36 @@ Cloudflare Worker `onlyfag-geography-scores` bruker den separate D1-databasen me
 - Kjente steder: topp 10 for «på rad», egen liste per retning. Varianten med 20 spørsmål forblir lokal uten ny konkurranseregel.
 - Statle: topp 10 etter fullførte 50 stater. Serveren tildeler 100/75/50/0 poeng etter grønn/gul/oransje/rød kategori, maksimalt 5000. Feil, tidsbruk og hopp over kontrolleres; ufullførte runder kan ikke publiseres.
 - Norske fylker: egen topp 10 etter fullførte 15 fylker, med samme regler som Statle og maksimalt 1500 poeng. Norsk og engelsk deler listen. Krever oppdatert Worker ved publisering; ingen databaseendring eller migrering er nødvendig.
-- Kart: én topp 10 per verdensdel etter at alle landene i kartet er besvart. De seks kartene omfatter til sammen 197 land uten gjentakelser. Samme poengregler som Statle, med maksimalt 100 poeng per land. Fylker-valget i Kart bruker fylkenes eksisterende liste; USA-valget lenker til Statle og beholder listen der. Norsk og engelsk deler hver liste. Krever oppdatert Worker ved publisering, uten databaseendring.
+- Kart, verdensdeler: én topp 10 per verdensdel etter at alle målene i kartet er besvart. De seks kartene omfatter til sammen 197 land uten gjentakelser og tre uttrykkelig merkede territorier: Fransk Guyana (fransk), Ny-Caledonia (fransk) og Vest-Sahara (omstridt). Samme poengregler som Statle, med maksimalt 100 poeng per mål. Fylker-valget i Kart bruker fylkenes eksisterende liste; USA-valget lenker til Statle og beholder listen der. Norsk og engelsk deler hver liste. Krever oppdatert Worker ved publisering, uten databaseendring.
+- Kart, elver/fjellkjeder/innsjøer/Europas vannområder: egen topp 10 per kart og modus. Øving (`practice`, standard) og test (`test`) gir tre forsøk per mål: 3/2/1 poeng ved riktig første/andre/tredje forsøk, ellers 0 etter tredje bom. Streng test (`strict`) gir ett forsøk og 1 poeng for riktig svar, ellers 0. Hopp over gir 0. Alle tildelte mål må fullføres før publisering. Tid gir ingen poengbonus, men avgjør ved lik poengsum. Serveren teller forsøk og ignorerer klientens poeng- og framdriftsflagg. Øvingshintet etter to bom endrer ikke poengberegningen.
 - Finn land: topp 10 per geografisk område. Serveren kontrollerer land, gjentakelser, hint og tidsbonus.
 
 Kart bruker disse separate listevalgene:
 
-| Kart | API-region | Land | Maks poeng |
+| Kart | API-region | Mål | Maks poeng |
 | --- | --- | ---: | ---: |
 | Europa | `europe` | 47 | 4700 |
 | Asia | `asia` | 47 | 4700 |
 | Nord- og Mellom-Amerika | `northAmerica` | 23 | 2300 |
-| Sør-Amerika | `southAmerica` | 12 | 1200 |
-| Afrika | `africa` | 54 | 5400 |
-| Oseania | `oceania` | 14 | 1400 |
+| Sør-Amerika | `southAmerica` | 13 | 1300 |
+| Afrika | `africa` | 55 | 5500 |
+| Oseania | `oceania` | 15 | 1500 |
 
-Kartgruppene følger nettstedets eksisterende quizområder. Armenia, Aserbajdsjan og Georgia er lagt til Asia slik at alle 197 land er med. Russland, Tyrkia og Kypros ligger i Europa. Serverens mål er hentet fra de samme kartfilene som klienten, og byggeprosessen avviser manglende land eller gjentakelser.
+De fire fysiske kartene bruker `game: "kart"`, `region: "rivers"`, `"mountains"`,
+`"lakes"` eller `"europeWater"`, og `variant: "practice"`, `"test"` eller `"strict"`.
+Maks poeng er antall mål × 3 i øving/test og antall mål i streng test. De offentlige
+referansedataene merker disse regionene i `kartPhysical`. Verdensdelenes gamle
+listeidentitet beholdes uten variantfelt. Norsk og engelsk deler også hver av de
+tolv nye kart-/moduslistene.
+
+| Fysisk kart | API-region | Mål | Maks øving/test | Maks streng test |
+| --- | --- | ---: | ---: | ---: |
+| Verdens elver | `rivers` | 49 | 147 | 49 |
+| Verdens fjellkjeder | `mountains` | 24 | 72 | 24 |
+| Verdens innsjøer | `lakes` | 33 | 99 | 33 |
+| Europas vannområder | `europeWater` | 72 | 216 | 72 |
+
+Kartgruppene følger nettstedets eksisterende quizområder. Armenia, Aserbajdsjan og Georgia er lagt til Asia slik at alle 197 land er med. Russland, Tyrkia og Kypros ligger i Europa. Serverens mål er hentet fra de samme kartfilene som klienten, og byggeprosessen avviser manglende land eller gjentakelser. Territoriene er egne Kart-mål med metadata i kontinentkartene; de endrer ikke landkatalogen i Finn land eller andre spill. De fysiske kartene hentes fra `physical-maps/world-water.json` og `physical-maps/mountain-europe.json`.
 
 Norsk og engelsk deler resultatliste. Språket styrer spørsmål og knapper. Når et fullført resultat kvalifiserer til topp 10, åpnes kallenavnvinduet automatisk. Brukeren velger fortsatt selv om resultatet skal publiseres. Vinduet viser bare «Du er på topp 10!», kallenavn og lagreknapp. En åpen resultatliste oppdateres hvert femte sekund og når fanen blir synlig igjen. Oppdateringen stopper når listen lukkes eller fanen skjules.
 

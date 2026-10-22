@@ -86,7 +86,7 @@ const server = http.createServer((req, res) => {
       info.mapActive = mode;
     } else if (mode === 'kart') {
       await page.locator('#kart-selection').waitFor({state:'visible'});
-      assert.equal(await page.locator('#kart-selection [data-map-region]').count(), 7);
+      assert.equal(await page.locator('#kart-selection [data-map-region]').count(), 11);
       assert.equal(await page.locator('#kart-selection .kart-statle-link').getAttribute('href'), 'statle.html');
       assert.equal(await page.locator('#kart-game').isVisible(), false);
       await page.locator('#kart-menu-button').click();
@@ -141,7 +141,8 @@ const server = http.createServer((req, res) => {
     current = 'legacy-' + target;
     await page.goto(base + 'geografi.html#' + target);
     await page.waitForURL(url => Object.values(routes).some(([file]) => url.pathname.endsWith('/' + file)));
-    assert.equal(await page.locator('.quiz-page-back').getAttribute('href'), '../geografi.html#verden-quiz');
+    const mapPage=/\/(?:kart|statle|fylker)\.html$/.test(new URL(page.url()).pathname);
+    assert.equal(await page.locator('.quiz-page-back').getAttribute('href'), mapPage?(new URL(page.url()).pathname.endsWith('/kart.html')?'kart.html':'../geografi/kart.html'):'../geografi.html#verden-quiz');
     console.log('PASS legacy link', target);
   }
   for (const [key, value, file] of [['quiz','flags','geografi/flaggquiz.html'],['mode','worldle','geografi/worldle.html'],['tab','globle','geografi/globle.html']]) {
@@ -167,7 +168,7 @@ const server = http.createServer((req, res) => {
   const kartTarget=await page.locator('#targetName').innerText();
   await page.locator('path.state').evaluateAll((paths,name)=>paths.find(p=>p.dataset.state===name).dispatchEvent(new MouseEvent('click',{bubbles:true})),kartTarget);
   assert.equal(await page.locator('#completed').innerText(),'1');
-  await page.locator('#kart-change-map').click();
+  await page.locator('#kart-back').click();
   await page.locator('#kart-selection').waitFor({state:'visible'});
   assert.equal(await page.locator('script[src*="beacon.min.js"]').count(),1);
   if(process.env.CF_BEACON_SOURCE){

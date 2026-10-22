@@ -39,6 +39,7 @@
  ,['{0} km unna','{0} km away'],['· {0} geografi + {1} tidsbonus =','· {0} distance + {1} time bonus ='],['{0} kategorier · {1} lag','{0} categories · {1} teams'],['Du har valgt {0}. Velg mellom 3 og 5 kategorier.','You selected {0}. Choose 3–5 categories.']
  ,['Du klarte alle {0} hovedstedene {1} uten å bomme.','You got all {0} capitals {1} without a mistake.'],['Du klarte alle {0} flaggene {1} uten å bomme.','You got all {0} flags {1} without a mistake.'],['Du klarte alle {0} landene {1} i flagg–hovedstad-runden uten å bomme.','You got all {0} countries {1} in the flags-and-capitals round without a mistake.'],['Du klarte alle {0} stedene uten å bomme.','You got all {0} places without a mistake.'],['Alle {0}!','All {0}!']
  ,['Alle {0} fullført · {1} · {2} feil · {3} hoppet over. Grønn: {4}, gul: {5}, oransje: {6}, rød: {7}.','All {0} completed · {1} · {2} mistakes · {3} skipped. Green: {4}, yellow: {5}, orange: {6}, red: {7}.'],['Klikkbart kart over {0}','Interactive map of {0}']
+ ,['{0} poeng · {1} forsøk','{0} points · {1} tries'],['Det var {0}.','That was {0}.']
  ].forEach(([no,en])=>pattern(no,en));
  patterns.sort((a,b)=>b[3]-a[3]);
  function translate(raw,depth=0){

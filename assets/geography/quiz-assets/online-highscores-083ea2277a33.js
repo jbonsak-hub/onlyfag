@@ -4,7 +4,7 @@
  if(!base||!['flags','capitals','flagcapital','places','countries','geoguessr','statle','fylker','kart'].includes(mode))return;
  let active=null,starting=false,sequence=0;
  const language=()=>window.QuizLanguage?.language||'no',esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const shapeConfig=()=>mode==='kart'?(document.body.dataset.region==='fylker'?{game:'fylker',language:language()}:{game:'kart',region:document.body.dataset.region,language:language()}):{game:mode,language:language()};
+ const shapeConfig=()=>mode==='kart'?(document.body.dataset.region==='fylker'?{game:'fylker',language:language()}:{game:'kart',region:document.body.dataset.region,...(document.body.dataset.physical==='true'?{variant:document.body.dataset.variant||'practice'}:{}),language:language()}):{game:mode,language:language()};
  const time=ms=>{const s=Math.floor(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
  async function api(path,body,run){const payload=body?{...body,requestId:crypto.randomUUID()}:null;for(let attempt=0;attempt<2;attempt++)try{const r=await fetch(base+path,{method:payload?'POST':'GET',credentials:'omit',cache:'no-store',headers:{...(payload?{'Content-Type':'application/json'}:{}),...(run?{Authorization:'Bearer '+run.token}:{})},...(payload?{body:JSON.stringify(payload)}:{}),signal:AbortSignal.timeout(6000)}),data=await r.json();if(!r.ok)throw Object.assign(Error(data.error||'unavailable'),{http:r.status});return data;}catch(e){if(attempt||e.http)throw e;}}
  function notice(text){let el=document.getElementById('geo-online-notice');if(!el){el=document.createElement('div');el.id='geo-online-notice';el.setAttribute('role','status');document.body.append(el);}el.textContent=text;}
@@ -23,7 +23,7 @@
  async function finish(run=active){if(!run||run.finalizing||run.failed)return;run.finalizing=true;const target=document.querySelector('.prototype-summary,.world-end,#country-map-complete')||(shapeQuiz(mode)?document.querySelector('.game-panel'):null),status=document.createElement('span');status.className='geo-online-checking';status.setAttribute('role','status');status.textContent='Kontrollerer resultat …';target?.append(status);await run.pending;status.remove();if(active!==run||run.failed||!run.reply.complete){run.finalizing=false;return;}
   if(run.config.game==='mapwiz'&&typeof geoGuessrState!=='undefined'){geoGuessrState.total=run.reply.total;geoGuessrState.baseTotal=run.reply.baseTotal;geoGuessrState.bonusTotal=run.reply.bonusTotal;const title=document.querySelector('.prototype-summary h3');if(title)title.textContent=run.reply.total.toFixed(1)+' / 1100 poeng';document.querySelectorAll('.prototype-results tbody tr').forEach((row,i)=>{const result=geoGuessrState.results[i];if(result){row.cells[1].textContent=result.base.toFixed(1);row.cells[2].textContent=result.bonus.toFixed(1);}});}
   if(run.config.game==='countries'){worldTrainerState.finalScore=run.reply.total;const score=document.querySelector('.country-map-result-stats span');if(score)score.textContent='Poeng: '+run.reply.total;}
-  if(shapeQuiz(run.config.game)){const score=document.getElementById('statle-score');if(score){score.hidden=false;score.textContent=run.reply.total+' / '+(run.plan.length*100)+' poeng';}}
+  if(shapeQuiz(run.config.game)){const score=document.getElementById('statle-score');if(score){score.hidden=false;score.textContent=run.reply.total+' / '+(run.plan.length*(run.config.game==='kart'&&run.config.variant?(run.config.variant==='strict'?1:3):100))+' poeng';}}
   for(let attempt=0;attempt<3;attempt++)try{const result=await getRows(run.config);if(active===run&&qualifies(run,result.rows))showSave(run);return;}catch(_){await new Promise(r=>setTimeout(r,500*(attempt+1)));}run.finalizing=false;
  }
  function resultButton(target){if(!target||target.querySelector('.geo-online-result')||!active)return;const box=document.createElement('div');box.className='geo-online-result';const button=document.createElement('button');button.type='button';button.className='world-button';button.textContent='Topp 10';const run=active;button.onclick=()=>{if(run.reply.complete&&!run.saved)run.prompted=false;showBoard(run.config,run);};box.append(button);target.append(box);}
@@ -33,7 +33,7 @@
   finishLocal(result,target){if(active){resultButton(target);finish();}return true;},
   startStatle(begin){return start(shapeConfig(),reply=>begin(reply.questions.map(q=>q.target)),()=>begin());},
   resetStatle(){reset();},
-  statleAnswer(choice,skip=false){const run=active;if(!run||!shapeQuiz(run.config.game))return;const q=run.plan[run.localIndex];enqueue(run,'/answer',{question:q.id,choice,skip});if(skip||choice===q.target)run.localIndex++;},
+  statleAnswer(choice,skip=false,advance=false){const run=active;if(!run||!shapeQuiz(run.config.game))return;const q=run.plan[run.localIndex];enqueue(run,'/answer',{question:q.id,choice,skip});if(advance||skip||choice===q.target)run.localIndex++;},
   statleNext(){const run=active;if(run&&shapeQuiz(run.config.game)&&run.localIndex<run.plan.length)enqueue(run,'/next',{});},
   finishStatle(){finish();},showStatle(){if(active?.reply.complete&&!active.saved)active.prompted=false;showBoard(active?.config||shapeConfig());}
  };
