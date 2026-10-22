@@ -39,6 +39,7 @@ function buildRegion(key,definition){const project=projector(definition),land=wo
  return{title:definition.title,en:definition.en,viewBox:[0,0,definition.width,definition.height],background,states};
 }
 const regions=Object.fromEntries(Object.entries(definitions).map(([key,definition])=>[key,buildRegion(key,definition)]));
+for(const state of regions.mountains.states)state.continent=require('./physical-map-continents.cjs')(state.en);
 assert.equal(regions.mountains.states.length,34,'Expected 34 mountain ranges and plateaus');
 const output=path.join(root,'assets/geography/physical-maps/mountain-europe.json'),result=JSON.stringify({version:1,regions})+'\n';
 if(process.argv.includes('--check'))assert.equal(fs.readFileSync(output,'utf8').replace(/\r\n/g,'\n'),result,'Run scripts/build-mountain-europe-maps.cjs');else{fs.mkdirSync(path.dirname(output),{recursive:true});fs.writeFileSync(output,result);}

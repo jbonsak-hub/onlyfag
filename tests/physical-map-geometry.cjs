@@ -8,15 +8,9 @@ const regions = {...water.regions, ...mountainEurope.regions};
 
 // Parse the emitted SVG geometry independently of either geographic builder.
 function paths(d) {
-  return [...d.matchAll(/M([^M]+)/g)].map(match => ({
-    closed: /Z/.test(match[1]),
-    points: match[1].replace(/Z/g, '').split('L').map(pair => {
-      const numbers = pair.trim().split(/[ ,]+/).map(Number);
-      assert.equal(numbers.length, 2, 'Each SVG vertex has two coordinates');
-      assert(numbers.every(Number.isFinite), 'SVG vertices are finite');
-      return numbers;
-    })
-  }));
+  const tokens=d.match(/[MLZmlz]|-?(?:\d*\.)?\d+(?:e[-+]?\d+)?/g)||[],out=[];let x=0,y=0,current;
+  for(let i=0;i<tokens.length;){const command=tokens[i++];if(/[Zz]/.test(command)){current.closed=true;continue;}assert(/[MLml]/.test(command),'Linear SVG command');const a=Number(tokens[i++]),b=Number(tokens[i++]);assert(Number.isFinite(a)&&Number.isFinite(b));if(command===command.toLowerCase()){x+=a;y+=b;}else{x=a;y=b;}if(/[Mm]/.test(command)){current={closed:false,points:[]};out.push(current);}current.points.push([x,y]);}
+  return out;
 }
 function distanceToSegment(p, a, b) {
   const dx=b[0]-a[0], dy=b[1]-a[1];
@@ -55,10 +49,10 @@ function geographicBounds(target) {
 
 
 test('three world maps include the revised inventories and water groups',()=>{
- assert.deepEqual(Object.fromEntries(Object.entries(regions).map(([id,r])=>[id,r.states.length])),{rivers:49,lakes:119,mountains:34});
+ assert.deepEqual(Object.fromEntries(Object.entries(regions).map(([id,r])=>[id,r.states.length])),{rivers:49,lakes:33,seas:73,mountains:34});
  assert.equal(regions.lakes.states.filter(s=>s.group==='lakes').length,33);
- assert(regions.lakes.states.filter(s=>s.group==='seas').length>=30);
- assert(regions.lakes.states.filter(s=>s.group==='gulfsStraits').length>=30);
+ assert(regions.seas.states.filter(s=>s.group==='seas').length>=30);
+ assert(regions.seas.states.filter(s=>s.group==='gulfsStraits').length>=25);
  assert.equal(regions.mountains.states.filter(s=>s.kind==='plateau').length,7);
  assert.equal(regions.mountains.states.filter(s=>s.kind==='range').length,27);
  for(const [id,region]of Object.entries(regions)){
@@ -85,34 +79,36 @@ test('water categories cover requested lakes, oceans and straits without duplica
  assert.equal(find('lakes','Lake Superior').n,'Superior');
  for(const en of ['Lake Mjøsa','Lake Garda'])assert.equal(find('lakes',en).group,'lakes');
  for(const en of ['Lake Tana','Lake Van','Bristol Channel','St. George’s Channel','North Channel'])assert(!regions.lakes.states.some(s=>s.en===en));
- assert.equal(find('lakes','Black Sea').group,'seas');assert.equal(find('lakes','Caspian Sea').group,'lakes');
- for(const en of ['Skagerrak','Kattegat','Red Sea','Indian Ocean','Atlantic Ocean','Pacific Ocean','Arctic Ocean','Caribbean Sea','Gulf of Mexico','Sargasso Sea','Hudson Bay','Baffin Bay','Sea of Japan','Yellow Sea','East China Sea','South China Sea','Bay of Bengal','Andaman Sea','Gulf of Thailand','Arabian Sea','Tasman Sea','Coral Sea','Southern Ocean','Gulf of California','Persian Gulf','Strait of Hormuz','Gulf of Oman','Gulf of Aden','Labrador Sea','Mozambique Channel','Gulf of Guinea','Strait of Gibraltar','Bering Strait','Strait of Malacca','Bosporus Strait','Bab el Mandeb','Strait of Magellan'])find('lakes',en);
- assert.equal(find('lakes','Southern Ocean').c[1]>500,true,'Southern Ocean south of 60 degrees is visible');
+ assert.equal(find('seas','Black Sea').group,'seas');assert.equal(find('lakes','Caspian Sea').group,'lakes');
+ for(const en of ['Skagerrak','Kattegat','Red Sea','Indian Ocean','Atlantic Ocean','Pacific Ocean','Arctic Ocean','Caribbean Sea','Gulf of Mexico','Sargasso Sea','Hudson Bay','Baffin Bay','Sea of Japan','Yellow Sea','East China Sea','South China Sea','Bay of Bengal','Andaman Sea','Gulf of Thailand','Arabian Sea','Tasman Sea','Coral Sea','Southern Ocean','Gulf of California','Persian Gulf','Strait of Hormuz','Gulf of Oman','Gulf of Aden','Labrador Sea','Mozambique Channel','Gulf of Guinea','Strait of Gibraltar','Bering Strait','Strait of Malacca','Bosporus Strait','Bab el Mandeb','Strait of Magellan'])find('seas',en);
+ assert.equal(find('seas','Southern Ocean').c[1]>500,true,'Southern Ocean south of 60 degrees is visible');
 });
 test('hint centers lie on actual river courses or inside filled geographic features',()=>{
  for(const [id,region]of Object.entries(regions))for(const t of region.states){const shapes=paths(t.d);if(t.kind==='river')assert(distanceToPaths(t.c,shapes)<.05,t.n);else assert(insideEvenOdd(t.c,shapes)||distanceToPaths(t.c,shapes)<.05,id+'/'+t.n);}
 });
 test('tiny lakes and straits retain real outlines and visible markers',()=>{
  for(const name of ['Lake Mjøsa','Lake Garda','Lake Geneva','Dead Sea','Lake Toba']){const t=find('lakes',name);assert(t.marker,name);assert(t.d.includes('Z'));}
- for(const name of ['Bosporus Strait','Strait of Hormuz','Bering Strait'])assert(find('lakes',name).marker);
+ for(const name of ['Bosporus Strait','Strait of Hormuz','Bering Strait'])assert(find('seas',name).marker);
 });
 test('both physical map builders reproduce the committed offline geometry',()=>{
  for(const file of ['build-world-water-maps.cjs','build-mountain-europe-maps.cjs'])execFileSync(process.execPath,[path.join(__dirname,'../scripts',file),'--check'],{stdio:'pipe'});
 });
 
 test('new named marine regions and all former catalogue holes belong to quiz targets',()=>{
- const map=regions.lakes,added=map.coverage.added;assert.equal(added.length,12);for(const t of added)assert(map.states.some(s=>s.n===t.n&&s.en===t.en));
- const parents=Object.fromEntries(map.coverage.assignments.map(a=>[a.source,a.target]));for(const [name,parent]of Object.entries({'Bristol Channel':'Celtic Sea','North Channel':'Irish Sea','James Bay':'Hudson Bay','Hudson Strait':'Hudson Bay','Bo Hai':'Yellow Sea','Laccadive Sea':'Indian Ocean','Great Australian Bight':'Indian Ocean','Gulf of Tonkin':'South China Sea','Bali Sea':'Java Sea','Yangtze River':'East China Sea','Savu Sea':'Indian Ocean','The North Western Passages':'Arctic Ocean'}))assert.equal(parents[name],parent);
+ const map=regions.seas;assert.equal(map.coverage.added.length,0);assert.equal(map.coverage.merged.length,13);for(const t of map.coverage.merged){assert(!map.states.some(s=>s.en===t.source));assert(map.states.some(s=>s.en===t.target));}
+ const parents=Object.fromEntries(map.coverage.assignments.map(a=>[a.source,a.target]));for(const [name,parent]of Object.entries({'Bristol Channel':'Celtic Sea','North Channel':'Irish Sea','James Bay':'Hudson Bay','Hudson Strait':'Hudson Bay','Bo Hai':'Yellow Sea','Laccadive Sea':'Indian Ocean','Great Australian Bight':'Indian Ocean','Gulf of Tonkin':'South China Sea','Bali Sea':'Indian Ocean','Yangtze River':'East China Sea','Savu Sea':'Indian Ocean','The North Western Passages':'Arctic Ocean'}))assert.equal(parents[name],parent);
  for(const assignment of map.coverage.assignments)assert(map.states.some(s=>s.en===assignment.target),'Known parent '+assignment.target);
- assert(map.extraLand.length>0,'Antarctica is land at the southern edge, not ocean catchment');
+ assert(water.background.some(s=>s.kind==='land'),'Detailed coastline masks inland land and Antarctica');
 });
 
 test('the complete sea selection covers an independent 21,600-point ocean reference',()=>{
- const reference=require('./fixtures/marine-water-reference.json'),bits=Buffer.from(reference.waterBits,'base64'),seas=regions.lakes.states.filter(s=>s.kind==='sea').map(s=>paths(s.d));let checked=0;assert(reference.waterCount>10000);
+ const reference=require('./fixtures/marine-water-reference.json'),bits=Buffer.from(reference.waterBits,'base64'),seas=regions.seas.states.filter(s=>s.kind==='sea').map(s=>paths(s.d));let checked=0;assert(reference.waterCount>10000);
  for(let ix=0;ix<reference.columns;ix++)for(let iy=0;iy<reference.rows;iy++){const i=ix*reference.rows+iy;if(!(bits[i>>3]&(1<<(i&7))))continue;const p=[reference.offset+ix*reference.step,reference.offset+iy*reference.step];assert(seas.some(shapes=>insideEvenOdd(p,shapes)),'Unassigned ocean position '+p);checked++;}
  assert.equal(checked,reference.waterCount);
 });
 
 test('marine coastal repair never labels deep inland lakes as ocean',()=>{
- const seas=regions.lakes.states.filter(s=>s.kind==='sea').map(s=>paths(s.d));for(const en of ['Lake Baikal','Lake Victoria','Lake Eyre','Great Slave Lake'])assert(!seas.some(shapes=>insideEvenOdd(find('lakes',en).c,shapes)),en+' stays outside ocean catchments');
+ const seas=regions.seas.states.filter(s=>s.kind==='sea').map(s=>paths(s.d));for(const en of ['Caspian Sea','Aral Sea','Lake Baikal','Lake Victoria','Lake Eyre','Great Slave Lake'])assert(!seas.some(shapes=>insideEvenOdd(find('lakes',en).c,shapes)),en+' stays outside ocean catchments');
 });
+
+test('practice inventories have an explicit continent and Glomma reaches Fredrikstad',()=>{for(const region of ['rivers','lakes','mountains'])for(const s of regions[region].states)assert(['northAmerica','southAmerica','europe','asia','africa','oceania'].includes(s.continent));const bounds=geographicBounds(find('rivers','Glomma'));assert(bounds[2]<59.18&&bounds[3]>62.6,'Complete Glomma, including its lower course');});

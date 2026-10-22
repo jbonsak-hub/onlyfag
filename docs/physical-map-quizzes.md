@@ -1,23 +1,18 @@
 # Physical map quizzes in Kart
 
-Kart now has three physical map choices alongside the continents, Norwegian
+Kart now has four physical map choices alongside the continents, Norwegian
 counties and the original Statle link:
 
 | Map | Targets |
 | --- | ---: |
 | World rivers | 49 |
 | Mountain ranges and highlands | 34: 27 ranges, 7 highland regions |
-| Lakes and marine areas | 119: 33 lakes, 55 seas/oceans, 31 gulfs/straits |
+| Lakes | 33 |
+| Seas, gulfs and straits | 73: 44 seas/oceans, 29 gulfs/straits |
 
-The water map offers three independent checkboxes directly above Start. Lakes
-are checked initially; the selection persists while changing maps. An empty
-selection disables Start and the leaderboard. Only selected targets are drawn,
-assigned and accepted by the score service. European waters are covered here;
-there is no separate European water quiz.
+Lakes and marine waters are separate choices. The marine page offers two independent checkboxes directly above Start, initially both selected. An empty selection disables Start and the leaderboard. Only selected targets are drawn, assigned and accepted by the score service. Smaller unasked water bodies are attached to their logical neighbours, including the twelve provisional additions, which are no longer questions. See [marine-coverage.md](marine-coverage.md).
 
-Marine coverage has no unassigned offshore patches. Smaller unasked water
-bodies are attached to their logical neighbours; twelve substantial missing
-seas/gulfs are now separate targets. See [marine-coverage.md](marine-coverage.md).
+Rivers, mountains and lakes also offer “Continent by continent”. This is local practice: North America, South America, Europe, Asia, Africa, then Oceania; random order within each continent. A small subtitle names the current continent. Every selected target appears once. No score session, answer or publication is sent to the API, and the leaderboard is hidden. Transcontinental teaching assignments are explicit in scripts/physical-map-continents.cjs.
 
 The supplied PDFs and reference quizzes informed inventories and interaction.
 The implementation uses local geographic SVG vectors, without third-party quiz
@@ -68,11 +63,14 @@ River corridor overlaps select the nearest mapped course.
 node --test tests/physical-map-geometry.cjs tests/continent-maps.cjs tests/geography-score-api.mjs
 node tests/physical-map-browser.cjs
 node tests/marine-coverage-browser.cjs
+node tests/kart-practice.cjs
 node tests/kart-zoom.cjs
 node tests/kart-online.cjs
 ```
 
 Browser checks use PLAYWRIGHT_MODULE and optionally BROWSER_EXECUTABLE and
-SCREENSHOT_DIR. They make real geographic clicks on all 202 physical targets,
+SCREENSHOT_DIR. They make real geographic clicks on all 189 physical targets,
 exercise free panel dragging, category changes, complete server-verified
 rounds, automatic nickname prompt, shared-language ranking and mobile zoom.
+
+The chooser uses local vector flags, continent silhouettes derived from existing maps, and river/mountain/lake/sea motifs. Run node scripts/build-kart-cards.cjs when continent outlines change; --check validates the sprite.

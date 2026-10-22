@@ -189,3 +189,11 @@ For fagkategoriene i Jeopardy brukes en egen engelsk bank med 84 oversatte grunn
 Brukernavn i toppresultater oversettes ikke, og eksisterende resultatlagring beholdes. Ingen nye analytics-hendelser, tokens, nettverkstjenester eller personopplysninger er lagt til.
 
 Bygg språkpakken med node scripts/build-quiz-language.cjs før node scripts/build-geography-quiz-assets.cjs. Begge støtter --check. node tests/geography-language.cjs tester språkvalg begge veier, rekkefølge, engelsk svarinntasting, flervalg i begge retninger, Jeopardy, alle stedsbeskrivelser, GeoGrid-bokstavregler, engelske kartspill, uendret resultatlagring, fast mobilknapp og naturlig flaggformat (også Nepal og Sveits). Mobil er kontrollert i emulert Edge/Chromium, ikke på fysiske iOS-enheter eller Safari.
+
+### Mobile Worldle/Tradle and frame startup (22 October 2026)
+
+Mobile Worldle and Tradle now have four stable choices per question, automatic next question on a correct answer, a correct-answer streak, and a result/restart after one miss. Distance, directions, typed guesses and hint histories remain in desktop only. Tradle uses the local embedded export profiles on mobile to avoid per-question network waits. Worldle keeps the local country shape and satellite-image fallback. The shared navigation moves into the mobile quiz card and returns to the desktop sidebar on resize. There is no new highscore list for these games.
+
+Maplab quiz documents hide the default module before first paint and select the requested quiz before revealing it. Globle no longer initializes unrelated Tradle requests. Navigation JS is versioned with its content hash so a cached older script cannot leave a new document hidden. The unframed map laboratory retains its normal default projection.
+
+Checks: tests/geography-mobile-choices.cjs (both languages, three mobile dimensions, streaks/restart, desktop typing), tests/maplab-quiz-startup.cjs (delayed navigation never exposes projection), tests/kart-practice.cjs (all 116 practice targets and no API traffic).

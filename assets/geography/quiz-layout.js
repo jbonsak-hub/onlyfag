@@ -87,6 +87,10 @@
     // Place every explanation inside one closed section, below the game.
     const help = side.querySelector(':scope > .quiz-help');
     if (help) side.insertBefore(help, end);
+    if(mode==='tradle'){
+      const placeNavigation=()=>{const target=doc.body.classList.contains('quiz-mobile-streak')&&doc.querySelector('.mobile-streak-shell')||side;if(nav.parentElement!==target)target.prepend(nav);if(end.parentElement!==target)target.append(end);};
+      const navigationObserver=new MutationObserver(placeNavigation);navigationObserver.observe(doc.querySelector('#tradle'),{childList:true,subtree:true});navigationObserver.observe(doc.body,{attributes:true,attributeFilter:['class']});frame.contentWindow.addEventListener('resize',placeNavigation);placeNavigation();
+    }
     const resize = () => frame.contentWindow.dispatchEvent(new frame.contentWindow.Event('resize'));
     style.addEventListener('load', resize); doc.head.append(style);
     if (window.ResizeObserver) new ResizeObserver(resize).observe(frame);
@@ -125,7 +129,7 @@
       panelResize.refresh();
       return;
     }
-    let target = document.querySelector('.worldle-side,.geo-hud,.country-map-side,.country-map-bottom-bar,.quiz-status-panel');
+    let target = document.body.classList.contains('quiz-mobile-streak')&&document.querySelector('.mobile-streak-shell')||document.querySelector('.worldle-side,.geo-hud,.country-map-side,.country-map-bottom-bar,.quiz-status-panel');
     if (mode === 'jeopardy') target = document.querySelector('#jeopardy-shell.playing .jeopardy-side');
     document.body.classList.toggle('quiz-integrated-nav', !!target);
     if (target) {
@@ -163,5 +167,6 @@
   }
   const content = document.querySelector('main.content');
   new MutationObserver(update).observe(content, {childList:true,subtree:true});
+  matchMedia('(max-width:700px),(max-width:1000px) and (max-height:500px)').addEventListener('change',()=>queueMicrotask(update));
   update();
 })();

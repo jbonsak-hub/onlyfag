@@ -81,17 +81,27 @@ body[data-physical="true"][data-phase="playing"] footer>span{display:none}
 .water-options legend{font-size:10px;font-weight:650;margin-bottom:6px}
 .water-options label{display:flex;align-items:center;gap:7px;line-height:1.25}
 .water-options input{margin:0;accent-color:#245845;width:14px;height:14px;flex-shrink:0}
+.continent-practice-option{display:flex;align-items:flex-start;gap:7px;font-size:10px;line-height:1.4;cursor:pointer}
+.continent-practice-option input{margin:1px 0 0;accent-color:#245845;flex-shrink:0}
+#target-continent{font-size:11px;color:#d9e4f4;font-weight:500;letter-spacing:0}
+body[data-practice="true"] #statle-top-ten{display:none!important}
+.kart-cards>[data-card]{position:relative;isolation:isolate;overflow:hidden;min-height:78px;background:var(--card-tint,#fffefa)}
+.kart-cards>[data-card] strong{position:relative;z-index:1;max-width:72%}
+.kart-card-art{position:absolute;right:3px;top:6px;height:calc(100% - 12px);width:30%;color:var(--card-art,#6f96a0);opacity:.55;pointer-events:none}
+.kart-cards>[data-card="fylker"] .kart-card-art,.kart-cards>[data-card="usa"] .kart-card-art{inset:0;width:100%;height:100%;opacity:.12}
+[data-card="europe"]{--card-tint:#edf2e5;--card-art:#71965c}[data-card="asia"]{--card-tint:#f5eee0;--card-art:#b28a4e}[data-card="northAmerica"]{--card-tint:#e7f0f4;--card-art:#6c95b3}[data-card="southAmerica"]{--card-tint:#e8f2e8;--card-art:#6b9c75}[data-card="africa"]{--card-tint:#f5ebe3;--card-art:#b98a64}[data-card="oceania"]{--card-tint:#eeebf6;--card-art:#9282af}
+.kart-cards>[data-card]:hover{filter:brightness(.98);border-color:#83a48c}
 .physical-target.plateau{--feature:#d9c593}.physical-target.plateau .physical-shape{stroke:#a69768;stroke-dasharray:2 2}
 .physical-target.plateau:hover,.physical-target.plateau:focus-visible{--feature:#e8d7a9}
 /* Named ocean areas remain distinct from the dark, high-contrast lakes. */
-body[data-region="lakes"]{--water:#adced5}
-body[data-region="lakes"] .physical-target.sea{--feature:#83afbd}
-body[data-region="lakes"] .physical-target.sea .physical-shape{stroke:#5f8f9f;stroke-width:.6}
-body[data-region="lakes"] .physical-target.sea:hover{--feature:#608fa4}
+body[data-region="seas"]{--water:#adced5}
+body[data-region="seas"] .physical-target.sea{--feature:#83afbd}
+body[data-region="seas"] .physical-target.sea .physical-shape{stroke:#5f8f9f;stroke-width:.6}
+body[data-region="seas"] .physical-target.sea:hover{--feature:#608fa4}
 .physical-target[data-band="0"]{--feature:var(--green)}.physical-target[data-band="1"]{--feature:var(--yellow)}.physical-target[data-band="2"]{--feature:var(--orange)}.physical-target[data-band="3"]{--feature:var(--red)}
-body[data-region="lakes"] .physical-target.sea[data-band="0"]{--feature:var(--green)}body[data-region="lakes"] .physical-target.sea[data-band="1"]{--feature:var(--yellow)}body[data-region="lakes"] .physical-target.sea[data-band="2"]{--feature:var(--orange)}body[data-region="lakes"] .physical-target.sea[data-band="3"]{--feature:var(--red)}
-body[data-region="lakes"] .physical-target.sea.wrong{--feature:#c8564c}
-body[data-region="lakes"] .physical-target.sea.hinted{--feature:#f2af38}
+body[data-region="seas"] .physical-target.sea[data-band="0"]{--feature:var(--green)}body[data-region="seas"] .physical-target.sea[data-band="1"]{--feature:var(--yellow)}body[data-region="seas"] .physical-target.sea[data-band="2"]{--feature:var(--orange)}body[data-region="seas"] .physical-target.sea[data-band="3"]{--feature:var(--red)}
+body[data-region="seas"] .physical-target.sea.wrong{--feature:#c8564c}
+body[data-region="seas"] .physical-target.sea.hinted{--feature:#f2af38}
 @media(max-width:700px){
  body[data-physical="true"] .map-viewport{padding:5px}
  body[data-physical="true"] .game-panel{left:8px;bottom:8px;width:196px;min-width:175px;max-height:49dvh;padding:10px;gap:8px;resize:none;max-width:calc(100vw - 16px)}
