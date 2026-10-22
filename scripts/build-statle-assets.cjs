@@ -30,6 +30,10 @@ for (const asset of assets) {
 for (const page of ['geografi/statle.html', 'geografi/fylker.html', 'geografi/kart.html', 'prototypes/statle.html']) {
   const file = path.join(root, page);
   let html = fs.readFileSync(file, 'utf8');
+  const themeInit='<script id="map-theme-init">try{document.documentElement.dataset.theme=localStorage.getItem("geoDarkMode")==="1"?"dark":"light"}catch(_){}</script>';
+  if(checking){if(!html.includes(themeInit))throw new Error(page+': missing initial map theme');}
+  else if(/<script id="map-theme-init">[\s\S]*?<\/script>/.test(html))html=html.replace(/<script id="map-theme-init">[\s\S]*?<\/script>/,themeInit);
+  else html=html.replace('<head>','<head>'+themeInit);
   for (const asset of assets) {
     const expected = '../' + asset.relative;
     if (checking) {

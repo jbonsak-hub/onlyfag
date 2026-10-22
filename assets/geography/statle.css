@@ -124,3 +124,41 @@ body[data-region="seas"][data-retry="true"] .physical-target.sea.mastered{--feat
  body[data-physical="true"] .water-options{font-size:10px;gap:6px}
 }
 @media(max-height:470px){body[data-physical="true"] .game-panel{max-height:calc(100dvh - 52px);gap:6px;padding:9px;width:196px}body[data-physical="true"] .legend{display:none!important}body[data-physical="true"] .target-block{min-height:0}body[data-physical="true"] footer>span{display:none}}
+.map-toolbar{display:flex;align-items:center;gap:6px}
+.map-toolbar .geo-menu-toggle{position:static}
+.map-theme-toggle{border:1px solid #c6d9ce;border-radius:7px;background:#fffef9f0;color:#285440;padding:6px 9px;font-size:17px;line-height:1;min-height:32px}
+/* The same persisted setting is used by the main geography site. The head
+   bootstrap sets data-theme before the first paint, including on the chooser. */
+:root[data-theme="dark"]{color-scheme:dark;--water:#263f49;--land:#287c56;--navy:#294358;background:#14231e;color:#e4eee7}
+:root[data-theme="dark"] body{background:#14231e;color:#e4eee7;--q-paper:#1c3027;--q-ink:#e4eee7;--q-muted:#b5cabe;--q-soft:#294437;--q-line:#4b6858}
+:root[data-theme="dark"] body[data-region="seas"]{--water:#263f49}
+:root[data-theme="dark"] .game-panel,:root[data-theme="dark"] .geo-menu{background:#1c3027;color:#e4eee7;border-color:#4b6858}
+:root[data-theme="dark"] :is(.kart-selection,.kart-chooser h1,.kart-map-groups h2,.brand,.kart-overview){color:#d7eddf}
+:root[data-theme="dark"] .kart-cards>[data-card]{background:var(--card-tint,#20362d);border-color:#456351;color:#e4eee7}
+:root[data-theme="dark"] [data-card="europe"]{--card-tint:#293d2a;--card-art:#9bbb82}
+:root[data-theme="dark"] [data-card="asia"]{--card-tint:#3b3425;--card-art:#cfb17d}
+:root[data-theme="dark"] [data-card="northAmerica"]{--card-tint:#293c48;--card-art:#9cbfd4}
+:root[data-theme="dark"] [data-card="southAmerica"]{--card-tint:#253e30;--card-art:#91bb9c}
+:root[data-theme="dark"] [data-card="africa"]{--card-tint:#413128;--card-art:#d2ac88}
+:root[data-theme="dark"] [data-card="oceania"]{--card-tint:#353047;--card-art:#b4a5ce}
+:root[data-theme="dark"] .kart-card-art{color:var(--card-art,#a8c7ca)}
+:root[data-theme="dark"] :is(.geo-menu-toggle,.map-theme-toggle,.quiz-page-back,.geo-menu-head>button,.map-tools){background:#233c30;color:#d7eddf;border-color:#4b6858}
+:root[data-theme="dark"] :is(.stats>div>span,.stats small,.legend,.legend>strong,footer,footer a,#feedback,.map-tools output){color:#b5cabe}
+:root[data-theme="dark"] #feedback.good{color:#a5e1b4}
+:root[data-theme="dark"] #feedback.error{color:#ffb8a2}
+:root[data-theme="dark"] .game-controls button{background:#263f32;color:#d7eddf;border-color:#4b6858}
+:root[data-theme="dark"] :is(.map-tools button,.map-zoom-hint){color:#d7eddf}
+:root[data-theme="dark"] .map-zoom-hint{background:#1c3027e6}
+:root[data-theme="dark"] :is(.map-tools button:hover:not(:disabled),.game-controls button:hover:not(:disabled),.quiz-page-back:hover,.geo-menu details a:hover){background:#375743;color:#eff9f2}
+:root[data-theme="dark"] :is(.geo-menu-head,.geo-menu details,.legend,#repeat-practice){border-color:#4b6858}
+:root[data-theme="dark"] .progress-track{background:#344c3d}
+:root[data-theme="dark"] .map-context{fill:#354a42;stroke:#668275}
+:root[data-theme="dark"] .state{stroke:#75a58c}
+:root[data-theme="dark"] .physical-background.land{fill:#354a42;stroke:#668275}
+:root[data-theme="dark"] .physical-background.lake{fill:#769eaa;stroke:#a2c4ce}
+:root[data-theme="dark"] .physical-target:not([data-band]):not(.mastered,.retry-pending,.wrong,.hinted,.hovered):not(:hover,:focus-visible){--feature:#8fbdcc}
+:root[data-theme="dark"] .physical-target.range:not([data-band]):not(.mastered,.retry-pending,.wrong,.hinted,.hovered):not(:hover,:focus-visible){--feature:#cda770}
+:root[data-theme="dark"] .physical-target.plateau:not([data-band]):not(.mastered,.retry-pending,.wrong,.hinted,.hovered):not(:hover,:focus-visible){--feature:#cfbf94}
+:root[data-theme="dark"] .physical-target.sea:not([data-band]):not(.mastered,.retry-pending,.wrong,.hinted,.hovered):not(:hover,:focus-visible){--feature:#396575}
+:root[data-theme="dark"] .physical-target.sea .physical-shape{stroke:#7299a5}
+:root[data-theme="dark"] .physical-marker:not([data-band]):not(.mastered):not(.retry-pending) .visible{fill:#8fbdcc;stroke:#213f49}

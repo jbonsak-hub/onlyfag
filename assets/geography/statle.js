@@ -4,6 +4,28 @@
   const $ = id => document.getElementById(id);
   const ns = 'http://www.w3.org/2000/svg';
   const kart = document.body.dataset.quiz === 'kart';
+  const themeButtons = [];
+  function applyTheme(dark) {
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    document.body.classList.toggle('dark-mode', dark);
+    themeButtons.forEach(button => button.setAttribute('aria-pressed', String(dark)));
+  }
+  for (const menu of [$('geoMenuButton'), $('kart-menu-button')].filter(Boolean)) {
+    const toolbar = document.createElement('div'); toolbar.className = 'map-toolbar';
+    const button = document.createElement('button'); button.type = 'button';
+    button.className = 'map-theme-toggle'; button.textContent = '◐';
+    button.setAttribute('aria-label', 'Bytt mellom lys og mørk modus');
+    button.addEventListener('click', () => {
+      const dark = document.documentElement.dataset.theme !== 'dark';
+      applyTheme(dark);
+      try { localStorage.setItem('geoDarkMode', dark ? '1' : '0'); } catch (_) {}
+    });
+    menu.before(toolbar); toolbar.append(menu, button); themeButtons.push(button);
+  }
+  try { applyTheme(localStorage.getItem('geoDarkMode') === '1'); } catch (_) { applyTheme(false); }
+  addEventListener('storage', event => { if(event.key === 'geoDarkMode' || event.key === null) {
+    try { applyTheme(localStorage.getItem('geoDarkMode') === '1'); } catch (_) {}
+  }});
   let counties = document.body.dataset.quiz === 'fylker';
   let total = counties ? 15 : 50;
   let shapeLabel = counties ? 'Fylke på kartet' : 'Delstat på kartet';
