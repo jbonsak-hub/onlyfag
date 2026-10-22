@@ -55,8 +55,9 @@
 <link rel="stylesheet" href="assets/geography/quiz-assets/quiz-overview-f983afd74379.css">
 <link rel="stylesheet" href="assets/geography/plate-boundaries/embed.css">
 <script src="assets/geography/plate-boundaries/embed.js" defer></script>
-<link rel="stylesheet" href="assets/geography/tsunami/embed.css?v=78f8c6d67d8d">
-<script src="assets/geography/tsunami/embed.js?v=4492dd7dae92" defer></script>
+<link rel="stylesheet" href="assets/geography/tsunami/embed.css?v=6b03ba50b558">
+<script src="assets/geography/tsunami/embed.js?v=2e39e5039270" defer></script>
+<link rel="stylesheet" href="assets/geography/quiz-assets/inner-forces-e493da39ab44.css">
 <link rel="stylesheet" href="assets/geography/global-circulation/embed.css?v=f125fb32c337">
 </head>
 <body data-geography-page>
@@ -136,7 +137,7 @@
 <section class="page-section" id="kart-begreper"><span class="topic-label">Begrepsliste</span><h2>Kart – begreper</h2><p class="lead">Sentrale begreper for å lese, tolke og diskutere kart.</p><table><tr><th>Begrep</th><th>Forklaring</th></tr><tr><td>Breddegrad</td><td>Markerer hvor langt nord eller sør man befinner seg på jorda. Ekvator er 0° bredde.</td></tr><tr><td>Ekvidistanse</td><td>Den virkelige høydeforskjellen mellom to høydekurver som ligger ved siden av hverandre.</td></tr><tr><td>Høydekurve</td><td>Linje på kartet som binder sammen punkter med samme høyde over havet.</td></tr><tr><td>Kartprojeksjon</td><td>Måte å overføre jordas krumme overflate til et flatt kart på.</td></tr><tr><td>Lengdegrad</td><td>Markerer hvor langt øst eller vest man befinner seg på jorda. Nullmeridianen går gjennom Greenwich.</td></tr><tr><td>Mercatorprojeksjon</td><td>Kartprojeksjon som bevarer retninger og derfor har vært nyttig til navigasjon, men som overdriver størrelsen på områder nær polene.</td></tr><tr><td>Målestokk</td><td>Viser forholdet mellom avstand på kartet og avstand i virkeligheten.</td></tr><tr><td>Temakart</td><td>Kart som viser ett bestemt geografisk tema, for eksempel klima, befolkning, ressurser eller arealbruk.</td></tr><tr><td>Topografisk kart</td><td>Kart som viser terrengformer, høyder, vann, veier, bygninger og andre fysiske detaljer i landskapet.</td></tr></table></section>
 <section class="page-section" id="kart-sporsmal"><span class="topic-label">Test deg selv</span><h2>Kart – Test deg selv</h2><div class="question-list"><article class="q-card"><div class="q-title"><span class="badge">1</span>Hva er problemet med å lage et flatt verdenskart?</div><p>Forklar hvorfor alle kartprojeksjoner forvrenger noe.</p><button class="answer-toggle" onclick="toggleAnswer(this)">Vis fasit</button><div class="answer-box">Jorda er omtrent kuleformet, mens et kart er flatt. Når en krum overflate overføres til en flat flate, må enten form, areal, avstand eller retning forvrenges.</div></article><article class="q-card"><div class="q-title"><span class="badge">2</span>Hva viser tette høydekurver?</div><p>Forklar med terreng.</p><button class="answer-toggle" onclick="toggleAnswer(this)">Vis fasit</button><div class="answer-box">Tette høydekurver betyr at høyden endrer seg mye over kort avstand. Terrenget er derfor bratt.</div></article><article class="q-card"><div class="q-title"><span class="badge">3</span>Hva er forskjellen på breddegrad og lengdegrad?</div><p>Bruk ekvator og nullmeridianen i forklaringen.</p><button class="answer-toggle" onclick="toggleAnswer(this)">Vis fasit</button><div class="answer-box">Breddegrad viser hvor langt nord eller sør man er fra ekvator. Lengdegrad viser hvor langt øst eller vest man er fra nullmeridianen i Greenwich.</div></article></div></section>
 <section class="page-section" id="indre-tsunami" aria-label="Slik oppstår en tsunami – interaktiv animasjon">
-<iframe id="tsunami-model-frame" class="tsunami-model-frame" title="Slik oppstår en tsunami – 11 animerte trinn" data-src="geografi/tsunami.html?embedded=1" allow="fullscreen"></iframe>
+<iframe id="tsunami-model-frame" class="tsunami-model-frame" title="Slik oppstår en tsunami – 11 animerte trinn" data-src="geografi/tsunami.html?embedded=1&amp;v=40a943ccb4f7"></iframe>
 </section>
 <section class="page-section" id="indre-plategrenser" aria-label="Plategrenser – interaktive modeller">
 <iframe id="plate-model-frame" class="plate-model-frame" title="Plategrenser – fem interaktive modeller" data-src="geografi/plategrenser.html?embedded=1" allow="fullscreen"></iframe>
@@ -145,8 +146,6 @@
 <span class="topic-label">Fagstoff</span>
 <h2>Indre krefter og landformer</h2>
 <p class="lead">Jordas oppbygning → litosfæreplater → platebevegelse → plategrenser → landformer, jordskjelv og vulkanisme.</p>
-<a href="#indre-plategrenser" class="notice" style="display:block;text-decoration:none;margin-bottom:18px"><strong>Utforsk plategrensene →</strong> Dra i glideren og sammenlign subduksjon, kontinentkollisjon, spredning og glidegrense i én interaktiv modell.</a>
-<a href="#indre-tsunami" class="notice" style="display:block;text-decoration:none;margin-bottom:18px"><strong>Slik oppstår en tsunami →</strong> Følg jordskjelvet, havbunnens bevegelse og bølgene inn mot land i elleve animerte trinn.</a>
 <div class="geo-concept-grid indre-geo-grid">
 <article class="geo-concept-card">
 <strong>1. Jordas oppbygning</strong>
@@ -234,10 +233,12 @@
 </tr>
 </table>
 <div class="geo-keyline"><strong>Subduksjon:</strong> Når en havbunnsplate synker under en annen plate. Vann fra den synkende plata senker smeltepunktet i mantelen over, slik at magma kan dannes og stige.</div>
+<a href="#indre-plategrenser" class="notice indre-model-link"><strong>Utforsk plategrensene →</strong> Sammenlign subduksjon, kontinentkollisjon, spredning og glidegrense i den interaktive modellen.</a>
 </article>
 <article class="geo-concept-card">
 <strong>6. Jordskjelv og tsunami</strong>
 <p>Jordskjelv oppstår når spenning i berggrunnen bygges opp og plutselig frigjøres langs en forkastning. De fleste kraftige skjelv ligger ved aktive plategrenser.</p>
+<p>Se hvor jorda rister akkurat nå i <a href="https://earthquake.usgs.gov/earthquakes/map/?extent=-68.00757,-68.90625&amp;extent=74.77584,298.82813" target="_blank" rel="noopener">USGS-kartet over de siste jordskjelvene</a>, og sammenlign mønsteret med plategrensene.</p>
 <ul class="geo-compact-list">
 <li><strong>Fokus / hyposenter:</strong> punktet i jordskorpa der bruddet starter.</li>
 <li><strong>Episenter:</strong> punktet på jordoverflata rett over fokus.</li>
@@ -247,6 +248,8 @@
 </ul>
 <p>I subduksjonssoner ligger jordskjelvene ofte dypere jo lenger inn fra dyphavsgropa man kommer. Det viser retningen på den synkende plata.</p>
 <p><strong>Tsunami:</strong> Oppstår når havbunnen forskyves raskt og setter en stor vannmasse i bevegelse. Bølgen er lav og rask på dypt vann, men vokser når den nærmer seg grunt vann.</p>
+<p>Jordskjelvet ved Sumatra 26. desember 2004 utløste en ødeleggende tsunami i Indiahavet. I <a href="https://www.earthscope.org/app/swaves/" target="_blank" rel="noopener">EarthScopes bølgeanimasjon</a> kan du følge hvordan jordskjelvbølgene forplanter seg gjennom jorda. Havbunnens bevegelse satte samtidig havvannet i bevegelse og dannet tsunamien.</p>
+<a href="#indre-tsunami" class="notice indre-model-link"><strong>Slik oppstår en tsunami →</strong> Følg Sumatra-skjelvet, havbunnens bevegelse og bølgene inn mot land i elleve animerte trinn.</a>
 </article>
 <article class="geo-concept-card">
 <strong>7. Vulkaner og hotspots</strong>
@@ -307,6 +310,17 @@
   <a href="https://snl.no/" rel="noopener" target="_blank">Store norske leksikon (SNL)</a>
   og <a href="https://no.wikipedia.org/" rel="noopener" target="_blank">Wikipedia</a>.
 </div>
+<aside class="indre-earth-box" id="indre-google-earth" aria-labelledby="indre-earth-title">
+<div class="indre-earth-heading"><h3 id="indre-earth-title">Utforsk i Google Earth</h3><a href="https://earth.google.com/" target="_blank" rel="noopener">Åpne Google Earth ↗</a></div>
+<p>Last ned en KMZ-fil og åpne den i <a href="https://www.google.com/earth/about/versions/#earth-pro" target="_blank" rel="noopener">Google Earth Pro</a>, eller dra filen inn i kartet.</p>
+<ul class="indre-earth-downloads">
+<li><a href="assets/geography/google-earth/plategrenser.kmz" download>Plategrenser <span>KMZ ↓</span></a><span>Legger plategrensene oppå kartet.</span></li>
+<li><a href="assets/geography/google-earth/vulkaner-holocen.kmz" download>Vulkaner <span>KMZ ↓</span></a><span>Vulkaner som har vært aktive siden siste istid.</span></li>
+<li><a href="assets/geography/google-earth/jordskjelv-m5-1994-2023.kmz" download>Jordskjelv <span>KMZ ↓</span></a><span>Magnitude 5 og høyere, 1994–2023. Fargene viser dybde.</span></li>
+<li><a href="assets/geography/google-earth/age-of-lithosphere.kmz" download>Jordskorpas alder <span>KMZ ↓</span></a><span>Viser alderen på kontinenter og havbunn.</span></li>
+</ul>
+<p class="indre-earth-sources">Kilder: <a href="https://earthref.org/ERDA/1367/" target="_blank" rel="noopener">EarthRef – plategrenser</a> · <a href="https://serc.carleton.edu/sp/library/google_earth/examples/49004.html" target="_blank" rel="noopener">SERC – vulkaner, jordskjelv og alder</a></p>
+</aside>
 </section>
 <section class="page-section" id="indre-begreper">
 <span class="topic-label">Begrepsliste</span>

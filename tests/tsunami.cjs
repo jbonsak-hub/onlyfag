@@ -44,16 +44,17 @@ const server = http.createServer((req,res) => {
     assert.equal(await select.locator('option').count(),11);
     assert.equal(await page.locator('.eyebrow').textContent(),'Slik oppstår en tsunami');
     assert.equal(await page.locator('#playback-speed').count(),0);
+    assert.equal(await page.locator('#play,#fullscreen,#back').count(),0,'No pause, fullscreen or geography-back controls');
     assert.equal(await select.inputValue(),'1');
     assert.equal(await range.inputValue(),'0','Initial load starts at the beginning');
-    assert.equal(await page.locator('#play').getAttribute('aria-pressed'),'false','Reduced motion starts paused');
+    assert.equal(await scene.getAttribute('data-playing'),'false','Reduced motion starts paused');
     assert.equal(await page.locator('#previous').isDisabled(),true);
     const titles=[],captions=[];
     for(let stage=1;stage<=11;stage++) {
       await select.selectOption(String(stage));
       assert.equal(await scene.getAttribute('data-stage'),String(stage));
       assert.equal(await range.inputValue(),'0','Each selected step starts at zero');
-      assert.equal(await page.locator('#play').getAttribute('aria-pressed'),'false');
+      assert.equal(await scene.getAttribute('data-playing'),'false');
       assert.equal(await range.isDisabled(),stage===1,'Only the static world-map step has no seekable interval');
       const title=await page.locator('#stage-title').innerText(),caption=await page.locator('#stage-text').innerText();
       titles.push(title);captions.push(caption);
@@ -72,7 +73,7 @@ const server = http.createServer((req,res) => {
       if(stage>1)await range.fill('20');
       assert.equal(await page.locator('#scene-content').innerHTML(),first.drawing,`Step ${stage}: seeking backward restores the same geometry`);
       if(stage>1)await range.fill('100');
-      assert.equal(await page.locator('#play').getAttribute('aria-pressed'),'false','Seeking pauses both the timeline and nested motion');
+      assert.equal(await scene.getAttribute('data-playing'),'false','Seeking pauses both the timeline and nested motion');
       if(shots)await page.screenshot({path:path.join(shots,`stage-${stage}.png`)});
       console.log('PASS reference scene, reversible scrubbing and explanation:',stage);
     }
@@ -92,18 +93,18 @@ const server = http.createServer((req,res) => {
     assert.equal(await select.inputValue(),'8','Deep links open the requested step');
     assert.equal(await range.inputValue(),'0');
 
-    // The original-style step navigation starts motion; the pause button freezes every loop.
+    // Step navigation starts motion; seeking pauses every loop for inspection.
     await page.emulateMedia({reducedMotion:'no-preference'});
     const featureSnapshot=async id=>page.locator(`[data-reference-id="${id}"]`).first().evaluate(el=>el.outerHTML);
     await select.selectOption('3');
-    assert.equal(await page.locator('#play').getAttribute('aria-pressed'),'true');
+    assert.equal(await scene.getAttribute('data-playing'),'true');
     await page.waitForFunction(()=>Number(document.querySelector('#tsunami-scene').dataset.frame)>67);
     await page.locator('[data-reference-id="71"]').first().waitFor();
     const moving=await featureSnapshot(71);
     await page.waitForTimeout(160);
     assert.notEqual(await featureSnapshot(71),moving,'The original yellow earthquake-ring movie animates during playback');
-    await page.locator('#play').click();
-    assert.equal(await page.locator('#play').getAttribute('aria-pressed'),'false');
+    await range.fill('60');
+    assert.equal(await scene.getAttribute('data-playing'),'false');
     const paused=await page.locator('#scene-content').innerHTML();
     await page.waitForTimeout(160);
     assert.equal(await page.locator('#scene-content').innerHTML(),paused,'Pause freezes the whole scene');
@@ -123,15 +124,15 @@ const server = http.createServer((req,res) => {
     assert.notEqual(await page.locator('#scene-content').innerHTML(),held,'Volcano, magma or plate arrows keep moving on the held step');
     for(const [id,feature] of loops)assert.notEqual(await featureSnapshot(id),feature.svg,feature.name+' retain the original nested animation');
     assert.ok(await page.evaluate(()=>window.retainedPlateArrows.isConnected),'Playback retains existing SVG nodes instead of rebuilding the scene every frame');
-    await page.locator('#play').click();
+    await range.fill('100');
     const heldPaused=await page.locator('#scene-content').innerHTML();
     await page.waitForTimeout(160);
     assert.equal(await page.locator('#scene-content').innerHTML(),heldPaused,'Pause also stops nested sprite loops');
     await page.locator('#replay').click();
     assert.equal(await select.inputValue(),'6','Replay keeps the selected step');
-    await page.waitForFunction(()=>Number(document.querySelector('#tsunami-scene').dataset.frame)<220 && document.querySelector('#play').getAttribute('aria-pressed')==='true');
+    await page.waitForFunction(()=>Number(document.querySelector('#tsunami-scene').dataset.frame)<220 && document.querySelector('#tsunami-scene').dataset.playing==='true');
     await range.fill('55');
-    assert.equal(await page.locator('#play').getAttribute('aria-pressed'),'false');
+    assert.equal(await scene.getAttribute('data-playing'),'false');
     console.log('PASS autoplay, expanding-ring motion, final-frame loops, pause and replay');
 
     // A slow frame must skip ahead in source time rather than slow the movie.
@@ -146,7 +147,7 @@ const server = http.createServer((req,res) => {
       return {seconds:(performance.now()-started)/1000,frames:Number(scene.dataset.elapsed)-before};
     });
     assert.ok(clock.frames>=clock.seconds*25*.8 && clock.frames<=clock.seconds*25*1.3,'Playback follows elapsed time after a slow frame '+JSON.stringify(clock));
-    await page.locator('#play').click();
+    await range.fill('50');
     console.log('PASS retained SVG nodes and elapsed-time playback');
 
     // Keep original-style figure, explanation and three round navigation buttons in view.
@@ -177,6 +178,7 @@ const server = http.createServer((req,res) => {
 
     // Geography integration loads lazily, pauses hidden playback, and reopens from step one.
     await page.setViewportSize({width:1366,height:646});
+    await page.evaluate(()=>localStorage.setItem('geoDarkMode','1'));
     await page.goto(base+'/geografi.html#indre-tsunami');
     const tsunamiMenu=page.locator('.submenu-item').filter({hasText:/^Tsunami$/});
     assert.equal(await tsunamiMenu.count(),1);
@@ -184,8 +186,24 @@ const server = http.createServer((req,res) => {
     const model=page.frameLocator('#tsunami-model-frame');
     await model.locator('#stage-select').waitFor();
     assert.equal(await model.locator('#stage-select').inputValue(),'1');
+    await page.waitForFunction(()=>document.querySelector('#tsunami-model-frame').contentDocument.documentElement.dataset.theme==='dark');
+    assert.ok(await page.locator('body').evaluate(el=>el.classList.contains('dark-mode')),'The parent restores its saved dark preference');
+    assert.equal(await model.locator('#play,#fullscreen,#back').count(),0);
     await model.locator('#stage-select').selectOption('8');
     await model.locator('#progress').fill('55');
+    const darkAppearance=await model.locator('#stage-text').evaluate(el=>({text:getComputedStyle(el).color,panel:getComputedStyle(el.parentElement).backgroundColor}));
+    const themedDrawing=await model.locator('#scene-content').innerHTML();
+    await page.evaluate(()=>toggleDarkMode());
+    await page.waitForFunction(()=>document.querySelector('#tsunami-model-frame').contentDocument.documentElement.dataset.theme==='light');
+    const lightAppearance=await model.locator('#stage-text').evaluate(el=>({text:getComputedStyle(el).color,panel:getComputedStyle(el.parentElement).backgroundColor}));
+    assert.notEqual(darkAppearance.text,lightAppearance.text,'Dark mode updates explanation text');
+    assert.notEqual(darkAppearance.panel,lightAppearance.panel,'Dark mode updates panel backgrounds');
+    assert.equal(await model.locator('#scene-content').innerHTML(),themedDrawing,'The original artwork is unchanged by the UI theme');
+    await page.evaluate(()=>toggleDarkMode());
+    await page.waitForFunction(()=>document.querySelector('#tsunami-model-frame').contentDocument.documentElement.dataset.theme==='dark');
+    await model.locator('body').evaluate(()=>window.postMessage({type:'tsunami-model-host',dark:false,visible:false},location.origin));
+    await page.waitForTimeout(60);
+    assert.equal(await model.locator('html').getAttribute('data-theme'),'dark','Only the trusted parent window controls the embedded theme');
     for(const viewport of [{width:1366,height:646},{width:390,height:844},{width:844,height:390}]) {
       await page.setViewportSize(viewport);
       const fit=await model.locator('#progress').evaluate(el=>({bottom:el.getBoundingClientRect().bottom,height:innerHeight,scrollHeight:document.documentElement.scrollHeight,scrollWidth:document.documentElement.scrollWidth,width:innerWidth,artwork:document.querySelector('#tsunami-scene').getBoundingClientRect().toJSON()}));
@@ -194,16 +212,52 @@ const server = http.createServer((req,res) => {
       assert.ok(await page.evaluate(()=>document.documentElement.scrollHeight<=innerHeight+1),'The geography page does not scroll around the embedded model');
       if(shots)await page.screenshot({path:path.join(shots,`embedded-${viewport.width}x${viewport.height}.png`)});
     }
-    await model.locator('#play').click();
+    await model.locator('#replay').click();
+    assert.equal(await model.locator('#tsunami-scene').getAttribute('data-playing'),'true');
     await page.evaluate(()=>showContent('indre-fagstoff',document.querySelector('[onclick*="indre-fagstoff"]')));
-    await page.waitForFunction(()=>document.querySelector('#tsunami-model-frame').contentDocument.querySelector('#play').getAttribute('aria-pressed')==='false');
+    await page.waitForFunction(()=>document.querySelector('#tsunami-model-frame').contentDocument.querySelector('#tsunami-scene').dataset.playing==='false');
     await page.evaluate(()=>showContent('indre-tsunami',document.querySelector('[onclick*="indre-tsunami"]')));
     await page.waitForFunction(()=>document.querySelector('#tsunami-model-frame').contentDocument.querySelector('#stage-select').value==='1');
     assert.equal(await model.locator('#progress').inputValue(),'0');
-    await model.locator('#back').click();
-    await page.waitForURL('**/geografi.html#indre-fagstoff');
+    assert.equal(await model.locator('#tsunami-scene').getAttribute('data-playing'),'false');
+
+    // Removing the model's back link must not strand mobile users. Reuse the
+    // page's menu control without changing its saved desktop-collapse setting.
+    await page.setViewportSize({width:390,height:844});
+    const menuButton=page.locator('#sidebar-collapse-toggle');
+    const preference=await page.evaluate(()=>localStorage.getItem('geoSidebarCollapsed'));
+    assert.ok(await menuButton.isVisible());
+    assert.equal(await page.locator('.sidebar').isVisible(),false);
+    await menuButton.click();
+    assert.equal(await menuButton.getAttribute('aria-expanded'),'true');
+    assert.ok(await page.locator('.sidebar').isVisible());
+    assert.equal(await page.evaluate(()=>localStorage.getItem('geoSidebarCollapsed')),preference);
+    await page.locator('#dark-mode-toggle').click();
+    await page.waitForFunction(()=>document.querySelector('#tsunami-model-frame').contentDocument.documentElement.dataset.theme==='light');
+    await page.keyboard.press('Escape');
+    assert.equal(await page.locator('.sidebar').isVisible(),false);
+    assert.equal(await menuButton.getAttribute('aria-expanded'),'false');
+    await menuButton.click();
+    await page.locator('.tsunami-menu-backdrop').click({position:{x:380,y:100}});
+    assert.equal(await menuButton.getAttribute('aria-expanded'),'false');
+    await page.evaluate(()=>{
+      document.body.classList.add('sidebar-collapsed');
+      localStorage.setItem('geoSidebarCollapsed','1');
+    });
+    await menuButton.click();
+    assert.ok(await page.locator('.sidebar').isVisible(),'The temporary menu also opens when the desktop sidebar is saved collapsed');
+    await page.locator('#dark-mode-toggle').click();
+    await page.waitForFunction(()=>document.querySelector('#tsunami-model-frame').contentDocument.documentElement.dataset.theme==='dark');
+    await page.locator('.submenu-item[onclick*="indre-fagstoff"]').click();
+    await page.waitForFunction(()=>document.querySelector('#indre-fagstoff').classList.contains('active'));
     assert.equal(await page.locator('#indre-fagstoff.active').count(),1);
-    console.log('PASS geography entry, embedded viewport fit, hide/pause, reopen/reset and back');
+    assert.equal(await page.evaluate(()=>document.body.classList.contains('tsunami-menu-open')),false);
+    assert.equal(await page.evaluate(()=>document.body.classList.contains('sidebar-collapsed')),true);
+    assert.equal(await page.evaluate(()=>localStorage.getItem('geoSidebarCollapsed')),'1');
+    assert.equal(await menuButton.textContent(),'☰');
+    assert.equal(await menuButton.getAttribute('aria-label'),'Vis venstremeny');
+    assert.equal(await menuButton.getAttribute('aria-expanded'),null);
+    console.log('PASS geography entry, parent dark/light mode, mobile menu, embedded viewport fit, hide/pause and reopen/reset');
 
     // Export remains one document: no reference JSON, stylesheet or player script is fetched.
     const directory=fs.mkdtempSync(path.join(os.tmpdir(),'onlyfag-tsunami-export-'));
@@ -214,6 +268,7 @@ const server = http.createServer((req,res) => {
     single.on('request',r=>requests.push(r.url()));
     await single.goto(base+'/__tsunami_export__.html');
     assert.equal(await single.locator('script[src],link[rel=stylesheet]').count(),0);
+    assert.equal(await single.locator('html').getAttribute('data-theme'),'dark','Standalone export follows the saved geography theme');
     for(let stage=1;stage<=11;stage++) {
       await single.locator('#stage-select').selectOption(String(stage));
       if(stage>1)await single.locator('#progress').fill('75');

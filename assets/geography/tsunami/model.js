@@ -27,6 +27,13 @@
   let stage=0,mainFrame=1,elapsed=0,playing=false,raf=0,last=0,lastPaint=0;
   let hostVisible=!embedded;
   const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+  function setTheme(dark) {
+    document.documentElement.dataset.theme=dark?'dark':'light';
+  }
+  try{setTheme(localStorage.getItem('geoDarkMode')==='1');}catch(_){setTheme(false);}
+  addEventListener('storage',event=>{
+    if(!embedded&&event.key==='geoDarkMode')setTheme(event.newValue==='1');
+  });
   function fitLayout() {
     const lab=document.querySelector('.tsunami');
     // CSS fits the scene and explanation to the viewport. No repeated forced
@@ -52,10 +59,7 @@
     svg.dataset.elapsed=String(Math.floor(elapsed));
   }
   function playbackUI() {
-    $('play').setAttribute('aria-pressed',String(playing));
-    $('play').setAttribute('aria-label',playing?'Sett animasjonen på pause':'Spill av animasjonen');
-    $('play-label').textContent=playing?'Pause':'Spill av';
-    $('play').querySelector('[aria-hidden]').textContent=playing?'Ⅱ':'▷';
+    svg.dataset.playing=String(playing);
   }
   function pause() {
     playing=false;cancelAnimationFrame(raf);raf=0;last=0;lastPaint=0;playbackUI();
@@ -107,22 +111,10 @@
   $('next').addEventListener('click',()=>selectStage(stage+1));
   $('replay').addEventListener('click',()=>selectStage(stage,true));
   $('stage-select').addEventListener('change',event=>selectStage(Number(event.target.value)-1));
-  $('play').addEventListener('click',()=>{
-    if(playing)return pause();
-    if(mainFrame>=stages[stage].end && stages[stage].end>stages[stage].start){mainFrame=stages[stage].start;elapsed=0;render();}
-    play();
-  });
   range.addEventListener('input',()=>{
     pause();const current=stages[stage],t=Number(range.value)/100;
     mainFrame=current.start+t*(current.end-current.start);
     elapsed=t*(current.end-current.start);render();
-  });
-  $('fullscreen').addEventListener('click',async()=>{
-    try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch(_){}
-  });
-  document.addEventListener('fullscreenchange',()=>{
-    $('fullscreen').setAttribute('aria-label',document.fullscreenElement?'Avslutt fullskjerm':'Åpne fullskjerm');
-    $('fullscreen').title=document.fullscreenElement?'Avslutt fullskjerm':'Fullskjerm';
   });
   document.addEventListener('visibilitychange',()=>{
     if(!document.hidden)return;
@@ -137,7 +129,6 @@
   document.addEventListener('keydown',event=>{
     if(event.key==='Escape')$('about').open=false;
     if(event.target.closest('input,select,button,a,summary'))return;
-    if(event.key===' '){event.preventDefault();$('play').click();}
     if(event.key==='ArrowRight'&&stage<stages.length-1){event.preventDefault();selectStage(stage+1);}
     if(event.key==='ArrowLeft'&&stage>0){event.preventDefault();selectStage(stage-1);}
   });
@@ -146,10 +137,9 @@
   document.fonts?.ready.then(fitLayout);
   if(embedded){
     document.documentElement.classList.add('embedded');
-    $('back').textContent='← Geografi / Meny';
-    $('back').addEventListener('click',event=>{event.preventDefault();parent.postMessage({type:'tsunami-model-back'},location.origin);});
     addEventListener('message',event=>{
       if(event.origin!==location.origin||event.source!==parent||event.data?.type!=='tsunami-model-host')return;
+      setTheme(!!event.data.dark);
       const visible=!!event.data.visible;
       if(!visible)pause();
       else if(!hostVisible)selectStage(0,false);
