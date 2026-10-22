@@ -4,16 +4,53 @@ Cloudflare Worker `onlyfag-geography-scores` bruker den separate D1-databasen me
 
 ## Spill og rangering
 
-- MapWiz: topp 10 for fullførte runder med ti spørsmål, egen liste per kategorivalg og språk. Serveren fordeler oppgavene og tillater maks to fra samme kategori når mer enn fem kategorier er valgt. Den beregner avstand, tidsbonus og samlet tid, med eksisterende Norge-/verdensformler.
-- Flagg, Hovedsteder og Flagg+Hovedstad: topp 5 for hele verden, egen liste per retning og språk. Runde avsluttes ved første feil eller når alle oppgavene er løst.
-- Kjente steder: topp 5 for «på rad», egen liste per retning og språk. Varianten med 20 spørsmål forblir lokal uten ny konkurranseregel.
-- Finn land: topp 5 per geografisk område og språk. Serveren kontrollerer land, gjentakelser, hint og tidsbonus.
+- MapWiz: topp 10 for fullførte runder med ti spørsmål, egen liste per kategorivalg. Serveren fordeler oppgavene og tillater maks to fra samme kategori når mer enn fem kategorier er valgt. Den beregner avstand, tidsbonus og samlet tid, med eksisterende Norge-/verdensformler.
+- Flagg, Hovedsteder og Flagg+Hovedstad: topp 10, egen liste per område og retning. Runde avsluttes ved første feil eller når alle oppgavene er løst.
+- Kjente steder: topp 10 for «på rad», egen liste per retning. Varianten med 20 spørsmål forblir lokal uten ny konkurranseregel.
+- Statle: topp 10 etter fullførte 50 stater. Serveren tildeler 100/75/50/0 poeng etter grønn/gul/oransje/rød kategori, maksimalt 5000. Feil, tidsbruk og hopp over kontrolleres; ufullførte runder kan ikke publiseres.
+- Norske fylker: egen topp 10 etter fullførte 15 fylker, med samme regler som Statle og maksimalt 1500 poeng. Norsk og engelsk deler listen. Krever oppdatert Worker ved publisering; ingen databaseendring eller migrering er nødvendig.
+- Kart, verdensdeler: én topp 10 per verdensdel etter at alle målene i kartet er besvart. De seks kartene omfatter til sammen 197 land uten gjentakelser og tre uttrykkelig merkede territorier: Fransk Guyana (fransk), Ny-Caledonia (fransk) og Vest-Sahara (omstridt). Samme poengregler som Statle, med maksimalt 100 poeng per mål. Fylker-valget i Kart bruker fylkenes eksisterende liste; USA-valget lenker til Statle og beholder listen der. Norsk og engelsk deler hver liste. Krever oppdatert Worker ved publisering, uten databaseendring.
+- Kart, elver/fjellkjeder/vannområder: samme regler som Statle, med 100/75/50/0 poeng etter tid og feil, ubegrenset antall rettingsforsøk og 0 for hopp over. Alle mål må fullføres. Egen liste per kart og valgt kombinasjon av vannkategorier.
+- Finn land: topp 10 per geografisk område. Serveren kontrollerer land, gjentakelser, hint og tidsbonus.
 
-Tid er servermålt og inkluderer nettverksforsinkelse. Ved like poeng rangeres kortere tid foran. Gamle lokale resultater lastes ikke opp; de kan fortsatt åpnes med «Resultater i denne nettleseren». Statle, Worldle, Tradle og de andre spillene uten slike resultatlister får ingen nye rangeringer i denne endringen.
+Kart bruker disse separate listevalgene:
+
+| Kart | API-region | Mål | Maks poeng |
+| --- | --- | ---: | ---: |
+| Europa | `europe` | 47 | 4700 |
+| Asia | `asia` | 47 | 4700 |
+| Nord- og Mellom-Amerika | `northAmerica` | 23 | 2300 |
+| Sør-Amerika | `southAmerica` | 13 | 1300 |
+| Afrika | `africa` | 55 | 5500 |
+| Oseania | `oceania` | 15 | 1500 |
+
+De tre fysiske kartene bruker `game: "kart"` og `region: "rivers"`,
+`"mountains"` eller `"lakes"`. Det finnes ikke lenger egne spillmåter.
+Vannkartet tar `categories`, en normalisert liste av `"lakes"`, `"seas"` og
+`"gulfsStraits"`; standard er bare `["lakes"]`. Tomme/ukjente kategorier avvises.
+Serveren tildeler og godtar bare mål fra valget. Norsk og engelsk deler liste,
+og kategoriorden påvirker ikke listeidentiteten. Gamle verdensdelslister beholdes.
+
+| Fysisk kart | Mål | Maks poeng |
+| --- | ---: | ---: |
+| Verdens elver | 49 | 4900 |
+| Fjellkjeder og høyland | 34 | 3400 |
+| Innsjøer | 33 | 3300 |
+| Hav og sjøområder | 44 | 4400 |
+| Bukter og stred | 29 | 2900 |
+
+Oppdatert Worker må publiseres sammen med nettsiden. Det kreves ingen ny
+D1-tabell eller migrering. Havkartets forenklede inndeling og innlemmede navn er dokumentert i `docs/marine-coverage.md`.
+
+Kartgruppene følger nettstedets eksisterende quizområder. Armenia, Aserbajdsjan og Georgia er lagt til Asia slik at alle 197 land er med. Russland, Tyrkia og Kypros ligger i Europa. Serverens mål er hentet fra de samme kartfilene som klienten, og byggeprosessen avviser manglende land eller gjentakelser. Territoriene er egne Kart-mål med metadata i kontinentkartene; de endrer ikke landkatalogen i Finn land eller andre spill. De fysiske kartene hentes fra `physical-maps/world-water.json` og `physical-maps/mountain-europe.json`.
+
+Norsk og engelsk deler resultatliste. Språket styrer spørsmål og knapper. Når et fullført resultat kvalifiserer til topp 10, åpnes kallenavnvinduet automatisk. Brukeren velger fortsatt selv om resultatet skal publiseres. Vinduet viser bare «Du er på topp 10!», kallenavn og lagreknapp. En åpen resultatliste oppdateres hvert femte sekund og når fanen blir synlig igjen. Oppdateringen stopper når listen lukkes eller fanen skjules.
+
+Tid er servermålt og inkluderer nettverksforsinkelse. Ved like poeng rangeres kortere tid foran. Gamle lokale resultater lastes ikke opp; de beholdes i nettleserlagringen, men har ingen knapp i nettlistene. Worldle, Tradle og de andre spillene uten slike resultatlister får ingen nye rangeringer i denne endringen.
 
 ## Kontroll og begrensninger
 
-Serveren oppretter runder og kontrollerer hvert svar/klikk. Nettleseren kan ikke sende inn et fritt valgt poengtall. Tilfeldige sesjonstoken finnes bare i nettleserens minne; databasen lagrer SHA-256-hash. Fullførte runder kan publiseres én gang. Revisjonskontroll hindrer parallelle svar i å telle dobbelt, og identiske forespørsler kan gjentas ved nettverksfeil.
+Serveren oppretter runder og kontrollerer hvert svar/klikk. Oppgavene forhåndshentes. Spillet viser lokal tilbakemelding straks, mens en ordnet kø sender svar til serveren. Sluttskjermen venter på kontrollen før et resultat kan publiseres. Ved feil i køen blir runden ikke rangert på nett; klientpoeng stoles aldri på. Nettleseren kan ikke sende inn et fritt valgt poengtall. Tilfeldige sesjonstoken finnes bare i nettleserens minne; databasen lagrer SHA-256-hash. Fullførte runder kan publiseres én gang. Revisjonskontroll hindrer parallelle svar i å telle dobbelt, og identiske forespørsler kan gjentas ved nettverksfeil.
 
 Dette er en åpen spilltjeneste uten brukerinnlogging. Kallenavn verifiserer ikke identitet. Offentlige geografidata og automatiserte oppslag gjør tjenesten uegnet som manipulasjonssikker konkurranse med premier eller vurdering av elever. Origin-kontroll og forespørselsgrenser reduserer misbruk, men erstatter ikke identitetskontroll eller botvern. Turnstile er ikke aktivert.
 
@@ -26,9 +63,16 @@ Ingen spilldata, kallenavn eller token sendes til Web Analytics. API-et har inge
 1. `node scripts/build-geography-score-data.cjs` bygger serverens offentlige referansedata fra eksisterende geografikilder. `--check` verifiserer at de er oppdatert. Øk regelversjonen ved endringer som gjør resultater usammenlignbare.
 2. `node --test tests/geography-score-api.mjs` tester reglene og API-et mot en isolert SQLite-database (Node 24).
 3. `node tests/geography-online-browser.cjs` tester spill, to nettlesere, språk, mobil, lokale lister og offline-fallback mot en isolert database. Krever Playwright og eventuell `BROWSER_EXECUTABLE`.
+   `node tests/kart-online.cjs` tester komplette kontinent-/fylkesrunder, separate kartlister, automatisk kallenavnvindu og bytte av kart mens en nettøkt opprettes.
 4. `node scripts/build-quiz-language.cjs` og `node scripts/build-geography-quiz-assets.cjs` versjonerer nettleserressursene.
 5. `wrangler deploy --config services/geography-scores/wrangler.jsonc` publiserer Worker. `wrangler d1 execute onlyfag-geography-scores --remote --file services/geography-scores/schema.sql --config services/geography-scores/wrangler.jsonc` oppretter tabeller ved førstegangsoppsett.
 
 Wrangler 4.151.3 ble brukt ved oppsett. `RATE_SECRET` opprettes som en Worker-secret, aldri som en variabel i nettleseren. API-adressen i `assets/geography/score-service.js` er offentlig. Hvis API-et svikter, vises beskjed og runden fortsetter lokalt uten å sende inn en uverifisert score. Ved lagringsfeil på sluttskjermen kan brukeren prøve igjen innen sesjonen utløper.
 
+For fylker og Kart skal referansedata bygges og Worker publiseres før de nye nettlistene brukes på nettstedet. Denne utvidelsen krever verken endring av databaseskjemaet eller en migrering; eksisterende Statle-, fylkes- og andre resultater beholder listeidentiteten sin. Det er ikke nødvendig å kjøre `schema.sql` på nytt.
+
 Databasesletting/moderering utføres av kontoeieren i D1, med betingelser for den aktuelle resultat-ID-en. Ingen offentlig slette- eller administrasjons-API er tilgjengelig.
+
+Ved oppgradering fra språkdelte lister kjøres `migrations/0001-shared-language-rankings.sql` mot den separate geografi-databasen etter Worker-deploy. Migreringen beholder alle poeng, kallenavn, tider og aktive runder; bare listeinndelingen endres. Den kan kjøres flere ganger.
+
+Innsjøer og hav er egne Kart-valg. Innsjøer bruker fortsatt region=lakes med standardkategorien lakes. Hav bruker region=seas, med kategoriene seas/gulfsStraits. Eldre kombinasjoner av region=lakes beholdes i API-et for kompatibilitet med publiserte klienter. Kontinentvis øving i elver/fjell/innsjøer sender ingen API-kall og gir ingen rangering.

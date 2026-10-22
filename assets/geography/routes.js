@@ -1,5 +1,6 @@
 // Quiz routes are relative to the site root.
 window.GEO_QUIZ_ROUTES={
+  "kart": ["geografi/kart.html", "Kart"],
   "countries": [
     "geografi/landquiz.html",
     "Verdens land-quiz"
@@ -27,6 +28,10 @@ window.GEO_QUIZ_ROUTES={
   "statle": [
     "geografi/statle.html",
     "Statle"
+  ],
+  "fylker": [
+    "geografi/fylker.html",
+    "Norske fylker"
   ],
   "geoguessr": [
     "geografi/mapwiz.html",

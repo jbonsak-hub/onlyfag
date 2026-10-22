@@ -36,7 +36,7 @@ async function handler(request,env){
   if(url.pathname==='/session'){
    const state=create(input,now),bearer=token(),key=await hash(bearer);
    await env.DB.prepare('INSERT INTO sessions(token_hash,board,state_json,revision,expires_at) VALUES(?,?,?,0,?)').bind(key,board(state.config),JSON.stringify(state),now+TTL).run();
-   return json({token:bearer,...view(state),targets:state.config.game==='mapwiz'?state.targets:undefined},201,cors);
+   return json({token:bearer,...view(state),targets:state.config.game==='mapwiz'?state.targets:undefined,questions:state.plan?.map(({issuedAt,...question})=>question)},201,cors);
   }
   const session=await load(request,env,now),s=session.state;
   if(url.pathname==='/status')return json(view(s),200,cors);
@@ -53,7 +53,7 @@ async function handler(request,env){
   let feedback={};
   if(url.pathname==='/answer')feedback=answer(s,input,now);
   else if(url.pathname==='/next'){
-   if(s.config.game!=='mapwiz'||s.complete)throw Error('invalid_action');
+   if(!['mapwiz','statle','fylker','kart'].includes(s.config.game)||s.complete)throw Error('invalid_action');
    // Repeating next cannot reset the clock for an already issued question.
    if(s.awaitingNext)issue(s,now);
   }else if(url.pathname==='/hint'){

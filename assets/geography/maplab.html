@@ -3,8 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<script>if(['globle','travle','tradle','geogrid'].includes(new URLSearchParams(location.search).get('quiz')))document.documentElement.dataset.quizBoot='pending';</script>
 <title>Kartlaboratorium – Geografi VG1</title>
 <style>
+html[data-quiz-boot] .module,html[data-quiz-boot] .sidebar,html[data-quiz-boot] header{visibility:hidden!important}
 :root{
   --green:#1f7a4d;--green2:#176b42;--greenSoft:#e8f4ee;--line:#dce7df;
   --ink:#243029;--muted:#607067;--bg:#f4f7f5;--card:#fff;
@@ -3123,7 +3125,7 @@ function wire(){
   var resizer=document.getElementById('sidebarResizer'),resizing=false;resizer.onpointerdown=function(e){resizing=true;document.body.classList.add('resizing-sidebar');resizer.setPointerCapture&&resizer.setPointerCapture(e.pointerId)};resizer.onpointermove=function(e){if(!resizing)return;var w=clamp(e.clientX,235,520);document.documentElement.style.setProperty('--sidebar-w',w+'px')};resizer.onpointerup=resizer.onpointercancel=function(){resizing=false;document.body.classList.remove('resizing-sidebar');setTimeout(drawActive,0)};
   var rt;window.onresize=function(){clearTimeout(rt);rt=setTimeout(function(){drawActive();drawTradleHelpGlobe();if(state.coord.globeOpen)drawCoordinateGlobe()},120)}
 }
-function init(){populate();wire();initCalc();selectCountry('Norway');document.getElementById('antiCitySelect').value='10.75,59.91';document.getElementById('scaleDifficulty').value='beginner';setDayToNow(false);newGlobleGame();newTravleGame();newTradleGame();newGeoGrid();document.documentElement.setAttribute('data-kartlab-ready','1')}
+function init(){populate();wire();initCalc();selectCountry('Norway');document.getElementById('antiCitySelect').value='10.75,59.91';document.getElementById('scaleDifficulty').value='beginner';setDayToNow(false);var requested=new URLSearchParams(location.search).get('quiz');if(!requested||requested==='globle')newGlobleGame();if(!requested||requested==='travle')newTravleGame();if(!requested||requested==='tradle'&&!matchMedia('(max-width:700px),(max-width:1000px) and (max-height:500px)').matches)newTradleGame();if(!requested||requested==='geogrid')newGeoGrid();document.documentElement.setAttribute('data-kartlab-ready','1')}
 init();
 </script>
 
@@ -3151,7 +3153,7 @@ init();
   }catch(e){}
 })();
 </script>
-<script src="maplab-navigation.js"></script>
-<script src="quiz-mobile-answers.js?v=a9e03c895513"></script>
-<script src="quiz-language.js?v=03bbcf7ec362"></script>
+<script src="maplab-navigation.js?v=05ac47a8083a"></script>
+<script src="quiz-mobile-answers.js?v=b6752b6c9021"></script>
+<script src="quiz-language.js?v=3df13d1915e7"></script>
 </body></html>

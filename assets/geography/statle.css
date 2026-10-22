@@ -25,3 +25,142 @@ body:has(#overlay:not([hidden])) .game-controls{display:none}
 .stats>div>span,.stats small,.legend,.legend>strong,footer,footer a{color:#566a55}#feedback{color:#536a59}
 
 @media(min-width:701px){.game{grid-template-columns:var(--q-panel,260px) minmax(0,1fr)}}
+body[data-quiz="fylker"] .brand{font-size:19px;letter-spacing:-.035em}
+body[data-quiz="fylker"] footer span a{font-size:inherit;text-decoration:underline}
+body[data-quiz="fylker"] .state{stroke-width:.8}
+@media(max-width:700px){body[data-quiz="fylker"] .legend{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:8px}body[data-quiz="fylker"] .legend>strong,body[data-quiz="fylker"] #statle-top-ten{grid-column:1/-1}body[data-quiz="fylker"] footer{align-items:flex-start;flex-direction:column;gap:8px}body[data-quiz="fylker"] footer span{text-align:left}}
+/* Unlock the document root as well as body while the map chooser is visible. */
+html:has(body[data-quiz="kart"] #kart-selection:not([hidden])){height:auto;overflow:auto}
+/* Shared map camera; every map keeps its own home view. */
+.map-viewport{position:relative}#map{touch-action:none}.map-is-zoomed{cursor:grab}.map-tools{position:absolute;top:12px;right:12px;z-index:3;display:flex;align-items:center;gap:2px;padding:3px;background:#fffefaed;border:1px solid #a7bfb1;border-radius:8px;box-shadow:0 2px 10px #234c3712}.map-tools button{height:34px;min-width:34px;border:0;border-radius:5px;background:transparent;color:#245845;font-size:19px}.map-tools button:hover:not(:disabled){background:#e4eddf}.map-tools output{min-width:41px;text-align:center;font-size:10px;color:#536a59;font-variant-numeric:tabular-nums}.map-tools #map-zoom-reset{font-size:11px;font-weight:650;padding:0 9px}.map-zoom-hint{position:absolute;bottom:10px;right:12px;padding:5px 8px;background:#fffefacb;border-radius:5px;color:#3d5c4c;font-size:10px;pointer-events:none}.map-context{fill:#e2e8df;stroke:#9cb9ac;stroke-width:.5;pointer-events:none;vector-effect:non-scaling-stroke}.country-marker .visible{fill:var(--land);stroke:#e1f2d9;stroke-width:1.1}.country-marker .hit{fill:transparent}.country-marker .visible{pointer-events:none}
+body[data-quiz="kart"]{background:#f3f6f0;min-height:100dvh}body[data-quiz="kart"]:has(#kart-selection:not([hidden])){height:auto;overflow:auto}body[data-quiz="kart"]:has(#kart-selection:not([hidden])) .quiz-panel-resizer{display:none}body[data-quiz="kart"] .brand{font-size:25px;letter-spacing:-.04em}.kart-change-map{align-self:flex-start;border:0;padding:0;background:transparent;color:#315b47;font-size:12px;font-weight:650}.kart-change-map:hover{text-decoration:underline}body[data-quiz="kart"] .country-credit a,body[data-quiz="kart"] footer span a{font-size:inherit;text-decoration:underline}.kart-selection{max-width:1160px;margin:auto;padding:24px 30px;color:#28463d}.kart-selection-nav{display:flex;align-items:center;justify-content:space-between;gap:15px}.kart-selection-nav .geo-menu-toggle{position:static;font-size:12px;padding:8px 11px;box-shadow:none}.kart-overview{font-size:12px;font-weight:650;color:#315b47}.kart-overview:hover{text-decoration:underline}.kart-chooser{min-height:calc(100dvh - 100px);display:grid;grid-template-columns:270px minmax(0,1fr);align-items:center;gap:65px;padding:30px 0}.kart-kicker{font-size:10px;letter-spacing:2px;font-weight:750;color:#5c7863}.kart-intro h1{font-size:70px;line-height:1;margin:16px 0 20px;letter-spacing:-4px;color:#245845}.kart-intro h1:focus{outline:none}.kart-intro p{font-size:17px;line-height:1.6;margin:0;max-width:260px}.kart-selection-help{margin-top:36px;border-top:1px solid #cbd9c5;padding-top:16px;font-size:12px;line-height:1.7;color:#5b705d;max-width:260px}.kart-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.kart-cards>button,.kart-cards>a{display:grid;grid-template-columns:28px minmax(0,1fr) 15px;align-items:center;gap:10px;min-height:85px;padding:16px 13px;background:#fffefa;border:1px solid #cbd9c5;border-radius:10px;box-shadow:0 2px 5px #29463404;color:#28463d;text-align:left}.kart-cards>button:hover,.kart-cards>a:hover{background:#e7efe1;border-color:#7fa68c}.kart-card-index{font-size:11px;color:#78917c;font-variant-numeric:tabular-nums}.kart-cards strong{font-size:14px;line-height:1.3;display:block}.kart-cards small{display:block;margin-top:5px;font-size:11px;color:#66806a}.kart-cards>button>span:last-child,.kart-cards>a>span:last-child{color:#64866c}
+@media(max-width:950px){.kart-chooser{grid-template-columns:210px minmax(0,1fr);gap:25px}.kart-cards>button,.kart-cards>a{gap:6px;padding:13px 10px;grid-template-columns:20px minmax(0,1fr) 12px}}
+@media(max-width:700px){.map-tools{top:9px;right:9px}.map-tools button{height:38px;min-width:38px}.map-zoom-hint{font-size:9px;bottom:7px;right:8px;max-width:calc(100% - 16px)}.kart-selection{padding:16px}.kart-chooser{display:block;min-height:0;padding:30px 0 14px}.kart-intro{position:relative}.kart-intro h1{font-size:48px;letter-spacing:-2px;margin:9px 0 12px}.kart-intro p{font-size:14px;max-width:none}.kart-selection-help{margin:15px 0 21px;font-size:11px;padding-top:12px;max-width:none}.kart-cards{gap:8px}.kart-cards>button,.kart-cards>a{min-height:84px;grid-template-columns:minmax(0,1fr) 12px;gap:5px;padding:13px 12px}.kart-card-index{display:none}.kart-cards strong{font-size:13px}.kart-cards small{font-size:10px}body[data-quiz="kart"] .legend{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:8px}body[data-quiz="kart"] .legend>strong,body[data-quiz="kart"] #statle-top-ten,body[data-quiz="kart"] .kart-change-map{grid-column:1/-1}body[data-quiz="kart"] footer{flex-direction:column;align-items:flex-start;gap:8px}body[data-quiz="kart"] footer span{text-align:left}}
+
+/* One exit, a quiet chooser and no leaderboard interruption while playing. */
+body[data-phase="playing"] #statle-top-ten{display:none!important}
+.kart-selection{max-width:1120px}.kart-chooser{display:block;min-height:0;padding:24px 0}.kart-chooser h1{font-size:42px;letter-spacing:-1.8px;line-height:1.1;margin:0 0 24px;color:#245845}.kart-map-groups{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:26px}.kart-map-groups h2{font-size:13px;color:#5b735e;margin:0 0 12px;font-weight:650}.kart-cards{gap:10px}.kart-cards>button,.kart-cards>a{display:flex;align-items:center;min-height:67px;padding:15px}.kart-map-groups>section:last-child .kart-cards{grid-template-columns:1fr}.kart-cards strong{font-size:14px}
+.physical-background{pointer-events:none;vector-effect:non-scaling-stroke}.physical-background.land{fill:#f4f2e7;stroke:#a4b6aa;stroke-width:.65}.physical-background.border{fill:none;stroke:#adbaad;stroke-width:.5}.physical-background.lake{fill:#7699a5;stroke:#557b8a;stroke-width:.5}.physical-background.river{fill:none;stroke:#7197a4;stroke-width:.8}.physical-background.sea{fill:#aacbd3;stroke:none}
+.physical-target{--feature:#1c526b;cursor:pointer;outline:none}.physical-target.range{--feature:#c29b63}.physical-shape{fill:var(--feature);stroke:#173e4d;stroke-width:.7;stroke-linejoin:round;transition:fill .15s,stroke .15s}.physical-target.range .physical-shape{stroke:#92703f;stroke-width:.8}.physical-target.river .physical-shape{fill:none;stroke:var(--feature);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}.physical-target.sea{--feature:#608f9e}.physical-target.sea .physical-shape{stroke:#426c7e;stroke-width:.65}.physical-hit{fill:transparent;stroke:transparent;stroke-linecap:round;stroke-linejoin:round}.physical-target.river .physical-hit{fill:none;pointer-events:stroke}.physical-target:hover,.physical-target:focus-visible,.physical-target.hovered{--feature:#3687a0}.physical-target.range:hover,.physical-target.range:focus-visible,.physical-target.range.hovered{--feature:#e2b779}.physical-target:focus-visible .physical-shape,.physical-target.hovered .physical-shape{stroke-width:2}.physical-target[data-band="0"]{--feature:var(--green)}.physical-target[data-band="1"]{--feature:var(--yellow)}.physical-target[data-band="2"]{--feature:var(--orange)}.physical-target[data-band="3"]{--feature:var(--red)}.physical-target.wrong{--feature:#c8564c}.physical-target.hinted{--feature:#f2af38}.physical-target.correct .physical-shape,.physical-target.hinted .physical-shape{stroke-width:3}.physical-target.river.correct .physical-shape,.physical-target.river.hinted .physical-shape{stroke-width:5}.physical-target.river.wrong .physical-shape{stroke-width:4}
+.physical-marker .visible{fill:#1c526b;stroke:#f8fff7;stroke-width:1.2}.physical-marker.range .visible{fill:#b98b4d}.physical-marker .hit{fill:transparent}
+.map-zoom-hint{z-index:2}
+@media(max-width:850px){.kart-map-groups{grid-template-columns:1fr;gap:24px}.kart-map-groups>section:last-child .kart-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){
+ html,body{height:100%;overflow:hidden}.game{height:100dvh;min-height:0;display:flex;flex-direction:column}.map-viewport{order:2;flex:1;min-height:0;height:auto}.game-panel{order:1;flex-shrink:0;max-height:43dvh;overflow:auto;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:7px 10px;padding:10px 12px;border-top:0;border-bottom:1px solid #91bac1}.panel-header{grid-column:1/-1}.panel-header .brand{font-size:21px}.panel-header .geo-menu-toggle{padding:6px 8px;font-size:11px}.target-block{grid-column:1;grid-row:auto;padding:9px 11px;gap:3px}#targetVerb{font-size:9px}#targetName{font-size:19px;min-height:22px}.stats{grid-column:2;align-self:center;gap:5px}.stats>div>span{font-size:8px}.stats strong,.stats time,#mistakes{font-size:12px}.stats small{font-size:9px}.progress-track{grid-column:1/-1;margin-top:0;height:3px}.game-controls{grid-column:2;grid-row:auto;display:flex;align-items:center;justify-content:flex-end;gap:8px}.game-controls button{padding:5px;font-size:10px}#skip{font-size:10px}.ready-actions{grid-column:1/-1}.primary-button{padding:9px;font-size:12px}.legend{display:none!important}#feedback{grid-column:1;grid-row:auto;min-height:0;font-size:11px;line-height:1.3;align-self:center}footer,body[data-quiz="kart"] footer{grid-column:1/-1;display:flex;flex-direction:row;gap:8px;margin:0;padding:0;align-items:center;justify-content:space-between}footer>span{display:none}.quiz-page-back{font-size:11px;padding:6px 8px}#statle-score{grid-column:1/-1;margin:0;font-size:12px}#statle-top-ten{grid-column:1/-1}body[data-quiz="kart"]:has(#kart-selection:not([hidden])){height:auto;overflow:auto}.kart-selection{padding:16px}.kart-chooser{padding:24px 0 12px}.kart-chooser h1{font-size:35px;margin-bottom:20px}.kart-cards>button,.kart-cards>a{min-height:59px;padding:12px}.kart-cards strong{font-size:13px}.map-tools{top:8px;right:8px}.map-tools button{min-width:33px;height:33px}.map-zoom-hint{font-size:8px;padding:4px 6px;right:8px;bottom:6px}
+}
+/* World maps use the entire canvas; the compact panel floats in the Pacific. */
+body[data-physical="true"] .game{display:block;position:relative}
+body[data-physical="true"] .map-viewport{position:absolute;inset:0;width:100%;height:100%;padding:8px}
+body[data-physical="true"] .game-panel{position:fixed;z-index:4;left:12px;bottom:12px;top:auto;width:222px;min-width:186px;max-width:min(330px,calc(100vw - 24px));height:auto;max-height:calc(100dvh - 68px);padding:12px;gap:10px;border:1px solid #8ca99a;border-radius:10px;background:#fffefaf5;box-shadow:0 4px 20px #234c3725;display:flex;overflow:auto;resize:horizontal;cursor:grab}
+body[data-physical="true"] .game-panel:active{cursor:grabbing}
+body[data-physical="true"] .game-panel :is(button,a,input,label){cursor:pointer}
+body[data-physical="true"] .panel-header{position:fixed;top:10px;left:10px;width:auto;z-index:5;cursor:default}
+body[data-physical="true"] .panel-header .brand{display:none}
+body[data-physical="true"] .target-block{padding:10px 12px;gap:4px;min-height:55px}
+body[data-physical="true"] #targetName{font-size:20px;min-height:23px;letter-spacing:-.4px}
+body[data-physical="true"] #targetVerb{font-size:10px}
+body[data-physical="true"] .stats{gap:7px}
+body[data-physical="true"] .stats>div{gap:3px}
+body[data-physical="true"] .stats>div>span{font-size:9px}
+body[data-physical="true"] .stats :is(strong,time),body[data-physical="true"] #mistakes{font-size:13px}
+body[data-physical="true"] .stats small{font-size:10px}
+body[data-physical="true"] .progress-track{margin:0;height:3px}
+body[data-physical="true"] .primary-button{padding:8px;font-size:11px}
+body[data-physical="true"] .game-controls{display:flex;gap:10px;align-items:center;justify-content:space-between}
+body[data-physical="true"] .game-controls button{font-size:10px;padding:6px}
+body[data-physical="true"] #skip{font-size:10px}
+body[data-physical="true"] #feedback{min-height:0;margin:0;font-size:11px;line-height:1.35}
+body[data-physical="true"] .legend{display:grid;grid-template-columns:1fr 1fr;font-size:8px;gap:6px;padding-top:9px}
+body[data-physical="true"] .legend>strong{display:none}
+body[data-physical="true"] .legend>span{gap:4px;white-space:nowrap}
+body[data-physical="true"] .legend .dot{width:7px;height:7px}
+body[data-physical="true"] footer{margin:0;padding:0;gap:6px}
+body[data-physical="true"] footer .quiz-page-back{font-size:11px;padding:6px 8px}
+body[data-physical="true"] footer>span{font-size:8px;line-height:1.2}
+body[data-physical="true"] #statle-score{margin:0;font-size:14px;font-weight:700}
+body[data-physical="true"][data-phase="playing"] footer>span{display:none}
+.water-options{margin:0;padding:0;border:0;display:grid;gap:7px;font-size:11px;cursor:default}
+.water-options legend{font-size:10px;font-weight:650;margin-bottom:6px}
+.water-options label{display:flex;align-items:center;gap:7px;line-height:1.25}
+.water-options input{margin:0;accent-color:#245845;width:14px;height:14px;flex-shrink:0}
+.continent-practice-option{display:flex;align-items:flex-start;gap:7px;font-size:10px;line-height:1.4;cursor:pointer}
+.continent-practice-option input{margin:1px 0 0;accent-color:#245845;flex-shrink:0}
+#target-continent{font-size:11px;color:#d9e4f4;font-weight:500;letter-spacing:0}
+body[data-practice="true"] #statle-top-ten{display:none!important}
+#repeat-practice{display:grid;gap:8px;padding:10px 0;border-top:1px solid #b8cdbd;grid-column:1/-1;font-size:12px}
+#repeat-practice .primary-button{white-space:normal;line-height:1.35}
+body[data-retry="true"] .state.retry-pending{fill:#fffefa}
+body[data-retry="true"] .state.mastered{fill:#b9dfc3}
+body[data-retry="true"] .physical-target.retry-pending{--feature:#fffefa}
+body[data-retry="true"] .physical-target.mastered{--feature:#b9dfc3}
+body[data-retry="true"] .small-marker.retry-pending .visible{fill:#fffefa}
+body[data-retry="true"] .small-marker.mastered .visible{fill:#b9dfc3}
+.kart-cards>[data-card]{position:relative;isolation:isolate;overflow:hidden;min-height:78px;background:var(--card-tint,#fffefa)}
+.kart-cards>[data-card] strong{position:relative;z-index:1;max-width:72%}
+.kart-card-art{position:absolute;right:3px;top:6px;height:calc(100% - 12px);width:30%;color:var(--card-art,#6f96a0);opacity:.55;pointer-events:none}
+.kart-cards>[data-card="fylker"] .kart-card-art,.kart-cards>[data-card="usa"] .kart-card-art{inset:0;width:100%;height:100%;opacity:.12}
+[data-card="europe"]{--card-tint:#edf2e5;--card-art:#71965c}[data-card="asia"]{--card-tint:#f5eee0;--card-art:#b28a4e}[data-card="northAmerica"]{--card-tint:#e7f0f4;--card-art:#6c95b3}[data-card="southAmerica"]{--card-tint:#e8f2e8;--card-art:#6b9c75}[data-card="africa"]{--card-tint:#f5ebe3;--card-art:#b98a64}[data-card="oceania"]{--card-tint:#eeebf6;--card-art:#9282af}
+.kart-cards>[data-card]:hover{filter:brightness(.98);border-color:#83a48c}
+.physical-target.plateau{--feature:#d9c593}.physical-target.plateau .physical-shape{stroke:#a69768;stroke-dasharray:2 2}
+.physical-target.plateau:hover,.physical-target.plateau:focus-visible{--feature:#e8d7a9}
+/* Named ocean areas remain distinct from the dark, high-contrast lakes. */
+body[data-region="seas"]{--water:#adced5}
+body[data-region="seas"] .physical-target.sea{--feature:#83afbd}
+body[data-region="seas"] .physical-target.sea .physical-shape{stroke:#5f8f9f;stroke-width:.6}
+body[data-region="seas"] .physical-target.sea:hover{--feature:#608fa4}
+.physical-target[data-band="0"]{--feature:var(--green)}.physical-target[data-band="1"]{--feature:var(--yellow)}.physical-target[data-band="2"]{--feature:var(--orange)}.physical-target[data-band="3"]{--feature:var(--red)}
+body[data-region="seas"] .physical-target.sea[data-band="0"]{--feature:var(--green)}body[data-region="seas"] .physical-target.sea[data-band="1"]{--feature:var(--yellow)}body[data-region="seas"] .physical-target.sea[data-band="2"]{--feature:var(--orange)}body[data-region="seas"] .physical-target.sea[data-band="3"]{--feature:var(--red)}
+body[data-region="seas"] .physical-target.sea.wrong{--feature:#c8564c}
+body[data-region="seas"] .physical-target.sea.hinted{--feature:#f2af38}
+body[data-region="seas"][data-retry="true"] .physical-target.sea.retry-pending{--feature:#fffefa}
+body[data-region="seas"][data-retry="true"] .physical-target.sea.mastered{--feature:#b9dfc3}
+@media(max-width:700px){
+ body[data-physical="true"] .map-viewport{padding:5px}
+ body[data-physical="true"] .game-panel{left:8px;bottom:8px;width:196px;min-width:175px;max-height:49dvh;padding:10px;gap:8px;resize:none;max-width:calc(100vw - 16px)}
+ body[data-physical="true"] .panel-header{left:8px;top:8px}
+ body[data-physical="true"] #targetName{font-size:17px;min-height:20px}
+ body[data-physical="true"] .target-block{padding:8px 10px;min-height:48px}
+ body[data-physical="true"] .legend{display:none!important}
+ body[data-physical="true"] footer>span{display:none}
+ body[data-physical="true"] #feedback{font-size:10px}
+ body[data-physical="true"] .water-options{font-size:10px;gap:6px}
+}
+@media(max-height:470px){body[data-physical="true"] .game-panel{max-height:calc(100dvh - 52px);gap:6px;padding:9px;width:196px}body[data-physical="true"] .legend{display:none!important}body[data-physical="true"] .target-block{min-height:0}body[data-physical="true"] footer>span{display:none}}
+.map-toolbar{display:flex;align-items:center;gap:6px}
+.map-toolbar .geo-menu-toggle{position:static}
+.map-theme-toggle{border:1px solid #c6d9ce;border-radius:7px;background:#fffef9f0;color:#285440;padding:6px 9px;font-size:17px;line-height:1;min-height:32px}
+/* The same persisted setting is used by the main geography site. The head
+   bootstrap sets data-theme before the first paint, including on the chooser. */
+:root[data-theme="dark"]{color-scheme:dark;--water:#263f49;--land:#287c56;--navy:#294358;background:#14231e;color:#e4eee7}
+:root[data-theme="dark"] body{background:#14231e;color:#e4eee7;--q-paper:#1c3027;--q-ink:#e4eee7;--q-muted:#b5cabe;--q-soft:#294437;--q-line:#4b6858}
+:root[data-theme="dark"] body[data-region="seas"]{--water:#263f49}
+:root[data-theme="dark"] .game-panel,:root[data-theme="dark"] .geo-menu{background:#1c3027;color:#e4eee7;border-color:#4b6858}
+:root[data-theme="dark"] :is(.kart-selection,.kart-chooser h1,.kart-map-groups h2,.brand,.kart-overview){color:#d7eddf}
+:root[data-theme="dark"] .kart-cards>[data-card]{background:var(--card-tint,#20362d);border-color:#456351;color:#e4eee7}
+:root[data-theme="dark"] [data-card="europe"]{--card-tint:#293d2a;--card-art:#9bbb82}
+:root[data-theme="dark"] [data-card="asia"]{--card-tint:#3b3425;--card-art:#cfb17d}
+:root[data-theme="dark"] [data-card="northAmerica"]{--card-tint:#293c48;--card-art:#9cbfd4}
+:root[data-theme="dark"] [data-card="southAmerica"]{--card-tint:#253e30;--card-art:#91bb9c}
+:root[data-theme="dark"] [data-card="africa"]{--card-tint:#413128;--card-art:#d2ac88}
+:root[data-theme="dark"] [data-card="oceania"]{--card-tint:#353047;--card-art:#b4a5ce}
+:root[data-theme="dark"] .kart-card-art{color:var(--card-art,#a8c7ca)}
+:root[data-theme="dark"] :is(.geo-menu-toggle,.map-theme-toggle,.quiz-page-back,.geo-menu-head>button,.map-tools){background:#233c30;color:#d7eddf;border-color:#4b6858}
+:root[data-theme="dark"] :is(.stats>div>span,.stats small,.legend,.legend>strong,footer,footer a,#feedback,.map-tools output){color:#b5cabe}
+:root[data-theme="dark"] #feedback.good{color:#a5e1b4}
+:root[data-theme="dark"] #feedback.error{color:#ffb8a2}
+:root[data-theme="dark"] .game-controls button{background:#263f32;color:#d7eddf;border-color:#4b6858}
+:root[data-theme="dark"] :is(.map-tools button,.map-zoom-hint){color:#d7eddf}
+:root[data-theme="dark"] .map-zoom-hint{background:#1c3027e6}
+:root[data-theme="dark"] :is(.map-tools button:hover:not(:disabled),.game-controls button:hover:not(:disabled),.quiz-page-back:hover,.geo-menu details a:hover){background:#375743;color:#eff9f2}
+:root[data-theme="dark"] :is(.geo-menu-head,.geo-menu details,.legend,#repeat-practice){border-color:#4b6858}
+:root[data-theme="dark"] .progress-track{background:#344c3d}
+:root[data-theme="dark"] .map-context{fill:#354a42;stroke:#668275}
+:root[data-theme="dark"] .state{stroke:#75a58c}
+:root[data-theme="dark"] .physical-background.land{fill:#354a42;stroke:#668275}
+:root[data-theme="dark"] .physical-background.lake{fill:#769eaa;stroke:#a2c4ce}
+:root[data-theme="dark"] .physical-target:not([data-band]):not(.mastered,.retry-pending,.wrong,.hinted,.hovered):not(:hover,:focus-visible){--feature:#8fbdcc}
+:root[data-theme="dark"] .physical-target.range:not([data-band]):not(.mastered,.retry-pending,.wrong,.hinted,.hovered):not(:hover,:focus-visible){--feature:#cda770}
+:root[data-theme="dark"] .physical-target.plateau:not([data-band]):not(.mastered,.retry-pending,.wrong,.hinted,.hovered):not(:hover,:focus-visible){--feature:#cfbf94}
+:root[data-theme="dark"] .physical-target.sea:not([data-band]):not(.mastered,.retry-pending,.wrong,.hinted,.hovered):not(:hover,:focus-visible){--feature:#396575}
+:root[data-theme="dark"] .physical-target.sea .physical-shape{stroke:#7299a5}
+:root[data-theme="dark"] .physical-marker:not([data-band]):not(.mastered):not(.retry-pending) .visible{fill:#8fbdcc;stroke:#213f49}

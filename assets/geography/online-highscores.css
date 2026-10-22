@@ -1,14 +1,17 @@
 #geo-online-notice{position:fixed;bottom:8px;left:8px;right:8px;width:fit-content;max-width:calc(100vw - 16px);padding:8px 12px;background:var(--q-paper);color:var(--q-ink);border:1px solid var(--q-line);border-radius:7px;z-index:10030;font-size:12px;box-shadow:0 2px 10px #0002;pointer-events:none}
 .geo-online-result{margin-top:10px;border-top:1px solid var(--q-line);padding-top:8px;font-size:12px;line-height:1.4}.geo-online-result p{margin-bottom:8px}
-#geo-online-board{position:fixed;inset:0;margin:auto;width:min(440px,calc(100vw - 24px));max-height:calc(100dvh - 24px);padding:18px;border:1px solid var(--q-line);border-radius:12px;background:var(--q-paper);color:var(--q-ink);box-shadow:0 12px 48px #0004;overflow:auto;font-size:13px;line-height:1.4}
-#geo-online-board::backdrop{background:#10251c88}
-#geo-online-board .mapwiz-top-ten-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
-#geo-online-board h3{margin:0;padding:0;border:0;color:var(--q-ink);font-size:22px}
-#geo-online-board button{color:var(--q-ink);background:var(--q-soft);border:1px solid var(--q-line);border-radius:5px;padding:7px 10px;font:inherit;font-weight:650;cursor:pointer}
-#geo-online-board .mapwiz-top-ten-close{font-size:20px;line-height:1;min-width:36px;min-height:36px}
-#geo-online-board p{color:var(--q-muted);margin:6px 0}
-#geo-online-board form{margin:12px 0}#geo-online-board label{display:block;margin-bottom:5px;font-weight:650}#geo-online-board form>div{display:flex;gap:6px}
-#geo-online-board input{width:100%;min-width:0;padding:8px;border:1px solid var(--q-line);border-radius:5px;background:var(--q-paper);color:var(--q-ink);font-size:16px}#geo-online-board form button{flex:none}
-#geo-online-board table{font-size:12px;width:100%;border-collapse:collapse;background:var(--q-paper);color:var(--q-ink)}
-#geo-online-board :is(th,td){padding:7px 5px;border:0;border-bottom:1px solid var(--q-line);background:var(--q-paper)!important;color:var(--q-ink);overflow-wrap:anywhere}
-#geo-online-board th{background:var(--q-soft)!important}#geo-online-board :is(th,td):nth-child(n+3){text-align:right;white-space:nowrap}#geo-online-board td:nth-child(2){font-weight:650}
+.geo-score-dialog{position:fixed;inset:0;margin:auto;width:min(440px,calc(100vw - 24px));max-height:calc(100dvh - 24px);padding:18px;border:1px solid var(--q-line);border-radius:12px;background:var(--q-paper);color:var(--q-ink);box-shadow:0 12px 48px #0004;overflow:auto;font-size:13px;line-height:1.4}
+.geo-score-dialog::backdrop{background:#10251c88}
+.geo-score-dialog .mapwiz-top-ten-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.geo-score-dialog h3{margin:0;padding:0;border:0;color:var(--q-ink);font-size:22px}
+.geo-score-dialog button{color:var(--q-ink);background:var(--q-soft);border:1px solid var(--q-line);border-radius:5px;padding:7px 10px;font:inherit;font-weight:650;cursor:pointer}
+.geo-score-dialog .mapwiz-top-ten-close{font-size:20px;line-height:1;min-width:36px;min-height:36px}
+.geo-score-dialog p{color:var(--q-muted);margin:6px 0}
+.geo-score-dialog form{margin:12px 0}.geo-score-dialog label{display:block;margin-bottom:5px;font-weight:650}.geo-score-dialog form>div{display:flex;gap:6px}
+.geo-score-dialog input{width:100%;min-width:0;padding:8px;border:1px solid var(--q-line);border-radius:5px;background:var(--q-paper);color:var(--q-ink);font-size:16px}.geo-score-dialog form button{flex:none}
+.geo-score-dialog table{font-size:12px;width:100%;border-collapse:collapse;background:var(--q-paper);color:var(--q-ink)}
+.geo-score-dialog :is(th,td){padding:7px 5px;border:0;border-bottom:1px solid var(--q-line);background:var(--q-paper)!important;color:var(--q-ink);overflow-wrap:anywhere}
+.geo-score-dialog th{background:var(--q-soft)!important}.geo-score-dialog :is(th,td):nth-child(n+3){text-align:right;white-space:nowrap}.geo-score-dialog td:nth-child(2){font-weight:650}
+
+#geo-online-save{width:min(340px,calc(100vw - 24px))}#geo-online-save form{margin:0}#geo-online-save .mapwiz-score-status:empty{display:none}
+body[data-quiz="statle"],body[data-quiz="fylker"],body[data-quiz="kart"]{--q-paper:#fffefa;--q-ink:#28463d;--q-muted:#536a59;--q-soft:#eaf1e2;--q-line:#cedbc7}

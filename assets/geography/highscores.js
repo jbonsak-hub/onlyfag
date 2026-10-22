@@ -5,16 +5,16 @@
   function load(){try{return JSON.parse(localStorage.getItem(STORE)||'{}')||{}}catch(e){return{}}}
   function save(x){try{localStorage.setItem(STORE,JSON.stringify(x))}catch(e){}}
   function cmp(a,b){const ar=a.rank||[],br=b.rank||[],n=Math.max(ar.length,br.length);for(let i=0;i<n;i++){const d=(Number(ar[i])||0)-(Number(br[i])||0);if(d)return d>0?-1:1}return (a.created||0)-(b.created||0)}
-  function list(key){const db=load();return (db[key]||[]).slice().sort(cmp).slice(0,5)}
-  function qualifies(result){const rows=list(result.key);if(rows.length<5)return true;return cmp(result,rows[rows.length-1])<0}
+  function list(key){const db=load();return (db[key]||[]).slice().sort(cmp).slice(0,10)}
+  function qualifies(result){const rows=list(result.key);if(rows.length<10)return true;return cmp(result,rows[rows.length-1])<0}
   function fmtTime(s){if(s==null||!Number.isFinite(Number(s)))return '–';s=Math.max(0,Math.round(Number(s)));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
   function add(result){
     if(!result||!result.key||!Array.isArray(result.rank)||!qualifies(result))return {saved:false,qualifies:false};
-    let name=window.prompt('Du er inne på topp 5! Skriv inn navnet ditt:','');
+    let name=window.prompt('Du er inne på topp 10! Skriv inn navnet ditt:','');
     if(name==null)return {saved:false,qualifies:true};name=String(name).trim().slice(0,24);if(!name)return {saved:false,qualifies:true};
-    const db=load(),entry={...result,name,created:Date.now()};const arr=(db[result.key]||[]).concat(entry).sort(cmp).slice(0,5);db[result.key]=arr;save(db);return {saved:true,qualifies:true};
+    const db=load(),entry={...result,name,created:Date.now()};const arr=(db[result.key]||[]).concat(entry).sort(cmp).slice(0,10);db[result.key]=arr;save(db);return {saved:true,qualifies:true};
   }
-  function specialTopTitle(key){if(key==='geoguessr2|geografifaget1')return 'Topp 5 (Geografifaget1)';if(key==='geoguessr2|all')return 'Topp 5 (alle kategorier)';if(key==='places|streak')return 'Topp 5 (på rad)';if(key==='countries2|world'||key==='capitals|world'||key==='flags|world'||key==='flagcapital|world'||key==='detective|world')return 'Topp 5 (hele verden)';return 'Topp 5'}
+  function specialTopTitle(key){if(key==='geoguessr2|geografifaget1')return 'Topp 10 (Geografifaget1)';if(key==='geoguessr2|all')return 'Topp 10 (alle kategorier)';if(key==='places|streak')return 'Topp 10 (på rad)';if(key==='countries2|world'||key==='capitals|world'||key==='flags|world'||key==='flagcapital|world'||key==='detective|world')return 'Topp 10 (hele verden)';return 'Topp 10'}
   window.geoHsShow=function(key,label){
     if(window.GeoOnline?.showLegacy(key,label))return;
     const rows=list(key),modal=document.getElementById('geo-hs-modal'),body=document.getElementById('geo-hs-body'),title=document.getElementById('geo-hs-title');if(!modal||!body)return;
@@ -44,7 +44,7 @@
   }
   function hsWorldLabel(mode,region,submode,pace){
     if(mode==='countries')return region==='world'?modeLabel(mode):modeLabel(mode)+' · '+regionLabel(region);
-    if(mode==='places')return 'Topp 5 (på rad)';
+    if(mode==='places')return 'Topp 10 (på rad)';
     if(mode==='capitals'||mode==='flags'||mode==='flagcapital')return modeLabel(mode);
     if(mode==='detective')return modeLabel(mode);
     return modeLabel(mode);
@@ -66,16 +66,16 @@
     else if(mode==='flags'){first='Flagg → land';second='Land → flagg';firstVal='flag-country-mc';secondVal='country-flag-mc'}
     else if(mode==='detective'){first='Kartutsnitt → land';second='Land → kartutsnitt';firstVal='shape-country-mc';secondVal='country-shape-mc'}
     else{first='Flagg → hovedstad';second='Hovedstad → flagg';firstVal='flag-capital-mc';secondVal='capital-flag-mc'}
-    return '<div class="world-setup streak-setup" data-hs-mode="'+mode+'"><h3>'+title+'</h3><p>Velg region og retning. Spillet fortsetter til første feil.</p><div class="hs-setup-row"><button type="button" class="hs-button" data-hs-world-only="1" onclick="geoHsShowCurrentWorld(\''+mode+'\',this)">🏆 Topp 5 (hele verden)</button></div><input type="hidden" class="world-region" value="world"><input type="hidden" class="world-submode" value="'+firstVal+'"><div class="streak-choice-section"><span class="streak-choice-label">Region</span><div class="streak-region-grid">'+worldRegionButtonsHtml(mode)+'</div></div><div class="streak-choice-section"><span class="streak-choice-label">Spørsmålstype</span><div class="streak-direction-grid"><button type="button" class="streak-direction-btn selected" onclick="selectStreakChoice(this,\'world-submode\',\''+firstVal+'\')">'+first+'</button><button type="button" class="streak-direction-btn" onclick="selectStreakChoice(this,\'world-submode\',\''+secondVal+'\')">'+second+'</button></div></div><div class="streak-start-row"><button class="world-button streak-start-btn" onclick="startWorldTrainer(\''+mode+'\')">Start</button></div></div>';
+    return '<div class="world-setup streak-setup" data-hs-mode="'+mode+'"><h3>'+title+'</h3><p>Velg region og retning. Spillet fortsetter til første feil.</p><div class="hs-setup-row"><button type="button" class="hs-button" data-hs-world-only="1" onclick="geoHsShowCurrentWorld(\''+mode+'\',this)">🏆 Topp 10 (hele verden)</button></div><input type="hidden" class="world-region" value="world"><input type="hidden" class="world-submode" value="'+firstVal+'"><div class="streak-choice-section"><span class="streak-choice-label">Region</span><div class="streak-region-grid">'+worldRegionButtonsHtml(mode)+'</div></div><div class="streak-choice-section"><span class="streak-choice-label">Spørsmålstype</span><div class="streak-direction-grid"><button type="button" class="streak-direction-btn selected" onclick="selectStreakChoice(this,\'world-submode\',\''+firstVal+'\')">'+first+'</button><button type="button" class="streak-direction-btn" onclick="selectStreakChoice(this,\'world-submode\',\''+secondVal+'\')">'+second+'</button></div></div><div class="streak-start-row"><button class="world-button streak-start-btn" onclick="startWorldTrainer(\''+mode+'\')">Start</button></div></div>';
   };
 
   const oldRenderPlaces=window.renderPlacesSetup;
-  window.renderPlacesSetup=function(){const html=oldRenderPlaces();return html.replace('<input type="hidden" class="world-pace"','<div class="hs-setup-row"><button type="button" class="hs-button" data-hs-streak-only="1" onclick="geoHsShow(\'places|streak\',\'Topp 5 (på rad)\')">🏆 Topp 5 (på rad)</button></div><input type="hidden" class="world-pace"')};
+  window.renderPlacesSetup=function(){const html=oldRenderPlaces();return html.replace('<input type="hidden" class="world-pace"','<div class="hs-setup-row"><button type="button" class="hs-button" data-hs-streak-only="1" onclick="geoHsShow(\'places|streak\',\'Topp 10 (på rad)\')">🏆 Topp 10 (på rad)</button></div><input type="hidden" class="world-pace"')};
 
   // One independent list per region in "Kan du verdens land?".
   window.renderCountryRegionSetup=function(){
     const worldId='world',others=['africa','asia','europe','northamerica','oceania','southamerica'];
-    function card(id,isWorld){const n=countryMapNames(id).length,label=COUNTRY_MAP_META[id].label,key='countries2|'+id,hsLabel=isWorld?modeLabel('countries'):modeLabel('countries')+' · '+label;return '<div class="country-region-hs-card'+(isWorld?' world':'')+'"><button class="country-region-btn'+(isWorld?' world':'')+'" onclick="startCountryMapQuiz(\''+id+'\')">'+(isWorld?'<span class="country-region-kicker">Hele utfordringen</span>':'')+'<strong>'+label+'</strong><small>'+n+' land</small></button><button type="button" class="country-region-hs-button" onclick="geoHsShow(\''+key+'\',\''+hsLabel.replace(/'/g,"\'")+'\')">'+(isWorld?'🏆 Topp 5 (hele verden)':'🏆 Topp 5')+'</button></div>'}
+    function card(id,isWorld){const n=countryMapNames(id).length,label=COUNTRY_MAP_META[id].label,key='countries2|'+id,hsLabel=isWorld?modeLabel('countries'):modeLabel('countries')+' · '+label;return '<div class="country-region-hs-card'+(isWorld?' world':'')+'"><button class="country-region-btn'+(isWorld?' world':'')+'" onclick="startCountryMapQuiz(\''+id+'\')">'+(isWorld?'<span class="country-region-kicker">Hele utfordringen</span>':'')+'<strong>'+label+'</strong><small>'+n+' land</small></button><button type="button" class="country-region-hs-button" onclick="geoHsShow(\''+key+'\',\''+hsLabel.replace(/'/g,"\'")+'\')">'+(isWorld?'🏆 Topp 10 (hele verden)':'🏆 Topp 10')+'</button></div>'}
     return '<div class="country-region-setup"><h2>Velg område</h2><p>Hvor mange land husker du navnet på?</p><div class="country-region-world">'+card(worldId,true)+'</div><div class="country-region-grid">'+others.map(id=>card(id,false)).join('')+'</div></div>';
   };
 
@@ -114,8 +114,8 @@
     const actions=document.querySelector('#geo-guessr-app .geo-setup-actions');
     if(actions&&!actions.querySelector('.geo-hs-actions'))actions.insertAdjacentHTML('beforeend',
       '<div class="geo-hs-actions">'+
-      '<button type="button" class="hs-button" onclick="geoHsShow(\'geoguessr2|all\',\'Topp 5 (alle kategorier)\')">🏆 Topp 5 · Alle kategorier</button>'+
-      '<button type="button" class="hs-button" onclick="geoHsShow(\'geoguessr2|geografifaget1\',\'Topp 5 (Geografifaget1)\')">🏆 Topp 5 · Geografifaget1</button>'+
+      '<button type="button" class="hs-button" onclick="geoHsShow(\'geoguessr2|all\',\'Topp 10 (alle kategorier)\')">🏆 Topp 10 · Alle kategorier</button>'+
+      '<button type="button" class="hs-button" onclick="geoHsShow(\'geoguessr2|geografifaget1\',\'Topp 10 (Geografifaget1)\')">🏆 Topp 10 · Geografifaget1</button>'+
       '</div>');
   };
   const oldSummaryGeo=window.renderGeoGuessrSummary;
@@ -127,7 +127,7 @@
     s.hsHandled=true;
     const t=Math.max(0,Math.floor(((s.hsEndedAt||Date.now())-(s.hsStartedAt||Date.now()))/1000));
     const key=s.hsMode==='all'?'geoguessr2|all':'geoguessr2|geografifaget1';
-    const label=s.hsMode==='all'?'Topp 5 (alle kategorier)':'Topp 5 (Geografifaget1)';
+    const label=s.hsMode==='all'?'Topp 10 (alle kategorier)':'Topp 10 (Geografifaget1)';
     const placeNames=(Array.isArray(s.results)?s.results:[]).map(r=>r&&r.name).filter(Boolean).join(' · ');
     add({key,label,rank:[Number(s.total)||0,-t],scoreText:(Number(s.total)||0).toFixed(1)+' poeng',timeSec:t,hints:0,meta:placeNames||s.rounds.length+' steder'});
   };
