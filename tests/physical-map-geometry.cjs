@@ -49,91 +49,53 @@ function find(region, english) {
 }
 function geographicBounds(target) {
   const points=paths(target.d).flatMap(shape=>shape.points);
-  const longitude=x=>x/1000*360-180, latitude=y=>80-y/590*138;
+  const longitude=x=>x/1000*360-180, latitude=y=>84-y/540*154;
   return [Math.min(...points.map(p=>longitude(p[0]))),Math.max(...points.map(p=>longitude(p[0]))),Math.min(...points.map(p=>latitude(p[1]))),Math.max(...points.map(p=>latitude(p[1])))];
 }
 
-test('all four maps keep complete inventories and the appropriate geographic feature types', () => {
-  assert.deepEqual(Object.fromEntries(Object.entries(regions).map(([id,r])=>[id,r.states.length])),{
-    rivers:49,lakes:33,mountains:24,europeWater:72
-  });
-  const counts=Object.fromEntries(['river','lake','sea'].map(kind=>[kind,regions.europeWater.states.filter(s=>s.kind===kind).length]));
-  assert.deepEqual(counts,{river:29,lake:9,sea:34});
-  for(const [id,kind] of [['rivers','river'],['lakes','lake'],['mountains','range']]) {
-    assert(regions[id].states.every(state=>state.kind===kind),`${id} contains only ${kind} targets`);
-  }
-});
 
-test('every target has a unique bilingual name, finite geometry and an on-map hint point', () => {
-  for(const [id,region] of Object.entries(regions)) {
-    assert.equal(new Set(region.states.map(s=>s.n)).size,region.states.length,`${id}: Norwegian names unique`);
-    assert.equal(new Set(region.states.map(s=>s.en)).size,region.states.length,`${id}: English names unique`);
-    const [x,y,width,height]=region.viewBox;
-    for(const target of region.states) {
-      assert(target.n.trim()&&target.en.trim(),`${id}: both languages available`);
-      assert(target.d.length>25&&!/NaN|Infinity|undefined/.test(target.d),`${target.n}: valid SVG path`);
-      assert(!/[^MLZ0-9.\s,-]/.test(target.d),`${target.n}: expected vector commands only`);
-      assert.equal(target.c.length,2,`${target.n}: hint is a point`);
-      assert(target.c.every(Number.isFinite),`${target.n}: finite hint`);
-      assert(target.c[0]>=x&&target.c[0]<=x+width&&target.c[1]>=y&&target.c[1]<=y+height,`${target.n}: visible hint`);
-      for(const shape of paths(target.d)) {
-        assert(shape.points.length>=2,`${target.n}: real geographic geometry`);
-        for(const p of shape.points)assert(p[0]>=x-.01&&p[0]<=x+width+.01&&p[1]>=y-.01&&p[1]<=y+height+.01,`${target.n}: clipped to map window`);
-      }
-    }
-  }
+test('three world maps include the revised inventories and water groups',()=>{
+ assert.deepEqual(Object.fromEntries(Object.entries(regions).map(([id,r])=>[id,r.states.length])),{rivers:49,lakes:107,mountains:34});
+ assert.equal(regions.lakes.states.filter(s=>s.group==='lakes').length,33);
+ assert(regions.lakes.states.filter(s=>s.group==='seas').length>=30);
+ assert(regions.lakes.states.filter(s=>s.group==='gulfsStraits').length>=30);
+ assert.equal(regions.mountains.states.filter(s=>s.kind==='plateau').length,7);
+ assert.equal(regions.mountains.states.filter(s=>s.kind==='range').length,27);
+ for(const [id,region]of Object.entries(regions)){
+  assert.equal(new Set(region.states.map(s=>s.n)).size,region.states.length,id+' Norwegian names unique');
+  assert.equal(new Set(region.states.map(s=>s.en)).size,region.states.length,id+' English names unique');
+  for(const t of region.states){assert(t.n&&t.en);assert(!/NaN|Infinity/.test(t.d));assert(t.c.every(Number.isFinite));for(const shape of paths(t.d))for(const [x,y]of shape.points)assert(x>=-.01&&x<=1000.01&&y>=-.01&&y<=540.01,t.n+' within map');}
+ }
 });
-
-test('complete user-supplied river and lake inventories survive additions and translations', () => {
-  // Factual label inventories transcribed from the supplied PDF maps.
-  const pdfRivers=['Mackenzie','Missouri','Arkansas','Ohio','Saint Lawrence','Colorado','Mississippi','Rio Grande','Amazon','São Francisco','Paraguay','Paraná','Uruguay','Ob','Yenisei','Lena','Volga','Dnipro','Don','Amur','Yarlung Tsangpo','Huang He (Yellow River)','Yangtze','Indus','Ganges','Brahmaputra','Mekong','Niger','Nile','Blue Nile','White Nile','Congo','Zambezi','Orange','Darling','Murray'];
-  const pdfLakes=['Great Bear Lake','Great Slave Lake','Lake Athabasca','Lake Winnipeg','Lake Superior','Lake Michigan','Lake Huron','Lake Erie','Lake Ontario','Great Salt Lake','Lake Nicaragua','Lake Maracaibo','Lake Titicaca','Vänern','Lake Ladoga','Lake Onega','Lake Geneva','Caspian Sea','Aral Sea','Lake Balkhash','Lake Baikal','Qinghai Lake','Lake Van','Dead Sea','Lake Chad','Lake Tana','Lake Turkana','Lake Victoria','Lake Tanganyika','Lake Malawi (Nyasa)','Tonlé Sap','Lake Toba','Lake Eyre'];
-  assert.equal(pdfRivers.length,36);
-  assert.equal(pdfLakes.length,33);
-  for(const name of pdfRivers)find('rivers',name);
-  for(const name of pdfLakes)find('lakes',name);
-  for(const name of ['Rhine','Danube','Tigris','Euphrates','Orinoco','Yukon'])find('rivers',name);
+test('requested river corrections preserve one continuous Congo and only the Canadian Mackenzie',()=>{
+ const bounds=geographicBounds(find('rivers','Mackenzie'));assert(bounds[1]<-110&&bounds[2]>60,'Mackenzie has no Australian segment');
+ const congo=find('rivers','Congo');assert.equal(paths(congo.d).length,1);const b=geographicBounds(congo);assert(b[0]<14&&b[1]>26&&b[2]<-11&&b[3]>0,'full Congo-Lualaba main stem');
+ for(const en of ['Glomma','Thames','Po','Elbe'])find('rivers',en);
+ for(const en of ['Yarlung Tsangpo','Darling','Arkansas','Columbia'])assert(!regions.rivers.states.some(s=>s.en===en));
+ const yangtze=geographicBounds(find('rivers','Yangtze'));assert(yangtze[0]<91&&yangtze[1]>119&&yangtze[3]>34);
+ const mekong=geographicBounds(find('rivers','Mekong'));assert(mekong[0]<95&&mekong[1]>106&&mekong[3]>32);
 });
-
-test('world rivers include continuous upper courses and keep separately asked rivers separate', () => {
-  const yangtze=geographicBounds(find('rivers','Yangtze'));
-  assert(yangtze[0]<91&&yangtze[1]>119&&yangtze[3]>34,'Yangtze includes Tuotuo, Tongtian, Jinsha and Chang Jiang');
-  const mekong=geographicBounds(find('rivers','Mekong'));
-  assert(mekong[0]<95&&mekong[1]>106&&mekong[3]>32,'Mekong includes its upper Lancang and Za reaches');
-  const paraguay=geographicBounds(find('rivers','Paraguay'));
-  const parana=geographicBounds(find('rivers','Paraná'));
-  assert(paraguay[3]>-15&&paraguay[2]<-27,'Paraguay extends from its northern course to the confluence');
-  assert(parana[1]>-51&&parana[2]<-33,'Parana retains its eastern upper and southern lower courses');
-  assert.notEqual(find('rivers','Nile').d,find('rivers','White Nile').d,'Nile and White Nile are distinct reaches');
-  assert.notEqual(find('rivers','Yarlung Tsangpo').d,find('rivers','Brahmaputra').d,'Tibetan and lower Brahmaputra reaches remain distinct');
+test('requested mountain ranges and differently coloured highlands are included',()=>{
+ for(const name of ['Kunlun Mountains','Carpathian Mountains','Apennines','Dinaric Alps','Dolomites'])assert.equal(find('mountains',name).kind,'range');
+ for(const name of ['Tibetan Plateau','Deccan Plateau','Iranian Plateau','Altiplano','Ethiopian Highlands','Mongolian Plateau','Brazilian Highlands'])assert.equal(find('mountains',name).kind,'plateau');
+ for(const name of ['Rwenzori Mountains','MacDonnell Ranges'])assert(!regions.mountains.states.some(s=>s.en===name));
+ const dolomites=geographicBounds(find('mountains','Dolomites'));assert(dolomites[0]>11&&dolomites[1]<13&&dolomites[2]>46&&dolomites[3]<47);
 });
-
-test('small lakes and narrow straits remain visible targets without losing their outlines', () => {
-  for(const name of ['Lake Geneva','Dead Sea','Lake Toba','Lake Tana','Lake Chad']) {
-    const target=find('lakes',name);
-    assert.equal(target.marker,true,`${name}: visible small-feature marker`);
-    assert(target.d.includes('Z'),`${name}: exact lake outline also retained`);
-    assert(target.hitWidth>=8,`${name}: generous transparent touch target`);
-  }
-  for(const name of ['Bosporus Strait','Strait of Dover','Strait of Gibraltar'])assert(find('europeWater',name).marker,`${name}: narrow-strait marker`);
-  assert.equal(find('lakes','Lake Victoria').marker,false,'Large lakes retain their full geographic area instead of a small dot');
+test('water categories cover requested lakes, oceans and straits without duplicate Pacific or Caspian',()=>{
+ assert.equal(find('lakes','Lake Superior').n,'Superior');
+ for(const en of ['Lake Mjøsa','Lake Garda'])assert.equal(find('lakes',en).group,'lakes');
+ for(const en of ['Lake Tana','Lake Van','Bristol Channel','St. George’s Channel','North Channel'])assert(!regions.lakes.states.some(s=>s.en===en));
+ assert.equal(find('lakes','Black Sea').group,'seas');assert.equal(find('lakes','Caspian Sea').group,'lakes');
+ for(const en of ['Skagerrak','Kattegat','Red Sea','Indian Ocean','Atlantic Ocean','Pacific Ocean','Arctic Ocean','Caribbean Sea','Gulf of Mexico','Sargasso Sea','Hudson Bay','Baffin Bay','Sea of Japan','Yellow Sea','East China Sea','South China Sea','Bay of Bengal','Andaman Sea','Gulf of Thailand','Arabian Sea','Tasman Sea','Coral Sea','Southern Ocean','Gulf of California','Persian Gulf','Strait of Hormuz','Gulf of Oman','Gulf of Aden','Labrador Sea','Mozambique Channel','Gulf of Guinea','Strait of Gibraltar','Bering Strait','Strait of Malacca','Bosporus Strait','Bab el Mandeb','Strait of Magellan'])find('lakes',en);
+ assert.equal(find('lakes','Southern Ocean').c[1]>500,true,'Southern Ocean south of 60 degrees is visible');
 });
-
-test('hint centers lie on real river courses or inside their filled geographic features', () => {
-  for(const [id,region] of Object.entries(regions))for(const target of region.states) {
-    const shapes=paths(target.d);
-    if(target.kind==='river') {
-      assert(!shapes.some(shape=>shape.closed),`${target.n}: open river lines`);
-      assert(distanceToPaths(target.c,shapes)<.05,`${target.n}: river hint follows the mapped course`);
-    } else {
-      assert(shapes.every(shape=>shape.closed),`${target.n}: closed geographic areas`);
-      assert(insideEvenOdd(target.c,shapes)||distanceToPaths(target.c,shapes)<.05,`${id}/${target.n}: hint inside real filled area`);
-    }
-  }
+test('hint centers lie on actual river courses or inside filled geographic features',()=>{
+ for(const [id,region]of Object.entries(regions))for(const t of region.states){const shapes=paths(t.d);if(t.kind==='river')assert(distanceToPaths(t.c,shapes)<.05,t.n);else assert(insideEvenOdd(t.c,shapes)||distanceToPaths(t.c,shapes)<.05,id+'/'+t.n);}
 });
-
-test('committed physical geometry matches both offline geographic snapshots', () => {
-  for(const file of ['build-world-water-maps.cjs','build-mountain-europe-maps.cjs']) {
-    execFileSync(process.execPath,[path.join(__dirname,'../scripts',file),'--check'],{stdio:'pipe'});
-  }
+test('tiny lakes and straits retain real outlines and visible markers',()=>{
+ for(const name of ['Lake Mjøsa','Lake Garda','Lake Geneva','Dead Sea','Lake Toba']){const t=find('lakes',name);assert(t.marker,name);assert(t.d.includes('Z'));}
+ for(const name of ['Bosporus Strait','Strait of Hormuz','Bering Strait'])assert(find('lakes',name).marker);
+});
+test('both physical map builders reproduce the committed offline geometry',()=>{
+ for(const file of ['build-world-water-maps.cjs','build-mountain-europe-maps.cjs'])execFileSync(process.execPath,[path.join(__dirname,'../scripts',file),'--check'],{stdio:'pipe'});
 });

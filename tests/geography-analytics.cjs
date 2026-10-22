@@ -86,7 +86,7 @@ const server = http.createServer((req, res) => {
       info.mapActive = mode;
     } else if (mode === 'kart') {
       await page.locator('#kart-selection').waitFor({state:'visible'});
-      assert.equal(await page.locator('#kart-selection [data-map-region]').count(), 11);
+      assert.equal(await page.locator('#kart-selection [data-map-region]').count(),10);
       assert.equal(await page.locator('#kart-selection .kart-statle-link').getAttribute('href'), 'statle.html');
       assert.equal(await page.locator('#kart-game').isVisible(), false);
       await page.locator('#kart-menu-button').click();

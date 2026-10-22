@@ -7,7 +7,7 @@
   let counties = document.body.dataset.quiz === 'fylker';
   let total = counties ? 15 : 50;
   let shapeLabel = counties ? 'Fylke på kartet' : 'Delstat på kartet';
-  let regionData = null, mapGeneration = 0, physical = false, variant = 'practice', points = 0;
+  let regionData = null, mapGeneration = 0, physical = false;
   const elements = new Map(), markers = new Map(), centers = new Map();
   let states = [], queue = [], index = 0, phase = 'ready', locked = false;
   let results = new Map(), roundMistakes = 0, mistakes = 0, skipped = 0;
@@ -165,12 +165,11 @@
   }
   function updateStats() {
     $('completed').textContent = results.size;
-    $('progressFill').style.width = results.size / total * 100 + '%';
-    $('mistakes').textContent = physical ? points+' / '+(total*(variant==='strict'?1:3)) : mistakes + ' feil';
-    document.querySelectorAll('[data-physical-legend]').forEach((el,i)=>{el.hidden=!physical||(variant==='strict'&&(i===1||i===2));if(i===0)el.lastChild.textContent=variant==='strict'?'1. forsøk · 1 poeng':'1. forsøk · 3 poeng';});
+    $('progressFill').style.width = results.size / Math.max(1,total) * 100 + '%';
+    $('mistakes').textContent = physical ? String(mistakes) : mistakes + ' feil';
   }
   function setPhase(value){phase=value;document.body.dataset.phase=value;}
-  function prompt(){const attempts=variant==='strict'?1:3;$('targetVerb').textContent=physical?Math.max(0,attempts-roundMistakes)+' poeng · '+Math.max(0,attempts-roundMistakes)+' forsøk':'Klikk på';}
+  function prompt(){$('targetVerb').textContent='Klikk på';}
   function next() {
     index++; locked = false; roundMistakes = 0; roundTime = 0;
     $('hintLayer').replaceChildren(); $('labelLayer').replaceChildren();
@@ -185,7 +184,6 @@
     if (phase !== 'playing' || locked || !target()) return;
     tick();
     if (results.has(name)) { flashLabel(name, ''); setFeedback(name + ' er allerede fullført.'); return; }
-    if(physical)return choosePhysical(name);
     window.GeoOnline?.statleAnswer(name);
     if (name !== target().n) {
       roundMistakes++; mistakes++; updateStats();
@@ -205,32 +203,16 @@
     setFeedback('Riktig! ' + name + ' · ' + (roundTime / 1000).toFixed(1).replace('.', ',') + ' s', 'good');
     updateStats(); later(next, 650);
   }
-  function choosePhysical(name){
-    const correct=name===target().n,maxAttempts=variant==='strict'?1:3;
-    if(!correct){roundMistakes++;mistakes++;}
-    const done=correct||roundMistakes>=maxAttempts;
-    window.GeoOnline?.statleAnswer(name,false,done);
-    if(!correct){
-      const el=elements.get(name);el.classList.add('wrong');later(()=>el.classList.remove('wrong'),700);
-      if(variant==='practice')flashLabel(name,'error');
-      if(!done){prompt();setFeedback(variant==='practice'?'Det var '+name+'.':'Feil. Prøv igjen.','error');if(variant==='practice'&&roundMistakes===2)showHint();updateStats();return;}
-    }
-    const band=correct?Math.min(2,roundMistakes):3,earned=correct?(variant==='strict'?1:3-roundMistakes):0;
-    points+=earned;results.set(target().n,{band,points:earned,ms:roundTime,mistakes:roundMistakes});setBand(target().n,band);locked=true;
-    const el=elements.get(target().n);el.classList.add(correct?'correct':'hinted');flashLabel(target().n,correct?'':'error',correct?900:1800);
-    setFeedback(correct?'+'+earned+' poeng':'Riktig svar: '+target().n,correct?'good':'error');
-    updateStats();later(next,correct?650:1900);
-  }
-  function start() {const selected=variant;document.querySelectorAll('[name="physical-mode"]').forEach(input=>input.disabled=true);const ready=names=>{variant=selected;begin(names);};if(window.GeoOnline)return GeoOnline.startStatle(ready);return ready();}
+  function start(){document.querySelectorAll('[name="water-category"]').forEach(input=>input.disabled=true);if(window.GeoOnline)return GeoOnline.startStatle(begin);return begin();}
   function begin(names) {
     generation++; clearEffects();if($('statle-score'))$('statle-score').hidden=true;
     results = new Map(); index = 0; totalTime = 0; roundTime = 0; lastTick = performance.now();
-    roundMistakes = 0; mistakes = 0; skipped = 0; locked = false;points=0;
+    roundMistakes = 0; mistakes = 0; skipped = 0; locked = false;
     elements.forEach(el => { delete el.dataset.band; el.classList.remove('found'); el.setAttribute('aria-label', shapeLabel); });
     markers.forEach(el => { delete el.dataset.band; el.setAttribute('aria-label', counties ? 'Ekstra klikkfelt for et lite fylke' : kart ? 'Ekstra klikkfelt for et lite land' : 'Ekstra klikkfelt for en liten delstat'); });
     queue = names ? names.map(name=>states.find(s=>s.n===name)) : states.filter(s => !results.has(s.n));
     if(!names)for (let i = queue.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [queue[i],queue[j]] = [queue[j],queue[i]]; }
-    setPhase('playing'); $('overlay').hidden = true;if($('physical-options'))$('physical-options').hidden=true;
+    setPhase('playing'); $('overlay').hidden = true;if($('water-options'))$('water-options').hidden=true;
     $('mapViewport').scrollTo({left:0,top:0});
     prompt();
     $('targetName').textContent = target().n; $('elapsed').textContent = '00:00';
@@ -253,11 +235,11 @@
     $('targetName').textContent = physical ? 'Alle stedene er fullført.' : counties ? 'Alle fylkene er på plass.' : kart ? 'Alle landene er på plass.' : 'Hele USA er på plass.';
     $('skip').disabled = true;
     const counts = [0,0,0,0]; results.forEach(r => counts[r.band]++);
-    setFeedback(physical?points+' / '+(total*(variant==='strict'?1:3))+' poeng':('Alle ' + total + ' fullført' + ' · ' + timeText(totalTime) + ' · ' + mistakes + ' feil · ' + skipped + ' hoppet over. Grønn: ' + counts[0] + ', gul: ' + counts[1] + ', oransje: ' + counts[2] + ', rød: ' + counts[3] + '.'));
+    setFeedback(('Alle ' + total + ' fullført' + ' · ' + timeText(totalTime) + ' · ' + mistakes + ' feil · ' + skipped + ' hoppet over. Grønn: ' + counts[0] + ', gul: ' + counts[1] + ', oransje: ' + counts[2] + ', rød: ' + counts[3] + '.'));
   }
   function clickedName(event,element){
     if(!physical)return element.dataset.state;
-    if(element.classList.contains('small-marker')){const local=new DOMPoint(event.clientX,event.clientY).matrixTransform(element.getScreenCTM().inverse());if(element.querySelector('.visible').isPointInFill(local))return element.dataset.state;}
+    if(element.classList.contains('small-marker')){let nearest=null,distance=Infinity;for(const [name,marker] of markers){const circle=marker.querySelector('.visible'),matrix=marker.getScreenCTM(),local=new DOMPoint(event.clientX,event.clientY).matrixTransform(matrix.inverse());if(!circle.isPointInFill(local))continue;const center=new DOMPoint(circle.cx.baseVal.value,circle.cy.baseVal.value).matrixTransform(matrix),d=(event.clientX-center.x)**2+(event.clientY-center.y)**2;if(d<distance){distance=d;nearest=name;}}if(nearest)return nearest;}
     const p=new DOMPoint(event.clientX,event.clientY).matrixTransform($('map').getScreenCTM().inverse()),clicked=elements.get(element.dataset.state);let painted;
     // A neighbour's enlarged touch corridor must never steal a click on the
     // actual lake/strait/river beneath it. Respect the visible painting order.
@@ -297,17 +279,29 @@
     generation++;clearEffects();elements.clear();markers.clear();centers.clear();
     $('states').replaceChildren();$('smallStates').replaceChildren();$('insetSeparators').setAttribute('d','');
     $('map').setAttribute('viewBox','0 0 900 550');
-    results=new Map();index=0;mistakes=0;totalTime=0;points=0;setPhase('ready');locked=false;
+    results=new Map();index=0;mistakes=0;totalTime=0;setPhase('ready');locked=false;
     $('completed').textContent='0';$('elapsed').textContent='00:00';$('mistakes').textContent='0 feil';$('progressFill').style.width='0%';
     $('overlay').hidden=false;$('start').disabled=true;$('skip').disabled=true;$('restart').disabled=true;$('statle-score').hidden=true;
-    document.querySelectorAll('[name="physical-mode"]').forEach(input=>input.disabled=false);
+    document.querySelectorAll('[name="water-category"]').forEach(input=>input.disabled=false);
   }
+  const waterCategories=()=>[...document.querySelectorAll('[name="water-category"]:checked')].map(input=>input.value).sort();
+
+  // A floating world-map panel can be moved from any non-interactive surface.
+  const panel=document.querySelector('.game-panel');let panelDrag=null;
+  panel.addEventListener('pointerdown',event=>{
+    if(!physical||event.button!==0||event.target.closest('button,a,input,label,select,summary,details,.water-options,.panel-header'))return;
+    const rect=panel.getBoundingClientRect();panelDrag={id:event.pointerId,x:event.clientX,y:event.clientY,left:rect.left,top:rect.top};panel.setPointerCapture(event.pointerId);event.preventDefault();
+  });
+  panel.addEventListener('pointermove',event=>{if(!panelDrag||event.pointerId!==panelDrag.id)return;const rect=panel.getBoundingClientRect();panel.style.left=Math.max(6,Math.min(innerWidth-rect.width-6,panelDrag.left+event.clientX-panelDrag.x))+'px';panel.style.top=Math.max(6,Math.min(innerHeight-rect.height-6,panelDrag.top+event.clientY-panelDrag.y))+'px';panel.style.bottom='auto';});
+  const stopPanelDrag=()=>{panelDrag=null;};panel.addEventListener('pointerup',stopPanelDrag);panel.addEventListener('pointercancel',stopPanelDrag);panel.addEventListener('lostpointercapture',stopPanelDrag);
+  addEventListener('resize',()=>{if(!physical)return;$('map').setAttribute('preserveAspectRatio',innerWidth>700?'none':'xMidYMid meet');if(panel.style.top){const r=panel.getBoundingClientRect();panel.style.left=Math.max(6,Math.min(innerWidth-r.width-6,r.left))+'px';panel.style.top=Math.max(6,Math.min(innerHeight-r.height-6,r.top))+'px';}});
+
   const readMap=url=>fetch(url).then(response=>{if(!response.ok)throw Error('Kartet kunne ikke hentes');return response.json();});
   let continents,countyMap,worldWater,mountainEurope;
   async function selectMap(region) {
-    const titles={fylker:'Norske fylker',europe:'Europa',asia:'Asia',northAmerica:'Nord- og Mellom-Amerika',southAmerica:'Sør-Amerika',africa:'Afrika',oceania:'Oseania',rivers:'Verdens elver',lakes:'Verdens innsjøer',mountains:'Verdens fjellkjeder',europeWater:'Europas vannområder'};
+    const titles={fylker:'Norske fylker',europe:'Europa',asia:'Asia',northAmerica:'Nord- og Mellom-Amerika',southAmerica:'Sør-Amerika',africa:'Afrika',oceania:'Oseania',rivers:'Verdens elver',lakes:'Innsjøer og havområder',mountains:'Fjellkjeder og høyland'};
     if(!Object.hasOwn(titles,region))return;
-    const token=++mapGeneration;window.GeoOnline?.resetStatle();resetMap();document.body.dataset.region=region;counties=region==='fylker';physical=['rivers','lakes','mountains','europeWater'].includes(region);document.body.dataset.physical=String(physical);document.body.dataset.variant=variant;shapeLabel=physical?'Sted på kartet':counties?'Fylke på kartet':'Land på kartet';
+    panel.style.removeProperty('top');panel.style.removeProperty('left');panel.style.removeProperty('bottom');const token=++mapGeneration;window.GeoOnline?.resetStatle();resetMap();document.body.dataset.region=region;counties=region==='fylker';physical=['rivers','lakes','mountains'].includes(region);document.body.dataset.physical=String(physical);shapeLabel=physical?'Sted på kartet':counties?'Fylke på kartet':'Land på kartet';
     $('kart-selection').hidden=true;$('kart-game').hidden=false;$('targetName').textContent=titles[region];$('targetVerb').textContent='Klar for en runde?';$('start').textContent='Laster kart …';setFeedback('Laster kart …');
     const url=new URL(location.href);url.searchParams.set('region',region);history.replaceState(null,'',url);
     try {
@@ -315,23 +309,22 @@
       else if(physical){
         let data;if(['rivers','lakes'].includes(region)){worldWater||=readMap('../assets/geography/physical-maps/world-water.json').catch(e=>{worldWater=null;throw e;});data=await worldWater;}
         else{mountainEurope||=readMap('../assets/geography/physical-maps/mountain-europe.json').catch(e=>{mountainEurope=null;throw e;});data=await mountainEurope;}
-        if(token!==mapGeneration)return;regionData={...data.regions[region],background:data.regions[region].background||data.background};states=regionData.states;
+        if(token!==mapGeneration)return;regionData={...data.regions[region],background:data.regions[region].background||data.background};states=regionData.states.filter(s=>region!=='lakes'||waterCategories().includes(s.group));document.body.dataset.waterCategories=waterCategories().join(',');
         if(window.GEO_QUIZ_EN)for(const state of states)if(state.en)window.GEO_QUIZ_EN.names[state.n]=state.en;
       }else {continents||=readMap('../assets/geography/continent-maps.json').catch(error=>{continents=null;throw error;});const data=await continents;if(token!==mapGeneration)return;regionData=data.regions[region];states=regionData.states;}
       if(token!==mapGeneration)return;total=states.length;
-      if(!total||new Set(states.map(s=>s.n)).size!==total)throw Error('Ufullstendig kart');
+      if(new Set(states.map(s=>s.n)).size!==total)throw Error('Ufullstendig kart');
       $('total-count').textContent=' / '+total;$('map').setAttribute('aria-label',counties?'Klikkbart kart over Norges 15 fylker':'Klikkbart kart over '+titles[region]);
       document.querySelector('.map-credit').hidden=counties||physical;document.querySelector('.county-credit').hidden=!counties;document.querySelector('.physical-credit').hidden=!physical;
-      $('physical-options').hidden=!physical;$('mistakes-label').textContent=physical?'Poeng':'Feil';
-      document.querySelectorAll('.legend [data-standard-legend]').forEach(el=>el.hidden=physical);
+      $('water-options').hidden=region!=='lakes';$('mistakes-label').textContent=window.QuizLanguage?.language==='en'?'Mistakes':'Feil';
       updateStats();
-      buildMap();window.ClickMapZoom?.setBase();window.dispatchEvent(new Event('resize'));$('start').disabled=false;$('start').textContent='Start →';setFeedback('Klikk i kartet for å se navn før start.');
+      $('map').setAttribute('preserveAspectRatio',physical&&innerWidth>700?'none':'xMidYMid meet');buildMap();window.ClickMapZoom?.setBase();window.dispatchEvent(new Event('resize'));$('statle-top-ten').disabled=!total;$('start').disabled=!total;$('start').textContent=total?'Start →':'Velg minst én kategori';setFeedback('Klikk i kartet for å se navn før start.');
     }catch(_){if(token!==mapGeneration)return;$('start').textContent='Kartet kunne ikke lastes';setFeedback('Velg kart på nytt for å prøve igjen.','error');}
   }
   if(kart){
     document.querySelectorAll('[data-map-region]').forEach(button=>button.addEventListener('click',()=>selectMap(button.dataset.mapRegion)));
     $('kart-back').addEventListener('click',event=>{event.preventDefault();++mapGeneration;window.GeoOnline?.resetStatle();resetMap();$('kart-game').hidden=true;$('kart-selection').hidden=false;delete document.body.dataset.region;delete document.body.dataset.physical;const url=new URL(location.href);url.searchParams.delete('region');history.replaceState(null,'',url);document.querySelector('#kart-selection h1')?.focus();});
-    document.querySelectorAll('[name="physical-mode"]').forEach(input=>input.addEventListener('change',()=>{variant=input.value;document.body.dataset.variant=variant;updateStats();}));
+    document.querySelectorAll('[name="water-category"]').forEach(input=>input.addEventListener('change',()=>selectMap('lakes')));
     const selected=new URLSearchParams(location.search).get('region');if(selected)selectMap(selected);
     return;
   }

@@ -83,7 +83,7 @@ async function answerAfterZoom(page){
   await page.goto(base+'/geografi/kart.html');
   assert.equal(await page.locator('#kart-selection').isVisible(),true);
   assert.equal(await page.locator('#kart-game').isVisible(),false);
-  assert.equal(await page.locator('[data-map-region]').count(),11);
+  assert.equal(await page.locator('[data-map-region]').count(),10);
   assert.equal(await page.locator('.kart-statle-link').getAttribute('href'),'statle.html','USA keeps its original Statle page');
   await page.locator('#kart-menu-button').click();assert.equal(await page.locator('#geoMenu').isVisible(),true);
   await page.keyboard.press('Escape');assert.equal(await page.locator('#kart-menu-button').getAttribute('aria-expanded'),'false');

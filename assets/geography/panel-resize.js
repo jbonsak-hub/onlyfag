@@ -19,7 +19,7 @@
     const maximum = () => Math.min(480, Math.max(220, win.innerWidth - 420));
     function refresh() {
       const width = Math.round(Math.max(220, Math.min(maximum(), preferred)));
-      handle.hidden = win.innerWidth <= 700 || !active();
+      handle.hidden = win.innerWidth <= 700 || body.dataset.physical === 'true' || !active();
       const value = width + 'px';
       if (body.style.getPropertyValue('--q-panel') !== value) {
         body.style.setProperty('--q-panel',value);

@@ -10,8 +10,8 @@
     view.x=Math.max(base.x,Math.min(base.x+base.w-view.w,view.x));view.y=Math.max(base.y,Math.min(base.y+base.h-view.h,view.y));
     svg.setAttribute('viewBox',`${view.x} ${view.y} ${view.w} ${view.h}`);
     // Keep small-country targets usable without turning them into giant dots.
-    const screenScale=svg.getScreenCTM()?.a;
-    if(screenScale>0)svg.querySelectorAll('.small-marker').forEach(marker=>{const circle=marker.querySelector('circle'),x=circle.cx.baseVal.value,y=circle.cy.baseVal.value;marker.setAttribute('transform',`translate(${x} ${y}) scale(${1/screenScale}) translate(${-x} ${-y})`);});
+    const screenMatrix=svg.getScreenCTM(),screenScale=screenMatrix?.a,screenScaleY=screenMatrix?.d;
+    if(screenScale>0)svg.querySelectorAll('.small-marker').forEach(marker=>{const circle=marker.querySelector('circle'),x=circle.cx.baseVal.value,y=circle.cy.baseVal.value;marker.setAttribute('transform',`translate(${x} ${y}) scale(${1/screenScale} ${1/screenScaleY}) translate(${-x} ${-y})`);});
     svg.classList.toggle('map-is-zoomed',scale()>1.01);
     const out=document.getElementById('map-zoom-value');if(out)out.textContent=Math.round(scale()*100)+'%';
     const minus=document.getElementById('map-zoom-out'),plus=document.getElementById('map-zoom-in');if(minus)minus.disabled=scale()<=1.001;if(plus)plus.disabled=scale()>=13.999;

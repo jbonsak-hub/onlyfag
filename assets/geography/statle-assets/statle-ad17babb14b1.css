@@ -38,14 +38,69 @@ body[data-quiz="kart"]{background:#f3f6f0;min-height:100dvh}body[data-quiz="kart
 /* One exit, a quiet chooser and no leaderboard interruption while playing. */
 body[data-phase="playing"] #statle-top-ten{display:none!important}
 .kart-selection{max-width:1120px}.kart-chooser{display:block;min-height:0;padding:24px 0}.kart-chooser h1{font-size:42px;letter-spacing:-1.8px;line-height:1.1;margin:0 0 24px;color:#245845}.kart-map-groups{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:26px}.kart-map-groups h2{font-size:13px;color:#5b735e;margin:0 0 12px;font-weight:650}.kart-cards{gap:10px}.kart-cards>button,.kart-cards>a{display:flex;align-items:center;min-height:67px;padding:15px}.kart-map-groups>section:last-child .kart-cards{grid-template-columns:1fr}.kart-cards strong{font-size:14px}
-.physical-options{border:0;padding:0;margin:0;display:flex;gap:4px}.physical-options legend{font-size:10px;font-weight:600;color:#536a59;margin-bottom:6px}.physical-options label{position:relative;flex:1}.physical-options input{position:absolute;opacity:0;width:1px;height:1px}.physical-options span{display:block;border:1px solid #c8d7c3;border-radius:5px;padding:8px 3px;text-align:center;font-size:11px;cursor:pointer}.physical-options input:checked+span{background:#245845;color:white;border-color:#245845}.physical-options input:focus-visible+span{outline:3px solid #d99136;outline-offset:2px}
 .physical-background{pointer-events:none;vector-effect:non-scaling-stroke}.physical-background.land{fill:#f4f2e7;stroke:#a4b6aa;stroke-width:.65}.physical-background.border{fill:none;stroke:#adbaad;stroke-width:.5}.physical-background.lake{fill:#7699a5;stroke:#557b8a;stroke-width:.5}.physical-background.river{fill:none;stroke:#7197a4;stroke-width:.8}.physical-background.sea{fill:#aacbd3;stroke:none}
 .physical-target{--feature:#1c526b;cursor:pointer;outline:none}.physical-target.range{--feature:#c29b63}.physical-shape{fill:var(--feature);stroke:#173e4d;stroke-width:.7;stroke-linejoin:round;transition:fill .15s,stroke .15s}.physical-target.range .physical-shape{stroke:#92703f;stroke-width:.8}.physical-target.river .physical-shape{fill:none;stroke:var(--feature);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}.physical-target.sea{--feature:#608f9e}.physical-target.sea .physical-shape{stroke:#426c7e;stroke-width:.65}.physical-hit{fill:transparent;stroke:transparent;stroke-linecap:round;stroke-linejoin:round}.physical-target.river .physical-hit{fill:none;pointer-events:stroke}.physical-target:hover,.physical-target:focus-visible,.physical-target.hovered{--feature:#3687a0}.physical-target.range:hover,.physical-target.range:focus-visible,.physical-target.range.hovered{--feature:#e2b779}.physical-target:focus-visible .physical-shape,.physical-target.hovered .physical-shape{stroke-width:2}.physical-target[data-band="0"]{--feature:var(--green)}.physical-target[data-band="1"]{--feature:var(--yellow)}.physical-target[data-band="2"]{--feature:var(--orange)}.physical-target[data-band="3"]{--feature:var(--red)}.physical-target.wrong{--feature:#c8564c}.physical-target.hinted{--feature:#f2af38}.physical-target.correct .physical-shape,.physical-target.hinted .physical-shape{stroke-width:3}.physical-target.river.correct .physical-shape,.physical-target.river.hinted .physical-shape{stroke-width:5}.physical-target.river.wrong .physical-shape{stroke-width:4}
-body[data-physical="true"] .legend{font-size:10px}.physical-options~.ready-actions{margin-top:-6px}
 .physical-marker .visible{fill:#1c526b;stroke:#f8fff7;stroke-width:1.2}.physical-marker.range .visible{fill:#b98b4d}.physical-marker .hit{fill:transparent}
-body[data-region="europeWater"]{--water:#608f9e}body[data-region="europeWater"] .physical-target.sea .physical-shape{stroke:none}body[data-region="europeWater"] .physical-target.sea.hovered .physical-shape,body[data-region="europeWater"] .physical-target.sea:focus-visible .physical-shape{stroke:#244d60;stroke-width:1}
 .map-zoom-hint{z-index:2}
 @media(max-width:850px){.kart-map-groups{grid-template-columns:1fr;gap:24px}.kart-map-groups>section:last-child .kart-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){
- html,body{height:100%;overflow:hidden}.game{height:100dvh;min-height:0;display:flex;flex-direction:column}.map-viewport{order:2;flex:1;min-height:0;height:auto}.game-panel{order:1;flex-shrink:0;max-height:43dvh;overflow:auto;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:7px 10px;padding:10px 12px;border-top:0;border-bottom:1px solid #91bac1}.panel-header{grid-column:1/-1}.panel-header .brand{font-size:21px}.panel-header .geo-menu-toggle{padding:6px 8px;font-size:11px}.target-block{grid-column:1;grid-row:auto;padding:9px 11px;gap:3px}#targetVerb{font-size:9px}#targetName{font-size:19px;min-height:22px}.stats{grid-column:2;align-self:center;gap:5px}.stats>div>span{font-size:8px}.stats strong,.stats time,#mistakes{font-size:12px}.stats small{font-size:9px}.progress-track{grid-column:1/-1;margin-top:0;height:3px}.game-controls{grid-column:2;grid-row:auto;display:flex;align-items:center;justify-content:flex-end;gap:8px}.game-controls button{padding:5px;font-size:10px}#skip{font-size:10px}.ready-actions{grid-column:1/-1}.primary-button{padding:9px;font-size:12px}.legend{display:none!important}#feedback{grid-column:1;grid-row:auto;min-height:0;font-size:11px;line-height:1.3;align-self:center}footer,body[data-quiz="kart"] footer{grid-column:1/-1;display:flex;flex-direction:row;gap:8px;margin:0;padding:0;align-items:center;justify-content:space-between}footer>span{display:none}.quiz-page-back{font-size:11px;padding:6px 8px}.physical-options{grid-column:1/-1}.physical-options span{padding:6px 3px}#statle-score{grid-column:1/-1;margin:0;font-size:12px}#statle-top-ten{grid-column:1/-1}body[data-quiz="kart"]:has(#kart-selection:not([hidden])){height:auto;overflow:auto}.kart-selection{padding:16px}.kart-chooser{padding:24px 0 12px}.kart-chooser h1{font-size:35px;margin-bottom:20px}.kart-cards>button,.kart-cards>a{min-height:59px;padding:12px}.kart-cards strong{font-size:13px}.map-tools{top:8px;right:8px}.map-tools button{min-width:33px;height:33px}.map-zoom-hint{font-size:8px;padding:4px 6px;right:8px;bottom:6px}
+ html,body{height:100%;overflow:hidden}.game{height:100dvh;min-height:0;display:flex;flex-direction:column}.map-viewport{order:2;flex:1;min-height:0;height:auto}.game-panel{order:1;flex-shrink:0;max-height:43dvh;overflow:auto;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:7px 10px;padding:10px 12px;border-top:0;border-bottom:1px solid #91bac1}.panel-header{grid-column:1/-1}.panel-header .brand{font-size:21px}.panel-header .geo-menu-toggle{padding:6px 8px;font-size:11px}.target-block{grid-column:1;grid-row:auto;padding:9px 11px;gap:3px}#targetVerb{font-size:9px}#targetName{font-size:19px;min-height:22px}.stats{grid-column:2;align-self:center;gap:5px}.stats>div>span{font-size:8px}.stats strong,.stats time,#mistakes{font-size:12px}.stats small{font-size:9px}.progress-track{grid-column:1/-1;margin-top:0;height:3px}.game-controls{grid-column:2;grid-row:auto;display:flex;align-items:center;justify-content:flex-end;gap:8px}.game-controls button{padding:5px;font-size:10px}#skip{font-size:10px}.ready-actions{grid-column:1/-1}.primary-button{padding:9px;font-size:12px}.legend{display:none!important}#feedback{grid-column:1;grid-row:auto;min-height:0;font-size:11px;line-height:1.3;align-self:center}footer,body[data-quiz="kart"] footer{grid-column:1/-1;display:flex;flex-direction:row;gap:8px;margin:0;padding:0;align-items:center;justify-content:space-between}footer>span{display:none}.quiz-page-back{font-size:11px;padding:6px 8px}#statle-score{grid-column:1/-1;margin:0;font-size:12px}#statle-top-ten{grid-column:1/-1}body[data-quiz="kart"]:has(#kart-selection:not([hidden])){height:auto;overflow:auto}.kart-selection{padding:16px}.kart-chooser{padding:24px 0 12px}.kart-chooser h1{font-size:35px;margin-bottom:20px}.kart-cards>button,.kart-cards>a{min-height:59px;padding:12px}.kart-cards strong{font-size:13px}.map-tools{top:8px;right:8px}.map-tools button{min-width:33px;height:33px}.map-zoom-hint{font-size:8px;padding:4px 6px;right:8px;bottom:6px}
 }
+/* World maps use the entire canvas; the compact panel floats in the Pacific. */
+body[data-physical="true"] .game{display:block;position:relative}
+body[data-physical="true"] .map-viewport{position:absolute;inset:0;width:100%;height:100%;padding:8px}
+body[data-physical="true"] .game-panel{position:fixed;z-index:4;left:12px;bottom:12px;top:auto;width:222px;min-width:186px;max-width:min(330px,calc(100vw - 24px));height:auto;max-height:calc(100dvh - 68px);padding:12px;gap:10px;border:1px solid #8ca99a;border-radius:10px;background:#fffefaf5;box-shadow:0 4px 20px #234c3725;display:flex;overflow:auto;resize:horizontal;cursor:grab}
+body[data-physical="true"] .game-panel:active{cursor:grabbing}
+body[data-physical="true"] .game-panel :is(button,a,input,label){cursor:pointer}
+body[data-physical="true"] .panel-header{position:fixed;top:10px;left:10px;width:auto;z-index:5;cursor:default}
+body[data-physical="true"] .panel-header .brand{display:none}
+body[data-physical="true"] .target-block{padding:10px 12px;gap:4px;min-height:55px}
+body[data-physical="true"] #targetName{font-size:20px;min-height:23px;letter-spacing:-.4px}
+body[data-physical="true"] #targetVerb{font-size:10px}
+body[data-physical="true"] .stats{gap:7px}
+body[data-physical="true"] .stats>div{gap:3px}
+body[data-physical="true"] .stats>div>span{font-size:9px}
+body[data-physical="true"] .stats :is(strong,time),body[data-physical="true"] #mistakes{font-size:13px}
+body[data-physical="true"] .stats small{font-size:10px}
+body[data-physical="true"] .progress-track{margin:0;height:3px}
+body[data-physical="true"] .primary-button{padding:8px;font-size:11px}
+body[data-physical="true"] .game-controls{display:flex;gap:10px;align-items:center;justify-content:space-between}
+body[data-physical="true"] .game-controls button{font-size:10px;padding:6px}
+body[data-physical="true"] #skip{font-size:10px}
+body[data-physical="true"] #feedback{min-height:0;margin:0;font-size:11px;line-height:1.35}
+body[data-physical="true"] .legend{display:grid;grid-template-columns:1fr 1fr;font-size:8px;gap:6px;padding-top:9px}
+body[data-physical="true"] .legend>strong{display:none}
+body[data-physical="true"] .legend>span{gap:4px;white-space:nowrap}
+body[data-physical="true"] .legend .dot{width:7px;height:7px}
+body[data-physical="true"] footer{margin:0;padding:0;gap:6px}
+body[data-physical="true"] footer .quiz-page-back{font-size:11px;padding:6px 8px}
+body[data-physical="true"] footer>span{font-size:8px;line-height:1.2}
+body[data-physical="true"] #statle-score{margin:0;font-size:14px;font-weight:700}
+body[data-physical="true"][data-phase="playing"] footer>span{display:none}
+.water-options{margin:0;padding:0;border:0;display:grid;gap:7px;font-size:11px;cursor:default}
+.water-options legend{font-size:10px;font-weight:650;margin-bottom:6px}
+.water-options label{display:flex;align-items:center;gap:7px;line-height:1.25}
+.water-options input{margin:0;accent-color:#245845;width:14px;height:14px;flex-shrink:0}
+.physical-target.plateau{--feature:#d9c593}.physical-target.plateau .physical-shape{stroke:#a69768;stroke-dasharray:2 2}
+.physical-target.plateau:hover,.physical-target.plateau:focus-visible{--feature:#e8d7a9}
+/* Named ocean areas remain distinct from the dark, high-contrast lakes. */
+body[data-region="lakes"]{--water:#adced5}
+body[data-region="lakes"] .physical-target.sea{--feature:#83afbd}
+body[data-region="lakes"] .physical-target.sea .physical-shape{stroke:#5f8f9f;stroke-width:.6}
+body[data-region="lakes"] .physical-target.sea:hover{--feature:#608fa4}
+.physical-target[data-band="0"]{--feature:var(--green)}.physical-target[data-band="1"]{--feature:var(--yellow)}.physical-target[data-band="2"]{--feature:var(--orange)}.physical-target[data-band="3"]{--feature:var(--red)}
+body[data-region="lakes"] .physical-target.sea[data-band="0"]{--feature:var(--green)}body[data-region="lakes"] .physical-target.sea[data-band="1"]{--feature:var(--yellow)}body[data-region="lakes"] .physical-target.sea[data-band="2"]{--feature:var(--orange)}body[data-region="lakes"] .physical-target.sea[data-band="3"]{--feature:var(--red)}
+body[data-region="lakes"] .physical-target.sea.wrong{--feature:#c8564c}
+body[data-region="lakes"] .physical-target.sea.hinted{--feature:#f2af38}
+@media(max-width:700px){
+ body[data-physical="true"] .map-viewport{padding:5px}
+ body[data-physical="true"] .game-panel{left:8px;bottom:8px;width:196px;min-width:175px;max-height:49dvh;padding:10px;gap:8px;resize:none;max-width:calc(100vw - 16px)}
+ body[data-physical="true"] .panel-header{left:8px;top:8px}
+ body[data-physical="true"] #targetName{font-size:17px;min-height:20px}
+ body[data-physical="true"] .target-block{padding:8px 10px;min-height:48px}
+ body[data-physical="true"] .legend{display:none!important}
+ body[data-physical="true"] footer>span{display:none}
+ body[data-physical="true"] #feedback{font-size:10px}
+ body[data-physical="true"] .water-options{font-size:10px;gap:6px}
+}
+@media(max-height:470px){body[data-physical="true"] .game-panel{max-height:calc(100dvh - 52px);gap:6px;padding:9px;width:196px}body[data-physical="true"] .legend{display:none!important}body[data-physical="true"] .target-block{min-height:0}body[data-physical="true"] footer>span{display:none}}

@@ -115,7 +115,7 @@
   "Øyer, øygrupper og halvøyer": "Islands, archipelagos and peninsulas",
   "Øyer og halvøyer": "Islands and peninsulas",
   "Regioner og områder": "Regions and areas",
-  "Hav og sjøområder": "Oceans and seas",
+  "Hav og sjøområder": "Seas and oceans",
   "Stred, kanaler, bukter og kapp": "Straits, canals, bays and capes",
   "Stred og kanaler": "Straits and canals",
   "Kjente byggverk og historiske steder": "Landmarks and historic sites",
@@ -592,5 +592,10 @@
   "1. forsøk · 1 poeng": "1st try · 1 point",
   "2. forsøk · 2 poeng": "2nd try · 2 points",
   "3. forsøk · 1 poeng": "3rd try · 1 point",
-  "Bom / hoppet over · 0 poeng": "Missed / skipped · 0 points"
+  "Bom / hoppet over · 0 poeng": "Missed / skipped · 0 points",
+  "Fjellkjeder og høyland": "Mountain ranges and plateaus",
+  "Innsjøer og havområder": "Lakes and seas",
+  "Ta med": "Include",
+  "Bukter og stred": "Gulfs and straits",
+  "Velg minst én kategori": "Select at least one category"
 }
