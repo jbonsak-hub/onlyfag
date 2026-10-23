@@ -1,0 +1,22 @@
+{
+  "source": {
+    "creator": "Oslo kommune",
+    "title": "Sognsvann – bathing place map location",
+    "url": "https://www.oslo.kommune.no/natur-kultur-og-fritid/tur-og-friluftsliv/badeplasser-og-temperaturer/sognsvann/",
+    "conversion": "Extracted the unchanged geo-json-text point published in the official page. It locates the bathing place; it is not a lake boundary."
+  },
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7243214,
+          59.9702878
+        ]
+      }
+    }
+  ]
+}

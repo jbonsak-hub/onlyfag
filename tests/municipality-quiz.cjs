@@ -59,7 +59,7 @@ const server = http.createServer((request, response) => {
     const africaBox = await page.locator('[data-card="africa"]').boundingBox();
     const entryBox = await entry.boundingBox();
     assert(entryBox.y >= africaBox.y + africaBox.height, 'The municipality entry is below Africa');
-    assert(Math.abs(entryBox.x - africaBox.x) <= 1, 'The municipality entry shares the left column with Africa');
+    assert(entryBox.x > africaBox.x, 'The municipality entry occupies the right column beside Oslo');
     assert.equal(new URL(await entry.getAttribute('href'), page.url()).pathname, '/geografi/kommuner.html');
     await capture('map-menu-entry');
     await entry.click();

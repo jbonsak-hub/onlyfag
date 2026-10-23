@@ -1,0 +1,86 @@
+{
+  "source": {
+    "title": "Local geographical reference points for the Oslo learning map",
+    "description": "Lysaker and Sandvika retain GeoNames point coordinates. Sognsvann retains Oslo kommune’s published bathing-place point. Other points are chosen map reference positions within the named locality or nearby part of the forest, not legal or administrative boundaries.",
+    "geonames": {
+      "provider": "GeoNames",
+      "source": "geonamescache 3.0.2 (cities500)",
+      "license": "CC BY 4.0",
+      "url": "https://www.geonames.org/",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
+    }
+  },
+  "places": [
+    {
+      "name": "Fornebu",
+      "code": "place-fornebu",
+      "coordinate": [
+        10.6215,
+        59.899
+      ],
+      "category": "locality",
+      "reference": "https://www.baerum.kommune.no/"
+    },
+    {
+      "name": "Lysaker",
+      "code": "place-lysaker",
+      "coordinate": [
+        10.63545,
+        59.90994
+      ],
+      "category": "locality",
+      "geonameid": 3146631
+    },
+    {
+      "name": "Bekkestua",
+      "code": "place-bekkestua",
+      "coordinate": [
+        10.5814,
+        59.9187
+      ],
+      "category": "locality",
+      "reference": "https://www.baerum.kommune.no/"
+    },
+    {
+      "name": "Sandvika",
+      "code": "place-sandvika",
+      "coordinate": [
+        10.52774,
+        59.89073
+      ],
+      "category": "locality",
+      "geonameid": 3140128
+    },
+    {
+      "name": "Nordmarka",
+      "code": "place-nordmarka",
+      "coordinate": [
+        10.7,
+        60.009
+      ],
+      "category": "forest",
+      "reference": "https://www.oslo.kommune.no/natur-kultur-og-fritid/tur-og-friluftsliv/marka/"
+    },
+    {
+      "name": "Østmarka",
+      "code": "place-ostmarka",
+      "coordinate": [
+        10.91,
+        59.895
+      ],
+      "category": "forest",
+      "reference": "https://www.oslo.kommune.no/natur-kultur-og-fritid/tur-og-friluftsliv/marka/"
+    },
+    {
+      "name": "Sognsvann",
+      "code": "place-sognsvann",
+      "coordinate": [
+        10.7243214,
+        59.9702878
+      ],
+      "category": "lake",
+      "reference": "https://www.oslo.kommune.no/natur-kultur-og-fritid/tur-og-friluftsliv/badeplasser-og-temperaturer/sognsvann/",
+      "description": "Official Oslo kommune point for the Sognsvann bathing place; used as a truthful lake-location marker because the N1000 source omits this smaller water body."
+    }
+  ]
+}

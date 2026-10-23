@@ -2,7 +2,7 @@ import data from './data.json' with {type:'json'};
 export {data};
 const modes=new Set(['flags','capitals','flagcapital','places','countries','mapwiz','statle','fylker','kart','kommuner','bydeler']);
 const shapeQuiz=game=>['statle','fylker','kart','kommuner','bydeler'].includes(game);
-const shapeTargets=c=>c.game==='kommuner'?data.kommuner[c.county]:c.game==='kart'?(['lakes','seas'].includes(c.region)?c.categories.flatMap(group=>data.kartWaterGroups[group]):data.kart[c.region]):data[c.game];
+const shapeTargets=c=>c.game==='bydeler'?(c.variant==='oslo-28'?data.bydeler:data.bydelerLegacy):c.game==='kommuner'?data.kommuner[c.county]:c.game==='kart'?(['lakes','seas'].includes(c.region)?c.categories.flatMap(group=>data.kartWaterGroups[group]):data.kart[c.region]):data[c.game];
 const variants={flags:['flag-country-mc','country-flag-mc'],capitals:['country-capital-mc','capital-country-mc'],flagcapital:['flag-capital-mc','capital-flag-mc'],places:['desc-place-mc','place-desc-mc']};
 export const shuffle=items=>{const a=items.slice(),random=new Uint32Array(a.length);crypto.getRandomValues(random);for(let i=a.length-1;i>0;i--){const j=random[i]%(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;};
 export function config(input){
@@ -13,6 +13,7 @@ export function config(input){
   c.categories=[...new Set(input.categories)].sort();if(c.categories.some(k=>!Object.hasOwn(data.mapwiz,k)))throw Error('invalid_config');
  }else if(c.game==='kommuner'){c.county=input.county;if(typeof c.county!=='string'||!Object.hasOwn(data.kommuner,c.county))throw Error('invalid_config');}
  else if(c.game==='kart'){c.region=input.region;if(typeof c.region!=='string'||!Object.hasOwn(data.kart,c.region))throw Error('invalid_config');if(['lakes','seas'].includes(c.region)){const groups=input.categories===undefined?(c.region==='lakes'?['lakes']:['seas','gulfsStraits']):input.categories;if(!Array.isArray(groups)||!groups.length||groups.length>3||groups.some(group=>typeof group!=='string'||(!Object.hasOwn(data.kartWaterGroups,group)||(c.region==='seas'&&group==='lakes'))))throw Error('invalid_config');c.categories=[...new Set(groups)].sort();}}
+ else if(c.game==='bydeler'){if(input.variant!==undefined){if(input.variant!=='oslo-28')throw Error('invalid_config');c.variant=input.variant;}}
  else if(shapeQuiz(c.game)){}else if(c.game==='countries'){c.region=input.region||'world';if(!Object.hasOwn(data.regions,c.region))throw Error('invalid_config');}
  else{c.variant=input.variant||variants[c.game][0];if(!variants[c.game].includes(c.variant))throw Error('invalid_config');c.region=input.region||'world';if(c.game!=='places'&&!Object.hasOwn(data.regions,c.region))throw Error('invalid_config');if(c.game==='places')c.region='world';}
  return c;

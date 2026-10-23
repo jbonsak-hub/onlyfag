@@ -9,10 +9,17 @@ const assets = ['statle.css', 'statle.js', 'panel-resize.js', 'map-zoom.js'].map
   const extension = source.split('.').pop(), stem = source.slice(0,-extension.length-1);
   let content = fs.readFileSync(path.join(root, 'assets/geography/' + source), 'utf8').replace(/\r\n/g, '\n');
   if (source === 'statle.js') {
-    for (const dataFile of ['us-states.json', 'norway-counties.json', 'continent-maps.json', 'physical-maps/world-water.json', 'physical-maps/mountain-europe.json', 'oslo-bydeler/map.json']) {
+    for (const dataFile of ['us-states.json', 'norway-counties.json', 'continent-maps.json', 'physical-maps/world-water.json', 'physical-maps/mountain-europe.json', 'oslo-bydeler/oslo.json']) {
       const data = fs.readFileSync(path.join(root, 'assets/geography', dataFile), 'utf8').replace(/\r\n/g, '\n');
       const revision = crypto.createHash('sha256').update(data).digest('hex').slice(0,12);
-      content = content.split(dataFile).join(dataFile + '?v=' + revision);
+      if(dataFile==='oslo-bydeler/oslo.json') {
+        const versioned=dataFile.replace('.json','-'+revision+'.json');
+        const destination=path.join(root,'assets/geography',versioned);
+        if(checking) {
+          if(!fs.existsSync(destination)||fs.readFileSync(destination,'utf8')!==data)throw new Error('Rebuild the immutable Oslo map data');
+        } else fs.writeFileSync(destination,data);
+        content=content.split(dataFile).join(versioned);
+      } else content = content.split(dataFile).join(dataFile + '?v=' + revision);
     }
   }
   const hash = crypto.createHash('sha256').update(content).digest('hex').slice(0, 12);

@@ -106,15 +106,59 @@ def build():
     occupied = unary_union([row["geometry"] for row in rows])
     assert len(rows) == 16
     assert abs(sum(row["geometry"].area for row in rows) - occupied.area) < 0.01
-    canvas = municipalities.Canvas(occupied.bounds)
+    # Add the two neighbouring municipalities without inventing sub-locality
+    # boundaries. The four Bærum localities and the two large forest regions
+    # use explicit point targets instead of administrative-looking polygons.
+    for code, name in [("3212", "Nesodden"), ("3222", "Lørenskog")]:
+        feature = next(f for f in municipality_features if f["properties"]["id"] == code)
+        geometry = transform(project, shape(feature["geometry"])).buffer(0)
+        rows.append({"name": name, "code": code, "geometry": geometry, "kind": "land"})
+    bygdoy_source = municipalities.read_json_gzip(OUTPUT / "sources/bygdoy.geojson.gz")
+    bygdoy = transform(project, shape(bygdoy_source["features"][0]["geometry"])).buffer(0)
+    # Keep the small subdistrict inside its parent borough, preserving a
+    # readable independent target without a coastal sliver outside Frogner.
+    frogner = next(row["geometry"] for row in rows if row["code"] == "05")
+    rows.append({"name": "Bygdøy", "code": "bygdoy", "geometry": polygonal(bygdoy.intersection(frogner)), "kind": "land"})
+    occupied = unary_union([row["geometry"] for row in rows])
+    point_source = json.loads((OUTPUT / "sources/local-reference-points.json").read_text(encoding="utf-8"))
+    point_rows = [{**place, "geometry": transform(project, Point(*place["coordinate"]))}
+                  for place in point_source["places"]]
 
     hydrography = municipalities.read_json_gzip(municipalities.WATER_SOURCE)
     assert hydrography["crs"] == "EPSG:25833"
     water_geometries = [shape(f["geometry"]) for f in hydrography["features"]]
     water_kinds = [f["properties"]["kind"] for f in hydrography["features"]]
     water_tree = STRtree(water_geometries)
+    # The two large lakes exist in the pinned N1000 source. Select by a point
+    # inside the actual polygon, retaining the complete unsimplified outline.
+    lake_targets = []
+    for name, code, coordinate in [("Bogstadvannet", "lake-bogstad", (10.622, 59.970)),
+                                   ("Maridalsvannet", "lake-maridal", (10.772, 59.982))]:
+        point = transform(project, Point(*coordinate))
+        candidates = [int(index) for index in water_tree.query(point)
+                      if water_kinds[index] == "lake" and water_geometries[index].covers(point)]
+        assert len(candidates) == 1, "Named lake no longer matches the pinned water source"
+        index = candidates[0]
+        lake_targets.append({"name": name, "code": code, "geometry": water_geometries[index], "kind": "lake", "sourceIndex": index})
+    # UTM preserves geographical shape. Padding the canvas, rather than
+    # stretching its coordinates, keeps the expanded map approximately square.
+    extent = unary_union([occupied, *[row["geometry"] for row in point_rows],
+                          *[row["geometry"] for row in lake_targets]])
+    xmin, ymin, xmax, ymax = extent.bounds
+    width, height = xmax - xmin, ymax - ymin
+    target_width = max(width, height * 1.08)
+    target_height = max(height, width / 1.2)
+    xpad, ypad = (target_width - width) / 2, (target_height - height) / 2
+    # Leave markers and their touch targets clear of the viewport edge on
+    # small screens. This is geographic padding, never a projection stretch.
+    touch_margin = max(target_width, target_height) * 0.03
+    canvas = municipalities.Canvas((xmin - xpad - touch_margin, ymin - ypad - touch_margin,
+                                    xmax + xpad + touch_margin, ymax + ypad + touch_margin))
+    named_water = {row["sourceIndex"] for row in lake_targets}
     water = []
     for index in sorted(water_tree.query(occupied, predicate="intersects")):
+        if int(index) in named_water:
+            continue
         geometry = water_geometries[index].intersection(occupied)
         path = canvas.path(geometry)
         if path:
@@ -122,7 +166,7 @@ def build():
     assert water and any(w["kind"] == "river" for w in water)
 
     # Marka and adjacent municipalities remain non-playable context.
-    xmin, ymin, xmax, ymax = occupied.bounds
+    xmin, ymin, xmax, ymax = extent.bounds
     margin = max(xmax - xmin, ymax - ymin)
     window = box(xmin - margin, ymin - margin, xmax + margin, ymax + margin)
     nearby_land = []
@@ -143,14 +187,36 @@ def build():
         context = context.difference(unary_union(surfaces))
     # Context is intentionally calmer; only the surrounding land is simplified.
     context = context.simplify(10, preserve_topology=True)
-    boundaries = unary_union([r["geometry"].boundary for r in rows]).difference(occupied.boundary)
+    administrative = [row["geometry"] for row in rows if row["code"] != "bygdoy"]
+    administrative_union = unary_union(administrative)
+    boundaries = unary_union([g.boundary for g in administrative]).difference(administrative_union.boundary)
+    # The finer Bygdøy coastline differs slightly from the borough overview.
+    # Keep only its inland edge in the high-contrast administrative overlay;
+    # the actual playable coastline is retained and gets the ordinary outline.
+    bygdoy_geometry = next(row["geometry"] for row in rows if row["code"] == "bygdoy")
+    bygdoy_inland_edge = bygdoy_geometry.boundary.intersection(frogner.buffer(-250))
+    boundaries = unary_union([boundaries, bygdoy_inland_edge])
+    # Marka is background context. A marker identifies the requested nearby
+    # part of Nordmarka/Østmarka without claiming that the municipal boundary
+    # or all northern forest (which includes Lillomarka) is its true extent.
+    original_city = unary_union([row["geometry"] for row in rows[:16]])
+    marka = oslo_land.difference(original_city).intersection(window)
+    marka = unary_union([g for g in municipalities.polygons(marka) if g.area > 1_000_000])
+    if surfaces:
+        marka = marka.difference(unary_union(surfaces))
+    states = [{"n": row["name"], "a": row["code"], "kind": row.get("kind", "land"),
+               "d": canvas.path(row["geometry"]), "c": canvas.center(row["geometry"])}
+              for row in [*rows, *lake_targets]]
+    for row in point_rows:
+        states.append({"n": row["name"], "a": row["code"], "kind": "place", "marker": True,
+                       "category": row["category"], "c": canvas.point(row["geometry"].x, row["geometry"].y)})
+    assert len(states) == len({state["n"] for state in states}) == 28
     data = {
-        "title": "Bydeler i Oslo", "viewBox": canvas.view_box,
-        "states": [{"n": r["name"], "a": r["code"], "d": canvas.path(r["geometry"]),
-                    "c": canvas.center(r["geometry"])} for r in rows],
+        "title": "Oslo", "viewBox": canvas.view_box, "states": states,
         "water": water, "boundaries": canvas.path(boundaries),
-        "context": canvas.path(context),
+        "context": canvas.path(context), "forestContext": canvas.path(marka.simplify(10, preserve_topology=True)),
         "source": {"boundaries": source["source"], "hydrography": hydrography["source"],
+                   "bygdoy": bygdoy_source["source"], "places": point_source["source"],
                    "sentrum": {"method": "Oslo land minus the fifteen boroughs; connected component containing the city centre",
                                "coastline": topology.get("source", {}), "areaM2": round(sentrum.area, 2)},
                    "topologyRepair": {"overlapAreaM2": round(overlap_area, 2),
@@ -164,14 +230,14 @@ def main():
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     content = build()
-    path = OUTPUT / "map.json"
+    path = OUTPUT / "oslo.json"
     if args.check:
-        assert path.read_text(encoding="utf-8") == content, "Rebuild Oslo borough map"
+        assert path.read_text(encoding="utf-8") == content, "Rebuild Oslo map"
     else:
         path.write_text(content, encoding="utf-8")
     data = json.loads(content)
-    print(f"{'Verified' if args.check else 'Built'} Oslo borough map: "
-          f"{len(data['states'])} boroughs, {len(data['water'])} water features, "
+    print(f"{'Verified' if args.check else 'Built'} Oslo map: "
+          f"{len(data['states'])} targets, {len(data['water'])} water features, "
           f"{len(content.encode()):,} bytes")
 
 

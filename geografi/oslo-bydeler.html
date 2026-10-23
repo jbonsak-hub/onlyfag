@@ -4,16 +4,16 @@
   <script id="map-theme-init">try{document.documentElement.dataset.theme=localStorage.getItem("geoDarkMode")==="1"?"dark":"light"}catch(_){}</script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Bydeler i Oslo – Geografi – Onlyfag</title>
+  <title>Oslo – Geografi – Onlyfag</title>
   <link rel="stylesheet" href="../assets/geography/statle-assets/statle-68d86f629c18.css">
-  <link rel="stylesheet" href="../assets/geography/quiz-assets/municipality-selector-8e6780f0d327.css">
+  <link rel="stylesheet" href="../assets/geography/quiz-assets/municipality-selector-6934459ad4b1.css">
   <script src="../assets/analytics.js" defer></script>
   <script src="../assets/geography/statle-assets/map-zoom-2946052d5453.js" defer></script>
-  <script src="../assets/geography/statle-assets/statle-aec810462003.js" defer></script>
+  <script src="../assets/geography/statle-assets/statle-b37cae5a7501.js" defer></script>
   <script src="../assets/geography/statle-assets/panel-resize-975819e58e3b.js" defer></script>
   <link rel="stylesheet" href="../assets/geography/quiz-assets/online-highscores-34ace9c01c94.css">
   <script src="../assets/geography/quiz-assets/score-service-0bf91f3dbe8c.js" defer></script>
-  <script src="../assets/geography/quiz-assets/online-highscores-8756f1427dd7.js" defer></script>
+  <script src="../assets/geography/quiz-assets/online-highscores-ef8a88828e3b.js" defer></script>
 </head>
 <body data-quiz="bydeler" data-region="bydeler">
 
@@ -30,10 +30,10 @@
   </nav>
 </dialog>
 
-<main id="kart-game" class="game" aria-label="Bydelsquiz for Oslo">
+<main id="kart-game" class="game" aria-label="Kartquiz for Oslo">
   <div id="mapViewport" class="map-viewport">
     <span class="map-zoom-hint">Scroll eller klyp for å zoome · dra for å flytte</span>
-    <svg id="map" viewBox="0 0 900 550" aria-label="Klikkbart bydelskart over Oslo" role="group">
+    <svg id="map" viewBox="0 0 900 550" aria-label="Klikkbart kart over Oslo og nærområdene" role="group">
       <defs><filter id="hoverGlow" x="-35%" y="-35%" width="170%" height="170%"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
       <g id="states"></g>
       <path id="insetSeparators" class="inset-line" aria-hidden="true"/>
@@ -43,10 +43,10 @@
     </svg>
   </div>
   <aside class="game-panel" aria-label="Spillinformasjon og kontroller">
-    <header class="panel-header"><button id="geoMenuButton" class="geo-menu-toggle" type="button" aria-haspopup="dialog" aria-controls="geoMenu" aria-expanded="false">☰ Meny</button><strong class="brand">Bydeler</strong></header>
-    <div id="municipality-current-county" class="municipality-current-county">Oslo</div>
-    <div class="target-block"><span id="targetVerb">Klar for en runde?</span><strong id="targetName">Bydeler i Oslo</strong></div>
-    <div class="stats"><div><span>Fullført</span><strong><span id="completed">0</span><small id="total-count"> / 16</small></strong></div><div><span>Tid</span><time id="elapsed">00:00</time></div><div><span id="mistakes-label">Feil</span><strong id="mistakes">0</strong></div></div>
+    <header class="panel-header"><button id="geoMenuButton" class="geo-menu-toggle" type="button" aria-haspopup="dialog" aria-controls="geoMenu" aria-expanded="false">☰ Meny</button><strong class="brand">Oslo</strong></header>
+    <div id="municipality-current-county" class="municipality-current-county" hidden>Oslo</div>
+    <div class="target-block"><span id="targetVerb">Klar for en runde?</span><strong id="targetName">Oslo</strong></div>
+    <div class="stats"><div><span>Fullført</span><strong><span id="completed">0</span><small id="total-count"> / 28</small></strong></div><div><span>Tid</span><time id="elapsed">00:00</time></div><div><span id="mistakes-label">Feil</span><strong id="mistakes">0</strong></div></div>
     <div class="progress-track"><i id="progressFill"></i></div>
     <div id="overlay" class="ready-actions"><button id="start" class="primary-button" disabled>Laster kart …</button></div>
     <p id="feedback" role="status" aria-live="polite"></p>
@@ -61,6 +61,6 @@
     </footer>
   </aside>
 </main>
-<script src="../assets/geography/quiz-assets/quiz-language-bfced34e3c41.js"></script>
+<script src="../assets/geography/quiz-assets/quiz-language-80cac2b3c481.js"></script>
 </body>
 </html>

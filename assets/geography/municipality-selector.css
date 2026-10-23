@@ -90,3 +90,26 @@ body:is([data-quiz="kommuner"],[data-quiz="bydeler"]) .state.municipality{stroke
 :root[data-theme="dark"] .borough-reform-note{color:#b5cabe}
 body[data-quiz="bydeler"] footer{align-items:flex-start;flex-direction:column}
 body[data-quiz="bydeler"] footer span{text-align:left}
+
+/* Local features stay distinct from administrative areas until answered. */
+.oslo-forest-context{fill:#d2dfc7;stroke:none;pointer-events:none}
+:root[data-theme="dark"] .oslo-forest-context{fill:#3b5140}
+body[data-quiz="bydeler"] .state.oslo-lake{stroke:#3d7784;stroke-width:1.2}
+body[data-quiz="bydeler"] .state.oslo-lake:not([data-band]):not(.mastered,.wrong){fill:#87b9c7}
+body[data-quiz="bydeler"] .state.oslo-forest{stroke:#5c8057;stroke-width:.8;stroke-dasharray:4 3}
+body[data-quiz="bydeler"] .state.oslo-forest:not([data-band]):not(.mastered,.wrong){fill:#68916a}
+body[data-quiz="bydeler"] .map-place .hit{stroke:none}
+body[data-quiz="bydeler"] .map-place .visible{fill:#fffdf2;stroke:#36674c;stroke-width:1.5}
+body[data-quiz="bydeler"] .map-place[data-category="lake"]:not([data-band]):not(.mastered,.wrong) .visible{fill:#87b9c7}
+body[data-quiz="bydeler"] .map-place[data-category="forest"]:not([data-band]):not(.mastered,.wrong) .visible{fill:#68916a;stroke:#fffdf2}
+body[data-quiz="bydeler"] .map-place[data-band="0"] .visible{fill:var(--green)}
+body[data-quiz="bydeler"] .map-place[data-band="1"] .visible{fill:var(--yellow)}
+body[data-quiz="bydeler"] .map-place[data-band="2"] .visible{fill:var(--orange)}
+body[data-quiz="bydeler"] .map-place[data-band="3"] .visible{fill:var(--red)}
+body[data-quiz="bydeler"] .map-place.wrong .visible{fill:#c3645c;stroke:#ffe1cd}
+body[data-quiz="bydeler"] .map-place.mastered .visible{fill:#b9dfc3}
+:root[data-theme="dark"] body[data-quiz="bydeler"] .state.oslo-lake:not([data-band]):not(.mastered,.wrong){fill:#52899b}
+:root[data-theme="dark"] body[data-quiz="bydeler"] .state.oslo-lake{stroke:#a4c9d0}
+:root[data-theme="dark"] body[data-quiz="bydeler"] .state.oslo-forest:not([data-band]):not(.mastered,.wrong){fill:#446d49}
+:root[data-theme="dark"] body[data-quiz="bydeler"] .map-place .visible{stroke:#183e30}
+:root[data-theme="dark"] body[data-quiz="bydeler"] .map-place[data-category="lake"]:not([data-band]):not(.mastered,.wrong) .visible{fill:#52899b;stroke:#c9e2e6}

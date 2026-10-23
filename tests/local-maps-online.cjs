@@ -25,7 +25,7 @@ const server=http.createServer((req,res)=>{try{const file=path.join(root,new URL
   await page.locator('#start').click();await page.waitForFunction(()=>document.querySelector('#overlay').hidden&&document.body.dataset.phase==='playing');
   for(let i=0;i<count;i++){
    const response=page.waitForResponse(r=>r.url().endsWith('/answer'));
-   assert.ok(await page.evaluate(()=>{const name=document.querySelector('#targetName').textContent,el=[...document.querySelectorAll('.state')].find(el=>el.dataset.state===name);el?.dispatchEvent(new MouseEvent('click',{bubbles:true}));return !!el;}));
+   assert.ok(await page.evaluate(()=>{const name=document.querySelector('#targetName').textContent,el=[...document.querySelectorAll('.state')].find(el=>el.dataset.state===name);el?.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true}));return !!el;}));
    const answer=await response;assert.equal(answer.status(),200,await answer.text());await answer.finished();const next=i<count-1?page.waitForResponse(r=>r.url().endsWith('/next')):null;
    await page.clock.fastForward(700);if(next){const reply=await next;assert.equal(reply.status(),200,await reply.text());await reply.finished();}
   }
@@ -35,7 +35,7 @@ const server=http.createServer((req,res)=>{try{const file=path.join(root,new URL
  try{
   const c=await context(),page=await c.newPage();await page.clock.install();await chooseCounty(page,'39');await complete(page,6,'Vestfold Pilot');
   assert.equal(sessionConfigs[0].game,'kommuner');assert.equal(sessionConfigs[0].county,'39');await page.locator('#geo-online-board .mapwiz-top-ten-close').click();await page.locator('#kart-back').click();await page.locator('#municipality-selection').waitFor({state:'visible'});
-  await page.goto(base+'geografi/oslo-bydeler.html');await page.locator('#start:enabled').waitFor();await complete(page,16,'Oslo Pilot');assert.equal(sessionConfigs[1].game,'bydeler');assert.equal(db.prepare('SELECT COUNT(*) n FROM scores').get().n,2);await page.locator('#geo-online-board .mapwiz-top-ten-close').click();
+  await page.goto(base+'geografi/oslo-bydeler.html');await page.locator('#start:enabled').waitFor();await complete(page,28,'Oslo Pilot');assert.equal(sessionConfigs[1].game,'bydeler');assert.equal(sessionConfigs[1].variant,'oslo-28');assert.equal(db.prepare('SELECT COUNT(*) n FROM scores').get().n,2);await page.locator('#geo-online-board .mapwiz-top-ten-close').click();
   const mobile=await context({width:390,height:844},true),second=await mobile.newPage();await chooseCounty(second,'39');assert.equal(await second.evaluate(()=>QuizLanguage.language),'en');await second.locator('#statle-top-ten').click();await second.locator('#geo-online-board tbody').waitFor();assert.match(await second.locator('#geo-online-board').innerText(),/Vestfold Pilot/);assert.doesNotMatch(await second.locator('#geo-online-board').innerText(),/Oslo Pilot/);await second.locator('#geo-online-board .mapwiz-top-ten-close').click();
   // An old county session must never start after returning to the chooser.
   let release;sessionGate=new Promise(resolve=>release=resolve);
@@ -45,6 +45,6 @@ const server=http.createServer((req,res)=>{try{const file=path.join(root,new URL
    await chooseCounty(second,county.code);const response=second.waitForResponse(r=>new URL(r.url()).pathname==='/scores');await second.locator('#statle-top-ten').click();const result=await response;assert.equal(result.status(),200);const config=JSON.parse(new URL(result.url()).searchParams.get('config'));assert.equal(config.game,'kommuner');assert.equal(config.county,county.code);const rows=(await result.json()).rows;assert.equal(rows.length,county.code==='39'?1:0);await second.locator('#geo-online-board .mapwiz-top-ten-close').click();
   }
   await second.goto(base+'geografi/oslo-bydeler.html');await second.locator('#start:enabled').waitFor();await second.locator('#statle-top-ten').click();await second.locator('#geo-online-board tbody').waitFor();assert.match(await second.locator('#geo-online-board').innerText(),/Oslo Pilot/);assert.doesNotMatch(await second.locator('#geo-online-board').innerText(),/Vestfold Pilot/);
-  assert.deepEqual(errors,[]);console.log('PASS local-map online scores: complete Vestfold6 and Oslo16 publication, all15 county boardconfigs, separate shared-language borough and county boards, mobile, pending session cancellation');
+  assert.deepEqual(errors,[]);console.log('PASS local-map online scores: complete Vestfold6 and Oslo28 publication, all15 county boardconfigs, separate shared-language borough and county boards, mobile, pending session cancellation');
  }finally{await browser.close();db.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(()=>server.close());

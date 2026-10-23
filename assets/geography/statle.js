@@ -106,14 +106,19 @@
     if (municipalities || boroughs) {
       $('map').setAttribute('viewBox',regionData.viewBox.join(' '));
       const extent=svgNode('clipPath',{id:'municipality-extent',clipPathUnits:'userSpaceOnUse'});
-      extent.append(svgNode('path',{d:states.map(state=>state.d).join(' '),'clip-rule':'evenodd'}));
+      // Separate clip children form a union even when forests, boroughs and
+      // smaller areas overlap. One even-odd path would cancel those overlaps.
+      for(const state of states.filter(state=>state.d&&state.kind!=='lake'))extent.append(svgNode('path',{d:state.d,'clip-rule':'evenodd'}));
       $('states').append(extent);
       if(regionData.context) $('states').append(svgNode('path',{d:regionData.context,class:'municipality-context','fill-rule':'evenodd','aria-hidden':'true'}));
-      for(const state of states) {
-        const el=svgNode('path',{d:state.d,class:'state municipality','fill-rule':'evenodd',role:'button',tabindex:'0','aria-label':shapeLabel});
-        el.dataset.state=state.n;el.dataset.code=state.a;$('states').append(el);elements.set(state.n,el);
+      if(regionData.forestContext) $('states').append(svgNode('path',{d:regionData.forestContext,class:'oslo-forest-context','fill-rule':'evenodd','aria-hidden':'true','pointer-events':'none'}));
+      const areas=states.filter(state=>state.kind!=='place');
+      function addArea(state) {
+        const el=svgNode('path',{d:state.d,class:'state municipality'+(boroughs?' oslo-'+(state.kind||'land'):''),'fill-rule':'evenodd',role:'button',tabindex:'0','aria-label':shapeLabel});
+        el.dataset.state=state.n;el.dataset.code=state.a;el.dataset.kind=state.kind||'land';$('states').append(el);elements.set(state.n,el);
         const box=el.getBBox();centers.set(state.n,{x:state.c[0],y:state.c[1],radius:Math.max(box.width,box.height)/2+10});
       }
+      for(const state of areas.filter(state=>state.kind!=='lake'))addArea(state);
       // Water provides geographical clues; it never intercepts answers. Draw
       // municipal boundaries again above it so they remain easy to follow.
       const water=svgNode('g',{id:'municipality-water','aria-hidden':'true','pointer-events':'none','clip-path':'url(#municipality-extent)'});
@@ -128,6 +133,14 @@
       const borderPath=regionData.boundaries??states.map(state=>state.d).join(' ');
       for(const layer of ['halo','line'])boundaries.append(svgNode('path',{d:borderPath,class:'municipality-border-'+layer,'vector-effect':'non-scaling-stroke'}));
       $('states').append(boundaries);
+      for(const state of areas.filter(state=>state.kind==='lake'))addArea(state);
+      for(const state of states.filter(state=>state.kind==='place')) {
+        const marker=svgNode('g',{class:'state municipality small-marker map-place',role:'button',tabindex:'0','aria-label':shapeLabel});
+        marker.dataset.state=state.n;marker.dataset.code=state.a;marker.dataset.kind='place';marker.dataset.category=state.category||'place';
+        marker.append(svgNode('circle',{cx:state.c[0],cy:state.c[1],r:12,class:'hit'}),svgNode('circle',{cx:state.c[0],cy:state.c[1],r:5,class:'visible'}));
+        $('states').append(marker);elements.set(state.n,marker);markers.set(state.n,marker);
+        centers.set(state.n,{x:state.c[0],y:state.c[1],radius:24});
+      }
       return;
     }
     if (physical) {
@@ -291,7 +304,7 @@
     roundMistakes = 0; mistakes = 0; locked = false;
     repeatOffer.hidden = true; repeatButton.disabled = false; document.body.dataset.retry = String(retrying);
     elements.forEach((el,name) => { delete el.dataset.band; el.classList.remove('found'); el.classList.toggle('mastered',retrying&&mastered.has(name));el.classList.toggle('retry-pending',retrying&&!mastered.has(name));el.setAttribute('aria-label', mastered.has(name) ? name + ' – fullført' : shapeLabel); });
-    markers.forEach((el,name) => { delete el.dataset.band;el.classList.toggle('mastered',retrying&&mastered.has(name));el.classList.toggle('retry-pending',retrying&&!mastered.has(name)); el.setAttribute('aria-label', mastered.has(name) ? name + ' – fullført' : counties ? 'Ekstra klikkfelt for et lite fylke' : kart ? 'Ekstra klikkfelt for et lite land' : 'Ekstra klikkfelt for en liten delstat'); });
+    markers.forEach((el,name) => { delete el.dataset.band;el.classList.toggle('mastered',retrying&&mastered.has(name));el.classList.toggle('retry-pending',retrying&&!mastered.has(name)); el.setAttribute('aria-label', mastered.has(name) ? name + ' – fullført' : boroughs ? 'Sted på kartet' : counties ? 'Ekstra klikkfelt for et lite fylke' : kart ? 'Ekstra klikkfelt for et lite land' : 'Ekstra klikkfelt for en liten delstat'); });
     queue = names ? names.map(name=>states.find(s=>s.n===name)) : states.filter(s => !mastered.has(s.n));
     if(!names)for (let i = queue.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [queue[i],queue[j]] = [queue[j],queue[i]]; }
     if(continentPractice)queue.sort((a,b)=>continentOrder.indexOf(a.continent)-continentOrder.indexOf(b.continent));
@@ -315,7 +328,7 @@
     }
     if($('target-continent'))$('target-continent').hidden=true;
     $('targetVerb').textContent = 'Godt jobbet!';
-    $('targetName').textContent = boroughs ? 'Alle bydelene er på plass.' : municipalities ? 'Alle kommunene er på plass.' : physical ? 'Alle stedene er fullført.' : counties ? 'Alle fylkene er på plass.' : kart ? 'Alle landene er på plass.' : 'Hele USA er på plass.';
+    $('targetName').textContent = boroughs ? 'Alle stedene er fullført.' : municipalities ? 'Alle kommunene er på plass.' : physical ? 'Alle stedene er fullført.' : counties ? 'Alle fylkene er på plass.' : kart ? 'Alle landene er på plass.' : 'Hele USA er på plass.';
     const counts = [0,0,0,0]; results.forEach(r => counts[r.band]++);
     results.forEach((r,name) => { if(r.band === 0)mastered.add(name); });
     repeatOffer.hidden = mastered.size === states.length;
@@ -324,6 +337,24 @@
     if(!repeatOffer.hidden)repeatOffer.scrollIntoView({block:'nearest'});
   }
   function clickedName(event,element){
+    if(boroughs&&event.isTrusted) {
+      // A click in a smaller area also belongs to its containing borough.
+      // Resolve this geometrically, so Bygdøy never makes Frogner impossible.
+      const current=phase==='playing'&&!locked?elements.get(target()?.n):null;
+      if(current?.tagName.toLowerCase()==='path') {
+        const point=new DOMPoint(event.clientX,event.clientY).matrixTransform(current.getScreenCTM().inverse());
+        if(current.isPointInFill(point))return target().n;
+      }
+      let nearest=null,distance=Infinity;
+      for(const [name,marker] of markers) {
+        const hit=marker.querySelector('.hit'),p=new DOMPoint(event.clientX,event.clientY).matrixTransform(marker.getScreenCTM().inverse());
+        if(!hit.isPointInFill(p))continue;
+        const center=new DOMPoint(hit.cx.baseVal.value,hit.cy.baseVal.value).matrixTransform(marker.getScreenCTM());
+        const d=(event.clientX-center.x)**2+(event.clientY-center.y)**2;
+        if(d<distance){nearest=name;distance=d;}
+      }
+      if(nearest)return nearest;
+    }
     if(!physical)return element.dataset.state;
     if(element.classList.contains('small-marker')){let nearest=null,distance=Infinity;for(const [name,marker] of markers){const circle=marker.querySelector('.visible'),matrix=marker.getScreenCTM(),local=new DOMPoint(event.clientX,event.clientY).matrixTransform(matrix.inverse());if(!circle.isPointInFill(local))continue;const center=new DOMPoint(circle.cx.baseVal.value,circle.cy.baseVal.value).matrixTransform(matrix),d=(event.clientX-center.x)**2+(event.clientY-center.y)**2;if(d<distance){distance=d;nearest=name;}}if(nearest)return nearest;}
     const p=new DOMPoint(event.clientX,event.clientY).matrixTransform($('map').getScreenCTM().inverse()),clicked=elements.get(element.dataset.state);let painted;
@@ -399,12 +430,12 @@
 
   const readMap=url=>fetch(url).then(response=>{if(!response.ok)throw Error('Kartet kunne ikke hentes');return response.json();});
   if(boroughs) {
-    shapeLabel='Bydel på kartet';document.body.dataset.region='bydeler';
-    readMap('../assets/geography/oslo-bydeler/map.json').then(data=>{
-      if(data.states?.length!==16||new Set(data.states.map(state=>state.n)).size!==16||!data.states.some(state=>state.n==='Sentrum'))throw Error('Ufullstendig kart');
+    shapeLabel='Sted på kartet';document.body.dataset.region='bydeler';
+    readMap('../assets/geography/oslo-bydeler/oslo.json').then(data=>{
+      if(data.states?.length!==28||new Set(data.states.map(state=>state.n)).size!==28||!data.states.some(state=>state.n==='Sentrum'))throw Error('Ufullstendig kart');
       regionData=data;states=data.states;total=states.length;
-      $('targetName').textContent=data.title||'Bydeler i Oslo';$('total-count').textContent=' / '+total;
-      $('map').setAttribute('aria-label','Klikkbart kart over Oslos bydeler og Sentrum');
+      $('targetName').textContent=data.title||'Oslo';$('total-count').textContent=' / '+total;
+      $('map').setAttribute('aria-label','Klikkbart kart over Oslo og nærområdene');
       buildMap();updateStats();window.ClickMapZoom?.setBase();window.dispatchEvent(new Event('resize'));
       $('start').disabled=false;$('start').textContent='Start →';
     }).catch(()=>{$('start').textContent='Kartet kunne ikke lastes';setFeedback('Last siden på nytt for å prøve igjen.','error');});
