@@ -64,7 +64,8 @@ window.GEO_QUIZ_EN={"texts":{"Øve en gang til?":"Practise again?","Øv på de s
  let queued=false;const pending=new Set();
  const observer=new MutationObserver(records=>{for(const r of records){if(r.type==='childList')r.addedNodes.forEach(n=>pending.add(n));else pending.add(r.target);}if(!queued){queued=true;queueMicrotask(()=>{queued=false;observer.disconnect();for(const node of pending)if(node.isConnected)walk(node);pending.clear();observe();});}});
  function observe(){roots.forEach(root=>observer.observe(root,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:attrs}));}
- function apply(){observer.disconnect();roots.forEach(root=>{root.setAttribute('lang',language==='en'?'en':'nb');walk(root)});if(isGame){document.documentElement.lang=language==='en'?'en':'nb';document.title=translate(document.title);}observe();document.querySelectorAll('button[data-quiz-language]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.quizLanguage===language)));}
+ let updateLanguageButton=()=>{};
+ function apply(){observer.disconnect();roots.forEach(root=>{root.setAttribute('lang',language==='en'?'en':'nb');walk(root)});if(isGame){document.documentElement.lang=language==='en'?'en':'nb';document.title=translate(document.title);}updateLanguageButton();observe();}
  // Alias lookup supports English answers without rewriting the game's identifiers.
  function installEngines(){
   if(language==='en'&&document.body.dataset.quiz==='jeopardy')document.querySelectorAll('.team-name').forEach((input,i)=>{if(input.value==='Lag '+(i+1))input.value=translate(input.value);});
@@ -91,7 +92,9 @@ window.GEO_QUIZ_EN={"texts":{"Øve en gang til?":"Practise again?","Øv på de s
   const heading=overview.querySelector('h2'),toolbar=document.createElement('div');toolbar.className='geoquiz-heading';heading.before(toolbar);toolbar.append(heading);
   const flags=document.createElement('div');flags.className='geoquiz-language';flags.setAttribute('aria-label','Language / Språk');
   const svg={en:'<svg viewBox="0 0 60 30" aria-hidden="true"><clipPath id="ukClip"><path d="M0 0h60v30H0z"/></clipPath><g clip-path="url(#ukClip)"><path fill="#18346d" d="M0 0h60v30H0z"/><path stroke="#fff" stroke-width="6" d="m0 0 60 30M60 0 0 30"/><path stroke="#c82135" stroke-width="2" d="m0 0 60 30M60 0 0 30"/><path stroke="#fff" stroke-width="10" d="M30 0v30M0 15h60"/><path stroke="#c82135" stroke-width="6" d="M30 0v30M0 15h60"/></g></svg>',no:'<svg viewBox="0 0 22 16" aria-hidden="true"><path fill="#ba1535" d="M0 0h22v16H0z"/><path fill="#fff" d="M6 0h4v16H6zM0 6h22v4H0z"/><path fill="#16386b" d="M7 0h2v16H7zM0 7h22v2H0z"/></svg>'};
-  for(const locale of ['en','no']){const button=document.createElement('button');button.type='button';button.dataset.quizLanguage=locale;button.setAttribute('aria-label',locale==='en'?'English':'Norsk');button.title=locale==='en'?'English':'Norsk';button.innerHTML=svg[locale];button.onclick=()=>{language=locale;try{localStorage.setItem(key,locale);}catch(_){}apply();};flags.append(button);}toolbar.append(flags);
+  const button=document.createElement('button');button.type='button';button.setAttribute('data-no-translate','');
+  updateLanguageButton=()=>{const locale=language==='en'?'no':'en',label=locale==='en'?'English':'Norsk';button.dataset.quizLanguage=locale;button.lang=locale==='en'?'en':'nb';button.setAttribute('aria-label',label);button.title=label;button.innerHTML=svg[locale];};
+  button.onclick=()=>{language=button.dataset.quizLanguage;try{localStorage.setItem(key,language);}catch(_){}apply();};flags.append(button);toolbar.append(flags);
  }
  for(const method of ['alert','confirm','prompt']){const original=window[method];window[method]=function(message,...args){return original.call(window,translate(message),...args);};}
  window.QuizLanguage={get language(){return language},translate,name:value=>data.names[value]||value};
