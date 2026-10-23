@@ -42,7 +42,7 @@
   window.MunicipalitySelector={showGame,showOverview};
   async function load(){
     try{
-      const response=await fetch('../assets/geography/municipalities/index-v2.json');
+      const response=await fetch('../assets/geography/municipalities/index-v3.json');
       if(!response.ok)throw Error('Missing municipality index');
       const index=await response.json();
       if(!Array.isArray(index.counties)||index.counties.length!==15)throw Error('Incomplete county index');

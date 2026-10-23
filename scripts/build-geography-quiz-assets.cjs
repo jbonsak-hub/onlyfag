@@ -24,9 +24,9 @@ for (const page of pages) {
     if (!built.has(sourceName)) {
       let content = fs.readFileSync(path.join(root, 'assets/geography', sourceName), 'utf8').replace(/\r\n/g, '\n');
       if(sourceName==='municipality-selector.js') {
-        const index=fs.readFileSync(path.join(root,'assets/geography/municipalities/index-v2.json'),'utf8');
+        const index=fs.readFileSync(path.join(root,'assets/geography/municipalities/index-v3.json'),'utf8');
         const revision=crypto.createHash('sha256').update(index).digest('hex').slice(0,12);
-        content=content.replace('municipalities/index-v2.json','municipalities/index-v2.json?v='+revision);
+        content=content.replace('municipalities/index-v3.json','municipalities/index-v3.json?v='+revision);
       }
       const hash = crypto.createHash('sha256').update(content).digest('hex').slice(0,12);
       const output = 'quiz-assets/' + sourceName.replace(/\.(js|css)$/, '-' + hash + '.$1');

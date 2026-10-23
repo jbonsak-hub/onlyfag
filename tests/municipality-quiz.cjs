@@ -6,15 +6,16 @@ const cp = require('node:child_process');
 const assert = require('node:assert/strict');
 const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = path.resolve(__dirname, '..');
-const index = JSON.parse(fs.readFileSync(path.join(root, 'assets/geography/municipalities/index-v2.json'), 'utf8'));
+const index = JSON.parse(fs.readFileSync(path.join(root, 'assets/geography/municipalities/index-v3.json'), 'utf8'));
+const legacy30Html=cp.execFileSync('git',['show','228d9cb:geografi/kommuner.html'],{cwd:root});
 const legacyHtml = cp.execFileSync('git',['show','095d022:geografi/kommuner.html'],{cwd:root});
 for(const file of ['index.json','county-03.json'])assert.equal(cp.execFileSync('git',['hash-object','--no-filters','assets/geography/municipalities/'+file],{cwd:root,encoding:'utf8'}).trim(),cp.execFileSync('git',['rev-parse','095d022:assets/geography/municipalities/'+file],{cwd:root,encoding:'utf8'}).trim(),file+' retains its published 54-target bytes');
 const osloMap = JSON.parse(fs.readFileSync(path.join(root,'assets/geography/municipalities',index.counties.find(county=>county.code==='03').file),'utf8'));
 const osloCount = osloMap.states.length;
-assert.equal(osloCount,30,'Oslo and surroundings is a compact thirty-municipality quiz');
-const compactNames=['Asker','Aurskog-Høland','Bærum','Drammen','Enebakk','Frogn','Gjerdrum','Hole','Holmestrand','Indre Østfold','Jevnaker','Lier','Lillestrøm','Lunner','Lørenskog','Modum','Moss','Nannestad','Nes','Nesodden','Nittedal','Nordre Follo','Oslo','Rælingen','Skiptvet','Ullensaker','Vestby','Våler','Ås','Øvre Eiker'];
-assert.deepEqual(osloMap.states.map(state=>state.n).sort(),compactNames.toSorted(),'The compact map contains the agreed thirty municipalities');
-assert.equal(index.counties.find(county=>county.code==='03').variant,'oslo-surroundings-v2');
+assert.equal(osloCount,31,'Oslo and surroundings is a compact thirty-one-municipality quiz');
+const compactNames=['Asker','Aurskog-Høland','Bærum','Drammen','Enebakk','Frogn','Gjerdrum','Hole','Holmestrand','Indre Østfold','Jevnaker','Lier','Lillestrøm','Lunner','Lørenskog','Modum','Moss','Nannestad','Nes','Nesodden','Nittedal','Nordre Follo','Oslo','Ringerike','Rælingen','Skiptvet','Ullensaker','Vestby','Våler','Ås','Øvre Eiker'];
+assert.deepEqual(osloMap.states.map(state=>state.n).sort(),compactNames.toSorted(),'The compact map contains the agreed thirty-one municipalities');
+assert.equal(index.counties.find(county=>county.code==='03').variant,'oslo-surroundings-v3');
 const counties = new Map(index.counties.map(county => [county.code, county]));
 assert.equal(counties.size, 15, 'All current counties are selectable');
 assert.equal(index.counties.reduce((sum, county) => sum + county.count, 0), 357, 'The chooser shows the official municipality counts');
@@ -32,6 +33,7 @@ const server = http.createServer((request, response) => {
   if (!file.startsWith(root + path.sep)) return response.writeHead(403).end();
   try {
     response.setHeader('Content-Type', mime[path.extname(file)] || 'application/octet-stream');
+    if(url.pathname==='/geografi/kommuner.html'&&url.searchParams.get('legacy')==='30')return response.end(legacy30Html);
     if(url.pathname==='/geografi/kommuner.html'&&url.searchParams.get('legacy')==='54')return response.end(legacyHtml);
     response.end(fs.readFileSync(file));
   } catch (_) { response.writeHead(404).end(); }
@@ -48,7 +50,7 @@ const server = http.createServer((request, response) => {
   await page.route('**/*', route => {
     const url = route.request().url();
     if (/\/session(?:\?|$)|\/scores\?|\/publish(?:\?|$)/.test(url)) scoringRequests.push({url,body:route.request().postDataJSON(),legacy:new URL(page.url()).searchParams.get('legacy')==='54'});
-    if(new URL(url).pathname==='/scores')return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({rows:Array.from({length:10},(_,i)=>({nickname:'Kartspiller '+(i+1),score:3000-i*100,time_ms:60000+i*1000}))})});
+    if(new URL(url).pathname==='/scores')return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({rows:Array.from({length:10},(_,i)=>({nickname:'Kartspiller '+(i+1),score:3100-i*100,time_ms:60000+i*1000}))})});
     return url.startsWith(base) || /^(data|blob):/.test(url) ? route.continue() : route.abort();
   });
   const targets = page.locator('#states .municipality[data-state]');
@@ -143,6 +145,7 @@ const server = http.createServer((request, response) => {
     assert.equal(await targets.count(),54,'The published cached page still loads its original 54-target map');
     await page.locator('#start').click();await page.waitForFunction(()=>document.body.dataset.phase==='playing');await choose(await nextName());
     assert.equal(await page.locator('#completed').textContent(),'1','A cached 54-target game still accepts answers');await capture('legacy-oslo-54');
+    await page.goto(base+'/geografi/kommuner.html?legacy=30&fylke=03');await page.locator('#start:enabled').waitFor();assert.equal(await targets.count(),30);assert.equal(await page.locator('#states [data-state="Ringerike"]').count(),0);await capture('legacy-oslo-30');
     await page.goto(base+'/geografi/kommuner.html');await page.locator('#municipality-list [data-county="39"]').waitFor();
 
     // Enter from the list, complete a full round, then practise the one slow answer.
@@ -224,7 +227,7 @@ const server = http.createServer((request, response) => {
     assert.match(await page.locator('#targetName').textContent(), /Oslo.*omegn/i);
     assert(await page.locator('#states [data-state="Oslo"]').count());
     assert.equal(await targets.count(),osloCount);
-    for(const name of ['Sør-Odal','Kongsvinger','Ringerike'])assert.equal(await page.locator('#states [data-state="'+name+'"]').count(),0,name+' is outside the compact Oslo-area quiz');
+    for(const name of ['Sør-Odal','Kongsvinger'])assert.equal(await page.locator('#states [data-state="'+name+'"]').count(),0,name+' is outside the compact Oslo-area quiz');
     await checkFilledHighscores(1366);await capture('oslo-compact-light');
 
     // Real mouse clicks still reach the land through the decorative hydrography.
@@ -283,9 +286,9 @@ const server = http.createServer((request, response) => {
     for(const request of scoringRequests){
       const url=new URL(request.url),config=url.pathname==='/scores'?JSON.parse(url.searchParams.get('config')):request.body;
       assert.equal(config.game,'kommuner');assert(counties.has(config.county),'Municipality rounds always select their own county leaderboard');
-      assert.equal(config.variant,config.county==='03'&&!request.legacy?'oslo-surroundings-v2':undefined,'Only the current Oslo-area quiz selects the new score variant');
+      assert.equal(config.variant,config.county==='03'&&!request.legacy?'oslo-surroundings-v3':undefined,'Only the current Oslo-area quiz selects the new score variant');
     }
     console.log('PASS municipality chooser: 15 counties, 357 municipalities, linked hover/focus, map/list navigation and Oslo surroundings');
-    console.log('PASS shared municipality game: compact Oslo30 desktop/mobile full rounds, preserved cached54, empty completion feedback with practice, ten-row opaque highscore dialogs in both themes, hydrography, zoom and mobile controls');
+    console.log('PASS shared municipality game: compact Oslo31 desktop/mobile full rounds, preserved cached54, empty completion feedback with practice, ten-row opaque highscore dialogs in both themes, hydrography, zoom and mobile controls');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; }).finally(() => server.close());

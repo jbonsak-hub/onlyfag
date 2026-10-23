@@ -34,10 +34,10 @@ COUNTIES = {
 }
 
 # A compact Oslo-centred subset of the original 54-municipality inset. Remove
-# the outer north/east/south/west layer and Ringerike's long northern tail.
+# the outer north/east/south/west layer; retain Ringerike as requested.
 # Whole source polygons keep every playable municipality intact.
 OSLO_AREA = {
-    "Modum", "Øvre Eiker", "Drammen", "Lier", "Hole", "Jevnaker", "Lunner",
+    "Ringerike", "Modum", "Øvre Eiker", "Drammen", "Lier", "Hole", "Jevnaker", "Lunner",
     "Nannestad", "Ullensaker", "Nes",
     "Nittedal", "Gjerdrum", "Oslo", "Bærum", "Lillestrøm", "Lørenskog",
     "Rælingen", "Aurskog-Høland", "Asker", "Nesodden", "Nordre Follo",
@@ -214,11 +214,11 @@ def main():
                         "hydrography": water_metadata, "neighborLand": neighbor_metadata}, "counties": []}
     outputs = {}
     if args.county:
-        existing_index = OUTPUT / "index-v2.json"
+        existing_index = OUTPUT / "index-v3.json"
         if not existing_index.exists():
             if args.county != "03":
-                parser.error("Build the full atlas or --county 03 before updating another v2 county")
-            existing_index = OUTPUT / "index.json"
+                parser.error("Build the full atlas or --county 03 before updating another v3 county")
+            existing_index = OUTPUT / "index-v2.json"
         if not existing_index.exists():
             parser.error("--county requires an existing municipality atlas")
         index = json.loads(existing_index.read_text(encoding="utf-8"))
@@ -247,8 +247,8 @@ def main():
                 "viewBox": canvas.view_box, "states": states, "water": water,
                 "boundaries": canvas.path(boundaries), "context": canvas.path(context)}
         if code == "03":
-            data["variant"] = "oslo-surroundings-v2"
-        filename = "county-03-v2.json" if code == "03" else f"county-{code}.json"
+            data["variant"] = "oslo-surroundings-v3"
+        filename = "county-03-v3.json" if code == "03" else f"county-{code}.json"
         outputs[filename] = dump(data)
         overview = county_geometries[code]
         # An 80 m tolerance is less than a tenth of one pixel on the national
@@ -269,11 +269,11 @@ def main():
         else:
             index["counties"].append(entry)
         print(f"{code} {name}: {count} municipalities, {len(states)} quiz targets, {len(water)} water features", flush=True)
-    # The old index/county-03 stay frozen for cached 54-question scripts.
+    # The old index/county-03 stay frozen for cached 54- and 30-question scripts.
     atlas_content = "".join(outputs.get(entry["file"]) or (OUTPUT / entry["file"]).read_text(encoding="utf-8")
                             for entry in index["counties"])
     index["revision"] = hashlib.sha256(atlas_content.encode()).hexdigest()[:12]
-    outputs["index-v2.json"] = dump(index)
+    outputs["index-v3.json"] = dump(index)
     OUTPUT.mkdir(parents=True, exist_ok=True)
     for filename, content in outputs.items():
         path = OUTPUT / filename
