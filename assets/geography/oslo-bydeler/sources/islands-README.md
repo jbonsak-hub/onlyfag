@@ -1,7 +1,7 @@
-# Six named Oslofjord island polygons
+# Ten named Oslofjord island source polygons
 
 `islands-quiz-polygons.geojson.gz` is a GeoJSON FeatureCollection in **EPSG:4326**.
-It contains six complete, actual coastal polygons from **OpenStreetMap
+It contains ten complete, actual coastal polygons from **OpenStreetMap
 contributors**, distributed as an adapted database under **ODbL 1.0**. The source
 does not use points, circle buffers, guessed coastlines, shoreline smoothing or
 manual boundary segments. The main quiz builder applies the map crop.
@@ -14,15 +14,35 @@ manual boundary segments. The main quiz builder applies the map crop.
 | Malmøya | [way 35213472](https://www.openstreetmap.org/way/35213472) | 18 | 0.571 | 665 |
 | Ulvøya | [way 4154565](https://www.openstreetmap.org/way/4154565) | 26 | 0.292 | 344 |
 | Ormøya | [way 4154500](https://www.openstreetmap.org/way/4154500) | 18 | 0.182 | 279 |
+| Hovedøya | [relation 20749306](https://www.openstreetmap.org/relation/20749306) | 1 | 0.485 | 506 |
+| Nakholmen | [way 4154397](https://www.openstreetmap.org/way/4154397) | 43 | 0.144 | 391 |
+| Bleikøya | [way 4154383](https://www.openstreetmap.org/way/4154383) | 12 | 0.138 | 403 |
+| Malmøykalven | [way 35213559](https://www.openstreetmap.org/way/35213559) | 12 | 0.103 | 316 |
 
-Areas are measured after projection to EPSG:25833. OSM tags Ulvøya and Ormøya
-as `place=islet`; the other four sources are `place=island`. Transport stops
+Areas are measured after projection to EPSG:25833. OSM tags Ulvøya, Ormøya,
+Nakholmen, Bleikøya and Malmøykalven as `place=islet`; the other five sources are
+`place=island`. Transport stops
 with the same names were explicitly excluded during source identification.
 
 Gressholmen follows the single complete coastline of the named source relation.
 It includes the connected Gressholmen/Rambergøya/Heggholmen landmass as one
 polygon. No arbitrary internal land boundary separates those connected parts.
-The six target polygons themselves are mutually disjoint.
+The ten source polygons themselves are mutually disjoint.
+
+## Quiz grouping
+
+The source deliberately retains **ten separately named coastal polygons**.
+The main quiz builder combines **Malmøya and Malmøykalven into one Malmøya
+target**, yielding **nine island targets**. `quizGrouping` in the request index
+and output metadata records that grouping, and the Malmøykalven feature has
+`quizTarget: "Malmøya"`. Preserve both exact source outlines when merging; no
+invented land bridge, coastline buffer or water fill should connect them.
+
+Hovedøya, Nakholmen and Bleikøya are their own targets alongside the existing
+Langøyene, Gressholmen, Lindøya, Malmøya, Ulvøya and Ormøya. The original six
+raw snapshots, object versions and geometries remain unchanged by this source
+extension. The OSM source spells the new target **Nakholmen**, with the alias
+`Nakkholmen` retained in its original tags.
 
 ## Preserved source requests
 
@@ -34,7 +54,7 @@ modification, inside its own deterministic gzip file named
 
 `islands-source-requests.json` records every exact endpoint, source filename,
 top-level object identity/version/edit timestamp, and SHA-256 of the original
-uncompressed response. The offline converter independently pins all six
+uncompressed response. The offline converter independently pins all ten
 expected response hashes and source identities.
 
 Unlike an Overpass `out meta geom` response, the OSM API full-object responses
@@ -56,7 +76,7 @@ PYTHONPATH=/workspace/shared/municipality-python-deps python3 -B assets/geograph
 The converter checks source hashes, exact names/IDs/versions/timestamps,
 `place=island`/`place=islet` identities, complete coastline member ways,
 closed standalone ways, exact endpoint-joined relation rings, valid nonempty
-Polygon geometry, plausible geographic bounds and metric area, and mutual
+Polygon geometry, plausible geographic bounds, per-island metric areas, and mutual
 island separation. Every source node must exist. Missing or invalid geometry
 fails rather than producing a substitute. Output gzip timestamps are fixed,
 so `--check` verifies the exact derived bytes without network access.

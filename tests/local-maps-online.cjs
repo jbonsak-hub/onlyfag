@@ -2,8 +2,8 @@
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),cp=require('node:child_process'),assert=require('node:assert/strict');
 const {DatabaseSync}=require('node:sqlite'),pw=require(process.env.PLAYWRIGHT_MODULE||'playwright'),root=path.resolve(__dirname,'..');
 const osloMap=JSON.parse(fs.readFileSync(path.join(root,'assets/geography/oslo-bydeler/oslo.json'),'utf8')),osloCount=osloMap.states.length;
-assert.equal(osloMap.ruleset,'oslo-areas-v4');assert.equal(osloCount,35);assert(osloCount<57);
-const historicalMaps=[{count:16,commit:'54ead85',variant:undefined},{count:28,commit:'c876d0f',variant:'oslo-28'},{count:57,commit:'f3ca0f1',variant:'oslo-areas-v3'}];
+assert.equal(osloMap.ruleset,'oslo-areas-v5');assert.equal(osloCount,43);
+const historicalMaps=[{count:16,commit:'54ead85',variant:undefined},{count:28,commit:'c876d0f',variant:'oslo-28'},{count:57,commit:'f3ca0f1',variant:'oslo-areas-v3'},{count:35,commit:'42a7ecf',variant:'oslo-areas-v4'}];
 const legacyHtml=new Map(historicalMaps.map(({count,commit})=>[String(count),cp.execFileSync('git',['show',commit+':geografi/oslo-bydeler.html'],{cwd:root})]));
 const server=http.createServer((req,res)=>{try{const url=new URL(req.url,'http://localhost'),file=path.join(root,url.pathname);res.setHeader('Content-Type',file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.js')?'text/javascript; charset=utf-8':file.endsWith('.css')?'text/css':file.endsWith('.json')?'application/json':'application/octet-stream');if(url.pathname==='/geografi/oslo-bydeler.html'&&legacyHtml.has(url.searchParams.get('legacy')))return res.end(legacyHtml.get(url.searchParams.get('legacy')));res.end(fs.readFileSync(file));}catch(_){res.writeHead(404);res.end();}});
 (async()=>{
@@ -39,7 +39,7 @@ const server=http.createServer((req,res)=>{try{const url=new URL(req.url,'http:/
  try{
   const c=await context(),page=await c.newPage();await page.clock.install();await chooseCounty(page,'39');await complete(page,6,'Vestfold Pilot');
   assert.equal(sessionConfigs[0].game,'kommuner');assert.equal(sessionConfigs[0].county,'39');await page.locator('#geo-online-board .mapwiz-top-ten-close').click();await page.locator('#kart-back').click();await page.locator('#municipality-selection').waitFor({state:'visible'});
-  await page.goto(base+'geografi/oslo-bydeler.html');await page.locator('#start:enabled').waitFor();await complete(page,osloCount,'Oslo Pilot');assert.equal(sessionConfigs[1].game,'bydeler');assert.equal(sessionConfigs[1].variant,'oslo-areas-v4');assert.equal(db.prepare('SELECT COUNT(*) n FROM scores').get().n,2);await page.locator('#geo-online-board .mapwiz-top-ten-close').click();
+  await page.goto(base+'geografi/oslo-bydeler.html');await page.locator('#start:enabled').waitFor();await complete(page,osloCount,'Oslo Pilot');assert.equal(sessionConfigs[1].game,'bydeler');assert.equal(sessionConfigs[1].variant,'oslo-areas-v5');assert.equal(db.prepare('SELECT COUNT(*) n FROM scores').get().n,2);await page.locator('#geo-online-board .mapwiz-top-ten-close').click();
   const mobile=await context({width:390,height:844},true),second=await mobile.newPage();await chooseCounty(second,'39');assert.equal(await second.evaluate(()=>QuizLanguage.language),'en');await second.locator('#statle-top-ten').click();await second.locator('#geo-online-board tbody').waitFor();assert.match(await second.locator('#geo-online-board').innerText(),/Vestfold Pilot/);assert.doesNotMatch(await second.locator('#geo-online-board').innerText(),/Oslo Pilot/);await second.locator('#geo-online-board .mapwiz-top-ten-close').click();
   // An old county session must never start after returning to the chooser.
   let release;sessionGate=new Promise(resolve=>release=resolve);
@@ -57,6 +57,6 @@ const server=http.createServer((req,res)=>{try{const url=new URL(req.url,'http:/
    const answerReply=legacyPage.waitForResponse(r=>r.url().endsWith('/answer'));await legacyPage.evaluate(()=>{const name=document.querySelector('#targetName').textContent;[...document.querySelectorAll('#states .state')].find(el=>el.dataset.state===name).dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true}));});const answer=await answerReply;assert.equal(answer.status(),200);assert.equal(await legacyPage.locator('#completed').innerText(),'1');
   }
   assert.equal(db.prepare('SELECT COUNT(*) n FROM scores').get().n,2,'Compatibility checks do not publish additional results');
-  assert.deepEqual(errors,[]);console.log('PASS local-map online scores: complete Vestfold6 and simplified Oslo publication, all15 county boardconfigs, isolated legacy16/28/57 plans and rankings, shared-language boards, mobile and pending session cancellation');
+  assert.deepEqual(errors,[]);console.log('PASS local-map online scores: complete Vestfold6 and current Oslo publication, all15 county boardconfigs, five isolated Oslo pools including cached16/28/57/35 plans, shared-language boards, mobile and pending session cancellation');
  }finally{await browser.close();db.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(()=>server.close());

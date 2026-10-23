@@ -98,7 +98,9 @@ body[data-quiz="bydeler"] footer span{text-align:left}
 body[data-quiz="bydeler"] .map-viewport{background:#f5f7f2}
 :root[data-theme="dark"] body[data-quiz="bydeler"] .map-viewport{background:#14231e}
 .oslo-map-water{fill:var(--water);pointer-events:none}
-body[data-quiz="bydeler"] .municipality-context{stroke:none}
+body[data-quiz="bydeler"] .municipality-context{fill:#fff;stroke:none}
+:root[data-theme="dark"] body[data-quiz="bydeler"] .municipality-context{fill:#59665f}
+body[data-quiz="bydeler"] .oslo-context-region{pointer-events:visiblePainted}
 .oslo-forest-context{fill:#d2dfc7;stroke:none;pointer-events:none}
 :root[data-theme="dark"] .oslo-forest-context{fill:#3b5140}
 body[data-quiz="bydeler"] .state.oslo-lake{stroke:#3d7784;stroke-width:1.2}

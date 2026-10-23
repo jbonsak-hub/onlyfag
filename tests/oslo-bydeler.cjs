@@ -9,7 +9,8 @@ const root = path.resolve(__dirname, '..');
 const historicalMaps = [
   {count:16,commit:'54ead85',file:'map.json',variant:undefined},
   {count:28,commit:'c876d0f',file:'oslo-00fc86a8a4bf.json',variant:'oslo-28'},
-  {count:57,commit:'f3ca0f1',file:'oslo-fa9842cf0c7a.json',variant:'oslo-areas-v3'}
+  {count:57,commit:'f3ca0f1',file:'oslo-fa9842cf0c7a.json',variant:'oslo-areas-v3'},
+  {count:35,commit:'42a7ecf',file:'oslo-8350eadb74db.json',variant:'oslo-areas-v4'}
 ];
 const legacyHtml = new Map(historicalMaps.map(({count,commit})=>[String(count),cp.execFileSync('git',['show',commit+':geografi/oslo-bydeler.html'],{cwd:root})]));
 const map = JSON.parse(fs.readFileSync(path.join(root, 'assets/geography/oslo-bydeler/oslo.json'), 'utf8'));
@@ -18,42 +19,48 @@ for(const {count,file} of historicalMaps){
   assert.equal(historicalMap.states.length,count,'The published '+count+'-target map remains available to cached pages');
 }
 const publishedMap = JSON.parse(fs.readFileSync(path.join(root,'assets/geography/oslo-bydeler/oslo-fa9842cf0c7a.json'),'utf8'));
-const islands = ['Langøyene','Gressholmen','Lindøya','Malmøya','Ulvøya','Ormøya'];
-const additions = ['Østre Bærum','Nesodden','Lørenskog','Nordre Follo','Nittedal','Bogstadvannet','Sognsvann','Maridalsvannet','Nordmarka','Østmarka','Bygdøy',...islands];
-const lakes = ['Bogstadvannet','Sognsvann','Maridalsvannet'];
+const islands = ['Langøyene','Gressholmen','Lindøya','Malmøya','Ulvøya','Ormøya','Hovedøya','Nakholmen','Bleikøya'];
+const additions = ['Nesodden','Lørenskog','Nordre Follo','Nittedal','Lillestrøm','Bogstadvannet','Sognsvann','Maridalsvannet','Lutvann','Nøklevann','Nordmarka','Østmarka','Bygdøy',...islands];
+const lakes = ['Bogstadvannet','Sognsvann','Maridalsvannet','Lutvann','Nøklevann'];
+const postalAreas = ['Eiksmarka','Jar','Lysaker'];
 const westernContextNames = ['Sandvika','Blommenholm','Gjettum','Kolsås'];
 const forests = map.states.filter(state => state.kind === 'forest').map(state => state.n);
 const total = map.states.length;
 assert.equal(map.title, 'Oslo');
-assert.equal(map.ruleset,'oslo-areas-v4');
-assert.equal(total,35,'The simplified learning map has 35 targets');
-assert(total<57,'The simplified map reduces the published 57-target pool');
+assert.equal(map.ruleset,'oslo-areas-v5');
+assert.equal(total,43,'The revised map has 43 playable targets');
+assert(total>35,'The requested neighbours, lakes and islands expand the published 35-target pool');
 assert.equal(new Set(map.states.map(item => item.n)).size,total);
 for (const name of ['Gamle Oslo','Grünerløkka','Sagene','Frogner','Søndre Nordstrand','Sentrum',...additions]) assert(map.states.some(item => item.n === name), name + ' is present');
 assert(!map.states.some(item => item.n === 'Marka'), 'Named forest areas replace a vague combined Marka target');
 for(const state of map.states){assert.equal(typeof state.d,'string');assert(/M.+Z/.test(state.d),state.n+' has a closed area outline');assert(['land','forest','lake'].includes(state.kind),state.n+' is a real area, forest or lake');assert(!state.marker,state.n+' never substitutes a point marker for its area');}
 for(const name of lakes)assert.equal(map.states.find(item=>item.n===name).kind,'lake',name+' has an actual lake outline');
 for(const name of forests)assert.equal(map.states.find(item=>item.n===name).kind,'forest',name+' has an actual forest outline');
-const baerum=map.states.find(state=>state.n==='Østre Bærum');
-assert.equal(baerum.kind,'land');
-assert.equal(baerum.boundaryType,'learning-area','The grouped Bærum area is described as a learning area');
-assert.notEqual(baerum.category,'postal-area','A group of postal areas is not described as one official postal area');
-assert.deepEqual(map.states.filter(state=>state.kind==='lake').map(state=>state.n).sort(),lakes.toSorted(),'Only the three selected northern lakes remain');
+assert.deepEqual(map.states.filter(state=>state.boundaryType==='poststed').map(state=>state.n).sort(),postalAreas.toSorted(),'Only postal areas bordering Ullern or Vestre Aker are quiz targets');
+for(const name of postalAreas){const area=map.states.find(state=>state.n===name);assert.equal(area.kind,'land');assert.equal(area.category,'postal-area');}
+assert.deepEqual(map.states.filter(state=>state.kind==='lake').map(state=>state.n).sort(),lakes.toSorted(),'Only the five selected lake targets remain');
 for(const name of islands)assert.equal(map.states.find(state=>state.n===name).kind,'land',name+' is a real island polygon');
-for(const name of [...publishedMap.states.filter(state=>state.boundaryType==='poststed').map(state=>state.n),'Lillestrøm','Rælingen','Enebakk',...westernContextNames])assert(!map.states.some(state=>state.n===name),name+' is not a separate quiz target');
-const aspect = map.viewBox[2] / map.viewBox[3];
-assert(aspect>1&&aspect<1.2,'The eastern cut leaves a compact, slightly wider-than-tall map');
+for(const name of [...publishedMap.states.filter(state=>state.boundaryType==='poststed'&&!postalAreas.includes(state.n)).map(state=>state.n),'Østre Bærum','Malmøykalven','Rælingen','Enebakk',...westernContextNames])assert(!map.states.some(state=>state.n===name),name+' is not a separate quiz target');
 assert.equal(map.crop.crs,'EPSG:25833');
-for(const [i,bound]of [248610.7274,6636516.4823,274430,6659260.6696].entries())assert(Math.abs(map.crop.bounds[i]-bound)<.1,'Crop bound '+i+' matches the simplified rectangle in real map coordinates');
+assert.equal(map.contextCrop.crs,'EPSG:25833');
+assert(map.contextCrop.bounds[2]-map.contextCrop.bounds[0]>map.crop.bounds[2]-map.crop.bounds[0],'Physical context extends beyond the playable crop');
 assert(map.boundaries.length && map.context.length, 'Quiz borders and surrounding land are included');
 assert.deepEqual(map.water,[],'Unselected decorative water is omitted from the map');
+const canvasScale = map.viewBox[2]/(map.contextCrop.bounds[2]-map.contextCrop.bounds[0]);
+const canvasPoint = ([x,y]) => [map.viewBox[0]+(x-map.contextCrop.bounds[0])*canvasScale,map.viewBox[1]+(map.contextCrop.bounds[3]-y)*canvasScale];
+const osloAnchor = canvasPoint([262543.3285,6649176.6709]);
+const quietIsland = canvasPoint([257329.237126,6649416.725219]);
+const malmoykalven = canvasPoint([261777.349608,6644014.139025]);
+assert(Math.hypot(map.camera.center[0]-osloAnchor[0],map.camera.center[1]-osloAnchor[1])<.05,'The camera is anchored at Oslo S');
+assert(Math.abs(map.camera.height/canvasScale-27000)<2,'The desktop camera starts with 27 km of vertical context');
+assert(map.camera.minWidth/canvasScale>=34251,'The home camera fits the playable east and west extent');
 const publishedPoint = name => {
   const state=publishedMap.states.find(state=>state.n===name);
   assert(state,'The published map includes reference geometry for '+name);
-  const [oldWest,oldSouth,oldEast,oldNorth]=publishedMap.crop.bounds,[west,south,east,north]=map.crop.bounds;
+  const [oldWest,oldSouth,oldEast,oldNorth]=publishedMap.crop.bounds;
   const projectedX=oldWest+(state.c[0]-publishedMap.viewBox[0])/publishedMap.viewBox[2]*(oldEast-oldWest);
   const projectedY=oldNorth-(state.c[1]-publishedMap.viewBox[1])/publishedMap.viewBox[3]*(oldNorth-oldSouth);
-  return [map.viewBox[0]+(projectedX-west)/(east-west)*map.viewBox[2],map.viewBox[1]+(north-projectedY)/(north-south)*map.viewBox[3]];
+  return canvasPoint([projectedX,projectedY]);
 };
 const mime = {'.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css', '.json':'application/json'};
 const server = http.createServer((request, response) => {
@@ -94,7 +101,7 @@ const server = http.createServer((request, response) => {
   const clickTarget = async (name, touch=false) => {
     await page.evaluate(()=>ClickMapZoom.reset());
     // Frogner remains answerable at an actual overlapping part of Bygdøy.
-    const coordinates=map.states.find(state=>state.n===name).c;
+    const coordinates=name==='Malmøya'&&!touch?malmoykalven:map.states.find(state=>state.n===name).c;
     const inspect=()=>page.evaluate(({name,coordinates,bygdoy})=>{
       const svg=document.querySelector('#map');
       const target=[...document.querySelectorAll('#states path.state[data-state]')].find(el=>el.dataset.state===name);
@@ -176,8 +183,9 @@ const server = http.createServer((request, response) => {
     await page.locator('#geo-online-board').waitFor();
     await page.waitForFunction(() => document.querySelector('#geo-online-content')?.textContent.includes('Ingen resultater'));
     assert.equal(boards.at(-1).game, 'bydeler', 'The borough quiz requests its own leaderboard');
-    assert.equal(boards.at(-1).variant,'oslo-areas-v4','The simplified map has a separate ranking from every previous edition');
+    assert.equal(boards.at(-1).variant,'oslo-areas-v5','The current map has a separate ranking from every previous edition');
     await page.locator('#geo-online-board button').click();
+    await capture('boroughs-current-desktop');
     const checkHierarchy = async () => {
       const styles = await page.evaluate(() => {
         const css = selector => getComputedStyle(document.querySelector(selector));
@@ -208,31 +216,92 @@ const server = http.createServer((request, response) => {
         await page.mouse.move(20,20);
       }
     };
-    const checkSimplifiedAreas = async () => {
-      const result=await page.evaluate(({western,mergedPoint})=>{
+    const easternContextPoint=await page.evaluate(()=>{
+      const svg=document.querySelector('#map'),matrix=svg.getScreenCTM().inverse(),box=document.querySelector('#mapViewport').getBoundingClientRect();
+      const region=[...document.querySelectorAll('.oslo-context-region')].find(el=>el.querySelector('title')?.textContent==='Øvrig Akershus');
+      const targets=[...document.querySelectorAll('#states path.state[data-state]')];
+      for(const x of [.96,.9,.8,.7])for(const y of [.15,.3,.5,.7,.85]){
+        const p=new DOMPoint(box.x+box.width*x,box.y+box.height*y).matrixTransform(matrix);
+        if(region.isPointInFill(p)&&targets.every(el=>!el.isPointInFill(p)))return [p.x,p.y];
+      }
+      throw Error('No visible eastern Akershus background outside the quiz polygons');
+    });
+    const contextSamples=[...westernContextNames.map(name=>({name,label:'Øvrig Bærum',point:publishedPoint(name)})),{name:'eastern Akershus',label:'Øvrig Akershus',point:easternContextPoint}];
+    const checkContextAreas = async () => {
+      const result=await page.evaluate(({samples,quietIsland,malmoykalven})=>{
         const contexts=[...document.querySelectorAll('.municipality-context')];
         const targetPaths=[...document.querySelectorAll('#states path.state[data-state]')];
-        const baerum=targetPaths.find(el=>el.dataset.state==='Østre Bærum');
-        return {
-          western:western.map(({name,point})=>({name,context:contexts.some(el=>el.isPointInFill(new DOMPoint(...point))),targets:targetPaths.filter(el=>el.isPointInFill(new DOMPoint(...point))).map(el=>el.dataset.state)})),
-          contextFills:[...new Set(contexts.map(el=>getComputedStyle(el).fill))],
-          merged:baerum.isPointInFill(new DOMPoint(...mergedPoint))
+        const contains=(el,point)=>el.isPointInFill(new DOMPoint(...point));
+        const inspect=(name,point)=>{
+          const context=contexts.filter(el=>contains(el,point));
+          const screen=new DOMPoint(...point).matrixTransform(document.querySelector('#map').getScreenCTM());
+          return {name,targets:targetPaths.filter(el=>contains(el,point)).map(el=>el.dataset.state),fills:context.map(el=>getComputedStyle(el).fill),titles:context.map(el=>el.querySelector('title')?.textContent).filter(Boolean),screen:{x:screen.x,y:screen.y}};
         };
-      },{western:westernContextNames.map(name=>({name,point:publishedPoint(name)})),mergedPoint:publishedPoint('Høvikodden')});
-      for(const area of result.western){assert(area.context,area.name+' is filled as western context');assert.deepEqual(area.targets,[],area.name+' cannot be answered or hovered as a quiz area');}
-      assert.equal(result.contextFills.length,1,'Western context has one uniform fill');
-      assert(result.merged,'The former Høvikodden representative point belongs to the grouped Bærum area');
+        return {
+          samples:samples.map(({name,point})=>inspect(name,point)),
+          quietIsland:inspect('unnamed island',quietIsland),
+          malmoykalven:inspect('Malmøykalven',malmoykalven),
+          selectableContexts:contexts.filter(el=>el.hasAttribute('data-state')||el.getAttribute('role')==='button'||el.hasAttribute('tabindex')).length,
+          dark:document.documentElement.dataset.theme==='dark'
+        };
+      },{samples:contextSamples,quietIsland,malmoykalven});
+      assert.equal(result.selectableContexts,0,'Context is never a keyboard or quiz target');
+      for(const [i,area] of result.samples.entries()){
+        assert.deepEqual(area.targets,[],area.name+' is background rather than a mainland quiz target');
+        assert(area.titles.includes(contextSamples[i].label),area.name+' has its truthful regional hover label');
+        if(!result.dark)assert(area.fills.every(fill=>fill==='rgb(255, 255, 255)'),area.name+' is white background');
+        await page.mouse.move(area.screen.x,area.screen.y);
+        const hovered=await page.evaluate(({x,y})=>{const el=document.elementFromPoint(x,y)?.closest('.oslo-context-region');return {title:el?.querySelector('title')?.textContent,target:document.elementFromPoint(x,y)?.closest('[data-state]')?.dataset.state};},area.screen);
+        assert.equal(hovered.title,contextSamples[i].label,'The real pointer reaches the native context title');
+        assert.equal(hovered.target,undefined);
+      }
+      assert.deepEqual(result.quietIsland.targets,[],'An unnamed island belongs to no mainland or island answer');
+      assert.deepEqual(result.quietIsland.titles,[],'An unnamed island belongs to no labelled context region');
+      assert(result.quietIsland.fills.length>0,'The unnamed island remains visible as land');
+      if(!result.dark)assert(result.quietIsland.fills.every(fill=>fill==='rgb(255, 255, 255)'),'The unnamed island is white background');
+      assert.deepEqual(result.malmoykalven.targets,['Malmøya'],'Malmøykalven belongs to Malmøya and no mainland answer');
+      await page.mouse.move(20,20);
+    };
+    const checkCamera = async () => {
+      await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+      const view=await page.evaluate(anchor=>{
+        const svg=document.querySelector('#map'),matrix=svg.getScreenCTM(),box=document.querySelector('#mapViewport').getBoundingClientRect(),v=svg.viewBox.baseVal;
+        const p=new DOMPoint(...anchor).matrixTransform(matrix),start=new DOMPoint(v.x,v.y).matrixTransform(matrix),end=new DOMPoint(v.x+v.width,v.y+v.height).matrixTransform(matrix);
+        return {centerError:[p.x-box.x-box.width/2,p.y-box.y-box.height/2],scaleX:Math.hypot(matrix.a,matrix.b),scaleY:Math.hypot(matrix.c,matrix.d),edges:[start.x-box.left,start.y-box.top,end.x-box.right,end.y-box.bottom],panelWidth:document.querySelector('.game-panel').getBoundingClientRect().width};
+      },osloAnchor);
+      assert(view.centerError.every(error=>Math.abs(error)<1),'Oslo S stays at the visible map centre: '+JSON.stringify(view.centerError));
+      assert(Math.abs(view.scaleX/view.scaleY-1)<.001,'Map projection keeps the same scale on both axes');
+      assert(view.edges.every(gap=>Math.abs(gap)<1),'Physical map fills the available width and height without letterboxing: '+JSON.stringify(view.edges));
+      return view;
+    };
+    const checkPanelCamera = async () => {
+      const handle=page.getByRole('separator',{name:'Bredde på spillpanelet'});
+      await handle.focus();await page.keyboard.press('Home');
+      const before=await checkCamera(),box=await handle.boundingBox();
+      await page.mouse.move(box.x+box.width/2,100);await page.mouse.down();await page.mouse.move(box.x+box.width/2+160,100,{steps:8});await page.mouse.up();
+      await page.waitForFunction(width=>Math.abs(document.querySelector('.game-panel').getBoundingClientRect().width-width-160)<2,before.panelWidth);
+      await checkCamera();await capture('boroughs-panel-wide');
+      await handle.focus();await page.keyboard.press('Home');
+      await page.waitForFunction(width=>Math.abs(document.querySelector('.game-panel').getBoundingClientRect().width-width)<2,before.panelWidth);
+      await checkCamera();
     };
     await checkHierarchy();
-    await checkSimplifiedAreas();
+    await checkContextAreas();
+    await checkPanelCamera();
     await capture('boroughs-light');
     const initial = await targets.evaluateAll(elements => Object.fromEntries(elements.map(element => [element.dataset.state, getComputedStyle(element).fill])));
     await page.locator('#start').click();
     await page.waitForFunction(() => document.body.dataset.phase === 'playing');
-    const slow = new Set(['Østre Bærum','Bogstadvannet']), seen = new Set();
+    const backgroundBefore=await page.locator('#completed,#mistakes').allTextContents();
+    for(const point of [contextSamples[0].point,contextSamples.at(-1).point,quietIsland]){
+      const screen=await page.evaluate(point=>{const p=new DOMPoint(...point).matrixTransform(document.querySelector('#map').getScreenCTM());return {x:p.x,y:p.y};},point);
+      await page.mouse.click(screen.x,screen.y);
+      assert.deepEqual(await page.locator('#completed,#mistakes').allTextContents(),backgroundBefore,'Background clicks never answer a question or add a mistake');
+    }
+    const slow = new Set(['Jar','Bogstadvannet']), seen = new Set();
     for (let i = 0; i < total; i++) {
       const name = await page.locator('#targetName').textContent();seen.add(name);
-      if(name==='Østre Bærum')assert.equal(await page.locator('#targetVerb').textContent(),'Klikk på','The grouped learning area uses the general area prompt');
+      if(postalAreas.includes(name))assert.equal(await page.locator('#targetVerb').textContent(),'Postområde · klikk på','The bordering Bærum polygons use the truthful postal-area prompt');
       if(slow.has(name))await page.clock.fastForward(6000);
       await clickTarget(name);await advance();
     }
@@ -243,7 +312,7 @@ const server = http.createServer((request, response) => {
     assert.equal(await page.locator('#targetName').textContent(), 'Alle stedene er fullført.');
     await page.locator('#repeat-practice-start').click();
     assert.equal(await page.locator('#states .mastered').count(),total-2);
-    assert.equal(await page.locator('#states .retry-pending').count(),2,'Only the slow learning area and lake return to practice');
+    assert.equal(await page.locator('#states .retry-pending').count(),2,'Only the slow postal area and lake return to practice');
     await page.waitForFunction(initial => [...document.querySelectorAll('#states .retry-pending')].every(element => getComputedStyle(element).fill === initial[element.dataset.state]), initial);
     const retried=new Set();
     for(let i=0;i<2;i++){const name=await page.locator('#targetName').textContent();assert(slow.has(name));retried.add(name);await choose(name);await advance();}
@@ -257,7 +326,8 @@ const server = http.createServer((request, response) => {
     await page.locator('.map-theme-toggle:visible').first().click();
     assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark');
     await checkHierarchy();
-    await checkSimplifiedAreas();
+    await checkContextAreas();
+    await checkCamera();
     await capture('boroughs-dark');
     await page.reload(); await page.locator('#start:enabled').waitFor();
     assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark', 'Dark mode persists');
@@ -266,6 +336,8 @@ const server = http.createServer((request, response) => {
     await page.waitForFunction(()=>window.QuizLanguage?.language==='en');
     for (const viewport of [{width:390,height:844}, {width:844,height:390}]) {
       await page.setViewportSize(viewport);
+      await page.evaluate(()=>ClickMapZoom.reset());
+      await checkCamera();
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'No horizontal overflow');
       const mapBox = await page.locator('#mapViewport').boundingBox();
       assert(mapBox.width > 100 && mapBox.height > 100 && mapBox.y + mapBox.height <= viewport.height + 1, 'Map remains usable inside the viewport');
@@ -294,7 +366,7 @@ const server = http.createServer((request, response) => {
             if(!state)throw Error('Unknown English map target: '+shown);
             return state.n;
           },map.states);
-          if(name==='Østre Bærum')assert.equal(await page.locator('#targetVerb').textContent(),'Click on','The English group prompt does not claim a single postal area');
+          if(postalAreas.includes(name))assert.equal(await page.locator('#targetVerb').textContent(),'Postal area · click on','The English prompt identifies the real postal areas');
           await clickTarget(name,true);tapped.add(name);
           await advance();
         }
@@ -308,6 +380,6 @@ const server = http.createServer((request, response) => {
     assert(await page.locator('#kart-selection').isVisible());
     assert.deepEqual(errors, []);
     assert.deepEqual(missing, []);
-    console.log('PASS simplified Oslo quiz: '+total+' real polygons, six islands, grouped Bærum, uniform western context, selected lakes only, legacy16/28/57 pages, actual mouse/touch answers with zoom, separate v4 scores and dark mode');
+    console.log('PASS revised Oslo quiz: '+total+' real polygons, nine island targets including Malmøykalven in Malmøya, quiet islands and labelled white context, stable centred camera through panel drag, cached16/28/57/35 pages, actual mouse/touch answers, separate v5 scores and dark mode');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; }).finally(() => server.close());

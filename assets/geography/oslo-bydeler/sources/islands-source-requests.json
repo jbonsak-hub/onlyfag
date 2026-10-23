@@ -63,6 +63,53 @@
       "rawSnapshot": "islands-osm-way-4154500-source-2026-10-23.json.gz",
       "rawUncompressedSha256": "44aab9d5b3e87ecf2a91581f292f64e6e305214ea69c43c7d64b9a2c506f4564",
       "endpoint": "https://api.openstreetmap.org/api/0.6/way/4154500/full.json"
+    },
+    {
+      "name": "Hovedøya",
+      "osmType": "relation",
+      "osmId": 20749306,
+      "osmVersion": 1,
+      "osmTimestamp": "2026-05-26T16:48:04Z",
+      "rawSnapshot": "islands-osm-relation-20749306-source-2026-10-23.json.gz",
+      "rawUncompressedSha256": "f137e59351b6795d12575419b6e56c8f343cf98258c052f3837ef9c69f648a26",
+      "endpoint": "https://api.openstreetmap.org/api/0.6/relation/20749306/full.json"
+    },
+    {
+      "name": "Nakholmen",
+      "osmType": "way",
+      "osmId": 4154397,
+      "osmVersion": 43,
+      "osmTimestamp": "2020-08-15T16:09:55Z",
+      "rawSnapshot": "islands-osm-way-4154397-source-2026-10-23.json.gz",
+      "rawUncompressedSha256": "0fb1e02b5425fcc9ee0e14f2bd2c7e94a7f5242581f372b74eebaa785b7ec53e",
+      "endpoint": "https://api.openstreetmap.org/api/0.6/way/4154397/full.json"
+    },
+    {
+      "name": "Bleikøya",
+      "osmType": "way",
+      "osmId": 4154383,
+      "osmVersion": 12,
+      "osmTimestamp": "2026-10-07T19:36:46Z",
+      "rawSnapshot": "islands-osm-way-4154383-source-2026-10-23.json.gz",
+      "rawUncompressedSha256": "02bb26d53e8bd1f62b6e7d16c73f7629d501ac27e0c61aa9f63195ed895a3727",
+      "endpoint": "https://api.openstreetmap.org/api/0.6/way/4154383/full.json"
+    },
+    {
+      "name": "Malmøykalven",
+      "osmType": "way",
+      "osmId": 35213559,
+      "osmVersion": 12,
+      "osmTimestamp": "2022-02-16T10:16:30Z",
+      "rawSnapshot": "islands-osm-way-35213559-source-2026-10-23.json.gz",
+      "rawUncompressedSha256": "19c0203b5342ba635f83a55ba2501d62631e6c3a774e3fda7eb00faaf9c59f2c",
+      "endpoint": "https://api.openstreetmap.org/api/0.6/way/35213559/full.json",
+      "quizTarget": "Malmøya"
     }
-  ]
+  ],
+  "quizGrouping": {
+    "Malmøya": [
+      "Malmøya",
+      "Malmøykalven"
+    ]
+  }
 }

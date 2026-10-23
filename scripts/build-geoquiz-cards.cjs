@@ -202,6 +202,30 @@ const cards = {
     stroke('M121 52v5M122 65l1 11M124 87v8', p.white, 2.8) +
     shape('M37 71V37M37 43H66L59 35H37', p.forest, ` stroke="${p.forest}" stroke-width="3" stroke-linejoin="round"`) +
     shape('M211 77V49M200 61l11-23 11 23Z', p.forest))],
+
+  'geogrid.html': ['geogrid', svg('Three by three geography grid', p.sage,
+    // Geographical row/column clues surround nine broad, readable cells.
+    circle(100, 7, 5.5, p.gold) +
+    shape('M145 12 152 2 161 12Z', p.leaf) +
+    stroke('M201 5q4-4 8 0t8 0M201 10q4-4 8 0t8 0', '#769ca6', 2) +
+    circle(35, 30, 9, p.leaf) +
+    stroke('M26 30H44M35 21q-8 9 0 18M35 21q8 9 0 18', p.sage, 1.3) +
+    shape('M35 43 42 57 35 54 28 57Z', p.rust) +
+    flag('no', 24, 68, 22, 16) +
+    stroke('M49 30H63M49 54H63M49 78H63', p.pale, 2) +
+    Array.from({length: 9}, (_, index) => {
+      const x = 71 + (index % 3) * 56, y = 19 + Math.floor(index / 3) * 24;
+      return rect(x, y, 53, 21, index === 4 ? p.forest : index % 2 ? '#d0dfcf' : p.white);
+    }).join('') +
+    `<g transform="translate(128 42) scale(.22)">${shape(francePath, p.white)}</g>`)],
+
+  'tradle.html': ['tradle', svg('Country export treemap', p.sage,
+    // Six export blocks fill the image; colour and area carry the idea without
+    // miniature product labels that would be illegible at thumbnail size.
+    rect(-1, -1, 109, 92, p.forest) +
+    rect(111, -1, 78, 53, p.blue) + rect(111, 55, 78, 36, p.gold) +
+    rect(192, -1, 49, 39, p.rust) + rect(192, 41, 49, 26, p.pale) +
+    rect(192, 70, 49, 21, p.leaf))],
 };
 
 const manifest = {};
@@ -220,8 +244,8 @@ const manifestFile = path.join(output, 'manifest.json');
 if (checking) assert.equal(fs.readFileSync(manifestFile, 'utf8'), manifestContent, 'Rebuild hub artwork manifest');
 else fs.writeFileSync(manifestFile, manifestContent);
 
-// Update only the nine hub previews, keeping routes, order, labels, event
-// handlers, and the independently maintained Kart/GeoGrid artwork untouched.
+// Update only these eleven hub previews, keeping routes, order, labels, event
+// handlers, and the independently maintained Kart/Globle/Travle artwork untouched.
 const htmlFile = path.join(root, 'geografi.html');
 const html = fs.readFileSync(htmlFile, 'utf8').replace(/\r\n/g, '\n');
 const replaced = new Set();
@@ -244,7 +268,7 @@ const updated = html.replace(/<button\b[^>]*onclick="location\.href='geografi\/(
       `<span class="geoquiz-preview image-preview geoquiz-art"><img alt="" src="${manifest[route]}"/></span>` +
       button.slice(end);
   });
-assert.equal(replaced.size, Object.keys(cards).length, 'All nine hub previews updated');
+assert.equal(replaced.size, Object.keys(cards).length, 'All eleven hub previews updated');
 if (checking) assert.equal(html, updated, 'Rebuild geography hub preview references');
 else fs.writeFileSync(htmlFile, updated);
 console.log(`PASS ${checking ? 'verified' : 'built'} ${Object.keys(cards).length} full-bleed geography hub illustrations`);

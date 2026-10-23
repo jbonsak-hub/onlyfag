@@ -2,7 +2,7 @@
 (() => {
   const svg=document.getElementById('map');if(!svg)return;
   const read=()=>{const v=svg.viewBox.baseVal;return {x:v.x,y:v.y,w:v.width,h:v.height};};
-  let base=read(),view={...base},suppressUntil=0,last=null,pinch=null;
+  let base=read(),view={...base},camera=null,suppressUntil=0,last=null,pinch=null;
   const pointers=new Map(),point=(x,y)=>new DOMPoint(x,y).matrixTransform(svg.getScreenCTM().inverse());
   const scale=()=>base.w/view.w;
   function render(){
@@ -18,8 +18,39 @@
   }
   function zoom(factor,client){const anchor=client?point(client.x,client.y):{x:view.x+view.w/2,y:view.y+view.h/2},width=Math.max(base.w/14,Math.min(base.w,view.w/factor)),ratio=width/view.w;view={x:anchor.x-(anchor.x-view.x)*ratio,y:anchor.y-(anchor.y-view.y)*ratio,w:width,h:view.h*ratio};render();}
   function reset(){pointers.clear();last=null;pinch=null;view={...base};render();}
-  window.ClickMapZoom={setBase(){base=read();reset();},reset,zoom};
-  addEventListener('resize',render);
+  function resizeCamera(){
+    if(!camera)return render();
+    const rect=svg.getBoundingClientRect();
+    // A hidden map will receive its real camera when ResizeObserver sees it.
+    if(!(rect.width>0&&rect.height>0))return render();
+    const aspect=rect.width/rect.height,height=Math.max(camera.height,camera.minWidth/aspect),width=height*aspect;
+    const zoomLevel=scale(),atHome=zoomLevel<=1.001;
+    const center=atHome?camera.center:[view.x+view.w/2,view.y+view.h/2];
+    base={x:camera.center[0]-width/2,y:camera.center[1]-height/2,w:width,h:height};
+    const w=width/(atHome?1:zoomLevel),h=height/(atHome?1:zoomLevel);
+    view={x:center[0]-w/2,y:center[1]-h/2,w,h};
+    // Matching the actual SVG aspect ratio gives one uniform screen scale and
+    // anchors the declared centre in the visible viewport, without letterboxes.
+    render();
+  }
+  function setBase(value){
+    let next=null;
+    if(value!=null){
+      if(!Array.isArray(value.center)||value.center.length!==2||!value.center.every(Number.isFinite)||
+         !Number.isFinite(value.height)||value.height<=0||!Number.isFinite(value.minWidth)||value.minWidth<0)
+        throw new TypeError('Map camera requires a finite center, positive height and nonnegative minWidth');
+      next={center:[...value.center],height:value.height,minWidth:value.minWidth};
+    }
+    camera=next;base=read();
+    // Set the new map to home before deriving its responsive base. Subsequent
+    // resizes preserve the user's zoom level and world-space view centre.
+    view={...base};
+    if(camera)resizeCamera();
+    reset();
+  }
+  window.ClickMapZoom={setBase,reset,zoom};
+  addEventListener('resize',resizeCamera);
+  if(window.ResizeObserver)new ResizeObserver(()=>{if(camera)resizeCamera();}).observe(svg);
   document.getElementById('map-zoom-in')?.addEventListener('click',()=>zoom(1.5));document.getElementById('map-zoom-out')?.addEventListener('click',()=>zoom(1/1.5));document.getElementById('map-zoom-reset')?.addEventListener('click',reset);
   svg.addEventListener('wheel',event=>{event.preventDefault();zoom(Math.exp(-Math.max(-150,Math.min(150,event.deltaY))*.004),{x:event.clientX,y:event.clientY});},{passive:false});
   svg.addEventListener('keydown',event=>{if(['+','=','-','0'].includes(event.key)){event.preventDefault();if(event.key==='0')reset();else zoom(event.key==='-'?1/1.5:1.5);}});

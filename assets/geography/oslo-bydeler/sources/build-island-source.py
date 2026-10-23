@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reproduce six actual Oslofjord island coastlines from pinned OSM API data.
+"""Reproduce ten actual Oslofjord island coastlines from pinned OSM API data.
 
 Run with the repository's municipality GIS dependencies on PYTHONPATH.
 Every coordinate comes from a preserved source node; no coastline is inferred.
@@ -26,6 +26,16 @@ EXPECTED = {
     ("way", 35213472): ("Malmøya", 18, "12e96be15c35e98c199b88fbf7f72651cc56d5c0ec103bea187fcf0457f2c748"),
     ("way", 4154565): ("Ulvøya", 26, "3129266faa97e1f0c0a221ffe26f8f09429b260cfad3618a8b1acc84d2fd06c4"),
     ("way", 4154500): ("Ormøya", 18, "44aab9d5b3e87ecf2a91581f292f64e6e305214ea69c43c7d64b9a2c506f4564"),
+    ("relation", 20749306): ("Hovedøya", 1, "f137e59351b6795d12575419b6e56c8f343cf98258c052f3837ef9c69f648a26"),
+    ("way", 4154397): ("Nakholmen", 43, "0fb1e02b5425fcc9ee0e14f2bd2c7e94a7f5242581f372b74eebaa785b7ec53e"),
+    ("way", 4154383): ("Bleikøya", 12, "02bb26d53e8bd1f62b6e7d16c73f7629d501ac27e0c61aa9f63195ed895a3727"),
+    ("way", 35213559): ("Malmøykalven", 12, "19c0203b5342ba635f83a55ba2501d62631e6c3a774e3fda7eb00faaf9c59f2c"),
+}
+AREA_BOUNDS_M2 = {
+    "Hovedøya": (400_000, 550_000),
+    "Nakholmen": (80_000, 170_000),
+    "Bleikøya": (80_000, 170_000),
+    "Malmøykalven": (60_000, 150_000),
 }
 
 
@@ -71,8 +81,11 @@ def source_geometry(obj, elements):
 
 def build():
     index = json.loads(INDEX.read_text(encoding="utf-8"))
+    assert len(index["requests"]) == len(EXPECTED), "Each island needs one pinned full-object response"
     records = {(entry["osmType"], entry["osmId"]): entry for entry in index["requests"]}
-    assert records.keys() == EXPECTED.keys(), "The six named source identities must be explicit"
+    assert records.keys() == EXPECTED.keys(), "The ten named source identities must be explicit"
+    assert index["quizGrouping"] == {"Malmøya": ["Malmøya", "Malmøykalven"]}
+    assert records[("way", 35213559)]["quizTarget"] == "Malmøya"
     project = Transformer.from_crs("EPSG:4326", "EPSG:25833", always_xy=True).transform
     features = []
     geometries = []
@@ -95,7 +108,8 @@ def build():
         west, south, east, north = geometry.bounds
         assert 10.69 < west < east < 10.79 and 59.85 < south < north < 59.91
         area = transform(project, geometry).area
-        assert 150_000 < area < 600_000, "Island area no longer matches the named source"
+        minimum_area, maximum_area = AREA_BOUNDS_M2.get(name, (150_000, 600_000))
+        assert minimum_area < area < maximum_area, "Island area no longer matches the named source"
         geometries.append(geometry)
         features.append({
             "type": "Feature",
@@ -107,6 +121,7 @@ def build():
                 "url": f"https://www.openstreetmap.org/{key[0]}/{key[1]}",
                 "rawSnapshot": record["rawSnapshot"], "rawUncompressedSha256": checksum,
                 "areaM2": round(area, 2), "coastlineVertices": len(geometry.exterior.coords),
+                **({"quizTarget": record["quizTarget"]} if "quizTarget" in record else {}),
             },
             "geometry": mapping(geometry),
         })
@@ -124,7 +139,8 @@ def build():
             "requestIndex": INDEX.name,
             "requestIndexSha256": hashlib.sha256(INDEX.read_bytes()).hexdigest(),
             "method": "Preserved official OSM API full-object responses pin the top-level island, every member way, every coastline node, versions and timestamps. Assemble exact node coordinates into complete coast rings; no buffering, smoothing, simplification, manual closing segments or guessed boundaries.",
-            "boundaryMeaning": "Six actual named coastal islands. Gressholmen follows the source's single connected coastline, which includes the physically connected Gressholmen/Rambergøya/Heggholmen landmass; no arbitrary internal splits.",
+            "boundaryMeaning": "Ten actual named coastal island source polygons. Gressholmen follows the source's single connected coastline, which includes the physically connected Gressholmen/Rambergøya/Heggholmen landmass; no arbitrary internal splits. Malmøykalven is a separate source polygon that joins Malmøya for the quiz, giving nine island targets without an invented land bridge.",
+            "quizGrouping": index["quizGrouping"],
             "requests": index["requests"],
         },
         "features": features,
@@ -139,10 +155,10 @@ def main():
     args = parser.parse_args()
     content = build()
     if args.check:
-        assert OUTPUT.read_bytes() == content, "Rebuild the six island coastlines"
+        assert OUTPUT.read_bytes() == content, "Rebuild the ten island coastlines"
     else:
         OUTPUT.write_bytes(content)
-    print(("Verified" if args.check else "Built") + " six genuine Oslofjord island polygons")
+    print(("Verified" if args.check else "Built") + " ten genuine Oslofjord island source polygons for nine quiz targets")
 
 
 if __name__ == "__main__":

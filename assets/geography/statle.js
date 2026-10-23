@@ -115,6 +115,10 @@
       for(const state of states.filter(state=>state.d&&state.kind!=='lake'))extent.append(svgNode('path',{d:state.d,'clip-rule':'evenodd'}));
       $('states').append(extent);
       if(regionData.context) $('states').append(svgNode('path',{d:regionData.context,class:'municipality-context','fill-rule':'evenodd','aria-hidden':'true'}));
+      for(const region of regionData.contextRegions||[]) {
+        const path=svgNode('path',{d:region.d,class:'municipality-context oslo-context-region','fill-rule':'evenodd'});
+        const title=svgNode('title',{});title.textContent=region.n;path.append(title);$('states').append(path);
+      }
       if(regionData.forestContext) $('states').append(svgNode('path',{d:regionData.forestContext,class:'oslo-forest-context','fill-rule':'evenodd','aria-hidden':'true','pointer-events':'none'}));
       const areas=states;
       function addArea(state) {
@@ -420,11 +424,11 @@
   if(boroughs) {
     shapeLabel='Sted på kartet';document.body.dataset.region='bydeler';
     readMap('../assets/geography/oslo-bydeler/oslo.json').then(data=>{
-      if(data.ruleset!=='oslo-areas-v4'||!Array.isArray(data.states)||data.states.length!==35||new Set(data.states.map(state=>state.n)).size!==data.states.length||data.states.some(state=>!state.d||state.marker||!['land','forest','lake'].includes(state.kind))||!data.states.some(state=>state.n==='Sentrum'))throw Error('Ufullstendig kart');
+      if(data.ruleset!=='oslo-areas-v5'||!Array.isArray(data.states)||data.states.length!==43||new Set(data.states.map(state=>state.n)).size!==data.states.length||data.states.some(state=>!state.d||state.marker||!['land','forest','lake'].includes(state.kind))||!data.states.some(state=>state.n==='Sentrum'))throw Error('Ufullstendig kart');
       regionData=data;states=data.states;total=states.length;
       $('targetName').textContent=data.title||'Oslo';$('total-count').textContent=' / '+total;
       $('map').setAttribute('aria-label','Klikkbart kart over Oslo og nærområdene');
-      buildMap();updateStats();window.ClickMapZoom?.setBase();window.dispatchEvent(new Event('resize'));
+      buildMap();updateStats();window.ClickMapZoom?.setBase(data.camera);window.dispatchEvent(new Event('resize'));
       $('start').disabled=false;$('start').textContent='Start →';
     }).catch(()=>{$('start').textContent='Kartet kunne ikke lastes';setFeedback('Last siden på nytt for å prøve igjen.','error');});
     setPhase('ready');return;
