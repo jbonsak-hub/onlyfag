@@ -73,8 +73,8 @@ const server = http.createServer((request, response) => {
       assert.match(await button.textContent(), new RegExp('\\(' + county.quizCount + '\\)'));
       assert.match(await button.textContent(), new RegExp(county.quizTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
     }
-    assert.match(await page.locator('#municipality-list [data-county="03"]').textContent(), /Oslo og omegn\s*\(52\)/);
-    assert.equal(await page.locator('#municipality-map [data-county="03"]').getAttribute('aria-label'), 'Oslo og omegn (52)');
+    assert.match(await page.locator('#municipality-list [data-county="03"]').textContent(), /Oslo og omegn\s*\(54\)/);
+    assert.equal(await page.locator('#municipality-map [data-county="03"]').getAttribute('aria-label'), 'Oslo og omegn (54)');
     const mapCounty = page.locator('#municipality-map [data-county="39"]');
     const listCounty = page.locator('#municipality-list [data-county="39"]');
     const original = await mapCounty.evaluate(element => getComputedStyle(element).fill);
@@ -169,6 +169,8 @@ const server = http.createServer((request, response) => {
     assert((await targets.count()) > 1, 'Oslo opens an actual Oslo-and-surroundings quiz');
     assert.match(await page.locator('#targetName').textContent(), /Oslo.*omegn/i);
     assert(await page.locator('#states [data-state="Oslo"]').count());
+    assert.equal(await targets.count(),54);
+    for(const name of ['Sør-Odal','Kongsvinger'])assert.equal(await page.locator('#states [data-state="'+name+'"]').count(),1,name+' appears on the Oslo-area map');
 
     // Real mouse clicks still reach the land through the decorative hydrography.
     await page.locator('#start').click();
@@ -199,6 +201,10 @@ const server = http.createServer((request, response) => {
     await checkMapHierarchy();
     assert.notEqual(await page.locator('#mapViewport').evaluate(element => getComputedStyle(element).backgroundColor), 'rgb(171, 210, 217)');
     await capture('oslo-dark');
+    const seen=new Set([name]);
+    for(let i=1;i<54;i++){const name=await nextName();seen.add(name);await choose(name);await advance();}
+    assert.equal(await page.locator('body').getAttribute('data-phase'),'finished');
+    for(const name of ['Sør-Odal','Kongsvinger'])assert(seen.has(name),name+' is asked and can be answered in the round');
     await page.reload();
     await page.locator('#start:enabled').waitFor();
     assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark', 'Theme persists through direct county links');

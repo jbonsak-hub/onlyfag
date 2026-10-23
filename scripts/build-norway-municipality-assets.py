@@ -33,12 +33,13 @@ COUNTIES = {
     "50": ("Trøndelag", 38), "55": ("Troms", 21), "56": ("Finnmark", 18),
 }
 
-# The municipalities named in Kartverket's Oslo-area inset. Whole polygons are
-# retained so every playable target remains visible and can be selected fairly.
+# Based on Kartverket's Oslo-area inset, with Sør-Odal and Kongsvinger added.
+# Whole polygons keep every playable target visible and selectable.
 OSLO_AREA = {
     "Flå", "Ringerike", "Krødsherad", "Sigdal", "Modum", "Øvre Eiker",
     "Kongsberg", "Drammen", "Lier", "Hole", "Jevnaker", "Lunner", "Gran",
     "Hurdal", "Eidsvoll", "Nannestad", "Ullensaker", "Nes", "Nord-Odal",
+    "Sør-Odal", "Kongsvinger",
     "Nittedal", "Gjerdrum", "Oslo", "Bærum", "Lillestrøm", "Lørenskog",
     "Rælingen", "Aurskog-Høland", "Asker", "Nesodden", "Nordre Follo",
     "Enebakk", "Frogn", "Ås", "Vestby", "Indre Østfold", "Holmestrand",
@@ -172,6 +173,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--require-water", action="store_true")
+    parser.add_argument("--county", choices=COUNTIES, help="Rebuild one quiz, retaining the existing national overview and other county files")
     args = parser.parse_args()
     topology = read_json_gzip(BOUNDARY_SOURCE)
     project = Transformer.from_crs("EPSG:4326", "EPSG:25833", always_xy=True).transform
@@ -214,7 +216,14 @@ def main():
                         "boundaryMirror": "https://github.com/robhop/fylker-og-kommuner/tree/ae8782500090144c2b74d6bb2a89365a7ff2236d",
                         "hydrography": water_metadata, "neighborLand": neighbor_metadata}, "counties": []}
     outputs = {}
+    if args.county:
+        existing_index = OUTPUT / "index.json"
+        if not existing_index.exists():
+            parser.error("--county requires an existing municipality atlas")
+        index = json.loads(existing_index.read_text(encoding="utf-8"))
     for code, (name, count) in COUNTIES.items():
+        if args.county and code != args.county:
+            continue
         selected = [row for row in rows if row["name"] in OSLO_AREA and (row["name"] != "Våler" or row["code"].startswith("31"))] if code == "03" else [row for row in rows if row["code"].startswith(code)]
         if code == "03":
             assert len(selected) == len(OSLO_AREA), "Oslo-area targets must be unique"
@@ -241,14 +250,23 @@ def main():
         overview = county_geometries[code]
         # An 80 m tolerance is less than a tenth of one pixel on the national
         # selector. This affects only the overview; quiz contours stay intact.
-        overview_display = overview.simplify(80, preserve_topology=True)
-        index["counties"].append({"code": code, "name": name, "count": count, "file": filename,
+        if args.county:
+            overview_data = next(county["overview"] for county in index["counties"] if county["code"] == code)
+        else:
+            overview_display = overview.simplify(80, preserve_topology=True)
+            overview_data = {"d": overview_canvas.path(overview_display), "c": overview_canvas.center(overview)}
+        entry = {"code": code, "name": name, "count": count, "file": filename,
                                   "revision": hashlib.sha256(outputs[filename].encode()).hexdigest()[:12],
                                   "quizTitle": data["title"], "quizCount": len(states),
-                                  "overview": {"d": overview_canvas.path(overview_display), "c": overview_canvas.center(overview)}})
+                                  "overview": overview_data}
+        if args.county:
+            index["counties"] = [entry if county["code"] == code else county for county in index["counties"]]
+        else:
+            index["counties"].append(entry)
         print(f"{code} {name}: {count} municipalities, {len(states)} quiz targets, {len(water)} water features", flush=True)
     # Index revision also invalidates cached county files without changing filenames.
-    index["revision"] = hashlib.sha256("".join(outputs.values()).encode()).hexdigest()[:12]
+    atlas_content = "".join(outputs.get(f"county-{code}.json") or (OUTPUT / f"county-{code}.json").read_text(encoding="utf-8") for code in COUNTIES)
+    index["revision"] = hashlib.sha256(atlas_content.encode()).hexdigest()[:12]
     outputs["index.json"] = dump(index)
     OUTPUT.mkdir(parents=True, exist_ok=True)
     for filename, content in outputs.items():

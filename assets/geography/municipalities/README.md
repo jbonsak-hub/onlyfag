@@ -56,8 +56,8 @@ lagret i kildefilens metadata.
 
 ## Oslo og omegn
 
-Fylkeslisten viser **Oslo og omegn (52)**, med de 52 hele kommunene som er navngitt i
-Kartverkets innfelte kart over Oslofjordområdet. Kartet beholder hele
+Fylkeslisten viser **Oslo og omegn (54)**: de 52 kommunene i Kartverkets innfelte
+kart over Oslofjordområdet, pluss Sør-Odal og Kongsvinger. Kartet beholder hele
 kommuneområder fremfor å gjøre delvis avkuttede områder til quizmål. Våler her
 er Våler i Østfold, ikke Våler i Innlandet. Oslo fylke har fortsatt én kommune i
 grunnlagets offisielle opptelling. De andre 14 quizene følger
@@ -73,6 +73,10 @@ python -m pip install -r scripts/municipality-requirements.txt
 python scripts/build-norway-municipality-assets.py --require-water
 python scripts/build-norway-municipality-assets.py --check --require-water
 ```
+
+Ved endring av utvalget i én quiz kan `--county 03` brukes for å bygge Oslo og
+omegn og oppdatere revisjonene uten å bygge de andre fylkesquizene på nytt.
+Endres kildegeometrien, bygges hele atlaset.
 
 `index.json` har fylkesantall, oversiktsgeometri, quiztittel og revisjon for hver
 fylkesfil. `county-NN.json` inneholder quizens `viewBox`, kommunene som `states`
