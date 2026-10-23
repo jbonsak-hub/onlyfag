@@ -10,6 +10,11 @@ const counties = new Map(index.counties.map(county => [county.code, county]));
 assert.equal(counties.size, 15, 'All current counties are selectable');
 assert.equal(index.counties.reduce((sum, county) => sum + county.count, 0), 357, 'The chooser shows the official municipality counts');
 assert.equal(counties.get('03').count, 1, 'Oslo is one municipality even though its quiz includes the surrounding area');
+for(const county of index.counties){
+  const map=JSON.parse(fs.readFileSync(path.join(root,'assets/geography/municipalities',county.file),'utf8'));
+  assert(map.boundaries?.length>0,county.name+' has separate inland municipality borders');
+  assert(map.context?.length>0,county.name+' includes surrounding land');
+}
 
 const mime = {'.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css', '.json':'application/json'};
 const server = http.createServer((request, response) => {
@@ -65,9 +70,11 @@ const server = http.createServer((request, response) => {
     assert.equal(await page.locator('#kart-game').isVisible(), false);
     for (const county of index.counties) {
       const button = page.locator('#municipality-list [data-county="' + county.code + '"]');
-      assert.match(await button.textContent(), new RegExp('\\(' + county.count + '\\)'));
-      assert.match(await button.textContent(), new RegExp(county.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+      assert.match(await button.textContent(), new RegExp('\\(' + county.quizCount + '\\)'));
+      assert.match(await button.textContent(), new RegExp(county.quizTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
     }
+    assert.match(await page.locator('#municipality-list [data-county="03"]').textContent(), /Oslo og omegn\s*\(52\)/);
+    assert.equal(await page.locator('#municipality-map [data-county="03"]').getAttribute('aria-label'), 'Oslo og omegn (52)');
     const mapCounty = page.locator('#municipality-map [data-county="39"]');
     const listCounty = page.locator('#municipality-list [data-county="39"]');
     const original = await mapCounty.evaluate(element => getComputedStyle(element).fill);
@@ -97,11 +104,35 @@ const server = http.createServer((request, response) => {
     assert.equal(await page.locator('#skip').count(), 0);
     assert.equal(await page.locator('#statle-top-ten').isVisible(), false, 'The new practice quiz cannot submit to an unrelated online leaderboard');
     const initialColors = await targets.evaluateAll(elements => Object.fromEntries(elements.map(element => [element.dataset.state, getComputedStyle(element).fill])));
+    assert(Object.values(initialColors).every(color=>color==='rgb(32, 129, 79)'),'Quiz targets retain their green base colour; grey is reserved for surrounding land');
     const water = page.locator('#municipality-water');
     assert(await water.locator('.municipality-lake').count(), 'Lakes remain visible on the county map');
     assert.equal(await water.evaluate(element => getComputedStyle(element).pointerEvents), 'none', 'Water never steals municipal answer clicks');
     assert.match(await water.getAttribute('clip-path'), /url\(#municipality-extent\)/, 'Hydrography is clipped to the visible land');
     assert.equal(await page.locator('.municipality-boundaries').evaluate(element => getComputedStyle(element).pointerEvents), 'none');
+    const checkMapHierarchy=async()=>{
+      const style=await page.evaluate(()=>{
+        const css=selector=>getComputedStyle(document.querySelector(selector));
+        const border=css('.municipality-border-line'),river=css('.municipality-river'),context=css('.municipality-context');
+        return {border:border.stroke,borderWidth:parseFloat(border.strokeWidth),river:river.stroke,riverWidth:parseFloat(river.strokeWidth),riverOpacity:parseFloat(river.opacity),land:css('.municipality:not([data-band])').fill,context:context.fill,contextPointer:context.pointerEvents,water:css('#mapViewport').backgroundColor};
+      });
+      const luminance=color=>color.match(/[\d.]+/g).slice(0,3).map(Number).map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;}).reduce((sum,v,i)=>sum+v*[.2126,.7152,.0722][i],0);
+      const contrast=(a,b)=>(Math.max(luminance(a),luminance(b))+.05)/(Math.min(luminance(a),luminance(b))+.05);
+      assert(style.borderWidth>=style.riverWidth*2.5,'Municipal boundaries are substantially thicker than rivers');
+      assert(contrast(style.border,style.land)>contrast(style.river,style.land)*2,'Municipal borders have much stronger contrast than rivers');
+      assert(style.riverOpacity<1,'River lines remain subdued');
+      assert.notEqual(style.context,style.water,'Surrounding land differs from water');
+      assert.notEqual(style.context,style.land,'Surrounding land differs from the quiz targets');
+      assert.equal(style.contextPointer,'none','Surrounding land cannot become an answer');
+      const contextVisible=await page.evaluate(()=>{
+        const map=document.querySelector('#map'),context=map.querySelector('.municipality-context'),r=map.getBoundingClientRect(),inverse=map.getScreenCTM().inverse();
+        for(let y=1;y<20;y++)for(let x=1;x<20;x++)if(context.isPointInFill(new DOMPoint(r.x+r.width*x/20,r.y+r.height*y/20).matrixTransform(inverse)))return true;
+        return false;
+      });
+      assert(contextVisible,'Actual surrounding land is visible inside the map viewport');
+    };
+    await checkMapHierarchy();
+    await capture('municipality-boundaries-light');
     assert.equal(await page.locator('#feedback').textContent(), '');
     await page.locator('#start').click();
     const slow = await nextName();
@@ -165,6 +196,7 @@ const server = http.createServer((request, response) => {
 
     await page.locator('.map-theme-toggle:visible').first().click();
     assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark');
+    await checkMapHierarchy();
     assert.notEqual(await page.locator('#mapViewport').evaluate(element => getComputedStyle(element).backgroundColor), 'rgb(171, 210, 217)');
     await capture('oslo-dark');
     await page.reload();

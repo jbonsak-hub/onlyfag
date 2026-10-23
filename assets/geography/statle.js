@@ -124,7 +124,8 @@
       for(const [kind,paths] of waterPaths)water.append(svgNode('path',{d:paths.join(' '),class:'municipality-'+kind,'fill-rule':'evenodd','vector-effect':'non-scaling-stroke'}));
       $('states').append(water);
       const boundaries=svgNode('g',{class:'municipality-boundaries','aria-hidden':'true','pointer-events':'none'});
-      for(const state of states)boundaries.append(svgNode('path',{d:state.d,'fill-rule':'evenodd','vector-effect':'non-scaling-stroke'}));
+      const borderPath=regionData.boundaries??states.map(state=>state.d).join(' ');
+      for(const layer of ['halo','line'])boundaries.append(svgNode('path',{d:borderPath,class:'municipality-border-'+layer,'vector-effect':'non-scaling-stroke'}));
       $('states').append(boundaries);
       return;
     }

@@ -65,7 +65,8 @@
       const shapes=document.createElementNS(ns,'g');shapes.setAttribute('fill-rule','evenodd');
       list.replaceChildren();paths.clear();buttons.clear();
       for(const county of counties){
-        const code=String(county.code),label=`${county.name} (${county.count})`;
+        const code=String(county.code),displayName=county.quizTitle||county.name,displayCount=county.quizCount??county.count;
+        const label=`${displayName} (${displayCount})`;
         if(!county.overview?.d||!Number.isInteger(county.count)||county.count<1)throw Error('Missing county geometry or count');
         const path=document.createElementNS(ns,'path');
         path.setAttribute('d',county.overview.d);path.setAttribute('class','municipality-county');
@@ -76,8 +77,8 @@
         bindHighlight(path,code);paths.set(code,path);shapes.append(path);
         const item=document.createElement('li'),button=document.createElement('button');
         button.type='button';button.className='municipality-county-option';button.dataset.county=code;
-        const name=document.createElement('span');name.textContent=county.name;
-        const count=document.createElement('span');count.className='municipality-count';count.textContent=`(${county.count})`;
+        const name=document.createElement('span');name.textContent=displayName;
+        const count=document.createElement('span');count.className='municipality-count';count.textContent=`(${displayCount})`;
         button.append(name,count);button.setAttribute('aria-label',label);bindHighlight(button,code);
         buttons.set(code,button);item.append(button);list.append(item);
       }

@@ -14,7 +14,7 @@ import json
 from pathlib import Path
 
 from pyproj import Transformer
-from shapely.geometry import GeometryCollection, MultiPolygon, Polygon, shape
+from shapely.geometry import GeometryCollection, MultiPolygon, Polygon, box, shape
 from shapely.ops import transform, unary_union
 from shapely.strtree import STRtree
 
@@ -24,6 +24,7 @@ OUTPUT = ROOT / "assets/geography/municipalities"
 SOURCES = OUTPUT / "sources"
 BOUNDARY_SOURCE = SOURCES / "municipalities-2024-L.topojson.gz"
 WATER_SOURCE = SOURCES / "hydrography.geojson.gz"
+NEIGHBOR_SOURCE = SOURCES / "neighbor-land-10m.geojson.gz"
 COUNTIES = {
     "03": ("Oslo", 1), "11": ("Rogaland", 23), "15": ("Møre og Romsdal", 27),
     "18": ("Nordland", 41), "31": ("Østfold", 12), "32": ("Akershus", 21),
@@ -147,6 +148,26 @@ def dump(data):
     return json.dumps(data, ensure_ascii=False, separators=(",", ":")) + "\n"
 
 
+def make_surrounding_land(norway_land, project, water_geometries, water_kinds):
+    neighbors = read_json_gzip(NEIGHBOR_SOURCE)
+    # Clip before projection to keep remote territories out of the UTM map.
+    neighbor_land = [transform(project, shape(feature["geometry"]).intersection(box(3, 54, 35, 72)))
+                     for feature in neighbors["features"]]
+    land = unary_union([norway_land, *neighbor_land])
+    surfaces = [geometry for geometry, kind in zip(water_geometries, water_kinds) if kind != "river"]
+    if surfaces:
+        land = land.difference(unary_union(surfaces))
+    # This simplified layer is never used for playable municipality targets.
+    return land.simplify(80, preserve_topology=False), neighbors["source"]
+
+
+def make_county_context(surrounding_land, union):
+    xmin, ymin, xmax, ymax = union.bounds
+    margin = max(xmax - xmin, ymax - ymin)
+    window = box(xmin - margin, ymin - margin, xmax + margin, ymax + margin)
+    return surrounding_land.intersection(window).difference(union).simplify(80, preserve_topology=False)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
@@ -185,11 +206,13 @@ def main():
         assert water_geometries, "Detailed hydrography source has not been supplied"
     water_tree = STRtree(water_geometries) if water_geometries else None
     county_geometries = {code: unary_union([row["geometry"] for row in rows if row["code"].startswith(code)]) for code in COUNTIES}
-    overview_canvas = Canvas(unary_union(list(county_geometries.values())).bounds)
+    norway_land = unary_union(list(county_geometries.values()))
+    surrounding_land, neighbor_metadata = make_surrounding_land(norway_land, project, water_geometries, water_kinds)
+    overview_canvas = Canvas(norway_land.bounds)
     index = {"version": "2024-01-01", "viewBox": overview_canvas.view_box,
              "source": {"name": "Kartverket", "license": "CC BY 4.0", "url": "https://kartkatalog.geonorge.no/",
                         "boundaryMirror": "https://github.com/robhop/fylker-og-kommuner/tree/ae8782500090144c2b74d6bb2a89365a7ff2236d",
-                        "hydrography": water_metadata}, "counties": []}
+                        "hydrography": water_metadata, "neighborLand": neighbor_metadata}, "counties": []}
     outputs = {}
     for code, (name, count) in COUNTIES.items():
         selected = [row for row in rows if row["name"] in OSLO_AREA and (row["name"] != "Våler" or row["code"].startswith("31"))] if code == "03" else [row for row in rows if row["code"].startswith(code)]
@@ -197,6 +220,10 @@ def main():
             assert len(selected) == len(OSLO_AREA), "Oslo-area targets must be unique"
         union = unary_union([row["geometry"] for row in selected])
         canvas = Canvas(union.bounds)
+        # Separate inland municipal borders from the jagged coastline. The
+        # emphasis belongs on the borders; coastal islands keep a quiet outline.
+        boundaries = unary_union([row["geometry"].boundary for row in selected]).difference(union.boundary)
+        context = make_county_context(surrounding_land, union)
         states = [{"n": row["name"], "a": row["code"], "d": canvas.path(row["geometry"]),
                    "c": canvas.center(row["geometry"])} for row in sorted(selected, key=lambda row: row["code"])]
         water = []
@@ -207,7 +234,8 @@ def main():
                 if path:
                     water.append({"kind": water_kinds[i], "d": path})
         data = {"title": "Oslo og omegn" if code == "03" else name, "county": code,
-                "viewBox": canvas.view_box, "states": states, "water": water}
+                "viewBox": canvas.view_box, "states": states, "water": water,
+                "boundaries": canvas.path(boundaries), "context": canvas.path(context)}
         filename = f"county-{code}.json"
         outputs[filename] = dump(data)
         overview = county_geometries[code]
@@ -218,7 +246,7 @@ def main():
                                   "revision": hashlib.sha256(outputs[filename].encode()).hexdigest()[:12],
                                   "quizTitle": data["title"], "quizCount": len(states),
                                   "overview": {"d": overview_canvas.path(overview_display), "c": overview_canvas.center(overview)}})
-        print(f"{code} {name}: {count} municipalities, {len(states)} quiz targets, {len(water)} water features")
+        print(f"{code} {name}: {count} municipalities, {len(states)} quiz targets, {len(water)} water features", flush=True)
     # Index revision also invalidates cached county files without changing filenames.
     index["revision"] = hashlib.sha256("".join(outputs.values()).encode()).hexdigest()[:12]
     outputs["index.json"] = dump(index)

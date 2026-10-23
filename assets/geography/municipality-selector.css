@@ -70,14 +70,18 @@ body[data-quiz="kommuner"] .panel-header .brand{font-size:20px}
 body[data-quiz="kommuner"] .panel-header .geo-menu-toggle{white-space:nowrap;flex-shrink:0}
 body[data-quiz="kommuner"] .panel-header .map-toolbar{flex-shrink:0}
 .municipality-current-county{font-size:12px;font-weight:650;line-height:1.3;color:#536f60}
-body[data-quiz="kommuner"] .state.municipality{stroke:#d4e3cd;stroke-width:1.5}
-.municipality-context{fill:#cfdbcd;stroke:#a8bca8;stroke-width:.5;pointer-events:none}
+body[data-quiz="kommuner"] .state.municipality{stroke:#74a68a;stroke-width:.45}
+.municipality-context{fill:#e3e6df;stroke:#bac4b6;stroke-width:.4;pointer-events:none}
 #municipality-water{pointer-events:none}
-.municipality-lake,.municipality-river-area{fill:#aeced5;stroke:#81adb5;stroke-width:.35;pointer-events:none}
-.municipality-river{fill:none;stroke:#9ec3cc;stroke-width:.7;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
-.municipality-boundaries path{fill:none;stroke:#365e48;stroke-width:.55;stroke-opacity:.8;pointer-events:none}
+.municipality-lake,.municipality-river-area{fill:#78abae;stroke:#6a9ca0;stroke-width:.25;pointer-events:none}
+.municipality-river{fill:none;stroke:#7aa99a;stroke-width:.45;opacity:.6;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.municipality-boundaries path{fill:none;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.municipality-border-halo{stroke:#31533e;stroke-width:2.3;opacity:.75}
+.municipality-border-line{stroke:#f4f3e9;stroke-width:1.35}
 :root[data-theme="dark"] .municipality-current-county{color:#b5cabe}
-:root[data-theme="dark"] .municipality-context{fill:#354a42;stroke:#668275}
-:root[data-theme="dark"] :is(.municipality-lake,.municipality-river-area){fill:#476d79;stroke:#6c929c}
-:root[data-theme="dark"] .municipality-river{stroke:#678d99}
+:root[data-theme="dark"] .municipality-context{fill:#59665f;stroke:#78847b}
+:root[data-theme="dark"] :is(.municipality-lake,.municipality-river-area){fill:#49766f;stroke:#57837b}
+:root[data-theme="dark"] .municipality-river{stroke:#639483}
+:root[data-theme="dark"] .municipality-border-line{stroke:#dce6dd}
+:root[data-theme="dark"] .municipality-border-halo{stroke:#183a28}
 @media(max-width:700px){.municipality-current-county{grid-column:1/-1;font-size:10px}}
