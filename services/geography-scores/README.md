@@ -11,6 +11,8 @@ Cloudflare Worker `onlyfag-geography-scores` bruker den separate D1-databasen me
 - Norske fylker: egen topp 10 etter fullførte 15 fylker, med samme regler som Statle og maksimalt 1500 poeng. Norsk og engelsk deler listen. Krever oppdatert Worker ved publisering; ingen databaseendring eller migrering er nødvendig.
 - Kart, verdensdeler: én topp 10 per verdensdel etter at alle målene i kartet er besvart. De seks kartene omfatter til sammen 197 land uten gjentakelser og tre uttrykkelig merkede territorier: Fransk Guyana (fransk), Ny-Caledonia (fransk) og Vest-Sahara (omstridt). Samme poengregler som Statle, med maksimalt 100 poeng per mål. Fylker-valget i Kart bruker fylkenes eksisterende liste; USA-valget lenker til Statle og beholder listen der. Norsk og engelsk deler hver liste. Krever oppdatert Worker ved publisering, uten databaseendring.
 - Kart, elver/fjellkjeder/vannområder: samme regler som Statle, med 100/75/50/0 poeng etter tid og feil, ubegrenset antall rettingsforsøk og 0 for hopp over. Alle mål må fullføres. Egen liste per kart og valgt kombinasjon av vannkategorier.
+- Kommuner: én topp 10 per fylkeskart, med `game: "kommuner"` og fylkets tosifrede `county`, for eksempel `"39"` for Vestfold. Oslo og omegn (`"03"`) har sin egen liste for alle de 54 kommunene i dette kartet, inkludert Sør-Odal og Kongsvinger. Serveren henter nøyaktig de samme navnene som kartene; alle kommunene i valgt kart må fullføres.
+- Bydeler i Oslo: egen topp 10 med `game: "bydeler"` for alle de 15 ordinære bydelene. Sentrum og Marka er bakgrunn, og kan ikke sendes inn som svar. Samme 100/75/50/0-regler som Statle gir maksimalt 1500 poeng. Språk deler liste; bydelslisten blandes aldri med Oslo og omegn eller fylker.
 - Finn land: topp 10 per geografisk område. Serveren kontrollerer land, gjentakelser, hint og tidsbonus.
 
 Kart bruker disse separate listevalgene:
@@ -70,6 +72,8 @@ Ingen spilldata, kallenavn eller token sendes til Web Analytics. API-et har inge
 Wrangler 4.151.3 ble brukt ved oppsett. `RATE_SECRET` opprettes som en Worker-secret, aldri som en variabel i nettleseren. API-adressen i `assets/geography/score-service.js` er offentlig. Hvis API-et svikter, vises beskjed og runden fortsetter lokalt uten å sende inn en uverifisert score. Ved lagringsfeil på sluttskjermen kan brukeren prøve igjen innen sesjonen utløper.
 
 For fylker og Kart skal referansedata bygges og Worker publiseres før de nye nettlistene brukes på nettstedet. Denne utvidelsen krever verken endring av databaseskjemaet eller en migrering; eksisterende Statle-, fylkes- og andre resultater beholder listeidentiteten sin. Det er ikke nødvendig å kjøre `schema.sql` på nytt.
+
+Det samme gjelder nye kommune- og bydelslister. Kjør `node scripts/build-geography-score-data.cjs`, `node --test tests/geography-score-api.mjs` og `BROWSER_EXECUTABLE=/usr/bin/chromium node tests/local-maps-online.cjs`, og publiser deretter Worker med kommandoen ovenfor. Det ligger ingen automatisk Worker-utrulling i repoet. GitHub Pages-publisering av HTML/JavaScript oppdaterer ikke Worker. Uten oppdatert Worker avviser API-et de nye spillkonfigurasjonene, klienten gir beskjed om manglende nettrangering og lar runden fortsette lokalt. Den hevder aldri at et uverifisert resultat er lagret.
 
 Databasesletting/moderering utføres av kontoeieren i D1, med betingelser for den aktuelle resultat-ID-en. Ingen offentlig slette- eller administrasjons-API er tilgjengelig.
 

@@ -36,7 +36,7 @@ const server = http.createServer((request, response) => {
   page.on('response', response => { if (response.url().startsWith(base) && response.status() >= 400) missing.push(response.url()); });
   await page.route('**/*', route => {
     const url = route.request().url();
-    if (/\/session(?:\?|$)|\/scores\?|\/publish(?:\?|$)/.test(url)) scoringRequests.push(url);
+    if (/\/session(?:\?|$)|\/scores\?|\/publish(?:\?|$)/.test(url)) scoringRequests.push({url,body:route.request().postDataJSON()});
     return url.startsWith(base) || /^(data|blob):/.test(url) ? route.continue() : route.abort();
   });
   const targets = page.locator('#states .municipality[data-state]');
@@ -102,7 +102,7 @@ const server = http.createServer((request, response) => {
     assert.equal(await targets.count(), counties.get('39').count);
     assert.equal(await page.locator('#map text').count(), 0, 'Municipalities have no answer labels before the game');
     assert.equal(await page.locator('#skip').count(), 0);
-    assert.equal(await page.locator('#statle-top-ten').isVisible(), false, 'The new practice quiz cannot submit to an unrelated online leaderboard');
+    assert.equal(await page.locator('#statle-top-ten').isVisible(), true, 'Each county exposes its own highscore list');
     const initialColors = await targets.evaluateAll(elements => Object.fromEntries(elements.map(element => [element.dataset.state, getComputedStyle(element).fill])));
     assert(Object.values(initialColors).every(color=>color==='rgb(32, 129, 79)'),'Quiz targets retain their green base colour; grey is reserved for surrounding land');
     const water = page.locator('#municipality-water');
@@ -135,6 +135,7 @@ const server = http.createServer((request, response) => {
     await capture('municipality-boundaries-light');
     assert.equal(await page.locator('#feedback').textContent(), '');
     await page.locator('#start').click();
+    await page.waitForFunction(()=>document.body.dataset.phase==='playing');
     const slow = await nextName();
     await page.clock.fastForward(6000);
     await choose(slow);
@@ -174,6 +175,7 @@ const server = http.createServer((request, response) => {
 
     // Real mouse clicks still reach the land through the decorative hydrography.
     await page.locator('#start').click();
+    await page.waitForFunction(()=>document.body.dataset.phase==='playing');
     const name = await nextName();
     const point = await page.locator('#states [data-state]').evaluateAll((elements, name) => {
       const element = elements.find(element => element.dataset.state === name), box = element.getBBox();
@@ -219,6 +221,7 @@ const server = http.createServer((request, response) => {
       const box = await page.locator('#mapViewport').boundingBox();
       assert(box.width > 100 && box.height > 100 && box.y + box.height <= viewport.height + 1, 'Map stays usable within the viewport');
       await page.locator('#start').click();
+      await page.waitForFunction(()=>document.body.dataset.phase==='playing');
       const restart = await page.locator('#restart').boundingBox(), back = await page.locator('#kart-back').boundingBox();
       assert(restart.y + restart.height <= back.y + 1, 'Restart remains above choose-county');
       await capture('municipalities-' + viewport.width);
@@ -226,7 +229,8 @@ const server = http.createServer((request, response) => {
     }
     assert.deepEqual(errors, []);
     assert.deepEqual(missing, []);
-    assert.deepEqual(scoringRequests, [], 'Municipality practice never contacts an unrelated score board');
+    assert(scoringRequests.length>0,'Municipality rounds use the highscore service');
+    assert(scoringRequests.every(request=>request.url.includes('/session')&&request.body.game==='kommuner'&&counties.has(request.body.county)), 'Municipality rounds always select their own county leaderboard');
     console.log('PASS municipality chooser: 15 counties, 357 municipalities, linked hover/focus, map/list navigation and Oslo surroundings');
     console.log('PASS shared municipality game: full round, coloured retry, hydrography, mouse answers, zoom, persistent dark mode and mobile controls');
   } finally { await browser.close(); }

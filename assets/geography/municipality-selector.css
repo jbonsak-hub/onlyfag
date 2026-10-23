@@ -1,5 +1,5 @@
 /* The overview shares the click-map palette, navigation and theme preference. */
-body[data-quiz="kommuner"]{background:#f5f7f2;color:#28463d}
+body:is([data-quiz="kommuner"],[data-quiz="bydeler"]){background:#f5f7f2;color:#28463d}
 body[data-quiz="kommuner"]:has(#municipality-selection:not([hidden])) .quiz-panel-resizer{display:none!important}
 .municipality-selection{height:100dvh;max-width:1280px;margin:0 auto;padding:18px 26px 16px;display:flex;flex-direction:column;gap:16px}
 .municipality-selection-nav{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:40px;flex-shrink:0}
@@ -25,10 +25,10 @@ body[data-quiz="kommuner"]:has(#municipality-selection:not([hidden])) .quiz-pane
 .municipality-county-option:focus-visible{outline:2px solid #398961;outline-offset:1px}
 #municipality-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:24px;text-align:center;font-size:14px;color:#285440}
 .municipality-retry{border:1px solid #8db99c;border-radius:6px;padding:9px 15px;background:#fffefa;color:#285440;font-size:13px;font-weight:650}
-body[data-quiz="kommuner"] .brand{font-size:23px;letter-spacing:-.04em}
+body:is([data-quiz="kommuner"],[data-quiz="bydeler"]) .brand{font-size:23px;letter-spacing:-.04em}
 .municipality-credit{font-size:9px;line-height:1.4;color:#566a55}
 .municipality-credit a{text-decoration:underline}
-:root[data-theme="dark"] body[data-quiz="kommuner"]{background:#14231e;color:#e4eee7}
+:root[data-theme="dark"] body:is([data-quiz="kommuner"],[data-quiz="bydeler"]){background:#14231e;color:#e4eee7}
 :root[data-theme="dark"] .municipality-overview-back,:root[data-theme="dark"] .municipality-credit{color:#b5cabe}
 :root[data-theme="dark"] .municipality-overview-canvas{border-color:#4b6858}
 :root[data-theme="dark"] .municipality-county{stroke:#83a890}
@@ -66,11 +66,11 @@ body[data-quiz="kommuner"] .brand{font-size:23px;letter-spacing:-.04em}
 @media(prefers-reduced-motion:reduce){.municipality-county,.municipality-county-option{transition:none}}
 
 /* Preserve the common Statle controls; give geographic context less weight. */
-body[data-quiz="kommuner"] .panel-header .brand{font-size:20px}
-body[data-quiz="kommuner"] .panel-header .geo-menu-toggle{white-space:nowrap;flex-shrink:0}
-body[data-quiz="kommuner"] .panel-header .map-toolbar{flex-shrink:0}
+body:is([data-quiz="kommuner"],[data-quiz="bydeler"]) .panel-header .brand{font-size:20px}
+body:is([data-quiz="kommuner"],[data-quiz="bydeler"]) .panel-header .geo-menu-toggle{white-space:nowrap;flex-shrink:0}
+body:is([data-quiz="kommuner"],[data-quiz="bydeler"]) .panel-header .map-toolbar{flex-shrink:0}
 .municipality-current-county{font-size:12px;font-weight:650;line-height:1.3;color:#536f60}
-body[data-quiz="kommuner"] .state.municipality{stroke:#74a68a;stroke-width:.45}
+body:is([data-quiz="kommuner"],[data-quiz="bydeler"]) .state.municipality{stroke:#74a68a;stroke-width:.45}
 .municipality-context{fill:#e3e6df;stroke:#bac4b6;stroke-width:.4;pointer-events:none}
 #municipality-water{pointer-events:none}
 .municipality-lake,.municipality-river-area{fill:#78abae;stroke:#6a9ca0;stroke-width:.25;pointer-events:none}
@@ -85,3 +85,8 @@ body[data-quiz="kommuner"] .state.municipality{stroke:#74a68a;stroke-width:.45}
 :root[data-theme="dark"] .municipality-border-line{stroke:#dce6dd}
 :root[data-theme="dark"] .municipality-border-halo{stroke:#183a28}
 @media(max-width:700px){.municipality-current-county{grid-column:1/-1;font-size:10px}}
+
+.borough-reform-note{display:block;font-size:10px;font-weight:400;line-height:1.45;color:#566a55}
+:root[data-theme="dark"] .borough-reform-note{color:#b5cabe}
+body[data-quiz="bydeler"] footer{align-items:flex-start;flex-direction:column}
+body[data-quiz="bydeler"] footer span{text-align:left}

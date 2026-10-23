@@ -164,6 +164,49 @@ test('physical Kart API validates full rounds, skips, replay safety, shared lang
  assert.equal(db.prepare('SELECT COUNT(*) n FROM scores').get().n,4);db.close();
 });
 
+test('municipality maps and Oslo boroughs use separate complete target pools and unchanged scoring bands',()=>{
+ const index=JSON.parse(fs.readFileSync(new URL('../assets/geography/municipalities/index.json',import.meta.url),'utf8'));
+ assert.equal(Object.keys(data.kommuner).length,15);assert.equal(data.bydeler.length,15);
+ const maps=index.counties.map(county=>({game:'kommuner',county:county.code}));maps.push({game:'bydeler'});
+ const boards=new Set();
+ for(const c of maps){
+  const names=c.game==='kommuner'?JSON.parse(fs.readFileSync(new URL('../assets/geography/municipalities/county-'+c.county+'.json',import.meta.url),'utf8')).states.map(state=>state.n):JSON.parse(fs.readFileSync(new URL('../assets/geography/oslo-bydeler/map.json',import.meta.url),'utf8')).states.map(state=>state.n);
+  const s=create(c,1000);assert.deepEqual(s.targets.slice().sort(),names.slice().sort());assert.equal(new Set(s.targets).size,names.length);assert.throws(()=>finish(s,1001),/incomplete/);assert.throws(()=>answer(s,{question:s.current.id,choice:'Ohio'},1002),/invalid_answer/);
+  let now=1000;
+  for(let i=0;i<s.targets.length;i++){
+   if(i)issue(s,now);
+   const q=s.current;if(i===0)assert.equal(answer(s,{question:q.id,choice:s.targets[1]},now+50).correct,false);
+   now+=i===1?7000:i===2?11000:100;
+   assert.equal(answer(s,{question:q.id,choice:q.target,score:999999},now).points,i<2?75:i===2?50:100);
+   now+=100;
+  }
+  assert.ok(s.complete);assert.equal(s.score,names.length*100-100);assert.equal(s.results.length,names.length);
+  assert.equal(board({...c,language:'no'}),board({...c,language:'en'}));boards.add(board(c));
+ }
+ assert.equal(boards.size,16);for(const game of ['statle','fylker'])assert.ok(!boards.has(board({game})));
+ assert.equal(data.kommuner['03'].length,54);assert.ok(data.kommuner['03'].includes('Sør-Odal'));assert.ok(data.kommuner['03'].includes('Kongsvinger'));
+ for(const county of [undefined,null,3,{},['03'],'3','00','01','__proto__','constructor'])assert.throws(()=>config({game:'kommuner',county}),/invalid_config/);
+ for(const name of ['Sentrum','Marka','Oslo']){const s=create({game:'bydeler'},0);assert.throws(()=>answer(s,{question:s.current.id,choice:name},1),/invalid_answer/);}
+});
+
+test('local-map API validates publication and keeps every county and borough ranking isolated',async()=>{
+ const {env,db}=fixture(),call=async(url,body,token)=>{const response=await worker.fetch(req(url,body,token),env);return {status:response.status,body:await response.json()};};
+ const completed=[{game:'kommuner',county:'39'},{game:'kommuner',county:'03'},{game:'bydeler'}];
+ for(const c of completed){
+  const start=await call('/session',c);assert.equal(start.status,201);const {token,questions}=start.body,mutate=(url,input={})=>call(url,{requestId:crypto.randomUUID(),...input},token);
+  assert.equal((await mutate('/publish',{nickname:'Too early'})).status,400);assert.equal((await mutate('/finish')).status,400);
+  for(let i=0;i<questions.length;i++){
+   const q=questions[i];assert.equal((await mutate('/answer',{question:q.id,choice:q.target,score:999999})).status,200);
+   if(i<questions.length-1){const next=await mutate('/next');assert.equal(next.status,200);assert.equal(next.body.question.id,questions[i+1].id);}
+  }
+  assert.equal((await mutate('/next')).status,400);assert.equal((await mutate('/publish',{nickname:c.game+' '+(c.county||'Oslo')})).status,200);
+  const rows=async config=>(await call('/scores?config='+encodeURIComponent(JSON.stringify(config)))).body.rows,ranked=await rows(c);assert.equal(ranked.length,1);assert.equal(ranked[0].score,questions.length*100);assert.deepEqual(await rows({...c,language:'en'}),ranked);
+ }
+ const configs=Object.keys(data.kommuner).map(county=>({game:'kommuner',county}));configs.push({game:'bydeler'},{game:'fylker'},{game:'statle'});
+ for(const c of configs){const response=await call('/scores?config='+encodeURIComponent(JSON.stringify(c)));assert.equal(response.status,200);assert.equal(response.body.rows.length,completed.some(done=>board(done)===board(c))?1:0);}
+ assert.equal(db.prepare('SELECT COUNT(*) n FROM scores').get().n,3);db.close();
+});
+
 test('language migration preserves scores and active runs and can be repeated',()=>{
  const {db}=fixture();
  for(const game of ['flags','capitals','flagcapital','places','countries','mapwiz'])for(const language of ['no','en']){

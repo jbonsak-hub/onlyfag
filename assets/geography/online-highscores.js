@@ -1,10 +1,10 @@
 /* Immediate feedback, ordered background verification, shared top ten. */
 (() => {
- const base=window.GEO_SCORE_API,mode=document.body.dataset.quiz,shapeQuiz=game=>game==='statle'||game==='fylker'||game==='kart';
- if(!base||!['flags','capitals','flagcapital','places','countries','geoguessr','statle','fylker','kart'].includes(mode))return;
+ const base=window.GEO_SCORE_API,mode=document.body.dataset.quiz,shapeQuiz=game=>['statle','fylker','kart','kommuner','bydeler'].includes(game);
+ if(!base||!['flags','capitals','flagcapital','places','countries','geoguessr','statle','fylker','kart','kommuner','bydeler'].includes(mode))return;
  let active=null,starting=false,sequence=0;
  const language=()=>window.QuizLanguage?.language||'no',esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const shapeConfig=()=>mode==='kart'?(document.body.dataset.region==='fylker'?{game:'fylker',language:language()}:{game:'kart',region:document.body.dataset.region,...(document.body.dataset.region==='seas'?{categories:(document.body.dataset.waterCategories||'seas,gulfsStraits').split(',').filter(Boolean)}:{}),language:language()}):{game:mode,language:language()};
+ const shapeConfig=()=>mode==='kommuner'?{game:mode,county:document.body.dataset.county,language:language()}:mode==='kart'?(document.body.dataset.region==='fylker'?{game:'fylker',language:language()}:{game:'kart',region:document.body.dataset.region,...(document.body.dataset.region==='seas'?{categories:(document.body.dataset.waterCategories||'seas,gulfsStraits').split(',').filter(Boolean)}:{}),language:language()}):{game:mode,language:language()};
  const time=ms=>{const s=Math.floor(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
  async function api(path,body,run){const payload=body?{...body,requestId:crypto.randomUUID()}:null;for(let attempt=0;attempt<2;attempt++)try{const r=await fetch(base+path,{method:payload?'POST':'GET',credentials:'omit',cache:'no-store',headers:{...(payload?{'Content-Type':'application/json'}:{}),...(run?{Authorization:'Bearer '+run.token}:{})},...(payload?{body:JSON.stringify(payload)}:{}),signal:AbortSignal.timeout(6000)}),data=await r.json();if(!r.ok)throw Object.assign(Error(data.error||'unavailable'),{http:r.status});return data;}catch(e){if(attempt||e.http)throw e;}}
  function notice(text){let el=document.getElementById('geo-online-notice');if(!el){el=document.createElement('div');el.id='geo-online-notice';el.setAttribute('role','status');document.body.append(el);}el.textContent=text;}

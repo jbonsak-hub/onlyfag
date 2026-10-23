@@ -9,7 +9,7 @@ const assets = ['statle.css', 'statle.js', 'panel-resize.js', 'map-zoom.js'].map
   const extension = source.split('.').pop(), stem = source.slice(0,-extension.length-1);
   let content = fs.readFileSync(path.join(root, 'assets/geography/' + source), 'utf8').replace(/\r\n/g, '\n');
   if (source === 'statle.js') {
-    for (const dataFile of ['us-states.json', 'norway-counties.json', 'continent-maps.json', 'physical-maps/world-water.json', 'physical-maps/mountain-europe.json']) {
+    for (const dataFile of ['us-states.json', 'norway-counties.json', 'continent-maps.json', 'physical-maps/world-water.json', 'physical-maps/mountain-europe.json', 'oslo-bydeler/map.json']) {
       const data = fs.readFileSync(path.join(root, 'assets/geography', dataFile), 'utf8').replace(/\r\n/g, '\n');
       const revision = crypto.createHash('sha256').update(data).digest('hex').slice(0,12);
       content = content.split(dataFile).join(dataFile + '?v=' + revision);
@@ -27,7 +27,7 @@ for (const asset of assets) {
     fs.writeFileSync(file, asset.content);
   }
 }
-for (const page of ['geografi/statle.html', 'geografi/fylker.html', 'geografi/kart.html', 'geografi/kommuner.html', 'prototypes/statle.html']) {
+for (const page of ['geografi/statle.html', 'geografi/fylker.html', 'geografi/kart.html', 'geografi/kommuner.html', 'geografi/oslo-bydeler.html', 'prototypes/statle.html']) {
   const file = path.join(root, page);
   let html = fs.readFileSync(file, 'utf8');
   const themeInit='<script id="map-theme-init">try{document.documentElement.dataset.theme=localStorage.getItem("geoDarkMode")==="1"?"dark":"light"}catch(_){}</script>';

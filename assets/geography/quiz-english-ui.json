@@ -620,5 +620,13 @@
   "Kommune på kartet": "Municipality on the map",
   "Alle kommunene er på plass.": "All municipalities are in place.",
   "Velg fylke på nytt for å prøve igjen.": "Choose the county again to retry.",
-  "Oslo og omegn": "Oslo and surroundings"
+  "Oslo og omegn": "Oslo and surroundings",
+  "Bydeler": "Boroughs",
+  "Bydeler i Oslo": "Oslo boroughs",
+  "Bydel på kartet": "Borough on the map",
+  "Alle bydelene er på plass.": "All boroughs are in place.",
+  "Last siden på nytt for å prøve igjen.": "Reload the page to try again.",
+  "Planlagt endring: 15 bydeler blir til 8 fra 1. januar 2028.": "Planned change: 15 boroughs become 8 from 1 January 2028.",
+  "Bydelsgrenser:": "Borough boundaries:",
+  "Kartkilder": "Map sources"
 }

@@ -5,6 +5,7 @@
   const ns = 'http://www.w3.org/2000/svg';
   const kart = document.body.dataset.quiz === 'kart';
   const municipalities = document.body.dataset.quiz === 'kommuner';
+  const boroughs = document.body.dataset.quiz === 'bydeler';
   const themeButtons = [];
   function applyTheme(dark) {
     document.documentElement.dataset.theme = dark ? 'dark' : 'light';
@@ -102,7 +103,7 @@
     return {x:b.x * scale + x, y:b.y * scale + y, width:b.width * scale, height:b.height * scale};
   }
   function buildMap() {
-    if (municipalities) {
+    if (municipalities || boroughs) {
       $('map').setAttribute('viewBox',regionData.viewBox.join(' '));
       const extent=svgNode('clipPath',{id:'municipality-extent',clipPathUnits:'userSpaceOnUse'});
       extent.append(svgNode('path',{d:states.map(state=>state.d).join(' '),'clip-rule':'evenodd'}));
@@ -314,7 +315,7 @@
     }
     if($('target-continent'))$('target-continent').hidden=true;
     $('targetVerb').textContent = 'Godt jobbet!';
-    $('targetName').textContent = municipalities ? 'Alle kommunene er på plass.' : physical ? 'Alle stedene er fullført.' : counties ? 'Alle fylkene er på plass.' : kart ? 'Alle landene er på plass.' : 'Hele USA er på plass.';
+    $('targetName').textContent = boroughs ? 'Alle bydelene er på plass.' : municipalities ? 'Alle kommunene er på plass.' : physical ? 'Alle stedene er fullført.' : counties ? 'Alle fylkene er på plass.' : kart ? 'Alle landene er på plass.' : 'Hele USA er på plass.';
     const counts = [0,0,0,0]; results.forEach(r => counts[r.band]++);
     results.forEach((r,name) => { if(r.band === 0)mastered.add(name); });
     repeatOffer.hidden = mastered.size === states.length;
@@ -397,13 +398,25 @@
   addEventListener('resize',()=>{if(!physical)return;$('map').setAttribute('preserveAspectRatio',innerWidth>700?'none':'xMidYMid meet');if(panel.style.top){const r=panel.getBoundingClientRect();panel.style.left=Math.max(6,Math.min(innerWidth-r.width-6,r.left))+'px';panel.style.top=Math.max(6,Math.min(innerHeight-r.height-6,r.top))+'px';}});
 
   const readMap=url=>fetch(url).then(response=>{if(!response.ok)throw Error('Kartet kunne ikke hentes');return response.json();});
+  if(boroughs) {
+    shapeLabel='Bydel på kartet';document.body.dataset.region='bydeler';
+    readMap('../assets/geography/oslo-bydeler/map.json').then(data=>{
+      if(data.states?.length!==15||new Set(data.states.map(state=>state.n)).size!==15)throw Error('Ufullstendig kart');
+      regionData=data;states=data.states;total=states.length;
+      $('targetName').textContent=data.title||'Bydeler i Oslo';$('total-count').textContent=' / '+total;
+      $('map').setAttribute('aria-label','Klikkbart kart over Oslos 15 bydeler');
+      buildMap();updateStats();window.ClickMapZoom?.setBase();window.dispatchEvent(new Event('resize'));
+      $('start').disabled=false;$('start').textContent='Start →';
+    }).catch(()=>{$('start').textContent='Kartet kunne ikke lastes';setFeedback('Last siden på nytt for å prøve igjen.','error');});
+    setPhase('ready');return;
+  }
   if(municipalities) {
     let municipalityIndex;
     const maps=new Map();
     async function selectMunicipalityCounty(code) {
       const county=municipalityIndex?.counties.find(county=>county.code===code);
       if(!county)return;
-      const token=++mapGeneration;resetMap();shapeLabel='Kommune på kartet';
+      const token=++mapGeneration;window.GeoOnline?.resetStatle();resetMap();shapeLabel='Kommune på kartet';
       document.body.dataset.county=code;document.body.dataset.region='kommuner-'+code;
       $('municipality-selection').hidden=true;$('kart-game').hidden=false;
       $('targetVerb').textContent='Klar for en runde?';$('targetName').textContent=county.quizTitle||county.name;
@@ -433,7 +446,7 @@
       if(selected)selectMunicipalityCounty(selected);
     });
     $('kart-back').addEventListener('click',event=>{
-      event.preventDefault();++mapGeneration;resetMap();$('kart-game').hidden=true;
+      event.preventDefault();++mapGeneration;window.GeoOnline?.resetStatle();resetMap();$('kart-game').hidden=true;
       $('municipality-selection').hidden=false;delete document.body.dataset.county;delete document.body.dataset.region;
       const url=new URL(location.href);url.searchParams.delete('fylke');history.replaceState(null,'',url);
       window.dispatchEvent(new CustomEvent('municipality-back'));
