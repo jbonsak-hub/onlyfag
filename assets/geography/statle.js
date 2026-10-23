@@ -420,7 +420,7 @@
   if(boroughs) {
     shapeLabel='Sted på kartet';document.body.dataset.region='bydeler';
     readMap('../assets/geography/oslo-bydeler/oslo.json').then(data=>{
-      if(data.ruleset!=='oslo-areas-v3'||!Array.isArray(data.states)||data.states.length<28||new Set(data.states.map(state=>state.n)).size!==data.states.length||data.states.some(state=>!state.d||state.marker||!['land','forest','lake'].includes(state.kind))||!data.states.some(state=>state.n==='Sentrum'))throw Error('Ufullstendig kart');
+      if(data.ruleset!=='oslo-areas-v4'||!Array.isArray(data.states)||data.states.length!==35||new Set(data.states.map(state=>state.n)).size!==data.states.length||data.states.some(state=>!state.d||state.marker||!['land','forest','lake'].includes(state.kind))||!data.states.some(state=>state.n==='Sentrum'))throw Error('Ufullstendig kart');
       regionData=data;states=data.states;total=states.length;
       $('targetName').textContent=data.title||'Oslo';$('total-count').textContent=' / '+total;
       $('map').setAttribute('aria-label','Klikkbart kart over Oslo og nærområdene');

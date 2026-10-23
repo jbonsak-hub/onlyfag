@@ -15,7 +15,7 @@ import sys
 sys.dont_write_bytecode = True
 
 from pyproj import Transformer
-from shapely.geometry import Point, box, shape
+from shapely.geometry import Point, Polygon, box, shape
 from shapely.ops import polygonize, transform, unary_union
 from shapely.strtree import STRtree
 
@@ -144,21 +144,41 @@ def clipped_row(row, crop, minimum_area=0):
             "clipped": share < 0.99999}
 
 
+def solid_land(geometry):
+    """Remove inland holes in generalized learning regions, keeping coastlines."""
+    return polygonal(unary_union([Polygon(part.exterior)
+                                  for part in municipalities.polygons(geometry)]))
+
+
+def absorb_land_gaps(domain, candidates):
+    """Assign existing land pieces using shared edges, never drawing over sea."""
+    occupied = unary_union([row["geometry"] for row in candidates])
+    gaps = list(municipalities.polygons(domain.difference(occupied)))
+    assigned = []
+    for gap in sorted(gaps, key=lambda geometry: (-geometry.area, geometry.bounds)):
+        shared_edge = gap.boundary.buffer(0.05)
+        shared = [(row["geometry"].boundary.intersection(shared_edge).length,
+                   -gap.distance(row["geometry"]), -index, row)
+                  for index, row in enumerate(candidates)]
+        _, _, _, owner = max(shared, key=lambda entry: entry[:3])
+        owner["geometry"] = polygonal(unary_union([owner["geometry"], gap]))
+        assigned.append({"areaM2": round(gap.area, 2), "assignedTo": owner["name"]})
+    return assigned
+
+
 def build(require_sources=True):
     rows, source, topology, municipality_features, oslo_land, repairs, sentrum_area = build_base()
     project = Transformer.from_crs("EPSG:4326", "EPSG:25833", always_xy=True).transform
-    # Reconstructed from the user's red rectangle in the published map. These
-    # fixed metric bounds crop geography; no target geometry is stretched to fit.
+    # The second user annotation cuts the previous frame at about 83% width.
     crop_bounds = (248610.72742114664, 6636516.482282372,
-                   279669.4171429286, 6659260.669574317)
+                   274430.0, 6659260.669574317)
     crop = box(*crop_bounds)
     canvas = municipalities.Canvas(crop_bounds)
     view_box = [16, 16, round(canvas.width - 32, 2), round(canvas.height - 32, 2)]
-    assert 1.35 < view_box[2] / view_box[3] < 1.38
+    assert 1.12 < view_box[2] / view_box[3] < 1.15
 
     nearby = {}
     for feature in municipality_features:
-        # Bounding-box filtering avoids projecting all Norway for this city map.
         geometry = shape(feature["geometry"])
         if not geometry.envelope.intersects(box(10, 59.5, 11.4, 60.3)):
             continue
@@ -167,160 +187,202 @@ def build(require_sources=True):
             geometry = geometry.buffer(0)
         if geometry.intersects(crop):
             nearby[feature["properties"]["id"]] = {
-                "name": feature["properties"]["name"], "geometry": polygonal(geometry),
+                "name": feature["properties"]["name"], "geometry": solid_land(geometry),
                 "code": feature["properties"]["id"], "kind": "land",
                 "boundaryType": "municipality"}
 
-    # Actual municipal borders, including substantial portions cut by the
-    # frame. Asker's narrow five-square-kilometre corner stays background.
-    for code in ["3212", "3222", "3207", "3205", "3224", "3232", "3220"]:
-        row = nearby[code]
-        assert row["geometry"].intersection(crop).area > 10_000_000
-        rows.append(row)
-    rows = [clipped_row({**row, "kind": "land",
-                         "boundaryType": row.get("boundaryType", "borough")}, crop)
+    selected_municipalities = ["3212", "3222", "3207", "3232"]
+    rows.extend(dict(nearby[code]) for code in selected_municipalities)
+    rows = [{**row, "geometry": solid_land(row["geometry"]),
+             "kind": "land", "boundaryType": row.get("boundaryType", "borough")}
             for row in rows]
-    assert all(row is not None for row in rows)
 
-    # Postal regions provide one consistent, real partition of western urban
-    # areas, including Fornebu and Bekkestua; they are not guessed town limits.
+    # Retain the exact western edge of the selected postal regions, but turn
+    # their ten former questions into one honestly named learning region.
     layer_sources = []
     postal_path = OUTPUT / "sources/baerum-areas-postal-localities.geojson.gz"
-    if postal_path.exists():
-        postal, metadata, filename = read_layer(postal_path, "land")
-        baerum_land = nearby["3201"]["geometry"]
-        postal_land = []
-        for row in postal:
-            row["geometry"] = polygonal(row["geometry"].intersection(baerum_land))
-            if row["geometry"].is_empty:
-                continue
-            clipped = clipped_row(row, crop, 150_000)
-            if clipped is not None and (clipped["geometry"].area >= 500_000 or clipped["visibleShare"] >= 0.15):
-                clipped["category"] = "postal-area"
-                clipped["code"] = "poststed-" + clipped["code"]
-                rows.append(clipped)
-                postal_land.append(clipped["geometry"])
-        postal_coverage = unary_union(postal_land).area / baerum_land.intersection(crop).area
-        assert postal_coverage > 0.95, "The postal partition no longer fills Bærum's visible land"
-        layer_sources.append({"file": filename, "source": metadata})
-    elif require_sources:
-        raise FileNotFoundError(f"The genuine Bærum postal region source is required: {postal_path}")
+    postal, metadata, filename = read_layer(postal_path, "land")
+    postal_by_name = {row["name"]: row for row in postal}
+    postal_by_name["Høvik"]["geometry"] = unary_union([
+        postal_by_name["Høvik"]["geometry"], postal_by_name["Høvikodden"]["geometry"]])
+    western_names = ["Bekkestua", "Høvik", "Hosle", "Eiksmarka", "Østerås",
+                     "Jar", "Stabekk", "Lysaker", "Fornebu", "Snarøya"]
+    baerum_land = nearby["3201"]["geometry"]
+    eastern_baerum = solid_land(unary_union([
+        postal_by_name[name]["geometry"] for name in western_names])).intersection(baerum_land)
+    rows.append({"name": "Østre Bærum", "code": "eastern-baerum",
+                 "kind": "land", "category": "land", "boundaryType": "learning-area",
+                 "geometry": eastern_baerum})
+    layer_sources.append({"file": filename, "source": metadata,
+                         "groupedAreas": western_names,
+                         "merge": {"Høvik": ["Høvik", "Høvikodden"]},
+                         "boundaryMeaning": "Learning region: union of retained postal areas; not the full municipality or an official district."})
 
     bygdoy_source = municipalities.read_json_gzip(OUTPUT / "sources/bygdoy.geojson.gz")
     bygdoy = transform(project, shape(bygdoy_source["features"][0]["geometry"])).buffer(0)
     frogner = next(row["geometry"] for row in rows if row["code"] == "05")
-    rows.append(clipped_row({"name": "Bygdøy", "code": "bygdoy", "kind": "land",
-                             "boundaryType": "subdistrict", "geometry": polygonal(bygdoy.intersection(frogner))}, crop))
+    rows.append({"name": "Bygdøy", "code": "bygdoy", "kind": "land",
+                 "boundaryType": "subdistrict",
+                 "geometry": polygonal(bygdoy.intersection(frogner))})
 
-    # Real named forest polygons, cut only by the rectangular map frame.
+    islands, metadata, filename = read_layer(OUTPUT / "sources/islands-quiz-polygons.geojson.gz", "land")
+    assert {row["name"] for row in islands} == {
+        "Langøyene", "Gressholmen", "Lindøya", "Malmøya", "Ulvøya", "Ormøya"}
+    for row in islands:
+        row.update(kind="land", category="island")
+    layer_sources.append({"file": filename, "source": metadata})
+    island_union = unary_union([row["geometry"] for row in islands])
+
+    # Replace the atlas's coarser versions of these islands with their pinned
+    # OSM coastlines; otherwise an old shoreline could leave a pale fringe.
+    coarse_islands = []
+    for row in nearby.values():
+        for part in municipalities.polygons(row["geometry"]):
+            if part.area < 3_000_000 and part.intersection(island_union).area > 10_000:
+                coarse_islands.append(part)
+    coarse_island_union = unary_union(coarse_islands)
+    for row in rows:
+        parts = [part for part in municipalities.polygons(row["geometry"])
+                 if not (part.area < 3_000_000 and
+                         part.intersection(island_union).area > 10_000)]
+        row["geometry"] = polygonal(unary_union(parts).difference(coarse_island_union))
+    land = solid_land(unary_union([row["geometry"] for row in nearby.values()]))
+    land = polygonal(land.difference(coarse_island_union).union(island_union)).intersection(crop)
+
+    excluded_west = baerum_land.difference(eastern_baerum)
+    for row in nearby.values():
+        if row["name"] == "Asker":
+            excluded_west = excluded_west.union(row["geometry"])
+    forests, metadata, filename = read_layer(OUTPUT / "sources/forests-quiz-polygons.geojson.gz", "forest")
     forest_rows = []
-    forest_path = OUTPUT / "sources/forests-quiz-polygons.geojson.gz"
-    if forest_path.exists():
-        forests, metadata, filename = read_layer(forest_path, "forest")
-        for row in forests:
-            clipped = clipped_row({**row, "kind": "forest"}, crop, 500_000)
-            if clipped is not None:
-                clipped["code"] = "forest-" + clipped["code"]
-                forest_rows.append(clipped)
-        layer_sources.append({"file": filename, "source": metadata})
-    elif require_sources:
-        raise FileNotFoundError(f"The genuine forest region polygons are required: {forest_path}")
+    forest_hole_area = 0
+    for row in forests:
+        filled = solid_land(row["geometry"])
+        forest_hole_area += filled.area - row["geometry"].area
+        row["geometry"] = polygonal(filled.intersection(land).difference(excluded_west))
+        clipped = clipped_row({**row, "kind": "forest"}, crop, 500_000)
+        assert clipped is not None, row["name"]
+        # The postal mask can reintroduce tiny enclosed pockets in a wood.
+        # Absorb those real land pieces too, without moving its outer edge or
+        # filling sea. The three selected lakes are subtracted separately.
+        enclosed_land = solid_land(clipped["geometry"]).difference(clipped["geometry"]).intersection(land)
+        forest_hole_area += enclosed_land.area
+        clipped["geometry"] = polygonal(clipped["geometry"].union(enclosed_land))
+        clipped["code"] = "forest-" + clipped["code"]
+        forest_rows.append(clipped)
+    layer_sources.append({"file": filename, "source": metadata,
+                         "learningGeneralization": "Fill inland clearing/water holes; retain sourced exterior woodland outlines and clip to the selected western learning boundary."})
 
     hydrography = municipalities.read_json_gzip(municipalities.WATER_SOURCE)
     assert hydrography["crs"] == "EPSG:25833"
-    water_geometries = [shape(f["geometry"]) for f in hydrography["features"]]
-    water_kinds = [f["properties"]["kind"] for f in hydrography["features"]]
+    water_geometries = [shape(feature["geometry"]) for feature in hydrography["features"]]
+    water_kinds = [feature["properties"]["kind"] for feature in hydrography["features"]]
     water_tree = STRtree(water_geometries)
     lakes_by_name = {}
-    named_water = set()
-    for name, code, coordinate in [("Bogstadvannet", "lake-bogstad", (10.622, 59.970)),
-                                   ("Maridalsvannet", "lake-maridal", (10.772, 59.982)),
-                                   ("Nøklevann", "lake-noklevann", (10.874, 59.875))]:
+    for name, code, coordinate in [
+            ("Bogstadvannet", "lake-bogstad", (10.622, 59.970)),
+            ("Maridalsvannet", "lake-maridal", (10.772, 59.982))]:
         point = transform(project, Point(*coordinate))
-        candidates = [int(i) for i in water_tree.query(point)
-                      if water_kinds[i] == "lake" and water_geometries[i].covers(point)]
-        assert len(candidates) == 1, f"Named lake no longer matches its pinned source: {name}"
-        index = candidates[0]
-        named_water.add(index)
+        candidates = [int(index) for index in water_tree.query(point)
+                      if water_kinds[index] == "lake" and water_geometries[index].covers(point)]
+        assert len(candidates) == 1, name
         lakes_by_name[name] = {"name": name, "code": code, "kind": "lake",
-                              "geometry": water_geometries[index]}
-    water_path = OUTPUT / "sources/water-quiz-polygons.geojson.gz"
-    if water_path.exists():
-        fine_water, metadata, filename = read_layer(water_path, "lake")
-        for row in fine_water:
-            # Prefer the finer sourced outline when both datasets name a lake.
-            row["kind"] = "lake"
-            row["code"] = "lake-" + row["code"]
-            lakes_by_name[row["name"]] = row
-        layer_sources.append({"file": filename, "source": metadata})
-    elif require_sources:
-        raise FileNotFoundError(f"The genuine small-lake outlines are required: {water_path}")
-    lakes = []
-    for row in lakes_by_name.values():
-        clipped = clipped_row(row, crop, 20_000)
-        if clipped is not None and (clipped["visibleShare"] >= 0.2 or clipped["geometry"].area >= 100_000):
-            lakes.append(clipped)
-
-    # Land and forests are selectable polygons; the water layer remains quiet.
-    # Named lake geometry is excluded from decorative water, which otherwise
-    # could cover its answer colour or intercept the visual hierarchy.
+                              "geometry": water_geometries[candidates[0]]}
+    fine_water, metadata, filename = read_layer(OUTPUT / "sources/water-quiz-polygons.geojson.gz", "lake")
+    sognsvann = next(row for row in fine_water if row["name"] == "Sognsvann")
+    lakes_by_name["Sognsvann"] = {**sognsvann, "kind": "lake", "code": "lake-sognsvann"}
+    lakes = [clipped_row(row, crop) for row in lakes_by_name.values()]
+    assert all(row is not None for row in lakes)
     lake_union = unary_union([row["geometry"] for row in lakes])
-    water = []
-    for index in sorted(water_tree.query(crop, predicate="intersects")):
-        if int(index) in named_water:
-            continue
-        geometry = water_geometries[index].intersection(crop)
-        if water_kinds[index] != "river":
-            geometry = geometry.difference(lake_union)
-        path = canvas.path(geometry)
-        if path:
-            water.append({"kind": water_kinds[index], "d": path})
+    layer_sources.append({"file": filename, "source": metadata,
+                         "selectedNames": ["Sognsvann"]})
 
-    # Fill surrounding land in the fixed crop, rather than leaving it the same
-    # colour as sea. The five new edge municipalities supply substantial real
-    # regions; very small outside pieces are context instead of quiz answers.
-    land = unary_union([row["geometry"] for row in nearby.values()]).intersection(crop)
-    surfaces = [water_geometries[i].intersection(crop) for i in water_tree.query(crop, predicate="intersects")
-                if water_kinds[i] != "river"]
-    occupied = unary_union([row["geometry"] for row in rows + forest_rows])
-    context = polygonal(land.difference(occupied).difference(unary_union(surfaces + [lake_union])))
-    context = context.simplify(10, preserve_topology=True)
+    rows = [clipped_row(row, crop) for row in rows]
+    islands = [clipped_row(row, crop) for row in islands]
+    assert all(row is not None for row in rows + islands)
+    # Enclosed source holes and unassigned coastal fragments are existing land,
+    # not extra questions. Assign them inside their municipality using shared
+    # edges (or the nearest real borough for disconnected islands).
+    gap_assignments = []
+    for code in ["0301", *selected_municipalities, "3201"]:
+        domain = eastern_baerum if code == "3201" else nearby[code]["geometry"]
+        domain = domain.intersection(crop).difference(coarse_island_union).difference(island_union)
+        if code == "0301":
+            candidates = [row for row in rows if row["code"] in {*NAMES, "16", "bygdoy"}]
+        elif code == "3201":
+            candidates = [row for row in rows if row["code"] == "eastern-baerum"]
+        else:
+            candidates = [row for row in rows if row["code"] == code]
+        candidates += [row for row in forest_rows if row["geometry"].intersection(domain).area > 1]
+        # Explicit lakes are overlaid later; their real island holes remain land.
+        gap_assignments.extend(absorb_land_gaps(domain, candidates))
+
+    for row in rows + forest_rows:
+        row["geometry"] = polygonal(row["geometry"].difference(island_union).difference(lake_union))
+    all_land_rows = rows + forest_rows + islands
+    occupied = unary_union([row["geometry"] for row in all_land_rows])
+    context = polygonal(land.difference(occupied).difference(lake_union))
+    for row in forest_rows:
+        holes = solid_land(row["geometry"]).difference(row["geometry"])
+        assert holes.intersection(context).area < 0.1, "Unassigned inland forest holes"
+    playable_domain = unary_union([
+        nearby[code]["geometry"] for code in ["0301", *selected_municipalities]
+    ] + [eastern_baerum]).intersection(crop).difference(coarse_island_union).union(island_union)
+    unassigned = playable_domain.difference(occupied).difference(lake_union)
+    assert unassigned.area < 0.1, "Unassigned land inside the learning area"
 
     administrative = [row["geometry"] for row in rows if row["code"] != "bygdoy"]
     administrative_union = unary_union(administrative)
-    boundaries = unary_union([g.boundary for g in administrative]).difference(administrative_union.boundary)
-    # Rectangle edges are clipping, not newly invented administrative borders.
+    boundaries = unary_union([geometry.boundary for geometry in administrative]).difference(administrative_union.boundary)
     boundaries = boundaries.difference(crop.boundary.buffer(0.01))
+    # Administrative lines beneath woods used to make one forest look like
+    # dozens of tiny regions. Forests now have only their own exterior edge.
+    forest_union = unary_union([row["geometry"] for row in forest_rows])
+    boundaries = boundaries.difference(forest_union.buffer(0.05))
     bygdoy_geometry = next(row["geometry"] for row in rows if row["code"] == "bygdoy")
     boundaries = unary_union([boundaries, bygdoy_geometry.boundary.intersection(frogner.buffer(-250))])
 
     states = []
-    for row in [*rows, *forest_rows, *lakes]:
+    for row in [*rows, *forest_rows, *lakes, *islands]:
         geometry = row["geometry"]
-        assert geometry.is_valid and geometry.geom_type in ("Polygon", "MultiPolygon") and not geometry.is_empty
-        assert geometry.difference(crop).area < 0.01, "A quiz polygon escaped the fixed crop"
+        assert geometry.is_valid and geometry.geom_type in ("Polygon", "MultiPolygon") and not geometry.is_empty, row["name"]
+        assert geometry.difference(crop).area < 0.01, row["name"]
+        # A parent municipality may overlap a forest/Bygdøy. Prefer a visible
+        # point for its hint so the newly simplified map remains easy to use.
+        visible = geometry
+        if row in rows:
+            occluders = forest_union.union(bygdoy_geometry) if row["code"] != "bygdoy" else forest_union
+            remainder = polygonal(geometry.difference(occluders))
+            if not remainder.is_empty:
+                visible = remainder
         states.append({"n": row["name"], "a": row["code"], "kind": row["kind"],
-                       "d": canvas.path(geometry), "c": canvas.center(geometry),
+                       "d": canvas.path(geometry), "c": canvas.center(visible),
                        "category": row.get("category", row["kind"]),
                        "boundaryType": row.get("boundaryType"),
                        "clipped": row["clipped"], "visibleShare": row["visibleShare"]})
     names = {state["n"] for state in states}
-    assert len(states) == len(names), "Each named area must have exactly one quiz target"
+    assert len(states) == len(names) == 35
     assert all(state["d"] and state["kind"] in ("land", "forest", "lake") for state in states)
-    if require_sources:
-        assert {"Fornebu", "Lysaker", "Bekkestua", "Sandvika", "Nordmarka", "Østmarka", "Sognsvann"} <= names
-        assert len(states) > 28
+    assert {state["n"] for state in states if state["kind"] == "lake"} == {
+        "Bogstadvannet", "Sognsvann", "Maridalsvannet"}
     data = {
-        "title": "Oslo", "ruleset": "oslo-areas-v3", "viewBox": view_box,
-        "states": states, "water": water, "boundaries": canvas.path(boundaries),
+        "title": "Oslo", "ruleset": "oslo-areas-v4", "viewBox": view_box,
+        "states": states, "water": [], "boundaries": canvas.path(boundaries),
         "context": canvas.path(context),
         "crop": {"crs": "EPSG:25833", "bounds": list(crop_bounds),
                  "widthKm": round((crop_bounds[2] - crop_bounds[0]) / 1000, 2),
                  "heightKm": round((crop_bounds[3] - crop_bounds[1]) / 1000, 2)},
+        "stats": {"targetCount": len(states), "assignedLandFragments": len(gap_assignments),
+                  "assignedLandAreaM2": round(sum(item["areaM2"] for item in gap_assignments), 2),
+                  "unassignedPlayableLandM2": round(unassigned.area, 4)},
         "source": {"boundaries": source["source"], "hydrography": hydrography["source"],
                    "bygdoy": bygdoy_source["source"], "additionalLayers": layer_sources,
                    "sentrum": {"method": "Oslo land minus the fifteen boroughs; city-centre component", "areaM2": round(sentrum_area, 2)},
-                   "topologyRepair": repairs},
+                   "topologyRepair": repairs,
+                   "learningGeneralization": {
+                       "assignedLandFragments": gap_assignments,
+                       "forestInteriorFilledAreaM2": round(forest_hole_area, 2),
+                       "method": "Retain real coasts; merge Høvikodden into Høvik; group retained eastern Bærum postal areas; fill inland holes and assign existing unallocated land to adjacent/nearest same-municipality learning regions. Nonquiz lakes and rivers are omitted; this is a generalized learning map, not a land-cover survey."}},
     }
     return municipalities.dump(data)
 

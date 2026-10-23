@@ -1,0 +1,20 @@
+Six named Oslofjord island polygons and preserved source responses
+
+© OpenStreetMap contributors
+https://www.openstreetmap.org/copyright
+
+The source OpenStreetMap database is available under the Open Data Commons
+Open Database License (ODbL) 1.0:
+https://opendatacommons.org/licenses/odbl/1-0/
+
+The preserved official OSM API responses and derived
+islands-quiz-polygons.geojson.gz layer are distributed under that license.
+Individual contents of the database are available under the Database Contents
+License (DbCL) 1.0:
+https://opendatacommons.org/licenses/dbcl/1-0/
+
+Attribution: © OpenStreetMap contributors.
+Keep that attribution visible when rendering the derived island coastlines.
+The full original responses, exact object references, checksums, provenance
+and deterministic offline conversion are included alongside this notice.
+These are mapped coastlines, not legal/property boundaries or a survey.

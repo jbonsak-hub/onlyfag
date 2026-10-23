@@ -6,30 +6,55 @@ const cp = require('node:child_process');
 const assert = require('node:assert/strict');
 const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = path.resolve(__dirname, '..');
-const legacyHtml = new Map([[16,'54ead85'],[28,'c876d0f']].map(([count,commit])=>[String(count),cp.execFileSync('git',['show',commit+':geografi/oslo-bydeler.html'],{cwd:root})]));
+const historicalMaps = [
+  {count:16,commit:'54ead85',file:'map.json',variant:undefined},
+  {count:28,commit:'c876d0f',file:'oslo-00fc86a8a4bf.json',variant:'oslo-28'},
+  {count:57,commit:'f3ca0f1',file:'oslo-fa9842cf0c7a.json',variant:'oslo-areas-v3'}
+];
+const legacyHtml = new Map(historicalMaps.map(({count,commit})=>[String(count),cp.execFileSync('git',['show',commit+':geografi/oslo-bydeler.html'],{cwd:root})]));
 const map = JSON.parse(fs.readFileSync(path.join(root, 'assets/geography/oslo-bydeler/oslo.json'), 'utf8'));
-const legacyMap = JSON.parse(fs.readFileSync(path.join(root, 'assets/geography/oslo-bydeler/map.json'), 'utf8'));
-assert.equal(legacyMap.states.length,16,'The original sixteen-target map remains available to cached pages');
-const additions = ['Fornebu','Lysaker','Bekkestua','Sandvika','Nesodden','Lørenskog','Bogstadvannet','Sognsvann','Maridalsvannet','Nordmarka','Østmarka','Bygdøy'];
+for(const {count,file} of historicalMaps){
+  const historicalMap=JSON.parse(fs.readFileSync(path.join(root,'assets/geography/oslo-bydeler',file),'utf8'));
+  assert.equal(historicalMap.states.length,count,'The published '+count+'-target map remains available to cached pages');
+}
+const publishedMap = JSON.parse(fs.readFileSync(path.join(root,'assets/geography/oslo-bydeler/oslo-fa9842cf0c7a.json'),'utf8'));
+const islands = ['Langøyene','Gressholmen','Lindøya','Malmøya','Ulvøya','Ormøya'];
+const additions = ['Østre Bærum','Nesodden','Lørenskog','Nordre Follo','Nittedal','Bogstadvannet','Sognsvann','Maridalsvannet','Nordmarka','Østmarka','Bygdøy',...islands];
 const lakes = ['Bogstadvannet','Sognsvann','Maridalsvannet'];
-const places = ['Fornebu','Lysaker','Bekkestua','Sandvika'];
+const westernContextNames = ['Sandvika','Blommenholm','Gjettum','Kolsås'];
 const forests = map.states.filter(state => state.kind === 'forest').map(state => state.n);
 const total = map.states.length;
 assert.equal(map.title, 'Oslo');
-assert.equal(map.ruleset,'oslo-areas-v3');
-assert(total>28,'Additional real areas fill the previous gaps around Oslo');
+assert.equal(map.ruleset,'oslo-areas-v4');
+assert.equal(total,35,'The simplified learning map has 35 targets');
+assert(total<57,'The simplified map reduces the published 57-target pool');
 assert.equal(new Set(map.states.map(item => item.n)).size,total);
 for (const name of ['Gamle Oslo','Grünerløkka','Sagene','Frogner','Søndre Nordstrand','Sentrum',...additions]) assert(map.states.some(item => item.n === name), name + ' is present');
-assert(!map.states.some(item => item.n === 'Marka'), 'The two named forest areas replace a vague combined Marka target');
+assert(!map.states.some(item => item.n === 'Marka'), 'Named forest areas replace a vague combined Marka target');
 for(const state of map.states){assert.equal(typeof state.d,'string');assert(/M.+Z/.test(state.d),state.n+' has a closed area outline');assert(['land','forest','lake'].includes(state.kind),state.n+' is a real area, forest or lake');assert(!state.marker,state.n+' never substitutes a point marker for its area');}
 for(const name of lakes)assert.equal(map.states.find(item=>item.n===name).kind,'lake',name+' has an actual lake outline');
 for(const name of forests)assert.equal(map.states.find(item=>item.n===name).kind,'forest',name+' has an actual forest outline');
-for(const name of places){const area=map.states.find(item=>item.n===name);assert.equal(area.kind,'land');assert.equal(area.boundaryType,'poststed',name+' uses a sourced postal-area boundary');}
+const baerum=map.states.find(state=>state.n==='Østre Bærum');
+assert.equal(baerum.kind,'land');
+assert.equal(baerum.boundaryType,'learning-area','The grouped Bærum area is described as a learning area');
+assert.notEqual(baerum.category,'postal-area','A group of postal areas is not described as one official postal area');
+assert.deepEqual(map.states.filter(state=>state.kind==='lake').map(state=>state.n).sort(),lakes.toSorted(),'Only the three selected northern lakes remain');
+for(const name of islands)assert.equal(map.states.find(state=>state.n===name).kind,'land',name+' is a real island polygon');
+for(const name of [...publishedMap.states.filter(state=>state.boundaryType==='poststed').map(state=>state.n),'Lillestrøm','Rælingen','Enebakk',...westernContextNames])assert(!map.states.some(state=>state.n===name),name+' is not a separate quiz target');
 const aspect = map.viewBox[2] / map.viewBox[3];
-assert(Math.abs(aspect-1.3656)<.03,'The map keeps the requested wider, tightly cropped frame');
+assert(aspect>1&&aspect<1.2,'The eastern cut leaves a compact, slightly wider-than-tall map');
 assert.equal(map.crop.crs,'EPSG:25833');
-for(const [i,bound]of [248610.7274,6636516.4823,279669.4171,6659260.6696].entries())assert(Math.abs(map.crop.bounds[i]-bound)<.1,'Crop bound '+i+' matches the requested rectangle in real map coordinates');
-assert(map.boundaries.length && map.context.length && map.water.length, 'Detailed borders, surrounding land and water are included');
+for(const [i,bound]of [248610.7274,6636516.4823,274430,6659260.6696].entries())assert(Math.abs(map.crop.bounds[i]-bound)<.1,'Crop bound '+i+' matches the simplified rectangle in real map coordinates');
+assert(map.boundaries.length && map.context.length, 'Quiz borders and surrounding land are included');
+assert.deepEqual(map.water,[],'Unselected decorative water is omitted from the map');
+const publishedPoint = name => {
+  const state=publishedMap.states.find(state=>state.n===name);
+  assert(state,'The published map includes reference geometry for '+name);
+  const [oldWest,oldSouth,oldEast,oldNorth]=publishedMap.crop.bounds,[west,south,east,north]=map.crop.bounds;
+  const projectedX=oldWest+(state.c[0]-publishedMap.viewBox[0])/publishedMap.viewBox[2]*(oldEast-oldWest);
+  const projectedY=oldNorth-(state.c[1]-publishedMap.viewBox[1])/publishedMap.viewBox[3]*(oldNorth-oldSouth);
+  return [map.viewBox[0]+(projectedX-west)/(east-west)*map.viewBox[2],map.viewBox[1]+(north-projectedY)/(north-south)*map.viewBox[3]];
+};
 const mime = {'.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css', '.json':'application/json'};
 const server = http.createServer((request, response) => {
   const url = new URL(request.url, 'http://localhost');
@@ -106,17 +131,23 @@ const server = http.createServer((request, response) => {
   };
   try {
     await page.clock.install();
-    // Both previously published pages keep their own original code and map.
+    // All previously published pages keep their own original code and map.
     // Serving them against today's files reproduces a real cached-HTML visit.
-    for(const count of [16,28]){
+    for(const {count,variant,file} of historicalMaps){
       await page.goto(base+'/geografi/oslo-bydeler.html?legacy='+count);
       await page.locator('#start:enabled').waitFor();
       assert.equal(await targets.count(),count,'The previously published '+count+'-target page still loads');
       assert.equal(await page.locator('#total-count').textContent(),' / '+count);
+      await page.locator('#statle-top-ten').click();
+      await page.waitForFunction(()=>document.querySelector('#geo-online-content')?.textContent.includes('Ingen resultater'));
+      assert.equal(boards.at(-1).game,'bydeler');
+      assert.equal(boards.at(-1).variant,variant,'The cached '+count+'-target page retains its original score variant');
+      await page.locator('#geo-online-board button').click();
       await page.locator('#start').click();await page.waitForFunction(()=>document.body.dataset.phase==='playing');
       await choose(await page.locator('#targetName').textContent());
       assert.equal(await page.locator('#completed').textContent(),'1','The cached '+count+'-target game still accepts an answer');
       await capture('legacy-'+count+'-targets');
+      assert(loadedMaps.includes('/assets/geography/oslo-bydeler/'+file),'The cached '+count+'-target page loads its preserved map');
     }
     assert(loadedMaps.includes('/assets/geography/oslo-bydeler/map.json'),'The old sixteen-target bundle reads its preserved map');
     await page.goto(base + '/geografi/kart.html');
@@ -145,7 +176,7 @@ const server = http.createServer((request, response) => {
     await page.locator('#geo-online-board').waitFor();
     await page.waitForFunction(() => document.querySelector('#geo-online-content')?.textContent.includes('Ingen resultater'));
     assert.equal(boards.at(-1).game, 'bydeler', 'The borough quiz requests its own leaderboard');
-    assert.equal(boards.at(-1).variant,'oslo-areas-v3','The real-area map has a separate ranking from both previous editions');
+    assert.equal(boards.at(-1).variant,'oslo-areas-v4','The simplified map has a separate ranking from every previous edition');
     await page.locator('#geo-online-board button').click();
     const checkHierarchy = async () => {
       const styles = await page.evaluate(() => {
@@ -161,6 +192,7 @@ const server = http.createServer((request, response) => {
       assert.notEqual(styles.context, styles.water, 'Outside land differs from water');
       assert.equal(styles.contextPointer, 'none');
       assert.equal(styles.waterPointer, 'none', 'Water cannot steal answer clicks');
+      assert.equal(await page.locator('#municipality-water path').count(),0,'No decorative water paths are drawn');
       assert.equal(styles.lakes.length,map.states.filter(state=>state.kind==='lake').length,'Every sourced lake polygon is an interactive water target');
       for(const lake of styles.lakes){assert.notEqual(lake.fill,styles.land,'Lake targets retain a distinct water colour before answering');assert.notEqual(lake.events,'none','A named lake remains clickable');}
       const luminance=color=>color.match(/[\d.]+/g).slice(0,3).map(Number).map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;}).reduce((sum,v,i)=>sum+v*[.2126,.7152,.0722][i],0);
@@ -176,14 +208,31 @@ const server = http.createServer((request, response) => {
         await page.mouse.move(20,20);
       }
     };
+    const checkSimplifiedAreas = async () => {
+      const result=await page.evaluate(({western,mergedPoint})=>{
+        const contexts=[...document.querySelectorAll('.municipality-context')];
+        const targetPaths=[...document.querySelectorAll('#states path.state[data-state]')];
+        const baerum=targetPaths.find(el=>el.dataset.state==='Østre Bærum');
+        return {
+          western:western.map(({name,point})=>({name,context:contexts.some(el=>el.isPointInFill(new DOMPoint(...point))),targets:targetPaths.filter(el=>el.isPointInFill(new DOMPoint(...point))).map(el=>el.dataset.state)})),
+          contextFills:[...new Set(contexts.map(el=>getComputedStyle(el).fill))],
+          merged:baerum.isPointInFill(new DOMPoint(...mergedPoint))
+        };
+      },{western:westernContextNames.map(name=>({name,point:publishedPoint(name)})),mergedPoint:publishedPoint('Høvikodden')});
+      for(const area of result.western){assert(area.context,area.name+' is filled as western context');assert.deepEqual(area.targets,[],area.name+' cannot be answered or hovered as a quiz area');}
+      assert.equal(result.contextFills.length,1,'Western context has one uniform fill');
+      assert(result.merged,'The former Høvikodden representative point belongs to the grouped Bærum area');
+    };
     await checkHierarchy();
+    await checkSimplifiedAreas();
     await capture('boroughs-light');
     const initial = await targets.evaluateAll(elements => Object.fromEntries(elements.map(element => [element.dataset.state, getComputedStyle(element).fill])));
     await page.locator('#start').click();
     await page.waitForFunction(() => document.body.dataset.phase === 'playing');
-    const slow = new Set(['Fornebu','Bogstadvannet']), seen = new Set();
+    const slow = new Set(['Østre Bærum','Bogstadvannet']), seen = new Set();
     for (let i = 0; i < total; i++) {
       const name = await page.locator('#targetName').textContent();seen.add(name);
+      if(name==='Østre Bærum')assert.equal(await page.locator('#targetVerb').textContent(),'Klikk på','The grouped learning area uses the general area prompt');
       if(slow.has(name))await page.clock.fastForward(6000);
       await clickTarget(name);await advance();
     }
@@ -194,7 +243,7 @@ const server = http.createServer((request, response) => {
     assert.equal(await page.locator('#targetName').textContent(), 'Alle stedene er fullført.');
     await page.locator('#repeat-practice-start').click();
     assert.equal(await page.locator('#states .mastered').count(),total-2);
-    assert.equal(await page.locator('#states .retry-pending').count(),2,'Only the slow postal area and lake return to practice');
+    assert.equal(await page.locator('#states .retry-pending').count(),2,'Only the slow learning area and lake return to practice');
     await page.waitForFunction(initial => [...document.querySelectorAll('#states .retry-pending')].every(element => getComputedStyle(element).fill === initial[element.dataset.state]), initial);
     const retried=new Set();
     for(let i=0;i<2;i++){const name=await page.locator('#targetName').textContent();assert(slow.has(name));retried.add(name);await choose(name);await advance();}
@@ -208,9 +257,13 @@ const server = http.createServer((request, response) => {
     await page.locator('.map-theme-toggle:visible').first().click();
     assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark');
     await checkHierarchy();
+    await checkSimplifiedAreas();
     await capture('boroughs-dark');
     await page.reload(); await page.locator('#start:enabled').waitFor();
     assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark', 'Dark mode persists');
+    await page.evaluate(()=>localStorage.setItem('onlyfag-geo-language','en'));
+    await page.reload();await page.locator('#start:enabled').waitFor();
+    await page.waitForFunction(()=>window.QuizLanguage?.language==='en');
     for (const viewport of [{width:390,height:844}, {width:844,height:390}]) {
       await page.setViewportSize(viewport);
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'No horizontal overflow');
@@ -235,7 +288,13 @@ const server = http.createServer((request, response) => {
         await page.locator('#start').click();await page.waitForFunction(()=>document.body.dataset.phase==='playing');
         const tapped=new Set();
         for(let i=0;i<total;i++){
-          const name=await page.locator('#targetName').textContent();
+          const name=await page.evaluate(states=>{
+            const shown=document.querySelector('#targetName').textContent;
+            const state=states.find(state=>shown===state.n||shown===QuizLanguage.translate(state.n));
+            if(!state)throw Error('Unknown English map target: '+shown);
+            return state.n;
+          },map.states);
+          if(name==='Østre Bærum')assert.equal(await page.locator('#targetVerb').textContent(),'Click on','The English group prompt does not claim a single postal area');
           await clickTarget(name,true);tapped.add(name);
           await advance();
         }
@@ -249,6 +308,6 @@ const server = http.createServer((request, response) => {
     assert(await page.locator('#kart-selection').isVisible());
     assert.deepEqual(errors, []);
     assert.deepEqual(missing, []);
-    console.log('PASS Oslo area quiz: '+total+' real polygons, legacy16/28 pages, actual mouse/touch overlap answers, zoomed small areas, coloured retry, separate v3 scores, dark mode and fixed crop');
+    console.log('PASS simplified Oslo quiz: '+total+' real polygons, six islands, grouped Bærum, uniform western context, selected lakes only, legacy16/28/57 pages, actual mouse/touch answers with zoom, separate v4 scores and dark mode');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; }).finally(() => server.close());
