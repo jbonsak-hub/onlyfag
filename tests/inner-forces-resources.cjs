@@ -53,6 +53,12 @@ const server=http.createServer((req,res)=>{
     assert.equal(await viewer.count(),1,'The fallback link opens a viewer rather than the owner editing screen');
     assert.equal(new URL(await viewer.getAttribute('href')).searchParams.get('mid'),embedUrl.searchParams.get('mid'));
     assert.equal(await viewer.getAttribute('target'),'_blank');
+    const legend=map.locator('.indre-map-legend');
+    assert.equal(await legend.locator('li').count(),4);
+    for(const [name,color] of [['Spredningssone','rgb(85, 255, 0)'],['Glidegrense','rgb(255, 0, 0)'],['Kollisjonssone','rgb(0, 112, 255)'],['Andre grenser','rgb(255, 255, 255)']]){
+      const item=legend.locator('li').filter({hasText:name});
+      assert.equal(await item.locator('.indre-map-swatch').evaluate(el=>getComputedStyle(el).backgroundColor),color,'The legend follows the KMZ layer colours: '+name);
+    }
     for(const host of ['earthquake.usgs.gov','www.earthscope.org']){
       const link=article.locator('a[href^="https://'+host+'/"]');
       assert.equal(await link.count(),1);
@@ -91,6 +97,12 @@ const server=http.createServer((req,res)=>{
         });
         assert.ok(mapFit.left>=-1&&mapFit.right<=mapFit.width+1&&mapFit.height>=320,'The embedded map fits '+JSON.stringify({viewport,dark,mapFit}));
         assert.ok(mapFit.frameWidth<=mapFit.gridWidth,'Long tables cannot widen the map beyond its content column');
+        const legendFit=await legend.boundingBox(),frameBox=await mapFrame.boundingBox();
+        assert.ok(legendFit.x>=-1&&legendFit.x+legendFit.width<=viewport.width+1,'The legend fits the viewport');
+        if(viewport.width>1100){
+          assert.ok(legendFit.x>=frameBox.x+frameBox.width,'The legend uses the space to the right of the map');
+          assert.ok(frameBox.height>=460,'The desktop map is taller');
+        }else assert.ok(legendFit.y>=frameBox.y+frameBox.height,'The legend moves below the map on narrow screens');
         if(shots)await page.screenshot({path:path.join(shots,`plate-map-frame-${viewport.width}-${dark?'dark':'light'}.png`)});
         await box.scrollIntoViewIfNeeded();
         const metrics=await box.evaluate(el=>{

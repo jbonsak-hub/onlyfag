@@ -24,6 +24,8 @@ Brukerens Google My Maps-kart med ID `105PobuL643Yr0Gh5O478-RHzWksbtCc` er bygge
 
 Kartet må være offentlig tilgjengelig uten innlogging. En redigeringsadresse med `usp=sharing` bekrefter ikke delingsinnstillingen. Skymiljøets proxy blokkerte direkte kontroll mot Google; anonym tilgang og innholdet i selve kartet er derfor ikke verifisert. Nettlesertesten bruker tydelig merket testinnhold i Google-rammen og kontrollerer adresse, plassering og layout, ikke Googles tilgjengelighet.
 
+Kartet har en tegnforklaring til høyre på store skjermer og under kartet på små skjermer. Fargene er kontrollert i KMZ-filens `LineStyle` og objektbeskrivelser: grønn (`#55ff00`) = spredningssone, rød (`#ff0000`) = glidegrense, blå (`#0070ff` og `#005ce6`) = kollisjonssone, hvit = øvrige grenser (`Other`). KML-farger er lagret som AABBGGRR og må leses i riktig rekkefølge.
+
 SHA-256:
 
 ```text

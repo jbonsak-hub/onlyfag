@@ -11,11 +11,24 @@ body.dark-mode #indre-fagstoff .geo-source-note,body.dark-mode #indre-fagstoff .
 #indre-fagstoff .indre-map-heading>a{font-size:.8rem;font-weight:650}
 #indre-fagstoff .indre-plate-map a{color:#236644;text-underline-offset:3px}
 #indre-fagstoff .indre-plate-map figcaption>p{margin:7px 0 12px;font-size:.84rem;line-height:1.5;color:#586b60}
-#indre-fagstoff .indre-plate-map-frame{display:block;width:100%;height:clamp(340px,52vh,500px);border:0;border-radius:8px;background:#e8eee9}
+#indre-fagstoff .indre-map-layout{display:grid;grid-template-columns:minmax(0,1fr) 185px;gap:14px;align-items:start}
+#indre-fagstoff .indre-plate-map-frame{display:block;width:100%;height:clamp(460px,68vh,620px);border:0;border-radius:8px;background:#e8eee9}
+#indre-fagstoff .indre-map-legend{min-width:0;padding:13px 12px;background:#f1f7f3;border:1px solid #d8e7dd;border-radius:8px}
+#indre-fagstoff .indre-map-legend h4{margin:0 0 13px;font-size:.85rem;color:#24583e}
+#indre-fagstoff .indre-map-legend ul{display:grid;gap:17px;margin:0;padding:0;list-style:none}
+#indre-fagstoff .indre-map-legend li{display:flex;align-items:flex-start;gap:9px;min-width:0}
+#indre-fagstoff .indre-map-swatch{display:block;flex:0 0 26px;height:5px;margin-top:6px;border-radius:3px;background:var(--boundary-color);box-shadow:0 0 0 1px #7e9085}
+#indre-fagstoff .indre-map-legend strong{display:block;font-size:.78rem;line-height:1.35;color:#304b3c}
+#indre-fagstoff .indre-map-legend small{display:block;margin-top:3px;font-size:.71rem;line-height:1.4;color:#586b60}
 #indre-fagstoff .indre-plate-map .indre-map-source{margin:8px 0 0;font-size:.7rem;line-height:1.4;color:#607265}
 body.dark-mode #indre-fagstoff .indre-map-heading h3{color:#a0e7bc}
 body.dark-mode #indre-fagstoff .indre-plate-map a{color:#92dfb0}
 body.dark-mode #indre-fagstoff .indre-plate-map figcaption>p,body.dark-mode #indre-fagstoff .indre-plate-map .indre-map-source{color:#b2c5b9}
+body.dark-mode #indre-fagstoff .indre-map-legend{background:#13251d;border-color:#334b3c}
+body.dark-mode #indre-fagstoff .indre-map-legend h4{color:#a0e7bc}
+body.dark-mode #indre-fagstoff .indre-map-legend strong{color:#d7e5df}
+body.dark-mode #indre-fagstoff .indre-map-legend small{color:#b2c5b9}
+@media(max-width:1100px){#indre-fagstoff .indre-map-layout{grid-template-columns:minmax(0,1fr)}#indre-fagstoff .indre-map-legend ul{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 18px}}
 @media(max-width:600px){#indre-fagstoff .indre-plate-map{padding:12px}#indre-fagstoff .indre-plate-map-frame{height:390px}}
 @media(max-width:900px){#indre-fagstoff .indre-geo-grid{grid-template-columns:minmax(0,1fr)}#indre-fagstoff .indre-geo-grid>.geo-concept-card{min-width:0;overflow-x:auto}}
 #indre-fagstoff .indre-earth-box{margin-top:24px;padding:16px 18px;background:#f1f7f3;border:1px solid #d8e7dd;border-radius:12px;color:#304b3c}
