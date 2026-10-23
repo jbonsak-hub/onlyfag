@@ -7,6 +7,7 @@ export function fixture(){
  return {db,env:{DB:{prepare:sql=>wrap(sql),batch:async statements=>{db.exec('BEGIN');try{const r=[];for(const s of statements)r.push(await s.run());db.exec('COMMIT');return r;}catch(e){db.exec('ROLLBACK');throw e;}}},RATE_SECRET:'test-only-local',ALLOW_LOCAL:'true'}};
 }
 const req=(url,body,token,origin='https://onlyfag.no')=>new Request('https://scores.example'+url,{method:body?'POST':'GET',headers:{Origin:origin,'Content-Type':'application/json','CF-Connecting-IP':'192.0.2.2',...(token?{Authorization:'Bearer '+token}:{})},...(body?{body:JSON.stringify(body)}:{})});
+const municipalityConfig=county=>({game:'kommuner',county,...(county==='03'?{variant:'oslo-surroundings-v2'}:{})});
 test('server chooses ten balanced MapWiz questions and computes geography/time points',()=>{
  for(const categories of [['flags'],['deserts'],['place:Norge'],Object.keys(data.mapwiz)]){
   const s=create({game:'mapwiz',categories},1000);assert.equal(s.targets.length,10);if(categories.length>5){const counts={};s.targets.forEach(id=>{const [cat]=JSON.parse(id);counts[cat]=(counts[cat]||0)+1;});assert.ok(Object.values(counts).every(n=>n<=2));}
@@ -165,12 +166,12 @@ test('physical Kart API validates full rounds, skips, replay safety, shared lang
 });
 
 test('municipality maps and Oslo boroughs use separate complete target pools and unchanged scoring bands',()=>{
- const index=JSON.parse(fs.readFileSync(new URL('../assets/geography/municipalities/index.json',import.meta.url),'utf8'));
+ const index=JSON.parse(fs.readFileSync(new URL('../assets/geography/municipalities/index-v2.json',import.meta.url),'utf8'));
  assert.equal(Object.keys(data.kommuner).length,15);assert(data.bydeler.length>=2);
- const maps=index.counties.map(county=>({game:'kommuner',county:county.code}));maps.push({game:'bydeler',variant:'oslo-areas-v5'});
+ const maps=index.counties.map(county=>municipalityConfig(county.code));maps.push({game:'bydeler',variant:'oslo-areas-v5'});
  const boards=new Set();
  for(const c of maps){
-  const names=c.game==='kommuner'?JSON.parse(fs.readFileSync(new URL('../assets/geography/municipalities/county-'+c.county+'.json',import.meta.url),'utf8')).states.map(state=>state.n):JSON.parse(fs.readFileSync(new URL('../assets/geography/oslo-bydeler/oslo.json',import.meta.url),'utf8')).states.map(state=>state.n);
+  const names=c.game==='kommuner'?JSON.parse(fs.readFileSync(new URL('../assets/geography/municipalities/'+index.counties.find(county=>county.code===c.county).file,import.meta.url),'utf8')).states.map(state=>state.n):JSON.parse(fs.readFileSync(new URL('../assets/geography/oslo-bydeler/oslo.json',import.meta.url),'utf8')).states.map(state=>state.n);
   const s=create(c,1000);assert.deepEqual(s.targets.slice().sort(),names.slice().sort());assert.equal(new Set(s.targets).size,names.length);assert.throws(()=>finish(s,1001),/incomplete/);assert.throws(()=>answer(s,{question:s.current.id,choice:'Ohio'},1002),/invalid_answer/);
   let now=1000;
   for(let i=0;i<s.targets.length;i++){
@@ -184,7 +185,10 @@ test('municipality maps and Oslo boroughs use separate complete target pools and
   assert.equal(board({...c,language:'no'}),board({...c,language:'en'}));boards.add(board(c));
  }
  assert.equal(boards.size,16);for(const game of ['statle','fylker'])assert.ok(!boards.has(board({game})));
- assert.equal(data.kommuner['03'].length,54);assert.ok(data.kommuner['03'].includes('Sør-Odal'));assert.ok(data.kommuner['03'].includes('Kongsvinger'));
+ assert(data.kommuner['03'].length<54);assert.equal(data.kommunerOslo54.length,54);assert.ok(data.kommunerOslo54.includes('Sør-Odal'));assert.ok(data.kommunerOslo54.includes('Kongsvinger'));
+ for(const county of Object.keys(data.kommuner).filter(county=>county!=='03'))assert.equal(board(municipalityConfig(county)),'v1:'+JSON.stringify({game:'kommuner',county}),'Other counties keep their existing board');
+ for(const variant of [null,'','oslo-surroundings-v3','oslo-areas-v5',54,{},[]])assert.throws(()=>config({game:'kommuner',county:'03',variant}),/invalid_config/);
+ assert.throws(()=>config({game:'kommuner',county:'39',variant:'oslo-surroundings-v2'}),/invalid_config/);
  for(const county of [undefined,null,3,{},['03'],'3','00','01','__proto__','constructor'])assert.throws(()=>config({game:'kommuner',county}),/invalid_config/);
  for(const name of ['Marka','Oslo']){const s=create({game:'bydeler',variant:'oslo-areas-v5'},0);assert.throws(()=>answer(s,{question:s.current.id,choice:name},1),/invalid_answer/);}
 });
@@ -277,7 +281,7 @@ test('a serialized Oslo35 session keeps Eastern Bærum and its original board af
 
 test('local-map API validates publication and keeps every county and borough ranking isolated',async()=>{
  const {env,db}=fixture(),call=async(url,body,token)=>{const response=await worker.fetch(req(url,body,token),env);return {status:response.status,body:await response.json()};};
- const completed=[{game:'kommuner',county:'39'},{game:'kommuner',county:'03'},{game:'bydeler',variant:'oslo-areas-v5'}];
+ const completed=[municipalityConfig('39'),municipalityConfig('03'),{game:'kommuner',county:'03'},{game:'bydeler',variant:'oslo-areas-v5'}];
  for(const c of completed){
   const start=await call('/session',c);assert.equal(start.status,201);const {token,questions}=start.body,mutate=(url,input={})=>call(url,{requestId:crypto.randomUUID(),...input},token);
   assert.equal((await mutate('/publish',{nickname:'Too early'})).status,400);assert.equal((await mutate('/finish')).status,400);
@@ -288,9 +292,41 @@ test('local-map API validates publication and keeps every county and borough ran
   assert.equal((await mutate('/next')).status,400);assert.equal((await mutate('/publish',{nickname:c.game+' '+(c.county||'Oslo')})).status,200);
   const rows=async config=>(await call('/scores?config='+encodeURIComponent(JSON.stringify(config)))).body.rows,ranked=await rows(c);assert.equal(ranked.length,1);assert.equal(ranked[0].score,questions.length*100);assert.deepEqual(await rows({...c,language:'en'}),ranked);
  }
- const configs=Object.keys(data.kommuner).map(county=>({game:'kommuner',county}));configs.push({game:'bydeler',variant:'oslo-areas-v5'},{game:'fylker'},{game:'statle'});
+ const configs=Object.keys(data.kommuner).map(municipalityConfig);configs.push({game:'kommuner',county:'03'},{game:'bydeler',variant:'oslo-areas-v5'},{game:'fylker'},{game:'statle'});
  for(const c of configs){const response=await call('/scores?config='+encodeURIComponent(JSON.stringify(c)));assert.equal(response.status,200);assert.equal(response.body.rows.length,completed.some(done=>board(done)===board(c))?1:0);}
- assert.equal(db.prepare('SELECT COUNT(*) n FROM scores').get().n,3);db.close();
+ assert.equal(db.prepare('SELECT COUNT(*) n FROM scores').get().n,4);db.close();
+});
+
+test('Oslo-surroundings preserves the cached54 map, original scores and active54 rounds on its old board',async()=>{
+ const legacyConfig={game:'kommuner',county:'03'},currentConfig=municipalityConfig('03');
+ const cachedMap=JSON.parse(fs.readFileSync(new URL('../assets/geography/municipalities/county-03.json',import.meta.url),'utf8'));
+ const cachedIndex=JSON.parse(fs.readFileSync(new URL('../assets/geography/municipalities/index.json',import.meta.url),'utf8'));
+ assert.deepEqual(data.kommunerOslo54,cachedMap.states.map(state=>state.n));assert.equal(cachedIndex.counties.find(county=>county.code==='03').quizCount,54);
+ assert.equal(board(legacyConfig),'v1:{"game":"kommuner","county":"03"}');
+ assert.equal(board(currentConfig),'v1:{"game":"kommuner","county":"03","variant":"oslo-surroundings-v2"}');
+ assert.notEqual(board(legacyConfig),board(currentConfig));assert.equal(board({...currentConfig,language:'en'}),board(currentConfig));
+ const {env,db}=fixture(),now=Date.now(),legacy=create(legacyConfig,now),removed=data.kommunerOslo54.find(name=>!data.kommuner['03'].includes(name));
+ assert(removed,'The smaller municipality quiz removes an original54 target');assert.equal(legacy.targets.length,54);
+ const current=create(currentConfig,now);assert.deepEqual(current.targets.slice().sort(),data.kommuner['03'].slice().sort());assert(!current.targets.includes(removed));
+ // Restore a cached-client round at the original board, including a question
+ // which is absent from the reduced map. Existing scores must stay alongside it.
+ const index=legacy.targets.indexOf(removed);[legacy.targets[0],legacy.targets[index]]=[legacy.targets[index],legacy.targets[0]];
+ [legacy.plan[0],legacy.plan[index]]=[legacy.plan[index],legacy.plan[0]];legacy.plan.forEach((question,index)=>question.index=index);issue(legacy,now);
+ const token='c'.repeat(64),key=Buffer.from(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(token))).toString('hex');
+ db.prepare('INSERT INTO sessions(token_hash,board,state_json,revision,expires_at) VALUES(?,?,?,0,?)').run(key,board(legacyConfig),JSON.stringify(legacy),now+60000);
+ db.prepare('INSERT INTO scores(run_hash,board,nickname,score,time_ms,created_at) VALUES(?,?,?,?,?,?)').run('before-map-change',board(legacyConfig),'Existing54',5400,200,1);
+ const call=async(url,input)=>{const response=await worker.fetch(req(url,input,token),env);return {status:response.status,body:await response.json()};};
+ for(let i=0;i<legacy.targets.length;i++){
+  if(i)assert.equal((await call('/next',{requestId:crypto.randomUUID()})).status,200);
+  const question=legacy.plan[i],reply=await call('/answer',{requestId:crypto.randomUUID(),question:question.id,choice:question.target});
+  assert.equal(reply.status,200);assert.equal(reply.body.board,board(legacyConfig));assert.equal(reply.body.complete,i===53);
+ }
+ assert.equal((await call('/publish',{requestId:crypto.randomUUID(),nickname:'Active54'})).status,200);
+ const rows=(await call('/scores?config='+encodeURIComponent(JSON.stringify(legacyConfig)))).body.rows;
+ assert.equal(rows.length,2);assert(rows.some(row=>row.nickname==='Existing54'&&row.score===5400));assert(rows.some(row=>row.nickname==='Active54'));
+ assert.equal((await call('/scores?config='+encodeURIComponent(JSON.stringify(currentConfig)))).body.rows.length,0);
+ assert.equal(db.prepare('SELECT board FROM sessions WHERE token_hash=?').get(key).board,board(legacyConfig));
+ db.close();
 });
 
 test('language migration preserves scores and active runs and can be repeated',()=>{

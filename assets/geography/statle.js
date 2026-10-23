@@ -334,7 +334,7 @@
     results.forEach((r,name) => { if(r.band === 0)mastered.add(name); });
     repeatOffer.hidden = mastered.size === states.length;
     if(retrying)$('targetName').textContent=repeatOffer.hidden?'Alle er grønne!':'Øvingsrunden er fullført.';
-    setFeedback('Alle ' + queue.length + ' fullført · ' + timeText(totalTime) + ' · ' + mistakes + ' feil. Grønn: ' + counts[0] + ', gul: ' + counts[1] + ', oransje: ' + counts[2] + ', rød: ' + counts[3] + '.');
+    setFeedback(municipalities ? '' : 'Alle ' + queue.length + ' fullført · ' + timeText(totalTime) + ' · ' + mistakes + ' feil. Grønn: ' + counts[0] + ', gul: ' + counts[1] + ', oransje: ' + counts[2] + ', rød: ' + counts[3] + '.');
     if(!repeatOffer.hidden)repeatOffer.scrollIntoView({block:'nearest'});
   }
   function clickedName(event,element){
@@ -441,6 +441,8 @@
       if(!county)return;
       const token=++mapGeneration;window.GeoOnline?.resetStatle();resetMap();shapeLabel='Kommune på kartet';
       document.body.dataset.county=code;document.body.dataset.region='kommuner-'+code;
+      if(county.variant)document.body.dataset.municipalityVariant=county.variant;
+      else delete document.body.dataset.municipalityVariant;
       $('municipality-selection').hidden=true;$('kart-game').hidden=false;
       $('targetVerb').textContent='Klar for en runde?';$('targetName').textContent=county.quizTitle||county.name;
       $('start').textContent='Laster kart …';setFeedback('');
@@ -448,7 +450,7 @@
       try {
         if(!maps.has(code))maps.set(code,readMap('../assets/geography/municipalities/'+county.file+'?v='+encodeURIComponent(county.revision||municipalityIndex.version||'1')).catch(error=>{maps.delete(code);throw error;}));
         const data=await maps.get(code);if(token!==mapGeneration)return;
-        if(!data.states?.length||new Set(data.states.map(state=>state.n)).size!==data.states.length)throw Error('Ufullstendig kart');
+        if(!data.states?.length||new Set(data.states.map(state=>state.n)).size!==data.states.length||data.variant!==county.variant)throw Error('Ufullstendig kart');
         regionData=data;states=data.states;total=states.length;
         $('targetName').textContent=data.title||county.quizTitle||county.name;
         const countyLabel=$('municipality-current-county');if(countyLabel)countyLabel.textContent=data.title||county.quizTitle||county.name;
@@ -470,7 +472,7 @@
     });
     $('kart-back').addEventListener('click',event=>{
       event.preventDefault();++mapGeneration;window.GeoOnline?.resetStatle();resetMap();$('kart-game').hidden=true;
-      $('municipality-selection').hidden=false;delete document.body.dataset.county;delete document.body.dataset.region;
+      $('municipality-selection').hidden=false;delete document.body.dataset.county;delete document.body.dataset.region;delete document.body.dataset.municipalityVariant;
       const url=new URL(location.href);url.searchParams.delete('fylke');history.replaceState(null,'',url);
       window.dispatchEvent(new CustomEvent('municipality-back'));
     });
