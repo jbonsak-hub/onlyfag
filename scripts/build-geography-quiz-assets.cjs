@@ -5,7 +5,7 @@ const crypto = require('node:crypto');
 const root = path.resolve(__dirname, '..');
 const check = process.argv.includes('--check');
 const routes = JSON.parse(fs.readFileSync(path.join(root, 'assets/geography/routes.js'), 'utf8').match(/window.GEO_QUIZ_ROUTES=([\s\S]*);/)[1]);
-const pages = ['geografi.html', 'prototypes/mapwiz.html', 'prototypes/statle.html', ...Object.values(routes).map(([file]) => file)];
+const pages = ['geografi.html', 'prototypes/mapwiz.html', 'prototypes/statle.html', 'geografi/kommuner.html', ...Object.values(routes).map(([file]) => file)];
 const mobileHash=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'assets/geography/quiz-mobile-answers.js'),'utf8').replace(/\r\n/g,'\n')).digest('hex').slice(0,12);
 const navigationHash=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'assets/geography/maplab-navigation.js'),'utf8').replace(/\r\n/g,'\n')).digest('hex').slice(0,12);
 const mapFile=path.join(root,'assets/geography/maplab.html'),mapOriginal=fs.readFileSync(mapFile,'utf8');
@@ -21,7 +21,12 @@ for (const page of pages) {
     // Statle's separate build and maplab resources are outside this pipeline.
     if (sourceName.includes('/')) return match;
     if (!built.has(sourceName)) {
-      const content = fs.readFileSync(path.join(root, 'assets/geography', sourceName), 'utf8').replace(/\r\n/g, '\n');
+      let content = fs.readFileSync(path.join(root, 'assets/geography', sourceName), 'utf8').replace(/\r\n/g, '\n');
+      if(sourceName==='municipality-selector.js') {
+        const index=fs.readFileSync(path.join(root,'assets/geography/municipalities/index.json'),'utf8');
+        const revision=crypto.createHash('sha256').update(index).digest('hex').slice(0,12);
+        content=content.replace('municipalities/index.json','municipalities/index.json?v='+revision);
+      }
       const hash = crypto.createHash('sha256').update(content).digest('hex').slice(0,12);
       const output = 'quiz-assets/' + sourceName.replace(/\.(js|css)$/, '-' + hash + '.$1');
       built.set(sourceName, {content, output});

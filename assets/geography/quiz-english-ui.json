@@ -608,5 +608,17 @@
   "Kan du verdens land, fjell, sjøer og elver?": "Do you know the world’s countries, mountains, lakes, seas and rivers?",
   "Kontinent for kontinent (øving)": "Continent by continent (practice)",
   "Flagg ↔ Hovedstad": "Flag ↔ Capital",
-  "3+ feil": "3+ mistakes"
+  "3+ feil": "3+ mistakes",
+  "Kommuner": "Municipalities",
+  "Kommuner i Norge": "Municipalities in Norway",
+  "Velg fylke": "Choose a county",
+  "← Velg fylke": "← Choose a county",
+  "← Kart": "← Map",
+  "Kommunequiz": "Municipality quiz",
+  "Velg et norsk fylke": "Choose a Norwegian county",
+  "Klikkbart kommunekart": "Clickable municipality map",
+  "Kommune på kartet": "Municipality on the map",
+  "Alle kommunene er på plass.": "All municipalities are in place.",
+  "Velg fylke på nytt for å prøve igjen.": "Choose the county again to retry.",
+  "Oslo og omegn": "Oslo and surroundings"
 }

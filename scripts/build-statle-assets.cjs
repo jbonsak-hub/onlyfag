@@ -27,7 +27,7 @@ for (const asset of assets) {
     fs.writeFileSync(file, asset.content);
   }
 }
-for (const page of ['geografi/statle.html', 'geografi/fylker.html', 'geografi/kart.html', 'prototypes/statle.html']) {
+for (const page of ['geografi/statle.html', 'geografi/fylker.html', 'geografi/kart.html', 'geografi/kommuner.html', 'prototypes/statle.html']) {
   const file = path.join(root, page);
   let html = fs.readFileSync(file, 'utf8');
   const themeInit='<script id="map-theme-init">try{document.documentElement.dataset.theme=localStorage.getItem("geoDarkMode")==="1"?"dark":"light"}catch(_){}</script>';

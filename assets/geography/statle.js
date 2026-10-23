@@ -4,6 +4,7 @@
   const $ = id => document.getElementById(id);
   const ns = 'http://www.w3.org/2000/svg';
   const kart = document.body.dataset.quiz === 'kart';
+  const municipalities = document.body.dataset.quiz === 'kommuner';
   const themeButtons = [];
   function applyTheme(dark) {
     document.documentElement.dataset.theme = dark ? 'dark' : 'light';
@@ -101,6 +102,32 @@
     return {x:b.x * scale + x, y:b.y * scale + y, width:b.width * scale, height:b.height * scale};
   }
   function buildMap() {
+    if (municipalities) {
+      $('map').setAttribute('viewBox',regionData.viewBox.join(' '));
+      const extent=svgNode('clipPath',{id:'municipality-extent',clipPathUnits:'userSpaceOnUse'});
+      extent.append(svgNode('path',{d:states.map(state=>state.d).join(' '),'clip-rule':'evenodd'}));
+      $('states').append(extent);
+      if(regionData.context) $('states').append(svgNode('path',{d:regionData.context,class:'municipality-context','fill-rule':'evenodd','aria-hidden':'true'}));
+      for(const state of states) {
+        const el=svgNode('path',{d:state.d,class:'state municipality','fill-rule':'evenodd',role:'button',tabindex:'0','aria-label':shapeLabel});
+        el.dataset.state=state.n;el.dataset.code=state.a;$('states').append(el);elements.set(state.n,el);
+        const box=el.getBBox();centers.set(state.n,{x:state.c[0],y:state.c[1],radius:Math.max(box.width,box.height)/2+10});
+      }
+      // Water provides geographical clues; it never intercepts answers. Draw
+      // municipal boundaries again above it so they remain easy to follow.
+      const water=svgNode('g',{id:'municipality-water','aria-hidden':'true','pointer-events':'none','clip-path':'url(#municipality-extent)'});
+      const waterPaths=new Map();
+      for(const feature of regionData.water||[]) {
+        if(!waterPaths.has(feature.kind))waterPaths.set(feature.kind,[]);
+        waterPaths.get(feature.kind).push(feature.d);
+      }
+      for(const [kind,paths] of waterPaths)water.append(svgNode('path',{d:paths.join(' '),class:'municipality-'+kind,'fill-rule':'evenodd','vector-effect':'non-scaling-stroke'}));
+      $('states').append(water);
+      const boundaries=svgNode('g',{class:'municipality-boundaries','aria-hidden':'true','pointer-events':'none'});
+      for(const state of states)boundaries.append(svgNode('path',{d:state.d,'fill-rule':'evenodd','vector-effect':'non-scaling-stroke'}));
+      $('states').append(boundaries);
+      return;
+    }
     if (physical) {
       $('map').setAttribute('viewBox',regionData.viewBox.join(' '));
       const land=(regionData.background||[]).filter(layer=>layer.kind==='land'),v=regionData.viewBox;
@@ -286,7 +313,7 @@
     }
     if($('target-continent'))$('target-continent').hidden=true;
     $('targetVerb').textContent = 'Godt jobbet!';
-    $('targetName').textContent = physical ? 'Alle stedene er fullført.' : counties ? 'Alle fylkene er på plass.' : kart ? 'Alle landene er på plass.' : 'Hele USA er på plass.';
+    $('targetName').textContent = municipalities ? 'Alle kommunene er på plass.' : physical ? 'Alle stedene er fullført.' : counties ? 'Alle fylkene er på plass.' : kart ? 'Alle landene er på plass.' : 'Hele USA er på plass.';
     const counts = [0,0,0,0]; results.forEach(r => counts[r.band]++);
     results.forEach((r,name) => { if(r.band === 0)mastered.add(name); });
     repeatOffer.hidden = mastered.size === states.length;
@@ -369,6 +396,49 @@
   addEventListener('resize',()=>{if(!physical)return;$('map').setAttribute('preserveAspectRatio',innerWidth>700?'none':'xMidYMid meet');if(panel.style.top){const r=panel.getBoundingClientRect();panel.style.left=Math.max(6,Math.min(innerWidth-r.width-6,r.left))+'px';panel.style.top=Math.max(6,Math.min(innerHeight-r.height-6,r.top))+'px';}});
 
   const readMap=url=>fetch(url).then(response=>{if(!response.ok)throw Error('Kartet kunne ikke hentes');return response.json();});
+  if(municipalities) {
+    let municipalityIndex;
+    const maps=new Map();
+    async function selectMunicipalityCounty(code) {
+      const county=municipalityIndex?.counties.find(county=>county.code===code);
+      if(!county)return;
+      const token=++mapGeneration;resetMap();shapeLabel='Kommune på kartet';
+      document.body.dataset.county=code;document.body.dataset.region='kommuner-'+code;
+      $('municipality-selection').hidden=true;$('kart-game').hidden=false;
+      $('targetVerb').textContent='Klar for en runde?';$('targetName').textContent=county.quizTitle||county.name;
+      $('start').textContent='Laster kart …';setFeedback('');
+      const url=new URL(location.href);url.searchParams.set('fylke',code);history.replaceState(null,'',url);
+      try {
+        if(!maps.has(code))maps.set(code,readMap('../assets/geography/municipalities/'+county.file+'?v='+encodeURIComponent(county.revision||municipalityIndex.version||'1')).catch(error=>{maps.delete(code);throw error;}));
+        const data=await maps.get(code);if(token!==mapGeneration)return;
+        if(!data.states?.length||new Set(data.states.map(state=>state.n)).size!==data.states.length)throw Error('Ufullstendig kart');
+        regionData=data;states=data.states;total=states.length;
+        $('targetName').textContent=data.title||county.quizTitle||county.name;
+        const countyLabel=$('municipality-current-county');if(countyLabel)countyLabel.textContent=data.title||county.quizTitle||county.name;
+        $('total-count').textContent=' / '+total;
+        $('map').setAttribute('aria-label','Klikkbart kommunekart over '+(data.title||county.name));
+        buildMap();updateStats();window.ClickMapZoom?.setBase();window.dispatchEvent(new Event('resize'));
+        $('start').disabled=false;$('start').textContent='Start →';
+        window.dispatchEvent(new CustomEvent('municipality-game-ready',{detail:{code,count:total,title:data.title||county.name}}));
+      } catch(_) {
+        if(token!==mapGeneration)return;
+        $('start').textContent='Kartet kunne ikke lastes';setFeedback('Velg fylke på nytt for å prøve igjen.','error');
+      }
+    }
+    window.addEventListener('municipality-select',event=>selectMunicipalityCounty(event.detail.code));
+    window.addEventListener('municipality-index-ready',event=>{
+      municipalityIndex=event.detail;
+      const selected=new URLSearchParams(location.search).get('fylke');
+      if(selected)selectMunicipalityCounty(selected);
+    });
+    $('kart-back').addEventListener('click',event=>{
+      event.preventDefault();++mapGeneration;resetMap();$('kart-game').hidden=true;
+      $('municipality-selection').hidden=false;delete document.body.dataset.county;delete document.body.dataset.region;
+      const url=new URL(location.href);url.searchParams.delete('fylke');history.replaceState(null,'',url);
+      window.dispatchEvent(new CustomEvent('municipality-back'));
+    });
+    setPhase('ready');return;
+  }
   let continents,countyMap,worldWater,mountainEurope;
   async function selectMap(region) {
     const titles={fylker:'Norske fylker',europe:'Europa',asia:'Asia',northAmerica:'Nord- og Mellom-Amerika',southAmerica:'Sør-Amerika',africa:'Afrika',oceania:'Oseania',rivers:'Verdens elver',lakes:'Innsjøer',seas:'Havområder, bukter og stred',mountains:'Fjellkjeder og høyland'};
