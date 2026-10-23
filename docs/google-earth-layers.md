@@ -18,6 +18,12 @@ Kildelenkene som fulgte vedleggene:
 
 Vulkanfilen bruker et eksternt Google-ikon. Jordskjelvfilen bruker eksterne USGS-ikoner og en USGS-tegnforklaring for dybde. Selve punktene og egenskapene ligger i KMZ-filene; de er ingen løpende jordskjelvfeed. Plategrense- og aldersfilenes bilder er pakket i arkivene. Avanserte lag og store punktmengder kan kreve Google Earth Pro fremfor nettutgaven.
 
+## Innebygd Google-kart
+
+Brukerens Google My Maps-kart med ID `105PobuL643Yr0Gh5O478-RHzWksbtCc` er bygget inn rett over punkt 5 i fagstoffet for indre krefter. Iframe bruker Googles `/maps/d/embed`-visning; lenken «Åpne større kart» bruker `/maps/d/viewer`. Eierens redigeringsadresse og kontoindeks er ikke brukt på nettsiden. Kartet lastes sent med `loading="lazy"` og har en responsiv ramme. Onlyfag-rammen følger mørk modus; Googles kartinnhold beholder Googles egne farger og kreditering.
+
+Kartet må være offentlig tilgjengelig uten innlogging. En redigeringsadresse med `usp=sharing` bekrefter ikke delingsinnstillingen. Skymiljøets proxy blokkerte direkte kontroll mot Google; anonym tilgang og innholdet i selve kartet er derfor ikke verifisert. Nettlesertesten bruker tydelig merket testinnhold i Google-rammen og kontrollerer adresse, plassering og layout, ikke Googles tilgjengelighet.
+
 SHA-256:
 
 ```text

@@ -20,7 +20,14 @@ const server=http.createServer((req,res)=>{
   const browser=await chromium.launch({headless:true,executablePath:process.env.BROWSER_EXECUTABLE||undefined});
   try{
     const context=await browser.newContext({viewport:{width:1366,height:768},acceptDownloads:true});
-    await context.route('**/*',route=>route.request().url().startsWith(base)?route.continue():route.abort());
+    // Check the frame independently of Google's service and sharing settings.
+    // The explicit fixture below does not verify live or anonymous map access.
+    await context.route('**/*',route=>{
+      const url=new URL(route.request().url());
+      if(url.origin===base)return route.continue();
+      if(url.origin==='https://www.google.com'&&url.pathname==='/maps/d/embed')return route.fulfill({contentType:'text/html',body:'<!doctype html><html lang="nb"><meta charset="utf-8"><body style="margin:0;display:grid;place-items:center;height:100vh;font:14px system-ui;background:#e8eee9;color:#304b3c"><p>Eksternt Google-kart: testinnhold for layout.</p></body></html>'});
+      return route.abort();
+    });
     const page=await context.newPage(),errors=[],missing=[];
     page.on('pageerror',e=>errors.push(e.message));
     page.on('response',r=>{if(r.url().startsWith(base)&&r.status()>=400)missing.push(r.url());});
@@ -34,6 +41,18 @@ const server=http.createServer((req,res)=>{
     assert.match(await plates.evaluate(el=>el.closest('article').querySelector('strong').textContent),/Tre hovedtyper plategrenser/);
     assert.match(await tsunami.evaluate(el=>el.closest('article').querySelector('strong').textContent),/Jordskjelv og tsunami/);
     assert.equal(await article.locator(':scope > a.notice').count(),0,'Animation links belong inside their topics');
+    const map=article.locator('#indre-platekart'),mapFrame=map.locator('iframe');
+    assert.match(await map.evaluate(el=>el.nextElementSibling.querySelector('strong').textContent),/^5\. Tre hovedtyper plategrenser/,'The map is immediately above point five');
+    const embedUrl=new URL(await mapFrame.getAttribute('src'));
+    assert.equal(embedUrl.origin,'https://www.google.com');
+    assert.equal(embedUrl.pathname,'/maps/d/embed');
+    assert.equal(embedUrl.searchParams.get('mid'),'105PobuL643Yr0Gh5O478-RHzWksbtCc');
+    assert.equal(await mapFrame.getAttribute('loading'),'lazy');
+    assert.ok(await mapFrame.getAttribute('title'));
+    const viewer=map.locator('a[href^="https://www.google.com/maps/d/viewer?"]');
+    assert.equal(await viewer.count(),1,'The fallback link opens a viewer rather than the owner editing screen');
+    assert.equal(new URL(await viewer.getAttribute('href')).searchParams.get('mid'),embedUrl.searchParams.get('mid'));
+    assert.equal(await viewer.getAttribute('target'),'_blank');
     for(const host of ['earthquake.usgs.gov','www.earthscope.org']){
       const link=article.locator('a[href^="https://'+host+'/"]');
       assert.equal(await link.count(),1);
@@ -65,6 +84,14 @@ const server=http.createServer((req,res)=>{
       await page.setViewportSize(viewport);
       for(const dark of [false,true]){
         await page.evaluate(dark=>applyDarkMode(dark),dark);
+        await map.scrollIntoViewIfNeeded();
+        const mapFit=await mapFrame.evaluate(el=>{
+          const r=el.getBoundingClientRect();
+          return {left:r.left,right:r.right,width:innerWidth,height:r.height,frameWidth:r.width,gridWidth:el.closest('.indre-geo-grid').clientWidth};
+        });
+        assert.ok(mapFit.left>=-1&&mapFit.right<=mapFit.width+1&&mapFit.height>=320,'The embedded map fits '+JSON.stringify({viewport,dark,mapFit}));
+        assert.ok(mapFit.frameWidth<=mapFit.gridWidth,'Long tables cannot widen the map beyond its content column');
+        if(shots)await page.screenshot({path:path.join(shots,`plate-map-frame-${viewport.width}-${dark?'dark':'light'}.png`)});
         await box.scrollIntoViewIfNeeded();
         const metrics=await box.evaluate(el=>{
           const r=el.getBoundingClientRect();
@@ -83,7 +110,7 @@ const server=http.createServer((req,res)=>{
     await page.waitForURL('**/geografi.html#indre-tsunami');
     assert.deepEqual(errors,[]);
     assert.deepEqual(missing,[]);
-    console.log('PASS contextual links, resource placement, light/dark layouts and animation navigation');
+    console.log('PASS contextual links, resource placement, Google map URL/position/responsive frame (external content mocked), light/dark layouts and animation navigation');
     await context.close();
   }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(()=>server.close());
