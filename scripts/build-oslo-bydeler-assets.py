@@ -40,7 +40,7 @@ def polygonal(geometry):
     return unary_union(municipalities.polygons(geometry))
 
 
-def build():
+def build_base():
     source = municipalities.read_json_gzip(SOURCE)
     project = Transformer.from_crs("EPSG:4326", "EPSG:25833", always_xy=True).transform
     assert len(source["features"]) == 15
@@ -106,121 +106,221 @@ def build():
     occupied = unary_union([row["geometry"] for row in rows])
     assert len(rows) == 16
     assert abs(sum(row["geometry"].area for row in rows) - occupied.area) < 0.01
-    # Add the two neighbouring municipalities without inventing sub-locality
-    # boundaries. The four Bærum localities and the two large forest regions
-    # use explicit point targets instead of administrative-looking polygons.
-    for code, name in [("3212", "Nesodden"), ("3222", "Lørenskog")]:
-        feature = next(f for f in municipality_features if f["properties"]["id"] == code)
-        geometry = transform(project, shape(feature["geometry"])).buffer(0)
-        rows.append({"name": name, "code": code, "geometry": geometry, "kind": "land"})
+    repairs = {"overlapAreaM2": round(overlap_area, 2), "gapAreaM2": round(gap_area, 2), "gapFaces": gap_count}
+    return rows, source, topology, municipality_features, oslo_land, repairs, sentrum.area
+
+def read_layer(path, default_kind):
+    """Read a pinned polygon layer and normalize its source CRS to UTM33."""
+    from pyproj import CRS
+    data = municipalities.read_json_gzip(path) if path.suffix == ".gz" else json.loads(path.read_text(encoding="utf-8"))
+    source_crs = data.get("crs", "EPSG:4326")
+    if isinstance(source_crs, dict):
+        source_crs = source_crs.get("properties", {}).get("name", "EPSG:4326")
+    crs = CRS.from_user_input(source_crs)
+    project = Transformer.from_crs(crs, "EPSG:25833", always_xy=True).transform
+    rows = []
+    for feature in data["features"]:
+        props = feature.get("properties", {})
+        name = props.get("name") or props.get("navn")
+        assert name, f"Missing named area in {path.name}"
+        geometry = shape(feature["geometry"])
+        assert geometry.geom_type in ("Polygon", "MultiPolygon"), f"Point fallback is not permitted: {name}"
+        geometry = transform(project, geometry)
+        if not geometry.is_valid:
+            geometry = geometry.buffer(0)
+        rows.append({"name": name, "code": str(props.get("id", name)),
+                     "kind": props.get("kind", default_kind), "geometry": polygonal(geometry),
+                     "boundaryType": props.get("boundaryType"), "year": props.get("year")})
+    return rows, data.get("source", {}), path.name
+
+
+def clipped_row(row, crop, minimum_area=0):
+    original = row["geometry"]
+    geometry = polygonal(original.intersection(crop))
+    if geometry.is_empty or geometry.area < minimum_area:
+        return None
+    share = geometry.area / original.area
+    return {**row, "geometry": geometry, "visibleShare": round(min(1, share), 4),
+            "clipped": share < 0.99999}
+
+
+def build(require_sources=True):
+    rows, source, topology, municipality_features, oslo_land, repairs, sentrum_area = build_base()
+    project = Transformer.from_crs("EPSG:4326", "EPSG:25833", always_xy=True).transform
+    # Reconstructed from the user's red rectangle in the published map. These
+    # fixed metric bounds crop geography; no target geometry is stretched to fit.
+    crop_bounds = (248610.72742114664, 6636516.482282372,
+                   279669.4171429286, 6659260.669574317)
+    crop = box(*crop_bounds)
+    canvas = municipalities.Canvas(crop_bounds)
+    view_box = [16, 16, round(canvas.width - 32, 2), round(canvas.height - 32, 2)]
+    assert 1.35 < view_box[2] / view_box[3] < 1.38
+
+    nearby = {}
+    for feature in municipality_features:
+        # Bounding-box filtering avoids projecting all Norway for this city map.
+        geometry = shape(feature["geometry"])
+        if not geometry.envelope.intersects(box(10, 59.5, 11.4, 60.3)):
+            continue
+        geometry = transform(project, geometry)
+        if not geometry.is_valid:
+            geometry = geometry.buffer(0)
+        if geometry.intersects(crop):
+            nearby[feature["properties"]["id"]] = {
+                "name": feature["properties"]["name"], "geometry": polygonal(geometry),
+                "code": feature["properties"]["id"], "kind": "land",
+                "boundaryType": "municipality"}
+
+    # Actual municipal borders, including substantial portions cut by the
+    # frame. Asker's narrow five-square-kilometre corner stays background.
+    for code in ["3212", "3222", "3207", "3205", "3224", "3232", "3220"]:
+        row = nearby[code]
+        assert row["geometry"].intersection(crop).area > 10_000_000
+        rows.append(row)
+    rows = [clipped_row({**row, "kind": "land",
+                         "boundaryType": row.get("boundaryType", "borough")}, crop)
+            for row in rows]
+    assert all(row is not None for row in rows)
+
+    # Postal regions provide one consistent, real partition of western urban
+    # areas, including Fornebu and Bekkestua; they are not guessed town limits.
+    layer_sources = []
+    postal_path = OUTPUT / "sources/baerum-areas-postal-localities.geojson.gz"
+    if postal_path.exists():
+        postal, metadata, filename = read_layer(postal_path, "land")
+        baerum_land = nearby["3201"]["geometry"]
+        postal_land = []
+        for row in postal:
+            row["geometry"] = polygonal(row["geometry"].intersection(baerum_land))
+            if row["geometry"].is_empty:
+                continue
+            clipped = clipped_row(row, crop, 150_000)
+            if clipped is not None and (clipped["geometry"].area >= 500_000 or clipped["visibleShare"] >= 0.15):
+                clipped["category"] = "postal-area"
+                clipped["code"] = "poststed-" + clipped["code"]
+                rows.append(clipped)
+                postal_land.append(clipped["geometry"])
+        postal_coverage = unary_union(postal_land).area / baerum_land.intersection(crop).area
+        assert postal_coverage > 0.95, "The postal partition no longer fills Bærum's visible land"
+        layer_sources.append({"file": filename, "source": metadata})
+    elif require_sources:
+        raise FileNotFoundError(f"The genuine Bærum postal region source is required: {postal_path}")
+
     bygdoy_source = municipalities.read_json_gzip(OUTPUT / "sources/bygdoy.geojson.gz")
     bygdoy = transform(project, shape(bygdoy_source["features"][0]["geometry"])).buffer(0)
-    # Keep the small subdistrict inside its parent borough, preserving a
-    # readable independent target without a coastal sliver outside Frogner.
     frogner = next(row["geometry"] for row in rows if row["code"] == "05")
-    rows.append({"name": "Bygdøy", "code": "bygdoy", "geometry": polygonal(bygdoy.intersection(frogner)), "kind": "land"})
-    occupied = unary_union([row["geometry"] for row in rows])
-    point_source = json.loads((OUTPUT / "sources/local-reference-points.json").read_text(encoding="utf-8"))
-    point_rows = [{**place, "geometry": transform(project, Point(*place["coordinate"]))}
-                  for place in point_source["places"]]
+    rows.append(clipped_row({"name": "Bygdøy", "code": "bygdoy", "kind": "land",
+                             "boundaryType": "subdistrict", "geometry": polygonal(bygdoy.intersection(frogner))}, crop))
+
+    # Real named forest polygons, cut only by the rectangular map frame.
+    forest_rows = []
+    forest_path = OUTPUT / "sources/forests-quiz-polygons.geojson.gz"
+    if forest_path.exists():
+        forests, metadata, filename = read_layer(forest_path, "forest")
+        for row in forests:
+            clipped = clipped_row({**row, "kind": "forest"}, crop, 500_000)
+            if clipped is not None:
+                clipped["code"] = "forest-" + clipped["code"]
+                forest_rows.append(clipped)
+        layer_sources.append({"file": filename, "source": metadata})
+    elif require_sources:
+        raise FileNotFoundError(f"The genuine forest region polygons are required: {forest_path}")
 
     hydrography = municipalities.read_json_gzip(municipalities.WATER_SOURCE)
     assert hydrography["crs"] == "EPSG:25833"
     water_geometries = [shape(f["geometry"]) for f in hydrography["features"]]
     water_kinds = [f["properties"]["kind"] for f in hydrography["features"]]
     water_tree = STRtree(water_geometries)
-    # The two large lakes exist in the pinned N1000 source. Select by a point
-    # inside the actual polygon, retaining the complete unsimplified outline.
-    lake_targets = []
+    lakes_by_name = {}
+    named_water = set()
     for name, code, coordinate in [("Bogstadvannet", "lake-bogstad", (10.622, 59.970)),
-                                   ("Maridalsvannet", "lake-maridal", (10.772, 59.982))]:
+                                   ("Maridalsvannet", "lake-maridal", (10.772, 59.982)),
+                                   ("Nøklevann", "lake-noklevann", (10.874, 59.875))]:
         point = transform(project, Point(*coordinate))
-        candidates = [int(index) for index in water_tree.query(point)
-                      if water_kinds[index] == "lake" and water_geometries[index].covers(point)]
-        assert len(candidates) == 1, "Named lake no longer matches the pinned water source"
+        candidates = [int(i) for i in water_tree.query(point)
+                      if water_kinds[i] == "lake" and water_geometries[i].covers(point)]
+        assert len(candidates) == 1, f"Named lake no longer matches its pinned source: {name}"
         index = candidates[0]
-        lake_targets.append({"name": name, "code": code, "geometry": water_geometries[index], "kind": "lake", "sourceIndex": index})
-    # UTM preserves geographical shape. Padding the canvas, rather than
-    # stretching its coordinates, keeps the expanded map approximately square.
-    extent = unary_union([occupied, *[row["geometry"] for row in point_rows],
-                          *[row["geometry"] for row in lake_targets]])
-    xmin, ymin, xmax, ymax = extent.bounds
-    width, height = xmax - xmin, ymax - ymin
-    target_width = max(width, height * 1.08)
-    target_height = max(height, width / 1.2)
-    xpad, ypad = (target_width - width) / 2, (target_height - height) / 2
-    # Leave markers and their touch targets clear of the viewport edge on
-    # small screens. This is geographic padding, never a projection stretch.
-    touch_margin = max(target_width, target_height) * 0.03
-    canvas = municipalities.Canvas((xmin - xpad - touch_margin, ymin - ypad - touch_margin,
-                                    xmax + xpad + touch_margin, ymax + ypad + touch_margin))
-    named_water = {row["sourceIndex"] for row in lake_targets}
+        named_water.add(index)
+        lakes_by_name[name] = {"name": name, "code": code, "kind": "lake",
+                              "geometry": water_geometries[index]}
+    water_path = OUTPUT / "sources/water-quiz-polygons.geojson.gz"
+    if water_path.exists():
+        fine_water, metadata, filename = read_layer(water_path, "lake")
+        for row in fine_water:
+            # Prefer the finer sourced outline when both datasets name a lake.
+            row["kind"] = "lake"
+            row["code"] = "lake-" + row["code"]
+            lakes_by_name[row["name"]] = row
+        layer_sources.append({"file": filename, "source": metadata})
+    elif require_sources:
+        raise FileNotFoundError(f"The genuine small-lake outlines are required: {water_path}")
+    lakes = []
+    for row in lakes_by_name.values():
+        clipped = clipped_row(row, crop, 20_000)
+        if clipped is not None and (clipped["visibleShare"] >= 0.2 or clipped["geometry"].area >= 100_000):
+            lakes.append(clipped)
+
+    # Land and forests are selectable polygons; the water layer remains quiet.
+    # Named lake geometry is excluded from decorative water, which otherwise
+    # could cover its answer colour or intercept the visual hierarchy.
+    lake_union = unary_union([row["geometry"] for row in lakes])
     water = []
-    for index in sorted(water_tree.query(occupied, predicate="intersects")):
+    for index in sorted(water_tree.query(crop, predicate="intersects")):
         if int(index) in named_water:
             continue
-        geometry = water_geometries[index].intersection(occupied)
+        geometry = water_geometries[index].intersection(crop)
+        if water_kinds[index] != "river":
+            geometry = geometry.difference(lake_union)
         path = canvas.path(geometry)
         if path:
             water.append({"kind": water_kinds[index], "d": path})
-    assert water and any(w["kind"] == "river" for w in water)
 
-    # Marka and adjacent municipalities remain non-playable context.
-    xmin, ymin, xmax, ymax = extent.bounds
-    margin = max(xmax - xmin, ymax - ymin)
-    window = box(xmin - margin, ymin - margin, xmax + margin, ymax + margin)
-    nearby_land = []
-    for feature in municipality_features:
-        geometry = shape(feature["geometry"])
-        # Cheap geographic bounds test avoids projecting the entire country.
-        if not geometry.envelope.intersects(box(9.8, 59.2, 11.8, 60.5)):
-            continue
-        geometry = transform(project, geometry)
-        if not geometry.is_valid:
-            geometry = geometry.buffer(0)
-        if geometry.intersects(window):
-            nearby_land.append(geometry.intersection(window))
-    surfaces = [water_geometries[index] for index in water_tree.query(window, predicate="intersects")
-                if water_kinds[index] != "river"]
-    context = unary_union(nearby_land).difference(occupied)
-    if surfaces:
-        context = context.difference(unary_union(surfaces))
-    # Context is intentionally calmer; only the surrounding land is simplified.
+    # Fill surrounding land in the fixed crop, rather than leaving it the same
+    # colour as sea. The five new edge municipalities supply substantial real
+    # regions; very small outside pieces are context instead of quiz answers.
+    land = unary_union([row["geometry"] for row in nearby.values()]).intersection(crop)
+    surfaces = [water_geometries[i].intersection(crop) for i in water_tree.query(crop, predicate="intersects")
+                if water_kinds[i] != "river"]
+    occupied = unary_union([row["geometry"] for row in rows + forest_rows])
+    context = polygonal(land.difference(occupied).difference(unary_union(surfaces + [lake_union])))
     context = context.simplify(10, preserve_topology=True)
+
     administrative = [row["geometry"] for row in rows if row["code"] != "bygdoy"]
     administrative_union = unary_union(administrative)
     boundaries = unary_union([g.boundary for g in administrative]).difference(administrative_union.boundary)
-    # The finer Bygdøy coastline differs slightly from the borough overview.
-    # Keep only its inland edge in the high-contrast administrative overlay;
-    # the actual playable coastline is retained and gets the ordinary outline.
+    # Rectangle edges are clipping, not newly invented administrative borders.
+    boundaries = boundaries.difference(crop.boundary.buffer(0.01))
     bygdoy_geometry = next(row["geometry"] for row in rows if row["code"] == "bygdoy")
-    bygdoy_inland_edge = bygdoy_geometry.boundary.intersection(frogner.buffer(-250))
-    boundaries = unary_union([boundaries, bygdoy_inland_edge])
-    # Marka is background context. A marker identifies the requested nearby
-    # part of Nordmarka/Østmarka without claiming that the municipal boundary
-    # or all northern forest (which includes Lillomarka) is its true extent.
-    original_city = unary_union([row["geometry"] for row in rows[:16]])
-    marka = oslo_land.difference(original_city).intersection(window)
-    marka = unary_union([g for g in municipalities.polygons(marka) if g.area > 1_000_000])
-    if surfaces:
-        marka = marka.difference(unary_union(surfaces))
-    states = [{"n": row["name"], "a": row["code"], "kind": row.get("kind", "land"),
-               "d": canvas.path(row["geometry"]), "c": canvas.center(row["geometry"])}
-              for row in [*rows, *lake_targets]]
-    for row in point_rows:
-        states.append({"n": row["name"], "a": row["code"], "kind": "place", "marker": True,
-                       "category": row["category"], "c": canvas.point(row["geometry"].x, row["geometry"].y)})
-    assert len(states) == len({state["n"] for state in states}) == 28
+    boundaries = unary_union([boundaries, bygdoy_geometry.boundary.intersection(frogner.buffer(-250))])
+
+    states = []
+    for row in [*rows, *forest_rows, *lakes]:
+        geometry = row["geometry"]
+        assert geometry.is_valid and geometry.geom_type in ("Polygon", "MultiPolygon") and not geometry.is_empty
+        assert geometry.difference(crop).area < 0.01, "A quiz polygon escaped the fixed crop"
+        states.append({"n": row["name"], "a": row["code"], "kind": row["kind"],
+                       "d": canvas.path(geometry), "c": canvas.center(geometry),
+                       "category": row.get("category", row["kind"]),
+                       "boundaryType": row.get("boundaryType"),
+                       "clipped": row["clipped"], "visibleShare": row["visibleShare"]})
+    names = {state["n"] for state in states}
+    assert len(states) == len(names), "Each named area must have exactly one quiz target"
+    assert all(state["d"] and state["kind"] in ("land", "forest", "lake") for state in states)
+    if require_sources:
+        assert {"Fornebu", "Lysaker", "Bekkestua", "Sandvika", "Nordmarka", "Østmarka", "Sognsvann"} <= names
+        assert len(states) > 28
     data = {
-        "title": "Oslo", "viewBox": canvas.view_box, "states": states,
-        "water": water, "boundaries": canvas.path(boundaries),
-        "context": canvas.path(context), "forestContext": canvas.path(marka.simplify(10, preserve_topology=True)),
+        "title": "Oslo", "ruleset": "oslo-areas-v3", "viewBox": view_box,
+        "states": states, "water": water, "boundaries": canvas.path(boundaries),
+        "context": canvas.path(context),
+        "crop": {"crs": "EPSG:25833", "bounds": list(crop_bounds),
+                 "widthKm": round((crop_bounds[2] - crop_bounds[0]) / 1000, 2),
+                 "heightKm": round((crop_bounds[3] - crop_bounds[1]) / 1000, 2)},
         "source": {"boundaries": source["source"], "hydrography": hydrography["source"],
-                   "bygdoy": bygdoy_source["source"], "places": point_source["source"],
-                   "sentrum": {"method": "Oslo land minus the fifteen boroughs; connected component containing the city centre",
-                               "coastline": topology.get("source", {}), "areaM2": round(sentrum.area, 2)},
-                   "topologyRepair": {"overlapAreaM2": round(overlap_area, 2),
-                                      "gapAreaM2": round(gap_area, 2), "gapFaces": gap_count}},
+                   "bygdoy": bygdoy_source["source"], "additionalLayers": layer_sources,
+                   "sentrum": {"method": "Oslo land minus the fifteen boroughs; city-centre component", "areaM2": round(sentrum_area, 2)},
+                   "topologyRepair": repairs},
     }
     return municipalities.dump(data)
 
@@ -232,13 +332,12 @@ def main():
     content = build()
     path = OUTPUT / "oslo.json"
     if args.check:
-        assert path.read_text(encoding="utf-8") == content, "Rebuild Oslo map"
+        assert path.read_text(encoding="utf-8") == content, "Rebuild the Oslo area map"
     else:
         path.write_text(content, encoding="utf-8")
     data = json.loads(content)
-    print(f"{'Verified' if args.check else 'Built'} Oslo map: "
-          f"{len(data['states'])} targets, {len(data['water'])} water features, "
-          f"{len(content.encode()):,} bytes")
+    print(f"{'Verified' if args.check else 'Built'} Oslo area map: {len(data['states'])} polygon targets, "
+          f"{len(content.encode()):,} bytes; crop {data['crop']['widthKm']} × {data['crop']['heightKm']} km")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,6 @@
+[out:json][timeout:45];
+(
+ way["name"~"^(Sognsvann|Sognsvatn|Nøklevann|Østensjøvannet|Lutvann|Steinbruvann|Dælivannet|Dælivann|Ulsrudvann|Øvresetertjern|Lille Åklungen|Store Åklungen)$",i](59.77,10.4,60.05,11.05);
+ relation["name"~"^(Sognsvann|Sognsvatn|Nøklevann|Østensjøvannet|Lutvann|Steinbruvann|Dælivannet|Dælivann|Ulsrudvann|Øvresetertjern|Lille Åklungen|Store Åklungen)$",i](59.77,10.4,60.05,11.05);
+);
+out meta geom;

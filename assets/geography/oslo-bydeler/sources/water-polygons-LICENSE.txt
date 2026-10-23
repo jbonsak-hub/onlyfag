@@ -1,0 +1,21 @@
+Named lake polygon database
+
+Copyright OpenStreetMap contributors.
+
+The original OpenStreetMap data and this adapted lake polygon database are
+available under the Open Database License (ODbL) 1.0:
+https://opendatacommons.org/licenses/odbl/1-0/
+
+Attribution: © OpenStreetMap contributors
+https://www.openstreetmap.org/copyright
+
+For a publicly displayed map produced from this data, retain the attribution
+and make the ODbL information accessible. When distributing this adapted
+database or an adapted database derived from it, observe the ODbL attribution,
+notice, and share-alike requirements. The license applies to the database;
+individual source content may be subject to its stated content terms.
+
+The preserved original response, query, object identities, versions, timestamps,
+and conversion are documented in water-polygons-README.md. Original source
+geometries are retained; the source layer introduces no point buffers or
+invented area boundaries.

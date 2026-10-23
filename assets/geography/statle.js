@@ -105,6 +105,10 @@
   function buildMap() {
     if (municipalities || boroughs) {
       $('map').setAttribute('viewBox',regionData.viewBox.join(' '));
+      if(boroughs) {
+        const [x,y,width,height]=regionData.viewBox;
+        $('states').append(svgNode('rect',{x,y,width,height,class:'oslo-map-water','aria-hidden':'true','pointer-events':'none'}));
+      }
       const extent=svgNode('clipPath',{id:'municipality-extent',clipPathUnits:'userSpaceOnUse'});
       // Separate clip children form a union even when forests, boroughs and
       // smaller areas overlap. One even-odd path would cancel those overlaps.
@@ -112,7 +116,7 @@
       $('states').append(extent);
       if(regionData.context) $('states').append(svgNode('path',{d:regionData.context,class:'municipality-context','fill-rule':'evenodd','aria-hidden':'true'}));
       if(regionData.forestContext) $('states').append(svgNode('path',{d:regionData.forestContext,class:'oslo-forest-context','fill-rule':'evenodd','aria-hidden':'true','pointer-events':'none'}));
-      const areas=states.filter(state=>state.kind!=='place');
+      const areas=states;
       function addArea(state) {
         const el=svgNode('path',{d:state.d,class:'state municipality'+(boroughs?' oslo-'+(state.kind||'land'):''),'fill-rule':'evenodd',role:'button',tabindex:'0','aria-label':shapeLabel});
         el.dataset.state=state.n;el.dataset.code=state.a;el.dataset.kind=state.kind||'land';$('states').append(el);elements.set(state.n,el);
@@ -134,13 +138,6 @@
       for(const layer of ['halo','line'])boundaries.append(svgNode('path',{d:borderPath,class:'municipality-border-'+layer,'vector-effect':'non-scaling-stroke'}));
       $('states').append(boundaries);
       for(const state of areas.filter(state=>state.kind==='lake'))addArea(state);
-      for(const state of states.filter(state=>state.kind==='place')) {
-        const marker=svgNode('g',{class:'state municipality small-marker map-place',role:'button',tabindex:'0','aria-label':shapeLabel});
-        marker.dataset.state=state.n;marker.dataset.code=state.a;marker.dataset.kind='place';marker.dataset.category=state.category||'place';
-        marker.append(svgNode('circle',{cx:state.c[0],cy:state.c[1],r:12,class:'hit'}),svgNode('circle',{cx:state.c[0],cy:state.c[1],r:5,class:'visible'}));
-        $('states').append(marker);elements.set(state.n,marker);markers.set(state.n,marker);
-        centers.set(state.n,{x:state.c[0],y:state.c[1],radius:24});
-      }
       return;
     }
     if (physical) {
@@ -263,7 +260,7 @@
     $('mistakes').textContent = String(mistakes);
   }
   function setPhase(value){phase=value;document.body.dataset.phase=value;}
-  function prompt(){$('targetVerb').textContent=retrying?'Øvingsrunde · klikk på':'Klikk på';const subtitle=$('target-continent');if(subtitle){subtitle.hidden=!continentPractice;subtitle.textContent=continentPractice?continentNames[target()?.continent]||'':'';}}
+  function prompt(){const action=retrying?'Øvingsrunde · klikk på':'Klikk på';$('targetVerb').textContent=boroughs&&target()?.category==='postal-area'?'Postområde · '+action.toLowerCase():action;const subtitle=$('target-continent');if(subtitle){subtitle.hidden=!continentPractice;subtitle.textContent=continentPractice?continentNames[target()?.continent]||'':'';}}
   function next() {
     index++; locked = false; roundMistakes = 0; roundTime = 0;
     $('hintLayer').replaceChildren(); $('labelLayer').replaceChildren();
@@ -345,15 +342,6 @@
         const point=new DOMPoint(event.clientX,event.clientY).matrixTransform(current.getScreenCTM().inverse());
         if(current.isPointInFill(point))return target().n;
       }
-      let nearest=null,distance=Infinity;
-      for(const [name,marker] of markers) {
-        const hit=marker.querySelector('.hit'),p=new DOMPoint(event.clientX,event.clientY).matrixTransform(marker.getScreenCTM().inverse());
-        if(!hit.isPointInFill(p))continue;
-        const center=new DOMPoint(hit.cx.baseVal.value,hit.cy.baseVal.value).matrixTransform(marker.getScreenCTM());
-        const d=(event.clientX-center.x)**2+(event.clientY-center.y)**2;
-        if(d<distance){nearest=name;distance=d;}
-      }
-      if(nearest)return nearest;
     }
     if(!physical)return element.dataset.state;
     if(element.classList.contains('small-marker')){let nearest=null,distance=Infinity;for(const [name,marker] of markers){const circle=marker.querySelector('.visible'),matrix=marker.getScreenCTM(),local=new DOMPoint(event.clientX,event.clientY).matrixTransform(matrix.inverse());if(!circle.isPointInFill(local))continue;const center=new DOMPoint(circle.cx.baseVal.value,circle.cy.baseVal.value).matrixTransform(matrix),d=(event.clientX-center.x)**2+(event.clientY-center.y)**2;if(d<distance){distance=d;nearest=name;}}if(nearest)return nearest;}
@@ -432,7 +420,7 @@
   if(boroughs) {
     shapeLabel='Sted på kartet';document.body.dataset.region='bydeler';
     readMap('../assets/geography/oslo-bydeler/oslo.json').then(data=>{
-      if(data.states?.length!==28||new Set(data.states.map(state=>state.n)).size!==28||!data.states.some(state=>state.n==='Sentrum'))throw Error('Ufullstendig kart');
+      if(data.ruleset!=='oslo-areas-v3'||!Array.isArray(data.states)||data.states.length<28||new Set(data.states.map(state=>state.n)).size!==data.states.length||data.states.some(state=>!state.d||state.marker||!['land','forest','lake'].includes(state.kind))||!data.states.some(state=>state.n==='Sentrum'))throw Error('Ufullstendig kart');
       regionData=data;states=data.states;total=states.length;
       $('targetName').textContent=data.title||'Oslo';$('total-count').textContent=' / '+total;
       $('map').setAttribute('aria-label','Klikkbart kart over Oslo og nærområdene');
