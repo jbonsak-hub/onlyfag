@@ -16,7 +16,7 @@ const municipalityIndex=JSON.parse(read('assets/geography/municipalities/index.j
 const municipalityFiles=municipalityIndex.counties.map(county=>'municipalities/'+county.file);
 const kommuneTargets=Object.fromEntries(municipalityIndex.counties.map((county,i)=>{const targets=JSON.parse(read('assets/geography/'+municipalityFiles[i])).states.map(state=>state.n);if(targets.length!==(county.quizCount||county.count)||targets.some(name=>typeof name!=='string'||!name.trim())||new Set(targets).size!==targets.length)throw Error('Invalid municipality targets: '+county.code);return [county.code,targets];}));
 const bydeler=JSON.parse(read('assets/geography/oslo-bydeler/map.json')).states.map(state=>state.n);
-if(bydeler.length!==15||bydeler.some(name=>typeof name!=='string'||!name.trim())||new Set(bydeler).size!==15)throw Error('Oslo must have exactly fifteen distinct borough targets');
+if(bydeler.length!==16||!bydeler.includes('Sentrum')||bydeler.some(name=>typeof name!=='string'||!name.trim())||new Set(bydeler).size!==16)throw Error('Oslo must have fifteen boroughs plus Sentrum');
 const playable=t=>Number.isFinite(t.lat)&&Number.isFinite(t.lon)&&t.lat<=75&&t.lat>=-58.8;
 const unique=items=>items.filter((t,i,a)=>a.findIndex(x=>x.name===t.name&&x.lat===t.lat&&x.lon===t.lon)===i);
 const categories={mountains:'Fjell og vulkaner',ranges:'Fjellkjeder',deserts:'Ørkener',lakes:'Innsjøer',islands:'Øyer, øygrupper og halvøyer',regions:'Regioner og områder',seas:'Hav og sjøområder',straits:'Stred, kanaler, bukter og kapp',landmarks:'Kjente byggverk og historiske steder',nature:'Kjente natursteder','place:Norge':'Norge'};

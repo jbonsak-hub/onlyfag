@@ -15,7 +15,7 @@ import sys
 sys.dont_write_bytecode = True
 
 from pyproj import Transformer
-from shapely.geometry import box, shape
+from shapely.geometry import Point, box, shape
 from shapely.ops import polygonize, transform, unary_union
 from shapely.strtree import STRtree
 
@@ -90,6 +90,22 @@ def build():
     assert gap_count == 53
     assert (overlap_area + gap_area) / occupied.area < 0.001
     assert abs(sum(row["geometry"].area for row in rows) - occupied.area) < 0.01
+
+    # Sentrum is a separate statistical area, outside the fifteen ordinary
+    # boroughs. Its inland edges are already defined by their official outlines;
+    # close the remaining seaward edge with the atlas's Kartverket coastline.
+    topology = municipalities.read_json_gzip(municipalities.BOUNDARY_SOURCE)
+    municipality_features = list(municipalities.decode_topology(topology))
+    oslo = next(f for f in municipality_features if f["properties"]["id"] == "0301")
+    oslo_land = transform(project, shape(oslo["geometry"])).buffer(0)
+    city_centre = transform(project, Point(10.738, 59.913))
+    sentrum = next(g for g in municipalities.polygons(oslo_land.difference(occupied))
+                   if g.covers(city_centre))
+    assert 1_500_000 < sentrum.area < 2_300_000, "Review the Sentrum/coastline intersection"
+    rows.append({"name": "Sentrum", "code": "16", "geometry": sentrum})
+    occupied = unary_union([row["geometry"] for row in rows])
+    assert len(rows) == 16
+    assert abs(sum(row["geometry"].area for row in rows) - occupied.area) < 0.01
     canvas = municipalities.Canvas(occupied.bounds)
 
     hydrography = municipalities.read_json_gzip(municipalities.WATER_SOURCE)
@@ -105,14 +121,12 @@ def build():
             water.append({"kind": water_kinds[index], "d": path})
     assert water and any(w["kind"] == "river" for w in water)
 
-    # The full Oslo municipality includes Marka and Sentrum. These and adjacent
-    # municipalities are context, not extra answers among the fifteen boroughs.
+    # Marka and adjacent municipalities remain non-playable context.
     xmin, ymin, xmax, ymax = occupied.bounds
     margin = max(xmax - xmin, ymax - ymin)
     window = box(xmin - margin, ymin - margin, xmax + margin, ymax + margin)
-    topology = municipalities.read_json_gzip(municipalities.BOUNDARY_SOURCE)
     nearby_land = []
-    for feature in municipalities.decode_topology(topology):
+    for feature in municipality_features:
         geometry = shape(feature["geometry"])
         # Cheap geographic bounds test avoids projecting the entire country.
         if not geometry.envelope.intersects(box(9.8, 59.2, 11.8, 60.5)):
@@ -137,6 +151,8 @@ def build():
         "water": water, "boundaries": canvas.path(boundaries),
         "context": canvas.path(context),
         "source": {"boundaries": source["source"], "hydrography": hydrography["source"],
+                   "sentrum": {"method": "Oslo land minus the fifteen boroughs; connected component containing the city centre",
+                               "coastline": topology.get("source", {}), "areaM2": round(sentrum.area, 2)},
                    "topologyRepair": {"overlapAreaM2": round(overlap_area, 2),
                                       "gapAreaM2": round(gap_area, 2), "gapFaces": gap_count}},
     }

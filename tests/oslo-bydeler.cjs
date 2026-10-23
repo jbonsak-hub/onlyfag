@@ -6,10 +6,10 @@ const assert = require('node:assert/strict');
 const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = path.resolve(__dirname, '..');
 const map = JSON.parse(fs.readFileSync(path.join(root, 'assets/geography/oslo-bydeler/map.json'), 'utf8'));
-assert.equal(map.states.length, 15);
-assert.equal(new Set(map.states.map(item => item.n)).size, 15);
-for (const name of ['Gamle Oslo', 'Grünerløkka', 'Sagene', 'Frogner', 'Søndre Nordstrand']) assert(map.states.some(item => item.n === name), name + ' is present');
-for (const name of ['Marka', 'Sentrum']) assert(!map.states.some(item => item.n === name), name + ' is context, not an ordinary borough');
+assert.equal(map.states.length, 16);
+assert.equal(new Set(map.states.map(item => item.n)).size, 16);
+for (const name of ['Gamle Oslo', 'Grünerløkka', 'Sagene', 'Frogner', 'Søndre Nordstrand', 'Sentrum']) assert(map.states.some(item => item.n === name), name + ' is present');
+for (const name of ['Marka']) assert(!map.states.some(item => item.n === name), name + ' is context, not an ordinary borough');
 assert(map.boundaries.length && map.context.length && map.water.length, 'Detailed borders, surrounding land and water are included');
 const mime = {'.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css', '.json':'application/json'};
 const server = http.createServer((request, response) => {
@@ -57,8 +57,8 @@ const server = http.createServer((request, response) => {
     await entry.click();
     await page.waitForURL('**/geografi/oslo-bydeler.html');
     await page.locator('#start:enabled').waitFor();
-    assert.equal(await targets.count(), 15);
-    assert.equal(await page.locator('#total-count').textContent(), ' / 15');
+    assert.equal(await targets.count(), 16);
+    assert.equal(await page.locator('#total-count').textContent(), ' / 16');
     assert.equal(await page.locator('#map text').count(), 0, 'Map does not reveal answers');
     assert.equal(await page.locator('#skip').count(), 0);
     assert.match(await page.locator('.borough-reform-note').textContent(), /8.*1\. januar 2028/);
@@ -102,13 +102,17 @@ const server = http.createServer((request, response) => {
     assert.equal(await page.locator('#completed').textContent(), '1');
     await advance();
     const seen = new Set([slow]);
-    for (let i = 1; i < 15; i++) { const name = await page.locator('#targetName').textContent(); seen.add(name); await choose(name); await advance(); }
-    assert.equal(seen.size, 15, 'A complete round asks all 15 boroughs');
+    for (let i = 1; i < 16; i++) { const name = await page.locator('#targetName').textContent(); seen.add(name); if(name==='Sentrum'){
+      const point=await page.evaluate(c=>{const p=new DOMPoint(...c).matrixTransform(document.querySelector('#map').getScreenCTM());return {x:p.x,y:p.y,hit:document.elementFromPoint(p.x,p.y)?.dataset.state};},map.states.find(s=>s.n==='Sentrum').c);
+      assert.equal(point.hit,'Sentrum','Sentrum has its own clickable land area');await page.mouse.click(point.x,point.y);
+    }else await choose(name); await advance(); }
+    assert(seen.has('Sentrum'),'Sentrum is included in the full quiz round');
+    assert.equal(seen.size, 16, 'A complete round asks all fifteen boroughs and Sentrum');
     assert.equal(await page.locator('body').getAttribute('data-phase'), 'finished');
     assert.equal(await page.locator('#targetName').textContent(), 'Alle bydelene er på plass.');
     await page.locator('#repeat-practice-start').click();
     assert.equal(await page.locator('#targetName').textContent(), slow);
-    assert.equal(await page.locator('#states .mastered').count(), 14);
+    assert.equal(await page.locator('#states .mastered').count(), 15);
     await page.waitForFunction(initial => [...document.querySelectorAll('#states .retry-pending')].every(element => getComputedStyle(element).fill === initial[element.dataset.state]), initial);
     await choose(slow); await advance();
     assert.equal(await page.locator('#targetName').textContent(), 'Alle er grønne!');
@@ -138,6 +142,6 @@ const server = http.createServer((request, response) => {
     assert(await page.locator('#kart-selection').isVisible());
     assert.deepEqual(errors, []);
     assert.deepEqual(missing, []);
-    console.log('PASS Oslo borough quiz: 15 real shapes, complete round and retry, mouse/keyboard answers, water/border hierarchy, own scoreboard, dark mode, zoom and responsive navigation');
+    console.log('PASS Oslo borough quiz: 16 real shapes, complete round and retry, mouse/keyboard answers, water/border hierarchy, own scoreboard, dark mode, zoom and responsive navigation');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; }).finally(() => server.close());

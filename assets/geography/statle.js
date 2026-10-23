@@ -401,10 +401,10 @@
   if(boroughs) {
     shapeLabel='Bydel på kartet';document.body.dataset.region='bydeler';
     readMap('../assets/geography/oslo-bydeler/map.json').then(data=>{
-      if(data.states?.length!==15||new Set(data.states.map(state=>state.n)).size!==15)throw Error('Ufullstendig kart');
+      if(data.states?.length!==16||new Set(data.states.map(state=>state.n)).size!==16||!data.states.some(state=>state.n==='Sentrum'))throw Error('Ufullstendig kart');
       regionData=data;states=data.states;total=states.length;
       $('targetName').textContent=data.title||'Bydeler i Oslo';$('total-count').textContent=' / '+total;
-      $('map').setAttribute('aria-label','Klikkbart kart over Oslos 15 bydeler');
+      $('map').setAttribute('aria-label','Klikkbart kart over Oslos bydeler og Sentrum');
       buildMap();updateStats();window.ClickMapZoom?.setBase();window.dispatchEvent(new Event('resize'));
       $('start').disabled=false;$('start').textContent='Start →';
     }).catch(()=>{$('start').textContent='Kartet kunne ikke lastes';setFeedback('Last siden på nytt for å prøve igjen.','error');});

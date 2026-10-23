@@ -166,7 +166,7 @@ test('physical Kart API validates full rounds, skips, replay safety, shared lang
 
 test('municipality maps and Oslo boroughs use separate complete target pools and unchanged scoring bands',()=>{
  const index=JSON.parse(fs.readFileSync(new URL('../assets/geography/municipalities/index.json',import.meta.url),'utf8'));
- assert.equal(Object.keys(data.kommuner).length,15);assert.equal(data.bydeler.length,15);
+ assert.equal(Object.keys(data.kommuner).length,15);assert.equal(data.bydeler.length,16);
  const maps=index.counties.map(county=>({game:'kommuner',county:county.code}));maps.push({game:'bydeler'});
  const boards=new Set();
  for(const c of maps){
@@ -186,7 +186,7 @@ test('municipality maps and Oslo boroughs use separate complete target pools and
  assert.equal(boards.size,16);for(const game of ['statle','fylker'])assert.ok(!boards.has(board({game})));
  assert.equal(data.kommuner['03'].length,54);assert.ok(data.kommuner['03'].includes('Sør-Odal'));assert.ok(data.kommuner['03'].includes('Kongsvinger'));
  for(const county of [undefined,null,3,{},['03'],'3','00','01','__proto__','constructor'])assert.throws(()=>config({game:'kommuner',county}),/invalid_config/);
- for(const name of ['Sentrum','Marka','Oslo']){const s=create({game:'bydeler'},0);assert.throws(()=>answer(s,{question:s.current.id,choice:name},1),/invalid_answer/);}
+ for(const name of ['Marka','Oslo']){const s=create({game:'bydeler'},0);assert.throws(()=>answer(s,{question:s.current.id,choice:name},1),/invalid_answer/);}
 });
 
 test('local-map API validates publication and keeps every county and borough ranking isolated',async()=>{

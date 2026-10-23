@@ -2,8 +2,8 @@
 
 The fifteen playable boroughs come directly from **Oslo kommune's own
 [Bydelsfakta](https://bydelsfakta.oslo.kommune.no/)** application, not a traced
-image or an approximate drawing. Sentrum and Marka appear as surrounding land;
-they are not additional borough answers.
+image or an approximate drawing. Sentrum is included as a sixteenth playable
+area. Marka remains surrounding land.
 
 ## Borough boundaries
 
@@ -42,6 +42,19 @@ larger gaps fail the build's validation instead of silently filling them.
 The display name `St. Hanshaugen` adds a space to the source label
 `St.Hanshaugen`.
 
+## Sentrum
+
+Sentrum is a separate statistical area rather than one of the fifteen ordinary
+boroughs. Its inland border follows the existing official borough edges. The
+build subtracts those fifteen polygons from the pinned Kartverket-derived
+Oslo municipality land polygon and selects the connected component containing
+10.738° E, 59.913° N in the city centre. This closes the seaward edge with the
+same coastline source as the municipality atlas; no inland boundary is traced
+or drawn by hand. The result is approximately 1.87 km². The builder checks the
+area and ensures that Sentrum has no overlap with another answer. Its
+representative point and the full playable outline are included in the same
+map and scoreboard data as the ordinary boroughs.
+
 ## Water and surrounding land
 
 Water uses the same pinned, unsimplified **Kartverket N1000** hydrography as
@@ -71,7 +84,7 @@ python scripts/build-oslo-bydeler-assets.py --check
 ```
 
 No network access is required. The builder validates the fifteen borough
-codes, valid and disjoint playable polygons, the number and narrowness of
+codes, the additional Sentrum area, valid and disjoint playable polygons, the number and narrowness of
 repaired gaps, the maximum repair area and the presence of river/lake context.
 The resulting `map.json` uses the same SVG data contract and quiz renderer as
 the municipality maps.
