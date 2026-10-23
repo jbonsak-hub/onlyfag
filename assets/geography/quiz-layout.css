@@ -442,3 +442,21 @@ html[lang=en] body[data-quiz=jeopardy] #score-actions:not(:empty)::before{conten
 html[lang=en] body[data-quiz=jeopardy] #jeopardy-setup .jeopardy-setup-grid>div:first-child::before{content:'Game setup'}
 html[lang=en] body[data-quiz=jeopardy] #jeopardy-setup .jeopardy-option.pensum span::after{content:'Curriculum'!important}
 html[lang=en] body[data-quiz=jeopardy] .jeopardy-card:not(.open)::before{content:'Choose a cell on the board'}
+
+/* GeoGrid leaves space around both the controls and the board. */
+body[data-quiz].quiz-mapwiz-playing .geo-map-stage .geo-hud{box-sizing:border-box!important}
+body[data-quiz-layout="geogrid"] .geogrid-side{padding:22px 18px!important;gap:16px!important}
+body[data-quiz-layout="geogrid"] .quiz-frame-nav{position:static!important;justify-content:space-between!important;margin:0 0 8px!important;width:100%}
+body[data-quiz-layout="geogrid"] .geogrid-side>div:first-of-type:not(.quiz-frame-nav){padding-right:0!important}
+body[data-quiz-layout="geogrid"] .geogrid-side-actions{grid-template-columns:1fr!important;gap:8px!important}
+body[data-quiz-layout="geogrid"] .geogrid-board-panel{align-items:center!important;justify-content:center!important;padding:clamp(20px,3vw,42px)!important}
+body[data-quiz-layout="geogrid"] .geogrid-board{max-width:1020px!important;max-height:610px!important;height:calc(100% - 20px)!important}
+body[data-quiz-layout="geogrid"] .geogrid-criterion{font-size:12px!important;line-height:1.4!important;padding:12px!important}
+body[data-quiz-layout="globle"] .quiz-distance-help{margin-top:auto!important;font-size:11px!important}
+@media(max-width:700px){
+ body[data-quiz-layout="geogrid"] .geogrid-side{padding:14px!important;gap:12px!important}
+ body[data-quiz-layout="geogrid"] .geogrid-board-panel{padding:10px!important}
+ body[data-quiz-layout="geogrid"] .geogrid-board{height:100%!important}
+ body[data-quiz-layout="geogrid"] .geogrid-criterion{font-size:10px!important;padding:6px!important}
+ body[data-quiz-layout="geogrid"] .geogrid-side-actions{grid-template-columns:1fr 1fr!important}
+}

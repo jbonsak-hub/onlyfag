@@ -16,6 +16,7 @@ function toggleFullscreen(){
 }
 function applyDarkMode(isDark){
   document.body.classList.toggle('dark-mode', !!isDark);
+  scheduleCountryMapDraw();
   const btn=document.getElementById('dark-mode-toggle');
   if(btn){ btn.textContent = isDark ? '☀' : '◐'; btn.title = isDark ? 'Lys modus' : 'Mørk modus'; }
   try{ localStorage.setItem('geoDarkMode', isDark ? '1' : '0'); }catch(e){}
@@ -1026,22 +1027,23 @@ const COUNTRY_MAP_GALAPAGOS=[[-91.55,-.37],[-91.08,-.66],[-90.35,-.62],[-89.43,-
 function countryMapDrawGalapagos(ctx,w,h,meta,isFound){
   for(let i=0;i<COUNTRY_MAP_GALAPAGOS.length;i++){
     const q=COUNTRY_MAP_GALAPAGOS[i],p=countryMapProject(q[0],q[1],w,h,meta);if(p[0]<-8||p[0]>w+8||p[1]<-8||p[1]>h+8)continue;
-    ctx.beginPath();ctx.arc(p[0],p[1],i===1?3.2:2.45,0,Math.PI*2);ctx.fillStyle=isFound?'#39a96b':'#edf2ef';ctx.strokeStyle='#55736a';ctx.lineWidth=.9;ctx.fill();ctx.stroke();
+    ctx.beginPath();ctx.arc(p[0],p[1],i===1?3.2:2.45,0,Math.PI*2);ctx.fillStyle=isFound?'#39a96b':document.body.classList.contains('dark-mode')?'#426553':'#edf2ef';ctx.strokeStyle='#55736a';ctx.lineWidth=.9;ctx.fill();ctx.stroke();
   }
 }
 function drawCountryMap(){
   const s=worldTrainerState;if(!s||s.mode!=='countries')return;const app=activeWorldApp();if(!app)return;
+  const dark=document.body.classList.contains('dark-mode'),water=dark?'#263f49':'#cfe5ed',land=dark?'#426553':'#edf2ef',border=dark?'#8cae9c':'#55736a';
   const canvas=app.querySelector('#country-map-canvas'),wrap=app.querySelector('#country-map-wrap');if(!canvas||!wrap)return;
   const rect=wrap.getBoundingClientRect(),cssW=Math.max(280,Math.round(rect.width)),cssH=Math.max(320,Math.round(rect.height)),dpr=Math.min(2,window.devicePixelRatio||1),pixelW=Math.round(cssW*dpr),pixelH=Math.round(cssH*dpr);
   if(canvas.width!==pixelW||canvas.height!==pixelH){canvas.width=pixelW;canvas.height=pixelH;canvas.style.width=cssW+'px';canvas.style.height=cssH+'px'}
-  const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,cssW,cssH);ctx.fillStyle='#cfe5ed';ctx.fillRect(0,0,cssW,cssH);
+  const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,cssW,cssH);ctx.fillStyle=water;ctx.fillRect(0,0,cssW,cssH);
   s.mapPan=clampCountryMapPan(s.mapPan||[0,0],cssW,cssH,s.mapZoom||1);
   const meta={...s.regionMeta,zoom:(s.regionMeta.zoom||1)*(s.mapZoom||1),pan:(s.mapPan||[0,0])},vectors=countryMapVectorSet(s.regionId),found=new Set(s.found.map(x=>x.country)),reverse={},regionFeatureNames=new Set(s.regionNames.map(c=>COUNTRY_MAP_FEATURE[c]).filter(Boolean)),foundFeatureNames=countryMapFoundFeatureSet(s.found.map(x=>x.country)),drawAllFeatures=s.regionId==='world';
   for(const country of s.regionNames)(COUNTRY_MAP_FILL_EXTRA_FEATURES[country]||[]).forEach(name=>regionFeatureNames.add(name));
   Object.keys(COUNTRY_MAP_FEATURE).forEach(c=>reverse[COUNTRY_MAP_FEATURE[c]]=c);
   if(typeof Path2D!=='undefined'&&vectors){
     const scale=countryMapTransform(ctx,cssW,cssH,meta,dpr);
-    ctx.fillStyle='#edf2ef';
+    ctx.fillStyle=land;
     if(vectors.neutralPath)ctx.fill(vectors.neutralPath,'evenodd');
     if(drawAllFeatures){
       /* Fill countries one by one. A combined even-odd path turns overlapping disputed
@@ -1063,13 +1065,13 @@ function drawCountryMap(){
     for(const country of found){
       if(vectors.islandByCountry&&vectors.islandByCountry[country])ctx.fill(vectors.islandByCountry[country],'evenodd');
     }
-    ctx.lineJoin='round';ctx.lineCap='round';ctx.strokeStyle='#55736a';ctx.lineWidth=.78/scale;
+    ctx.lineJoin='round';ctx.lineCap='round';ctx.strokeStyle=border;ctx.lineWidth=.78/scale;
     if(drawAllFeatures){
       ctx.stroke(vectors.allBorders);
     }else{
       for(const featureName of regionFeatureNames){if(vectors.byFeature[featureName])ctx.stroke(vectors.byFeature[featureName])}
     }
-    if(vectors.neutralPath){ctx.strokeStyle='#607970';ctx.lineWidth=.72/scale;ctx.stroke(vectors.neutralPath)}
+    if(vectors.neutralPath){ctx.strokeStyle=border;ctx.lineWidth=.72/scale;ctx.stroke(vectors.neutralPath)}
     ctx.setTransform(dpr,0,0,dpr,0,0);
   }else{
     const world=countryMapFillData();
@@ -1078,12 +1080,12 @@ function drawCountryMap(){
       for(const f of world.features){
         if(f.properties.name==='Antarctica')continue;
         if(featureFilter && !featureFilter.has(f.properties.name)) continue;
-        ctx.beginPath();countryMapTraceGeometry(ctx,f.geometry,cssW,cssH,meta);ctx.fillStyle=foundFeatureNames.has(f.properties.name)?'#39a96b':'#edf2ef';ctx.fill('evenodd');ctx.strokeStyle='#55736a';ctx.lineWidth=.78;ctx.stroke()
+        ctx.beginPath();countryMapTraceGeometry(ctx,f.geometry,cssW,cssH,meta);ctx.fillStyle=foundFeatureNames.has(f.properties.name)?'#39a96b':land;ctx.fill('evenodd');ctx.strokeStyle=border;ctx.lineWidth=.78;ctx.stroke()
       }
     }
   }
   if(s.regionId==='southamerica')countryMapDrawGalapagos(ctx,cssW,cssH,meta,found.has('Ecuador'));
-  for(const c of s.regionNames){if(COUNTRY_MAP_FEATURE[c])continue;const q=COUNTRY_MAP_POINTS[c];if(!q)continue;const p=countryMapProject(q[0],q[1],cssW,cssH,meta);if(p[0]<-10||p[0]>cssW+10||p[1]<-10||p[1]>cssH+10)continue;ctx.beginPath();ctx.arc(p[0],p[1],found.has(c)?5.5:4.2,0,Math.PI*2);ctx.fillStyle=found.has(c)?'#22a35e':'#f7f8f6';ctx.strokeStyle='#385e50';ctx.lineWidth=1.4;ctx.fill();ctx.stroke()}
+  for(const c of s.regionNames){if(COUNTRY_MAP_FEATURE[c])continue;const q=COUNTRY_MAP_POINTS[c];if(!q)continue;const p=countryMapProject(q[0],q[1],cssW,cssH,meta);if(p[0]<-10||p[0]>cssW+10||p[1]<-10||p[1]>cssH+10)continue;ctx.beginPath();ctx.arc(p[0],p[1],found.has(c)?5.5:4.2,0,Math.PI*2);ctx.fillStyle=found.has(c)?'#22a35e':land;ctx.strokeStyle=border;ctx.lineWidth=1.4;ctx.fill();ctx.stroke()}
 }
 function checkCountryGuess(){
   const s=worldTrainerState;if(!s||s.mode!=='countries'||s.ended)return;const app=activeWorldApp(),input=app?.querySelector('#country-guess'),fb=app?.querySelector('#country-feedback');if(!input)return;

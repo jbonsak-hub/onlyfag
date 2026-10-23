@@ -32,6 +32,7 @@ const server = http.createServer((req,res) => {
    await page.goto(base+file);await page.waitForTimeout(100);
    const frame=framed.includes(mode)?page.frames().find(f=>f!==page.mainFrame()):page.mainFrame();
    if(framed.includes(mode))await frame.locator('[data-quiz-layout]').waitFor();
+   assert.equal(await frame.locator('.quiz-help').count(),mode==='geogrid'?1:0,'Only GeoGrid keeps the instructions section');
    assert.equal(await frame.locator('a.quiz-home').count(),0,'No logo row in quiz controls');
    const nav=await frame.locator(framed.includes(mode)?'.quiz-frame-nav':'.quiz-page-header').evaluate(e=>getComputedStyle(e).position);
    assert.notEqual(nav,'fixed','No full-width fixed topbar');
@@ -77,11 +78,19 @@ const server = http.createServer((req,res) => {
      assert.equal(await page.evaluate(()=>geoGuessrState.answered),false,'HUD actions must not submit map guesses');
      await page.locator('#geo-map-stage').click({position:{x:100,y:100}});
      assert.equal(await page.evaluate(()=>geoGuessrState.answered),true,'Mobile map click still scores');
+     // The draggable panel is clamped by ResizeObserver after its answer grows.
+     await page.waitForFunction(()=>{const r=document.querySelector('.geo-hud').getBoundingClientRect();return r.y+r.height<=innerHeight&&r.height<innerHeight-60;});
      const answered=await page.locator('.geo-hud').boundingBox();assert.ok(answered.y+answered.height<=viewport.height&&answered.height<viewport.height-60,'Answer box stays compact over map');
      await page.locator('.geo-map-stage .quiz-page-theme').click();
     }
     if(mode==='detective2')await checkBox(page,'.worldle-target',200);
     if(mode==='countries'){
+     if(viewport.width===1366){
+      for(const dark of [true,false]){
+       const pixel=await page.evaluate(async dark=>{applyDarkMode(dark);await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));return [...document.querySelector('#country-map-canvas').getContext('2d').getImageData(0,0,1,1).data];},dark);
+       assert.deepEqual(pixel,dark?[38,63,73,255]:[207,229,237,255],'The rendered map follows the selected theme immediately');
+      }
+     }
      const map=await checkBox(page,'.country-map-wrap',200),input=await checkBox(page,'.country-map-input',200);
      if(viewport.width<=700)assert.ok(map.bottom<=input.top,'Country input below map');
      else assert.ok(Math.abs(map.height-viewport.height)<1,'Country map uses full height');
@@ -137,7 +146,7 @@ const server = http.createServer((req,res) => {
  await globe.locator('.quiz-frame-nav .quiz-page-theme').click();
  await globe.waitForFunction(()=>!document.body.classList.contains('dark'));
  await globe.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
- const help=globe.locator('.globle-side>.quiz-help');assert.equal(await help.getAttribute('open'),null);assert.match(await help.textContent(),/Hvor raskt/);assert.match(await help.textContent(),/Avstandshjelp/);
+ assert.equal(await globe.locator('.quiz-help').count(),0);assert.match(await globe.locator('.globle-side>.geo-distance-note').textContent(),/Avstandshjelp/);
  const back=await checkBox(globe,'.globle-side .quiz-page-back');assert.ok(back.bottom<=643);
  if(process.env.LAYOUT_SCREENSHOTS)await page.screenshot({path:path.join(process.env.LAYOUT_SCREENSHOTS,'globle-20-attempts-100pct.png')});
  for(const viewport of [{width:1366,height:643},{width:390,height:844}]){

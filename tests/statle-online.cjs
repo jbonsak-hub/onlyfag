@@ -18,7 +18,7 @@ const server=http.createServer((req,res)=>{try{const file=path.join(root,new URL
  const shot=async(page,name)=>{if(process.env.LAYOUT_SCREENSHOTS){fs.mkdirSync(process.env.LAYOUT_SCREENSHOTS,{recursive:true});await page.screenshot({path:path.join(process.env.LAYOUT_SCREENSHOTS,name+'.png')});}};
  try{
   const c=await context(),page=await c.newPage();page.on('requestfailed',r=>{if(r.url().includes('scores.test'))console.log('Request failed',new URL(r.url()).pathname,r.failure().errorText);});page.on('response',async r=>{if(r.url().includes('scores.test')&&r.status()>=400)console.log('API error',r.status(),await r.text());});
-  await page.clock.install();await page.goto(base+'geografi/statle.html');await page.locator('#start:not([disabled])').waitFor();await page.locator('#start').click();await page.waitForFunction(()=>document.querySelector('#overlay').hidden&&!document.querySelector('#skip').disabled);
+  await page.clock.install();await page.goto(base+'geografi/statle.html');await page.locator('#start:not([disabled])').waitFor();await page.locator('#start').click();await page.waitForFunction(()=>document.querySelector('#overlay').hidden&&document.body.dataset.phase==='playing');
   for(let i=0;i<50;i++){
    if(i%10===0)console.log('Statle step',i,await page.locator('#targetName').innerText());
    const response=page.waitForResponse(r=>r.url().endsWith('/answer'));

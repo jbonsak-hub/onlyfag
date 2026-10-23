@@ -253,7 +253,12 @@
     art += path(fault,'none',`class="fault" style="stroke:${broken?'#f4bb83':'#e7d3a3'}" data-feature="fault"`);
     if(broken) {
       art += `<g transform="${camera}">`;
-      for(const r of [30,62,102]) art += `<ellipse cx="500" cy="297" rx="${r}" ry="${r}" fill="none" stroke="#fff0bc" stroke-width="3" opacity="${f(.95-r/155)}" data-feature="quake-wave"/>`;
+      const waveProgress=ramp(p,.74,1);
+      for(const delay of [0,.16,.32]) {
+        const travel=Math.max(0,waveProgress-delay),r=5+210*travel;
+        const opacity=clamp(travel/.06)*(.9-.65*travel);
+        art += `<ellipse cx="500" cy="297" rx="${f(r)}" ry="${f(r)}" fill="none" stroke="#fff0bc" stroke-width="3" opacity="${f(opacity)}" data-feature="quake-wave"/>`;
+      }
       art += '</g>';
       const a=project(500,297); art += quake(f(a.x),80+.09*500+.43*297);
     } else if(p>.1) {

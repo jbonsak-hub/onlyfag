@@ -50,6 +50,13 @@
   });
   function collectHelp(container, selector) {
     const notes = [...container.querySelectorAll(selector)].filter(n => !n.closest('.quiz-help'));
+    if (mode !== 'geogrid') {
+      notes.forEach(note => {
+        if (mode === 'globle' && note.classList.contains('geo-distance-note')) return;
+        note.remove();
+      });
+      return;
+    }
     if (!notes.length) return;
     let details = container.querySelector(':scope > .quiz-help');
     if (!details) {
@@ -87,6 +94,10 @@
     // Place every explanation inside one closed section, below the game.
     const help = side.querySelector(':scope > .quiz-help');
     if (help) side.insertBefore(help, end);
+    if (mode === 'globle') {
+      const distance = side.querySelector('.geo-distance-note');
+      if (distance) { distance.classList.add('quiz-distance-help'); side.insertBefore(distance, end); }
+    }
     if(mode==='tradle'){
       const placeNavigation=()=>{const target=doc.body.classList.contains('quiz-mobile-streak')&&doc.querySelector('.mobile-streak-shell')||side;if(nav.parentElement!==target)target.prepend(nav);if(end.parentElement!==target)target.append(end);};
       const navigationObserver=new MutationObserver(placeNavigation);navigationObserver.observe(doc.querySelector('#tradle'),{childList:true,subtree:true});navigationObserver.observe(doc.body,{attributes:true,attributeFilter:['class']});frame.contentWindow.addEventListener('resize',placeNavigation);placeNavigation();

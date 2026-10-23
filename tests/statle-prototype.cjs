@@ -64,7 +64,7 @@ assert.ok(process.env.STATLE_PREVIEW_URL, 'Set STATLE_PREVIEW_URL to the prototy
  }
  assert.equal(await page.locator('#completed').innerText(),'50');assert.equal(await target(),'Hele USA er på plass.');
  await page.screenshot({path:path.join(screenshots,'statle-finished.png'),fullPage:true});
- await page.locator('#restart').click();await page.locator('#skip').click();await page.waitForTimeout(1150);assert.equal(await page.locator('#completed').innerText(),'1');
+ await page.locator('#restart').click();assert.equal(await page.locator('#skip').count(),0);await click(await target());await page.waitForTimeout(700);assert.equal(await page.locator('#completed').innerText(),'1');
  await page.setViewportSize({width:390,height:844});await page.locator('#restart').click();
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  await page.waitForTimeout(250);await page.screenshot({path:path.join(screenshots,'statle-mobile.png'),fullPage:true});

@@ -94,6 +94,11 @@ const modes = ['ocean-continent','ocean-ocean','continent-continent','divergent'
       } else {
         assert.equal(await page.locator('#view-kind').innerText(), 'Skrått 3D-utsnitt');
         assert.equal(await feature('quake-wave').count(), 3);
+        const radii=()=>feature('quake-wave').evaluateAll(els=>els.map(el=>Number(el.getAttribute('rx'))));
+        await set(78);const earlyWaves=await radii();
+        await set(90);const laterWaves=await radii();
+        assert.ok(laterWaves.every((r,i)=>r>earlyWaves[i]),'Seismic wavefronts expand as the model progresses');
+        await set(78);assert.deepEqual(await radii(),earlyWaves,'Scrubbing backward rewinds the wavefronts');await set(100);
         assert.notEqual(await feature('transform-left').getAttribute('transform'), 'translate(0 0)');
         assert.equal(await feature('magma').count(), 0);
         assert.equal(await feature('transform-surface').count(),2,'Both plates have a projected land surface');

@@ -10,10 +10,10 @@ const server=http.createServer((req,res)=>{try{const file=path.join(root,new URL
   const page=await context.newPage();page.setDefaultTimeout(7000);page.on('dialog',d=>d.dismiss());
   const shot=async name=>{if(process.env.LAYOUT_SCREENSHOTS){fs.mkdirSync(process.env.LAYOUT_SCREENSHOTS,{recursive:true});await page.screenshot({path:path.join(process.env.LAYOUT_SCREENSHOTS,name+'.png')});}};
   await page.goto(base+'geografi.html#verden-quiz');
-  assert.deepEqual(await page.locator('.geoquiz-copy strong').allTextContents().then(a=>a.slice(0,4)),['Flagg','Hovedsteder','Flagg+Hovedstad','Kart']);
+  assert.deepEqual(await page.locator('.geoquiz-copy strong').allTextContents().then(a=>a.slice(0,4)),['Flagg','Hovedsteder','Flagg ↔ Hovedstad','Kart']);
   await page.evaluate(()=>localStorage.setItem('geoHighscoresV1',JSON.stringify({'flags|world':[{name:'Norge',rank:[99],scoreText:'99 på rad',timeSec:10}]})));
   await page.getByRole('button',{name:'English',exact:true}).click();await page.waitForFunction(()=>document.querySelector('.geoquiz-copy strong').textContent==='Flags');
-  assert.deepEqual(await page.locator('.geoquiz-copy strong').allTextContents().then(a=>a.slice(0,4)),['Flags','Capitals','Flags+Capitals','Map']);
+  assert.deepEqual(await page.locator('.geoquiz-copy strong').allTextContents().then(a=>a.slice(0,4)),['Flags','Capitals','Flag ↔ Capital','Map']);
   assert.equal(await page.getByRole('button',{name:'English',exact:true}).getAttribute('aria-pressed'),'true');
   const subject=await page.locator('#klima-fagstoff').textContent();assert.match(subject,/klima/i,'Subject material is not translated');await shot('overview-english');
   await page.reload();assert.equal(await page.evaluate(()=>QuizLanguage.language),'en');
@@ -48,7 +48,7 @@ const server=http.createServer((req,res)=>{try{const file=path.join(root,new URL
    }
    await page.waitForTimeout(30);assert.doesNotMatch(await frame.locator('#'+mode).innerText(),/\b(Riktig|Feil|hovedstad|Landet|Gjetninger|Nærmest|Vanskelig|Poeng|velg|finn|landet)\b/);console.log('PASS English',file);
   }
-  await page.goto(base+'geografi/statle.html');await page.locator('#start:enabled').click();assert.equal(await page.locator('#targetVerb').innerText(),'Click on');assert.match(await page.locator('#feedback').innerText(),/Find/);
+  await page.goto(base+'geografi/statle.html');await page.locator('#start:enabled').click();assert.equal(await page.locator('#targetVerb').innerText(),'Click on');assert.equal(await page.locator('#feedback').innerText(),'');
   for(const viewport of [{width:390,height:844},{width:360,height:740},{width:844,height:390}]){
    await page.setViewportSize(viewport);await page.goto(base+'geografi/mapwiz.html');await page.locator('[data-prototype-category="place:Norge"]').check();await page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight));
    const visible=await page.locator('#geo-start-button').evaluate(el=>{const r=el.getBoundingClientRect(),top=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return r.y>=0&&r.bottom<=innerHeight&&(top===el||el.contains(top));});assert.ok(visible,'Start stays visible after scrolling '+viewport.width);await shot('mapwiz-start-'+viewport.width);await page.locator('#geo-start-button').click();assert.equal(await page.evaluate(()=>geoGuessrState.rounds.length),10);assert.ok(await page.evaluate(()=>geoGuessrState.norwayOnly));await page.locator('.geo-map-stage').click({position:{x:viewport.width-30,y:viewport.height/2}});await page.waitForTimeout(20);assert.doesNotMatch(await page.locator('.geo-feedback').innerText(),/\b(unna|geografi|tidsbonus|poeng)\b/);if(viewport.width===390){for(let i=1;i<10;i++){await page.locator('.geo-next-button').click();await page.evaluate(()=>geoMapClick({clientX:innerWidth-20,clientY:innerHeight/2}));}await page.locator('.geo-next-button').click();assert.equal(await page.locator('.prototype-results tbody tr').count(),10);assert.deepEqual(await page.locator('.prototype-results th').allTextContents(),['Place','Distance pts','Time pts']);}

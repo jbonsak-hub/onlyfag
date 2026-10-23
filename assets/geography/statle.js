@@ -36,7 +36,7 @@
   const continentNames={northAmerica:'Nord-Amerika',southAmerica:'Sør-Amerika',europe:'Europa',asia:'Asia',africa:'Afrika',oceania:'Oseania'};
   const elements = new Map(), markers = new Map(), centers = new Map();
   let states = [], queue = [], index = 0, phase = 'ready', locked = false;
-  let results = new Map(), roundMistakes = 0, mistakes = 0, skipped = 0;
+  let results = new Map(), roundMistakes = 0, mistakes = 0;
   let totalTime = 0, roundTime = 0, lastTick = performance.now(), generation = 0;
   const timers = new Set();
   // Shared by the standalone state/county games and every Kart region. Keep
@@ -176,7 +176,7 @@
     const florida = elements.get('Florida').getBBox();
     const mainlandTransform = groups.main.transform.baseVal.consolidate().matrix;
     const southEdge = (florida.y + florida.height) * mainlandTransform.d + mainlandTransform.f;
-    const alaska = fit(groups.AK, {x:25, y:southEdge - 100, w:165, h:100, bottom:true});
+    const alaska = fit(groups.AK, {x:25, y:southEdge - 125, w:165, h:100, bottom:true});
     const hawaii = fit(groups.HI, {x:215, y:southEdge - 41, w:110, h:41, bottom:true});
     $('insetSeparators').setAttribute('d', 'M15 ' + (alaska.y - 12) + 'H202V' + (southEdge + 8) + ' M210 ' + (hawaii.y - 12) + 'H338');
     // Extra click targets for the small northeastern states. No answer labels.
@@ -218,7 +218,7 @@
   function updateStats() {
     $('completed').textContent = results.size;
     $('progressFill').style.width = results.size / Math.max(1,phase === 'ready' ? total : queue.length) * 100 + '%';
-    $('mistakes').textContent = physical ? String(mistakes) : mistakes + ' feil';
+    $('mistakes').textContent = String(mistakes);
   }
   function setPhase(value){phase=value;document.body.dataset.phase=value;}
   function prompt(){$('targetVerb').textContent=retrying?'Øvingsrunde · klikk på':'Klikk på';const subtitle=$('target-continent');if(subtitle){subtitle.hidden=!continentPractice;subtitle.textContent=continentPractice?continentNames[target()?.continent]||'':'';}}
@@ -229,7 +229,7 @@
     if (!target()) return finish();
     if(!practice)window.GeoOnline?.statleNext();
     $('targetName').textContent = target().n;
-    prompt();setFeedback(physical?'':'Hvor ligger ' + target().n + '?');
+    prompt();setFeedback('');
   }
   function choose(name) {
     if (phase === 'ready' || phase === 'finished') {flashLabel(name,'',2800);setFeedback(name);return;}
@@ -243,7 +243,7 @@
       flashLabel(name, 'error');
       later(() => el.classList.remove('wrong'), 1050);
       if (roundMistakes >= 2) showHint();
-      setFeedback('Det var ' + name + '. Finn ' + target().n + '.', 'error');
+      setFeedback('Det var ' + name + '.', 'error');
       return;
     }
     // Slower times and mistakes can only lower the performance category.
@@ -259,7 +259,7 @@
   function begin(names) {
     generation++; clearEffects();if($('statle-score'))$('statle-score').hidden=true;
     results = new Map(); index = 0; totalTime = 0; roundTime = 0; lastTick = performance.now();
-    roundMistakes = 0; mistakes = 0; skipped = 0; locked = false;
+    roundMistakes = 0; mistakes = 0; locked = false;
     repeatOffer.hidden = true; repeatButton.disabled = false; document.body.dataset.retry = String(retrying);
     elements.forEach((el,name) => { delete el.dataset.band; el.classList.remove('found'); el.classList.toggle('mastered',retrying&&mastered.has(name));el.classList.toggle('retry-pending',retrying&&!mastered.has(name));el.setAttribute('aria-label', mastered.has(name) ? name + ' – fullført' : shapeLabel); });
     markers.forEach((el,name) => { delete el.dataset.band;el.classList.toggle('mastered',retrying&&mastered.has(name));el.classList.toggle('retry-pending',retrying&&!mastered.has(name)); el.setAttribute('aria-label', mastered.has(name) ? name + ' – fullført' : counties ? 'Ekstra klikkfelt for et lite fylke' : kart ? 'Ekstra klikkfelt for et lite land' : 'Ekstra klikkfelt for en liten delstat'); });
@@ -272,17 +272,8 @@
     $('mapViewport').scrollTo({left:0,top:0});
     prompt();
     $('targetName').textContent = target().n; $('elapsed').textContent = '00:00';
-    $('restart').disabled = false; $('skip').disabled = false;
-    updateStats(); setFeedback(physical?'':'Finn ' + target().n + '.');
-  }
-  function skip() {
-    if (phase !== 'playing' || locked) return;
-    const name = target().n;
-    if(!practice)window.GeoOnline?.statleAnswer(name,true);
-    results.set(name,{band:3,ms:roundTime,mistakes:roundMistakes,skipped:true});
-    skipped++; setBand(name,3); flashLabel(name,'error'); locked = true;
-    $('hintLayer').replaceChildren(); setFeedback('Her ligger ' + name + '. Vi går videre.');
-    updateStats(); later(next,1100);
+    $('restart').disabled = false;
+    updateStats(); setFeedback('');
   }
   function finish() {
     setPhase('finished'); locked = true;
@@ -296,12 +287,11 @@
     if($('target-continent'))$('target-continent').hidden=true;
     $('targetVerb').textContent = 'Godt jobbet!';
     $('targetName').textContent = physical ? 'Alle stedene er fullført.' : counties ? 'Alle fylkene er på plass.' : kart ? 'Alle landene er på plass.' : 'Hele USA er på plass.';
-    $('skip').disabled = true;
     const counts = [0,0,0,0]; results.forEach(r => counts[r.band]++);
     results.forEach((r,name) => { if(r.band === 0)mastered.add(name); });
     repeatOffer.hidden = mastered.size === states.length;
     if(retrying)$('targetName').textContent=repeatOffer.hidden?'Alle er grønne!':'Øvingsrunden er fullført.';
-    setFeedback(('Alle ' + queue.length + ' fullført' + ' · ' + timeText(totalTime) + ' · ' + mistakes + ' feil · ' + skipped + ' hoppet over. Grønn: ' + counts[0] + ', gul: ' + counts[1] + ', oransje: ' + counts[2] + ', rød: ' + counts[3] + '.'));
+    setFeedback('Alle ' + queue.length + ' fullført · ' + timeText(totalTime) + ' · ' + mistakes + ' feil. Grønn: ' + counts[0] + ', gul: ' + counts[1] + ', oransje: ' + counts[2] + ', rød: ' + counts[3] + '.');
     if(!repeatOffer.hidden)repeatOffer.scrollIntoView({block:'nearest'});
   }
   function clickedName(event,element){
@@ -334,13 +324,22 @@
   $('map').addEventListener('focusout',e => highlight(e,false));
   $('start').addEventListener('click', start);
   $('restart').addEventListener('click', start);
-  $('skip').addEventListener('click', skip);
   const menu = $('geoMenu'), menuButton = $('geoMenuButton');
   let menuOpener=menuButton;
   function openMenu(button){menuOpener=button;menu.showModal();button.setAttribute('aria-expanded','true');}
   menuButton.addEventListener('click', () => openMenu(menuButton));
   $('kart-menu-button')?.addEventListener('click',event=>openMenu(event.currentTarget));
   $('geoMenuClose').addEventListener('click', () => menu.close());
+  const menuTools=document.createElement('div');menuTools.className='geo-menu-tools';
+  for(const [label,title,action] of [
+    ['↓','Lagre som PDF',()=>window.print()],
+    ['⛶','Fullskjerm',()=>document.fullscreenElement?document.exitFullscreen?.():document.documentElement.requestFullscreen?.()],
+    ['◐','Lys eller mørk modus',()=>themeButtons[0].click()]
+  ]) {
+    const button=document.createElement('button');button.type='button';button.textContent=label;button.title=title;button.setAttribute('aria-label',title);button.addEventListener('click',action);menuTools.append(button);
+  }
+  menu.append(menuTools);
+  const menuBack=document.createElement('a');menuBack.className='geo-menu-back';menuBack.href='../geografi.html';menuBack.textContent='←';menuBack.setAttribute('aria-label','Tilbake til geografi');menu.append(menuBack);
   menu.addEventListener('close', () => { menuButton.setAttribute('aria-expanded', 'false');$('kart-menu-button')?.setAttribute('aria-expanded','false');menuOpener.focus(); });
   menu.addEventListener('click', event => {
     const box = menu.getBoundingClientRect();
@@ -352,8 +351,8 @@
     $('states').replaceChildren();$('smallStates').replaceChildren();$('insetSeparators').setAttribute('d','');
     $('map').setAttribute('viewBox','0 0 900 550');
     results=new Map();index=0;mistakes=0;totalTime=0;setPhase('ready');locked=false;
-    $('completed').textContent='0';$('elapsed').textContent='00:00';$('mistakes').textContent='0 feil';$('progressFill').style.width='0%';
-    $('overlay').hidden=false;$('start').disabled=true;$('skip').disabled=true;$('restart').disabled=true;$('statle-score').hidden=true;
+    $('completed').textContent='0';$('elapsed').textContent='00:00';$('mistakes').textContent='0';$('progressFill').style.width='0%';
+    $('overlay').hidden=false;$('start').disabled=true;$('restart').disabled=true;$('statle-score').hidden=true;
     document.querySelectorAll('[name="water-category"]').forEach(input=>input.disabled=false);
     if($('continent-practice'))$('continent-practice').disabled=false;
   }
@@ -393,7 +392,7 @@
       document.querySelector('.map-credit').hidden=counties||physical;document.querySelector('.county-credit').hidden=!counties;document.querySelector('.physical-credit').hidden=!physical;if($('river-credit'))$('river-credit').hidden=region!=='rivers';
       $('water-options').hidden=region!=='seas';$('continent-practice-option').hidden=!['rivers','lakes','mountains'].includes(region);$('mistakes-label').textContent=window.QuizLanguage?.language==='en'?'Mistakes':'Feil';
       updateStats();
-      $('map').setAttribute('preserveAspectRatio',physical&&innerWidth>700?'none':'xMidYMid meet');buildMap();window.ClickMapZoom?.setBase();window.dispatchEvent(new Event('resize'));$('statle-top-ten').disabled=!total;$('start').disabled=!total;$('start').textContent=total?'Start →':'Velg minst én kategori';setFeedback('Klikk i kartet for å se navn før start.');
+      $('map').setAttribute('preserveAspectRatio',physical&&innerWidth>700?'none':'xMidYMid meet');buildMap();window.ClickMapZoom?.setBase();window.dispatchEvent(new Event('resize'));$('statle-top-ten').disabled=!total;$('start').disabled=!total;$('start').textContent=total?'Start →':'Velg minst én kategori';setFeedback('');
     }catch(_){if(token!==mapGeneration)return;$('start').textContent='Kartet kunne ikke lastes';setFeedback('Velg kart på nytt for å prøve igjen.','error');}
   }
   if(kart){

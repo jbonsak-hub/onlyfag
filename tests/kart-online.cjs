@@ -22,7 +22,7 @@ const server=http.createServer((req,res)=>{try{const file=path.join(root,new URL
  }
  async function choose(page,region){await page.locator(`[data-map-region="${region}"]`).click();await page.locator('#kart-game').waitFor({state:'visible'});await page.locator('#start:not([disabled])').waitFor();assert.equal(await page.evaluate(()=>document.body.dataset.region),region);}
  async function complete(page,count,nickname){
-  await page.locator('#start').click();await page.waitForFunction(()=>document.querySelector('#overlay').hidden&&!document.querySelector('#skip').disabled);
+  await page.locator('#start').click();await page.waitForFunction(()=>document.querySelector('#overlay').hidden&&document.body.dataset.phase==='playing');
   for(let i=0;i<count;i++){
    const response=page.waitForResponse(r=>r.url().endsWith('/answer'));
    assert.ok(await page.evaluate(()=>{const name=document.querySelector('#targetName').textContent,el=[...document.querySelectorAll('.state')].find(el=>el.dataset.state===name);el?.dispatchEvent(new MouseEvent('click',{bubbles:true}));return !!el;}));
