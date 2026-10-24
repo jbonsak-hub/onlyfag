@@ -1,0 +1,8 @@
+{
+  "url": "https://gis3.nve.no/map/rest/services/Mapservices/Nevina4/MapServer/3/query?f=json&where=%28elvId+LIKE+%27002-34-%25%27+OR+elvId+LIKE+%27006-11-%25%27+OR+elvId+LIKE+%27008-1-%25%27+OR+elvId+LIKE+%27012-1-%25%27+OR+elvId+LIKE+%27015-18-%25%27+OR+elvId+LIKE+%27016-35-%25%27%29+AND+%28lengde_m+%3E%3D+5000+OR+arealElverute_km2+%3E%3D+2%29&returnIdsOnly=true",
+  "parameters": {
+    "f": "json",
+    "where": "(elvId LIKE '002-34-%' OR elvId LIKE '006-11-%' OR elvId LIKE '008-1-%' OR elvId LIKE '012-1-%' OR elvId LIKE '015-18-%' OR elvId LIKE '016-35-%') AND (lengde_m >= 5000 OR arealElverute_km2 >= 2)",
+    "returnIdsOnly": "true"
+  }
+}

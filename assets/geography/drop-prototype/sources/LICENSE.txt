@@ -1,0 +1,18 @@
+Source river data: Norges vassdrags- og energidirektorat (NVE), ELVIS elvenett.
+
+The original NVE public data is provided under Norsk lisens for offentlige
+data (NLOD). Credit NVE when using the original or adapted river data.
+https://data.norge.no/nlod/no/2.0
+
+Source service:
+https://gis3.nve.no/map/rest/services/Mapservices/Nevina4/MapServer/3
+
+Attribution for this derived prototype dataset: River network: NVE / ELVIS.
+The original public-service metadata is retained alongside this notice.
+
+The compact dataset is an adapted excerpt: source M measures determine
+direction; actual same-family junctions determine connections; geometry between
+fixed junctions is simplified for display. The source remains credited and all
+selection, precision and routing limitations are documented in README.md.
+
+NVE does not endorse the prototype or provide measured droplet travel times.
