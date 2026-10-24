@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Se hvordan sollys, synsvinkel og månens skrå bane gir månefaser og formørkelser.">
+  <title>Jord, måne og sol · OnlyFag prototype</title>
+  <link rel="stylesheet" href="../assets/astronomy-prototypes/common-5063eaad4646.css">
+  <link rel="stylesheet" href="../assets/astronomy-prototypes/jord-mane-sol-daa583138092.css">
+  <script src="../assets/astronomy-prototypes/common-b5ec872831d5.js" defer></script>
+  <script src="../assets/astronomy-prototypes/jord-mane-sol-30cdc7527e6b.js" defer></script>
+</head>
+<body class="astro-page system-page">
+  <header class="site-head">
+    <a class="brand" href="../geografi.html">← OnlyFag <span class="prototype-badge">Nye prototyper</span></a>
+    <nav class="prototype-nav" aria-label="Tre astronomiprototyper">
+      <a href="jord-mane-sol.html" aria-current="page">Jord · måne · sol</a>
+      <a href="arstider-solbane.html">Årstider og solbane</a>
+      <a href="milankovitch.html">Milanković</a>
+    </nav>
+  </header>
+  <section class="page-heading">
+    <div><span class="eyebrow">Prototype 01 · Lys og skygge</span><h1>Én lyskilde. Mange månefaser.</h1><p>Følg månen fra rommet, og se samtidig hva vi ser fra jorda.</p></div>
+    <div class="segmented scene-tabs" role="group" aria-label="Velg sammenheng">
+      <button type="button" data-scene="phases" aria-pressed="true">1 · Månefaser</button>
+      <button type="button" data-scene="solar" aria-pressed="false">2 · Solformørkelse</button>
+      <button type="button" data-scene="lunar" aria-pressed="false">3 · Måneformørkelse</button>
+    </div>
+  </section>
+  <main class="lab-grid system-lab">
+    <div class="system-main">
+      <section class="visual-card" aria-label="Sammenhengen mellom månens plassering, lys og skygge">
+        <div class="system-stage-heading"><strong id="diagram-title">Sett ovenfra</strong><span id="diagram-status">Fasen endres med synsvinkelen.</span></div>
+        <svg id="system-scene" viewBox="0 0 920 560" role="img" aria-labelledby="diagram-title diagram-description"><desc id="diagram-description"></desc></svg>
+        <p class="scene-caption">Skjematisk visning: størrelser og avstander er forstørret hver for seg. Skyggene er veiledende; formørkelsestypen beregnes fra geometrien.</p>
+      </section>
+      <section class="controls-card system-controls" aria-label="Styr bevegelsen">
+        <div class="control-row system-timeline">
+          <button id="system-play" class="primary" type="button" aria-pressed="false">Spill måneden</button>
+          <label class="control-group" for="system-time"><span id="time-label">Gjennom månemåneden</span><input id="system-time" type="range" min="0" max="29.53059" step="0.01" value="7.38265"></label>
+          <output id="time-value" for="system-time">7,4 døgn</output>
+        </div>
+        <div id="phase-presets" class="preset-row" role="group" aria-label="Gå til en månefase">
+          <button type="button" data-phase="0">Nymåne</button><button type="button" data-phase="0.25">Første kvarter</button><button type="button" data-phase="0.5">Fullmåne</button><button type="button" data-phase="0.75">Siste kvarter</button>
+          <button id="year-view" type="button" aria-pressed="false">Se jordas årsbane</button>
+        </div>
+        <div id="eclipse-controls" class="control-row eclipse-controls" hidden>
+          <div class="segmented" role="group" aria-label="Treffer månen jordbanens plan?"><button id="align-node" type="button" aria-pressed="true">Nær knutelinjen</button><button id="miss-node" type="button" aria-pressed="false">Over eller under</button></div>
+          <div id="distance-controls" class="segmented" role="group" aria-label="Månens avstand"><button id="near-moon" type="button" aria-pressed="true">Månen nær</button><button id="far-moon" type="button" aria-pressed="false">Månen langt unna</button></div>
+        </div>
+      </section>
+    </div>
+    <aside class="lesson-card system-lesson">
+      <div class="observer-card"><span id="observer-label">Fra jorda · nordlig halvkule</span><canvas id="observer-sky" width="320" height="280" role="img" aria-label="Månen sett fra jorda"></canvas><span id="observer-caption">Høyre side vokser frem mot fullmåne.</span></div>
+      <div class="phase-heading"><span class="eyebrow" id="scene-kicker">Det du ser</span><h2 id="phase-name">Første kvarter</h2></div>
+      <p id="scene-explanation">Sola lyser opp halvparten av månen. Her ser vi halvparten av den opplyste siden.</p>
+      <div class="metrics"><div class="metric"><small>Måneskiven belyst</small><strong id="illuminated">50 %</strong></div><div class="metric"><small>Månens banehelning</small><strong>5,1°</strong></div></div>
+      <div class="notice" id="scene-takeaway">Månefaser skyldes synsvinkelen vår, ikke jordas skygge.</div>
+      <p class="model-note" id="period-note">Én runde rundt jorda tar ca. 27,3 døgn. Fra nymåne til nymåne tar det 29,5 døgn, fordi jorda også beveger seg rundt sola.</p>
+      <details class="sources"><summary>Modell og kilder</summary><p>Modellen bruker sirkulære middelbaner og gjennomsnittlige perioder. Den viser prinsippene, ikke formørkelser på bestemte datoer. Måneskivens orientering er skjematisk for nordlig halvkule. Ved solformørkelse vises en observatør nær sentrallinjen.</p><ul class="source-list"><li><a href="https://science.nasa.gov/moon/moon-phases/" target="_blank" rel="noopener">NASA · Månefaser</a></li><li><a href="https://science.nasa.gov/moon/eclipses/" target="_blank" rel="noopener">NASA · Formørkelser og skrå månebane</a></li><li><a href="https://eclipse.gsfc.nasa.gov/SEsaros/SEperiodicity.html" target="_blank" rel="noopener">NASA GSFC · Perioder og knutelinje</a></li></ul></details>
+    </aside>
+  </main>
+  <footer class="page-footer">Utforsk én sammenheng om gangen. Sammenlign gjerne samme månefase med og uten treff på knutelinjen.</footer>
+</body>
+</html>

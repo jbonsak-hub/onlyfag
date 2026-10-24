@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Utforsk hvordan jordaksens helning endrer solbanen, daglengden og solenergien gjennom året.">
+  <title>Årstider og solbane · prototype · OnlyFag</title>
+  <link rel="stylesheet" href="../assets/astronomy-prototypes/common-5063eaad4646.css">
+  <link rel="stylesheet" href="../assets/astronomy-prototypes/arstider-solbane-9b3aabdebacb.css">
+  <script src="../assets/astronomy-prototypes/common-b5ec872831d5.js" defer></script>
+  <script src="../assets/astronomy-prototypes/arstider-solbane-70c4a9eb411f.js" defer></script>
+</head>
+<body class="astro-page season-page">
+  <header class="site-head">
+    <a class="brand" href="../geografi.html#klima-fagstoff">← OnlyFag <span class="prototype-badge">Nye prototyper</span></a>
+    <nav class="prototype-nav" aria-label="Astronomiske modeller">
+      <a href="jord-mane-sol.html">Jord · måne · sol</a>
+      <a href="arstider-solbane.html" aria-current="page">Årstider og solbane</a>
+      <a href="milankovitch.html">Milanković</a>
+    </nav>
+  </header>
+  <section class="page-heading">
+    <span class="eyebrow">02 · Lyset der du står</span>
+    <h1>Én jord. Ulike solbaner.</h1>
+    <p>Når jordaksen heller mot sola, blir solbanen høyere og dagen lengre. Flytt deg på jorda, bytt årstid og se hvordan begge deler endrer lyset.</p>
+  </section>
+  <main class="lab-grid season-grid">
+    <section class="visual-card season-visual" aria-label="Solas bane over den lokale horisonten">
+      <div class="season-visual-head">
+        <div><span class="figure-title">Himmelen fra <strong id="sky-place">Oslo</strong></span><span class="season-date" id="sky-date">21. juni</span></div>
+        <label class="check"><input id="compare-seasons" type="checkbox" checked> Sammenlign årstidene</label>
+      </div>
+      <svg id="season-sky" viewBox="0 0 800 440" role="img" aria-labelledby="sky-title sky-desc"></svg>
+      <div class="season-key" aria-label="Farger i solbanene"><span><i class="june"></i>Junisolverv</span><span><i class="equinox"></i>Jevndøgn</span><span><i class="december"></i>Desembersolverv</span><span class="current"><i></i>Valgt dato</span></div>
+      <p class="figure-caption" id="sky-caption">Horisonten er kanten rundt deg; buen over viser himmelhvelvingen. Sola tegnes bare over horisonten.</p>
+    </section>
+    <aside class="lesson-card season-lesson" aria-label="Hva viser modellen?">
+      <span class="kicker">Se etter to ting</span>
+      <h2 id="season-headline">Høyere sol. Lengre dag.</h2>
+      <p id="season-explanation">I juni heller nord mot sola. I Oslo går sola høyt på himmelen og er over horisonten i mange timer.</p>
+      <div class="metrics" aria-live="off">
+        <div class="metric"><small>Solhøyde nå</small><strong id="sun-altitude">—</strong><span id="sun-direction">—</span></div>
+        <div class="metric"><small>Daglengde</small><strong id="day-length">—</strong><span id="day-range">—</span></div>
+        <div class="metric"><small>Lys på horisontal flate nå</small><strong id="horizontal-flux">—</strong><span>W/m² · toppen av atmosfæren</span></div>
+      </div>
+      <h3>Samme strålebunt, ulikt areal</h3>
+      <svg id="light-footprint" viewBox="0 0 280 155" role="img" aria-label="Parallelle solstråler fordeles over en horisontal flate"></svg>
+      <p class="season-footprint-note" id="footprint-note">En høy sol samler den samme energien på et mindre areal.</p>
+      <div class="takeaway" id="season-takeaway"><strong>Prøv 0° helning.</strong> Da faller årstidenes solbaner sammen. Dag og natt finnes fortsatt, men helningen gir ikke lenger en årstidssyklus.</div>
+    </aside>
+    <section class="controls-card" aria-label="Utforsk sted, dato og jordakse">
+      <div class="control-grid season-control-grid">
+        <div class="control-group season-date-control">
+          <label for="season-day">Gjennom året <output id="season-day-value" for="season-day">21. juni</output></label>
+          <input id="season-day" type="range" min="1" max="365" step="1" value="172">
+          <div class="preset-row season-dates" aria-label="Velg årstid"><button type="button" data-season="march" aria-pressed="false">Mars</button><button type="button" data-season="june" aria-pressed="true">Juni</button><button type="button" data-season="september" aria-pressed="false">September</button><button type="button" data-season="december" aria-pressed="false">Desember</button></div>
+        </div>
+        <div class="control-group">
+          <label for="solar-hour">Tid på døgnet <output id="solar-hour-value" for="solar-hour">12:00</output></label>
+          <input id="solar-hour" type="range" min="0" max="24" step="0.05" value="12">
+          <div class="button-row"><button class="primary" id="play-day" type="button" aria-pressed="false">Spill døgnet</button><button id="solar-noon" type="button">Kl. 12</button></div>
+        </div>
+        <div class="control-group">
+          <label for="season-place">Sted <output id="latitude-value" for="latitude">59,9° N</output></label>
+          <select id="season-place"><option value="oslo">Oslo · 59,9° N</option><option value="tromso">Tromsø · 69,7° N</option><option value="equator">Ekvator · 0°</option><option value="cape-town">Cape Town · 33,9° S</option><option value="custom">Egen breddegrad</option></select>
+          <input id="latitude" type="range" min="-80" max="80" step="0.1" value="59.9" aria-label="Breddegrad">
+        </div>
+        <div class="control-group">
+          <label for="axis-tilt">Jordaksens helning <output id="axis-tilt-value" for="axis-tilt">23,44°</output></label>
+          <input id="axis-tilt" type="range" min="0" max="30" step="0.01" value="23.44">
+          <div class="button-row"><button id="zero-tilt" type="button">Prøv 0°</button><button id="real-tilt" type="button">Dagens 23,44°</button></div>
+        </div>
+      </div>
+      <p class="control-hint">Klokkeslettet er <strong>lokal soltid</strong>: sola er høyest kl. 12. Det er ikke samme tid som på en vanlig klokke.</p>
+    </section>
+  </main>
+  <details class="sources">
+    <summary>Modell, begrensninger og faglige kilder</summary>
+    <p>Dette er en geometrisk undervisningsmodell. Kalenderdatoene er omtrentlige datoer i et normalår, med jevndøgn og solverv som holdepunkter. Avstanden til sola og solas effekt holdes fast for å isolere virkningen av aksehelningen. Strålingen på en horisontal flate beregnes som 1361 W/m² × sinus til solhøyden, og settes til null under horisonten. Skyer, atmosfærisk svekking, terreng og refleksjon er utelatt. Tallene er derfor ikke en værmelding eller strømproduksjon ved bakken.</p>
+    <p>Daglengden gjelder når <strong>solsentrum</strong> er over en fri, geometrisk horisont. Vi har ikke lagt til refraksjon eller solskivens radius; faktiske soloppgangstider kan derfor avvike. Himmelvisningen er en skjematisk projeksjon av retningene øst, nord og opp. Den er ikke en fotografisk utsikt.</p>
+    <ul class="source-list"><li><a href="https://gml.noaa.gov/grad/solcalc/solareqns.PDF" target="_blank" rel="noopener">NOAA · Solar Position Calculations</a> — solhøyde, timevinkel og asimut.</li><li><a href="https://spaceplace.nasa.gov/seasons/en/" target="_blank" rel="noopener">NASA · What Causes the Seasons?</a> — aksehelning og motsatte årstider på de to halvkulene.</li><li><a href="https://www.weather.gov/fgz/Seasons" target="_blank" rel="noopener">NOAA/National Weather Service · Why Do We Have the Seasons?</a> — mer direkte lys og lengre dager.</li></ul>
+  </details>
+  <footer class="prototype-footer">OnlyFag · Ny prototype for å utforske solbane og årstider. De eksisterende simulatorene er beholdt.</footer>
+</body>
+</html>

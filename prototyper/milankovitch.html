@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Utforsk hvordan baneform, aksehelning og presesjon omfordeler solenergi, og sammenlign med ekte klimahistoriske data.">
+  <title>Milanković – sollys og istider | OnlyFag prototype</title>
+  <link rel="stylesheet" href="../assets/astronomy-prototypes/common-5063eaad4646.css">
+  <link rel="stylesheet" href="../assets/astronomy-prototypes/milankovitch-8fc296138acc.css">
+  <script src="../assets/astronomy-prototypes/common-b5ec872831d5.js" defer></script>
+  <script src="../assets/astronomy-prototypes/milankovitch-474e040e6c75.js" defer></script>
+</head>
+<body class="astro-page">
+  <header class="site-head">
+    <a class="brand" href="../geografi.html">OnlyFag <span class="prototype-badge">Nye prototyper</span></a>
+    <nav class="prototype-nav" aria-label="Astronomilaboratorier">
+      <a href="jord-mane-sol.html">Jord · måne · sol</a>
+      <a href="arstider-solbane.html">Årstider og solbane</a>
+      <a href="milankovitch.html" aria-current="page">Milanković</a>
+    </nav>
+  </header>
+  <div class="page-heading">
+    <span class="eyebrow">Fra bane til klima</span>
+    <h1>Små baneendringer. Lange klimasykluser.</h1>
+    <p>Følg årsakskjeden: jordas bane og akse endrer sommerlyset i nord. Hvor mye snø som smelter, påvirker isdekkene over lang tid.</p>
+    <div class="segmented mil-chapters" role="group" aria-label="Velg undersøkelse">
+      <button id="chapter-experiment" type="button" data-chapter="experiment" aria-pressed="true">1 · Utforsk syklusene</button>
+      <button id="chapter-history" type="button" data-chapter="history" aria-pressed="false">2 · Se klimahistorien</button>
+      <button id="chapter-future" type="button" data-chapter="future" aria-pressed="false">3 · Hva med framtiden?</button>
+    </div>
+  </div>
+  <main class="lab-grid">
+    <section class="visual-card" aria-label="Bane, solenergi og klimahistorie">
+      <div class="mil-figure-head"><span class="figure-title" id="figure-title">Baneform · eksentrisitet</span><div class="mil-scene-summary"><strong id="mil-visual-energy">478 W/m²</strong><span class="mil-measure-badge">65° N · nordlig sommersolverv</span></div></div>
+      <svg id="mil-diagram" viewBox="0 0 620 390" role="img" aria-labelledby="diagram-title diagram-desc"><title id="diagram-title">Jordas bane og innstråling</title><desc id="diagram-desc">En interaktiv framstilling av jordas bane.</desc></svg>
+      <div id="mil-chart-wrap" hidden>
+        <svg id="mil-chart" viewBox="0 0 880 405" role="img" aria-labelledby="chart-title chart-desc"><title id="chart-title">Solinnstråling og klimahistorie</title><desc id="chart-desc">To tidsserier med felles tidsakse.</desc></svg>
+      </div>
+      <p class="figure-caption" id="figure-caption">Baneformen er visuelt forstørret. Energitallene bruker den virkelige eksentrisiteten.</p>
+    </section>
+    <aside class="lesson-card">
+      <span class="kicker" id="lesson-kicker">Én endring om gangen</span>
+      <h2 id="lesson-title">Når er jorda nærmest sola?</h2>
+      <p id="lesson-copy">En mer oval bane gir større avstandsforskjell gjennom året. Den endrer også hvor sterkt presesjonen kan påvirke årstidene.</p>
+      <div class="mil-primary-metric"><small>Sommerdøgn ved 65° N</small><strong id="mil-q65">478 <span>W/m²</span></strong><span id="mil-q-delta">Referansebanen</span></div>
+      <div class="metrics mil-orbital-values">
+        <div class="metric"><small>Eksentrisitet</small><strong id="mil-e-value">0,0167</strong></div>
+        <div class="metric"><small>Aksehelning</small><strong id="mil-tilt-value">23,44°</strong></div>
+      </div>
+      <p class="mil-global-readout">Globalt årsmiddel <strong id="mil-global-value">340,3 W/m²</strong></p>
+      <div class="takeaway" id="lesson-takeaway">Solenergien omfordeles langt mer mellom årstider og breddegrader enn jordas globale årsmiddel endres.</div>
+      <div class="mil-chain" aria-label="Koblingen til isdekkene"><span>Bane og akse</span><b>→</b><span>Sommerlys</span><b>→</b><span>Snø som overlever</span></div>
+      <p class="small-note" id="lesson-limit">Tallene er døgnmiddel ved toppen av atmosfæren, uten skyer og atmosfærisk demping. De er ikke temperatur.</p>
+    </aside>
+    <section class="controls-card" aria-label="Styr Milanković-modellen">
+      <div id="experiment-controls">
+        <div class="segmented" role="group" aria-label="Velg baneparameter">
+          <button type="button" data-mechanism="eccentricity" aria-pressed="true">Baneform · ca. 100 000 år</button>
+          <button type="button" data-mechanism="tilt" aria-pressed="false">Helning · ca. 41 000 år</button>
+          <button type="button" data-mechanism="precession" aria-pressed="false">Presesjon · 19–23 000 år</button>
+        </div>
+        <div class="mil-range-row">
+          <div class="range-control"><label for="mil-parameter"><span id="parameter-label">Eksentrisitet</span><output id="parameter-value" for="mil-parameter">0,0167</output></label><input id="mil-parameter" type="range" min="0" max="0.06" step="0.0001" value="0.0167"></div>
+          <button type="button" id="reset-parameters">Dagens nære bane</button>
+        </div>
+        <div class="control-row mil-options"><label class="check" id="true-shape-label"><input id="true-shape" type="checkbox"> Vis virkelig baneform</label><span class="control-hint" id="parameter-hint">Bare denne verdien endres. Prøv deretter presesjon med en mer oval bane.</span></div>
+      </div>
+      <div id="time-controls" hidden>
+        <div class="mil-range-row"><div class="range-control"><label for="mil-time"><span id="time-control-title">Tidspunkt i klimahistorien</span><output id="mil-time-value" for="mil-time">Referanseåret 1950</output></label><input id="mil-time" type="range" min="-800" max="0" step="1" value="0"></div><button id="mil-play" type="button">Spill tidslinjen</button></div>
+        <div class="preset-row" id="time-presets"><button type="button" data-time="-125">Varm mellomistid · 125 000 år</button><button type="button" data-time="-20">Siste istidsmaksimum · 20 000 år</button><button type="button" data-time="0">1950 · referanse</button></div>
+        <p class="control-hint" id="time-data-note">Baner: Berger (1978) via NOAA · is-/dyphavsproxy: LR04 · 0 på tidsaksen er 1950.</p>
+      </div>
+      <p class="small-note" id="mil-status" role="status" aria-live="polite">Henter de lokale dataseriene …</p>
+    </section>
+  </main>
+  <details class="sources"><summary>Faggrunnlag, data og modellgrenser</summary>
+    <p>Forsøket beregner døgnmiddelinnstråling ved 65° N når solas ekliptiske lengde er 90°: nordlig sommersolverv. Solarkonstanten er satt til 1361 W/m². Daglengde, aksehelning og avstand inngår i beregningen. Det globale årsmiddelet er 1361 / (4√(1−e²)).</p>
+    <p>Tidslinjene bruker <strong>en reell astronomisk baneberegning</strong>, ikke idealiserte sinuskurver: Berger-løsningen fra 1978, med 1000 års trinn fra 800 000 år før til 100 000 år etter 1950. NOAA anbefaler denne løsningen ved referanseåret. Vinkelen i NOAA-tabellen er omregnet med 180° til solas lengde ved perihel.</p>
+    <p>LR04 er et globalt bentisk δ¹⁸O-stack fra 57 sedimentkjerner, og avspeiler både globalt isvolum og dyphavstemperatur. Det er ikke en direkte temperaturkurve. Aldersmodellen er delvis astronomisk justert, så samsvaret mellom kurvene er ikke et uavhengig bevis alene. Det finnes ingen proxydata for framtiden.</p>
+    <ul class="source-list">
+      <li><a href="https://www.ncei.noaa.gov/pub/data/paleo/climate_forcing/orbital_variations/insolation/readme_insolation.txt" target="_blank" rel="noopener">NOAA NCEI · banedata, definisjoner og tidsreferanse</a></li>
+      <li><a href="https://www.ncei.noaa.gov/pub/data/paleo/contributions_by_author/lisiecki2005/lisiecki2005.txt" target="_blank" rel="noopener">Lisiecki &amp; Raymo (2005) · LR04-data og metode via NOAA</a></li>
+      <li><a href="https://science.nasa.gov/science-research/earth-science/milankovitch-orbital-cycles-and-their-role-in-earths-climate/" target="_blank" rel="noopener">NASA · de tre banesyklusene og klimahistorien</a></li>
+      <li><a href="https://science.nasa.gov/science-research/earth-science/why-milankovitch-orbital-cycles-cant-explain-earths-current-warming/" target="_blank" rel="noopener">NASA · hvorfor banesyklusene ikke forklarer dagens oppvarming</a></li>
+    </ul>
+    <p>Illustrasjonene er skjematiske. Denne siden beregner verken klimasensitivitet, isdekker, CO₂-utslipp eller et årstall for neste istid.</p>
+  </details>
+  <footer class="prototype-footer">Ny prototype · Baneendringer fordeler solenergien. Klimaresponsen avhenger også av is, hav, drivhusgasser og tidsforsinkelser.</footer>
+</body>
+</html>
