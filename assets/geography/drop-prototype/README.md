@@ -24,8 +24,13 @@ compound the opacity. At zero opacity the background is hidden and further tile
 requests stop. “Bare valgt vassdrag” isolates its river family, including rain
 and river picking. These controls do not restart the selected journey.
 
-“Kartvisning” hides the journey panel and fits the network to the larger space;
-the independent settings stay accessible. A projected metric scale and north
+The top “Dråpen” button independently shows or hides the journey panel, and
+“Kartstil” toggles its own panel. Both panels have drag handles that support
+mouse, touch and keyboard arrows (Shift for larger steps). Their locations are
+retained while hidden and clamped inside the viewport after resizing. Panel
+positions are independent of the map camera; showing, hiding or moving them
+does not restart or relocate the journey. The map can zoom out to 20% of its
+initial fitted scale. A projected metric scale and north
 arrow are drawn into the map. PNG export includes the current rendered map,
 title, source credits and the elevation key when enabled. Export waits for
 visible tiles and reports download errors next to its button.
@@ -93,6 +98,7 @@ node scripts/build-drop-prototype-assets.cjs --check
 BROWSER_EXECUTABLE=/usr/bin/chromium node tests/drop-prototype.cjs
 BROWSER_EXECUTABLE=/usr/bin/chromium node tests/drop-basemap.cjs
 BROWSER_EXECUTABLE=/usr/bin/chromium node tests/drop-map-style.cjs
+BASE_URL=http://127.0.0.1:58390 BROWSER_EXECUTABLE=/usr/bin/chromium node tests/drop-panels.cjs
 ```
 
 After changing data or browser sources, rebuild the versioned assets. Retain

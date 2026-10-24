@@ -5,17 +5,17 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="Bygg en modell av den globale atmosfæriske sirkulasjonen, fra soloppvarming til celler, trykkbelter og vind.">
   <title>Global sirkulasjon | OnlyFag</title>
-  <link rel="stylesheet" href="../assets/geography/global-circulation/model.css?v=9cb49797a843">
+  <link rel="stylesheet" href="../assets/geography/global-circulation/model.css?v=2eb90f14c072">
   <script src="../assets/analytics.js" defer></script>
   <script src="../assets/geography/global-circulation/earth-land.js?v=effe2d1698fe" defer></script>
-  <script src="../assets/geography/global-circulation/globe-surface.js?v=a5fe1c146e3f" defer></script>
-  <script src="../assets/geography/global-circulation/model.js?v=1fd90001f7eb" defer></script>
+  <script src="../assets/geography/global-circulation/globe-surface.js?v=3a295535d97e" defer></script>
+  <script src="../assets/geography/global-circulation/model.js?v=97173d960f66" defer></script>
 </head>
 <body>
   <main class="circulation">
     <header class="lab-head">
       <div><a id="back" href="../geografi.html#klima-fagstoff">← Vær og klima</a><h1>Global sirkulasjon</h1></div>
-      <div class="tools"><button id="motion" type="button" aria-pressed="false" aria-label="Pause bevegelsen">Ⅱ <span>Pause</span></button><button id="theme" type="button" aria-label="Bytt til mørk visning" aria-pressed="false">◐</button><button id="fullscreen" type="button" aria-label="Åpne fullskjerm">⛶</button></div>
+      <div class="tools"><button id="fullscreen" type="button" aria-label="Åpne fullskjerm">⛶</button></div>
     </header>
     <nav class="steps" role="tablist" aria-label="Bygg modellen trinn for trinn">
       <button id="step-0" type="button" role="tab" aria-selected="true" aria-controls="model-panel" data-step="0"><b>1</b><span>Soloppvarming</span></button>
@@ -26,10 +26,12 @@
     </nav>
     <div id="model-panel" class="workspace" role="tabpanel" aria-labelledby="step-0">
       <section class="figure" aria-label="Modell av atmosfæren">
-        <div class="figure-top"><span id="figure-label">Solenergi ved jordoverflaten</span><span id="model-badge" hidden>Ulik innstrålingsvinkel</span><button id="surface-toggle" type="button" aria-pressed="false" hidden>Fysisk kart</button></div>
+        <div class="figure-controls"><button id="surface-toggle" type="button" aria-pressed="false" hidden>Fysisk kart</button><button id="projection-toggle" type="button" aria-pressed="false" hidden>Vis 2D-kart</button></div>
+        <div class="figure-top"><span id="figure-label">Solenergi ved jordoverflaten</span><span id="model-badge" hidden>Ulik innstrålingsvinkel</span></div>
         <svg id="earth" viewBox="0 0 760 660" role="img" aria-labelledby="earth-title earth-description"><title id="earth-title">Ulik soloppvarming</title><desc id="earth-description"></desc></svg>
         <div id="figure-legend" class="figure-legend" aria-hidden="true"></div>
-        <div class="globe-controls" role="group" aria-label="Roter jordkloden"><button id="rotate-left" type="button" aria-label="Vis lenger vest">←</button><input id="longitude" type="range" min="-180" max="180" value="10" step="1" aria-label="Lengdegrad midt i visningen"><button id="rotate-right" type="button" aria-label="Vis lenger øst">→</button><output id="longitude-value">10° Ø</output><button id="rotate-reset" type="button">Nullstill</button></div><p id="surface-status" role="status"></p>
+        <div class="globe-controls" role="group" aria-label="Roter jordkloden"><button id="rotate-left" type="button" aria-label="Vis lenger vest">←</button><input id="longitude" type="range" min="-180" max="180" value="10" step="1" aria-label="Lengdegrad midt i visningen"><button id="rotate-right" type="button" aria-label="Vis lenger øst">→</button><output id="longitude-value">10° Ø</output></div><p id="surface-status" role="status"></p>
+        <a class="live-wind-card" href="https://earth.nullschool.net/#current/wind/surface/level/orthographic=-20.28,18.44,300" target="_blank" rel="noopener"><strong>Live vindkart ↗</strong><span>Se dagens vind på earth.nullschool.net</span></a>
       </section>
       <aside class="explanation" aria-live="polite" aria-atomic="false">
         <div class="step-count" id="step-count">TRINN 1 AV 5</div>

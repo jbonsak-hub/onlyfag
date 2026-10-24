@@ -77,7 +77,7 @@ body:has(#map-style[open]) .height-legend{visibility:hidden}
 .map-status{position:fixed;z-index:3;top:72px;right:24px;width:max-content;max-width:min(330px,calc(100vw - 32px));margin:0;padding:7px 10px;border:1px solid var(--line);border-radius:7px;background:rgba(9,17,14,.94);font-size:10px;line-height:1.5;color:#b4cdbf;pointer-events:none}
 .map-status:empty{display:none}
 body:has(#map-style[open]) .map-status{top:auto;bottom:38px}
-body[data-map-focus="true"] .player{visibility:hidden;pointer-events:none}
+body[data-player-visible="false"] .player{visibility:hidden;pointer-events:none}
 body:not([data-map-layer="dark"]) .masthead-copy{background:rgba(9,17,14,.91);box-shadow:0 0 0 8px rgba(9,17,14,.91);border-radius:2px}
 body:not([data-map-layer="dark"]) .source-credit{color:#172e23;text-shadow:0 0 3px #fff,0 0 6px #fff}
 body:not([data-map-layer="dark"]) .source-credit a{color:#183b28;text-decoration-color:#3c5b49}
@@ -179,3 +179,15 @@ select:hover{border-color:#617e6b}
   .source-credit{left:auto;right:16px;bottom:4px;font-size:8px}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* Panels move independently of the camera and retain their positions when hidden. */
+.map-actions{z-index:10}
+.style-panel{position:fixed;right:24px;top:72px;z-index:5}
+.style-panel[hidden]{display:none}
+.panel-grip{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:0 0 10px;margin:0 0 8px;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--text);font-size:12px;font-weight:600;text-align:left;cursor:grab;touch-action:none;user-select:none}
+.grip-dots{font-size:20px;line-height:1;color:#7da58c}
+.is-moving .panel-grip{cursor:grabbing}
+.style-panel-heading .panel-grip{font-size:15px}
+body[data-front-panel="player"] .player{z-index:7}
+body[data-front-panel="style-panel"] .style-panel{z-index:7}
+@media(max-width:760px){.style-panel{right:14px;top:62px}.panel-grip{font-size:11px}}

@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="color-scheme" content="dark">
   <title>Følg dråpen – OnlyFag</title>
-  <link rel="stylesheet" href="../assets/geography/drop-prototype/style-2b71208d5724.css">
-  <script src="../assets/geography/drop-prototype/app-85b9356e15d3.js" defer></script>
+  <link rel="stylesheet" href="../assets/geography/drop-prototype/style-493c19c0cd2b.css">
+  <script src="../assets/geography/drop-prototype/app-41818aa98aab.js" defer></script>
 </head>
-<body data-map-layer="dark" data-map-focus="false">
+<body data-map-layer="dark" data-player-visible="true">
   <main class="drop-explorer" aria-label="Følg dråpen gjennom norske vassdrag">
     <canvas id="river-map" tabindex="0" aria-label="Interaktivt elvekart" aria-describedby="map-help keyboard-help">
       Utforsk vassdragene ved å velge et startpunkt i listen under kartet.
@@ -33,18 +33,34 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H4v4m12-4h4v4M4 16v4h4m12-4v4h-4M8 8h8v8H8Z"/></svg>
         <span>Hele kartet</span>
       </button>
-      <button class="map-action" id="map-focus" type="button" title="Vis kartet uten reisepanelet" aria-label="Vis kartet uten reisepanelet" aria-pressed="false">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4ZM4 14h16M8 14v5"/></svg>
-        <span>Kartvisning</span>
+      <button class="map-action" id="toggle-player" type="button" title="Vis eller skjul dråpepanelet" aria-label="Vis eller skjul dråpepanelet" aria-controls="player" aria-expanded="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C9 7 6 10 6 14a6 6 0 0 0 12 0c0-4-3-7-6-11Z"/></svg><span>Dråpen</span>
       </button>
       <details class="map-style" id="map-style">
-        <summary title="Juster kartets utseende">
+        <summary title="Vis eller skjul kartstil" aria-controls="style-panel">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h7m4 0h5M4 12h2m4 0h10M4 18h11m4 0h1M11 3v6M6 9v6m9 0v6"/></svg>
           <span>Kartstil</span>
         </summary>
-        <div class="style-panel">
+      </details>
+      <details class="about" id="about">
+        <summary title="Om kartet">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 11v5m0-9v.2"/></svg>
+          <span>Om kartet</span>
+        </summary>
+        <div class="about-panel">
+          <h2>Vannets vei</h2>
+          <div id="about-copy">
+            <p>Et nedbørfelt er landskapet som leder vann mot samme utløp. Følg elvene fra små sidegrener til større vassdrag.</p>
+            <p>Prototypen viser et utvalg norske vassdrag. Animasjonen gjør vannets vei synlig; hastigheten er tilpasset visningen.</p>
+            <p>Velg topografisk kart, turkart eller terrengrelieff under Bakgrunn. Slå av Vis elver for å studere landskapet. Terrengrelieff viser fjellrygger og daler, men tegner ikke inn beregnede vannskiller.</p>
+          </div>
+        </div>
+      </details>
+    </aside>
+
+        <section class="style-panel movable-panel" id="style-panel" aria-label="Kartstil" hidden>
           <div class="style-panel-heading">
-            <h2>Form kartet</h2>
+            <button type="button" id="style-grip" class="panel-grip" aria-label="Flytt kartstilpanelet. Bruk piltastene for å flytte."><span>Form kartet</span><span class="grip-dots" aria-hidden="true">⠿</span></button>
             <p>Finn balansen mellom vann og landskap.</p>
           </div>
           <div class="map-layer-controls">
@@ -85,28 +101,13 @@
             <span>Lagre kart som bilde</span>
           </button>
           <p id="export-status" class="export-status" role="status" aria-live="polite"></p>
-        </div>
-      </details>
-      <details class="about" id="about">
-        <summary title="Om kartet">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 11v5m0-9v.2"/></svg>
-          <span>Om kartet</span>
-        </summary>
-        <div class="about-panel">
-          <h2>Vannets vei</h2>
-          <div id="about-copy">
-            <p>Et nedbørfelt er landskapet som leder vann mot samme utløp. Følg elvene fra små sidegrener til større vassdrag.</p>
-            <p>Prototypen viser et utvalg norske vassdrag. Animasjonen gjør vannets vei synlig; hastigheten er tilpasset visningen.</p>
-            <p>Velg topografisk kart, turkart eller terrengrelieff under Bakgrunn. Slå av Vis elver for å studere landskapet. Terrengrelieff viser fjellrygger og daler, men tegner ikke inn beregnede vannskiller.</p>
-          </div>
-        </div>
-      </details>
-    </aside>
+        </section>
 
     <p id="map-status" class="map-status" role="status" aria-live="polite"></p>
     <aside id="height-legend" class="height-legend" aria-label="Forklaring av høydefarger" hidden></aside>
 
-    <section class="player" id="player" aria-label="Utforsk vassdraget">
+    <section class="player movable-panel" id="player" aria-label="Utforsk vassdraget">
+      <button type="button" id="player-grip" class="panel-grip" aria-label="Flytt dråpepanelet. Bruk piltastene for å flytte."><span>Følg vannet</span><span class="grip-dots" aria-hidden="true">⠿</span></button>
       <div class="player-topline">
         <div class="view-modes" role="group" aria-label="Visning">
           <button id="mode-flow" class="is-active" type="button" aria-pressed="true">Følg vannet</button>

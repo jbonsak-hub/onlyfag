@@ -22,3 +22,18 @@ body.dark .step-count{color:#a3c5a9}
 @media(min-width:1200px){.workspace{grid-template-columns:minmax(0,1fr) 320px}.explanation{padding:14px 16px 12px 8px}#lesson-text{font-size:13px}.takeaway{font-size:12px}}
 @media(max-height:580px) and (min-width:731px){.circulation{padding:6px 10px;gap:6px}h1{font-size:21px}.steps button{min-height:31px;font-size:11px}.lab-head #back{font-size:10px}.workspace{grid-template-columns:minmax(0,1fr) 265px}.explanation{padding:9px}h2{font-size:20px}.choice,.fact{padding:6px}.takeaway{margin-top:7px}.circulation footer{font-size:8px}}
 @media(max-width:730px){.circulation{display:flex;flex-direction:column;height:auto;min-height:100dvh;padding:12px;gap:10px}.embedded #back{margin-left:22px}.lab-head{align-items:center}.steps button{min-height:61px;padding:6px 2px;font-size:10px}.workspace{display:flex;flex-direction:column}.figure{height:430px;min-height:0;padding:4px 4px 6px}#earth,.embedded #earth{height:100%;min-height:0;max-height:none;aspect-ratio:auto}.figure-top{font-size:10px}.globe-controls input{width:96px}.explanation{overflow:visible;padding:12px 14px 14px}h2{font-size:23px}#lesson-text{font-size:13px}.choice small,.choice .range,.fact p{font-size:11px}.takeaway{font-size:12px}.nav-buttons button{min-height:38px}.circulation footer{display:flex;flex-direction:column;gap:4px}.circulation footer a{margin:0}.latitude-label text{font-size:21px}.figure-legend{font-size:9px}.solar-label{font-size:24px}.solar-callout .svg-note{font-size:20px}}
+
+/* Prominent map controls at the left of the diagram. */
+.figure-controls{display:flex;align-items:center;flex-wrap:wrap;gap:8px;align-self:flex-start;padding:6px 8px 3px;flex:none}
+.figure-controls:has(> :not([hidden])){min-height:40px}
+.figure-controls:not(:has(> :not([hidden]))){display:none}
+.figure-controls #surface-toggle,.figure-controls #projection-toggle{border:2px solid var(--green);border-radius:7px;background:var(--green);color:white;font:650 12px system-ui,sans-serif;padding:7px 12px;min-height:34px;box-shadow:0 2px 5px #123a2520}
+.figure-controls #projection-toggle{background:var(--paper);color:var(--green)}
+.figure-controls button:hover{filter:brightness(1.12)}
+.figure-top{justify-content:flex-start}
+.live-wind-card{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:3px 10px;align-self:center;margin:4px 8px 1px;padding:5px 10px;border:1px solid var(--line);border-radius:7px;background:var(--soft);color:var(--ink);font-size:10px;line-height:1.4;text-decoration:none}
+.live-wind-card strong{color:var(--green);font-size:11px}.live-wind-card:hover{border-color:var(--green)}
+body[data-projection="flat"] #globe-surface{border-radius:0;touch-action:pan-y}
+@media(max-width:730px){body[data-projection="flat"] .figure{height:auto}body[data-projection="flat"] #earth{flex:none;height:auto;aspect-ratio:730/370}}
+body[data-projection="flat"] .flat-latitudes .latitude-label text{font-size:13px}
+@media(max-width:730px){.figure-controls{padding:5px 8px 0;gap:6px}.figure-controls #surface-toggle,.figure-controls #projection-toggle{font-size:11px;padding:6px 9px}.live-wind-card{font-size:9px;padding:5px 7px;gap:2px 6px}.live-wind-card strong{font-size:10px}body[data-projection="flat"] .flat-latitudes .latitude-label text{font-size:16px}}

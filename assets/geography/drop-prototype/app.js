@@ -4,10 +4,12 @@
   const $=id=>document.getElementById(id),canvas=$('river-map'),ctx=canvas.getContext('2d',{alpha:false});
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   const palette=['#d690b9','#7dc9b7','#d8ba79','#9b9bd7','#99c67f','#d78f73','#7dbbd7','#b79ad1','#c6cb7a','#79b6a2','#da9fa0','#9db4da'];
-  const state={ready:false,mode:'flow',mapLayer:'dark',showRivers:true,riverWidth:1.4,riverIntensity:.95,mapOpacity:.85,heightColors:false,isolateBasin:false,mapFocus:false,paused:reduced.matches,speed:1,progress:0,completed:false,zoom:1,pan:[0,0],route:[],selectedSegment:null,basin:null,selectedStart:null,rain:false};
+  const state={ready:false,mode:'flow',mapLayer:'dark',showRivers:true,riverWidth:1.4,riverIntensity:.95,mapOpacity:.85,heightColors:false,isolateBasin:false,playerVisible:true,paused:reduced.matches,speed:1,progress:0,completed:false,zoom:1,pan:[0,0],route:[],selectedSegment:null,basin:null,selectedStart:null,rain:false};
   let data,segments=[],byId=new Map(),basins=new Map(),upstream=new Set(),route=[],routeLength=0,duration=30,particles=[];
   let rainSources=[],rainTributaries=[],rainElapsed=0,rainEmissions=0;
   let width=0,height=0,dpr=1,camera={scale:1,tx:0,ty:0},extent=[0,0,1,1],base=document.createElement('canvas'),dirty=true,last=performance.now(),hover=null,lastHover=null,selectedPrefix=null;
+  const panelOffsets=new Map();
+  const panelRect=element=>{const r=element.getBoundingClientRect(),p=panelOffsets.get(element)||[0,0];return {left:r.left-p[0],right:r.right-p[0],top:r.top-p[1],bottom:r.bottom-p[1],width:r.width,height:r.height};};
   const pointers=new Map();let gesture=null,drag=null,suppress=0,domTime=0;
   // Kartverket's UTM33 matrix shares the source rivers' CRS. Tile edges and
   // river points use the same camera, without geographic stretching.
@@ -29,11 +31,11 @@
   function section(s,from,to){const points=[at(s.points,s.totals,from)];for(let i=1;i<s.points.length-1;i++)if(s.totals[i]>from&&s.totals[i]<to)points.push(s.points[i]);points.push(at(s.points,s.totals,to));return path(points);}
   function setStatus(message){if($('status').textContent!==message)$('status').textContent=message;}
   function updateCamera(){
-    const player=$('player').getBoundingClientRect(),top=Math.max(100,$('masthead').getBoundingClientRect().bottom+20),bottom=Math.max(top+100,player.top-24);
+    const player=panelRect($('player')),top=Math.max(100,$('masthead').getBoundingClientRect().bottom+20),bottom=Math.max(top+100,player.top-24);
     // On wide screens the small player sits beside the tall Norwegian network,
     // leaving its entire height available rather than shrinking it above a bar.
     const side=width>=1100&&height>=650&&player.width<500;
-    const available=state.mapFocus?{x:24,y:100,w:Math.max(100,width-48),h:Math.max(100,height-160)}:side?{x:player.right+36,y:86,w:width-player.right-72,h:height-126}:{x:width<600?16:52,y:top,w:width-(width<600?32:104),h:bottom-top};
+    const available=side?{x:player.right+36,y:86,w:width-player.right-72,h:height-126}:{x:width<600?16:52,y:top,w:width-(width<600?32:104),h:bottom-top};
     const fit=.96*Math.min(available.w/(extent[2]-extent[0]),available.h/(extent[3]-extent[1]));
     camera={scale:fit*state.zoom,tx:available.x+available.w/2-(extent[2]-extent[0])/2*fit*state.zoom+state.pan[0],ty:available.y+available.h/2-(extent[3]-extent[1])/2*fit*state.zoom+state.pan[1]};dirty=true;
   }
@@ -198,7 +200,7 @@
   function drawMapKey(c){
     c.save();c.setTransform(dpr,0,0,dpr,0,0);c.globalAlpha=1;c.shadowBlur=0;
     const metresPerPixel=1000/(data.unitsPerKm*camera.scale),target=Math.min(120,width*.22)*metresPerPixel,magnitude=10**Math.floor(Math.log10(target)),length=[5,2,1].map(n=>n*magnitude).find(n=>n<=target)||magnitude/2,pixels=length/metresPerPixel;
-    const x=width-pixels-28,y=state.mapFocus?height-58:Math.min(height-58,$('player').getBoundingClientRect().top-22);
+    const x=width-pixels-28,y=state.playerVisible?Math.min(height-58,panelRect($('player')).top-22):height-58;
     c.fillStyle='#071910dd';c.fillRect(x-10,y-25,pixels+20,39);c.strokeStyle='#d1e7d8';c.lineWidth=1.5;c.beginPath();c.moveTo(x,y-4);c.lineTo(x,y+1);c.lineTo(x+pixels,y+1);c.lineTo(x+pixels,y-4);c.stroke();
     c.fillStyle='#dfede5';c.font='10px system-ui,sans-serif';c.textAlign='center';c.fillText(length>=1000?new Intl.NumberFormat('nb-NO').format(length/1000)+' km':Math.round(length)+' m',x+pixels/2,y-10);
     const northY=state.heightColors&&state.mapLayer==='relief'?170:92;c.fillStyle='#071910dd';c.fillRect(width-53,northY,28,43);c.fillStyle='#d1e7d8';c.beginPath();c.moveTo(width-39,northY+6);c.lineTo(width-44,northY+22);c.lineTo(width-39,northY+19);c.lineTo(width-34,northY+22);c.closePath();c.fill();c.font='9px system-ui,sans-serif';c.fillText('N',width-39,northY+36);c.restore();
@@ -240,12 +242,12 @@
     }
     requestAnimationFrame(frame);
   }
-  function zoom(factor,x=width/2,y=height/2){if(!state.ready)return;const anchor=world(x,y),old=camera.scale;state.zoom=Math.max(1,Math.min(12,state.zoom*factor));updateCamera();state.pan[0]+=x-(anchor[0]*camera.scale+camera.tx);state.pan[1]+=y-(anchor[1]*camera.scale+camera.ty);if(state.zoom===1)state.pan=[0,0];updateCamera();}
+  function zoom(factor,x=width/2,y=height/2){if(!state.ready)return;const anchor=world(x,y),old=camera.scale;state.zoom=Math.max(.2,Math.min(12,state.zoom*factor));updateCamera();state.pan[0]+=x-(anchor[0]*camera.scale+camera.tx);state.pan[1]+=y-(anchor[1]*camera.scale+camera.ty);updateCamera();}
   canvas.addEventListener('wheel',e=>{e.preventDefault();zoom(Math.exp(-Math.max(-120,Math.min(120,e.deltaY))*.0035),e.offsetX,e.offsetY);},{passive:false});
   canvas.addEventListener('pointerdown',e=>{if(e.button!==0)return;canvas.setPointerCapture(e.pointerId);pointers.set(e.pointerId,[e.clientX,e.clientY]);drag={x:e.clientX,y:e.clientY,moved:false};if(pointers.size===2){const [a,b]=[...pointers.values()],center=[(a[0]+b[0])/2,(a[1]+b[1])/2];gesture={distance:distance(a,b),center,anchor:world(...center),zoom:state.zoom};suppress=performance.now()+400;}});
   canvas.addEventListener('pointermove',e=>{
     if(pointers.has(e.pointerId)){const prior=pointers.get(e.pointerId);pointers.set(e.pointerId,[e.clientX,e.clientY]);
-      if(pointers.size===2){const [a,b]=[...pointers.values()],d=distance(a,b),center=[(a[0]+b[0])/2,(a[1]+b[1])/2];if(gesture&&gesture.distance>0){state.zoom=Math.max(1,Math.min(12,gesture.zoom*d/gesture.distance));updateCamera();state.pan[0]+=center[0]-(gesture.anchor[0]*camera.scale+camera.tx);state.pan[1]+=center[1]-(gesture.anchor[1]*camera.scale+camera.ty);updateCamera();}drag.moved=true;suppress=performance.now()+400;}
+      if(pointers.size===2){const [a,b]=[...pointers.values()],d=distance(a,b),center=[(a[0]+b[0])/2,(a[1]+b[1])/2];if(gesture&&gesture.distance>0){state.zoom=Math.max(.2,Math.min(12,gesture.zoom*d/gesture.distance));updateCamera();state.pan[0]+=center[0]-(gesture.anchor[0]*camera.scale+camera.tx);state.pan[1]+=center[1]-(gesture.anchor[1]*camera.scale+camera.ty);updateCamera();}drag.moved=true;suppress=performance.now()+400;}
       else if(drag&&(drag.moved||Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>5)){state.pan[0]+=e.clientX-prior[0];state.pan[1]+=e.clientY-prior[1];drag.moved=true;dirty=true;updateCamera();suppress=performance.now()+300;}
     }else if(state.ready){hover=state.showRivers?nearest(e.offsetX,e.offsetY)?.segment||null:null;canvas.style.cursor=hover?(hover.routable===false?'help':'pointer'):'grab';}
   });
@@ -265,9 +267,25 @@
   for(const [name,key,scale] of [['river-width','riverWidth',1],['river-intensity','riverIntensity',100],['map-opacity','mapOpacity',100]])$(name).addEventListener('input',()=>{state[key]=Number($(name).value)/scale;dirty=true;styleControls();});
   $('height-colors').addEventListener('change',()=>{state.heightColors=$('height-colors').checked;dirty=true;styleControls();});
   $('isolate-basin').addEventListener('change',()=>{state.isolateBasin=$('isolate-basin').checked;hover=null;if(state.rain)fillParticles();dirty=true;});
-  $('map-focus').addEventListener('click',()=>{state.mapFocus=!state.mapFocus;document.body.dataset.mapFocus=String(state.mapFocus);$('map-focus').setAttribute('aria-pressed',String(state.mapFocus));$('map-focus').setAttribute('aria-label',state.mapFocus?'Vis reisepanelet':'Vis kartet uten reisepanelet');$('map-focus').querySelector('span').textContent=state.mapFocus?'Vis reisen':'Kartvisning';updateCamera();});
+  $('toggle-player').addEventListener('click',()=>{state.playerVisible=!state.playerVisible;document.body.dataset.playerVisible=String(state.playerVisible);$('toggle-player').setAttribute('aria-expanded',String(state.playerVisible));$('player').inert=!state.playerVisible;if(state.playerVisible)document.body.dataset.frontPanel='player';$('toggle-player').setAttribute('aria-label',state.playerVisible?'Skjul dråpepanelet':'Vis dråpepanelet');dirty=true;});
   $('export-map').addEventListener('click',exportMap);
-  for(const [a,b] of [['map-style','about'],['about','map-style']])$(a).addEventListener('toggle',()=>{if($(a).open)$(b).open=false;});
+  $('map-style').addEventListener('toggle',()=>{const open=$('map-style').open;$('style-panel').hidden=!open;$('map-style').querySelector('summary').setAttribute('aria-expanded',String(open));if(open){$('about').open=false;clampPanel($('style-panel'));}});
+  $('about').addEventListener('toggle',()=>{if($('about').open)$('map-style').open=false;});
+  function movePanel(panel,x,y){
+    const home=panelRect(panel),left=Math.max(8,Math.min(innerWidth-home.width-8,x)),top=Math.max(8,Math.min(innerHeight-home.height-8,y)),offset=[left-home.left,top-home.top];
+    panelOffsets.set(panel,offset);panel.style.translate=offset[0]+'px '+offset[1]+'px';document.body.dataset.frontPanel=panel.id;dirty=true;
+  }
+  function clampPanel(panel){if(!panel.hidden){const r=panel.getBoundingClientRect();movePanel(panel,r.left,r.top);}}
+  for(const [panelId,gripId] of [['player','player-grip'],['style-panel','style-grip']]){
+    const panel=$(panelId),grip=$(gripId);let moving=null;
+    panel.addEventListener('pointerdown',()=>{document.body.dataset.frontPanel=panelId;});
+    grip.addEventListener('pointerdown',e=>{if(e.button!==0)return;e.preventDefault();const r=panel.getBoundingClientRect();moving={id:e.pointerId,x:e.clientX,y:e.clientY,left:r.left,top:r.top};grip.setPointerCapture(e.pointerId);panel.classList.add('is-moving');document.body.dataset.frontPanel=panelId;});
+    grip.addEventListener('pointermove',e=>{if(moving?.id===e.pointerId)movePanel(panel,moving.left+e.clientX-moving.x,moving.top+e.clientY-moving.y);});
+    const stop=e=>{if(moving?.id!==e.pointerId)return;moving=null;panel.classList.remove('is-moving');if(grip.hasPointerCapture(e.pointerId))grip.releasePointerCapture(e.pointerId);};
+    grip.addEventListener('pointerup',stop);grip.addEventListener('pointercancel',stop);
+    grip.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;e.preventDefault();const r=panel.getBoundingClientRect(),d=e.shiftKey?40:10;movePanel(panel,r.left+(e.key==='ArrowLeft'?-d:e.key==='ArrowRight'?d:0),r.top+(e.key==='ArrowUp'?-d:e.key==='ArrowDown'?d:0));});
+  }
+  addEventListener('resize',()=>{clampPanel($('player'));clampPanel($('style-panel'));});
   $('show-rivers').addEventListener('change',()=>{state.showRivers=$('show-rivers').checked;hover=null;dirty=true;});
   $('reset').addEventListener('click',()=>{state.zoom=1;state.pan=[0,0];if(state.ready)updateCamera();});
   for(const mode of ['flow','basin'])$('mode-'+mode).addEventListener('click',()=>{state.mode=mode;dirty=true;controls();setStatus(mode==='basin'?'Fargen viser vassdraget. De lyseste sideelvene leder vann til startpunktet.':'Følg dråpen mot vassdragets utløp.');});
