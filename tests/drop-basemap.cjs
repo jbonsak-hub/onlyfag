@@ -80,6 +80,10 @@ async function registration(page,layer){
    });
    const page=await context.newPage();page.on('pageerror',error=>report.errors.push(error.message));
    await page.goto(base+'/prototypes/folg-drapen.html');await page.waitForFunction(()=>window.DropPrototype?.snapshot().ready);await settled(page);
+   await page.locator('#map-style > summary').click();
+   // Registration checks use fully opaque imagery, independently of the
+   // presentation default chosen by the cartographic opacity control.
+   await page.locator('#map-opacity').evaluate(element=>{element.value='100';element.dispatchEvent(new Event('input',{bubbles:true}));});await settled(page);
    return {page,context,network};
   }
   for(const [viewport,dpr] of [[{width:1366,height:900},1],[{width:390,height:844},2]]){

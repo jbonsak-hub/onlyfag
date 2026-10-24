@@ -4,7 +4,7 @@
   const $=id=>document.getElementById(id),canvas=$('river-map'),ctx=canvas.getContext('2d',{alpha:false});
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   const palette=['#d690b9','#7dc9b7','#d8ba79','#9b9bd7','#99c67f','#d78f73','#7dbbd7','#b79ad1','#c6cb7a','#79b6a2','#da9fa0','#9db4da'];
-  const state={ready:false,mode:'flow',mapLayer:'dark',showRivers:true,paused:reduced.matches,speed:1,progress:0,completed:false,zoom:1,pan:[0,0],route:[],selectedSegment:null,basin:null,selectedStart:null,rain:false};
+  const state={ready:false,mode:'flow',mapLayer:'dark',showRivers:true,riverWidth:1.4,riverIntensity:.95,mapOpacity:.85,heightColors:false,isolateBasin:false,mapFocus:false,paused:reduced.matches,speed:1,progress:0,completed:false,zoom:1,pan:[0,0],route:[],selectedSegment:null,basin:null,selectedStart:null,rain:false};
   let data,segments=[],byId=new Map(),basins=new Map(),upstream=new Set(),route=[],routeLength=0,duration=30,particles=[];
   let rainSources=[],rainTributaries=[],rainElapsed=0,rainEmissions=0;
   let width=0,height=0,dpr=1,camera={scale:1,tx:0,ty:0},extent=[0,0,1,1],base=document.createElement('canvas'),dirty=true,last=performance.now(),hover=null,lastHover=null,selectedPrefix=null;
@@ -12,7 +12,12 @@
   // Kartverket's UTM33 matrix shares the source rivers' CRS. Tile edges and
   // river points use the same camera, without geographic stretching.
   const tiles=new Map(),tileOrigin=[-2500000,9045984],tileResolution=21664;
-  let tileLoads=0,tileView=new Set();
+  const mapScene=document.createElement('canvas'),tileStage=document.createElement('canvas');
+  const heightPalette=[[59,105,78],[130,157,112],[191,180,133],[169,140,114],[190,187,175],[245,246,240]];
+  // Fixed physical height statistics and one palette for every tile. Dynamic
+  // image stretching would assign different heights the same color at seams.
+  const elevationRule={rasterFunction:'Colormap',rasterFunctionArguments:{Colorramp:{type:'multipart',colorRamps:heightPalette.slice(1).map((to,i)=>({type:'algorithmic',fromColor:[...heightPalette[i],255],toColor:[...to,255],algorithm:'esriCIELabAlgorithm'}))},Raster:{rasterFunction:'Stretch',rasterFunctionArguments:{Raster:'$$',StretchType:5,Statistics:[[0,2500,1250,700]],DRA:false,Min:0,Max:255,UseGamma:false},outputPixelType:'U8'}},outputPixelType:'U8'};
+  let tileLoads=0,tileView=new Set(),exporting=false;
   const id=value=>String(value),point=(p)=>[Number(p[0])-extent[0],data.yUp?extent[3]-Number(p[1]):Number(p[1])-extent[1]];
   const screen=p=>({x:p[0]*camera.scale+camera.tx,y:p[1]*camera.scale+camera.ty});
   const world=(x,y)=>[(x-camera.tx)/camera.scale,(y-camera.ty)/camera.scale];
@@ -28,24 +33,44 @@
     // On wide screens the small player sits beside the tall Norwegian network,
     // leaving its entire height available rather than shrinking it above a bar.
     const side=width>=1100&&height>=650&&player.width<500;
-    const available=side?{x:player.right+36,y:86,w:width-player.right-72,h:height-126}:{x:width<600?16:52,y:top,w:width-(width<600?32:104),h:bottom-top};
+    const available=state.mapFocus?{x:24,y:100,w:Math.max(100,width-48),h:Math.max(100,height-160)}:side?{x:player.right+36,y:86,w:width-player.right-72,h:height-126}:{x:width<600?16:52,y:top,w:width-(width<600?32:104),h:bottom-top};
     const fit=.96*Math.min(available.w/(extent[2]-extent[0]),available.h/(extent[3]-extent[1]));
     camera={scale:fit*state.zoom,tx:available.x+available.w/2-(extent[2]-extent[0])/2*fit*state.zoom+state.pan[0],ty:available.y+available.h/2-(extent[3]-extent[1])/2*fit*state.zoom+state.pan[1]};dirty=true;
   }
-  function resize(){width=canvas.clientWidth;height=canvas.clientHeight;dpr=Math.min(devicePixelRatio||1,2);canvas.width=base.width=Math.round(width*dpr);canvas.height=base.height=Math.round(height*dpr);if(state.ready)updateCamera();}
+  function resize(){width=canvas.clientWidth;height=canvas.clientHeight;dpr=Math.min(devicePixelRatio||1,2);canvas.width=base.width=mapScene.width=tileStage.width=Math.round(width*dpr);canvas.height=base.height=mapScene.height=tileStage.height=Math.round(height*dpr);if(state.ready)updateCamera();}
   function mapStatus(){
     const visible=[...tileView].map(key=>tiles.get(key)).filter(Boolean),pending=visible.some(tile=>tile.status==='loading'||tile.status==='queued'),failed=visible.some(tile=>tile.status==='error');
     $('map-status').textContent=state.mapLayer==='dark'?'':failed?'Noen kartfliser kunne ikke lastes. Bytt kartlag og prøv igjen.':pending?'Laster bakgrunnskart …':'';
+    $('export-map').disabled=exporting||!state.ready||(state.mapLayer!=='dark'&&(pending||failed));
+  }
+  function styleControls(){
+    $('river-width-value').textContent=new Intl.NumberFormat('nb-NO',{maximumFractionDigits:1}).format(state.riverWidth)+'×';
+    $('river-intensity-value').textContent=Math.round(state.riverIntensity*100)+' %';$('map-opacity-value').textContent=Math.round(state.mapOpacity*100)+' %';
+    $('map-opacity').disabled=state.mapLayer==='dark';$('height-colors').disabled=state.mapLayer!=='relief';
+    $('height-color-help').textContent=state.mapLayer==='relief'?'En fast fargeskala viser høyde over havet.':'Velg Terrengrelieff for høydefarger.';
+    $('height-legend').hidden=state.mapLayer!=='relief'||!state.heightColors||state.mapOpacity===0;
+  }
+  function drawHeightLegend(c,x,y,w){
+    const ramp=c.createLinearGradient(x,0,x+w,0);heightPalette.forEach((rgb,i)=>ramp.addColorStop(i/(heightPalette.length-1),'rgb('+rgb.join(',')+')'));c.fillStyle=ramp;c.fillRect(x,y,w,9);c.font='9px system-ui,sans-serif';c.fillStyle='#c9dace';c.textAlign='left';c.fillText('0 m',x,y+23);c.textAlign='center';c.fillText('1 000 m',x+w*.4,y+23);c.fillText('2 000 m',x+w*.8,y+23);c.textAlign='right';c.fillText('2 500 m',x+w,y+23);c.textAlign='left';
+  }
+  function initHeightLegend(){
+    const title=document.createElement('strong');title.textContent='Høyde over havet';const ramp=document.createElement('div');ramp.className='height-ramp';ramp.style.background='linear-gradient(to right,'+heightPalette.map(rgb=>'rgb('+rgb.join(',')+')').join(',')+')';
+    const ticks=document.createElement('div');ticks.className='height-ticks';for(const text of ['0','500','1 000','1 500','2 000','2 500 m']){const tick=document.createElement('span');tick.textContent=text;ticks.append(tick);}
+    $('height-legend').replaceChildren(title,ramp,ticks);
   }
   function loadTiles(){
     for(const key of tileView){
       if(tileLoads>=(state.mapLayer==='relief'?4:8))break;
       const tile=tiles.get(key);if(tile.status!=='queued')continue;
       tile.status='loading';tile.attempts=(tile.attempts||0)+1;tileLoads++;const img=new Image();tile.image=img;img.crossOrigin='anonymous';
-      let settled=false;const timeout=setTimeout(()=>{done('error');img.src='';},tile.layer==='relief'?45000:20000);
+      let settled=false;const timeout=setTimeout(()=>{done('error');img.src='';},['relief','elevation'].includes(tile.layer)?45000:20000);
       const done=status=>{if(settled)return;settled=true;clearTimeout(timeout);tile.status=status==='error'&&tile.attempts<2?'queued':status;tileLoads--;dirty=true;loadTiles();mapStatus();};
       img.onload=()=>done('ready');img.onerror=()=>done('error');
-      if(tile.layer==='relief'){
+      if(tile.layer==='elevation'){
+        const span=256*tileResolution/2**tile.z,x=tileOrigin[0]+tile.col*span,y=tileOrigin[1]-tile.row*span;
+        const query=new URLSearchParams({f:'image',format:'png32',bbox:[x,y-span,x+span,y].join(','),bboxSR:'25833',imageSR:'25833',size:'256,256',interpolation:'RSP_BilinearInterpolation',renderingRule:JSON.stringify(elevationRule)});
+        img.src='https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/exportImage?'+query;
+      }else if(tile.layer==='relief'){
         const span=256*tileResolution/2**tile.z,x=tileOrigin[0]+tile.col*span,y=tileOrigin[1]-tile.row*span;
         const query=new URLSearchParams({service:'WMS',version:'1.3.0',request:'GetMap',layers:'DTM:multiskyggerelieff',styles:'',crs:'EPSG:25833',bbox:[x,y-span,x+span,y].join(','),width:'256',height:'256',format:'image/png',transparent:'true'});
         img.src='https://wms.geonorge.no/skwms1/wms.hoyde-dtm?'+query;
@@ -53,25 +78,38 @@
     }
   }
   function paintMap(c){
-    if(state.mapLayer==='dark'){tileView.clear();return;}
+    if(state.mapLayer==='dark'||state.mapOpacity===0){tileView.clear();mapStatus();return;}
     const [west,,,north]=data.source.projectedBounds,units=data.unitsPerKm/1000;
-    const z=Math.max(0,Math.min(18,Math.round(Math.log2(tileResolution*units*camera.scale)))),span=256*tileResolution/2**z,count=2**z;
+    const z=Math.max(0,Math.min(18,Math.round(Math.log2(tileResolution*units*camera.scale))));
     const a=world(0,0),b=world(width,height),minE=west+(a[0]+extent[0])/units,maxE=west+(b[0]+extent[0])/units,maxN=north-(a[1]+extent[1])/units,minN=north-(b[1]+extent[1])/units;
-    const firstCol=Math.max(0,Math.floor((minE-tileOrigin[0])/span)),lastCol=Math.min(count-1,Math.floor((maxE-tileOrigin[0])/span)),firstRow=Math.max(0,Math.floor((tileOrigin[1]-maxN)/span)),lastRow=Math.min(count-1,Math.floor((tileOrigin[1]-minN)/span));
+    const scene=mapScene.getContext('2d'),stage=tileStage.getContext('2d');
+    scene.setTransform(dpr,0,0,dpr,0,0);scene.globalAlpha=1;scene.globalCompositeOperation='source-over';scene.fillStyle=state.mapLayer==='relief'?'#13231d':'#e8ecdf';scene.fillRect(0,0,width,height);
     const drawTile=tile=>{
       const sizeInMeters=256*tileResolution/2**tile.z,p=screen([(tileOrigin[0]+tile.col*sizeInMeters-west)*units-extent[0],(north-tileOrigin[1]+tile.row*sizeInMeters)*units-extent[1]]),size=sizeInMeters*units*camera.scale;
-      if(p.x+size>=0&&p.x<=width&&p.y+size>=0&&p.y<=height)c.drawImage(tile.image,p.x,p.y,size+.25,size+.25);
+      if(p.x+size>=0&&p.x<=width&&p.y+size>=0&&p.y<=height)stage.drawImage(tile.image,p.x,p.y,size+.25,size+.25);
     };
-    // Reuse already loaded detail at the current geographic position while
-    // new tiles arrive, so zooming does not flash an empty background.
-    for(const tile of [...tiles.values()].filter(t=>t.layer===state.mapLayer&&t.status==='ready'&&t.z!==z).sort((a,b)=>a.z-b.z))drawTile(tile);
     tileView=new Set();
-    for(let row=firstRow;row<=lastRow;row++)for(let col=firstCol;col<=lastCol;col++){
-      const key=[state.mapLayer,z,row,col].join('/');tileView.add(key);
-      if(!tiles.has(key))tiles.set(key,{layer:state.mapLayer,z,row,col,status:'queued'});
-      const tile=tiles.get(key);tile.used=performance.now();
-      if(tile.status==='ready')drawTile(tile);
+    const colored=state.mapLayer==='relief'&&state.heightColors,layers=colored?['elevation','relief']:[state.mapLayer];
+    for(const layer of layers){
+      // Large elevation mosaics exceed the service's source-image limits.
+      // Smaller fixed-grid requests retain alignment at the overview scale.
+      const level=layer==='elevation'?Math.max(5,z):z,span=256*tileResolution/2**level,count=2**level;
+      const firstCol=Math.max(0,Math.floor((minE-tileOrigin[0])/span)),lastCol=Math.min(count-1,Math.floor((maxE-tileOrigin[0])/span)),firstRow=Math.max(0,Math.floor((tileOrigin[1]-maxN)/span)),lastRow=Math.min(count-1,Math.floor((tileOrigin[1]-minN)/span));
+      stage.setTransform(1,0,0,1,0,0);stage.clearRect(0,0,tileStage.width,tileStage.height);stage.setTransform(dpr,0,0,dpr,0,0);
+      // Compose cached fallback and current tiles at full opacity first.
+      // Applying opacity once afterwards avoids dark seams and double blending.
+      for(const tile of [...tiles.values()].filter(t=>t.layer===layer&&t.status==='ready'&&t.z!==level).sort((a,b)=>a.z-b.z))drawTile(tile);
+      for(let row=firstRow;row<=lastRow;row++)for(let col=firstCol;col<=lastCol;col++){
+        const key=[layer,level,row,col].join('/');tileView.add(key);
+        if(!tiles.has(key))tiles.set(key,{layer,z:level,row,col,status:'queued'});
+        const tile=tiles.get(key);tile.used=performance.now();
+        if(tile.status==='ready')drawTile(tile);
+      }
+      scene.globalCompositeOperation=colored&&layer==='relief'?'multiply':'source-over';scene.globalAlpha=colored&&layer==='relief'?.62:1;
+      scene.drawImage(tileStage,0,0,width,height);
     }
+    scene.globalCompositeOperation='source-over';scene.globalAlpha=1;
+    c.save();c.globalAlpha=state.mapOpacity;c.drawImage(mapScene,0,0,width,height);c.restore();
     // Bound decoded image memory during long exploration. Late responses are
     // always positioned with the current camera on the next repaint.
     if(tiles.size>160)for(const [key,tile] of [...tiles].sort((a,b)=>a[1].used-b[1].used)){if(tiles.size<=160)break;if(!tileView.has(key)&&tile.status!=='loading')tiles.delete(key);}
@@ -80,7 +118,7 @@
   function paintBase(){
     // The route is translucent. Never carry its alpha into the next opaque
     // background fill: that leaves the old camera's rivers in the cache.
-    const c=base.getContext('2d');c.save();c.globalAlpha=1;c.setTransform(dpr,0,0,dpr,0,0);c.fillStyle=state.mapLayer==='dark'?'#040807':'#e8ecdf';c.fillRect(0,0,width,height);
+    const c=base.getContext('2d');c.save();c.globalAlpha=1;c.setTransform(dpr,0,0,dpr,0,0);c.fillStyle='#040807';c.fillRect(0,0,width,height);
     paintMap(c);
     if(!state.showRivers){c.restore();dirty=false;return;}
     if(state.mapLayer==='dark'){const glow=c.createRadialGradient(width*.5,height*.4,0,width*.5,height*.4,Math.max(width,height)*.65);glow.addColorStop(0,'#0a151370');glow.addColorStop(1,'#04080700');c.fillStyle=glow;c.fillRect(0,0,width,height);}
@@ -90,13 +128,15 @@
       const basin=basins.get(state.basin);if(basin?.path){c.fillStyle=basin.color+'0b';c.strokeStyle=basin.color+'66';c.lineWidth=.8/camera.scale;c.fill(basin.path,'evenodd');c.stroke(basin.path);}
     }
     for(const s of segments){
+      if(state.isolateBasin&&s.basin!==state.basin)continue;
       const selected=s.basin===state.basin,contributing=upstream.has(s.id);
-      c.globalAlpha=state.mode==='basin'?(contributing&&s.id!==state.selectedSegment?.98:selected?.28:.12):(selected?.98:.76);
-      c.strokeStyle=basins.get(s.basin).color;c.lineWidth=s.weight*Math.pow(state.zoom,.2)/camera.scale;c.stroke(s.path);
+      const alpha=(state.mode==='basin'?(contributing&&s.id!==state.selectedSegment?1:selected?.3:.12):(selected?1:.9))*state.riverIntensity,lineWidth=s.weight*Math.pow(state.zoom,.2)*state.riverWidth/camera.scale;
+      if(state.mapLayer!=='dark'){c.globalAlpha=alpha*.5;c.strokeStyle='#061b18';c.lineWidth=lineWidth+1.1/camera.scale;c.stroke(s.path);}
+      c.globalAlpha=alpha;c.strokeStyle=basins.get(s.basin).color;c.lineWidth=lineWidth;c.stroke(s.path);
     }
-    if(state.mode==='basin'&&selectedPrefix){const s=byId.get(state.selectedSegment);c.globalAlpha=.95;c.strokeStyle=basins.get(s.basin).color;c.lineWidth=s.weight/camera.scale;c.stroke(selectedPrefix);}
+    if(state.mode==='basin'&&selectedPrefix){const s=byId.get(state.selectedSegment);c.globalAlpha=state.riverIntensity;c.strokeStyle=basins.get(s.basin).color;c.lineWidth=s.weight*state.riverWidth/camera.scale;c.stroke(selectedPrefix);}
     c.globalAlpha=1;
-    if(route.length){c.strokeStyle='#f2f3dc';c.globalAlpha=state.mode==='basin'?.25:.32;c.lineWidth=1.1/camera.scale;for(const piece of route)c.stroke(piece.path);}
+    if(route.length){c.strokeStyle='#f2f3dc';c.globalAlpha=(state.mode==='basin'?.25:.42)*state.riverIntensity;c.lineWidth=1.1*state.riverWidth/camera.scale;for(const piece of route)c.stroke(piece.path);}
     c.restore();dirty=false;
   }
   function walk(segment){const ids=[],seen=new Set();let s=segment;while(s&&!seen.has(s.id)){seen.add(s.id);ids.push(s.id);s=s.next===null?null:byId.get(s.next);}return ids;}
@@ -120,12 +160,12 @@
     const names=[];for(const piece of route){const n=riverName(piece.segment.name);if(n&&names.at(-1)!==n)names.push(n);}
     const ending=basin.outletLabel||'Vassdragets utløp';if(names.at(-1)!==ending)names.push(ending);$('route-stages').textContent=names.length>1?names.join(' → '):'Sideelvene samles på vei mot '+ending.toLocaleLowerCase('nb-NO');
     $('start-point').value=startId||'';setStatus(reduced.matches?'Reisen er klar. Trykk Spill av for å følge dråpen.':'Dråpen følger elven nedstrøms. Klikk en annen elv for å starte der.');
-    for(const key of ['pause','replay','rain'])$(key).disabled=false;dirty=true;controls();
+    for(const key of ['pause','replay','rain'])$(key).disabled=false;if(state.rain&&state.isolateBasin)fillParticles();dirty=true;controls();
   }
   function restart(){if(!state.ready)return;state.progress=0;state.completed=false;state.paused=false;controls();setStatus('Dråpen starter reisen på nytt.');}
   function nearest(x,y){
     const p=world(x,y),limit=(width<600?20:13)/camera.scale;let hit=null,best=limit*limit;
-    for(const s of segments){const b=s.bounds;if(p[0]<b[0]-limit||p[0]>b[2]+limit||p[1]<b[1]-limit||p[1]>b[3]+limit)continue;
+    for(const s of segments){if(state.isolateBasin&&s.basin!==state.basin)continue;const b=s.bounds;if(p[0]<b[0]-limit||p[0]>b[2]+limit||p[1]<b[1]-limit||p[1]>b[3]+limit)continue;
       for(let i=1;i<s.points.length;i++){const a=s.points[i-1],b=s.points[i],dx=b[0]-a[0],dy=b[1]-a[1],t=Math.max(0,Math.min(1,((p[0]-a[0])*dx+(p[1]-a[1])*dy)/(dx*dx+dy*dy||1))),d=(p[0]-a[0]-dx*t)**2+(p[1]-a[1]-dy*t)**2;if(d<best){best=d;hit={segment:s,fraction:(s.totals[i-1]+distance(a,b)*t)/s.length};}}
     }return hit;
   }
@@ -137,7 +177,7 @@
   }
   function fillParticles(){
     particles=[];rainElapsed=0;rainEmissions=0;
-    rainTributaries=segments.filter(s=>s.routable!==false&&s.next!==null&&s.length>0);rainSources=rainTributaries.filter(s=>s.parents.length===0);
+    rainTributaries=segments.filter(s=>(!state.isolateBasin||s.basin===state.basin)&&s.routable!==false&&s.next!==null&&s.length>0);rainSources=rainTributaries.filter(s=>s.parents.length===0);
     if(!rainTributaries.length)return;
     for(let i=0;i<(width<600?160:320);i++){const particle={};replenishParticle(particle);particle.age=Math.random()*particle.lifetime;particles.push(particle);}
   }
@@ -155,21 +195,47 @@
       }
     }
   }
+  function drawMapKey(c){
+    c.save();c.setTransform(dpr,0,0,dpr,0,0);c.globalAlpha=1;c.shadowBlur=0;
+    const metresPerPixel=1000/(data.unitsPerKm*camera.scale),target=Math.min(120,width*.22)*metresPerPixel,magnitude=10**Math.floor(Math.log10(target)),length=[5,2,1].map(n=>n*magnitude).find(n=>n<=target)||magnitude/2,pixels=length/metresPerPixel;
+    const x=width-pixels-28,y=state.mapFocus?height-58:Math.min(height-58,$('player').getBoundingClientRect().top-22);
+    c.fillStyle='#071910dd';c.fillRect(x-10,y-25,pixels+20,39);c.strokeStyle='#d1e7d8';c.lineWidth=1.5;c.beginPath();c.moveTo(x,y-4);c.lineTo(x,y+1);c.lineTo(x+pixels,y+1);c.lineTo(x+pixels,y-4);c.stroke();
+    c.fillStyle='#dfede5';c.font='10px system-ui,sans-serif';c.textAlign='center';c.fillText(length>=1000?new Intl.NumberFormat('nb-NO').format(length/1000)+' km':Math.round(length)+' m',x+pixels/2,y-10);
+    const northY=state.heightColors&&state.mapLayer==='relief'?170:92;c.fillStyle='#071910dd';c.fillRect(width-53,northY,28,43);c.fillStyle='#d1e7d8';c.beginPath();c.moveTo(width-39,northY+6);c.lineTo(width-44,northY+22);c.lineTo(width-39,northY+19);c.lineTo(width-34,northY+22);c.closePath();c.fill();c.font='9px system-ui,sans-serif';c.fillText('N',width-39,northY+36);c.restore();
+  }
+  async function exportMap(){
+    if(!state.ready||exporting||$('export-map').disabled)return;
+    const button=$('export-map'),label=button.querySelector('span');exporting=true;button.disabled=true;label.textContent='Lagrer …';$('export-status').textContent='';
+    try{
+      await new Promise(resolve=>requestAnimationFrame(resolve));
+      if(state.mapLayer!=='dark'&&state.mapOpacity>0&&[...tileView].some(key=>tiles.get(key)?.status!=='ready'))throw Error('pending map');
+      const colored=state.heightColors&&state.mapLayer==='relief'&&state.mapOpacity>0,image=document.createElement('canvas'),header=62,footer=colored?100:70;image.width=canvas.width;image.height=canvas.height+Math.round((header+footer)*dpr);
+      const c=image.getContext('2d',{alpha:false});c.fillStyle='#07110c';c.fillRect(0,0,image.width,image.height);c.drawImage(canvas,0,header*dpr);c.scale(dpr,dpr);
+      c.fillStyle='#e1f0e6';c.font='600 17px system-ui,sans-serif';c.fillText('OnlyFag · Vann og landskap',20,27);c.font='11px system-ui,sans-serif';c.fillStyle='#b4cabe';c.fillText((state.isolateBasin?basins.get(state.basin).name:'Norske vassdrag')+' · '+$('map-layer').selectedOptions[0].textContent,20,46);
+      let y=header+height+23;c.font='10px system-ui,sans-serif';c.fillText('Elvedata: NVE ELVIS · NLOD · onlyfag.no',20,y);
+      if(state.mapLayer!=='dark'){y+=17;c.fillText('Bakgrunn: © Kartverket · kartverket.no',20,y);}
+      if(colored){y+=22;c.fillText('Høyde over havet',20,y-6);drawHeightLegend(c,20,y,Math.min(260,width-40));}
+      const blob=await new Promise(resolve=>image.toBlob(resolve,'image/png'));if(!blob)throw Error('image');
+      const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='onlyfag-kart-'+new Date().toISOString().slice(0,10)+'.png';link.click();setTimeout(()=>URL.revokeObjectURL(url),5000);$('export-status').textContent='PNG er lagret med kildeinformasjon.';
+    }catch(error){$('export-status').textContent='Kartbildet kunne ikke lagres. Vent til bakgrunnen er lastet og prøv igjen.';}
+    finally{exporting=false;label.textContent='Lagre kart som bilde';mapStatus();}
+  }
   function frame(now){
     const dt=Math.min(.15,Math.max(0,(now-last)/1000));last=now;
     if(state.ready&&!document.hidden&&(dirty||!state.paused||hover!==lastHover)){
       if(!state.paused&&!state.completed){state.progress=Math.min(1,state.progress+dt*state.speed/duration);if(state.progress===1){state.completed=true;state.paused=!state.rain;controls();setStatus('Dråpen har nådd '+(basins.get(state.basin).outletLabel||'vassdragets utløp')+(state.rain?'. Regnet fortsetter i sideelvene.':'. Spill reisen igjen eller velg en ny elv.'));}}
       if(dirty)paintBase();ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(base,0,0);ctx.setTransform(dpr,0,0,dpr,0,0);
-      if(state.rain){if(!state.paused)advanceRain(dt*state.speed);if(state.showRivers)for(const particle of particles)dot(ctx,at(particle.segment.points,particle.segment.totals,particle.distance),particle.color,1.2,.16);}
+      if(state.rain){if(!state.paused)advanceRain(dt*state.speed);if(state.showRivers){ctx.globalAlpha=state.riverIntensity;for(const particle of particles)if(!state.isolateBasin||particle.segment.basin===state.basin)dot(ctx,at(particle.segment.points,particle.segment.totals,particle.distance),particle.color,1.2*Math.sqrt(state.riverWidth),.16);ctx.globalAlpha=1;}}
       const pos=routePosition(route,state.progress);
       if(pos&&state.showRivers){
         const q=screen(pos.point);ctx.strokeStyle='#e4f8ee';ctx.globalAlpha=.2;ctx.lineWidth=1;ctx.beginPath();ctx.arc(q.x,q.y,state.completed?11:8,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;
         // A short luminous tail follows the actual downstream geometry.
         for(let k=12;k>0;k--){const p=routePosition(route,Math.max(0,state.progress-k*.0015));if(p){ctx.globalAlpha=(1-k/14)*.5;dot(ctx,p.point,'#d3f9e2',Math.max(.6,2.6-k*.14),.5);}}
-        ctx.globalAlpha=1;dot(ctx,pos.point,'#f4fff6',3.1,1);dot(ctx,pos.point,'#ffffff',1.2,0);
+        ctx.globalAlpha=1;if(state.mapLayer!=='dark')dot(ctx,pos.point,'#08241d',4.5,0);dot(ctx,pos.point,'#f4fff6',3.1,1);dot(ctx,pos.point,'#ffffff',1.2,0);
       }
       if(pos&&now-domTime>180){$('progress').value=state.progress;$('river-name').textContent=state.completed?'Reisen er fremme':riverName(pos.segment.name)||'Langs sideelvene';domTime=now;}
       if(hover&&state.showRivers){ctx.strokeStyle=basins.get(hover.basin).color;ctx.lineWidth=2/camera.scale;ctx.translate(camera.tx,camera.ty);ctx.scale(camera.scale,camera.scale);ctx.stroke(hover.path);ctx.setTransform(dpr,0,0,dpr,0,0);}
+      drawMapKey(ctx);
       lastHover=hover;
     }
     requestAnimationFrame(frame);
@@ -194,8 +260,14 @@
     if(state.mapLayer==='dark'){state.showRivers=true;$('show-rivers').checked=true;}
     $('show-rivers').disabled=state.mapLayer==='dark';$('basemap-credit').hidden=state.mapLayer==='dark';
     for(const [key,tile] of tiles)if(tile.status==='error')tiles.delete(key);
-    tileView.clear();hover=null;dirty=true;$('map-status').textContent=state.mapLayer==='dark'?'':'Laster bakgrunnskart …';
+    tileView.clear();hover=null;dirty=true;styleControls();$('map-status').textContent=state.mapLayer==='dark'?'':'Laster bakgrunnskart …';$('export-map').disabled=state.mapLayer!=='dark';
   });
+  for(const [name,key,scale] of [['river-width','riverWidth',1],['river-intensity','riverIntensity',100],['map-opacity','mapOpacity',100]])$(name).addEventListener('input',()=>{state[key]=Number($(name).value)/scale;dirty=true;styleControls();});
+  $('height-colors').addEventListener('change',()=>{state.heightColors=$('height-colors').checked;dirty=true;styleControls();});
+  $('isolate-basin').addEventListener('change',()=>{state.isolateBasin=$('isolate-basin').checked;hover=null;if(state.rain)fillParticles();dirty=true;});
+  $('map-focus').addEventListener('click',()=>{state.mapFocus=!state.mapFocus;document.body.dataset.mapFocus=String(state.mapFocus);$('map-focus').setAttribute('aria-pressed',String(state.mapFocus));$('map-focus').setAttribute('aria-label',state.mapFocus?'Vis reisepanelet':'Vis kartet uten reisepanelet');$('map-focus').querySelector('span').textContent=state.mapFocus?'Vis reisen':'Kartvisning';updateCamera();});
+  $('export-map').addEventListener('click',exportMap);
+  for(const [a,b] of [['map-style','about'],['about','map-style']])$(a).addEventListener('toggle',()=>{if($(a).open)$(b).open=false;});
   $('show-rivers').addEventListener('change',()=>{state.showRivers=$('show-rivers').checked;hover=null;dirty=true;});
   $('reset').addEventListener('click',()=>{state.zoom=1;state.pan=[0,0];if(state.ready)updateCamera();});
   for(const mode of ['flow','basin'])$('mode-'+mode).addEventListener('click',()=>{state.mode=mode;dirty=true;controls();setStatus(mode==='basin'?'Fargen viser vassdraget. De lyseste sideelvene leder vann til startpunktet.':'Følg dråpen mot vassdragets utløp.');});
@@ -216,7 +288,7 @@
       const description=data.description||['Et nedbørfelt samler vann mot et felles utløp. Fargene viser seks norske vassdrag. De lyseste sideelvene leder vann til startpunktet du har valgt.','Klikk på en elv eller velg et startsted i listen. Prototypen følger kartlagte elveløp; den beregner ikke avrenning fra vilkårlige punkter på land. Noen mindre sidegrener vises bare som bakgrunn.','Dråpen viser vannets vei gjennom elvenettet. Tempoet er tilpasset visningen og viser ikke hvor lang tid vannet bruker i virkeligheten.'];
       $('about-copy').replaceChildren();for(const text of description){const p=document.createElement('p');p.textContent=text;$('about-copy').append(p);}
       const mapHelp=document.createElement('p');mapHelp.textContent='Velg topografisk kart, turkart eller terrengrelieff under Bakgrunn. Slå av Vis elver for å studere landskapet. Terrengrelieff viser fjellrygger og daler, men tegner ikke inn beregnede vannskiller.';$('about-copy').append(mapHelp);
-      state.ready=true;document.body.dataset.ready='true';$('map-layer').disabled=false;resize();const first=data.starts.find(s=>basins.get(id(byId.get(id(s.segment)).basin))?.name==='Glomma')||data.starts[0];selectSegment(byId.get(id(first.segment)),Number(first.fraction)||0,id(first.id));updateCamera();
+      state.ready=true;document.body.dataset.ready='true';$('map-layer').disabled=false;$('export-map').disabled=false;initHeightLegend();styleControls();resize();const first=data.starts.find(s=>basins.get(id(byId.get(id(s.segment)).basin))?.name==='Glomma')||data.starts[0];selectSegment(byId.get(id(first.segment)),Number(first.fraction)||0,id(first.id));updateCamera();
     }catch(error){setStatus('Kartet kunne ikke lastes. Last siden på nytt for å prøve igjen.');document.body.dataset.error='true';console.error('River prototype:',error);}
   }
   resize();requestAnimationFrame(frame);load();

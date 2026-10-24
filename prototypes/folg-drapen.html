@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="color-scheme" content="dark">
   <title>Følg dråpen – OnlyFag</title>
-  <link rel="stylesheet" href="../assets/geography/drop-prototype/style-327706f45df8.css">
-  <script src="../assets/geography/drop-prototype/app-c8926720fd57.js" defer></script>
+  <link rel="stylesheet" href="../assets/geography/drop-prototype/style-2b71208d5724.css">
+  <script src="../assets/geography/drop-prototype/app-85b9356e15d3.js" defer></script>
 </head>
-<body data-map-layer="dark">
+<body data-map-layer="dark" data-map-focus="false">
   <main class="drop-explorer" aria-label="Følg dråpen gjennom norske vassdrag">
     <canvas id="river-map" tabindex="0" aria-label="Interaktivt elvekart" aria-describedby="map-help keyboard-help">
       Utforsk vassdragene ved å velge et startpunkt i listen under kartet.
@@ -33,6 +33,60 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H4v4m12-4h4v4M4 16v4h4m12-4v4h-4M8 8h8v8H8Z"/></svg>
         <span>Hele kartet</span>
       </button>
+      <button class="map-action" id="map-focus" type="button" title="Vis kartet uten reisepanelet" aria-label="Vis kartet uten reisepanelet" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4ZM4 14h16M8 14v5"/></svg>
+        <span>Kartvisning</span>
+      </button>
+      <details class="map-style" id="map-style">
+        <summary title="Juster kartets utseende">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h7m4 0h5M4 12h2m4 0h10M4 18h11m4 0h1M11 3v6M6 9v6m9 0v6"/></svg>
+          <span>Kartstil</span>
+        </summary>
+        <div class="style-panel">
+          <div class="style-panel-heading">
+            <h2>Form kartet</h2>
+            <p>Finn balansen mellom vann og landskap.</p>
+          </div>
+          <div class="map-layer-controls">
+            <label for="map-layer">Bakgrunn</label>
+            <select id="map-layer" disabled>
+              <option value="dark">Elvekart</option>
+              <option value="topo">Topografisk kart</option>
+              <option value="toporaster">Turkart</option>
+              <option value="relief">Terrengrelieff</option>
+            </select>
+          </div>
+          <label class="style-range" for="map-opacity">
+            <span>Kartlagets synlighet <output id="map-opacity-value" for="map-opacity">85 %</output></span>
+            <input id="map-opacity" type="range" min="0" max="100" step="1" value="85">
+            <small>Demp bakgrunnen for å løfte frem elvene.</small>
+          </label>
+          <label class="style-check" for="height-colors">
+            <input id="height-colors" type="checkbox" disabled>
+            <span><strong>Høydefarger</strong><small id="height-color-help">Velg Terrengrelieff for høydefarger.</small></span>
+          </label>
+          <fieldset class="river-style-controls">
+            <legend>Elvenett</legend>
+            <label class="style-range" for="river-width">
+              <span>Tykkelse <output id="river-width-value" for="river-width">1,4×</output></span>
+              <input id="river-width" type="range" min="0.5" max="4" step="0.1" value="1.4">
+            </label>
+            <label class="style-range" for="river-intensity">
+              <span>Intensitet <output id="river-intensity-value" for="river-intensity">95 %</output></span>
+              <input id="river-intensity" type="range" min="20" max="100" step="1" value="95">
+            </label>
+            <div class="river-style-toggles">
+              <label class="river-toggle"><input id="show-rivers" type="checkbox" checked disabled> Vis elver</label>
+              <label class="river-toggle"><input id="isolate-basin" type="checkbox"> Bare valgt vassdrag</label>
+            </div>
+          </fieldset>
+          <button id="export-map" class="export-map" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg>
+            <span>Lagre kart som bilde</span>
+          </button>
+          <p id="export-status" class="export-status" role="status" aria-live="polite"></p>
+        </div>
+      </details>
       <details class="about" id="about">
         <summary title="Om kartet">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 11v5m0-9v.2"/></svg>
@@ -49,18 +103,10 @@
       </details>
     </aside>
 
+    <p id="map-status" class="map-status" role="status" aria-live="polite"></p>
+    <aside id="height-legend" class="height-legend" aria-label="Forklaring av høydefarger" hidden></aside>
+
     <section class="player" id="player" aria-label="Utforsk vassdraget">
-      <div class="map-layer-controls">
-        <label for="map-layer">Bakgrunn</label>
-        <select id="map-layer" disabled>
-          <option value="dark">Elvekart</option>
-          <option value="topo">Topografisk kart</option>
-          <option value="toporaster">Turkart</option>
-          <option value="relief">Terrengrelieff</option>
-        </select>
-        <label class="river-toggle"><input id="show-rivers" type="checkbox" checked disabled> Vis elver</label>
-      </div>
-      <p id="map-status" class="map-status" role="status" aria-live="polite"></p>
       <div class="player-topline">
         <div class="view-modes" role="group" aria-label="Visning">
           <button id="mode-flow" class="is-active" type="button" aria-pressed="true">Følg vannet</button>

@@ -14,6 +14,38 @@ journey arrives; Pause stops all motion, and reduced motion remains opt-in.
 The static canvas cache resets opacity before each background fill, so fast
 pan/zoom fully replaces the previous camera's image.
 
+## Cartographic controls
+
+The independent “Kartstil” panel adjusts river width (0.5–4×), intensity
+(20–100%) and background visibility (0–100%). A subtle dark casing keeps rivers
+legible on pale backgrounds. Background images are composed at full opacity in
+one intermediate canvas, then blended exactly once; cached fallback tiles never
+compound the opacity. At zero opacity the background is hidden and further tile
+requests stop. “Bare valgt vassdrag” isolates its river family, including rain
+and river picking. These controls do not restart the selected journey.
+
+“Kartvisning” hides the journey panel and fits the network to the larger space;
+the independent settings stay accessible. A projected metric scale and north
+arrow are drawn into the map. PNG export includes the current rendered map,
+title, source credits and the elevation key when enabled. Export waits for
+visible tiles and reports download errors next to its button.
+
+The optional height colors apply only to terrain relief. They use **actual
+elevations**, not brightness estimated from hillshade. Kartverket's public
+[DTM ImageServer](https://hoydedata.no/arcgis/rest/services/DTM/ImageServer)
+serves `exportImage` PNG32 images on the same EPSG:25833 grid. A fixed `Stretch`
+with statistics 0–2500 m, `DRA:false`, and an explicit natural multipart color
+ramp gives the same height the same color in every tile. Palette anchors are
+0, 500, 1000, 1500, 2000 and 2500 m; values outside the range clamp at its ends.
+The color images are multiplied with the existing relief to retain landforms.
+Color tiles use matrix level 5 or finer because larger source mosaics can exceed
+the service's limits. Linked Kartverket attribution remains visible and is
+included in exports.
+
+The dynamically colored WMS layer was deliberately excluded: equal-resolution
+nested sample requests assigned different colors to the same geographic pixels.
+The fixed-statistics REST rule passed a pixel-identical overlap check.
+
 ## Background maps
 
 The background selector offers the original dark river map, Kartverket's
@@ -60,6 +92,7 @@ node scripts/build-drop-prototype-assets.cjs
 node scripts/build-drop-prototype-assets.cjs --check
 BROWSER_EXECUTABLE=/usr/bin/chromium node tests/drop-prototype.cjs
 BROWSER_EXECUTABLE=/usr/bin/chromium node tests/drop-basemap.cjs
+BROWSER_EXECUTABLE=/usr/bin/chromium node tests/drop-map-style.cjs
 ```
 
 After changing data or browser sources, rebuild the versioned assets. Retain
