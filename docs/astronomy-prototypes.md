@@ -20,6 +20,6 @@ The Milanković page bundles NOAA's Berger (1978) orbital solution, sampled ever
 
 ## Build and validation
 
-Run `node scripts/build-astronomy-prototype-assets.cjs` after changing sources. It creates immutable content-addressed CSS, JavaScript, and data files and updates all four HTML pages. Keep previously published assets so cached HTML remains usable. `--check` verifies that source, generated assets, and page references agree.
+Run `node scripts/build-astronomy-prototype-assets.cjs` after changing sources. It creates immutable content-addressed CSS, JavaScript, and data files and updates all four HTML pages. Page asset URLs also include a matching query version, which avoids the domain CDN's cached pre-deployment 404 responses. Keep previously published assets so cached HTML remains usable. `--check` verifies that source, generated assets, and page references agree.
 
 Browser regression scripts are in `tests/astronomy-system.cjs`, `tests/astronomy-seasons.cjs`, and `tests/astronomy-milankovitch.cjs`. Set `BASE_URL` to a local static server or the deployed origin, `PLAYWRIGHT_MODULE` to the installed Playwright module, and `BROWSER_EXECUTABLE` to a browser executable if needed. Tests cover numerical reference cases, meaningful control transitions, eclipse geometry, polar day/night, zero tilt, real-data ranges, animation, and small-screen overflow. A separate integration check covers navigation, local assets, and the shared page layout.

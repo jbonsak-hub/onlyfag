@@ -18,9 +18,9 @@ for(const {file,source} of entries){
 }
 for(const page of ['index','jord-mane-sol','arstider-solbane','milankovitch']){
   const target=path.join(root,'prototyper',page+'.html'),original=fs.readFileSync(target,'utf8');let html=original;
-  for(const {name,file} of entries){
+  for(const {name,file,source} of entries){
     const ext=path.extname(name).slice(1),stem=name.slice(0,-ext.length-1);
-    html=html.replace(new RegExp('astronomy-prototypes/'+stem+'(?:-[a-f0-9]{12})?\\.'+ext,'g'),'astronomy-prototypes/'+file);
+    html=html.replace(new RegExp('astronomy-prototypes/'+stem+'(?:-[a-f0-9]{12})?\\.'+ext+'(?:\\?v=[a-f0-9]{12})?','g'),'astronomy-prototypes/'+file+'?v='+hash(source));
   }
   if(check){if(html!==original)throw Error('Rebuild astronomy page references: '+page);}
   else fs.writeFileSync(target,html);

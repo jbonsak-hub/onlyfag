@@ -34,7 +34,7 @@ const pages=['index','jord-mane-sol','arstider-solbane','milankovitch'];
         assert.equal(result.nav.length,3);assert.equal(new Set(result.nav.map(a=>a.href)).size,3);
         if(name!=='index')assert.equal(result.nav.filter(a=>a.current==='page').length,1);
         assert(result.runtimeAssets.every(url=>url.startsWith(base+'/assets/astronomy-prototypes/')));
-        assert(result.runtimeAssets.every(url=>/-[a-f0-9]{12}\.(css|js)$/.test(url)),'HTML must use versioned assets');
+        assert(result.runtimeAssets.every(url=>/-[a-f0-9]{12}\.(css|js)\?v=[a-f0-9]{12}$/.test(url)),'HTML must use versioned assets');
         if(name==='jord-mane-sol')assert.equal(await page.evaluate(()=>EarthMoonLab.snapshot().playing),false);
         if(name==='arstider-solbane')assert.equal(await page.evaluate(()=>SeasonsLab.snapshot().playing),false);
         if(name==='milankovitch')assert.equal(await page.evaluate(()=>MilankovitchLab.snapshot().playing),false);
