@@ -31,7 +31,7 @@
   let counties = document.body.dataset.quiz === 'fylker';
   let total = counties ? 15 : 50;
   let shapeLabel = counties ? 'Fylke på kartet' : 'Delstat på kartet';
-  let regionData = null, mapGeneration = 0, physical = false;
+  let regionData = null, usContext = null, mapGeneration = 0, physical = false;
   let practice = false, continentPractice = false, retrying = false;
   const mastered = new Set();
   const continentOrder=['northAmerica','southAmerica','europe','asia','africa','oceania'];
@@ -221,6 +221,28 @@
     const southEdge = (florida.y + florida.height) * mainlandTransform.d + mainlandTransform.f;
     const alaska = fit(groups.AK, {x:25, y:southEdge - 125, w:165, h:100, bottom:true});
     const hawaii = fit(groups.HI, {x:215, y:southEdge - 41, w:110, h:41, bottom:true});
+    // Fit only the answer shapes. The neighbours follow those transforms without
+    // changing state size, hint positions or the separate Alaska/Hawaii insets.
+    const context = svgNode('g',{id:'us-context','aria-hidden':'true','pointer-events':'none'});
+    const insetBox = (bounds, x, width) => ({x, y:bounds.y - 12, width, height:southEdge + 8 - (bounds.y - 12)});
+    const alaskaBox = insetBox(alaska,15,187), hawaiiBox = insetBox(hawaii,210,128);
+    const boxPath = b => `M${b.x} ${b.y}h${b.width}v${b.height}h${-b.width}Z`;
+    const mainClip = svgNode('clipPath',{id:'us-main-context-clip',clipPathUnits:'userSpaceOnUse'});
+    // Let neighbours continue into the SVG's letterboxed margins; cutting at
+    // the viewBox would turn northern Canada into a straight artificial coast.
+    mainClip.append(svgNode('path',{d:boxPath({x:-2000,y:-2000,width:4000,height:4000})+boxPath(alaskaBox)+boxPath(hawaiiBox),'clip-rule':'evenodd'}));
+    const alaskaClip = svgNode('clipPath',{id:'us-alaska-context-clip',clipPathUnits:'userSpaceOnUse'});
+    alaskaClip.append(svgNode('rect',alaskaBox));
+    context.append(mainClip,alaskaClip);
+    for (const area of ['main','AK']) {
+      const clipped = svgNode('g',{'clip-path':`url(#us-${area==='main'?'main':'alaska'}-context-clip)`});
+      const projected = svgNode('g',{transform:groups[area].getAttribute('transform')});
+      for (const country of usContext.areas[area]) projected.append(svgNode('path',{
+        d:country.d,class:'map-context','fill-rule':'evenodd','data-country':country.n,'data-area':area
+      }));
+      clipped.append(projected);context.append(clipped);
+    }
+    $('states').prepend(context);
     $('insetSeparators').setAttribute('d', 'M15 ' + (alaska.y - 12) + 'H202V' + (southEdge + 8) + ' M210 ' + (hawaii.y - 12) + 'H338');
     // Extra click targets for the small northeastern states. No answer labels.
     const small = ['New Hampshire','Vermont','Massachusetts','Rhode Island','Connecticut','New Jersey','Delaware','Maryland'];
@@ -517,7 +539,11 @@
   const mapData = embedded ? Promise.resolve(JSON.parse(embedded.textContent)) : fetch(counties ? '../assets/geography/norway-counties.json' : '../assets/geography/us-states.json').then(response => {
     if (!response.ok) throw new Error('Kartet kunne ikke hentes'); return response.json();
   });
-  mapData.then(data => {
+  const contextData = counties ? Promise.resolve(null) : fetch('../assets/geography/us-context.json').then(response => {
+    if (!response.ok) throw new Error('Nabokartet kunne ikke hentes'); return response.json();
+  });
+  Promise.all([mapData, contextData]).then(([data, context]) => {
+    usContext = context;
     states = data;
     if (states.length !== total || new Set(states.map(s=>s.n)).size !== total) throw new Error('Ufullstendig kart');
     buildMap(); window.ClickMapZoom?.setBase(); $('start').disabled = false; $('start').textContent = counties ? 'Start Norske fylker →' : 'Start Statle →';
