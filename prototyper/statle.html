@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="no">
+<head><script id="map-theme-init">try{document.documentElement.dataset.theme=localStorage.getItem("geoDarkMode")==="1"?"dark":"light"}catch(_){}</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Statle · prototype · Onlyfag</title><link rel="stylesheet" href="../assets/geography/statle-assets/statle-af1d526c31ec.css"><script src="../assets/geography/statle-assets/map-zoom-9a32687db670.js" defer></script><script src="../assets/geography/statle-assets/statle-b02ce3964e8a.js" defer></script><script src="../assets/geography/statle-assets/panel-resize-a79751319f7d.js" defer></script><link rel="stylesheet" href="../assets/geography/quiz-assets/online-highscores-63ca10e91552.css"><script src="../assets/geography/quiz-assets/score-service-0bf91f3dbe8c.js" defer></script><script src="../assets/geography/quiz-assets/online-highscores-e936f69cc21b.js" defer></script></head>
+<body data-quiz="statle">
+
+<dialog id="geoMenu" class="geo-menu" aria-label="Geografimeny"><div class="geo-menu-head"><a href="../geografi.html">🌍 Geografi</a><button id="geoMenuClose" type="button" aria-label="Lukk geografimenyen">Lukk ×</button></div><nav aria-label="Geografimeny"><details><summary>Kart</summary><a href="../geografi.html#projection">Kartprojeksjoner</a><a href="../geografi.html#coordinates">Koordinater</a><a href="../geografi.html#coordinatequiz">↳ Test deg selv</a><a href="../geografi.html#routes">Flyruter</a><a href="../geografi.html#antipodes">Antipoder</a><a href="../geografi.html#scale">Målestokk</a><a href="../geografi.html#terrain">Høydekurver og terreng</a><a href="../geografi.html#daynight">Hvor er sola?</a></details>
+<details><summary>Indre krefter og landformer</summary><a href="../geografi.html#indre-fagstoff">Fagstoff</a><a href="../geografi/plategrenser.html">Plategrenser</a><a href="../geografi/tsunami.html">Tsunami</a><a href="../geografi.html#indre-begreper">Begrepsliste</a><a href="../geografi.html#indre-sporsmal">Test deg selv</a></details>
+<details><summary>Ytre krefter og landformer</summary><a href="../geografi.html#ytre-fagstoff">Fagstoff</a><a href="../geografi.html#ytre-begreper">Begrepsliste</a><a href="../geografi.html#ytre-sporsmal">Test deg selv</a></details>
+<details><summary>Vær og klima</summary><a href="../geografi.html#klima-fagstoff">Fagstoff</a><a href="../geografi.html#klima-sirkulasjon">Global sirkulasjon</a><a href="../geografi.html#system">Jord · måne · sol</a><a href="../geografi.html#seasons">Årstider og solbane</a><a href="../geografi.html#milankovitch">Milankovitch-sykluser</a><a href="../geografi.html#klima-oppvarming">Hva varmer verden?</a><a href="../geografi.html#klima-begreper">Begrepsliste</a><a href="../geografi.html#klima-sporsmal">Test deg selv</a></details>
+<details><summary>Ressurser, næring, lokalisering og interessekonflikter</summary><a href="../geografi.html#ressurs-fagstoff">Fagstoff</a><a href="../geografi.html#ressurs-begreper">Begrepsliste</a><a href="../geografi.html#ressurs-sporsmal">Test deg selv</a></details>
+<details><summary>Demografi</summary><a href="../geografi.html#demografi-fagstoff">Fagstoff</a><a href="../geografi.html#demografi-overgang">Demografisk overgang</a><a href="../geografi.html#demografi-pyramider">Befolkningspyramider</a><a href="../geografi.html#demografi-begreper">Begrepsliste</a><a href="../geografi.html#demografi-sporsmal">Test deg selv</a></details>
+<details><summary>Fakta og quiz</summary><a href="../geografi.html#verden-land">Land</a><a href="../geografi.html#verden-landformer">Kjente steder</a><a href="../geografi.html#verden-quiz">Geo-quiz</a></details></nav></dialog>
+
+<main class="game" aria-label="Statle – finn delstatene">
+  <div id="mapViewport" class="map-viewport"><span class="map-zoom-hint">Scroll eller klyp for å zoome · dra for å flytte</span>        <svg id="map" viewBox="0 0 900 550" aria-label="Klikkbart kart over USAs 50 delstater" role="group">
+          <defs><filter id="hoverGlow" x="-35%" y="-35%" width="170%" height="170%"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+          <g id="states"></g>
+          <path id="insetSeparators" class="inset-line" aria-hidden="true"/>
+
+          <g id="smallStates"></g>
+          <g id="hintLayer" aria-hidden="true"></g>
+          <g id="labelLayer" aria-hidden="true"></g>
+        </svg></div>
+  <aside class="game-panel" aria-label="Spillinformasjon og kontroller">
+    <header class="panel-header"><button id="geoMenuButton" class="geo-menu-toggle" type="button" aria-haspopup="dialog" aria-controls="geoMenu" aria-expanded="false">☰ Meny</button><strong class="brand">Statle</strong></header>
+    <div class="target-block"><span id="targetVerb">Klar for en runde?</span><strong id="targetName">USAs 50 delstater</strong></div>
+    <div class="stats"><div><span>Fullført</span><strong><span id="completed">0</span><small> / 50</small></strong></div><div><span>Tid</span><time id="elapsed">00:00</time></div><div><span>Feil</span><strong id="mistakes">0</strong></div></div>
+    <div class="progress-track"><i id="progressFill"></i></div>
+    <div id="overlay" class="ready-actions"><button id="start" class="primary-button" disabled>Laster kart …</button></div>
+
+    <p id="feedback" role="status" aria-live="polite"></p>
+    <p id="statle-score" hidden></p><div class="legend" aria-label="Fargekoder"><strong>Fargekoder</strong><span><i class="dot green"></i>≤ 5 s · ingen feil</span><span><i class="dot yellow"></i>≤ 10 s · maks 1 feil</span><span><i class="dot orange"></i>&gt; 10 s / 2 feil</span><span><i class="dot red"></i>3+ feil</span></div>
+    <button id="statle-top-ten" class="primary-button" type="button">Topp 10</button><footer><div class="game-controls"><button id="restart" aria-label="Start en ny runde" disabled>↻ Ny runde</button></div><a href="../geografi/statle.html">Dagens Statle ↗</a><span>Kart: U.S. Census Bureau, 2024. Naboland: Natural Earth.</span></footer>
+  </aside>
+</main>
+<script src="../assets/geography/quiz-assets/quiz-language-9871a8569506.js"></script></body></html>

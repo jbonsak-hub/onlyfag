@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#163a39">
+  <meta name="description" content="Utforsk referansesystemer, lysets fart, samtidighet, tid og lengde i seks interaktive fysikkmoduler på norsk.">
+  <title>Relativitetslab · Rom, tid og perspektiv</title>
+  <style>500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+:root{--ink:#163a39;--teal:#087e79;--orange:#df7048;--muted:#667b77;--line:#dce7e1;--paper:#fffef8;--mint:#e8f1e9;--surface:#f3f6ef;font-family:'DM Sans',Arial,sans-serif;color:var(--ink);background:var(--paper);font-synthesis:none}
+*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button,a,input{touch-action:manipulation}button{cursor:pointer;color:inherit}button:disabled{opacity:.35;cursor:default}a{color:var(--teal)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--orange);outline-offset:4px}button{border:0}button.primary,.primary,.next-button{background:var(--ink);color:white;border-radius:8px;padding:11px 18px;font-weight:600}.secondary{padding:10px 15px;border:1px solid #b6cbc3;border-radius:8px;background:white;font-weight:600}button:hover:not(:disabled){filter:brightness(.96)}.text-button{background:none;padding:8px 0;font-size:13px;font-weight:600}.skip-link{position:fixed;top:-60px;left:20px;z-index:20;background:var(--ink);color:#fff;padding:15px}.skip-link:focus{top:10px}
+.site-header{height:98px;border-bottom:1px solid var(--line);padding:0 4vw;display:flex;align-items:center;justify-content:space-between;background:var(--paper)}.brand{text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:13px;font-family:'Manrope',sans-serif;font-size:24px;font-weight:800;letter-spacing:-1px}.brand-light{font-weight:400}.brand small{display:block;letter-spacing:1.8px;font-size:8px;margin-top:5px;font-weight:600}.brand-mark{background:var(--ink);color:var(--paper);width:43px;height:43px;border-radius:50%;font-size:30px;line-height:42px;padding-left:10px;position:relative;font-weight:500}.brand-mark span{color:#c7dcbc;font-size:21px;position:absolute;right:4px;top:-3px}.header-right{display:flex;align-items:center;gap:28px}.level-pill{font-size:9px;letter-spacing:1.5px;border:1px solid var(--line);padding:9px 13px;border-radius:30px}.header-right button span{color:var(--orange);margin-left:10px}
+.app-shell{display:grid;grid-template-columns:252px minmax(0,1fr);max-width:1640px;margin:0 auto}.navigation{padding:37px 23px 0 34px;border-right:1px solid var(--line);min-height:calc(100vh - 98px)}.eyebrow{font-size:9px;font-weight:700;letter-spacing:1.8px;color:var(--teal);margin:0 0 15px}.nav-intro h2{font-family:'Manrope',sans-serif;font-size:23px;line-height:1.35;letter-spacing:-.9px;margin:14px 0}.nav-intro p{font-size:12px;line-height:1.7;color:var(--muted);max-width:170px;margin-bottom:30px}.nav-item{position:relative;display:flex;align-items:center;gap:13px;text-decoration:none;color:var(--ink);padding:16px 10px 16px 7px;border-top:1px solid var(--line);font-size:12px;font-weight:600;min-height:74px;border-radius:0}.nav-item:last-child{border-bottom:1px solid var(--line)}.nav-item.active{background:var(--mint);border-color:transparent;border-radius:8px;margin-left:-9px;padding-left:16px;width:calc(100% + 9px)}.nav-index{font-size:10px;font-weight:500;color:var(--muted);align-self:flex-start;padding-top:3px}.nav-item.active .nav-index{color:var(--teal)}.nav-item small{display:block;font-size:10px;font-weight:400;color:var(--muted);margin-top:6px}.nav-arrow{margin-left:auto;font-size:17px;color:var(--teal);opacity:0}.nav-item.active .nav-arrow{opacity:1}.nav-foot{display:flex;align-items:center;gap:12px;margin-top:32px;color:var(--muted)}.tiny-orbit{font-size:30px;color:#9aada0}.nav-foot p{font-size:10px;line-height:1.7}
+main{padding:38px 3.4vw 0;min-width:0}.module-heading{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:29px;gap:20px}h1{font-family:'Manrope',sans-serif;font-size:clamp(28px,2.9vw,43px);font-weight:600;line-height:1.2;letter-spacing:-1.8px;margin:0 0 12px}.module-subtitle{font-size:13px;line-height:1.7;color:var(--muted);margin:0}.module-number{font-family:'Manrope',sans-serif;font-size:72px;line-height:1;color:#d9e4d8;letter-spacing:-5px;font-weight:500}.lab-layout{display:grid;grid-template-columns:minmax(0,1fr) 245px;gap:24px;align-items:start}.experiment{min-width:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:white}.stage{background:#f0f5ee;position:relative;border-radius:10px 10px 0 0;overflow:hidden;min-width:0}.stage svg{display:block;width:100%;height:auto}.stage-label{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 0;font-size:10px;letter-spacing:1.2px;font-weight:700;color:var(--muted)}.stage-label .live-dot{font-size:9px;letter-spacing:.6px;color:var(--teal)}.live-dot:before{content:'';display:inline-block;width:5px;height:5px;background:var(--teal);border-radius:50%;margin-right:6px}.controls{padding:20px;display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px;border-top:1px solid var(--line)}.control{flex:1 1 170px;min-width:0}.control label{display:flex;justify-content:space-between;gap:8px;font-size:11px;font-weight:600;margin-bottom:9px;line-height:1.5}.control output{color:var(--teal);font-variant-numeric:tabular-nums;white-space:nowrap}.control input[type=range]{width:100%;accent-color:var(--teal);cursor:pointer;height:18px;margin:0}.control select{width:100%;padding:8px;border:1px solid var(--line);border-radius:6px;background:white}.range-ends{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:3px}.segmented{display:flex;gap:3px;flex-wrap:wrap;background:#edf2ed;padding:4px;border-radius:8px}.segmented button{padding:9px 12px;background:transparent;border-radius:5px;font-size:11px;font-weight:600;flex:1}.segmented button.active{background:var(--ink);color:#fff}.button-row{display:flex;gap:8px;flex-wrap:wrap}.controls button{font-size:11px}.metrics{display:flex;flex-wrap:wrap;padding:18px 20px;gap:14px;border-top:1px solid var(--line);background:#fff}.metric{flex:1;min-width:115px}.metric span,.metric label{display:block;color:var(--muted);font-size:10px;line-height:1.5;margin-bottom:6px}.metric strong{display:block;font-family:'Manrope',sans-serif;font-size:23px;font-weight:600;letter-spacing:-.8px;font-variant-numeric:tabular-nums}.metric small{font-size:11px;font-weight:400;letter-spacing:0}.note{font-size:11px;line-height:1.75;color:var(--muted);padding:13px 20px;margin:0;border-top:1px solid var(--line);background:#fafbf7}.note strong{color:var(--ink)}.lesson-sidebar{font-size:12px;line-height:1.8;padding:1px 0}.lesson-sidebar h2{font-family:'Manrope',sans-serif;font-size:16px;letter-spacing:-.5px;margin:0 0 10px}.lesson-sidebar h3{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;margin:23px 0 9px;color:var(--teal)}.lesson-sidebar p{margin:0 0 14px;color:#47615c}.lesson-sidebar ol,.lesson-sidebar ul{padding-left:18px;color:#47615c}.lesson-sidebar li{padding-left:3px;margin-bottom:8px}.formula{padding:13px 15px;background:var(--mint);border-radius:7px;font-size:15px;font-family:Georgia,serif;line-height:1.8;margin:15px 0;color:var(--ink);overflow-wrap:anywhere}.formula small{display:block;font-family:'DM Sans',sans-serif;font-size:10px;color:var(--muted);margin-top:6px}.question{border-top:1px solid var(--line);margin-top:22px;padding-top:17px}.question h3{margin-top:0}.question button{display:block;text-align:left;width:100%;font-size:11px;line-height:1.6;border:1px solid var(--line);background:white;border-radius:6px;padding:9px 11px;margin:7px 0}.question button.correct{border-color:var(--teal);background:var(--mint)}.question button.wrong{border-color:var(--orange);background:#fcf0e9}.feedback{font-size:11px;line-height:1.7;color:var(--teal);margin-top:10px}.feedback:empty{display:none}details{font-size:11px;line-height:1.8}summary{cursor:pointer;font-weight:600;color:var(--ink)}details p{margin-top:10px}.module-footer{display:flex;align-items:center;justify-content:space-between;margin-top:24px;padding:20px 0;border-top:1px solid var(--line);gap:15px}.module-footer span{font-size:10px;color:var(--muted)}.next-button{font-size:12px}.sources{padding:17px 0 27px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;color:var(--muted);border-top:1px solid var(--line)}.sources details{max-width:650px;font-size:10px}.sources>span{font-size:8px;letter-spacing:1.4px;white-space:nowrap;margin-top:4px}.teacher-panel{background:var(--mint);padding:22px;border:1px solid #c3d6c9;border-radius:10px;margin:0 0 25px;font-size:12px;line-height:1.8}.teacher-top{display:flex;justify-content:space-between;gap:20px}.teacher-top h2{font-size:18px;margin:0}.teacher-top button{padding-top:0}.teacher-panel[hidden]{display:none}.mink-options{padding:0 20px 16px;display:flex;gap:14px;flex-wrap:wrap;font-size:10px}.mink-options label{display:flex;align-items:center;gap:5px}.mink-options input{accent-color:var(--teal)}.mink-metrics .metric strong{font-size:20px}.mink-status{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;font-size:11px;background:var(--mint);border-top:1px solid var(--line)}.mink-status strong{color:var(--teal)}.event-presets{padding:14px 20px;display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid var(--line)}.event-presets button{font-size:10px;padding:6px 9px;background:var(--surface);border:1px solid var(--line);border-radius:5px}.mink-svg{touch-action:none;cursor:crosshair}.mink-legend{display:flex;gap:13px;flex-wrap:wrap;font-size:9px;padding:2px 20px 13px;background:#f0f5ee}.mink-legend span:before{content:'';display:inline-block;width:13px;height:2px;background:var(--ink);vertical-align:middle;margin-right:5px}.mink-legend .primed:before{background:var(--teal)}.mink-legend .light:before{background:var(--orange)}.mink-legend .projection:before{background:#9670a0}.wide-formula{font-size:14px}.mini-label{font-size:10px;color:var(--muted)}
+@media(min-width:1500px){.lab-layout{grid-template-columns:minmax(0,1fr) 280px;gap:33px}.lesson-sidebar{font-size:13px}main{padding-left:48px;padding-right:48px}}
+@media(max-width:1150px){.app-shell{grid-template-columns:205px minmax(0,1fr)}.navigation{padding-left:23px;padding-right:17px}.nav-intro h2{font-size:21px}.lab-layout{grid-template-columns:minmax(0,1fr) 205px;gap:18px}main{padding-left:24px;padding-right:24px}.module-number{font-size:58px}.sources>span{display:none}.header-right{gap:15px}.level-pill{display:none}.metric strong{font-size:20px}}
+@media(max-width:850px){.site-header{height:82px;padding:0 20px}.brand{font-size:21px}.brand small{font-size:7px}.header-right .text-button{font-size:11px}.app-shell{display:block}.navigation{min-height:0;border-right:0;border-bottom:1px solid var(--line);padding:10px 15px}.nav-intro,.nav-foot{display:none}#module-nav{display:flex;overflow:auto;gap:5px;padding:3px}.nav-item,.nav-item.active,.nav-item:last-child{border:0;border-radius:7px;margin:0;padding:10px 12px;min-width:max-content;min-height:0;gap:7px;width:auto;font-size:11px}.nav-item small,.nav-arrow{display:none}.nav-index{padding-top:0;align-self:auto}.module-heading{margin-bottom:22px}main{padding:27px 22px 0}.lab-layout{grid-template-columns:minmax(0,1fr) 230px}.module-number{font-size:52px}.module-subtitle{font-size:12px}.eyebrow{font-size:8px}.lesson-sidebar{font-size:11px}}
+@media(max-width:650px){.brand small{display:none}.brand{font-size:19px}.brand-mark{width:36px;height:36px;font-size:25px;line-height:35px}.site-header{height:70px}.header-right .text-button{font-size:10px}.lab-layout{display:block}.lesson-sidebar{margin-top:25px;font-size:13px}.lesson-sidebar h2{font-size:19px}.lesson-sidebar h3{margin-top:20px}.module-number{font-size:42px}h1{font-size:29px;letter-spacing:-1.2px}main{padding:25px 16px 0}.module-heading{gap:12px}.controls{padding:15px;gap:14px}.metrics{padding:15px;gap:10px}.metric{min-width:100px}.metric strong{font-size:22px}.note{padding:12px 15px}.question button{font-size:12px}.stage-label{padding:16px 15px 0;font-size:8px}.mink-options{padding:0 15px 15px}.mink-metrics .metric{min-width:100px}.mink-metrics .metric strong{font-size:19px}.teacher-panel{padding:16px}.teacher-top h2{font-size:16px}.sources{padding-bottom:22px}.module-footer .text-button{font-size:11px}.next-button{font-size:11px;padding:10px 13px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+@media print{.site-header,.navigation,.module-footer,.controls,.event-presets,.mink-options,.sources>span,#teacher-close,#print-guide{display:none!important}.app-shell{display:block}main{padding:0}.lab-layout{grid-template-columns:1fr 1fr}.teacher-panel[hidden]{display:block}.experiment{break-inside:avoid}.module-heading{margin-top:20px}body{background:white}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#module-content">Hopp til forsøket</a>
+<header class="site-header">
+  <a class="brand" href="#references" aria-label="Relativitetslab, start"><span class="brand-mark" aria-hidden="true">r<span>↗</span></span><span>relativitets<span class="brand-light">lab</span><small>ET LABORATORIUM FOR ROM OG TID</small></span></a>
+  <div class="header-right"><span class="level-pill">FYSIKK · SPESIELL RELATIVITET</span><button id="teacher-toggle" class="text-button" aria-expanded="false" aria-controls="teacher-panel">Lærerveiledning <span aria-hidden="true">↗</span></button></div>
+</header>
+<div class="app-shell">
+  <aside class="navigation" aria-label="Moduler">
+    <div class="nav-intro"><span class="eyebrow">SEKS PERSPEKTIVER</span><h2>Samme verden.<br>Ulike målinger.</h2><p>Begynn med toget. Bygg deg videre til romtid.</p></div>
+    <nav id="module-nav"></nav>
+    <div class="nav-foot"><span class="tiny-orbit" aria-hidden="true">✳</span><p>Forutsi. Utforsk.<br>Forklar med egne ord.</p></div>
+  </aside>
+  <main id="main">
+    <div class="module-heading"><div><p class="eyebrow" id="module-eyebrow"></p><h1 id="module-title"></h1><p class="module-subtitle" id="module-subtitle"></p></div><span class="module-number" id="module-number" aria-hidden="true"></span></div>
+    <section id="teacher-panel" class="teacher-panel" hidden>
+      <div class="teacher-top"><h2>Et undervisningsløp du kan ta rett i bruk</h2><button class="text-button" id="teacher-close">Lukk ×</button></div>
+      <p><strong>Første økt, 45–60 min:</strong> Bruk 5 min på «Kan du avsløre jevn bevegelse uten vinduer?». Utforsk modul 1 i par i 15 min. Samle forklaringer om treghetssystemer i 10 min. Bruk modul 2 til å utfordre den klassiske fartsaddisjonen. Avslutt med en egen setning om hvorfor lys krever en ny modell.</p>
+      <p><strong>Videre progresjon:</strong> Modul 3: skill mellom når lys mottas og når en hendelse tidfestes. Modul 4–5: la elevene forutsi før de drar i fartsglideren. Modul 6: start med β = 0, flytt én hendelse og øk deretter β. Vent med det skrå rutenettet til akser og lyslinjer er forstått.</p>
+      <p><strong>Faglig ramme:</strong> Modellene bruker ideelle treghetssystemer og synkroniserte klokker. Målinger beskriver koordinater, ikke et fotografi forsinket av lysets gangtid. Tyngdekraften i epleforsøket behandles klassisk og lokalt. Spesiell relativitet brukes i de øvrige modulene.</p>
+      <button class="secondary" id="print-guide">Skriv ut veiledning og modultekst</button>
+    </section>
+    <div id="module-content" aria-label="Interaktiv modul" tabindex="-1"></div>
+    <div class="module-footer"><button class="text-button" id="previous">← Forrige modul</button><span id="progress-label"></span><button class="next-button" id="next">Neste modul →</button></div>
+    <div style="margin:12px 0 20px;font-size:12px"><a href="./">← Alle prototyper på OnlyFag</a></div><footer class="sources"><details><summary>Om modellene og fagkildene</summary><p>Et originalt læringsopplegg med utgangspunkt i de vedlagte læreboksidene om referansesystemer, spesiell relativitet, tid og lengde. Figurene er nye, skjematiske illustrasjoner. Fysikken er kontrollert mot <a href="https://openstax.org/books/university-physics-volume-3/pages/5-introduction" target="_blank" rel="noopener">OpenStax: Relativity</a>, <a href="https://www.einstein-online.info/en/spacetime/" target="_blank" rel="noopener">Einstein Online: Spacetime</a> og <a href="https://cosmo.nyu.edu/hogg/sr/sr.pdf" target="_blank" rel="noopener">David Hogg: Special Relativity</a>. c = 299 792 458 m/s, med eventuell tydelig avrunding i eksempler. Alle forsøk kjører lokalt i nettleseren.</p></details><span>ROM + TID = NYTT PERSPEKTIV</span></footer>
+  </main>
+</div>
+<script>
+(function () {
+  'use strict';
+  const G = 9.81, H = 2, FALL = Math.sqrt(2 * H / G);
+  const fmt = (n, d = 1) => Number(n).toLocaleString('nb-NO', { minimumFractionDigits: d, maximumFractionDigits: d });
+  function referencePosition(t, v) {
+    const time = Math.max(0, Math.min(FALL, Number(t)));
+    return { t: time, trainX: 0, platformX: Number(v) * time, height: Math.max(0, H - G * time * time / 2), fallTime: FALL };
+  }
+  window.RelativityPhysics = Object.assign(window.RelativityPhysics || {}, { referencePosition });
+  function train(x, y, id) {
+    return `<g id="${id}" transform="translate(${x} ${y})"><path d="M0 28Q0 0 30 0H240Q282 0 300 50V173H0Z" fill="#e2f0e8" stroke="#476a65" stroke-width="2"/><path d="M17 15H234Q263 15 277 49H17Z" fill="#fffef8" stroke="#93b5ac"/><path d="M75 15V49M135 15V49M195 15V49" stroke="#93b5ac"/><path d="M0 173H300" stroke="#476a65" stroke-width="4"/><circle cx="52" cy="180" r="13" fill="#466762"/><circle cx="245" cy="180" r="13" fill="#466762"/><circle cx="52" cy="180" r="5" fill="#d3e5db"/><circle cx="245" cy="180" r="5" fill="#d3e5db"/></g>`;
+  }
+  function apple(x, y, id) {
+    return `<g id="${id}" transform="translate(${x} ${y})"><path d="M0-6C-11-14-17 0-10 9Q0 18 10 9C17 0 11-14 0-6" fill="#df7048" stroke="#9c452c" stroke-width="1.5"/><path d="M0-6Q-1-16 6-18" fill="none" stroke="#476a65" stroke-width="2"/><path d="M1-12Q10-19 14-11Q7-7 1-12" fill="#4e9775"/></g>`;
+  }
+  window.RelativityModules = window.RelativityModules || {};
+  window.RelativityModules.references = {
+    render() {
+      return `<style>
+        .ref-lab .ref-tabs{margin-bottom:22px;display:flex;flex-wrap:wrap;gap:7px}.ref-lab .ref-tab-panel[hidden]{display:none!important}.ref-lab svg text{font-family:inherit}.ref-lab .ref-stage{background:#f4f7f0;border:1px solid #dce7e1;border-radius:18px;overflow:hidden}.ref-lab .ref-stage svg{display:block;width:100%;height:auto}.ref-lab .ref-choice{display:block;width:100%;text-align:left;margin:8px 0;padding:11px 13px;border:1px solid #cdded5;border-radius:10px;background:#fffef8;color:#163a39;cursor:pointer}.ref-lab .ref-choice[aria-pressed=true]{border-color:#087e79;background:#e8f1e9}.ref-lab .ref-control-row{display:flex;flex-wrap:wrap;gap:20px;align-items:end}.ref-lab .ref-control-row>.control{flex:1;min-width:180px}.ref-lab .ref-actions{display:flex;gap:8px;align-items:center}.ref-lab .ref-caption{font-size:13px;line-height:1.5;color:#667b77;margin:11px 0}.ref-lab .ref-concept{padding:16px;background:#e8f1e9;border-radius:12px;margin-top:16px}.ref-lab .ref-concept p{margin:6px 0}.ref-lab input[type=range]{width:100%;accent-color:#087e79}.ref-lab output{font-variant-numeric:tabular-nums;font-weight:700;color:#087e79}.ref-lab .ref-inertia-buttons{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0}.ref-lab .ref-feedback{min-height:56px;font-size:14px;line-height:1.55;margin-top:12px}.ref-lab .ref-steps{padding-left:20px}.ref-lab .ref-steps li{margin:12px 0}
+      </style>
+      <div class="ref-lab">
+      <div class="segmented ref-tabs" aria-label="Velg forsøk">
+        <button type="button" class="active" data-ref-tab="apple" aria-pressed="true">Eplet i toget</button>
+        <button type="button" data-ref-tab="walk" aria-pressed="false">Gå i toget</button>
+        <button type="button" data-ref-tab="inertia" aria-pressed="false">Treghetssystemer</button>
+      </div>
+      <div class="lab-layout">
+       <section class="experiment" aria-label="Utforsk referansesystemer">
+        <div class="ref-tab-panel" data-ref-panel="apple">
+          <div class="stage ref-stage">
+          <svg viewBox="0 0 1000 405" role="img" aria-labelledby="ref-apple-title ref-apple-desc">
+           <title id="ref-apple-title">Samme eple sett fra toget og perrongen</title>
+           <desc id="ref-apple-desc">To samtidige visninger av et eple som slippes fra to meters høyde. I toget faller det loddrett. Fra perrongen følger det en parabel.</desc>
+           <defs><clipPath id="ref-platform-clip"><rect x="516" y="78" width="464" height="245" rx="8"/></clipPath><marker id="ref-arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto-start-reverse"><path d="M0 0L7 3.5L0 7" fill="#087e79"/></marker></defs>
+           <rect x="16" y="16" width="474" height="361" rx="13" fill="#fffef8"/>
+           <rect x="510" y="16" width="474" height="361" rx="13" fill="#fffef8"/>
+           <text x="38" y="48" fill="#163a39" font-size="20" font-weight="700">Med toget · S′</text>
+           <text x="532" y="48" fill="#163a39" font-size="20" font-weight="700">På perrongen · S</text>
+           <text x="38" y="72" fill="#667b77" font-size="14">Toget er i ro i dette systemet</text>
+           <text x="532" y="72" fill="#667b77" font-size="14">Tog og eple har samme startfart</text>
+           ${train(95, 107, 'ref-train-fixed')}
+           <g clip-path="url(#ref-platform-clip)">${train(530, 107, 'ref-train-moving')}</g>
+           <path d="M38 300H468M532 300H962" stroke="#7b9690" stroke-width="3"/>
+           <path d="M38 309H468M532 309H962" stroke="#b6c9bd" stroke-width="2"/>
+           <path d="M55 310V322M105 310V322M155 310V322M205 310V322M255 310V322M305 310V322M355 310V322M405 310V322M455 310V322M549 310V322M599 310V322M649 310V322M699 310V322M749 310V322M799 310V322M849 310V322M899 310V322M949 310V322" stroke="#b6c9bd" stroke-width="4"/>
+           <path d="M240 156V300" stroke="#df7048" stroke-width="3" stroke-dasharray="5 6" opacity=".6"/>
+           <path id="ref-world-trail" d="" fill="none" stroke="#df7048" stroke-width="3" stroke-dasharray="5 6" opacity=".7"/>
+           <path id="ref-done-trail" d="" fill="none" stroke="#df7048" stroke-width="4"/>
+           ${apple(240, 156, 'ref-apple-train')}${apple(675, 156, 'ref-apple-platform')}
+           <circle cx="240" cy="300" r="3.5" fill="#476a65"/>
+           <circle cx="675" cy="300" r="3.5" fill="#476a65"/>
+           <text x="38" y="351" fill="#163a39" font-size="16">x′ = <tspan id="ref-xprime" font-weight="700">0,0 m</tspan></text>
+           <text x="532" y="351" fill="#163a39" font-size="16">x = <tspan id="ref-x" font-weight="700">0,0 m</tspan></text>
+           <text x="322" y="351" fill="#667b77" font-size="14">rett ned</text>
+           <text x="849" y="351" fill="#667b77" font-size="14">samme hendelse</text>
+          </svg></div>
+          <p class="ref-caption">Stiplede kurver viser hele banen. Begge bilder viser nøyaktig samme tidspunkt. Avspilling er i sakte film; tidslinjen viser fysisk tid. Luftmotstand er utelatt; toget holder konstant, rettlinjet fart. Tegningen er skjematisk.</p>
+          <div class="controls">
+           <div class="ref-control-row"><div class="control"><label for="ref-speed">Togets hastighet v: <output id="ref-speed-out">20 m/s</output></label><input id="ref-speed" type="range" min="-20" max="30" value="20" step="1"/></div>
+           <div class="ref-actions"><button type="button" class="primary" id="ref-play">Slipp eplet</button><button type="button" class="secondary" id="ref-reset">Nullstill</button></div></div>
+           <div class="control" style="margin-top:18px"><label for="ref-time">Tid etter slipp: <output id="ref-time-out">0,00 s</output></label><input id="ref-time" type="range" min="0" max="${FALL}" step="0.001" value="0"/></div>
+          </div>
+          <div class="metrics"><div class="metric"><strong id="ref-height">2,00 m</strong><span>høyde over bakken</span></div><div class="metric"><strong id="ref-fall-time">${fmt(FALL, 3)} s</strong><span>falltid i begge systemer</span></div><div class="metric"><strong id="ref-vx">20 m/s</strong><span>eplets vannrette fart på perrongen</span></div></div>
+          <div class="ref-concept"><strong>En bane er knyttet til et referansesystem.</strong><p>Eplet beholder togets vannrette fart når det slippes. Togpassasjeren måler derfor x′ = 0, mens personen på perrongen måler x = vt. Begge beskrivelser passer til samme bevegelse.</p></div>
+        </div>
+        <div class="ref-tab-panel" data-ref-panel="walk" hidden>
+         <div class="stage ref-stage"><svg viewBox="0 0 1000 410" role="img" aria-labelledby="ref-walk-title"><title id="ref-walk-title">Hastigheter for en person som går i et tog</title><defs><marker id="ref-walk-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto-start-reverse"><path d="M0 0L8 4L0 8" fill="#087e79"/></marker><marker id="ref-walk-orange" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto-start-reverse"><path d="M0 0L8 4L0 8" fill="#df7048"/></marker></defs>
+          <text x="35" y="43" fill="#163a39" font-size="20" font-weight="700">Positiv retning er mot høyre →</text>
+          <g transform="translate(70 65) scale(2.25 1.1)">${train(0, 0, 'ref-walk-train')}</g>
+          <circle cx="440" cy="155" r="15" fill="#dfb28d"/><path d="M440 173V214M440 184L416 199M440 184L464 171M440 214L420 239M440 214L462 239" stroke="#476a65" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path id="ref-walker-arrow" d="M440 122H464" stroke="#df7048" stroke-width="5" marker-end="url(#ref-walk-orange)"/><text id="ref-walker-svg-label" x="440" y="100" text-anchor="middle" fill="#9c452c" font-size="17">u′ = 1,0 m/s</text>
+          <path id="ref-train-arrow" d="M195 310H595" stroke="#087e79" stroke-width="5" marker-end="url(#ref-walk-arrow)"/><text id="ref-train-svg-label" x="390" y="342" text-anchor="middle" fill="#087e79" font-size="17">Toget: v = 30 m/s</text>
+          <text x="35" y="383" fill="#163a39" font-size="18">Personen sett fra perrongen: <tspan id="ref-walk-result" font-weight="700">31,0 m/s →</tspan></text>
+         </svg></div>
+         <div class="controls"><div class="control"><label for="ref-walk-v">Togets hastighet v: <output id="ref-walk-v-out">30 m/s</output></label><input id="ref-walk-v" type="range" min="-30" max="30" value="30" step="1"/></div><div class="control" style="margin-top:16px"><label for="ref-walk-u">Personens hastighet i toget u′: <output id="ref-walk-u-out">1,0 m/s</output></label><input id="ref-walk-u" type="range" min="-5" max="5" value="1" step="0.5"/></div></div>
+         <div class="metrics"><div class="metric"><strong id="ref-walk-u-total">31,0 m/s</strong><span>personen målt fra perrongen</span></div><div class="metric"><strong id="ref-walk-direction">mot høyre</strong><span>fortegnet viser retningen</span></div></div>
+         <div class="ref-concept"><strong>Hastigheter har retning.</strong><p>Går du bakover, er u′ negativ. En person kan stå i ro relativt til perrongen mens både personen og toget beveger seg relativt til hverandre.</p><p>Her bruker vi galileisk addisjon, u = v + u′. Den er en svært god tilnærming ved disse lave hastighetene.</p></div>
+        </div>
+        <div class="ref-tab-panel" data-ref-panel="inertia" hidden>
+         <div class="segmented ref-inertia-buttons" aria-label="Togets bevegelse"><button type="button" class="active" data-ref-inertia="steady" aria-pressed="true">Rett frem, konstant fart</button><button type="button" data-ref-inertia="accelerate" aria-pressed="false">Akselererer</button><button type="button" data-ref-inertia="brake" aria-pressed="false">Bremser</button><button type="button" data-ref-inertia="turn" aria-pressed="false">Svinger</button></div>
+         <div class="stage ref-stage"><svg viewBox="0 0 1000 405" role="img" aria-labelledby="ref-inertia-title ref-inertia-desc"><title id="ref-inertia-title">En pendel viser om toget akselererer</title><desc id="ref-inertia-desc">Ved konstant rettlinjet fart henger pendelen rett ned. Ved akselerasjon heller den motsatt akselerasjonen.</desc><defs><marker id="ref-acc-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto-start-reverse"><path d="M0 0L8 4L0 8" fill="#df7048"/></marker></defs><path d="M175 337V84Q175 60 200 60H800Q825 60 825 84V337" fill="#fffef8" stroke="#93b5ac" stroke-width="3"/><path d="M175 337H825" stroke="#476a65" stroke-width="5"/><path d="M500 103V310" stroke="#cdded5" stroke-dasharray="6 6" stroke-width="2"/><path d="M467 103H533" stroke="#476a65" stroke-width="7" stroke-linecap="round"/><circle cx="500" cy="103" r="5" fill="#163a39"/><path id="ref-pendulum-string" d="M500 103L500 294" stroke="#476a65" stroke-width="3"/><circle id="ref-pendulum-bob" cx="500" cy="294" r="21" fill="#df7048" stroke="#9c452c" stroke-width="2"/><path id="ref-acceleration-arrow" d="M650 176H750" fill="none" stroke="#df7048" stroke-width="5" marker-end="url(#ref-acc-arrow)" visibility="hidden"/><text id="ref-acceleration-label" x="700" y="153" text-anchor="middle" fill="#9c452c" font-size="17"></text><text id="ref-view-label" x="500" y="376" text-anchor="middle" fill="#667b77" font-size="16">Sett fra siden · toget beveger seg mot høyre</text></svg></div>
+         <p class="ref-caption">Pendelen er vist etter at svingningene har dempet seg, ved jevn akselerasjon. Jordoverflaten behandles som et tilnærmet treghetssystem i dette lokale forsøket.</p>
+         <div class="metrics"><div class="metric"><strong id="ref-inertia-status">Ja</strong><span>treghetssystem i denne modellen?</span></div><div class="metric"><strong id="ref-inertia-acc">0 m/s²</strong><span>togets akselerasjon</span></div><div class="metric"><strong id="ref-inertia-angle">0,0°</strong><span>pendelens vinkel fra loddrett</span></div></div>
+         <div class="ref-concept" id="ref-inertia-explanation"><strong>Fart alene avslører ingen akselerasjon.</strong><p>Et tog med konstant, rettlinjet fart er et treghetssystem. Med lukkede vinduer kan du ikke avgjøre ved et lokalt mekanisk forsøk om toget er i ro eller beveger seg slik.</p></div>
+        </div>
+       </section>
+       <aside class="lesson-sidebar">
+        <p class="note">START MED ET STÅSTED</p><h3 id="ref-side-title">Hvem beskriver bevegelsen?</h3>
+        <p id="ref-side-intro">Et referansesystem gir oss koordinater og klokker. En hendelse får et sted og en tid i systemet vi velger.</p>
+        <ol class="ref-steps" id="ref-side-steps"><li><strong>Forutsi:</strong> Eplet slippes uten et dytt. Hvor lander det sett fra toget?</li><li><strong>Undersøk:</strong> Slipp eplet, dra tidslinjen og endre togets hastighet. Prøv også v = 0 og v &lt; 0.</li><li><strong>Forklar:</strong> Hvorfor blir formen på banen ulik, selv om falltiden er lik?</li></ol>
+        <div class="formula" id="ref-side-formula">x′ = x − vt<br>t′ = t<br><small>Galileitransformasjonen ved lave hastigheter</small></div>
+        <div class="question"><h4>Test tanken</h4><p id="ref-quiz-question">Toget kjører rett frem med konstant fart. Hvor lander eplet relativt til stedet det ble sluppet i toget?</p><div id="ref-quiz-options"><button type="button" class="ref-choice" data-ref-answer="wrong">Bak stedet det ble sluppet</button><button type="button" class="ref-choice" data-ref-answer="correct">Rett under stedet det ble sluppet</button><button type="button" class="ref-choice" data-ref-answer="wrong">Foran stedet det ble sluppet</button></div><div class="feedback ref-feedback" id="ref-quiz-feedback" aria-live="polite"></div></div>
+       </aside>
+      </div></div>`;
+    },
+    mount(root) {
+      const el = id => root.querySelector('#' + id);
+      let t = 0, v = 20, frame = 0, running = false, lastTime = 0, tab = 'apple';
+      const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const pathFor = (end, velocity) => Array.from({ length: 51 }, (_, i) => {
+        const p = referencePosition(end * i / 50, velocity);
+        return `${i ? 'L' : 'M'}${(675 + 10 * p.platformX).toFixed(2)} ${(300 - 72 * p.height).toFixed(2)}`;
+      }).join(' ');
+      function stop() { running = false; cancelAnimationFrame(frame); el('ref-play').textContent = t >= FALL - 0.001 ? 'Slipp på nytt' : (t > 0 ? 'Fortsett' : 'Slipp eplet'); }
+      function drawApple() {
+        const p = referencePosition(t, v);
+        el('ref-apple-train').setAttribute('transform', `translate(240 ${300 - 72 * p.height})`);
+        el('ref-apple-platform').setAttribute('transform', `translate(${675 + 10 * p.platformX} ${300 - 72 * p.height})`);
+        el('ref-train-moving').setAttribute('transform', `translate(${530 + 10 * p.platformX} 107)`);
+        el('ref-world-trail').setAttribute('d', pathFor(FALL, v));
+        el('ref-done-trail').setAttribute('d', pathFor(t, v));
+        el('ref-x').textContent = fmt(p.platformX) + ' m';
+        el('ref-height').textContent = fmt(p.height, 2) + ' m';
+        el('ref-time-out').textContent = fmt(t, 2) + ' s';
+        el('ref-time').value = t;
+        el('ref-speed-out').textContent = fmt(v, 0) + ' m/s';
+        el('ref-vx').textContent = fmt(v, 0) + ' m/s';
+      }
+      function tick(now) {
+        if (!running) return;
+        if (lastTime) t = Math.min(FALL, t + Math.min(0.05, (now - lastTime) / 1000) * 0.22);
+        lastTime = now; drawApple();
+        if (t >= FALL) stop(); else frame = requestAnimationFrame(tick);
+      }
+      function play() {
+        if (running) { stop(); return; }
+        if (t >= FALL - 0.001) t = 0;
+        if (reducedMotion) { t = FALL; drawApple(); stop(); return; }
+        running = true; lastTime = 0; el('ref-play').textContent = 'Pause'; frame = requestAnimationFrame(tick);
+      }
+      function walk() {
+        const trainV = +el('ref-walk-v').value, ownU = +el('ref-walk-u').value, total = trainV + ownU;
+        el('ref-walk-v-out').textContent = fmt(trainV, 0) + ' m/s';
+        el('ref-walk-u-out').textContent = fmt(ownU) + ' m/s';
+        el('ref-walk-u-total').textContent = fmt(total) + ' m/s';
+        el('ref-walk-direction').textContent = total > 0 ? 'mot høyre' : total < 0 ? 'mot venstre' : 'i ro på perrongen';
+        el('ref-walk-result').textContent = fmt(total) + ' m/s ' + (total > 0 ? '→' : total < 0 ? '←' : '(i ro)');
+        el('ref-train-svg-label').textContent = 'Toget: v = ' + fmt(trainV, 0) + ' m/s';
+        el('ref-walker-svg-label').textContent = 'u′ = ' + fmt(ownU) + ' m/s';
+        el('ref-train-arrow').setAttribute('d', `M395 310H${395 + trainV * 7}`);
+        el('ref-train-arrow').setAttribute('visibility', trainV === 0 ? 'hidden' : 'visible');
+        el('ref-walker-arrow').setAttribute('d', `M440 122H${440 + ownU * 24}`);
+        el('ref-walker-arrow').setAttribute('visibility', ownU === 0 ? 'hidden' : 'visible');
+      }
+      const states = {
+        steady: { a: 0, status: 'Ja', heading: 'Fart alene avslører ingen akselerasjon.', text: 'Et tog med konstant, rettlinjet fart er et treghetssystem. Med lukkede vinduer kan du ikke avgjøre ved et lokalt mekanisk forsøk om toget er i ro eller beveger seg slik.', view: 'Sett fra siden · toget beveger seg mot høyre' },
+        accelerate: { a: 3, status: 'Nei', heading: 'Toget øker farten mot høyre.', text: 'Pendelen heller bakover. I togets akselererte system må vi ta med en treghetskraft for å bruke Newtons lover i vanlig form. Uten en slik tilleggskraft er toget ikke et treghetssystem.', view: 'Sett fra siden · akselerasjonen peker mot høyre' },
+        brake: { a: -3, status: 'Nei', heading: 'Toget bremser mens det kjører mot høyre.', text: 'Akselerasjonen peker mot venstre, og pendelen heller fremover. Det er endringen i hastighet, også når farten avtar, som gjør dette til et akselerert referansesystem.', view: 'Sett fra siden · toget kjører mot høyre og bremser' },
+        turn: { a: 3, status: 'Nei', heading: 'Konstant banefart kan likevel gi akselerasjon.', text: 'I en sving endrer hastighetsvektoren retning. Akselerasjonen peker inn mot svingen, mens pendelen heller utover. Derfor er et tog i sving ikke et treghetssystem, selv med konstant banefart.', view: 'Sett forfra · innsiden av svingen er mot høyre' }
+      };
+      function inertia(key) {
+        const s = states[key], angle = Math.atan(s.a / G), x = 500 - 191 * Math.sin(angle), y = 103 + 191 * Math.cos(angle);
+        root.querySelectorAll('[data-ref-inertia]').forEach(b => { const on = b.dataset.refInertia === key; b.classList.toggle('active', on); b.setAttribute('aria-pressed', on); });
+        el('ref-pendulum-string').setAttribute('d', `M500 103L${x} ${y}`);
+        el('ref-pendulum-bob').setAttribute('cx', x); el('ref-pendulum-bob').setAttribute('cy', y);
+        el('ref-inertia-status').textContent = s.status;
+        el('ref-inertia-acc').textContent = fmt(Math.abs(s.a), 0) + ' m/s²';
+        el('ref-inertia-angle').textContent = fmt(Math.abs(angle) * 180 / Math.PI) + '°';
+        el('ref-view-label').textContent = s.view;
+        el('ref-inertia-explanation').innerHTML = `<strong>${s.heading}</strong><p>${s.text}</p>`;
+        el('ref-acceleration-arrow').setAttribute('visibility', s.a ? 'visible' : 'hidden');
+        el('ref-acceleration-arrow').setAttribute('d', s.a > 0 ? 'M650 176H750' : 'M750 176H650');
+        el('ref-acceleration-label').textContent = s.a ? (key === 'turn' ? 'a inn mot svingen' : 'a = 3 m/s²') : '';
+      }
+      const side = {
+        apple: ['Hvem beskriver bevegelsen?', 'Et referansesystem gir oss koordinater og klokker. En hendelse får et sted og en tid i systemet vi velger.', '<li><strong>Forutsi:</strong> Eplet slippes uten et dytt. Hvor lander det sett fra toget?</li><li><strong>Undersøk:</strong> Slipp eplet, dra tidslinjen og endre togets hastighet. Prøv også v = 0 og v &lt; 0.</li><li><strong>Forklar:</strong> Hvorfor blir formen på banen ulik, selv om falltiden er lik?</li>', 'x′ = x − vt<br>t′ = t<br><small>Galileitransformasjonen ved lave hastigheter</small>', 'Toget kjører rett frem med konstant fart. Hvor lander eplet relativt til stedet det ble sluppet i toget?', ['Bak stedet det ble sluppet', 'Rett under stedet det ble sluppet', 'Foran stedet det ble sluppet'], 1, 'Eplet har togets vannrette fart allerede før det slippes. Uten luftmotstand fortsetter både tog og eple like raskt vannrett.'],
+        walk: ['Fart måles i forhold til noe.', 'Velg først positiv retning. Fortegnet forteller om personen går med eller mot togets bevegelse.', '<li><strong>Forutsi:</strong> Toget kjører med 30 m/s og du går bakover med 1 m/s. Hva måler perrongen?</li><li><strong>Undersøk:</strong> Sett toget til 5 m/s og gangen til −5 m/s.</li><li><strong>Forklar:</strong> Hvordan kan du være i bevegelse for én observatør og i ro for en annen?</li>', 'u = v + u′<br><small>Gjelder tilnærmet når |u| og |v| ≪ c</small>', 'Du går bakover med 1 m/s i et tog som kjører fremover med 30 m/s. Hva er hastigheten din sett fra perrongen?', ['−1 m/s', '29 m/s', '31 m/s'], 1, 'Med høyre som positiv retning blir u = 30 + (−1) = 29 m/s. Du beveger deg fortsatt fremover relativt til perrongen.'],
+        inertia: ['Fart eller endring i hastighet?', 'Et treghetssystem er et referansesystem der Newtons første lov gjelder: Et legeme uten netto kraft forblir i ro eller holder konstant, rettlinjet fart.', '<li><strong>Forutsi:</strong> Hvilke togbevegelser kan en pendel avsløre?</li><li><strong>Undersøk:</strong> Bytt mellom rettlinjet kjøring, akselerasjon, bremsing og sving.</li><li><strong>Forklar:</strong> Hvorfor er konstant banefart i en sving ikke tilstrekkelig?</li>', 'ΣF = 0 ⇒ v er konstant<br><small>Både størrelse og retning må være konstante.</small>', 'Et tog kjører gjennom en sving med konstant banefart. Er toget et treghetssystem?', ['Ja, fordi farten er konstant', 'Nei, fordi hastigheten endrer retning', 'Ja, så lenge pendelen er i ro'], 1, 'Hastighet er en vektor. Når retningen endres, er akselerasjonen ulik null. Togets referansesystem er derfor ikke et treghetssystem.']
+      };
+      function changeTab(key) {
+        stop(); tab = key;
+        root.querySelectorAll('[data-ref-tab]').forEach(b => { const on = b.dataset.refTab === key; b.classList.toggle('active', on); b.setAttribute('aria-pressed', on); });
+        root.querySelectorAll('[data-ref-panel]').forEach(p => { p.hidden = p.dataset.refPanel !== key; });
+        const s = side[key]; el('ref-side-title').textContent = s[0]; el('ref-side-intro').textContent = s[1]; el('ref-side-steps').innerHTML = s[2]; el('ref-side-formula').innerHTML = s[3]; el('ref-quiz-question').textContent = s[4];
+        el('ref-quiz-options').innerHTML = s[5].map((a, i) => `<button type="button" class="ref-choice" data-ref-answer="${i === s[6] ? 'correct' : 'wrong'}" aria-pressed="false">${a}</button>`).join(''); el('ref-quiz-feedback').textContent = '';
+      }
+      function click(e) {
+        const target = e.target.closest('button'); if (!target || !root.contains(target)) return;
+        if (target.dataset.refTab) changeTab(target.dataset.refTab);
+        if (target.dataset.refInertia) inertia(target.dataset.refInertia);
+        if (target.id === 'ref-play') play();
+        if (target.id === 'ref-reset') { stop(); t = 0; drawApple(); el('ref-play').textContent = 'Slipp eplet'; }
+        if (target.dataset.refAnswer) { root.querySelectorAll('[data-ref-answer]').forEach(b => b.setAttribute('aria-pressed', b === target)); el('ref-quiz-feedback').textContent = (target.dataset.refAnswer === 'correct' ? 'Riktig. ' : 'Se nærmere på bevegelsen. ') + side[tab][7]; }
+      }
+      function input(e) {
+        if (e.target.id === 'ref-speed') { v = +e.target.value; drawApple(); }
+        if (e.target.id === 'ref-time') { stop(); t = +e.target.value; drawApple(); }
+        if (e.target.id === 'ref-walk-v' || e.target.id === 'ref-walk-u') walk();
+      }
+      root.addEventListener('click', click); root.addEventListener('input', input);
+      drawApple(); walk(); inertia('steady'); changeTab('apple');
+      return () => { stop(); root.removeEventListener('click', click); root.removeEventListener('input', input); };
+    }
+  };
+}());
+
+
+</script>
+<script>
+(() => {
+  const c = 299792458;
+  const f = (n, d = 2) => new Intl.NumberFormat('nb-NO', { maximumFractionDigits: d, minimumFractionDigits: d }).format(n);
+  const addVelocity = (v, up) => (v + up) / (1 + v * up);
+  window.RelativityPhysics ||= {};
+  window.RelativityPhysics.addVelocity = addVelocity;
+  window.RelativityModules ||= {};
+  window.RelativityModules.velocity = {
+    render: () => `<div class="lab-layout"><section class="experiment">
+      <div class="segmented" aria-label="Velg forsøk"><button class="active" data-speed-preset="relativistic">Raske tog</button><button data-speed-preset="everyday">30 m/s + 1 m/s</button><button data-speed-preset="light">Et lyssignal</button></div>
+      <div class="stage" data-speed-stage></div>
+      <div class="controls"><div class="control"><label for="speed-train">Togets fart i forhold til perrongen <strong data-speed-v></strong></label><input id="speed-train" type="range" min="-0.95" max="0.95" step="0.01" value="0.60"></div><div class="control"><label for="speed-object">Gjenstandens fart i forhold til toget <strong data-speed-up></strong></label><input id="speed-object" type="range" min="-1" max="1" step="0.01" value="0.50"></div></div>
+      <div class="metrics"><div class="metric"><span>Relativistisk: målt på perrongen</span><strong data-speed-result></strong></div><div class="metric"><span>Klassisk beregning: v + u′</span><strong data-speed-classical></strong></div></div>
+      <p class="note" data-speed-note></p>
+    </section><aside class="lesson-sidebar"><span class="eyebrow">Forutsi · prøv · forklar</span><h3>Kan vi legge sammen alle hastigheter?</h3><p>En passasjer måler farten u′ inne i toget. Toget har farten v i perrongens referansesystem. Hvilken fart u måler en observatør på perrongen?</p><ol><li>Start med 30 m/s + 1 m/s. Sammenlign de to svarene.</li><li>Velg «Raske tog». Hva skjer med den klassiske summen?</li><li>Velg «Et lyssignal», og dra toget i begge retninger.</li></ol><div class="formula">u = (u′ + v) / (1 + u′v/c²)</div><p>Pluss og minus angir retning langs samme x-akse. For små hastigheter er nevneren nesten 1. Da får vi Galileis addisjonsregel som en svært god tilnærming.</p><details><summary>Einsteins to postulater</summary><ol><li>Fysikkens lover har samme form i alle treghetssystemer.</li><li>Lysfarten i vakuum er den samme i alle treghetssystemer, uavhengig av lyskildens bevegelse.</li></ol><p>Den relativistiske addisjonsregelen følger av Lorentz-transformasjonen og passer med begge postulatene.</p></details><div class="question"><h4>Sjekk forståelsen</h4><p>Et tog har farten 0,60c. Det sender lys forover. Hva måles fra perrongen?</p><button class="secondary" data-speed-answer="wrong">1,60c</button> <button class="secondary" data-speed-answer="right">c</button><p class="feedback" data-speed-feedback aria-live="polite"></p></div></aside></div>`,
+    mount(root) {
+      const q = s => root.querySelector(s);
+      const state = { v: .6, up: .5, everyday: false };
+      const trainInput = q('#speed-train');
+      const objectInput = q('#speed-object');
+      const arrow = (start, end, y, color, dashed, label) => {
+        const direction = end >= start ? 1 : -1;
+        const head = Math.abs(end - start) < 2 ? '' : `<path d="M${end - direction * 10},${y - 6} L${end},${y} L${end - direction * 10},${y + 6}" fill="none" stroke="${color}" stroke-width="2.5"/>`;
+        return `<line x1="${start}" y1="${y}" x2="${end}" y2="${y}" stroke="${color}" stroke-width="3" ${dashed ? 'stroke-dasharray="8 6"' : ''}/>${head}<text x="${(start + end) / 2}" y="${y - 12}" text-anchor="middle" fill="${color}" font-size="15" font-weight="600">${label}</text>`;
+      };
+      function update() {
+        const u = addVelocity(state.v, state.up);
+        const classical = state.v + state.up;
+        const unit = state.everyday ? n => `${f(n * c, 1)} m/s` : n => `${f(n)}c`;
+        q('[data-speed-v]').textContent = unit(state.v);
+        q('[data-speed-up]').textContent = unit(state.up);
+        q('[data-speed-result]').textContent = unit(u);
+        q('[data-speed-classical]').textContent = unit(classical);
+        q('[data-speed-note]').textContent = state.everyday
+          ? 'Ved vanlige toghastigheter blir forskjellen mindre enn en billiondel m/s. 31 m/s er en utmerket tilnærming.'
+          : Math.abs(state.up) === 1
+            ? 'Lys i vakuum har farten c i begge systemer. Fortegnet viser bare hvilken vei lyset går.'
+            : Math.abs(classical) > 1
+              ? 'Den stiplede klassiske beregningen passerer c. Da svikter tilnærmingen. Den relativistiske farten holder seg under c for gjenstander med masse.'
+              : 'Begge måler i sitt eget system med linjaler og synkroniserte klokker. Pilene viser hastigheter, ikke hvordan motivet ser ut gjennom et kamera.';
+        const origin = 465;
+        const scale = state.everyday ? 8 : 140;
+        const ticks = state.everyday ? [-20, 0, 20, 40] : [-2, -1, 0, 1, 2];
+        const x = n => origin + n * scale;
+        const trainV = state.everyday ? state.v * c : state.v;
+        const objectV = state.everyday ? state.up * c : state.up;
+        const labV = state.everyday ? u * c : u;
+        const classicalV = state.everyday ? classical * c : classical;
+        const boundedX = n => Math.max(180, Math.min(790, x(n)));
+        q('[data-speed-stage]').innerHTML = `<svg viewBox="0 0 840 370" role="img" aria-label="Hastighetspiler i togets og perrongens referansesystem. Relativistisk fart ${unit(u)}, klassisk sum ${unit(classical)}."><rect width="840" height="370" rx="18" fill="#f4f7f0"/><text x="28" y="38" font-size="14" fill="#667b77">Én bevegelse, to målinger</text><line x1="160" x2="812" y1="187" y2="187" stroke="#dce7e1"/>
+          ${!state.everyday ? [-1,1].map(n=>`<line x1="${x(n)}" x2="${x(n)}" y1="62" y2="327" stroke="#c6d9d0" stroke-dasharray="4 5"/><text x="${x(n)}" y="58" text-anchor="middle" font-size="13" fill="#667b77">${n<0?'−c':'+c'}</text>`).join('') : ''}
+          <g fill="#163a39"><text x="28" y="103" font-size="17" font-weight="600">I toget</text><text x="28" y="125" font-size="12" fill="#667b77">Toget er i ro</text><text x="28" y="229" font-size="17" font-weight="600">På perrongen</text><text x="28" y="251" font-size="12" fill="#667b77">Toget beveger seg</text></g>
+          <line x1="${origin}" x2="${origin}" y1="75" y2="322" stroke="#b9cbc2" stroke-width="1.5"/>
+          <circle cx="${origin}" cy="141" r="5" fill="#163a39"/>${arrow(origin,boundedX(objectV),141,'#df7048',false,`u′ = ${unit(state.up)}`)}
+          ${arrow(origin,boundedX(trainV),216,'#667b77',false,`v = ${unit(state.v)}`)}
+          ${arrow(origin,boundedX(labV),265,'#087e79',false,`u = ${unit(u)}`)}
+          ${arrow(origin,boundedX(classicalV),314,'#a17e6c',true,'klassisk sum')}
+          <line x1="175" x2="805" y1="340" y2="340" stroke="#c4d3ca"/>
+          ${ticks.map(n=>`<line x1="${x(n)}" x2="${x(n)}" y1="336" y2="345" stroke="#667b77"/><text x="${x(n)}" y="362" text-anchor="middle" font-size="12" fill="#667b77">${n===0?'0':f(n,0)+(state.everyday?' m/s':'c')}</text>`).join('')}
+        </svg>`;
+        root.querySelectorAll('[data-speed-preset]').forEach(b => b.classList.toggle('active', b.dataset.speedPreset === (state.everyday ? 'everyday' : state.up === 1 ? 'light' : 'relativistic')));
+      }
+      const onInput = () => { state.v = +trainInput.value; state.up = +objectInput.value; state.everyday = false; update(); };
+      trainInput.addEventListener('input', onInput);
+      objectInput.addEventListener('input', onInput);
+      const onClick = event => {
+        const preset = event.target.closest('[data-speed-preset]');
+        if (preset) {
+          state.everyday = preset.dataset.speedPreset === 'everyday';
+          state.v = state.everyday ? 30 / c : .6;
+          state.up = state.everyday ? 1 / c : preset.dataset.speedPreset === 'light' ? 1 : .5;
+          trainInput.value = state.v;
+          objectInput.value = state.up;
+          update();
+        }
+        const answer = event.target.closest('[data-speed-answer]');
+        if (answer) q('[data-speed-feedback]').textContent = answer.dataset.speedAnswer === 'right'
+          ? 'Riktig. (c + 0,60c) / (1 + 0,60) = c. Alle treghetssystemer måler samme lysfart i vakuum.'
+          : 'Prøv å sette u′ = c i formelen. Da vokser både telleren og nevneren med samme faktor.';
+      };
+      root.addEventListener('click', onClick);
+      update();
+      return () => { trainInput.removeEventListener('input', onInput); objectInput.removeEventListener('input', onInput); root.removeEventListener('click', onClick); };
+    }
+  };
+})();
+
+</script>
+<script>
+(() => {
+  const f = (n, d = 2) => new Intl.NumberFormat('nb-NO', { maximumFractionDigits: d, minimumFractionDigits: d }).format(Math.abs(n)<1e-10?0:n);
+  const gamma = beta => 1 / Math.sqrt(1 - beta * beta);
+  const lorentzEvent = (x, ct, beta) => ({ x: gamma(beta) * (x - beta * ct), ct: gamma(beta) * (ct - beta * x) });
+  window.RelativityPhysics ||= {};
+  window.RelativityPhysics.lorentzEvent = lorentzEvent;
+  window.RelativityModules ||= {};
+  window.RelativityModules.simultaneity = {
+    render: () => `<div class="lab-layout"><section class="experiment">
+      <div class="stage" data-sim-stage></div>
+      <div class="controls"><div class="control"><label for="sim-beta">Togets fart v/c <strong data-sim-beta></strong></label><input id="sim-beta" type="range" min="-0.8" max="0.8" step="0.01" value="0.60"></div><div class="control"><label for="sim-time">Tid på perrongens synkroniserte klokker <strong data-sim-time></strong></label><input id="sim-time" type="range" min="0" max="2.65" step="0.005" value="0"></div></div>
+      <div class="segmented" aria-label="Gå til en hendelse"><button data-sim-snap="start" class="active">Lynnedslag</button><button data-sim-snap="first">Første mottak</button><button data-sim-snap="platform">Mottak på perrongen</button><button data-sim-snap="last">Siste mottak</button></div>
+      <div style="display:flex;gap:10px;margin:16px 0"><button class="primary" data-sim-play>Spill av</button><button class="secondary" data-sim-reset>Nullstill tid</button></div>
+      <div class="metrics"><div class="metric"><span>Lynnedslag til venstre: t′</span><strong data-sim-left></strong></div><div class="metric"><span>Lynnedslag til høyre: t′</span><strong data-sim-right></strong></div><div class="metric"><span>Forskjell t′<sub>høyre</sub> − t′<sub>venstre</sub></span><strong data-sim-delta></strong></div></div>
+      <p class="note">Enheter: 1 lyssekund (ls) er avstanden lyset går på 1 s. Lynnedslagene skjer ved x = ±1 ls og t = 0 s på perrongen. Skissen viser x-posisjoner ved samme perrongtid; radene skiller observatørene.</p>
+      <details><summary>Se hendelsene og klokkeavlesningene</summary><div data-sim-table style="overflow:auto;margin-top:12px"></div></details>
+    </section><aside class="lesson-sidebar"><span class="eyebrow">Forutsi · prøv · forklar</span><h3>Samtidig hvor?</h3><p>To lyn slår ned samtidig i perrongens system. Togets midtpunkt er da ved perrongens midtpunkt. Togets lengde målt fra perrongen er 2 ls.</p><ol><li>Forutsi hvem som mottar lyset fra høyre først ved v &gt; 0.</li><li>Spill av og sammenlign mottakene.</li><li>Snu fartsretningen. Studer deretter tidene for selve lynnedslagene.</li></ol><div class="formula">t′ = γ(t − vx/c²)</div><p>Å motta lys er en annen hendelse enn at lynet slår ned. Vi bestemmer tidspunktet for lynet med synkroniserte klokker i hvert system, etter korreksjon for lysets reisetid.</p><p data-sim-conclusion></p><div class="question"><h4>Sjekk forståelsen</h4><p>Skyldes ulik samtidighet bare at signalene tar tid på veien?</p><button class="secondary" data-sim-answer="wrong">Ja, det er hele forklaringen</button><button class="secondary" data-sim-answer="right">Nei, målt lyntid er også ulik</button><p class="feedback" data-sim-feedback aria-live="polite"></p></div></aside></div>`,
+    mount(root) {
+      const q = s => root.querySelector(s);
+      const betaInput = q('#sim-beta');
+      const timeInput = q('#sim-time');
+      let beta = .6, time = 0, playing = false, frame = 0, previous = null;
+      const reception = () => ({ left: 1 / (1 - beta), right: 1 / (1 + beta) });
+      function person(x, y, color, caption, leftReceived, rightReceived) {
+        return `<g><circle cx="${x}" cy="${y-32}" r="9" fill="${color}"/><path d="M${x},${y-21}v25m-12,-16l12,-9 12,9m-12,16l-10,17m10,-17l10,17" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round"/><text x="${x}" y="${y+41}" text-anchor="middle" font-size="13" fill="#163a39">${caption}</text><rect x="${x-42}" y="${y+51}" width="84" height="23" rx="11" fill="${leftReceived&&rightReceived?'#d0e6dc':'#fffef8'}" stroke="#c4d8ce"/><text x="${x}" y="${y+67}" text-anchor="middle" font-size="11" fill="#163a39">V ${leftReceived?'✓':'·'}　H ${rightReceived?'✓':'·'}</text></g>`;
+      }
+      function update() {
+        const g = gamma(beta);
+        const times = reception();
+        const end = Math.max(times.left, times.right) + .15;
+        timeInput.max = end;
+        time = Math.min(time, end);
+        timeInput.value = time;
+        q('[data-sim-beta]').textContent = f(beta);
+        q('[data-sim-time]').textContent = `${f(time)} s`;
+        q('[data-sim-left]').textContent = `${f(g * beta)} s`;
+        q('[data-sim-right]').textContent = `${f(-g * beta)} s`;
+        q('[data-sim-delta]').textContent = `${f(-2 * g * beta)} s`;
+        q('[data-sim-conclusion]').textContent = Math.abs(beta)<.001
+          ? 'Når v = 0, er systemene i ro i forhold til hverandre. Både lynnedslagene og mottakene i midtpunktene er samtidige.'
+          : `I togets system skjedde lynet til ${beta>0?'høyre':'venstre'} først. Forskjellen er ${f(2*g*Math.abs(beta))} s, selv etter at signalenes reisetid er tatt med.`;
+        const trainX = beta * time;
+        const minX = Math.min(-1.4, trainX - 1.4);
+        const maxX = Math.max(1.4, trainX + 1.4);
+        const px = x => 65 + (x - minX) / (maxX - minX) * 710;
+        const width = px(trainX+1)-px(trainX-1);
+        const light = (y) => `${time<=Math.max(1,times.left)+.025?`<circle cx="${px(-1+time)}" cy="${y}" r="8" fill="#df7048" stroke="#fffef8" stroke-width="3"/>`:''}${time<=Math.max(1,times.right)+.025?`<path d="M${px(1-time)},${y-9}l9,9 -9,9 -9,-9z" fill="#087e79" stroke="#fffef8" stroke-width="2"/>`:''}`;
+        const ticks=[]; for(let k=Math.ceil(minX); k<=Math.floor(maxX); k++)ticks.push(k);
+        q('[data-sim-stage]').innerHTML = `<svg viewBox="0 0 840 420" role="img" aria-label="Lyssignaler fra to samtidige lynnedslag sett fra perrongen. Tid ${f(time)} sekunder. Togets fart ${f(beta)}c."><rect width="840" height="420" rx="18" fill="#f4f7f0"/><text x="26" y="31" font-size="13" fill="#667b77">Posisjoner målt fra perrongen</text><text x="814" y="31" text-anchor="end" font-size="14" fill="#163a39">t = ${f(time)} s</text>
+          ${[-1,1].map((x,i)=>`<line x1="${px(x)}" y1="65" x2="${px(x)}" y2="344" stroke="#c9d9cf" stroke-dasharray="4 5"/><text x="${px(x)}" y="58" text-anchor="middle" font-size="13" fill="${i?'#087e79':'#b85b3a'}">${i?'Høyre lyn':'Venstre lyn'}</text>${time<.08?`<path d="M${px(x)-2},66l-8,18 10,-4 -6,18 16,-24 -11,4z" fill="#df7048"/>`:''}`).join('')}
+          <rect x="${px(trainX-1)}" y="88" width="${width}" height="111" rx="22" fill="#dcebe3" stroke="#779b90" stroke-width="2"/>
+          <line x1="${px(trainX-1)+14}" x2="${px(trainX+1)-14}" y1="187" y2="187" stroke="#779b90" stroke-width="3"/>
+          <text x="${px(trainX-1)+16}" y="110" font-size="12" fill="#667b77">TOGET</text>
+          ${person(px(trainX),139,'#087e79','Sadia',time+.00001>=times.left,time+.00001>=times.right)}${light(163)}
+          <line x1="58" x2="782" y1="322" y2="322" stroke="#91aaa0" stroke-width="4"/>
+          <text x="27" y="245" font-size="12" fill="#667b77">PERRONGEN</text>
+          ${person(px(0),269,'#163a39','Nora',time+.00001>=1,time+.00001>=1)}${light(289)}
+          <circle cx="265" cy="361" r="5" fill="#df7048"/><text x="278" y="365" font-size="12" fill="#667b77">Lys fra venstre →</text><path d="M475,355l6,6 -6,6 -6,-6z" fill="#087e79"/><text x="490" y="365" font-size="12" fill="#667b77">← Lys fra høyre</text>
+          <line x1="65" x2="775" y1="384" y2="384" stroke="#bdcfc5"/>
+          ${ticks.map(n=>`<line x1="${px(n)}" x2="${px(n)}" y1="380" y2="389" stroke="#667b77"/><text x="${px(n)}" y="405" text-anchor="middle" font-size="12" fill="#667b77">${n} ls</text>`).join('')}
+        </svg>`;
+        q('[data-sim-table]').innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:14px;text-align:left"><thead><tr><th style="padding:8px">Hendelse</th><th style="padding:8px">t i perrongen</th><th style="padding:8px">t′ i toget</th></tr></thead><tbody>${[
+          ['Venstre lyn slår ned',0,g*beta],['Høyre lyn slår ned',0,-g*beta],['Nora mottar begge signaler',1,g],['Sadia mottar fra høyre',times.right,times.right/g],['Sadia mottar fra venstre',times.left,times.left/g]
+        ].map(row=>`<tr style="border-top:1px solid #dce7e1"><td style="padding:8px">${row[0]}</td><td style="padding:8px">${f(row[1])} s</td><td style="padding:8px">${f(row[2])} s</td></tr>`).join('')}</tbody></table><p class="note">t′ er tidskoordinaten i togets system. Ved Sadias mottak er dette også avlesningen på klokken hennes, nullstilt når midtpunktene møtes. Togets hvilelengde er ${f(2*g)} ls; 2 ls er lengden målt samtidig på perrongen.</p>`;
+        root.querySelectorAll('[data-sim-snap]').forEach(button=>{
+          const target = ({start:0,first:Math.min(times.left,times.right),platform:1,last:Math.max(times.left,times.right)})[button.dataset.simSnap];
+          button.classList.toggle('active',Math.abs(time-target)<.015);
+        });
+      }
+      function stop(){playing=false;previous=null;cancelAnimationFrame(frame);q('[data-sim-play]').textContent='Spill av';}
+      function tick(now){if(!playing)return;if(previous!==null)time+=(now-previous)/1000*.55;previous=now;const end=Math.max(reception().left,reception().right)+.15;if(time>=end){time=end;stop();update();return;}update();frame=requestAnimationFrame(tick);}
+      const onBeta = () => {stop();beta=+betaInput.value;time=0;update();};
+      const onTime = () => {stop();time=+timeInput.value;update();};
+      const onClick = event => {
+        if(event.target.closest('[data-sim-play]')){if(playing)stop();else{const end=Math.max(reception().left,reception().right)+.15;if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){time=time>=end-.01?0:end;update();return;}if(time>=end-.01)time=0;playing=true;previous=null;q('[data-sim-play]').textContent='Pause';frame=requestAnimationFrame(tick);}return;}
+        if(event.target.closest('[data-sim-reset]')){stop();time=0;update();}
+        const snap=event.target.closest('[data-sim-snap]');
+        if(snap){stop();const times=reception();time=({start:0,first:Math.min(times.left,times.right),platform:1,last:Math.max(times.left,times.right)})[snap.dataset.simSnap];update();}
+        const answer=event.target.closest('[data-sim-answer]');
+        if(answer)q('[data-sim-feedback]').textContent=answer.dataset.simAnswer==='right'?'Riktig. Systemene bruker hver sine synkroniserte klokker. Også de beregnede tidspunktene for lynnedslagene er ulike. Dette er mer enn ulike mottakstider.':'Ulik reisetid forklarer mottakene, men er ikke hele historien. Se t′ for selve lynnedslagene: de er ulike også etter korreksjon for signalenes reisetid.';
+      };
+      betaInput.addEventListener('input',onBeta);timeInput.addEventListener('input',onTime);root.addEventListener('click',onClick);update();
+      return()=>{stop();betaInput.removeEventListener('input',onBeta);timeInput.removeEventListener('input',onTime);root.removeEventListener('click',onClick);};
+    }
+  };
+})();
+
+</script>
+<script>
+(() => {
+  'use strict';
+  window.RelativityModules ||= {};
+  window.RelativityPhysics ||= {};
+  const gamma = b => 1 / Math.sqrt(1 - b * b);
+  window.RelativityPhysics.gamma = gamma;
+  const fmt = (v, d = 2) => v.toLocaleString('nb-NO', { minimumFractionDigits: d, maximumFractionDigits: d });
+  window.RelativityModules.clock = {
+    render: () => `
+      <div class="lab-layout">
+        <section class="experiment" aria-label="Forsøk med en lysklokke">
+          <div class="segmented" aria-label="Velg eksempel"><button type="button" data-clock-preset="0">I ro</button><button type="button" data-clock-preset="0.6">0,60c</button><button type="button" data-clock-preset="0.9">0,90c</button></div>
+          <div class="stage" data-clock-stage></div>
+          <div class="controls">
+            <div class="control"><label for="clock-speed">Farten til klokka <strong data-clock-speed-value>0,60c</strong></label><input id="clock-speed" type="range" min="0" max="95" step="1" value="60"></div>
+            <div class="control"><label for="clock-progress">Følg ett tikk <strong data-clock-progress-value>0 %</strong></label><input id="clock-progress" type="range" min="0" max="1000" step="1" value="0"></div>
+            <div class="control"><div><button class="primary" type="button" data-clock-play>Start ett tikk</button> <button class="secondary" type="button" data-clock-reset>Nullstill</button></div></div>
+          </div>
+          <div class="metrics"><div class="metric"><strong data-clock-gamma>1,25</strong><span>Lorentzfaktor γ</span></div><div class="metric"><strong data-clock-rest>0,00 s</strong><span>med klokka · Δτ</span></div><div class="metric"><strong data-clock-lab>0,00 s</strong><span>på perrongen · Δt</span></div></div>
+          <p class="note">Én og samme lysklokke, beskrevet i to treghetssystemer. Avstanden mellom speilene er ett lyssekund. Ett helt tikk er turen opp og ned. Diagrammenes målestokk tilpasses, men er lik vannrett og loddrett innen hvert diagram.</p>
+        </section>
+        <aside class="lesson-sidebar">
+          <p class="eyebrow">Forutsi → prøv → forklar</p><h3>Samme lysfart. Lengre vei.</h3>
+          <p>Lyset går rett opp og ned sammen med klokka. Sett fra perrongen flytter speilene seg mens lyset er på vei. Lysbanen blir lengre, men lysfarten er fortsatt <i>c</i>.</p>
+          <p><strong>Prøv:</strong> Velg 0,60c og dra gjennom ett tikk. Hvor mye tid går i hvert system?</p>
+          <div class="formula">γ = 1 / √(1 − β²)<br>Δt = γΔτ &nbsp; · &nbsp; β = v/c</div>
+          <p>Her er Δτ <strong>egentiden</strong>: tiden mellom to hendelser som skjer ved samme sted i klokkens eget system. På perrongen skjer starten og slutten på ulike steder.</p>
+          <details><summary>Hvor kommer formelen fra?</summary><p>For en halv tur er høyden <i>h</i>, lysveien <i>c</i>Δt/2 og forflytningen <i>v</i>Δt/2. Pytagoras gir (cΔt/2)² = h² + (vΔt/2)². Bruk h = cΔτ/2, så får vi Δt = γΔτ.</p></details>
+          <div class="question"><h4>Sjekk forståelsen</h4><p>Ved 0,60c bruker klokka 60 s på en prosess i sitt eget system. Hvilken tid måler perrongens synkroniserte klokker?</p><button type="button" class="secondary" data-clock-answer="48">48 s</button> <button type="button" class="secondary" data-clock-answer="60">60 s</button> <button type="button" class="secondary" data-clock-answer="75">75 s</button><p class="feedback" data-clock-feedback aria-live="polite"></p></div>
+          <p class="note">«Måler» betyr koordinattid med synkroniserte klokker. Lysets reisetid til et øye eller kamera er ikke med. Hvert treghetssystem måler den andres bevegelige klokker til å gå saktere; systemene har også ulik samtidighet.</p>
+        </aside>
+      </div>`,
+    mount(root) {
+      const q = s => root.querySelector(s);
+      const speed = q('#clock-speed');
+      const progress = q('#clock-progress');
+      let beta = 0.6, phase = 0, playing = false, frame = 0, last = null;
+      const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      function draw() {
+        const g = gamma(beta), h = 90;
+        const unit = Math.min(90, beta ? 260 / (2 * beta * g) : 90);
+        const x0 = 425, base = 232, xend = x0 + 2 * beta * g * unit;
+        const px = x0 + 2 * beta * g * phase * unit;
+        const rise = phase <= 0.5 ? phase * 2 : 2 - phase * 2;
+        const restY = base - rise * h, moveY = base - rise * unit;
+        const movingMirrors = `<line x1="${px - 22}" y1="${base - unit}" x2="${px + 22}" y2="${base - unit}" stroke="#163a39" stroke-width="6"/><line x1="${px - 22}" y1="${base}" x2="${px + 22}" y2="${base}" stroke="#163a39" stroke-width="6"/><line x1="${px}" y1="${base - unit}" x2="${px}" y2="${base}" stroke="#dce7e1" stroke-width="1.5" stroke-dasharray="4 5"/>`;
+        q('[data-clock-stage]').innerHTML = `<svg viewBox="0 0 760 340" role="img" aria-label="Lysklokke ved ${fmt(beta)}c. Egentid ${fmt(phase * 2)} sekunder, perrongtid ${fmt(phase * 2 * g)} sekunder.">
+          <title>En lysklokke i to referansesystemer</title><desc>Venstre viser lyset som går loddrett i klokkens system. Høyre viser en diagonal lysbane når klokka beveger seg. Begge viser samme punkt i ett tikk.</desc>
+          <rect x="12" y="12" width="357" height="312" rx="18" fill="#f1f6ef"/><rect x="389" y="12" width="357" height="312" rx="18" fill="#f1f6ef"/>
+          <text x="32" y="44" font-size="17" font-weight="700" fill="#163a39">Med lysklokka</text><text x="409" y="44" font-size="17" font-weight="700" fill="#163a39">Fra perrongen</text>
+          <text x="32" y="67" font-size="13" fill="#667b77">Klokka er i ro · egentid Δτ</text><text x="409" y="67" font-size="13" fill="#667b77">Klokka beveger seg · koordinattid Δt</text>
+          <line x1="190" y1="${base - h}" x2="190" y2="${base}" stroke="#df7048" stroke-width="4" opacity="0.35"/>
+          <line x1="168" y1="${base - h}" x2="212" y2="${base - h}" stroke="#163a39" stroke-width="6"/><line x1="168" y1="${base}" x2="212" y2="${base}" stroke="#163a39" stroke-width="6"/>
+          <line x1="247" y1="${base - h}" x2="247" y2="${base}" stroke="#667b77"/><line x1="242" y1="${base - h}" x2="252" y2="${base - h}" stroke="#667b77"/><line x1="242" y1="${base}" x2="252" y2="${base}" stroke="#667b77"/><text x="258" y="192" font-size="13" fill="#667b77">1 lyssekund</text>
+          <circle cx="190" cy="${restY}" r="8" fill="#df7048" stroke="#fffef8" stroke-width="3"/>
+          <path d="M ${x0} ${base} L ${x0 + beta * g * unit} ${base - unit} L ${xend} ${base}" fill="none" stroke="#df7048" stroke-width="3" stroke-dasharray="7 5" opacity="0.6"/>
+          ${movingMirrors}<circle cx="${px}" cy="${moveY}" r="8" fill="#df7048" stroke="#fffef8" stroke-width="3"/>
+          <text x="409" y="104" font-size="13" fill="#087e79">v = ${fmt(beta)}c →</text>
+          <text x="32" y="293" font-size="18" font-weight="700" fill="#087e79">Δτ = ${fmt(phase * 2)} s</text><text x="409" y="293" font-size="18" font-weight="700" fill="#087e79">Δt = ${fmt(phase * 2 * g)} s</text>
+          <text x="32" y="314" font-size="12" fill="#667b77">Lysfart: c</text><text x="409" y="314" font-size="12" fill="#667b77">Lysfart: c</text>
+        </svg>`;
+        q('[data-clock-speed-value]').textContent = `${fmt(beta)}c`;
+        q('[data-clock-progress-value]').textContent = `${Math.round(phase * 100)} %`;
+        q('[data-clock-gamma]').textContent = fmt(g);
+        q('[data-clock-rest]').textContent = `${fmt(phase * 2)} s`;
+        q('[data-clock-lab]').textContent = `${fmt(phase * 2 * g)} s`;
+        q('[data-clock-play]').textContent = playing ? 'Pause' : phase >= 1 ? 'Spill tikket igjen' : 'Start ett tikk';
+        progress.value = Math.round(phase * 1000);
+        root.querySelectorAll('[data-clock-preset]').forEach(b => b.classList.toggle('active', Math.abs(Number(b.dataset.clockPreset) - beta) < 0.0001));
+      }
+      function stop() { playing = false; last = null; cancelAnimationFrame(frame); }
+      function tick(now) {
+        if (!playing) return;
+        if (last !== null) phase = Math.min(1, phase + Math.min(now - last, 100) / 6500);
+        last = now;
+        if (phase >= 1) stop();
+        draw();
+        if (playing) frame = requestAnimationFrame(tick);
+      }
+      const onSpeed = () => { beta = Number(speed.value) / 100; draw(); };
+      const onProgress = () => { stop(); phase = Number(progress.value) / 1000; draw(); };
+      const onClick = e => {
+        const button = e.target.closest('button');
+        if (!button) return;
+        if (button.hasAttribute('data-clock-preset')) { stop(); beta = Number(button.dataset.clockPreset); speed.value = beta * 100; draw(); }
+        if (button.hasAttribute('data-clock-play')) {
+          if (playing) stop(); else if (reduced) { phase = phase >= 1 ? 0 : 1; } else { if (phase >= 1) phase = 0; playing = true; last = null; frame = requestAnimationFrame(tick); }
+          draw();
+        }
+        if (button.hasAttribute('data-clock-reset')) { stop(); phase = 0; draw(); }
+        if (button.hasAttribute('data-clock-answer')) {
+          const correct = button.dataset.clockAnswer === '75';
+          q('[data-clock-feedback]').textContent = correct ? 'Ja. γ = 1,25, så perrongen måler 1,25 · 60 s = 75 s mellom de samme to hendelsene.' : 'Prøv igjen: ved 0,60c er γ = 1,25. Gang egentiden med γ. Den bevegelige prosessen tar lengre tid i perrongens system.';
+          q('[data-clock-feedback]').classList.toggle('correct', correct);
+        }
+      };
+      speed.addEventListener('input', onSpeed); progress.addEventListener('input', onProgress); root.addEventListener('click', onClick); draw();
+      return () => { stop(); speed.removeEventListener('input', onSpeed); progress.removeEventListener('input', onProgress); root.removeEventListener('click', onClick); };
+    }
+  };
+})();
+
+</script>
+<script>
+(() => {
+  'use strict';
+  window.RelativityModules ||= {};
+  window.RelativityPhysics ||= {};
+  const c = 299792458;
+  const gamma = b => 1 / Math.sqrt(1 - b * b);
+  function muon(beta, height = 10000, tau0 = 2.2e-6) {
+    const g = gamma(beta), labTransit = beta > 0 ? height / (beta * c) : Infinity;
+    const properTransit = labTransit / g;
+    return { gamma: g, contractedHeight: height / g, labTransit, properTransit, labMeanLife: g * tau0, meanRange: beta * c * g * tau0, survival: Math.exp(-properTransit / tau0) };
+  }
+  window.RelativityPhysics.gamma = gamma;
+  window.RelativityPhysics.muon = muon;
+  const fmt = (v, d = 2) => Number.isFinite(v) ? v.toLocaleString('nb-NO', { minimumFractionDigits: d, maximumFractionDigits: d }) : '∞';
+  window.RelativityModules.length = {
+    render: () => `
+      <div class="lab-layout">
+        <section class="experiment" aria-label="Lengdeforkortelse og myoner">
+          <div class="segmented" aria-label="Velg forsøk"><button type="button" class="active" data-length-mode="rod">Mål en stav</button><button type="button" data-length-mode="muon">Myonet fra atmosfæren</button></div>
+          <div class="stage" data-length-stage></div>
+          <div class="controls"><div class="control"><label for="length-speed">Relativ fart <strong data-length-speed-value>0,600c</strong></label><input id="length-speed" type="range" min="0" max="999" step="1" value="600"></div><div class="control" data-length-frame-control hidden><label>Beskriv hendelsene fra</label><div class="segmented"><button type="button" class="active" data-length-frame="earth">Jorda</button><button type="button" data-length-frame="muon">Myonet</button></div></div><div class="control"><button class="secondary" type="button" data-length-preset>Prøv 0,80c</button></div></div>
+          <div class="metrics" data-length-metrics></div>
+          <p class="note" data-length-note></p>
+        </section>
+        <aside class="lesson-sidebar">
+          <p class="eyebrow">Forutsi → prøv → forklar</p><h3 data-length-heading>Mål begge endene samtidig</h3>
+          <div data-length-explain></div>
+          <div class="formula">L = L₀ / γ<br>γ = 1 / √(1 − v²/c²)</div>
+          <p><strong>Hvilelengden L₀</strong> måles der gjenstanden er i ro. Lengden <strong>L</strong> måles mellom endepunkter <strong>samtidig i målesystemet</strong>. Bare lengder i bevegelsesretningen forkortes.</p>
+          <div class="question"><h4>Sjekk forståelsen</h4><p data-length-question></p><div data-length-answers></div><p class="feedback" data-length-feedback aria-live="polite"></p></div>
+          <p class="note">Figurene viser koordinater og målinger, ikke hvordan et kamera vil fotografere en gjenstand. Lysets reisetid kan endre hvordan et bilde ser ut.</p>
+        </aside>
+      </div>`,
+    mount(root) {
+      const q = s => root.querySelector(s);
+      const slider = q('#length-speed');
+      let mode = 'rod', earth = true, rodBeta = 0.6, muonBeta = 0.998;
+      const beta = () => mode === 'rod' ? rodBeta : muonBeta;
+      function renderRod() {
+        const b = beta(), g = gamma(b), left = 138, right = 622, length = (right - left) / g, start = (760 - length) / 2, end = start + length;
+        let ticks = '';
+        for (let n = 0; n <= 10; n++) { const x = left + (right - left) * n / 10; ticks += `<line x1="${x}" y1="288" x2="${x}" y2="${n % 5 === 0 ? 304 : 297}" stroke="#667b77"/><text x="${x}" y="323" text-anchor="middle" font-size="12" fill="#667b77">${n}</text>`; }
+        q('[data-length-stage]').innerHTML = `<svg viewBox="0 0 760 355" role="img" aria-label="En stav har hvilelengde 10 meter. Ved ${fmt(b, 3)}c måles den til ${fmt(10 / g)} meter."><title>En stav i ro og i bevegelse</title><desc>Staven øverst har lengden ti meter i sitt eget system. Den nederste staven har kortere koordinatlengde, målt ved å registrere begge endepunktene samtidig i laboratoriet.</desc>
+          <text x="28" y="37" font-size="17" font-weight="700" fill="#163a39">I stavens system</text><text x="28" y="60" font-size="13" fill="#667b77">Hvilelengde L₀ = 10,00 m</text>
+          <rect x="${left}" y="85" width="${right - left}" height="28" rx="6" fill="#087e79"/><line x1="${left}" y1="128" x2="${right}" y2="128" stroke="#087e79"/><line x1="${left}" y1="122" x2="${left}" y2="134" stroke="#087e79"/><line x1="${right}" y1="122" x2="${right}" y2="134" stroke="#087e79"/>
+          <text x="380" y="150" text-anchor="middle" font-size="13" fill="#087e79">10,00 m</text>
+          <text x="28" y="191" font-size="17" font-weight="700" fill="#163a39">I laboratoriet</text><text x="565" y="191" font-size="13" fill="#df7048">v = ${fmt(b, 3)}c →</text>
+          <rect x="${start}" y="215" width="${Math.max(1, length)}" height="28" rx="6" fill="#df7048"/>
+          <line x1="${start}" y1="207" x2="${start}" y2="288" stroke="#df7048" stroke-dasharray="4 4"/><line x1="${end}" y1="207" x2="${end}" y2="288" stroke="#df7048" stroke-dasharray="4 4"/>
+          <text x="380" y="268" text-anchor="middle" font-size="14" font-weight="700" fill="#163a39">L = ${fmt(10 / g)} m · begge ender ved t = 0</text>
+          <line x1="${left}" y1="288" x2="${right}" y2="288" stroke="#667b77"/>${ticks}<text x="646" y="323" font-size="12" fill="#667b77">m</text>
+        </svg>`;
+        q('[data-length-metrics]').innerHTML = `<div class="metric"><strong>10,00 m</strong><span>hvilelengde L₀</span></div><div class="metric"><strong>${fmt(10 / g)} m</strong><span>målt lengde L</span></div><div class="metric"><strong>${fmt(g)}</strong><span>Lorentzfaktor γ</span></div>`;
+        q('[data-length-note]').textContent = 'Samme målestokk i begge rader. Den nederste staven er en måling av lengde i laboratoriet. Velg for eksempel 0,80c: da er lengden 6,00 m.';
+      }
+      function renderMuon() {
+        const b = beta(), m = muon(b), ground = earth ? 287 : 67 + 220 / m.gamma, muonY = 67;
+        const distance = earth ? '10,00 km' : `${fmt(m.contractedHeight, 0)} m`;
+        q('[data-length-stage]').innerHTML = `<svg viewBox="0 0 760 355" role="img" aria-label="Myon ved ${fmt(b, 3)}c. Avstanden til jorda er ${distance} i det valgte systemet. ${fmt(m.survival * 100, 1)} prosent overlever reisen."><title>Myonets reise, sett fra ${earth ? 'jorda' : 'myonet'}</title><desc>I jordas system er atmosfæren ti kilometer tykk og myonets middellevetid forlenget. I myonets system er avstanden kortere, mens myonets middellevetid er 2,20 mikrosekunder. Begge beskrivelsene gir samme overlevelsessannsynlighet.</desc>
+          <rect x="20" y="20" width="390" height="309" rx="18" fill="#f1f6ef"/>
+          <text x="40" y="47" font-size="16" font-weight="700" fill="#163a39">${earth ? 'Jorda er i ro' : 'Myonet er i ro'}</text>
+          <line x1="290" y1="67" x2="290" y2="287" stroke="#dce7e1" stroke-width="2" stroke-dasharray="5 5"/>
+          <rect x="80" y="${ground}" width="255" height="12" rx="2" fill="#087e79"/>
+          <circle cx="170" cy="${muonY}" r="9" fill="#df7048" stroke="#fffef8" stroke-width="3"/>
+          <text x="100" y="${muonY + 5}" text-anchor="end" font-size="13" fill="#163a39">Myon</text>
+          <line x1="352" y1="${muonY}" x2="352" y2="${ground}" stroke="#667b77"/><line x1="346" y1="${muonY}" x2="358" y2="${muonY}" stroke="#667b77"/><line x1="346" y1="${ground}" x2="358" y2="${ground}" stroke="#667b77"/>
+          <text x="${earth ? 365 : 230}" y="${earth ? 183 : ground + 42}" font-size="13" fill="#087e79" ${earth ? 'transform="rotate(-90 365 183)"' : ''}>${distance}</text>
+          ${earth ? `<line x1="170" y1="93" x2="170" y2="201" stroke="#df7048" stroke-width="3"/><path d="M 163 191 L 170 204 L 177 191" fill="none" stroke="#df7048" stroke-width="3"/><text x="185" y="155" font-size="13" fill="#df7048">${fmt(b, 3)}c ↓</text>` : `<line x1="123" y1="${ground + 118}" x2="123" y2="${ground + 35}" stroke="#087e79" stroke-width="3"/><path d="M 116 ${ground + 45} L 123 ${ground + 32} L 130 ${ground + 45}" fill="none" stroke="#087e79" stroke-width="3"/><text x="140" y="${ground + 99}" font-size="13" fill="#087e79">Jorda nærmer seg med ${fmt(b, 3)}c</text>`}
+          <text x="80" y="319" font-size="12" fill="#667b77">Lik loddrett målestokk: stiplet høyde = 10 km</text>
+          <text x="443" y="55" font-size="15" font-weight="700" fill="#163a39">Tid til bakken</text><text x="443" y="88" font-size="25" font-weight="700" fill="#087e79">${fmt((earth ? m.labTransit : m.properTransit) * 1e6)} μs</text>
+          <text x="443" y="127" font-size="15" font-weight="700" fill="#163a39">Middellevetid i dette systemet</text><text x="443" y="160" font-size="25" font-weight="700" fill="#087e79">${fmt((earth ? m.labMeanLife : 2.2e-6) * 1e6)} μs</text>
+          <text x="443" y="207" font-size="15" font-weight="700" fill="#163a39">Begge systemer er enige:</text><text x="443" y="240" font-size="26" font-weight="700" fill="#df7048">${fmt(m.survival * 100, 1)} % overlever</text><text x="443" y="267" font-size="13" fill="#667b77">Samme myoner. Samme treff på bakken.</text>
+        </svg>`;
+        q('[data-length-metrics]').innerHTML = `<div class="metric"><strong>${fmt(m.gamma)}</strong><span>Lorentzfaktor γ</span></div><div class="metric"><strong>${fmt(m.contractedHeight, 0)} m</strong><span>avstand i myonets system</span></div><div class="metric"><strong>${fmt(m.meanRange / 1000, 2)} km</strong><span>middelveilengde i jordsystemet</span></div>`;
+        q('[data-length-note]').textContent = `Modell: myoner dannes 10 km over bakken og holder konstant fart. Middellevetid i ro er 2,20 μs. Et enkelt myon kan leve både kortere og lengre. P = exp(−Δτ/τ₀) = ${fmt(m.survival * 100, 1)} %. Ingen energitap eller produksjonsfordeling er tatt med.`;
+      }
+      function setupMode() {
+        const isMuon = mode === 'muon';
+        slider.min = isMuon ? '900' : '0'; slider.max = '999'; slider.value = beta() * 1000;
+        q('[data-length-frame-control]').hidden = !isMuon;
+        q('[data-length-preset]').textContent = isMuon ? 'Bokas eksempel: 0,998c' : 'Prøv 0,80c';
+        q('[data-length-heading]').textContent = isMuon ? 'To forklaringer. Samme resultat.' : 'Mål begge endene samtidig';
+        q('[data-length-explain]').innerHTML = isMuon ? '<p>Et myon dannes høyt i atmosfæren. Sett fra jorda lever det i gjennomsnitt lenger fordi det beveger seg. Sett fra myonet er middellevetiden som vanlig, men avstanden til jorda er kortere.</p><p><strong>Prøv:</strong> Velg 0,998c og bytt system. Sammenlign reisetid med middellevetid. Hvorfor blir overlevelsesandelen den samme?</p>' : '<p>En stav som beveger seg langs lengderetningen, måles kortere i laboratoriet. Den har fortsatt sin vanlige hvilelengde i eget system.</p><p><strong>Prøv:</strong> Øk farten fra null. Ved hvilken fart blir en 10 m lang stav målt til 6 m?</p>';
+        q('[data-length-question]').textContent = isMuon ? 'Et myon har middellevetiden 2,20 μs i ro. Betyr det at hvert myon forsvinner nøyaktig etter 2,20 μs egentid?' : 'Hva må være sant når laboratoriet måler lengden av staven?';
+        q('[data-length-answers]').innerHTML = isMuon ? '<button class="secondary" type="button" data-length-answer="wrong">Ja, alle har samme levetid</button> <button class="secondary" type="button" data-length-answer="right">Nei, levetiden varierer</button>' : '<button class="secondary" type="button" data-length-answer="wrong">Endene måles etter tur</button> <button class="secondary" type="button" data-length-answer="right">Endene måles samtidig</button>';
+        q('[data-length-feedback]').textContent = '';
+        draw();
+      }
+      function draw() {
+        q('[data-length-speed-value]').textContent = `${fmt(beta(), 3)}c`;
+        root.querySelectorAll('[data-length-mode]').forEach(b => b.classList.toggle('active', b.dataset.lengthMode === mode));
+        root.querySelectorAll('[data-length-frame]').forEach(b => b.classList.toggle('active', (b.dataset.lengthFrame === 'earth') === earth));
+        if (mode === 'rod') renderRod(); else renderMuon();
+      }
+      const onInput = () => { if (mode === 'rod') rodBeta = Number(slider.value) / 1000; else muonBeta = Number(slider.value) / 1000; draw(); };
+      const onClick = e => {
+        const button = e.target.closest('button'); if (!button) return;
+        if (button.hasAttribute('data-length-mode')) { mode = button.dataset.lengthMode; setupMode(); }
+        if (button.hasAttribute('data-length-frame')) { earth = button.dataset.lengthFrame === 'earth'; draw(); }
+        if (button.hasAttribute('data-length-preset')) { if (mode === 'rod') rodBeta = 0.8; else muonBeta = 0.998; slider.value = beta() * 1000; draw(); }
+        if (button.hasAttribute('data-length-answer')) {
+          const right = button.dataset.lengthAnswer === 'right';
+          q('[data-length-feedback]').textContent = mode === 'muon' ? (right ? 'Riktig. 2,20 μs er et gjennomsnitt. Overlevelsen er eksponentiell, og et enkelt myon har ingen fast utløpstid.' : 'Tenk på forskjellen mellom en middellevetid og en bestemt levetid. Myoner henfaller tilfeldig; de har ikke alle samme levetid.') : (right ? 'Riktig. Begge endepunktene må registreres samtidig i laboratoriets referansesystem. Samtidighet i stavens system er en annen måling.' : 'Da rekker staven å flytte seg mellom registreringene. En lengdemåling krever samtidige endepunkter i systemet som måler.');
+          q('[data-length-feedback]').classList.toggle('correct', right);
+        }
+      };
+      slider.addEventListener('input', onInput); root.addEventListener('click', onClick); setupMode();
+      return () => { slider.removeEventListener('input', onInput); root.removeEventListener('click', onClick); };
+    }
+  };
+})();
+
+</script>
+<script>
+(() => {
+  'use strict';
+  window.RelativityModules ||= {};
+  window.RelativityPhysics ||= {};
+  const transform=(x,ct,beta)=>{const g=1/Math.sqrt(1-beta*beta);return {x:g*(x-beta*ct),ct:g*(ct-beta*x)};};
+  window.RelativityPhysics.transform=transform;
+  window.RelativityPhysics.interval=(x,ct)=>ct*ct-x*x;
+  const fmt=(n,d=2)=> (Math.abs(n)<.000001?0:n).toLocaleString('nb-NO',{minimumFractionDigits:d,maximumFractionDigits:d});
+  window.RelativityModules.minkowski={
+    render:()=>`<div class="lab-layout">
+      <section class="experiment">
+        <div class="stage"><div class="stage-label"><span>ET KART OVER HENDELSER</span><span class="live-dot">KLIKK ELLER DRA PUNKT B</span></div>
+        <svg id="mink-plot" class="mink-svg" viewBox="0 0 650 650" role="img" aria-labelledby="mink-svg-title mink-svg-desc"><title id="mink-svg-title">Interaktivt Minkowski-diagram</title><desc id="mink-svg-desc">Rom x går mot høyre og tid ct oppover. Lys går langs diagonalene. Bruk gliderne under figuren som alternativ til å dra hendelse B.</desc></svg>
+        <div class="mink-legend"><span>S: perrong</span><span class="primed">S′: tog</span><span class="light">Lys</span><span class="projection">Avlesning i S′</span></div></div>
+        <div class="controls"><div class="control"><label for="mink-beta">Togets fart β = v/c <output id="mink-beta-value"></output></label><input id="mink-beta" type="range" min="-0.85" max="0.85" step="0.05" value="0.5"><div class="range-ends"><span>← −0,85</span><span>0</span><span>+0,85 →</span></div></div><button class="secondary" id="mink-reset">Nullstill</button></div>
+        <div class="controls"><div class="control"><label for="mink-x">Hendelse B: x <output id="mink-x-value"></output></label><input id="mink-x" type="range" min="-3.5" max="3.5" step="0.1" value="2"></div><div class="control"><label for="mink-ct">Hendelse B: ct <output id="mink-ct-value"></output></label><input id="mink-ct" type="range" min="-3.5" max="3.5" step="0.1" value="1"></div></div>
+        <div class="mink-options"><label><input id="mink-grid" type="checkbox"> Skrått rutenett</label><label><input id="mink-projections" type="checkbox" checked> Avlesningslinjer</label><label><input id="mink-cone" type="checkbox" checked> Lyskjegle</label></div>
+        <div class="event-presets" aria-label="Eksempler"><button data-preset="simultaneous">Samtidig i S</button><button data-preset="train">På togets klokke</button><button data-preset="light">Lyssignal</button><button data-preset="future">Mulig årsak → virkning</button></div>
+        <div class="metrics mink-metrics"><div class="metric"><span>Perrong S: (x, ct)</span><strong id="mink-s"></strong></div><div class="metric"><span>Tog S′: (x′, ct′)</span><strong id="mink-prime"></strong></div><div class="metric"><span>Intervall s² = (ct)² − x²</span><strong id="mink-interval"></strong></div></div>
+        <div class="mink-status"><span>Fra O til B</span><strong id="mink-class"></strong></div><p class="note" id="mink-explanation"></p>
+        <p class="note">Begge akser bruker <strong>lyssekunder</strong> (avstanden lys tilbakelegger på ett sekund). Dermed har ct samme tallverdi som t målt i sekunder. Samme skala på aksene gjør at lyslinjene ligger 45°.</p>
+      </section>
+      <aside class="lesson-sidebar"><h2>Et punkt er en hendelse</h2><p>O er «her og nå»: x = 0 og t = 0. B er noe som skjer på et bestemt sted til en bestemt tid. Diagrammet viser hele romtiden i én romdimensjon.</p>
+      <h3>1 · Les verdenskartet</h3><p>En loddrett linje er et objekt i ro i S. Togets verdenslinje er ct′-aksen: x = βct. Jo nærmere lysfarten toget kommer, desto nærmere lyslinjen ligger denne aksen.</p>
+      <h3>2 · Endre hva «nå» betyr</h3><p>Velg «Samtidig i S», og endre β. O og B ligger på samme vannrette linje, men får ulike t′. Linjer parallelle med x′-aksen er samtidighetslinjer i S′.</p>
+      <h3>3 · Les av riktig</h3><p>Følg linjene parallelt med den andre skrå aksen. De små strekene på de grønne aksene markerer én enhet i S′. Dette er en Lorentz-transformasjon; vanlig rotasjon og vinkelrett projeksjon gir feil.</p>
+      <div class="formula wide-formula">x′ = γ(x − βct)<br>ct′ = γ(ct − βx)<small>γ = 1/√(1 − β²). En hendelse endrer koordinater, men ikke intervall.</small></div>
+      <details><summary>Hvorfor er begge aksene skrå?</summary><p>På ct′-aksen er x′ = 0, altså x = βct. På x′-aksen er t′ = 0, altså ct = βx. De nærmer seg samme lyslinje når β nærmer seg 1. De grønne enhetsmerkene flytter seg også fordi γ endres.</p></details>
+      <div class="question"><h3>Sjekk forståelsen</h3><p>Kan du endre rekkefølgen til to hendelser som er romlikt atskilt, ved å bytte treghetssystem?</p><button data-mink-answer="yes">Ja, for noen valg av fart.</button><button data-mink-answer="no">Nei, rekkefølgen er alltid fast.</button><div class="feedback" id="mink-feedback" aria-live="polite"></div></div>
+      </aside></div>`,
+    mount(root){
+      const get=id=>root.querySelector('#'+id);
+      let beta=.5,x=2,ct=1,grid=false,projections=true,cone=true,dragging=false;
+      const svg=get('mink-plot'), origin=325,scale=65,bound=4;
+      const px=q=>origin+q*scale,py=q=>origin-q*scale;
+      const point=(a,b)=>`${px(a)},${py(b)}`;
+      const line=(x1,t1,x2,t2,color,width=1,dash='')=>`<line x1="${px(x1)}" y1="${py(t1)}" x2="${px(x2)}" y2="${py(t2)}" stroke="${color}" stroke-width="${width}" ${dash?`stroke-dasharray="${dash}"`:''}/>`;
+      const label=(a,b,text,color='#163a39',size=13,anchor='middle')=>`<text x="${px(a)}" y="${py(b)}" fill="${color}" font-size="${size}" text-anchor="${anchor}" font-family="Arial,sans-serif">${text}</text>`;
+      const short=n=>fmt(n,1);
+      function draw(){
+        const g=1/Math.sqrt(1-beta*beta),p=transform(x,ct,beta),s2=ct*ct-x*x;
+        get('mink-beta-value').textContent=fmt(beta,2);
+        get('mink-x-value').textContent=fmt(x,1)+' ls';get('mink-ct-value').textContent=fmt(ct,1)+' ls';
+        get('mink-s').textContent=`(${short(x)}; ${short(ct)})`;
+        get('mink-prime').textContent=`(${fmt(p.x)}; ${fmt(p.ct)})`;
+        get('mink-interval').innerHTML=`${fmt(s2)} <small>ls²</small>`;
+        let kind,explanation;
+        if(Math.abs(x)+Math.abs(ct)<1e-7){kind='Samme hendelse';explanation='B sammenfaller med O. Alle treghetssystemer er enige om at dette er én og samme hendelse.';}
+        else if(Math.abs(s2)<1e-7){kind='Lyslikt intervall';explanation=ct>0?'Et lyssignal fra O kan nå B. Alle treghetssystemer bevarer denne lysforbindelsen og rekkefølgen.':'Et lyssignal fra B kan nå O. Alle treghetssystemer bevarer denne lysforbindelsen og rekkefølgen.';}
+        else if(s2>0){kind='Tidlikt intervall';explanation=ct>0?'B ligger i fremtidskjeglen til O. Et signal med fart lavere enn c kan gå fra O til B. Alle treghetssystemer er enige om rekkefølgen.':'B ligger i fortidskjeglen til O. Et signal med fart lavere enn c kan gå fra B til O. Alle treghetssystemer er enige om rekkefølgen.';}
+        else {kind='Romlikt intervall';explanation='Et signal mellom O og B ville kreve fart større enn c. Hendelsene kan derfor ikke påvirke hverandre direkte. Deres tidsrekkefølge kan avhenge av treghetssystemet.';}
+        get('mink-class').textContent=kind;get('mink-explanation').textContent=explanation;
+        let out=`<title id="mink-svg-title">Minkowski-diagram, β ${fmt(beta)}</title><desc id="mink-svg-desc">Hendelse B: x ${short(x)}, ct ${short(ct)} lyssekunder. I toget: x prim ${fmt(p.x)}, ct prim ${fmt(p.ct)}. ${kind}. Bruk gliderne for tilgjengelig betjening.</desc><defs><clipPath id="mink-clip"><rect x="65" y="65" width="520" height="520"/></clipPath></defs>`;
+        out+='<rect x="65" y="65" width="520" height="520" fill="#fafcf8" rx="4"/>';
+        if(cone){out+=`<polygon points="${point(0,0)} ${point(-bound,bound)} ${point(bound,bound)}" fill="#deebe0"/><polygon points="${point(0,0)} ${point(-bound,-bound)} ${point(bound,-bound)}" fill="#e6ede4"/>`;out+=label(-2.35,3.65,'FREMTID','#789183',10)+label(-2.35,-3.65,'FORTID','#789183',10);}
+        for(let n=-4;n<=4;n++){if(n){out+=line(n,-4,n,4,'#e0e8e0')+line(-4,n,4,n,'#e0e8e0');out+=label(n,-.24,String(n),'#81938a',10)+label(-.15,n-.06,String(n),'#81938a',10,'end');}}
+        out+='<g clip-path="url(#mink-clip)">';
+        if(grid)for(let n=-6;n<=6;n++){if(n){out+=line(-5,beta*(-5)+n/g,5,beta*5+n/g,'#a8c8bd',1,'3 5');out+=line(beta*(-5)+n/g,-5,beta*5+n/g,5,'#a8c8bd',1,'3 5');}}
+        out+=line(-4,-4,4,4,'#df7048',1.7,'6 5')+line(-4,4,4,-4,'#df7048',1.7,'6 5');
+        out+=line(-4.2,0,4.2,0,'#234741',1.4)+line(0,-4.2,0,4.2,'#234741',1.4);
+        out+=line(-4.5,-4.5*beta,4.5,4.5*beta,'#087e79',2)+line(-4.5*beta,-4.5,4.5*beta,4.5,'#087e79',2);
+        // Calibrated S′ units, using the inverse Lorentz transformation.
+        for(let q=-3;q<=3;q++){if(q){const a=g*q,b=g*beta*q;out+=line(a-.045,b+.07,a+.045,b-.07,'#087e79',1.5);out+=label(a,b-.2,String(q),'#087e79',10);out+=line(b-.07,a+.045,b+.07,a-.045,'#087e79',1.5);out+=label(b+.18,a+.04,String(q),'#087e79',10);}}
+        if(projections){const xt=g*p.x,tt=g*beta*p.x,xc=g*beta*p.ct,tc=g*p.ct;out+=line(x,ct,xt,tt,'#9670a0',1.7,'5 4')+line(x,ct,xc,tc,'#9670a0',1.7,'5 4');out+=`<circle cx="${px(xt)}" cy="${py(tt)}" r="3" fill="#9670a0"/><circle cx="${px(xc)}" cy="${py(tc)}" r="3" fill="#9670a0"/>`;}
+        out+='</g>';
+        out+=label(4.25,-.05,'x','#163a39',17,'start')+label(.12,4.3,'ct','#163a39',17,'start');
+        // Place primed labels inside the plotting margin at all supported speeds.
+        out+=label(3.8,3.8*beta+.22,'x′','#087e79',17)+label(3.8*beta+.16,3.8,'ct′','#087e79',17,'start');
+        out+=label(3.35,3.65,'c','#df7048',14)+label(-3.4,3.6,'−c','#df7048',14);
+        out+=`<circle cx="325" cy="325" r="4" fill="#163a39"/>`+label(-.17,.19,'O','#163a39',12,'end');
+        out+=`<circle cx="${px(x)}" cy="${py(ct)}" r="16" fill="#df7048" opacity=".12"/><circle cx="${px(x)}" cy="${py(ct)}" r="7" fill="#df7048" stroke="#fffef8" stroke-width="2"/>`+label(x+.18,ct+.18,'B','#a7482c',15,'start');
+        svg.innerHTML=out;
+      }
+      function setEvent(a,b){x=Math.max(-3.5,Math.min(3.5,Math.round(a*10)/10));ct=Math.max(-3.5,Math.min(3.5,Math.round(b*10)/10));get('mink-x').value=x;get('mink-ct').value=ct;draw();}
+      function pointer(e){const pointSvg=svg.createSVGPoint();pointSvg.x=e.clientX;pointSvg.y=e.clientY;const p=pointSvg.matrixTransform(svg.getScreenCTM().inverse());setEvent((p.x-origin)/scale,(origin-p.y)/scale);}
+      svg.addEventListener('pointerdown',e=>{dragging=true;svg.setPointerCapture(e.pointerId);pointer(e);});
+      svg.addEventListener('pointermove',e=>{if(dragging)pointer(e);});svg.addEventListener('pointerup',()=>{dragging=false;});svg.addEventListener('pointercancel',()=>{dragging=false;});
+      get('mink-beta').addEventListener('input',e=>{beta=+e.target.value;draw();});
+      get('mink-x').addEventListener('input',e=>{x=+e.target.value;draw();});get('mink-ct').addEventListener('input',e=>{ct=+e.target.value;draw();});
+      get('mink-grid').addEventListener('change',e=>{grid=e.target.checked;draw();});get('mink-projections').addEventListener('change',e=>{projections=e.target.checked;draw();});get('mink-cone').addEventListener('change',e=>{cone=e.target.checked;draw();});
+      get('mink-reset').addEventListener('click',()=>{beta=.5;grid=false;cone=true;projections=true;get('mink-beta').value=beta;get('mink-grid').checked=false;get('mink-cone').checked=true;get('mink-projections').checked=true;setEvent(2,1);});
+      root.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{switch(b.dataset.preset){case 'simultaneous':setEvent(2,0);break;case 'light':setEvent(2,2);break;case 'future':setEvent(1,3);break;case 'train':setEvent(beta*2,2);break;}}));
+      root.querySelectorAll('[data-mink-answer]').forEach(b=>b.addEventListener('click',()=>{root.querySelectorAll('[data-mink-answer]').forEach(a=>a.classList.remove('correct','wrong'));b.classList.add(b.dataset.minkAnswer==='yes'?'correct':'wrong');get('mink-feedback').textContent=b.dataset.minkAnswer==='yes'?'Riktig. Prøv B = (2; 1), og dra β fra 0 til 0,8. Da skifter t′ fortegn. Ingen årsaksrekkefølge brytes: O og B kan ikke forbindes med et signal med fart ≤ c.':'Prøv B = (2; 1) og β fra 0 til 0,8. t′ går fra positiv til negativ. Fast rekkefølge gjelder for tidlike og lyslike intervaller.';}));
+      draw();return ()=>{dragging=false;};
+    }
+  };
+})();
+
+</script>
+<script>
+(() => {
+  'use strict';
+  if('scrollRestoration' in history)history.scrollRestoration='manual';
+  const modules = [
+    {id:'references',title:'Hvem er i bevegelse?',short:'Referansesystemer',subtitle:'Ett eple. To observatører. To forskjellige baner.',tag:'01 / START MED DET KJENTE',time:'12–15 min'},
+    {id:'velocity',title:'Kan vi legge sammen fart?',short:'Fart og lys',subtitle:'Fra en ball på toget til lysets ufravikelige fartsgrense.',tag:'02 / FRA GALILEI TIL EINSTEIN',time:'8–12 min'},
+    {id:'simultaneity',title:'Når skjer «samtidig»?',short:'Samtidighet',subtitle:'To lynnedslag utfordrer ideen om én felles tid.',tag:'03 / ETT NÅ ER IKKE ALLES NÅ',time:'10–15 min'},
+    {id:'clock',title:'En klokke av lys',short:'Tidsforlengelse',subtitle:'Samme lysfart. En lengre vei. Et lengre tidsintervall.',tag:'04 / TID MÅ MÅLES',time:'10–15 min'},
+    {id:'length',title:'Hvor lang er reisen?',short:'Lengde og myoner',subtitle:'En stav, en atmosfære og to like gode forklaringer.',tag:'05 / AVSTAND AVHENGER AV SYSTEMET',time:'10–15 min'},
+    {id:'minkowski',title:'Tegn rom og tid sammen',short:'Minkowski-laboratoriet',subtitle:'Flytt en hendelse. Bytt perspektiv. Behold fysikken.',tag:'06 / SE GEOMETRIEN BAK FORMELENE',time:'15–20 min'}
+  ];
+  let active=-1, cleanup;
+  const nav=document.getElementById('module-nav');
+  nav.innerHTML=modules.map((m,i)=>`<a class="nav-item" href="#${m.id}" data-module="${m.id}"><span class="nav-index">${String(i+1).padStart(2,'0')}</span><span>${m.short}<small>${m.time}</small></span><span class="nav-arrow" aria-hidden="true">↗</span></a>`).join('');
+  function show(){
+    let i=modules.findIndex(m=>m.id===location.hash.slice(1));if(i<0)i=0;
+    if(i===active)return;
+    cleanup?.();active=i;const m=modules[i];window.scrollTo(0,0);
+    document.title=`${m.short} · Relativitetslab`;
+    document.getElementById('module-title').textContent=m.title;
+    document.getElementById('module-subtitle').textContent=m.subtitle;
+    document.getElementById('module-eyebrow').textContent=m.tag;
+    document.getElementById('module-number').textContent=String(i+1).padStart(2,'0');
+    nav.querySelectorAll('a').forEach((a,j)=>{a.classList.toggle('active',j===i);if(j===i)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
+    const container=document.getElementById('module-content');const mod=window.RelativityModules[m.id];
+    container.innerHTML=mod.render();cleanup=mod.mount(container);
+    document.getElementById('previous').disabled=i===0;
+    const next=document.getElementById('next');next.textContent=i===5?'Tilbake til starten ↗':'Neste modul →';
+    document.getElementById('progress-label').textContent=`${i+1} av ${modules.length}`;
+    if(window.matchMedia('(max-width: 850px)').matches)nav.querySelector('a.active').scrollIntoView({block:'nearest',inline:'center'});
+    requestAnimationFrame(()=>window.scrollTo(0,0));
+  }
+  window.addEventListener('hashchange',show);
+  document.querySelector('.skip-link').addEventListener('click',event=>{event.preventDefault();const content=document.getElementById('module-content');content.focus({preventScroll:true});content.scrollIntoView({block:'start'});});
+  document.getElementById('previous').addEventListener('click',()=>{if(active>0)location.hash=modules[active-1].id;});
+  document.getElementById('next').addEventListener('click',()=>{location.hash=modules[(active+1)%modules.length].id;});
+  const teacher=document.getElementById('teacher-panel'),toggle=document.getElementById('teacher-toggle');
+  toggle.addEventListener('click',()=>{teacher.hidden=!teacher.hidden;toggle.setAttribute('aria-expanded',String(!teacher.hidden));});
+  document.getElementById('teacher-close').addEventListener('click',()=>{teacher.hidden=true;toggle.setAttribute('aria-expanded','false');});
+  document.getElementById('print-guide').addEventListener('click',()=>window.print());
+  show();
+})();
+
+</script>
+</body>
+</html>
+
