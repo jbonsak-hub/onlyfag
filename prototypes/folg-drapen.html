@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="color-scheme" content="dark">
   <title>Følg dråpen – OnlyFag</title>
-  <link rel="stylesheet" href="../assets/geography/drop-prototype/style-d3b44920b335.css">
-  <script src="../assets/geography/drop-prototype/app-74aee8c67c71.js" defer></script>
+  <link rel="stylesheet" href="../assets/geography/drop-prototype/style-327706f45df8.css">
+  <script src="../assets/geography/drop-prototype/app-c8926720fd57.js" defer></script>
 </head>
-<body>
+<body data-map-layer="dark">
   <main class="drop-explorer" aria-label="Følg dråpen gjennom norske vassdrag">
     <canvas id="river-map" tabindex="0" aria-label="Interaktivt elvekart" aria-describedby="map-help keyboard-help">
       Utforsk vassdragene ved å velge et startpunkt i listen under kartet.
@@ -43,12 +43,24 @@
           <div id="about-copy">
             <p>Et nedbørfelt er landskapet som leder vann mot samme utløp. Følg elvene fra små sidegrener til større vassdrag.</p>
             <p>Prototypen viser et utvalg norske vassdrag. Animasjonen gjør vannets vei synlig; hastigheten er tilpasset visningen.</p>
+            <p>Velg topografisk kart, turkart eller terrengrelieff under Bakgrunn. Slå av Vis elver for å studere landskapet. Terrengrelieff viser fjellrygger og daler, men tegner ikke inn beregnede vannskiller.</p>
           </div>
         </div>
       </details>
     </aside>
 
     <section class="player" id="player" aria-label="Utforsk vassdraget">
+      <div class="map-layer-controls">
+        <label for="map-layer">Bakgrunn</label>
+        <select id="map-layer" disabled>
+          <option value="dark">Elvekart</option>
+          <option value="topo">Topografisk kart</option>
+          <option value="toporaster">Turkart</option>
+          <option value="relief">Terrengrelieff</option>
+        </select>
+        <label class="river-toggle"><input id="show-rivers" type="checkbox" checked disabled> Vis elver</label>
+      </div>
+      <p id="map-status" class="map-status" role="status" aria-live="polite"></p>
       <div class="player-topline">
         <div class="view-modes" role="group" aria-label="Visning">
           <button id="mode-flow" class="is-active" type="button" aria-pressed="true">Følg vannet</button>
@@ -104,7 +116,7 @@
       <p class="status" id="status" role="status" aria-live="polite">Velg en elv i kartet eller et startpunkt i listen.</p>
     </section>
 
-    <footer class="source-credit" id="source-credit">Norske vassdrag · Følg dråpen</footer>
+    <footer class="source-credit" id="source-credit"><span id="river-source">Norske vassdrag · Følg dråpen</span><span id="basemap-credit" hidden> · Bakgrunn <a href="https://www.kartverket.no/" target="_blank" rel="noopener">© Kartverket</a></span></footer>
   </main>
 </body>
 </html>

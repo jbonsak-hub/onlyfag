@@ -8,6 +8,40 @@ preset starts to follow a downstream journey. Playback, speed, rain particles,
 upstream highlighting, wheel/pinch zoom, pointer pan and keyboard controls are
 local to this prototype; it has no game scores, accounts or server mutations.
 
+Rain continuously renews a bounded pool of drops in tributaries and headwaters,
+following the same verified downstream links. It continues after the selected
+journey arrives; Pause stops all motion, and reduced motion remains opt-in.
+The static canvas cache resets opacity before each background fill, so fast
+pan/zoom fully replaces the previous camera's image.
+
+## Background maps
+
+The background selector offers the original dark river map, Kartverket's
+topographic `topo` and tour-map `toporaster` layers, and real terrain relief
+(`DTM:multiskyggerelieff`). “Vis elver” hides the complete river overlay to
+inspect the underlying landscape without changing the camera or journey.
+Terrain relief makes ridges visible; it does not compute drainage divides.
+
+Maps are requested directly from the official public services only after a
+background is selected. Linked `© Kartverket` attribution appears with the map.
+No API key, backend proxy, bundled map imagery or new library is required.
+The dark map still works without either remote service. Failed tiles show a
+message; changing layers retries. Requests are bounded to eight concurrent
+images, decoded tiles are capped at 160 after each repaint, and already loaded
+geographically aligned tiles remain visible while new detail arrives.
+
+- [WMTS service and capabilities](https://cache.kartverket.no/):
+  `https://cache.kartverket.no/v1/wmts/1.0.0/{layer}/default/utm33n/{matrix}/{row}/{col}.png`
+- UTM33 matrix `00`–`18`, EPSG:25833, origin `[-2500000,9045984]`,
+  256-pixel tiles, `21664 / 2^level` metres per pixel.
+- [Terrain WMS](https://wms.geonorge.no/skwms1/wms.hoyde-dtm?service=WMS&request=GetCapabilities):
+  WMS 1.3.0, EPSG:25833, matching tile BBOX, 256×256 transparent PNG.
+- [Kartverket terms and attribution](https://www.kartverket.no/api-og-data/vilkar-for-bruk).
+
+The normalized source coordinates are converted back to projected metres using
+`source.projectedBounds` and `unitsPerKm`. Both the tile grid and river geometry
+use the same UTM33 camera; there is no reprojected or stretched approximation.
+
 This is a **river-network prototype**, not arbitrary overland rainfall routing.
 Catchment boundary polygons are deliberately absent: the available broader NVE
 vassdragsområder do not equal these exact river-family catchments. “Se
@@ -25,6 +59,7 @@ PYTHONPATH=/workspace/shared/municipality-python-deps python3 -B scripts/build-d
 node scripts/build-drop-prototype-assets.cjs
 node scripts/build-drop-prototype-assets.cjs --check
 BROWSER_EXECUTABLE=/usr/bin/chromium node tests/drop-prototype.cjs
+BROWSER_EXECUTABLE=/usr/bin/chromium node tests/drop-basemap.cjs
 ```
 
 After changing data or browser sources, rebuild the versioned assets. Retain

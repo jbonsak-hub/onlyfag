@@ -171,9 +171,35 @@ const server = http.createServer((request, response) => {
       await page.locator('#reset').click();
       assert.equal((await snapshot(page)).zoom,1);assert.deepEqual((await snapshot(page)).pan,[0,0]);
     }
+    async function noGhosting(page, deviceScaleFactor) {
+      await pause(page);assert.equal((await snapshot(page)).rain,false);
+      await page.locator('#pause').hover();await page.locator('#river-map').focus();
+      for(const key of ['+','ArrowRight','ArrowDown','+','ArrowLeft','-','ArrowUp','ArrowRight']){
+        await page.keyboard.press(key);await page.clock.runFor(16);
+      }
+      await page.clock.runFor(40);
+      const before=await snapshot(page);
+      await page.evaluate(()=>{
+        const canvas=document.getElementById('river-map');
+        window.dropNavigationPixels=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
+        window.dispatchEvent(new Event('resize'));
+      });
+      await page.clock.runFor(40);
+      const after=await snapshot(page);assert.deepEqual(after.camera,before.camera,'A clean redraw preserves the navigation camera');
+      const difference=await page.evaluate(()=>{
+        const canvas=document.getElementById('river-map'),pixels=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data,previous=window.dropNavigationPixels;
+        let changed=0;for(let i=0;i<pixels.length;i++)if(pixels[i]!==previous[i])changed++;
+        delete window.dropNavigationPixels;
+        return {changed,ratio:canvas.width/canvas.clientWidth};
+      });
+      assert.equal(difference.ratio,deviceScaleFactor,'The ghosting regression uses the intended pixel density');
+      assert.equal(difference.changed,0,'Rapid zoom/pan leaves exactly the pixels produced by a clean redraw');
+      await page.locator('#reset').click();await page.clock.runFor(40);
+    }
 
     for (const viewport of [{width:1366,height:900},{width:390,height:844}]) {
-      const current = await context({viewport, hasTouch:true});
+      const deviceScaleFactor=viewport.width<700?2:1;
+      const current = await context({viewport, hasTouch:true,deviceScaleFactor});
       const page = await current.newPage();await page.clock.install();page.setDefaultTimeout(10000);
       await page.goto(base + '/prototypes/folg-drapen.html');await page.waitForFunction(() => window.DropPrototype?.snapshot().ready);
       await pause(page);await page.clock.runFor(40);await layoutCheck(page, viewport);
@@ -208,6 +234,7 @@ const server = http.createServer((request, response) => {
       await routeCheck(page);await page.clock.runFor(40);await page.screenshot({path:path.join(out,'drop-basin-'+viewport.width+'.png')});
       await page.locator('#mode-flow').click();assert.equal((await snapshot(page)).mode,'flow');
       await zoomAndPan(page,viewport.width<700,current);
+      await noGhosting(page,deviceScaleFactor);
       await page.locator('#river-map').focus();await page.keyboard.press('+');assert((await snapshot(page)).zoom>1);await page.keyboard.press('ArrowLeft');assert.notDeepEqual((await snapshot(page)).pan,[0,0]);await page.keyboard.press('0');assert.equal((await snapshot(page)).zoom,1);assert.deepEqual((await snapshot(page)).pan,[0,0]);
       if(viewport.width<700){
         const client=await page.context().newCDPSession(page),x=viewport.width/2,y=viewport.height*.25;
@@ -236,21 +263,54 @@ const server = http.createServer((request, response) => {
       },byId.get(complete.outlet).points.at(-1));
       assert(outletLight>210,'The visible drop reaches the graph outlet on the canvas');
       await page.screenshot({path:path.join(out,'drop-complete-'+viewport.width+'.png')});
-      await page.locator('#rain').click();let raining=await snapshot(page);assert(raining.rain&&!raining.completed&&!raining.paused,'Rain explicitly starts a new animated journey after completion');
-      assert.equal(await page.locator('#rain').getAttribute('aria-pressed'),'true');await page.clock.runFor(500);assert((await snapshot(page)).progress>0);await page.screenshot({path:path.join(out,'drop-rain-'+viewport.width+'.png')});
-      await pause(page);await page.locator('#rain').click();assert.equal((await snapshot(page)).rain,false,'Rain can be switched off');
+      await page.locator('#rain').click();let raining=await snapshot(page);
+      assert(raining.rain&&raining.completed&&!raining.paused,'Rain starts after completion without restarting the selected journey');
+      assert.equal(raining.progress,1);assert.equal(await page.locator('#rain').getAttribute('aria-pressed'),'true');
+      const rainCount=raining.rainSummary.count;assert(rainCount>0&&rainCount<=320,'Rain uses a bounded particle pool');
+      await page.clock.runFor(13000);raining=await snapshot(page);
+      assert(raining.rain&&raining.completed&&!raining.paused&&raining.progress===1,'Rain continues beyond the selected journey');
+      assert(raining.rainSummary.elapsed>48,'Rain keeps flowing for longer than a complete droplet lifetime');
+      assert(raining.rainSummary.emissions>=rainCount*2,'Fresh tributary droplets replenish the full initial pool');
+      assert.equal(raining.rainSummary.count,rainCount,'Continuous replenishment never grows the pool');
+      await page.screenshot({path:path.join(out,'drop-rain-'+viewport.width+'.png')});
+      await pause(page);const pausedRain=await snapshot(page);
+      assert(pausedRain.completed&&pausedRain.paused);assert.equal(await page.locator('#pause span').textContent(),'Spill av');
+      await page.clock.runFor(1600);assert.deepEqual((await snapshot(page)).rainSummary,pausedRain.rainSummary,'Explicit pause stops rainfall and new emissions after completion');
+      await page.locator('#pause').click();await page.clock.runFor(800);const resumedRain=await snapshot(page);
+      assert(resumedRain.rainSummary.elapsed>pausedRain.rainSummary.elapsed&&resumedRain.progress===1,'Play resumes only rain while the completed drop stays at its outlet');
+      await page.locator('#rain').click();const dry=await snapshot(page);
+      assert(!dry.rain&&dry.paused&&dry.completed,'Turning rain off returns the completed journey to rest');assert.equal(dry.rainSummary.count,0);
+      await page.clock.runFor(1000);assert.deepEqual((await snapshot(page)).rainSummary,dry.rainSummary,'Turning rain off stops rainfall work');
+      await page.locator('#replay').click();await pause(page);await page.locator('#rain').click();const heldRain=await snapshot(page);
+      assert(heldRain.rain&&heldRain.paused&&!heldRain.completed,'Enabling rain respects an explicit pause during a journey');
+      await page.clock.runFor(500);assert.deepEqual((await snapshot(page)).rainSummary,heldRain.rainSummary);
+      await page.locator('#pause').click();await page.clock.runFor(12000);const wetComplete=await snapshot(page);
+      assert(wetComplete.completed&&!wetComplete.paused&&wetComplete.rain,'Rain already flowing at journey completion keeps running');
+      const wetElapsed=wetComplete.rainSummary.elapsed;await page.clock.runFor(500);assert((await snapshot(page)).rainSummary.elapsed>wetElapsed);
+      await page.locator('#rain').click();
       await page.locator('#replay').click();await pause(page);assert.equal((await snapshot(page)).completed,false);
       await layoutCheck(page,viewport);
-      report.viewports.push({viewport,presets:data.starts.length,keyboard:true,riverClick:true,pause:true,replay:true,speed:4,basinMode:true,pan:true,zoomReset:true,correctOutlet:complete.outlet});
+      report.viewports.push({viewport,deviceScaleFactor,presets:data.starts.length,keyboard:true,riverClick:true,pause:true,replay:true,speed:4,basinMode:true,pan:true,zoomReset:true,noGhosting:true,continuousRain:true,correctOutlet:complete.outlet});
       await current.close();
     }
 
     const reduced = await context({viewport:{width:390,height:844},hasTouch:true,reducedMotion:'reduce'});
     const page = await reduced.newPage();await page.clock.install();await page.goto(base+'/prototypes/folg-drapen.html');await page.waitForFunction(()=>window.DropPrototype?.snapshot().ready);
     const still=await routeCheck(page);assert(still.paused && !still.rain,'Reduced motion starts paused with rain disabled');await page.clock.runFor(1500);assert.equal((await snapshot(page)).progress,still.progress,'Reduced motion does not autoplay');
-    await page.locator('#pause').focus();await page.keyboard.press('Space');await page.clock.runFor(600);assert((await snapshot(page)).progress>still.progress,'Playback remains an explicit keyboard choice');await pause(page);await layoutCheck(page,{width:390,height:844});await page.screenshot({path:path.join(out,'drop-reduced-motion.png')});
+    await page.locator('#rain').click();const reducedRain=await snapshot(page);assert(reducedRain.rain&&reducedRain.paused,'Reduced-motion rain waits for explicit playback');
+    await page.clock.runFor(1000);assert.deepEqual((await snapshot(page)).rainSummary,reducedRain.rainSummary,'Reduced-motion rain does not autoplay');
+    await page.locator('#pause').focus();await page.keyboard.press('Space');await page.clock.runFor(600);assert((await snapshot(page)).progress>still.progress,'Playback remains an explicit keyboard choice');
+    // Media-query changes are delivered on rendering frames. Let the first
+    // preference settle before changing it back, rather than coalescing both.
+    await page.emulateMedia({reducedMotion:'no-preference'});await page.clock.runFor(40);
+    await page.waitForFunction(()=>!matchMedia('(prefers-reduced-motion: reduce)').matches);
+    await page.emulateMedia({reducedMotion:'reduce'});await page.clock.runFor(40);
+    await page.waitForFunction(()=>DropPrototype.snapshot().paused&&!DropPrototype.snapshot().rain);
+    const reducedAgain=await snapshot(page);assert.equal(reducedAgain.rainSummary.count,0,'Enabling reduced motion stops rain and clears its droplets');
+    await page.clock.runFor(500);assert.deepEqual((await snapshot(page)).rainSummary,reducedAgain.rainSummary);
+    await pause(page);await layoutCheck(page,{width:390,height:844});await page.screenshot({path:path.join(out,'drop-reduced-motion.png')});
     report.reducedMotion=true;await reduced.close();
-    assert.deepEqual(report.errors,[]);assert.deepEqual(report.missing,[]);report.success=true;
+    assert.deepEqual(report.errors,[]);assert.deepEqual(report.missing,[]);assert.deepEqual(report.blocked,[],'The default dark map makes no external requests');report.success=true;
     console.log(JSON.stringify(report));
   } finally {
     if(browser)await browser.close();await new Promise(resolve=>server.close(resolve));
