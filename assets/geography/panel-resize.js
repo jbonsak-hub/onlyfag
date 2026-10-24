@@ -1,6 +1,6 @@
 /* Presentation preference only; no game state or analytics events. */
 (() => {
-  const key = 'onlyfag-geography-panel-width';
+  const key = document.body.dataset.quiz === 'bydeler' ? 'onlyfag-oslo-panel-width' : 'onlyfag-geography-panel-width';
   window.OnlyfagPanelResize = ({document: doc = document, defaultWidth = 280, active = () => true} = {}) => {
     const win = doc.defaultView, body = doc.body;
     const existing = doc.querySelector('.quiz-panel-resizer');
@@ -65,5 +65,5 @@
     win.addEventListener('resize',refresh);
     handle.resizeController = {refresh}; refresh(); return handle.resizeController;
   };
-  if (document.querySelector('.game-panel')) window.OnlyfagPanelResize({defaultWidth:260});
+  if (document.querySelector('.game-panel')) window.OnlyfagPanelResize({defaultWidth:document.body.dataset.quiz === 'bydeler' ? 386 : 260});
 })();

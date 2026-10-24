@@ -179,3 +179,7 @@ body[data-quiz] .game-panel footer{flex-direction:column;align-items:stretch;gap
 .geo-menu-tools button,.geo-menu-back{display:grid;place-items:center;width:34px;height:34px;border:1px solid #c6d9ce;border-radius:9px;background:transparent;color:inherit;font-size:18px}
 .geo-menu-back{margin:auto 12px 12px}
 @media(max-width:700px){body[data-quiz] .game-panel footer{gap:5px}.game-panel footer .game-controls button{padding:6px;font-size:10px}.game-panel footer>a{align-self:flex-start}#repeat-practice{padding:10px;gap:7px}}
+
+/* Lake islets retain forest colour; their underlying target is the lake. */
+.oslo-lake-islands{fill:#79a16b;stroke:#5c9088;stroke-width:.8;vector-effect:non-scaling-stroke;pointer-events:none}
+:root[data-theme="dark"] .oslo-lake-islands{fill:#436e47;stroke:#a4c9d0}

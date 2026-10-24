@@ -171,8 +171,12 @@ def build(require_sources=True):
     project = Transformer.from_crs("EPSG:4326", "EPSG:25833", always_xy=True).transform
     # Questions retain a compact frame; a separate, broader physical backdrop
     # lets the camera fill each viewport without stretching the projection.
-    crop_bounds = (248610.72742114664, 6636516.482282372,
-                   279669.417, 6659260.669574317)
+    focus_bounds = (248610.72742114664, 6636516.482282372,
+                    279669.417, 6659260.669574317)
+    focus_crop = box(*focus_bounds)
+    # Continue the sourced regions beyond the home camera on every screen.
+    # Keep the western learning boundary and the existing camera/quiz focus.
+    crop_bounds = (focus_bounds[0], 6600000, 320000, 6700000)
     crop = box(*crop_bounds)
     context_bounds = (190000, 6580000, 335000, 6720000)
     context_crop = box(*context_bounds)
@@ -369,7 +373,11 @@ def build(require_sources=True):
             remainder = polygonal(geometry.difference(occluders))
             if not remainder.is_empty:
                 visible = remainder
-        states.append({"n": row["name"], "a": row["code"], "kind": row["kind"],
+        if not visible.intersection(focus_crop).is_empty:
+            visible = polygonal(visible.intersection(focus_crop))
+        lake_interior = polygonal(unary_union([Polygon(ring) for part in municipalities.polygons(geometry) for ring in part.interiors])) if row["kind"] == "lake" else None
+        states.append({"islands": canvas.path(lake_interior) if lake_interior is not None else "",
+                       "n": row["name"], "a": row["code"], "kind": row["kind"],
                        "d": canvas.path(geometry), "c": canvas.center(visible),
                        "category": row.get("category", row["kind"]),
                        "boundaryType": row.get("boundaryType"),
@@ -391,7 +399,7 @@ def build(require_sources=True):
     data = {
         "title": "Oslo", "ruleset": "oslo-areas-v5", "viewBox": view_box,
         "camera": {"center": canvas.point(*focus), "height": round(27000 * canvas.scale, 5),
-                   "minWidth": round(2 * max(focus[0] - crop_bounds[0], crop_bounds[2] - focus[0]) * canvas.scale, 5)},
+                   "minWidth": round(2 * max(focus[0] - focus_bounds[0], focus_bounds[2] - focus[0]) * canvas.scale, 5)},
         "states": states, "water": [], "boundaries": canvas.path(boundaries),
         "context": canvas.path(context),
         "contextRegions": context_regions,

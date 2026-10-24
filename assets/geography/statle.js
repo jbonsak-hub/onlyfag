@@ -141,7 +141,15 @@
       const borderPath=regionData.boundaries??states.map(state=>state.d).join(' ');
       for(const layer of ['halo','line'])boundaries.append(svgNode('path',{d:borderPath,class:'municipality-border-'+layer,'vector-effect':'non-scaling-stroke'}));
       $('states').append(boundaries);
-      for(const state of areas.filter(state=>state.kind==='lake'))addArea(state);
+      for(const state of areas.filter(state=>state.kind==='lake')) {
+        addArea(state);
+        if(boroughs && state.islands) {
+          // The water target includes its islands; the passive forest overlay
+          // keeps land green while letting pointer hits reach the lake below.
+          elements.get(state.n).setAttribute('d',state.d+' '+state.islands);
+          $('states').append(svgNode('path',{d:state.islands,class:'oslo-lake-islands','fill-rule':'evenodd','aria-hidden':'true','pointer-events':'none'}));
+        }
+      }
       return;
     }
     if (physical) {

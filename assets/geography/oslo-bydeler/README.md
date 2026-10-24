@@ -11,8 +11,9 @@ quiz targets.
 Source coastlines and polygon boundaries anchor the map. Unassigned mainland
 pieces are absorbed into neighbouring learning areas and inland holes are
 filled.
-Only explicitly named island targets belong to quiz areas; all other sea and
-lake islands are quiet, unowned landscape. These deliberate generalizations
+Only explicitly named island targets belong to quiz areas; all other
+sea islands are quiet, unowned landscape. Lake islands retain their sourced
+outline, use the woodland colour, and accept answers for their containing lake. These deliberate generalizations
 reduce visual fragmentation; the resulting learning areas are
 not a claim about legal district boundaries or exact land cover. There are no
 point-marker substitutes, circle buffers or hand-drawn island coastlines.
@@ -32,12 +33,14 @@ edge includes the boundary interfaces between Nittedal, Lillestrøm, Lørenskog
 and Østmarka:
 
 ```
-xmin 248610.72742114664   ymin 6636516.482282372
-xmax 279669.417           ymax 6659260.669574317
+xmin 248610.72742114664   ymin 6600000
+xmax 320000              ymax 6700000
 ```
 
-This is approximately **31.06 km west–east by 22.74 km north–south**. Every
-target is intersected with this rectangle. Answer/hint points prefer a visible
+This is approximately **71.39 km west–east by 100 km north–south**.
+The wider source extent continues past the home view at the top, bottom and
+right edge, removing the former straight clipping edges. Every
+target is intersected with this rectangle. Answer/hint points stay in the original compact Oslo frame and prefer a visible
 part of a parent area outside overlying forests or Bygdøy. `clipped` and
 `visibleShare` describe the
 initial crop, before subsequent learning-area gap allocation and lake/island
@@ -266,3 +269,6 @@ saved installation script. Rebuild dependent browser assets and score data
 after an authorized map change, retaining all historical map/resource hashes
 and the independent 16-, 28-, 57- and 35-target ranking pools. This learning map
 does not claim to be a cadastral or surveying map.
+
+The Oslo side panel defaults to 386 px on desktop, with a separate saved width
+preference. The panel remains resizable and retains the mobile layout.

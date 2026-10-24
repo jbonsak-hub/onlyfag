@@ -101,7 +101,14 @@ const server = http.createServer((request, response) => {
   const clickTarget = async (name, touch=false) => {
     await page.evaluate(()=>ClickMapZoom.reset());
     // Frogner remains answerable at an actual overlapping part of Bygdøy.
-    const coordinates=name==='Malmøya'&&!touch?malmoykalven:map.states.find(state=>state.n===name).c;
+    let coordinates=name==='Malmøya'&&!touch?malmoykalven:map.states.find(state=>state.n===name).c;
+    if(['Lutvann','Nøklevann'].includes(name)) {
+      coordinates=await page.evaluate(name=>{
+        const lake=[...document.querySelectorAll('.state')].find(el=>el.dataset.state===name),islands=lake.nextElementSibling,b=islands.getBBox();
+        for(let y=.01;y<1;y+=.02)for(let x=.01;x<1;x+=.02){const p=new DOMPoint(b.x+b.width*x,b.y+b.height*y);if(islands.isPointInFill(p))return [p.x,p.y];}
+        throw Error('Missing clickable lake island');
+      },name);
+    }
     const inspect=()=>page.evaluate(({name,coordinates,bygdoy})=>{
       const svg=document.querySelector('#map');
       const target=[...document.querySelectorAll('#states path.state[data-state]')].find(el=>el.dataset.state===name);
@@ -173,6 +180,13 @@ const server = http.createServer((request, response) => {
     assert.equal(await page.locator('#total-count').textContent(),' / '+total);
     assert.equal(await page.locator('.panel-header .brand').textContent(),'Oslo');
     assert.equal(await page.locator('#targetName').textContent(),'Oslo');
+    assert.equal(await page.locator('.game-panel').evaluate(el=>el.getBoundingClientRect().width),386,'Oslo has a wider default panel');
+    const edgeTargets=await page.evaluate(()=>{const b=document.querySelector('#mapViewport').getBoundingClientRect();return [[.65,1],[.9,b.height-2],[1,b.height*.7]].map(([x,y])=>document.elementFromPoint(x===1?b.right-2:b.left+b.width*x,b.top+y)?.closest('[data-state]')?.dataset.state);});
+    assert(edgeTargets.every(Boolean),'Sourced target areas reach the top, bottom and right of the home view');
+    for(const name of ['Lutvann','Nøklevann']){
+      const fill=await page.locator('.state[data-state="'+name+'"]').evaluate(el=>getComputedStyle(el.nextElementSibling).fill);
+      assert.equal(fill,'rgb(121, 161, 107)','Lake islands share the forest colour');
+    }
     assert(await page.locator('.oslo-map-credit').isVisible(),'OSM attribution is visible on the map');
     assert(loadedMaps.some(path=>/\/oslo-[a-f0-9]+\.json$/.test(path)),'The expanded quiz loads its own immutable map file');
     assert.equal(await page.locator('#map text').count(), 0, 'Map does not reveal answers');
@@ -216,17 +230,8 @@ const server = http.createServer((request, response) => {
         await page.mouse.move(20,20);
       }
     };
-    const easternContextPoint=await page.evaluate(()=>{
-      const svg=document.querySelector('#map'),matrix=svg.getScreenCTM().inverse(),box=document.querySelector('#mapViewport').getBoundingClientRect();
-      const region=[...document.querySelectorAll('.oslo-context-region')].find(el=>el.querySelector('title')?.textContent==='Øvrig Akershus');
-      const targets=[...document.querySelectorAll('#states path.state[data-state]')];
-      for(const x of [.96,.9,.8,.7])for(const y of [.15,.3,.5,.7,.85]){
-        const p=new DOMPoint(box.x+box.width*x,box.y+box.height*y).matrixTransform(matrix);
-        if(region.isPointInFill(p)&&targets.every(el=>!el.isPointInFill(p)))return [p.x,p.y];
-      }
-      throw Error('No visible eastern Akershus background outside the quiz polygons');
-    });
-    const contextSamples=[...westernContextNames.map(name=>({name,label:'Øvrig Bærum',point:publishedPoint(name)})),{name:'eastern Akershus',label:'Øvrig Akershus',point:easternContextPoint}];
+    // The expanded quiz regions now occupy the eastern viewport edge.
+    const contextSamples=westernContextNames.map(name=>({name,label:'Øvrig Bærum',point:publishedPoint(name)}));
     const checkContextAreas = async () => {
       const result=await page.evaluate(({samples,quietIsland,malmoykalven})=>{
         const contexts=[...document.querySelectorAll('.municipality-context')];
@@ -279,7 +284,7 @@ const server = http.createServer((request, response) => {
       await handle.focus();await page.keyboard.press('Home');
       const before=await checkCamera(),box=await handle.boundingBox();
       await page.mouse.move(box.x+box.width/2,100);await page.mouse.down();await page.mouse.move(box.x+box.width/2+160,100,{steps:8});await page.mouse.up();
-      await page.waitForFunction(width=>Math.abs(document.querySelector('.game-panel').getBoundingClientRect().width-width-160)<2,before.panelWidth);
+      await page.waitForFunction(width=>Math.abs(document.querySelector('.game-panel').getBoundingClientRect().width-Math.min(480,width+160))<2,before.panelWidth);
       await checkCamera();await capture('boroughs-panel-wide');
       await handle.focus();await page.keyboard.press('Home');
       await page.waitForFunction(width=>Math.abs(document.querySelector('.game-panel').getBoundingClientRect().width-width)<2,before.panelWidth);
