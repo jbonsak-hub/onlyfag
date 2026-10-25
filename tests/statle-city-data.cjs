@@ -14,5 +14,10 @@ console.log('PASS all 50 largest-city identities and projected city locations');
 
 const duplicateNames=Object.values(cities).filter((c,i,all)=>all.filter(x=>x.name===c.name).length>1).map(c=>c.name);
 assert.deepEqual([...new Set(duplicateNames)].sort(),['Charleston','Portland']);
-const prompts=Object.values(cities).map(c=>c.name+'|'+Math.round(c.population2025/1000));
-assert.equal(new Set(prompts).size,50,'name plus rounded population uniquely identifies every city');
+const snapshot=JSON.stringify(cities),prompts=states.map(state=>layout.cityName(state,cities));
+assert.equal(new Set(prompts).size,50,'state abbreviations uniquely identify duplicate city names');
+assert.deepEqual(prompts.filter(name=>/\([A-Z]{2}\)$/.test(name)).sort(),['Charleston (SC)','Charleston (WV)','Portland (ME)','Portland (OR)']);
+for(const state of states)if(!duplicateNames.includes(cities[state.n].name))assert.equal(layout.cityName(state,cities),cities[state.n].name);
+assert.equal(layout.cityName(states.find(state=>state.a==='ME'),new Map(Object.entries(cities))),'Portland (ME)');
+assert.equal(JSON.stringify(cities),snapshot,'display formatting leaves raw Census data unchanged');
+console.log('PASS exactly four duplicate-city prompts use state abbreviations');

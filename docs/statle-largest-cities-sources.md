@@ -98,4 +98,11 @@ Camera input is batched to one SVG update per animation frame, avoids unchanged 
 
 Validation: `node tests/statle-city-data.cjs`, `node tests/statle-label-layout.cjs`, `node --test tests/map-zoom-frame.cjs tests/geography-score-api.mjs`, and `python scripts/check-statle-relief-raster.py`, plus asset build checks. Browser QA checked all 100 measured label rectangles against each other and all 50 point circles, correct/wrong advanced answers, label removal, cancel, map switching, zoom/reset, 390×700 mobile and the county map.
 
-Only Portland and Charleston have duplicate largest-city names. These four round prompts include an approximate population subtitle (rounded to 1,000) to distinguish them without disclosing the state. Other prompts have no extra subtitle.
+Only Portland and Charleston have duplicate largest-city names. Their quiz prompts and preview city labels use the state abbreviations: Portland (ME)/(OR) and Charleston (SC)/(WV). Population subtitles have been removed.
+
+
+## Physical answer colour regression
+
+The physical hover rule previously replaced an earned band colour with a translucent white fill while the pointer or keyboard focus stayed over a state. Hover/focus now changes only the outline. Physical state fills have no transition and no SVG glow filter, so correct and wrong colours remain immediately visible. `tests/statle-physical-colors.cjs` checks all four bands, wrong answers, active hover/focus and dark mode. Browser computed-style and screenshot checks confirm the colours while the answered state remains marked.
+
+The Statle ready card now places “Kan du plassere alle?” below “USAs 50 delstater”. During play, the click instruction remains above the current question; cancelling restores the ready-card order.

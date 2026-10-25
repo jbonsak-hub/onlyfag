@@ -54,6 +54,11 @@
     return true;
   }
   const lookup=(map,key)=>map instanceof Map?map.get(key):map?.[key];
+  function cityName(state,cities){
+    const city=lookup(cities,state.n),values=cities instanceof Map?[...cities.values()]:Object.values(cities);
+    return city.name+(values.some(other=>other!==city&&other.name===city.name)?' ('+state.a+')':'');
+  }
+
   const defaultMeasure=(text,size)=>text.length*size*.58;
   const wrap=text=>{const parts=text.split(' ');if(parts.length<2)return [text];const mid=Math.ceil(parts.length/2);return [parts.slice(0,mid).join(' '),parts.slice(mid).join(' ')];};
   function textBox(lines,x,y,size,measure,kind,anchor='middle'){
@@ -153,6 +158,6 @@
     for(const label of [...stateLabels,...cityLabels])if(!dotFree(label.box))issues.push({state:label.state,kind:'dot-covered'});
     return{stateLabels,cityLabels,issues};
   }
-  const api={layout,parsePath,interiorAnchor,contains,distance,boxInside,intersects,pointBox};
+  const api={layout,cityName,parsePath,interiorAnchor,contains,distance,boxInside,intersects,pointBox};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.StatleLabelLayout=api;
 })(typeof window!=='undefined'?window:globalThis);

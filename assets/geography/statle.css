@@ -218,13 +218,14 @@ body[data-quiz="statle"] .ready-actions{gap:14px}
 #statle-relief{display:none}
 body[data-statle-basemap="physical"] #statle-relief{display:initial}
 body[data-statle-basemap="physical"] #us-context{display:none}
-body[data-statle-basemap="physical"] .state{fill:transparent;stroke:#65745a;stroke-width:.7}
+/* Answer colours must paint immediately and remain visible under the pointer.
+   Stroke-only hover also avoids filtering/repainting the terrain beneath a state. */
+body[data-statle-basemap="physical"] .state{fill:transparent;stroke:#65745a;stroke-width:.7;transition:none;filter:none}
+body[data-statle-basemap="physical"] .state:hover,body[data-statle-basemap="physical"] .state:focus-visible,body[data-statle-basemap="physical"] .state.hovered{stroke:#fffefa;filter:none}
 body[data-statle-basemap="physical"] .state[data-band="0"]{fill:var(--green);fill-opacity:.7}
 body[data-statle-basemap="physical"] .state[data-band="1"]{fill:var(--yellow);fill-opacity:.7}
 body[data-statle-basemap="physical"] .state[data-band="2"]{fill:var(--orange);fill-opacity:.7}
 body[data-statle-basemap="physical"] .state[data-band="3"]{fill:var(--red);fill-opacity:.7}
-body[data-statle-basemap="physical"] .state.wrong{fill:#c3645c;fill-opacity:.8}
-body[data-statle-basemap="physical"] .state:hover,body[data-statle-basemap="physical"] .state.hovered{fill:#ffffff24;stroke:#fffefa;filter:none}
+body[data-statle-basemap="physical"] .state.correct{stroke:#efffe8;stroke-width:1.8}
+body[data-statle-basemap="physical"] .state.wrong{fill:#c3645c;fill-opacity:.8;stroke:#ffe1cd;stroke-width:1.5}
 .statle-rivers{fill:none;stroke:#448ba3;stroke-width:.9;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
-
-#statle-city-detail{font-size:11px;line-height:1.35;color:#e0e7f3;font-weight:500}
