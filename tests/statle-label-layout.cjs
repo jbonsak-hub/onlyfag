@@ -9,7 +9,7 @@ matrices.main=fit('main',{x:20,y:16,w:825,h:522});
 const fl=ext(states.filter(s=>s.a==='FL')),southEdge=(fl.y+fl.h)*matrices.main.scale+matrices.main.y;
 matrices.AK=fit('AK',{x:25,y:southEdge-125,w:165,h:100,bottom:true});matrices.HI=fit('HI',{x:215,y:southEdge-41,w:110,h:41,bottom:true});
 const project=(state,p)=>{const m=matrices[['AK','HI'].includes(state.a)?state.a:'main'];return[p[0]*m.scale+m.x,p[1]*m.scale+m.y];};
-const points=new Map(states.map(s=>{const p=project(s,cities[s.n].p);return[s.n,{name:cities[s.n].name,x:p[0],y:p[1]}];}));
+const points=new Map(states.map(s=>{const p=project(s,cities[s.n].p);return[s.n,{name:layout.cityName(s,cities),x:p[0],y:p[1]}];}));
 const names=['New Hampshire','Vermont','Massachusetts','Rhode Island','Connecticut','New Jersey','Delaware','Maryland'];
 const callouts=new Map(names.map((name,i)=>[name,{x:851,y:162+i*35,anchor:'end'}]));
 const started=performance.now(),result=layout.layout({states,project,cities:points,callouts});

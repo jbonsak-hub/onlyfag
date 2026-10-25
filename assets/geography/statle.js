@@ -11,16 +11,7 @@
   const cityPoints = new Map(), stateTransforms = new Map();
   const showNames = () => statle && !!$('statle-show-names')?.checked;
   const answerName = name => citiesMode ? cityData[name].name + ' · ' + name : name;
-  const questionName = state => citiesMode ? cityData[state.n].name : state.n;
-  const cityDetail=statle?document.createElement('small'):null;
-  if(cityDetail){cityDetail.id='statle-city-detail';cityDetail.hidden=true;$('targetName').after(cityDetail);}
-  function updateCityDetail() {
-    if(!cityDetail)return;
-    const city=citiesMode&&phase==='playing'&&target()?cityData[target().n]:null;
-    const ambiguous=city&&Object.values(cityData).filter(item=>item.name===city.name).length>1;
-    cityDetail.hidden=!ambiguous;
-    if(ambiguous){const english=window.QuizLanguage?.language==='en',population=(Math.round(city.population2025/1000)*1000).toLocaleString(english?'en-US':'nb-NO');cityDetail.textContent=english?'About '+population+' residents':'Ca. '+population+' innbyggere';}
-  }
+  const questionName = state => citiesMode ? StatleLabelLayout.cityName(state,cityData) : state.n;
   const themeButtons = [];
   function applyTheme(dark) {
     document.documentElement.dataset.theme = dark ? 'dark' : 'light';
@@ -350,8 +341,11 @@
     $('progressFill').style.width = results.size / Math.max(1,phase === 'ready' ? total : queue.length) * 100 + '%';
     $('mistakes').textContent = String(mistakes);
   }
-  function setPhase(value){phase=value;document.body.dataset.phase=value;}
-  function prompt(){const action=retrying?'Øvingsrunde · klikk på':'Klikk på';$('targetVerb').textContent=boroughs&&target()?.category==='postal-area'?'Postområde · '+action.toLowerCase():action;const subtitle=$('target-continent');if(subtitle){subtitle.hidden=!continentPractice;subtitle.textContent=continentPractice?continentNames[target()?.continent]||'':'';}updateCityDetail();}
+  function setPhase(value){
+    phase=value;document.body.dataset.phase=value;
+    if(statle){if(value==='ready')$('targetName').after($('targetVerb'));else $('targetName').before($('targetVerb'));}
+  }
+  function prompt(){const action=retrying?'Øvingsrunde · klikk på':'Klikk på';$('targetVerb').textContent=boroughs&&target()?.category==='postal-area'?'Postområde · '+action.toLowerCase():action;const subtitle=$('target-continent');if(subtitle){subtitle.hidden=!continentPractice;subtitle.textContent=continentPractice?continentNames[target()?.continent]||'':'';}}
   function next() {
     index++; locked = false; roundMistakes = 0; roundTime = 0;
     $('hintLayer').replaceChildren(); $('labelLayer').replaceChildren();
@@ -407,7 +401,7 @@
   }
   function finish() {
     setPhase('finished'); locked = true;
-    updateCityDetail();
+
     // Let the original score check/name prompt finish before a retry detaches
     // its session. Practice itself never waits for or contacts the service.
     if(!practice){
@@ -470,10 +464,10 @@
     document.body.dataset.practice='false';delete document.body.dataset.retry;
     elements.forEach(el=>{delete el.dataset.band;el.classList.remove('found','mastered','retry-pending');el.setAttribute('aria-label',shapeLabel);});
     markers.forEach(el=>{delete el.dataset.band;el.classList.remove('mastered','retry-pending');el.setAttribute('aria-label','Ekstra klikkfelt for en liten delstat');});
-    setPhase('ready');updateCityDetail();repeatOffer.hidden=true;$('overlay').hidden=false;
+    setPhase('ready');repeatOffer.hidden=true;$('overlay').hidden=false;
     $('statle-score').hidden=true;$('restart').disabled=true;$('start').disabled=false;
     $('statle-advanced').disabled=false;$('statle-show-names').disabled=false;
-    $('targetVerb').textContent='Klar for en runde?';$('elapsed').textContent='00:00';
+    $('targetVerb').textContent='Kan du plassere alle?';$('elapsed').textContent='00:00';
     updateStatleOptions();updateStats();setFeedback('');
   }
   $('restart').addEventListener('click', statle ? cancelStatle : start);
@@ -485,7 +479,7 @@
     const key=String(citiesMode);
     if(!studyLayouts.has(key)) {
       const project=(state,p)=>{const t=stateTransforms.get(state.n);return [p[0]*t.scale+t.x,p[1]*t.scale+t.y];};
-      const cities=citiesMode?new Map(states.map(state=>[state.n,{name:cityData[state.n].name,...cityPoints.get(state.n)}])):null;
+      const cities=citiesMode?new Map(states.map(state=>[state.n,{name:StatleLabelLayout.cityName(state,cityData),...cityPoints.get(state.n)}])):null;
       const callouts=new Map();
       markers.forEach((marker,name)=>{const dot=marker.querySelector('.visible');callouts.set(name,{x:dot.cx.baseVal.value-17,y:dot.cy.baseVal.value,anchor:'end'});});
       const canvas=document.createElement('canvas'),context=canvas.getContext('2d'),widths=new Map();
