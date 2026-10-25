@@ -364,3 +364,22 @@ test('language migration preserves scores and active runs and can be repeated',(
  }
  db.close();
 });
+
+
+test('Statle Capitals has an isolated ranking and retains state-answer validation',()=>{
+ const normal=config({game:'statle'}),capitals=config({game:'statle',variant:'capitals'});
+ assert.notEqual(board(normal),board(capitals));
+ assert.equal(board(capitals),board({...capitals,language:'en'}));
+ assert.throws(()=>config({game:'statle',variant:'invented'}),/invalid_config/);
+ const s=create(capitals,1000);
+ assert.equal(s.targets.length,50);
+ assert.throws(()=>answer(s,{question:s.current.id,choice:'Boston'},1100),/invalid_answer/);
+ const wrong=s.targets.find(n=>n!==s.current.target);
+ assert.equal(answer(s,{question:s.current.id,choice:wrong},1200).correct,false);
+ for(let i=0;i<50;i++){
+  answer(s,{question:s.current.id,choice:s.current.target},2000+i*1000);
+  if(i<49)issue(s,2100+i*1000);
+ }
+ assert.ok(s.complete);assert.equal(s.found.length,50);
+ assert.equal(s.config.variant,'capitals');
+});
