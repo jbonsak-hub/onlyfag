@@ -226,3 +226,5 @@ body[data-statle-basemap="physical"] .state[data-band="3"]{fill:var(--red);fill-
 body[data-statle-basemap="physical"] .state.wrong{fill:#c3645c;fill-opacity:.8}
 body[data-statle-basemap="physical"] .state:hover,body[data-statle-basemap="physical"] .state.hovered{fill:#ffffff24;stroke:#fffefa;filter:none}
 .statle-rivers{fill:none;stroke:#448ba3;stroke-width:.9;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+
+#statle-city-detail{font-size:11px;line-height:1.35;color:#e0e7f3;font-weight:500}

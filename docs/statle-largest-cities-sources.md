@@ -97,3 +97,5 @@ The physical map now loads `us-relief-raster.json` and three transparent WebP im
 Camera input is batched to one SVG update per animation frame, avoids unchanged viewBox writes, and does not rewrite marker transforms during pan-only movement. Tests cover reset and responsive camera behaviour. No browser FPS figure is claimed; the evidence is the reduced runtime geometry, coalesced writes, and preserved raster dimensions/pixels.
 
 Validation: `node tests/statle-city-data.cjs`, `node tests/statle-label-layout.cjs`, `node --test tests/map-zoom-frame.cjs tests/geography-score-api.mjs`, and `python scripts/check-statle-relief-raster.py`, plus asset build checks. Browser QA checked all 100 measured label rectangles against each other and all 50 point circles, correct/wrong advanced answers, label removal, cancel, map switching, zoom/reset, 390×700 mobile and the county map.
+
+Only Portland and Charleston have duplicate largest-city names. These four round prompts include an approximate population subtitle (rounded to 1,000) to distinguish them without disclosing the state. Other prompts have no extra subtitle.

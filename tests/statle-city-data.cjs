@@ -11,3 +11,8 @@ for(const state of states){
 for(const [state,name]of Object.entries({Alabama:'Huntsville',California:'Los Angeles',Florida:'Jacksonville',Kentucky:'Louisville',Michigan:'Detroit',Tennessee:'Nashville','West Virginia':'Charleston',Idaho:'Boise',Louisiana:'New Orleans',Hawaii:'Honolulu'}))assert.equal(cities[state].name,name);
 assert.notEqual(cities.California.name,read('us-capitals.json').California.name);
 console.log('PASS all 50 largest-city identities and projected city locations');
+
+const duplicateNames=Object.values(cities).filter((c,i,all)=>all.filter(x=>x.name===c.name).length>1).map(c=>c.name);
+assert.deepEqual([...new Set(duplicateNames)].sort(),['Charleston','Portland']);
+const prompts=Object.values(cities).map(c=>c.name+'|'+Math.round(c.population2025/1000));
+assert.equal(new Set(prompts).size,50,'name plus rounded population uniquely identifies every city');
