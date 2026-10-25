@@ -8,6 +8,11 @@ Lysaker**, and nine named Oslofjord islands. Overlapping geographical levels,
 such as Bygdøy and Frogner or a forest inside a municipality, remain separate
 quiz targets.
 
+The optional physical-map background uses locally baked, label-free Kartverket
+DTM hillshade in this unchanged UTM coordinate space. Source attribution,
+lossless image dimensions, water masks and the separate rendering layer are
+documented in [`docs/norway-relief-sources.md`](../../../docs/norway-relief-sources.md).
+
 Source coastlines and polygon boundaries anchor the map. Unassigned mainland
 pieces are absorbed into neighbouring learning areas and inland holes are
 filled.
