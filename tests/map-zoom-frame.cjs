@@ -73,3 +73,13 @@ check('responsive camera and reset retain its center and minimum width',()=>{
   v=f.svg.viewBox.baseVal;close(v.width,600);close(v.height,400);close(v.x+v.width/2,100);close(v.y+v.height/2,200);
   f.api.reset();f.flush();v=f.svg.viewBox.baseVal;close(v.width,1200);close(v.height,800);close(v.x,-500);close(v.y,-200);
 });
+check('basemap subscribers receive only changed painted cameras and can unsubscribe',()=>{
+  const f=fixture(),snapshots=[];const unsubscribe=f.api.subscribe(value=>snapshots.push(value));
+  assert.equal(snapshots.length,0);f.flush();assert.equal(snapshots.length,1);
+  assert.deepEqual([...snapshots[0].viewBox],[0,0,900,550]);
+  for(let i=0;i<8;i++){f.api.zoom(1);f.emit('resize');}f.flush();assert.equal(snapshots.length,1);
+  for(let i=0;i<8;i++)f.api.zoom(1.01);f.flush();assert.equal(snapshots.length,2);
+  close(snapshots[1].viewBox[2],900/(1.01**8));
+  unsubscribe();f.api.reset();f.flush();assert.equal(snapshots.length,2);
+  const late=[];const off=f.api.subscribe(value=>late.push(value));assert.equal(late.length,1);assert.deepEqual([...late[0].viewBox],[0,0,900,550]);off();
+});

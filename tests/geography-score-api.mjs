@@ -396,3 +396,52 @@ test('largest-city Statle rankings are separate from state and historical capita
  }
  assert.ok(s.complete);assert.equal(s.found.length,50);assert.equal(s.config.variant,'largest-city');
 });
+
+
+test('six regional capital rounds keep their full country pools and separate rankings',()=>{
+ for(const region of ['europe','asia','northAmerica','southAmerica','africa','oceania']){
+  const normal=config({game:'kart',region}),capitals=config({game:'kart',region,variant:'capitals'});
+  assert.notEqual(board(normal),board(capitals));assert.equal(board(capitals),board({...capitals,language:'en'}));
+  const s=create(capitals,1000);assert.equal(s.targets.length,data.kart[region].length);
+  assert.throws(()=>finish(s,1100),/incomplete/);
+  const other=data.kart[region].find(n=>n!==s.current.target);
+  assert.equal(answer(s,{question:s.current.id,choice:other},1200).correct,false);
+  for(let i=0;i<s.targets.length;i++){
+   answer(s,{question:s.current.id,choice:s.current.target},2000+i*1000);
+   if(i<s.targets.length-1)issue(s,2100+i*1000);
+  }
+  assert.ok(s.complete);assert.equal(s.found.length,data.kart[region].length);assert.equal(s.config.variant,'capitals');
+  assert.throws(()=>config({game:'kart',region,variant:'invented'}),/invalid_config/);
+ }
+ for(const region of ['rivers','lakes','seas','mountains'])assert.throws(()=>config({game:'kart',region,variant:'capitals'}),/invalid_config/);
+});
+
+test('regional capital API publishes a complete round only to its language-shared capital ranking',async()=>{
+ const {env,db}=fixture(),capitalConfig={game:'kart',region:'southAmerica',variant:'capitals',language:'no'};
+ const call=async(url,input,token)=>{const response=await worker.fetch(req(url,input,token),env);return{status:response.status,body:await response.json()};};
+ try{
+  assert.equal((await call('/session',{...capitalConfig,variant:'invented'})).status,400);
+  assert.equal((await call('/session',{game:'kart',region:'rivers',variant:'capitals'})).status,400);
+  const start=await call('/session',capitalConfig);assert.equal(start.status,201);assert.equal(start.body.config.variant,'capitals');
+  assert.equal(start.body.questions.length,13);assert.deepEqual(start.body.questions.map(q=>q.target).sort(),[...data.kart.southAmerica].sort());
+  const token=start.body.token,mutate=(url,input={})=>call(url,{requestId:crypto.randomUUID(),...input},token);
+  assert.equal((await mutate('/publish',{nickname:'Too Early'})).status,400);
+  assert.equal((await mutate('/answer',{question:start.body.question.id,choice:'Norge'})).status,400);
+  for(let i=0;i<13;i++){
+   const question=start.body.questions[i],input={requestId:crypto.randomUUID(),question:question.id,choice:question.target};
+   const answerReply=await call('/answer',input,token);assert.equal(answerReply.status,200);assert.equal(answerReply.body.feedback.correct,true);
+   assert.equal(answerReply.body.board,board(capitalConfig));assert.equal(answerReply.body.complete,i===12);
+   if(i===0){const replay=await call('/answer',input,token);assert.equal(replay.status,200);assert.deepEqual(replay.body,answerReply.body,'an answer replay cannot add points twice');}
+   if(i<12){const next=await mutate('/next');assert.equal(next.status,200);assert.equal(next.body.question.id,start.body.questions[i+1].id);}
+  }
+  const status=await call('/status',{},token);assert.equal(status.status,200);assert.equal(status.body.index,13);assert.equal(status.body.found,13);assert.equal(status.body.total,1300);
+  const published=await mutate('/publish',{nickname:'South Cap Fixture'});assert.equal(published.status,200);assert.equal(published.body.saved,true);
+  const rows=async input=>{const reply=await call('/scores?config='+encodeURIComponent(JSON.stringify(input)));assert.equal(reply.status,200);return reply.body.rows;};
+  const norwegian=await rows(capitalConfig);assert.equal(norwegian.length,1);assert.equal(norwegian[0].nickname,'South Cap Fixture');assert.equal(norwegian[0].score,1300);
+  assert.deepEqual(await rows({...capitalConfig,language:'en'}),norwegian);
+  assert.deepEqual(await rows({game:'kart',region:'southAmerica'}),[],'normal country rounds use another ranking');
+  assert.deepEqual(await rows({game:'kart',region:'southAmerica',variant:'strict'}),[],'legacy strict config still normalizes to the country ranking');
+  assert.deepEqual(await rows({...capitalConfig,region:'europe'}),[],'other capital regions stay isolated');
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM scores').get().n,1);assert.equal(db.prepare('SELECT board FROM scores').get().board,board(capitalConfig));
+ }finally{db.close();}
+});

@@ -1,0 +1,2664 @@
+{
+  "version": 1,
+  "regions": {
+    "europe": {
+      "capitals": {
+        "Albania": {
+          "name": "Tirana",
+          "en": "Tirana",
+          "lon": 19.818883,
+          "lat": 41.327541,
+          "neId": 1159151117,
+          "p": [
+            463.719,
+            535.338
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Andorra": {
+          "name": "Andorra la Vella",
+          "en": "Andorra la Vella",
+          "lon": 1.516486,
+          "lat": 42.500001,
+          "neId": 1159149089,
+          "p": [
+            259.864,
+            497.481
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Belarus": {
+          "name": "Minsk",
+          "en": "Minsk",
+          "lon": 27.564681,
+          "lat": 53.901923,
+          "neId": 1159151149,
+          "p": [
+            527.961,
+            339.828
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Belgia": {
+          "name": "Brussel",
+          "en": "Brussels",
+          "lon": 4.331371,
+          "lat": 50.835263,
+          "neId": 1159151465,
+          "p": [
+            313.105,
+            379.613
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Bosnia-Hercegovina": {
+          "name": "Sarajevo",
+          "en": "Sarajevo",
+          "lon": 18.383002,
+          "lat": 43.850022,
+          "neId": 1159151177,
+          "p": [
+            447.129,
+            497.549
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Bulgaria": {
+          "name": "Sofia",
+          "en": "Sofia",
+          "lon": 23.314708,
+          "lat": 42.685295,
+          "neId": 1159151147,
+          "p": [
+            502.265,
+            513.005
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Danmark": {
+          "name": "København",
+          "en": "Copenhagen",
+          "lon": 12.56154,
+          "lat": 55.68051,
+          "neId": 1159151437,
+          "p": [
+            396.552,
+            316.827
+          ],
+          "marker": false,
+          "outsideGeometry": true,
+          "geometryDistance": 0.143
+        },
+        "Estland": {
+          "name": "Tallinn",
+          "en": "Tallinn",
+          "lon": 24.728041,
+          "lat": 59.433877,
+          "neId": 1159150877,
+          "p": [
+            494.723,
+            259.342
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Finland": {
+          "name": "Helsinki",
+          "en": "Helsinki",
+          "lon": 24.932181,
+          "lat": 60.177509,
+          "neId": 1159151419,
+          "p": [
+            495.131,
+            248.002
+          ],
+          "marker": false,
+          "outsideGeometry": true,
+          "geometryDistance": 0.293
+        },
+        "Frankrike": {
+          "name": "Paris",
+          "en": "Paris",
+          "lon": 2.33139,
+          "lat": 48.868639,
+          "neId": 1159151613,
+          "p": [
+            288.163,
+            404.938
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Hellas": {
+          "name": "Athen",
+          "en": "Athens",
+          "lon": 23.731375,
+          "lat": 37.985272,
+          "neId": 1159151545,
+          "p": [
+            511.842,
+            583.229
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Irland": {
+          "name": "Dublin",
+          "en": "Dublin",
+          "lon": -6.250852,
+          "lat": 53.335007,
+          "neId": 1159151309,
+          "p": [
+            228.477,
+            317.27
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Island": {
+          "name": "Reykjavík",
+          "en": "Reykjavík",
+          "lon": -21.950015,
+          "lat": 64.150024,
+          "neId": 1159150587,
+          "p": [
+            195.059,
+            116.018
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Italia": {
+          "name": "Roma",
+          "en": "Rome",
+          "lon": 12.481313,
+          "lat": 41.897902,
+          "neId": 1159151593,
+          "p": [
+            380.515,
+            524.684
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Kosovo": {
+          "name": "Pristina",
+          "en": "Pristina",
+          "lon": 21.165984,
+          "lat": 42.66671,
+          "neId": 1159149757,
+          "p": [
+            478.311,
+            514.656
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Kroatia": {
+          "name": "Zagreb",
+          "en": "Zagreb",
+          "lon": 15.999995,
+          "lat": 45.800007,
+          "neId": 1159150875,
+          "p": [
+            421.786,
+            467.826
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Kypros": {
+          "name": "Nikosia",
+          "en": "Nicosia",
+          "lon": 33.366635,
+          "lat": 35.166677,
+          "neId": 1159151209,
+          "p": [
+            634.006,
+            608.714
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Latvia": {
+          "name": "Riga",
+          "en": "Riga",
+          "lon": 24.099965,
+          "lat": 56.950024,
+          "neId": 1159150811,
+          "p": [
+            493.258,
+            297.221
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Liechtenstein": {
+          "name": "Vaduz",
+          "en": "Vaduz",
+          "lon": 9.51667,
+          "lat": 47.133724,
+          "neId": 1159146061,
+          "p": [
+            355.668,
+            442.885
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Litauen": {
+          "name": "Vilnius",
+          "en": "Vilnius",
+          "lon": 25.316635,
+          "lat": 54.683366,
+          "neId": 1159150809,
+          "p": [
+            506.848,
+            330.414
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Luxemburg": {
+          "name": "Luxemburg",
+          "en": "Luxembourg",
+          "lon": 6.130003,
+          "lat": 49.61166,
+          "neId": 1159146437,
+          "p": [
+            327.029,
+            400.955
+          ],
+          "marker": true,
+          "outsideGeometry": false
+        },
+        "Malta": {
+          "name": "Valletta",
+          "en": "Valletta",
+          "lon": 14.514711,
+          "lat": 35.899733,
+          "neId": 1159151199,
+          "p": [
+            399.728,
+            616.121
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Moldova": {
+          "name": "Chișinău",
+          "en": "Chișinău",
+          "lon": 28.857711,
+          "lat": 47.005024,
+          "neId": 1159150677,
+          "p": [
+            554.72,
+            441.583
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Monaco": {
+          "name": "Monaco",
+          "en": "Monaco",
+          "lon": 7.406913,
+          "lat": 43.739646,
+          "neId": 1159149077,
+          "p": [
+            327.131,
+            490.913
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Montenegro": {
+          "name": "Podgorica",
+          "en": "Podgorica",
+          "lon": 19.266307,
+          "lat": 42.465973,
+          "neId": 1159149511,
+          "p": [
+            457.136,
+            518.315
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Nederland": {
+          "name": "Amsterdam",
+          "en": "Amsterdam",
+          "lon": 4.914694,
+          "lat": 52.351915,
+          "neId": 1159151519,
+          "p": [
+            322.689,
+            358.002
+          ],
+          "note": "Amsterdam (hovedstad) / Haag (regjeringssete)",
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Nord-Makedonia": {
+          "name": "Skopje",
+          "en": "Skopje",
+          "lon": 21.433462,
+          "lat": 42.000006,
+          "neId": 1159150073,
+          "p": [
+            481.727,
+            524.565
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Norge": {
+          "name": "Oslo",
+          "en": "Oslo",
+          "lon": 10.748033,
+          "lat": 59.918636,
+          "neId": 1159151281,
+          "p": [
+            387.917,
+            251.651
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Polen": {
+          "name": "Warszawa",
+          "en": "Warsaw",
+          "lon": 20.998054,
+          "lat": 52.251947,
+          "neId": 1159151299,
+          "p": [
+            470.712,
+            369.926
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Portugal": {
+          "name": "Lisboa",
+          "en": "Lisbon",
+          "lon": -9.146812,
+          "lat": 38.724669,
+          "neId": 1159151273,
+          "p": [
+            127.577,
+            516.826
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Romania": {
+          "name": "București",
+          "en": "Bucharest",
+          "lon": 26.098001,
+          "lat": 44.435318,
+          "neId": 1159151263,
+          "p": [
+            530.523,
+            483.913
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Russland": {
+          "name": "Moskva",
+          "en": "Moscow",
+          "lon": 37.613577,
+          "lat": 55.75411,
+          "neId": 1159151585,
+          "p": [
+            607.651,
+            294.543
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "San Marino": {
+          "name": "San Marino",
+          "en": "San Marino",
+          "lon": 12.44177,
+          "lat": 43.936096,
+          "neId": 1159146051,
+          "p": [
+            382.211,
+            493.977
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Serbia": {
+          "name": "Beograd",
+          "en": "Belgrade",
+          "lon": 20.466045,
+          "lat": 44.820591,
+          "neId": 1159151079,
+          "p": [
+            469.478,
+            482.464
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Slovakia": {
+          "name": "Bratislava",
+          "en": "Bratislava",
+          "lon": 17.116981,
+          "lat": 48.150018,
+          "neId": 1159149463,
+          "p": [
+            434.007,
+            432.531
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Slovenia": {
+          "name": "Ljubljana",
+          "en": "Ljubljana",
+          "lon": 14.514969,
+          "lat": 46.055288,
+          "neId": 1159149461,
+          "p": [
+            406.267,
+            463.385
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Spania": {
+          "name": "Madrid",
+          "en": "Madrid",
+          "lon": -3.685298,
+          "lat": 40.401972,
+          "neId": 1159151503,
+          "p": [
+            195.327,
+            513.232
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Storbritannia": {
+          "name": "London",
+          "en": "London",
+          "lon": -0.118668,
+          "lat": 51.501941,
+          "neId": 1159151577,
+          "p": [
+            274.212,
+            360.481
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Sveits": {
+          "name": "Bern",
+          "en": "Bern",
+          "lon": 7.466976,
+          "lat": 46.916683,
+          "neId": 1159149737,
+          "p": [
+            334.28,
+            443.397
+          ],
+          "note": "Bern (føderal by / de facto hovedstad)",
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Sverige": {
+          "name": "Stockholm",
+          "en": "Stockholm",
+          "lon": 18.095389,
+          "lat": 59.352706,
+          "neId": 1159151507,
+          "p": [
+            443.671,
+            263.052
+          ],
+          "marker": false,
+          "outsideGeometry": true,
+          "geometryDistance": 0.068
+        },
+        "Tsjekkia": {
+          "name": "Praha",
+          "en": "Prague",
+          "lon": 14.464034,
+          "lat": 50.085283,
+          "neId": 1159151359,
+          "p": [
+            408.589,
+            402.465
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Tyrkia": {
+          "name": "Ankara",
+          "en": "Ankara",
+          "lon": 32.862446,
+          "lat": 39.929184,
+          "neId": 1159151255,
+          "p": [
+            615.344,
+            539.455
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Tyskland": {
+          "name": "Berlin",
+          "en": "Berlin",
+          "lon": 13.399603,
+          "lat": 52.523765,
+          "neId": 1159151529,
+          "p": [
+            400.591,
+            365.034
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Ukraina": {
+          "name": "Kyiv",
+          "en": "Kyiv",
+          "lon": 30.514682,
+          "lat": 50.435313,
+          "neId": 1159151495,
+          "p": [
+            562.961,
+            387.583
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Ungarn": {
+          "name": "Budapest",
+          "en": "Budapest",
+          "lon": 19.081375,
+          "lat": 47.501952,
+          "neId": 1159151257,
+          "p": [
+            454.006,
+            442.304
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Vatikanstaten": {
+          "name": "Vatikanstaten",
+          "en": "Vatican City",
+          "lon": 12.453387,
+          "lat": 41.903282,
+          "neId": 1159127243,
+          "p": [
+            380.206,
+            524.58
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Østerrike": {
+          "name": "Wien",
+          "en": "Vienna",
+          "lon": 16.364693,
+          "lat": 48.201961,
+          "neId": 1159151563,
+          "p": [
+            426.42,
+            431.614
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        }
+      }
+    },
+    "asia": {
+      "capitals": {
+        "Afghanistan": {
+          "name": "Kabul",
+          "en": "Kabul",
+          "lon": 69.181314,
+          "lat": 34.518636,
+          "neId": 1159151561,
+          "p": [
+            272.433,
+            218.824
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Bahrain": {
+          "name": "Manama",
+          "en": "Manama",
+          "lon": 50.583052,
+          "lat": 26.236136,
+          "neId": 1159150451,
+          "p": [
+            118.86,
+            248.468
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Bangladesh": {
+          "name": "Dhaka",
+          "en": "Dhaka",
+          "lon": 90.406634,
+          "lat": 23.725006,
+          "neId": 1159151467,
+          "p": [
+            421.899,
+            336.05
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Bhutan": {
+          "name": "Thimpu",
+          "en": "Thimphu",
+          "lon": 89.639014,
+          "lat": 27.472986,
+          "neId": 1159151151,
+          "p": [
+            417.028,
+            302.386
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Brunei": {
+          "name": "Bandar Seri Begawan",
+          "en": "Bandar Seri Begawan",
+          "lon": 114.933284,
+          "lat": 4.883331,
+          "neId": 1159151083,
+          "p": [
+            639.41,
+            490.875
+          ],
+          "marker": true,
+          "outsideGeometry": false
+        },
+        "De forente arabiske emirater": {
+          "name": "Abu Dhabi",
+          "en": "Abu Dhabi",
+          "lon": 54.366593,
+          "lat": 24.466684,
+          "neId": 1159150565,
+          "p": [
+            140.573,
+            275.001
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Filippinene": {
+          "name": "Manila",
+          "en": "Manila",
+          "lon": 120.980271,
+          "lat": 14.606105,
+          "neId": 1159151525,
+          "p": [
+            682.681,
+            395.668
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "India": {
+          "name": "New Delhi",
+          "en": "New Delhi",
+          "lon": 77.19998,
+          "lat": 28.600023,
+          "neId": 1159151541,
+          "p": [
+            320.992,
+            282.808
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Indonesia": {
+          "name": "Jakarta",
+          "en": "Jakarta",
+          "lon": 106.827492,
+          "lat": -6.172472,
+          "neId": 1159151599,
+          "p": [
+            569.23,
+            594.59
+          ],
+          "note": "Jakarta (Nusantara planlagt som politisk hovedstad fra 2028)",
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Irak": {
+          "name": "Bagdad",
+          "en": "Baghdad",
+          "lon": 44.391923,
+          "lat": 33.340594,
+          "neId": 1159151547,
+          "p": [
+            104.696,
+            166.824
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Iran": {
+          "name": "Teheran",
+          "en": "Tehran",
+          "lon": 51.422398,
+          "lat": 35.673889,
+          "neId": 1159151551,
+          "p": [
+            157.568,
+            168.568
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Israel": {
+          "name": "Jerusalem",
+          "en": "Jerusalem",
+          "lon": 35.206626,
+          "lat": 31.778408,
+          "neId": 1159151203,
+          "p": [
+            43.484,
+            146.332
+          ],
+          "note": "Jerusalem (erklært hovedstad; byens status er internasjonalt omstridt)",
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Japan": {
+          "name": "Tokyo",
+          "en": "Tokyo",
+          "lon": 139.749462,
+          "lat": 35.686963,
+          "neId": 1159151609,
+          "p": [
+            768.536,
+            165.08
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Jemen": {
+          "name": "Sana'a",
+          "en": "Sana'a",
+          "lon": 44.204648,
+          "lat": 15.356679,
+          "neId": 1159151259,
+          "p": [
+            40.477,
+            325.533
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Jordan": {
+          "name": "Amman",
+          "en": "Amman",
+          "lon": 35.931354,
+          "lat": 31.951971,
+          "neId": 1159150807,
+          "p": [
+            48.443,
+            147.749
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Kambodsja": {
+          "name": "Phnom Penh",
+          "en": "Phnom Penh",
+          "lon": 104.914689,
+          "lat": 11.551976,
+          "neId": 1159151127,
+          "p": [
+            546.933,
+            441.569
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Kasakhstan": {
+          "name": "Astana",
+          "en": "Astana",
+          "lon": 71.427774,
+          "lat": 51.181125,
+          "neId": 1159150965,
+          "p": [
+            327.305,
+            77.371
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Kina": {
+          "name": "Beijing",
+          "en": "Beijing",
+          "lon": 116.38634,
+          "lat": 39.930838,
+          "neId": 1159151595,
+          "p": [
+            604.68,
+            177.92
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Kirgisistan": {
+          "name": "Bisjkek",
+          "en": "Bishkek",
+          "lon": 74.583258,
+          "lat": 42.875025,
+          "neId": 1159150813,
+          "p": [
+            326.456,
+            153.376
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Kuwait": {
+          "name": "Kuwait by",
+          "en": "Kuwait City",
+          "lon": 47.976355,
+          "lat": 29.371664,
+          "neId": 1159151361,
+          "p": [
+            111.837,
+            212.867
+          ],
+          "marker": false,
+          "outsideGeometry": true,
+          "geometryDistance": 0.12
+        },
+        "Laos": {
+          "name": "Vientiane",
+          "en": "Vientiane",
+          "lon": 102.59998,
+          "lat": 17.966693,
+          "neId": 1159150991,
+          "p": [
+            524.139,
+            386.071
+          ],
+          "marker": false,
+          "outsideGeometry": true,
+          "geometryDistance": 0.549
+        },
+        "Libanon": {
+          "name": "Beirut",
+          "en": "Beirut",
+          "lon": 35.507762,
+          "lat": 33.873921,
+          "neId": 1159150957,
+          "p": [
+            55.604,
+            129.874
+          ],
+          "marker": true,
+          "outsideGeometry": false
+        },
+        "Malaysia": {
+          "name": "Kuala Lumpur",
+          "en": "Kuala Lumpur",
+          "lon": 101.698037,
+          "lat": 3.168612,
+          "neId": 1159151317,
+          "p": [
+            520.584,
+            516.789
+          ],
+          "note": "Kuala Lumpur (hovedstad) / Putrajaya (administrativt sentrum)",
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Maldivene": {
+          "name": "Malé",
+          "en": "Malé",
+          "lon": 73.499948,
+          "lat": 4.166708,
+          "neId": 1159151201,
+          "p": [
+            265.039,
+            495.169
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Mongolia": {
+          "name": "Ulaanbaatar",
+          "en": "Ulaanbaatar",
+          "lon": 106.91467,
+          "lat": 47.918619,
+          "neId": 1159150781,
+          "p": [
+            531.345,
+            117.559
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Myanmar": {
+          "name": "Naypyidaw",
+          "en": "Naypyidaw",
+          "lon": 96.116673,
+          "lat": 19.768503,
+          "neId": 1159151179,
+          "p": [
+            468.832,
+            371.924
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Nepal": {
+          "name": "Katmandu",
+          "en": "Kathmandu",
+          "lon": 85.314696,
+          "lat": 27.718638,
+          "neId": 1159150655,
+          "p": [
+            383.106,
+            298.042
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Nord-Korea": {
+          "name": "Pyongyang",
+          "en": "Pyongyang",
+          "lon": 125.752745,
+          "lat": 39.021385,
+          "neId": 1159151303,
+          "p": [
+            668.31,
+            170.37
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Oman": {
+          "name": "Muskat",
+          "en": "Muscat",
+          "lon": 58.593312,
+          "lat": 23.613325,
+          "neId": 1159150717,
+          "p": [
+            169.626,
+            293.542
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Pakistan": {
+          "name": "Islamabad",
+          "en": "Islamabad",
+          "lon": 73.164689,
+          "lat": 33.701942,
+          "neId": 1159150645,
+          "p": [
+            299.058,
+            232.236
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Palestina": {
+          "name": "Ramallah",
+          "en": "Ramallah",
+          "lon": 35.206209,
+          "lat": 31.902945,
+          "neId": 1159121947,
+          "p": [
+            44.092,
+            145.275
+          ],
+          "note": "Ramallah (administrativt sentrum; Øst-Jerusalem hevdes som hovedstad)",
+          "marker": true,
+          "outsideGeometry": false
+        },
+        "Qatar": {
+          "name": "Doha",
+          "en": "Doha",
+          "lon": 51.532968,
+          "lat": 25.286556,
+          "neId": 1159149469,
+          "p": [
+            122.584,
+            259.693
+          ],
+          "marker": true,
+          "outsideGeometry": false
+        },
+        "Saudi-Arabia": {
+          "name": "Riyadh",
+          "en": "Riyadh",
+          "lon": 46.770796,
+          "lat": 24.642779,
+          "neId": 1159151581,
+          "p": [
+            87.138,
+            250.649
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Singapore": {
+          "name": "Singapore",
+          "en": "Singapore",
+          "lon": 103.853875,
+          "lat": 1.294979,
+          "neId": 1159151627,
+          "p": [
+            540.645,
+            532.053
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Sri Lanka": {
+          "name": "Sri Jayawardenepura Kotte",
+          "en": "Sri Jayawardenepura Kotte",
+          "lon": 79.857751,
+          "lat": 6.931966,
+          "neId": 1159150719,
+          "p": [
+            323.351,
+            478.111
+          ],
+          "note": "Sri Jayawardenepura Kotte (administrativ) / Colombo (kommersiell)",
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Sør-Korea": {
+          "name": "Seoul",
+          "en": "Seoul",
+          "lon": 126.997785,
+          "lat": 37.568295,
+          "neId": 1159151523,
+          "p": [
+            680.6,
+            180.516
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Syria": {
+          "name": "Damaskus",
+          "en": "Damascus",
+          "lon": 36.29805,
+          "lat": 33.50198,
+          "neId": 1159151269,
+          "p": [
+            58.118,
+            136.098
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Tadsjikistan": {
+          "name": "Dusjanbe",
+          "en": "Dushanbe",
+          "lon": 68.773879,
+          "lat": 38.560035,
+          "neId": 1159150609,
+          "p": [
+            278.996,
+            182.621
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Taiwan": {
+          "name": "Taipei",
+          "en": "Taipei",
+          "lon": 121.568333,
+          "lat": 25.035833,
+          "neId": 1159151567,
+          "p": [
+            671.125,
+            301.6
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Thailand": {
+          "name": "Bangkok",
+          "en": "Bangkok",
+          "lon": 100.514699,
+          "lat": 13.751945,
+          "neId": 1159151509,
+          "p": [
+            507.606,
+            424.327
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Turkmenistan": {
+          "name": "Asjkhabad",
+          "en": "Ashgabat",
+          "lon": 58.383299,
+          "lat": 37.949995,
+          "neId": 1159150567,
+          "p": [
+            209.635,
+            167.023
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Usbekistan": {
+          "name": "Tasjkent",
+          "en": "Tashkent",
+          "lon": 69.292987,
+          "lat": 41.313648,
+          "neId": 1159151501,
+          "p": [
+            289.142,
+            159.415
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Vietnam": {
+          "name": "Hanoi",
+          "en": "Hanoi",
+          "lon": 105.848068,
+          "lat": 21.035273,
+          "neId": 1159151251,
+          "p": [
+            549.747,
+            356.803
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Øst-Timor": {
+          "name": "Dili",
+          "en": "Dili",
+          "lon": 125.579456,
+          "lat": -8.559388,
+          "neId": 1159150577,
+          "p": [
+            740.562,
+            593.116
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Armenia": {
+          "name": "Jerevan",
+          "en": "Yerevan",
+          "lon": 44.511606,
+          "lat": 40.183097,
+          "neId": 1159151119,
+          "p": [
+            136.31,
+            109.534
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Aserbajdsjan": {
+          "name": "Baku",
+          "en": "Baku",
+          "lon": 49.860271,
+          "lat": 40.397218,
+          "neId": 1159151123,
+          "p": [
+            167.344,
+            123.938
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Georgia": {
+          "name": "Tbilisi",
+          "en": "Tbilisi",
+          "lon": 44.78885,
+          "lat": 41.726956,
+          "neId": 1159150961,
+          "p": [
+            145.266,
+            97.666
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        }
+      }
+    },
+    "northAmerica": {
+      "capitals": {
+        "Antigua og Barbuda": {
+          "name": "Saint John's",
+          "en": "Saint John's",
+          "lon": -61.850034,
+          "lat": 17.118037,
+          "neId": 1159150457,
+          "p": [
+            829.4,
+            490.489
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Bahamas": {
+          "name": "Nassau",
+          "en": "Nassau",
+          "lon": -77.350044,
+          "lat": 25.08339,
+          "neId": 1159151207,
+          "p": [
+            690.184,
+            464.357
+          ],
+          "marker": true,
+          "outsideGeometry": true,
+          "geometryDistance": 4.918
+        },
+        "Barbados": {
+          "name": "Bridgetown",
+          "en": "Bridgetown",
+          "lon": -59.616527,
+          "lat": 13.102003,
+          "neId": 1159150339,
+          "p": [
+            857.018,
+            517.552
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Belize": {
+          "name": "Belmopan",
+          "en": "Belmopan",
+          "lon": -88.767073,
+          "lat": 17.252034,
+          "neId": 1159151109,
+          "p": [
+            607.261,
+            552.414
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Canada": {
+          "name": "Ottawa",
+          "en": "Ottawa",
+          "lon": -75.701961,
+          "lat": 45.418643,
+          "neId": 1159151059,
+          "p": [
+            651.873,
+            283.286
+          ],
+          "marker": false,
+          "outsideGeometry": true,
+          "geometryDistance": 0.127
+        },
+        "Costa Rica": {
+          "name": "San José",
+          "en": "San José",
+          "lon": -84.085997,
+          "lat": 9.936958,
+          "neId": 1159150849,
+          "p": [
+            654.997,
+            609.811
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Cuba": {
+          "name": "Havanna",
+          "en": "Havana",
+          "lon": -82.366128,
+          "lat": 23.133905,
+          "neId": 1159151347,
+          "p": [
+            653.738,
+            491.207
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Den dominikanske republikk": {
+          "name": "Santo Domingo",
+          "en": "Santo Domingo",
+          "lon": -69.902031,
+          "lat": 18.472019,
+          "neId": 1159151401,
+          "p": [
+            762.707,
+            503.99
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Dominica": {
+          "name": "Roseau",
+          "en": "Roseau",
+          "lon": -61.387013,
+          "lat": 15.301016,
+          "neId": 1159149847,
+          "p": [
+            837.643,
+            504.727
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "El Salvador": {
+          "name": "San Salvador",
+          "en": "San Salvador",
+          "lon": -89.204987,
+          "lat": 13.711948,
+          "neId": 1159150853,
+          "p": [
+            606.368,
+            583.968
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Grenada": {
+          "name": "St. George's",
+          "en": "St. George's",
+          "lon": -61.741643,
+          "lat": 12.052633,
+          "neId": 1159150447,
+          "p": [
+            842.53,
+            534.4
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Guatemala": {
+          "name": "Guatemala by",
+          "en": "Guatemala City",
+          "lon": -90.528911,
+          "lat": 14.623081,
+          "neId": 1159150909,
+          "p": [
+            594.046,
+            577.465
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Haiti": {
+          "name": "Port-au-Prince",
+          "en": "Port-au-Prince",
+          "lon": -72.33798,
+          "lat": 18.542971,
+          "neId": 1159150589,
+          "p": [
+            742.951,
+            509.934
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Honduras": {
+          "name": "Tegucigalpa",
+          "en": "Tegucigalpa",
+          "lon": -87.219475,
+          "lat": 14.103991,
+          "neId": 1159150583,
+          "p": [
+            623.488,
+            578.059
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Jamaica": {
+          "name": "Kingston",
+          "en": "Kingston",
+          "lon": -76.767434,
+          "lat": 17.977077,
+          "neId": 1159150855,
+          "p": [
+            707.731,
+            525.544
+          ],
+          "marker": true,
+          "outsideGeometry": false
+        },
+        "Mexico": {
+          "name": "Mexico by",
+          "en": "Mexico City",
+          "lon": -99.132934,
+          "lat": 19.444388,
+          "neId": 1159151587,
+          "p": [
+            516.957,
+            541.011
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Nicaragua": {
+          "name": "Managua",
+          "en": "Managua",
+          "lon": -86.270438,
+          "lat": 12.154962,
+          "neId": 1159150623,
+          "p": [
+            633.575,
+            593.782
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Panama": {
+          "name": "Panama by",
+          "en": "Panama City",
+          "lon": -79.534983,
+          "lat": 8.969963,
+          "neId": 1159150667,
+          "p": [
+            696.463,
+            610.093
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Saint Kitts og Nevis": {
+          "name": "Basseterre",
+          "en": "Basseterre",
+          "lon": -62.717009,
+          "lat": 17.302031,
+          "neId": 1159150435,
+          "p": [
+            822.196,
+            491.88
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "St. Lucia": {
+          "name": "Castries",
+          "en": "Castries",
+          "lon": -61.000008,
+          "lat": 14.001974,
+          "neId": 1159150433,
+          "p": [
+            843.894,
+            514.707
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "St. Vincent og Grenadinene": {
+          "name": "Kingstown",
+          "en": "Kingstown",
+          "lon": -61.212062,
+          "lat": 13.148279,
+          "neId": 1159150431,
+          "p": [
+            844.254,
+            522.934
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Trinidad og Tobago": {
+          "name": "Port of Spain",
+          "en": "Port of Spain",
+          "lon": -61.517031,
+          "lat": 10.651997,
+          "neId": 1159149307,
+          "p": [
+            847.428,
+            545.883
+          ],
+          "marker": true,
+          "outsideGeometry": false
+        },
+        "USA": {
+          "name": "Washington D.C.",
+          "en": "Washington D.C.",
+          "lon": -77.011364,
+          "lat": 38.901495,
+          "neId": 1159151573,
+          "p": [
+            661.574,
+            342.408
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        }
+      }
+    },
+    "southAmerica": {
+      "capitals": {
+        "Argentina": {
+          "name": "Buenos Aires",
+          "en": "Buenos Aires",
+          "lon": -58.399477,
+          "lat": -34.600556,
+          "neId": 1159151559,
+          "p": [
+            445.673,
+            441.866
+          ],
+          "marker": false,
+          "outsideGeometry": true,
+          "geometryDistance": 0.011
+        },
+        "Bolivia": {
+          "name": "Sucre",
+          "en": "Sucre",
+          "lon": -65.259516,
+          "lat": -19.040971,
+          "neId": 1159151095,
+          "p": [
+            388.733,
+            302.495
+          ],
+          "note": "Sucre (konstitusjonell) / La Paz (regjeringssete)",
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Brasil": {
+          "name": "Brasília",
+          "en": "Brasília",
+          "lon": -47.917998,
+          "lat": -15.781394,
+          "neId": 1159151443,
+          "p": [
+            538.421,
+            275.617
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Chile": {
+          "name": "Santiago",
+          "en": "Santiago",
+          "lon": -70.668987,
+          "lat": -33.448068,
+          "neId": 1159151615,
+          "p": [
+            352.564,
+            434.245
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Colombia": {
+          "name": "Bogotá",
+          "en": "Bogotá",
+          "lon": -74.08529,
+          "lat": 4.598369,
+          "neId": 1159151601,
+          "p": [
+            304.855,
+            92.685
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Ecuador": {
+          "name": "Quito",
+          "en": "Quito",
+          "lon": -78.501997,
+          "lat": -0.213042,
+          "neId": 1159150847,
+          "p": [
+            265.475,
+            138.404
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Guyana": {
+          "name": "Georgetown",
+          "en": "Georgetown",
+          "lon": -58.167029,
+          "lat": 6.801974,
+          "neId": 1159150585,
+          "p": [
+            450.432,
+            70.026
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Paraguay": {
+          "name": "Asunción",
+          "en": "Asunción",
+          "lon": -57.643451,
+          "lat": -25.294457,
+          "neId": 1159150621,
+          "p": [
+            452.926,
+            358.429
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Peru": {
+          "name": "Lima",
+          "en": "Lima",
+          "lon": -77.052008,
+          "lat": -12.046067,
+          "neId": 1159151511,
+          "p": [
+            283.51,
+            244.815
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Surinam": {
+          "name": "Paramaribo",
+          "en": "Paramaribo",
+          "lon": -55.167031,
+          "lat": 5.83503,
+          "neId": 1159150597,
+          "p": [
+            477.925,
+            78.895
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Uruguay": {
+          "name": "Montevideo",
+          "en": "Montevideo",
+          "lon": -56.172998,
+          "lat": -34.856096,
+          "neId": 1159150469,
+          "p": [
+            462.338,
+            444.437
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Venezuela": {
+          "name": "Caracas",
+          "en": "Caracas",
+          "lon": -66.918983,
+          "lat": 10.502944,
+          "neId": 1159151493,
+          "p": [
+            370.403,
+            38.048
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Fransk Guyana (fransk)": {
+          "name": "Cayenne",
+          "en": "Cayenne",
+          "lon": -52.330021,
+          "lat": 4.932992,
+          "neId": 1159150911,
+          "p": [
+            503.888,
+            87.462
+          ],
+          "note": "Administrative centre of the existing labelled territory target",
+          "marker": false,
+          "outsideGeometry": true,
+          "geometryDistance": 0.101
+        }
+      }
+    },
+    "africa": {
+      "capitals": {
+        "Algerie": {
+          "name": "Alger",
+          "en": "Algiers",
+          "lon": 3.048607,
+          "lat": 36.765011,
+          "neId": 1159151471,
+          "p": [
+            355.393,
+            24.659
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Angola": {
+          "name": "Luanda",
+          "en": "Luanda",
+          "lon": 13.232481,
+          "lat": -8.83634,
+          "neId": 1159151469,
+          "p": [
+            419.632,
+            411.05
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Benin": {
+          "name": "Porto-Novo",
+          "en": "Porto-Novo",
+          "lon": 2.518045,
+          "lat": 6.401954,
+          "neId": 1159151141,
+          "p": [
+            329.042,
+            280.507
+          ],
+          "note": "Porto-Novo (hovedstad) / Cotonou (regjeringssete)",
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Botswana": {
+          "name": "Gaborone",
+          "en": "Gaborone",
+          "lon": 25.911948,
+          "lat": -24.646314,
+          "neId": 1159151153,
+          "p": [
+            523.618,
+            544.392
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Burkina Faso": {
+          "name": "Ouagadougou",
+          "en": "Ouagadougou",
+          "lon": -1.52667,
+          "lat": 12.372262,
+          "neId": 1159151173,
+          "p": [
+            297.599,
+            228.574
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Burundi": {
+          "name": "Gitega",
+          "en": "Gitega",
+          "lon": 29.360006,
+          "lat": -3.376087,
+          "neId": 1159150427,
+          "p": [
+            556.347,
+            364.548
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Kapp Verde": {
+          "name": "Praia",
+          "en": "Praia",
+          "lon": -23.516689,
+          "lat": 14.916698,
+          "neId": 1159151205,
+          "p": [
+            124.415,
+            199.365
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Kamerun": {
+          "name": "Yaoundé",
+          "en": "Yaoundé",
+          "lon": 11.514705,
+          "lat": 3.868647,
+          "neId": 1159151115,
+          "p": [
+            404.633,
+            302.624
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Den sentralafrikanske republikk": {
+          "name": "Bangui",
+          "en": "Bangui",
+          "lon": 18.558288,
+          "lat": 4.366644,
+          "neId": 1159151111,
+          "p": [
+            464.503,
+            298.47
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Tsjad": {
+          "name": "N'Djamena",
+          "en": "N'Djamena",
+          "lon": 15.047203,
+          "lat": 12.115042,
+          "neId": 1159150863,
+          "p": [
+            435.273,
+            232.521
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Komorene": {
+          "name": "Moroni",
+          "en": "Moroni",
+          "lon": 43.240244,
+          "lat": -11.704158,
+          "neId": 1159149083,
+          "p": [
+            670.363,
+            437.324
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "DR Kongo": {
+          "name": "Kinshasa",
+          "en": "Kinshasa",
+          "lon": 15.313026,
+          "lat": -4.327778,
+          "neId": 1159151539,
+          "p": [
+            436.913,
+            372.589
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Kongo-Brazzaville": {
+          "name": "Brazzaville",
+          "en": "Brazzaville",
+          "lon": 15.282744,
+          "lat": -4.25724,
+          "neId": 1159150993,
+          "p": [
+            436.653,
+            371.988
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Djibouti": {
+          "name": "Djibouti",
+          "en": "Djibouti",
+          "lon": 43.148002,
+          "lat": 11.595015,
+          "neId": 1159149869,
+          "p": [
+            669.663,
+            234.999
+          ],
+          "marker": false,
+          "outsideGeometry": true,
+          "geometryDistance": 0.942
+        },
+        "Egypt": {
+          "name": "Kairo",
+          "en": "Cairo",
+          "lon": 31.248022,
+          "lat": 30.051906,
+          "neId": 1159151603,
+          "p": [
+            562.514,
+            81.337
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Ekvatorial-Guinea": {
+          "name": "Ciudad de la Paz",
+          "en": "Ciudad de la Paz",
+          "lon": 10.8222222,
+          "lat": 1.5916667,
+          "source": "Wikidata Q1140136; capital declaration Equatorial Guinea government 2026-01-02",
+          "p": [
+            398.647,
+            322.072
+          ],
+          "note": "Ciudad de la Paz declared capital 2 January 2026; replaces former Malabo convention",
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Eritrea": {
+          "name": "Asmara",
+          "en": "Asmara",
+          "lon": 38.933324,
+          "lat": 15.333339,
+          "neId": 1159150873,
+          "p": [
+            633.04,
+            203.618
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Eswatini": {
+          "name": "Mbabane",
+          "en": "Mbabane",
+          "lon": 31.133335,
+          "lat": -26.316651,
+          "neId": 1159149413,
+          "p": [
+            563.953,
+            559.008
+          ],
+          "note": "Mbabane (administrativ) / Lobamba (kongelig og lovgivende)",
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Etiopia": {
+          "name": "Addis Abeba",
+          "en": "Addis Ababa",
+          "lon": 38.698059,
+          "lat": 9.035256,
+          "neId": 1159151549,
+          "p": [
+            633.929,
+            257.724
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Gabon": {
+          "name": "Libreville",
+          "en": "Libreville",
+          "lon": 9.457965,
+          "lat": 0.385389,
+          "neId": 1159150913,
+          "p": [
+            387.042,
+            332.383
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Gambia": {
+          "name": "Banjul",
+          "en": "Banjul",
+          "lon": -16.591702,
+          "lat": 13.453877,
+          "neId": 1159149997,
+          "p": [
+            176.739,
+            215.277
+          ],
+          "marker": true,
+          "outsideGeometry": false
+        },
+        "Ghana": {
+          "name": "Accra",
+          "en": "Accra",
+          "lon": -0.218662,
+          "lat": 5.551981,
+          "neId": 1159151403,
+          "p": [
+            305.942,
+            287.636
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Guinea": {
+          "name": "Conakry",
+          "en": "Conakry",
+          "lon": -13.682181,
+          "lat": 9.533469,
+          "neId": 1159150997,
+          "p": [
+            196.833,
+            250.911
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Guinea-Bissau": {
+          "name": "Bissau",
+          "en": "Bissau",
+          "lon": -15.598361,
+          "lat": 11.865024,
+          "neId": 1159150803,
+          "p": [
+            183.182,
+            229.72
+          ],
+          "marker": false,
+          "outsideGeometry": true,
+          "geometryDistance": 0.155
+        },
+        "Elfenbenskysten": {
+          "name": "Yamoussoukro",
+          "en": "Yamoussoukro",
+          "lon": -5.275503,
+          "lat": 6.818381,
+          "neId": 1159150999,
+          "p": [
+            264.236,
+            276.165
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Kenya": {
+          "name": "Nairobi",
+          "en": "Nairobi",
+          "lon": 36.814711,
+          "lat": -1.281401,
+          "neId": 1159151597,
+          "p": [
+            619.536,
+            346.721
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Lesotho": {
+          "name": "Maseru",
+          "en": "Maseru",
+          "lon": 27.483273,
+          "lat": -29.316674,
+          "neId": 1159150831,
+          "p": [
+            534.197,
+            583.324
+          ],
+          "marker": false,
+          "outsideGeometry": true,
+          "geometryDistance": 0.556
+        },
+        "Liberia": {
+          "name": "Monrovia",
+          "en": "Monrovia",
+          "lon": -10.79966,
+          "lat": 6.314582,
+          "neId": 1159151311,
+          "p": [
+            218.617,
+            279.892
+          ],
+          "marker": false,
+          "outsideGeometry": true,
+          "geometryDistance": 0.286
+        },
+        "Libya": {
+          "name": "Tripoli",
+          "en": "Tripoli",
+          "lon": 13.180012,
+          "lat": 32.8925,
+          "neId": 1159151415,
+          "p": [
+            425.911,
+            58.723
+          ],
+          "marker": false,
+          "outsideGeometry": true,
+          "geometryDistance": 0.229
+        },
+        "Madagaskar": {
+          "name": "Antananarivo",
+          "en": "Antananarivo",
+          "lon": 47.514678,
+          "lat": -18.914692,
+          "neId": 1159150835,
+          "p": [
+            699.327,
+            500.764
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Malawi": {
+          "name": "Lilongwe",
+          "en": "Lilongwe",
+          "lon": 33.783302,
+          "lat": -13.983295,
+          "neId": 1159150907,
+          "p": [
+            591.323,
+            455.418
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Mali": {
+          "name": "Bamako",
+          "en": "Bamako",
+          "lon": -8.001985,
+          "lat": 12.651961,
+          "neId": 1159150945,
+          "p": [
+            244.883,
+            224.814
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Mauritania": {
+          "name": "Nouakchott",
+          "en": "Nouakchott",
+          "lon": -15.97534,
+          "lat": 18.086427,
+          "neId": 1159150943,
+          "p": [
+            186.837,
+            174.495
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Mauritius": {
+          "name": "Port Louis",
+          "en": "Port Louis",
+          "lon": 57.499994,
+          "lat": -20.166639,
+          "neId": 1159150443,
+          "p": [
+            775.537,
+            515.932
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Marokko": {
+          "name": "Rabat",
+          "en": "Rabat",
+          "lon": -6.836408,
+          "lat": 34.025307,
+          "neId": 1159150673,
+          "p": [
+            280.85,
+            42.684
+          ],
+          "marker": false,
+          "outsideGeometry": true,
+          "geometryDistance": 0.072
+        },
+        "Mosambik": {
+          "name": "Maputo",
+          "en": "Maputo",
+          "lon": 32.587217,
+          "lat": -25.953332,
+          "neId": 1159150683,
+          "p": [
+            575.523,
+            556.255
+          ],
+          "marker": false,
+          "outsideGeometry": true,
+          "geometryDistance": 0.211
+        },
+        "Namibia": {
+          "name": "Windhoek",
+          "en": "Windhoek",
+          "lon": 17.083546,
+          "lat": -22.570006,
+          "neId": 1159150785,
+          "p": [
+            453.361,
+            526.865
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Niger": {
+          "name": "Niamey",
+          "en": "Niamey",
+          "lon": 2.11471,
+          "lat": 13.518652,
+          "neId": 1159150605,
+          "p": [
+            328.144,
+            219.334
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Nigeria": {
+          "name": "Abuja",
+          "en": "Abuja",
+          "lon": 7.531382,
+          "lat": 9.085279,
+          "neId": 1159150799,
+          "p": [
+            371.707,
+            257.871
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Rwanda": {
+          "name": "Kigali",
+          "en": "Kigali",
+          "lon": 30.058586,
+          "lat": -1.951644,
+          "neId": 1159149385,
+          "p": [
+            562.346,
+            352.379
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "São Tomé og Príncipe": {
+          "name": "São Tomé",
+          "en": "São Tomé",
+          "lon": 6.733325,
+          "lat": 0.333402,
+          "neId": 1159151195,
+          "p": [
+            363.945,
+            332.82
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Senegal": {
+          "name": "Dakar",
+          "en": "Dakar",
+          "lon": -17.475076,
+          "lat": 14.717778,
+          "neId": 1159151513,
+          "p": [
+            171.092,
+            203.711
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Seychellene": {
+          "name": "Victoria",
+          "en": "Victoria",
+          "lon": 55.44999,
+          "lat": -4.616632,
+          "neId": 1159151191,
+          "p": [
+            773.361,
+            376.975
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Sierra Leone": {
+          "name": "Freetown",
+          "en": "Freetown",
+          "lon": -13.236162,
+          "lat": 8.471957,
+          "neId": 1159150625,
+          "p": [
+            199.804,
+            260.414
+          ],
+          "marker": false,
+          "outsideGeometry": true,
+          "geometryDistance": 0.003
+        },
+        "Somalia": {
+          "name": "Mogadishu",
+          "en": "Mogadishu",
+          "lon": 45.364732,
+          "lat": 2.068627,
+          "neId": 1159150715,
+          "p": [
+            691.081,
+            317.61
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Sør-Afrika": {
+          "name": "Pretoria",
+          "en": "Pretoria",
+          "lon": 26.229913,
+          "lat": -29.119994,
+          "neId": 1159150659,
+          "p": [
+            524.661,
+            581.549
+          ],
+          "note": "Pretoria (administrativ) / Cape Town (lovgivende) / Bloemfontein (judisiell)",
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Sør-Sudan": {
+          "name": "Juba",
+          "en": "Juba",
+          "lon": 29.833333,
+          "lat": 9.233333,
+          "neId": 1159122273,
+          "p": [
+            559.653,
+            256.782
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Sudan": {
+          "name": "Khartoum",
+          "en": "Khartoum",
+          "lon": 32.532233,
+          "lat": 15.590024,
+          "neId": 1159151275,
+          "p": [
+            580.388,
+            202.435
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Tanzania": {
+          "name": "Dodoma",
+          "en": "Dodoma",
+          "lon": 39.266396,
+          "lat": -6.798067,
+          "neId": 1159151305,
+          "p": [
+            639.329,
+            394.413
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Togo": {
+          "name": "Lomé",
+          "en": "Lomé",
+          "lon": 1.220811,
+          "lat": 6.133883,
+          "neId": 1159150535,
+          "p": [
+            318.115,
+            282.719
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Tunisia": {
+          "name": "Tunis",
+          "en": "Tunis",
+          "lon": 10.179678,
+          "lat": 36.802778,
+          "neId": 1159150537,
+          "p": [
+            406.25,
+            26.364
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Uganda": {
+          "name": "Kampala",
+          "en": "Kampala",
+          "lon": 32.581378,
+          "lat": 0.318605,
+          "neId": 1159150593,
+          "p": [
+            583.779,
+            332.949
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Zambia": {
+          "name": "Lusaka",
+          "en": "Lusaka",
+          "lon": 28.281382,
+          "lat": -15.414698,
+          "neId": 1159150571,
+          "p": [
+            545.365,
+            467.002
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Zimbabwe": {
+          "name": "Harare",
+          "en": "Harare",
+          "lon": 31.042764,
+          "lat": -17.815844,
+          "neId": 1159150573,
+          "p": [
+            567.312,
+            487.603
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Vest-Sahara (omstridt)": {
+          "name": "El Aaiún",
+          "en": "El Aaiún",
+          "lon": -13.200006,
+          "lat": 27.149982,
+          "neId": 1159149741,
+          "p": [
+            222.009,
+            97.087
+          ],
+          "note": "Administrative centre of the existing labelled territory target; sovereignty disputed",
+          "marker": false,
+          "outsideGeometry": false
+        }
+      }
+    },
+    "oceania": {
+      "capitals": {
+        "Australia": {
+          "name": "Canberra",
+          "en": "Canberra",
+          "lon": 149.129026,
+          "lat": -35.283029,
+          "neId": 1159151161,
+          "p": [
+            430.304,
+            505.828
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "New Zealand": {
+          "name": "Wellington",
+          "en": "Wellington",
+          "lon": 174.783266,
+          "lat": -41.299988,
+          "neId": 1159151699,
+          "p": [
+            662.338,
+            571.556
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Fiji": {
+          "name": "Suva",
+          "en": "Suva",
+          "lon": 178.441707,
+          "lat": -18.133016,
+          "neId": 1159150917,
+          "p": [
+            726.337,
+            312.314
+          ],
+          "marker": false,
+          "outsideGeometry": true,
+          "geometryDistance": 0.185
+        },
+        "Kiribati": {
+          "name": "Sør-Tarawa",
+          "en": "South Tarawa",
+          "lon": 173.017571,
+          "lat": 1.338188,
+          "neId": 1159149079,
+          "p": [
+            675.615,
+            87.09
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Marshalløyene": {
+          "name": "Majuro",
+          "en": "Majuro",
+          "lon": 171.38,
+          "lat": 7.103004,
+          "neId": 1159149063,
+          "p": [
+            657.035,
+            21.923
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Mikronesia": {
+          "name": "Palikir",
+          "en": "Palikir",
+          "lon": 158.149974,
+          "lat": 6.916644,
+          "neId": 1159149061,
+          "p": [
+            503.755,
+            22.971
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Nauru": {
+          "name": "Yaren",
+          "en": "Yaren",
+          "lon": 166.9208,
+          "lat": -0.5477,
+          "source": "https://open.unep.org/docs/gef/PIR/10267_PIR_UNEP_2024_GEF_CW.10267.ISLANDS_Pacific.pdf",
+          "p": [
+            605.167,
+            106.194
+          ],
+          "note": "Yaren (de facto; ingen offisiell hovedstad)",
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Palau": {
+          "name": "Ngerulmud",
+          "en": "Ngerulmud",
+          "lon": 134.6242,
+          "lat": 7.5006,
+          "source": "https://open.unep.org/docs/gef/PIR/10267_PIR_UNEP_2024_GEF_CW.10267.ISLANDS_Pacific.pdf",
+          "p": [
+            234.475,
+            33.471
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Papua Ny-Guinea": {
+          "name": "Port Moresby",
+          "en": "Port Moresby",
+          "lon": 147.192504,
+          "lat": -9.464708,
+          "neId": 1159150663,
+          "p": [
+            382.556,
+            213.561
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Samoa": {
+          "name": "Apia",
+          "en": "Apia",
+          "lon": -171.738642,
+          "lat": -13.841545,
+          "neId": 1159151197,
+          "p": [
+            836.604,
+            275.075
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Salomonøyene": {
+          "name": "Honiara",
+          "en": "Honiara",
+          "lon": 159.949766,
+          "lat": -9.437994,
+          "neId": 1159150665,
+          "p": [
+            525.608,
+            206.476
+          ],
+          "marker": false,
+          "outsideGeometry": false
+        },
+        "Tonga": {
+          "name": "Nukuʻalofa",
+          "en": "Nukuʻalofa",
+          "lon": -175.220565,
+          "lat": -21.138512,
+          "neId": 1159151187,
+          "p": [
+            789.325,
+            354.016
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Tuvalu": {
+          "name": "Funafuti",
+          "en": "Funafuti",
+          "lon": 179.216647,
+          "lat": -8.516652,
+          "neId": 1159149071,
+          "p": [
+            742.555,
+            203.104
+          ],
+          "marker": true,
+          "outsideGeometry": true
+        },
+        "Vanuatu": {
+          "name": "Port Vila",
+          "en": "Port Vila",
+          "lon": 168.316641,
+          "lat": -17.73335,
+          "neId": 1159150579,
+          "p": [
+            617.583,
+            301.36
+          ],
+          "marker": true,
+          "outsideGeometry": true,
+          "geometryDistance": 14.775
+        },
+        "Ny-Caledonia (fransk)": {
+          "name": "Nouméa",
+          "en": "Nouméa",
+          "lon": 166.444285,
+          "lat": -22.262528,
+          "neId": 1159146907,
+          "p": [
+            596.256,
+            352.417
+          ],
+          "note": "Administrative centre of the existing labelled territory target",
+          "marker": false,
+          "outsideGeometry": false
+        }
+      }
+    }
+  }
+}
