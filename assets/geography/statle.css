@@ -122,6 +122,11 @@ body[data-region="seas"][data-retry="true"] .physical-target.sea.mastered{--feat
 }
 @media(max-height:470px){body[data-physical="true"] .game-panel{max-height:calc(100dvh - 52px);gap:6px;padding:9px;width:196px}body[data-physical="true"] .legend{display:none!important}body[data-physical="true"] .target-block{min-height:0}body[data-physical="true"] footer>span{display:none}}
 .map-toolbar{display:flex;align-items:center;gap:6px}
+.geoquiz-language[data-game-language]{display:inline-flex;flex:none;align-items:center}
+.geoquiz-language[data-game-language] button{display:flex;align-items:center;justify-content:center;width:32px;height:32px;padding:4px;border:1px solid #c6d9ce;border-radius:7px;background:#fffef9f0;color:#285440;cursor:pointer}
+.geoquiz-language[data-game-language] button:focus-visible{outline:3px solid #d99136;outline-offset:3px}
+:root[data-theme="dark"] .geoquiz-language[data-game-language] button{background:#233c30;color:#d7eddf;border-color:#4b6858}
+.geo-menu-tools .geoquiz-language button{width:34px;height:34px}
 .map-toolbar .geo-menu-toggle{position:static}
 .map-theme-toggle{border:1px solid #c6d9ce;border-radius:7px;background:#fffef9f0;color:#285440;padding:6px 9px;font-size:17px;line-height:1;min-height:32px}
 /* The same persisted setting is used by the main geography site. The head

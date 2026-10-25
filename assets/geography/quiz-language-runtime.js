@@ -6,7 +6,7 @@
  const overview=document.querySelector('body:not([data-quiz]) #verden-quiz');
  const isGame=!!document.body.dataset.quiz||!!document.querySelector('#states[data-state-map],#map #states,#start')&&location.pathname.endsWith('/statle.html')||new URLSearchParams(location.search).has('quiz');
  if(!overview&&!isGame)return;
- const roots=overview?[overview]:[document.body];
+ const roots=overview?[overview]:[document.body], originalTitle=document.title;
  const originals=new WeakMap(),attributes=new WeakMap();
  const normalize=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
  const canonical=new Map(Object.entries(data.names).map(([no,en])=>[normalize(en),no]));
@@ -60,10 +60,10 @@
  function element(el){if(el.tagName==='OPTION'&&el.parentElement?.tagName==='DATALIST'){let saved=attributes.get(el)||{};const current=el.getAttribute('value');if(current!==null){if(!saved.value||current!==saved.value.output)saved.value={source:current};saved.value.output=translate(saved.value.source);if(current!==saved.value.output)el.setAttribute('value',saved.value.output);attributes.set(el,saved);}}if((el.matches(excluded)&&!el.matches('input,textarea'))||el.closest('[data-no-translate]'))return;let saved=attributes.get(el)||{};for(const attr of attrs){const current=el.getAttribute(attr);if(current===null)continue;if(!saved[attr]||current!==saved[attr].output)saved[attr]={source:current};const output=translate(saved[attr].source);saved[attr].output=output;if(current!==output)el.setAttribute(attr,output);}attributes.set(el,saved);}
  function walk(root){if(root.nodeType===3)return textNode(root);if(root.nodeType!==1||root.matches('script,style'))return;element(root);const walker=document.createTreeWalker(root,NodeFilter.SHOW_ELEMENT|NodeFilter.SHOW_TEXT);let n;while(n=walker.nextNode())n.nodeType===3?textNode(n):element(n);}
  let queued=false;const pending=new Set();
- const observer=new MutationObserver(records=>{for(const r of records){if(r.type==='childList')r.addedNodes.forEach(n=>pending.add(n));else pending.add(r.target);}if(!queued){queued=true;queueMicrotask(()=>{queued=false;observer.disconnect();for(const node of pending)if(node.isConnected)walk(node);pending.clear();observe();});}});
+ const observer=new MutationObserver(records=>{for(const r of records){if(r.type==='childList')r.addedNodes.forEach(n=>pending.add(n));else pending.add(r.target);}if(!queued){queued=true;queueMicrotask(()=>{queued=false;observer.disconnect();for(const node of pending)if(node.isConnected)walk(node);pending.clear();syncGameButtons();updateLanguageButton();observe();});}});
  function observe(){roots.forEach(root=>observer.observe(root,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:attrs}));}
  let updateLanguageButton=()=>{};
- function apply(){observer.disconnect();roots.forEach(root=>{root.setAttribute('lang',language==='en'?'en':'nb');walk(root)});if(isGame){document.documentElement.lang=language==='en'?'en':'nb';document.title=translate(document.title);}updateLanguageButton();observe();}
+ function apply(){observer.disconnect();roots.forEach(root=>{root.setAttribute('lang',language==='en'?'en':'nb');walk(root)});if(isGame){document.documentElement.lang=language==='en'?'en':'nb';document.title=translate(originalTitle);}syncGameButtons();updateLanguageButton();observe();}
  // Alias lookup supports English answers without rewriting the game's identifiers.
  function installEngines(){
   if(language==='en'&&document.body.dataset.quiz==='jeopardy')document.querySelectorAll('.team-name').forEach((input,i)=>{if(input.value==='Lag '+(i+1))input.value=translate(input.value);});
@@ -84,17 +84,49 @@
   if(typeof makeOptions==='function'){const original=makeOptions;window.makeOptions=function(correct,all,answer,count){if(language!=='en')return original(correct,all,answer,count);const seen=new Set([translate(String(answer(correct)))]),unique=[correct];for(const option of all){const label=translate(String(answer(option)));if(!seen.has(label)){seen.add(label);unique.push(option);}}return original(correct,unique,answer,count);};}
   if(typeof makePlaceQuestions==='function'){const original=makePlaceQuestions;window.makePlaceQuestions=function(cat,heading){const questions=original(cat,heading);if(language!=='en')return questions;const rows=getPlaceRowsByHeading(heading),clean=s=>String(s).trim().replace(/[.!]$/,'');return questions.map(q=>{const row=rows.find(r=>r.place===q.a||clean(r.explanation)===clean(q.a));if(!row)return q;const name=translate(row.place),description=translate(row.explanation);return {...q,q:row.place===q.a?'Which place matches this description? '+description:'Where is '+name+', or what is it known for?',a:row.place===q.a?name:description};});};}
   if(typeof makeJeopardyQuestions==='function'){const original=makeJeopardyQuestions;window.makeJeopardyQuestions=function(category){if(language==='en'&&data.academic[category.id])return geoJeopardyDifficulty.tieredPick(data.academic[category.id]).map(q=>({...q,q:translate(q.q),a:translate(q.a)}));return original(category);};}
-  if(typeof newGeoGrid==='function'&&language==='en'&&typeof state!=='undefined'&&state.geogrid?.board)newGeoGrid();
+  if(typeof newGeoGrid==='function'&&language==='en'&&typeof state!=='undefined'&&state.geogrid?.rows?.length)newGeoGrid();
  }
- if(overview){
-  const heading=overview.querySelector('h2'),toolbar=document.createElement('div');toolbar.className='geoquiz-heading';heading.before(toolbar);toolbar.append(heading);
-  const flags=document.createElement('div');flags.className='geoquiz-language';flags.setAttribute('aria-label','Language / Språk');
+ const controls=new Set();let flagSequence=0;
+ const mode=document.body.dataset.quiz||new URLSearchParams(location.search).get('quiz');
+ function languageLocked(){
+  if(document.querySelector('.world-game,#jeopardy-shell.playing,.geo-map-stage'))return true;
+  if(mode==='statle'||mode==='fylker'||mode==='kommuner'||mode==='bydeler'){
+   const overlay=document.getElementById('overlay');if(overlay?.hidden)return true;
+  }
+  if(typeof state!=='undefined'){
+   if(['globle','travle','tradle'].includes(mode)&&state[mode]?.guesses?.length)return true;
+   const grid=mode==='geogrid'&&state.geogrid;
+   if(grid&&(grid.solved||grid.wrong||grid.hintsLeft<3||grid.finished))return true;
+  }
+  return false;
+ }
+ function setLanguage(next,persist=true){
+  if(!['no','en'].includes(next)||next===language||languageLocked())return;
+  language=next;if(persist)try{localStorage.setItem(key,language);}catch(_){}
+  if(mode==='geogrid'&&typeof newGeoGrid==='function')newGeoGrid();
+  apply();
+ }
+ function makeControl(game=false){
+  const flags=document.createElement('span');flags.className='geoquiz-language';flags.setAttribute('aria-label','Language / Språk');
+  if(game)flags.dataset.gameLanguage='';
   const svg={en:'<svg viewBox="0 0 60 30" aria-hidden="true"><clipPath id="ukClip"><path d="M0 0h60v30H0z"/></clipPath><g clip-path="url(#ukClip)"><path fill="#18346d" d="M0 0h60v30H0z"/><path stroke="#fff" stroke-width="6" d="m0 0 60 30M60 0 0 30"/><path stroke="#c82135" stroke-width="2" d="m0 0 60 30M60 0 0 30"/><path stroke="#fff" stroke-width="10" d="M30 0v30M0 15h60"/><path stroke="#c82135" stroke-width="6" d="M30 0v30M0 15h60"/></g></svg>',no:'<svg viewBox="0 0 22 16" aria-hidden="true"><path fill="#ba1535" d="M0 0h22v16H0z"/><path fill="#fff" d="M6 0h4v16H6zM0 6h22v4H0z"/><path fill="#16386b" d="M7 0h2v16H7zM0 7h22v2H0z"/></svg>'};
   const button=document.createElement('button');button.type='button';button.setAttribute('data-no-translate','');
-  updateLanguageButton=()=>{const locale=language==='en'?'no':'en',label=locale==='en'?'English':'Norsk';button.dataset.quizLanguage=locale;button.lang=locale==='en'?'en':'nb';button.setAttribute('aria-label',label);button.title=label;button.innerHTML=svg[locale];};
-  button.onclick=()=>{language=button.dataset.quizLanguage;try{localStorage.setItem(key,language);}catch(_){}apply();};flags.append(button);toolbar.append(flags);
+  const clip='quiz-language-clip-'+(++flagSequence);
+  const update=()=>{const locale=language==='en'?'no':'en',label=locale==='en'?'English':'Norsk';button.dataset.quizLanguage=locale;button.lang=locale==='en'?'en':'nb';button.setAttribute('aria-label',label);button.title=label;button.disabled=game&&languageLocked();if(button.dataset.flag!==locale){button.dataset.flag=locale;button.innerHTML=svg[locale].replace(/ukClip/g,clip);button.querySelector('svg').setAttribute('width','22');button.querySelector('svg').setAttribute('height','16');}};
+  button.onclick=()=>setLanguage(button.dataset.quizLanguage);flags.append(button);controls.add({flags,update});update();return flags;
  }
+ updateLanguageButton=()=>{for(const control of controls){if(control.flags.isConnected)control.update();else controls.delete(control);}};
+ function syncGameButtons(){
+  if(!isGame||overview)return;
+  document.querySelectorAll('.map-theme-toggle,.quiz-page-theme,[data-language-anchor]').forEach(theme=>{
+   if(!theme.nextElementSibling?.hasAttribute('data-game-language'))theme.after(makeControl(true));
+  });
+ }
+ if(overview){
+  const heading=overview.querySelector('h2'),toolbar=document.createElement('div');toolbar.className='geoquiz-heading';heading.before(toolbar);toolbar.append(heading,makeControl());
+ }
+ window.addEventListener('storage',event=>{if(event.key===key||event.key===null)setLanguage(event.newValue==='en'?'en':'no',false);});
  for(const method of ['alert','confirm','prompt']){const original=window[method];window[method]=function(message,...args){return original.call(window,translate(message),...args);};}
- window.QuizLanguage={get language(){return language},translate,name:value=>data.names[value]||value};
+ window.QuizLanguage={get language(){return language},translate,name:value=>data.names[value]||value,setLanguage};
  installEngines();apply();
 })();

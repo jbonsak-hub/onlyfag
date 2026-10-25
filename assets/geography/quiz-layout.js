@@ -68,7 +68,8 @@
   }
   if (mode === 'openguessr') {
     document.body.classList.add('quiz-external-host');
-    menu.classList.add('quiz-floating-menu'); document.body.append(menu);
+    const tools=document.createElement('div');tools.className='quiz-external-tools';
+    menu.classList.add('quiz-floating-menu');tools.append(menu,theme);document.body.append(tools);
     footer.classList.add('quiz-external-overview'); document.body.append(footer);
     rail.remove(); return;
   }

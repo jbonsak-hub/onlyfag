@@ -419,6 +419,7 @@
     ['◐','Lys eller mørk modus',()=>themeButtons[0].click()]
   ]) {
     const button=document.createElement('button');button.type='button';button.textContent=label;button.title=title;button.setAttribute('aria-label',title);button.addEventListener('click',action);menuTools.append(button);
+    if(label==='◐')button.dataset.languageAnchor='';
   }
   menu.append(menuTools);
   const menuBack=document.createElement('a');menuBack.className='geo-menu-back';menuBack.href='../geografi.html';menuBack.textContent='←';menuBack.setAttribute('aria-label','Tilbake til geografi');menu.append(menuBack);

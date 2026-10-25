@@ -1,6 +1,12 @@
 /* Statle palette and compact chrome. Scoped so geography reference modules keep
    their layout; framed games receive this stylesheet only on their own pages. */
 :root{--quiz-nav-height:0px}
+.geoquiz-language[data-game-language]{display:inline-flex;flex:none;align-items:center}
+.geoquiz-language[data-game-language] button{display:flex;align-items:center;justify-content:center;width:26px;height:26px;padding:2px;border:1px solid var(--q-line,#c6d9ce);border-radius:6px;background:var(--q-paper,#fffefa);color:var(--q-green,#245845);cursor:pointer}
+.geoquiz-language[data-game-language] button:disabled{opacity:.4;cursor:default}
+.geoquiz-language[data-game-language] button:focus-visible{outline:2px solid var(--q-green,#245845);outline-offset:2px}
+.quiz-external-tools{position:fixed;left:10px;top:10px;display:flex;align-items:center;gap:6px;z-index:11000}
+.quiz-external-tools .quiz-floating-menu{position:static!important}
 body[data-quiz],body[data-quiz-layout]{--q-bg:#f6f7f3;--q-paper:#fffefa;--q-ink:#28463d;--q-muted:#586b5b;--q-line:#d8e2d3;--q-soft:#eaf1e2;--q-green:#245845;--q-water:#abd2d9;--q-panel:280px;font-family:Inter,"Segoe UI",sans-serif;background:var(--q-bg);color:var(--q-ink)}
 body[data-quiz].dark-mode,body[data-quiz-layout].dark{--q-bg:#15251d;--q-paper:#1c3025;--q-ink:#e7f1e5;--q-muted:#b1c2ac;--q-line:#3c5540;--q-soft:#2c4633;--q-green:#80bb8d}
 body[data-quiz] .quiz-page-header{position:static;inset:auto;display:flex;height:auto;min-height:32px;gap:8px;padding:0;margin:0 0 16px;background:transparent;color:var(--q-ink);border:0;z-index:auto}
