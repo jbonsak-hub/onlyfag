@@ -1,8 +1,12 @@
 # Kommunequiz: kartgrunnlag
 
-Quizene bruker lokale vektorkart. Ingen kartbilder, navneetiketter eller eksterne
-karttjenester lastes under spill. Kommunegrensene, øyene og kystlinjen følger det
+Quizene bruker lokale vektorkart og har et valgfritt lokalt terrengbilde fra
+Kartverkets høydegrunnlag. Ingen eksterne karttjenester lastes under spill.
+Kommunegrensene, øyene og kystlinjen følger det
 lagrede kartgrunnlaget også når brukeren zoomer.
+
+Terrengbildenes kilder, lisenser og uendrede UTM-tilpasning er dokumentert i
+[`docs/norway-relief-sources.md`](../../../docs/norway-relief-sources.md).
 
 ## Kommune- og fylkesgrenser
 

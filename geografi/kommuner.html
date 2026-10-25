@@ -5,12 +5,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Kommuner – Geografi – Onlyfag</title>
-  <link rel="stylesheet" href="../assets/geography/statle-assets/statle-e86dfbd9d36c.css">
+  <link rel="stylesheet" href="../assets/geography/statle-assets/statle-43f1faaa96ae.css">
   <link rel="stylesheet" href="../assets/geography/quiz-assets/municipality-selector-08112ee844df.css">
   <script src="../assets/analytics.js" defer></script>
   <script src="../assets/geography/statle-assets/map-zoom-e8ed6463ce05.js" defer></script>
-  <script src="../assets/geography/statle-assets/statle-aadd207590bf.js" defer></script>
-  <script src="../assets/geography/statle-assets/panel-resize-c22527ed73c9.js" defer></script>
+  <script src="../assets/geography/statle-assets/statle-2b0d32f0aba5.js" defer></script>
+  <script src="../assets/geography/statle-assets/panel-resize-0ecf978d62e1.js" defer></script>
   <script src="../assets/geography/quiz-assets/municipality-selector-7b7af4ef9acd.js" defer></script>
   <link rel="stylesheet" href="../assets/geography/quiz-assets/online-highscores-63ca10e91552.css">
   <script src="../assets/geography/quiz-assets/score-service-0bf91f3dbe8c.js" defer></script>
@@ -67,21 +67,21 @@
   <aside class="game-panel" aria-label="Spillinformasjon og kontroller">
     <header class="panel-header"><button id="geoMenuButton" class="geo-menu-toggle" type="button" aria-haspopup="dialog" aria-controls="geoMenu" aria-expanded="false">☰ Meny</button><strong class="brand">Kommuner</strong></header>
     <div id="municipality-current-county" class="municipality-current-county"></div>
-    <div class="target-block"><span id="targetVerb">Klar for en runde?</span><strong id="targetName">Velg fylke</strong></div>
+    <div class="target-block"><strong id="targetName">Velg fylke</strong><span id="targetVerb">Kan du plassere alle?</span></div>
     <div class="stats"><div><span>Fullført</span><strong><span id="completed">0</span><small id="total-count"> / 0</small></strong></div><div><span>Tid</span><time id="elapsed">00:00</time></div><div><span id="mistakes-label">Feil</span><strong id="mistakes">0</strong></div></div>
     <div class="progress-track"><i id="progressFill"></i></div>
-    <div id="overlay" class="ready-actions"><button id="start" class="primary-button" disabled>Laster kart …</button></div>
+    <div id="overlay" class="ready-actions"><button id="start" class="primary-button" disabled>Laster kart …</button><label class="statle-option"><input id="local-show-names" type="checkbox" disabled> <span>Vis navn</span></label></div>
     <p id="feedback" role="status" aria-live="polite"></p>
     <p id="statle-score" hidden></p>
     <div class="legend" aria-label="Fargekoder"><strong>Fargekoder</strong><span><i class="dot green"></i>≤ 5 s · ingen feil</span><span><i class="dot yellow"></i>≤ 10 s · maks 1 feil</span><span><i class="dot orange"></i>&gt; 10 s / 2 feil</span><span><i class="dot red"></i>3+ feil</span></div>
     <button id="statle-top-ten" class="primary-button" type="button">Topp 10</button>
     <footer>
-      <div class="game-controls"><button id="restart" aria-label="Start en ny runde" disabled>↻ Ny runde</button></div>
+      <div class="game-controls"><button id="restart" aria-label="Avbryt" disabled>Avbryt</button></div>
       <a id="kart-back" class="quiz-page-back" href="kommuner.html">← Velg fylke</a>
       <span class="municipality-credit">Kart: <a href="../assets/geography/municipalities/README.md" target="_blank" rel="noopener">Kartverket</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.</span>
     </footer>
   </aside>
 </main>
-<script src="../assets/geography/quiz-assets/quiz-language-51a635900f53.js"></script>
+<script src="../assets/geography/quiz-assets/quiz-language-badb2e6a842d.js"></script>
 </body>
 </html>

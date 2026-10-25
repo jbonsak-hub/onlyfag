@@ -190,13 +190,14 @@ body[data-quiz] .game-panel footer{flex-direction:column;align-items:stretch;gap
 :root[data-theme="dark"] .oslo-lake-islands{fill:#436e47;stroke:#a4c9d0}
 
 /* Statle keeps preview choices above a quieter, lower leaderboard action. */
-:is(body[data-quiz="statle"],body[data-country-region="true"])[data-phase="ready"] .legend{display:none}
-:is(body[data-quiz="statle"],body[data-country-region="true"]) #feedback:empty{display:none}
-:is(body[data-quiz="statle"],body[data-country-region="true"]) #statle-top-ten{margin-top:auto}
-:is(body[data-quiz="statle"],body[data-country-region="true"]) footer{margin-top:0}
+:is(body[data-quiz="statle"],body[data-country-region="true"],body[data-quiz="kommuner"],body[data-quiz="bydeler"])[data-phase="ready"] .legend{display:none}
+:is(body[data-quiz="statle"],body[data-country-region="true"],body[data-quiz="kommuner"],body[data-quiz="bydeler"]) #feedback:empty{display:none}
+:is(body[data-quiz="statle"],body[data-country-region="true"],body[data-quiz="kommuner"],body[data-quiz="bydeler"]) #statle-top-ten{margin-top:auto}
+:is(body[data-quiz="statle"],body[data-country-region="true"],body[data-quiz="kommuner"],body[data-quiz="bydeler"]) footer{margin-top:0}
+body[data-quiz="kommuner"][data-phase="ready"] .municipality-current-county{display:none}
 .statle-option{display:flex;align-items:flex-start;gap:7px;font-size:12px;line-height:1.5;cursor:pointer}
 .statle-option input{margin:2px 0 0;accent-color:#245845;flex:none}
-:is(body[data-quiz="statle"],body[data-country-region="true"]) .ready-actions{gap:14px}
+:is(body[data-quiz="statle"],body[data-country-region="true"],body[data-quiz="kommuner"],body[data-quiz="bydeler"]) .ready-actions{gap:14px}
 .city-hit{fill:transparent;pointer-events:all}
 .city-dot{fill:#fff2bf;stroke:#173e32;stroke-width:1.2;pointer-events:none}
 .city-point:hover .city-dot,.city-point:focus-visible .city-dot{fill:#fff;stroke-width:2}
@@ -207,8 +208,8 @@ body[data-quiz] .game-panel footer{flex-direction:column;align-items:stretch;gap
 .study-city-leader{fill:none;stroke:#343584;stroke-width:.65;opacity:.9}
 .study-state-leader{fill:none;stroke:#344c3f;stroke-width:.65;opacity:.9}
 
-@media(min-width:701px){:is(body[data-quiz="statle"],body[data-country-region="true"]) .game-panel{gap:22px}:is(body[data-quiz="statle"],body[data-country-region="true"]) #statle-top-ten{margin-top:auto;margin-bottom:14px}}
-@media(max-width:700px){:is(body[data-quiz="statle"],body[data-country-region="true"]) #statle-top-ten{margin-top:14px}:is(body[data-quiz="statle"],body[data-country-region="true"])[data-phase="playing"] .legend{display:grid!important;grid-column:1/-1;grid-template-columns:1fr 1fr;font-size:8px;gap:5px}:is(body[data-quiz="statle"],body[data-country-region="true"]) .legend>strong{grid-column:1/-1}:is(body[data-quiz="statle"],body[data-country-region="true"]) .ready-actions{gap:9px}}
+@media(min-width:701px){:is(body[data-quiz="statle"],body[data-country-region="true"],body[data-quiz="kommuner"],body[data-quiz="bydeler"]) .game-panel{gap:22px}:is(body[data-quiz="statle"],body[data-country-region="true"],body[data-quiz="kommuner"],body[data-quiz="bydeler"]) #statle-top-ten{margin-top:auto;margin-bottom:14px}}
+@media(max-width:700px){:is(body[data-quiz="statle"],body[data-country-region="true"],body[data-quiz="kommuner"],body[data-quiz="bydeler"]) #statle-top-ten{margin-top:14px}:is(body[data-quiz="statle"],body[data-country-region="true"],body[data-quiz="kommuner"],body[data-quiz="bydeler"])[data-phase="playing"] .legend{display:grid!important;grid-column:1/-1;grid-template-columns:1fr 1fr;font-size:8px;gap:5px}:is(body[data-quiz="statle"],body[data-country-region="true"],body[data-quiz="kommuner"],body[data-quiz="bydeler"]) .legend>strong{grid-column:1/-1}:is(body[data-quiz="statle"],body[data-country-region="true"],body[data-quiz="kommuner"],body[data-quiz="bydeler"]) .ready-actions{gap:9px}}
 
 .study-leader{fill:none;stroke:#f8fff2;stroke-width:.7;opacity:.8}
 
@@ -230,3 +231,19 @@ body[data-statle-basemap="physical"] .state.wrong{fill:#c3645c;fill-opacity:.8;s
 
 body[data-statle-basemap="physical"] .map-context{display:none}
 body[data-statle-basemap="physical"] #map{background:transparent}
+
+/* Local terrain uses the same independent image layer as the world maps.
+   The original land fills are replaced only while that layer is visible. */
+body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physical"] #map :is(.municipality-context,.oslo-forest-context,.oslo-map-water,.oslo-lake-islands,#municipality-water){display:none}
+body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physical"] #map .state{transition:none;filter:none}
+body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physical"] #map .state:not([data-band]):not(.mastered,.wrong){fill:transparent}
+body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physical"] #map .state:is(:hover,:focus-visible,.hovered){filter:none;stroke:#fffefa}
+body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physical"] #map .state[data-band="0"]{fill:var(--green);fill-opacity:.7}
+body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physical"] #map .state[data-band="1"]{fill:var(--yellow);fill-opacity:.7}
+body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physical"] #map .state[data-band="2"]{fill:var(--orange);fill-opacity:.7}
+body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physical"] #map .state[data-band="3"]{fill:var(--red);fill-opacity:.7}
+body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physical"] #map .state.correct{stroke:#efffe8;stroke-width:1.8}
+body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physical"] #map .state.wrong{fill:#c3645c;fill-opacity:.8;stroke:#ffe1cd}
+/* Keep the longer municipality title beside all three menu controls at 260px. */
+body[data-quiz="kommuner"] #kart-game .panel-header{gap:4px}
+body[data-quiz="kommuner"] #kart-game .panel-header .brand{font-size:16px}
