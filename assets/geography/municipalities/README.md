@@ -8,6 +8,10 @@ lagrede kartgrunnlaget også når brukeren zoomer.
 Terrengbildenes kilder, lisenser og uendrede UTM-tilpasning er dokumentert i
 [`docs/norway-relief-sources.md`](../../../docs/norway-relief-sources.md).
 
+Den valgfrie varianten med kommunesentre bruker et eget, lokalt punktregister.
+Navnekilder, delte administrasjonssentre og kontroll av plasseringene er beskrevet
+i [`docs/municipality-centres.md`](../../../docs/municipality-centres.md).
+
 ## Kommune- og fylkesgrenser
 
 - Opphav: **Kartverket**, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).

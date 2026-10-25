@@ -244,6 +244,10 @@ body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physi
 body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physical"] #map .state[data-band="3"]{fill:var(--red);fill-opacity:.7}
 body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physical"] #map .state.correct{stroke:#efffe8;stroke-width:1.8}
 body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physical"] #map .state.wrong{fill:#c3645c;fill-opacity:.8;stroke:#ffe1cd}
+/* Administrative edges remain distinct from relief and the quieter coastlines. */
+body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physical"] #map .municipality-boundaries path{vector-effect:non-scaling-stroke}
+body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physical"] #map .municipality-border-halo{stroke:#fffbe8;stroke-width:3.6;opacity:1}
+body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physical"] #map .municipality-border-line{stroke:#263e31;stroke-width:1.65;opacity:1}
 /* Keep the longer municipality title beside all three menu controls at 260px. */
 body[data-quiz="kommuner"] #kart-game .panel-header{gap:4px}
 body[data-quiz="kommuner"] #kart-game .panel-header .brand{font-size:16px}

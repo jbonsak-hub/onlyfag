@@ -445,3 +445,67 @@ test('regional capital API publishes a complete round only to its language-share
   assert.equal(db.prepare('SELECT COUNT(*) n FROM scores').get().n,1);assert.equal(db.prepare('SELECT board FROM scores').get().board,board(capitalConfig));
  }finally{db.close();}
 });
+
+test('municipality centre rounds preserve all county pools and use separate language-shared boards',()=>{
+ const boards=new Set();
+ assert.equal(Object.keys(data.kommuner).length,15);
+ for(const county of Object.keys(data.kommuner)){
+  const normal=municipalityConfig(county),centres={...normal,questionMode:'centres'};
+  const normalized=config(centres);assert.equal(normalized.questionMode,'centres');
+  assert.notEqual(board(normal),board(centres));assert.equal(board(centres),board({...centres,language:'en'}));
+  boards.add(board(normal));boards.add(board(centres));
+  const s=create(centres,1000);assert.deepEqual(s.targets.slice().sort(),data.kommuner[county].slice().sort());
+  assert.equal(s.plan.length,data.kommuner[county].length);assert.throws(()=>finish(s,1100),/incomplete/);
+  for(let i=0;i<s.targets.length;i++){
+   const q=s.current;assert.equal(answer(s,{question:q.id,choice:q.target},2000+i*1000).points,100);
+   if(i<s.targets.length-1)issue(s,2100+i*1000);
+  }
+  assert.ok(s.complete);assert.equal(s.score,data.kommuner[county].length*100);
+ }
+ assert.equal(boards.size,30,'Each county has distinct normal and centre rankings');
+ for(const variant of [undefined,'oslo-surroundings-v2','oslo-surroundings-v3']){
+  const c={game:'kommuner',county:'03',...(variant?{variant}:{})},normal=create(c,1000),centres=create({...c,questionMode:'centres'},1000);
+  assert.deepEqual(centres.targets.slice().sort(),normal.targets.slice().sort());
+  assert.equal(normal.targets.length,variant===undefined?54:variant==='oslo-surroundings-v2'?30:31);
+  assert.equal(board(c),'v1:'+JSON.stringify({game:'kommuner',county:'03',...(variant?{variant}:{})}));
+ }
+ for(const questionMode of ['capitals','normal','',null,0,{},[]])assert.throws(()=>config({...municipalityConfig('03'),questionMode}),/invalid_config/);
+ for(const c of [{game:'bydeler',variant:'oslo-areas-v5'},{game:'kart',region:'europe'},{game:'statle'},{game:'flags'}])assert.throws(()=>config({...c,questionMode:'centres'}),/invalid_config/);
+});
+
+test('municipality centre API publishes only to its board while preserving normal scores and active sessions',async()=>{
+ const {env,db}=fixture(),normalConfig=municipalityConfig('03'),centreConfig={...normalConfig,questionMode:'centres',language:'no'};
+ const call=async(url,input,token)=>{const response=await worker.fetch(req(url,input,token),env);return{status:response.status,body:await response.json()};};
+ const normalBoards=[normalConfig,{game:'kommuner',county:'03',variant:'oslo-surroundings-v2'},{game:'kommuner',county:'03'}];
+ try{
+  for(let i=0;i<normalBoards.length;i++)db.prepare('INSERT INTO scores VALUES(?,?,?,?,?,?)').run('normal-'+i,board(normalBoards[i]),'Existing '+i,666+i,1234,1000+i);
+  const originalScores=db.prepare('SELECT * FROM scores ORDER BY run_hash').all();
+  const normal=await call('/session',normalConfig);assert.equal(normal.status,201);
+  const normalAnswer=await call('/answer',{requestId:crypto.randomUUID(),question:normal.body.question.id,choice:normal.body.question.target},normal.body.token);
+  assert.equal(normalAnswer.status,200);assert.equal(normalAnswer.body.index,1);
+  const normalStatus=await call('/status',{},normal.body.token);
+  for(const invalid of [{...centreConfig,questionMode:'capital'},{game:'bydeler',variant:'oslo-areas-v5',questionMode:'centres'}])assert.equal((await call('/session',invalid)).status,400);
+  const start=await call('/session',centreConfig);assert.equal(start.status,201);assert.equal(start.body.config.questionMode,'centres');
+  assert.equal(start.body.config.variant,'oslo-surroundings-v3');assert.equal(start.body.questions.length,31);
+  assert.deepEqual(start.body.questions.map(q=>q.target).sort(),data.kommuner['03'].slice().sort());
+  const token=start.body.token,mutate=(url,input={})=>call(url,{requestId:crypto.randomUUID(),...input},token);
+  assert.equal((await mutate('/publish',{nickname:'Too Early'})).status,400);
+  assert.equal((await mutate('/answer',{question:start.body.question.id,choice:'Sandvika'})).status,400,'The server validates municipality identities rather than trusting a city label');
+  for(let i=0;i<start.body.questions.length;i++){
+   const q=start.body.questions[i],input={requestId:crypto.randomUUID(),question:q.id,choice:q.target};
+   const reply=await call('/answer',input,token);assert.equal(reply.status,200);assert.equal(reply.body.board,board(centreConfig));
+   assert.equal(reply.body.complete,i===30);
+   if(!i)assert.deepEqual((await call('/answer',input,token)).body,reply.body,'An answer replay never awards duplicate points');
+   if(i<30)assert.equal((await mutate('/next')).body.question.id,start.body.questions[i+1].id);
+  }
+  const published=await mutate('/publish',{nickname:'Centre Fixture'});assert.equal(published.status,200);assert.equal(published.body.saved,true);
+  const rows=async c=>{const response=await call('/scores?config='+encodeURIComponent(JSON.stringify(c)));assert.equal(response.status,200);return response.body.rows;};
+  const centreRows=await rows(centreConfig);assert.equal(centreRows.length,1);assert.equal(centreRows[0].nickname,'Centre Fixture');assert.equal(centreRows[0].score,3100);
+  assert.deepEqual(await rows({...centreConfig,language:'en'}),centreRows);
+  assert.deepEqual(await rows({...municipalityConfig('11'),questionMode:'centres'}),[],'Other counties do not inherit centre scores');
+  for(let i=0;i<normalBoards.length;i++)assert.equal((await rows(normalBoards[i]))[0].nickname,'Existing '+i);
+  assert.deepEqual(db.prepare('SELECT * FROM scores WHERE run_hash LIKE ? ORDER BY run_hash').all('normal-%'),originalScores);
+  assert.deepEqual((await call('/status',{},normal.body.token)).body,normalStatus.body,'An already active normal round retains its state and board');
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM scores').get().n,4);
+ }finally{db.close();}
+});
