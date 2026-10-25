@@ -188,3 +188,35 @@ body[data-quiz] .game-panel footer{flex-direction:column;align-items:stretch;gap
 /* Lake islets retain forest colour; their underlying target is the lake. */
 .oslo-lake-islands{fill:#79a16b;stroke:#5c9088;stroke-width:.8;vector-effect:non-scaling-stroke;pointer-events:none}
 :root[data-theme="dark"] .oslo-lake-islands{fill:#436e47;stroke:#a4c9d0}
+
+/* Statle keeps preview choices above a quieter, lower leaderboard action. */
+body[data-quiz="statle"][data-phase="ready"] .legend{display:none}
+body[data-quiz="statle"] #feedback:empty{display:none}
+body[data-quiz="statle"] #statle-top-ten{margin-top:auto}
+body[data-quiz="statle"] footer{margin-top:0}
+.statle-option{display:flex;align-items:flex-start;gap:7px;font-size:12px;line-height:1.5;cursor:pointer}
+.statle-option input{margin:2px 0 0;accent-color:#245845;flex:none}
+body[data-quiz="statle"] .ready-actions{gap:14px}
+.capital-hit{fill:transparent;pointer-events:all}
+.capital-dot{fill:#fff2bf;stroke:#173e32;stroke-width:1.2;pointer-events:none}
+.capital-point:hover .capital-dot,.capital-point:focus-visible .capital-dot{fill:#fff;stroke-width:2}
+.study-name{font:7.5px Inter,"Segoe UI",sans-serif;font-weight:650;fill:#102b20;stroke:#f8fff2;stroke-width:1.8;paint-order:stroke;stroke-linejoin:round;pointer-events:none}
+@media(min-width:701px){body[data-quiz="statle"] .game-panel{gap:22px}body[data-quiz="statle"] #statle-top-ten{margin-top:auto;margin-bottom:14px}}
+@media(max-width:700px){body[data-quiz="statle"] #statle-top-ten{margin-top:14px}body[data-quiz="statle"][data-phase="playing"] .legend{display:grid!important;grid-column:1/-1;grid-template-columns:1fr 1fr;font-size:8px;gap:5px}body[data-quiz="statle"] .legend>strong{grid-column:1/-1}body[data-quiz="statle"] .ready-actions{gap:9px}}
+
+.study-leader{fill:none;stroke:#f8fff2;stroke-width:.7;opacity:.8}
+
+.statle-basemap-tools{position:absolute;left:12px;top:12px;z-index:3}
+.statle-basemap-tools button{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:1px solid #a7bfb1;border-radius:7px;background:#fffefaed;color:#245845;box-shadow:0 2px 8px #234c3718}
+.statle-basemap-tools button[aria-pressed="true"]{background:#245845;color:white}
+#statle-relief{display:none}
+body[data-statle-basemap="physical"] #statle-relief{display:initial}
+body[data-statle-basemap="physical"] #us-context .map-context{fill:none}
+body[data-statle-basemap="physical"] .state{fill:transparent;stroke:#65745a;stroke-width:.7}
+body[data-statle-basemap="physical"] .state[data-band="0"]{fill:var(--green);fill-opacity:.7}
+body[data-statle-basemap="physical"] .state[data-band="1"]{fill:var(--yellow);fill-opacity:.7}
+body[data-statle-basemap="physical"] .state[data-band="2"]{fill:var(--orange);fill-opacity:.7}
+body[data-statle-basemap="physical"] .state[data-band="3"]{fill:var(--red);fill-opacity:.7}
+body[data-statle-basemap="physical"] .state.wrong{fill:#c3645c;fill-opacity:.8}
+body[data-statle-basemap="physical"] .state:hover,body[data-statle-basemap="physical"] .state.hovered{fill:#ffffff24;stroke:#fffefa;filter:none}
+.statle-rivers{fill:none;stroke:#448ba3;stroke-width:.9;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
