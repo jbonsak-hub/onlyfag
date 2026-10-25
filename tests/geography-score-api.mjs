@@ -383,3 +383,16 @@ test('Statle Capitals has an isolated ranking and retains state-answer validatio
  assert.ok(s.complete);assert.equal(s.found.length,50);
  assert.equal(s.config.variant,'capitals');
 });
+
+
+test('largest-city Statle rankings are separate from state and historical capital rounds',()=>{
+ const original=config({game:'statle'}),old=config({game:'statle',variant:'capitals'}),advanced=config({game:'statle',variant:'largest-city'});
+ assert.equal(new Set([original,old,advanced].map(board)).size,3);
+ assert.equal(board(advanced),board({...advanced,language:'en'}));
+ const s=create(advanced,1000);assert.equal(s.targets.length,50);
+ for(let i=0;i<50;i++){
+  answer(s,{question:s.current.id,choice:s.current.target},2000+i*1000);
+  if(i<49)issue(s,2100+i*1000);
+ }
+ assert.ok(s.complete);assert.equal(s.found.length,50);assert.equal(s.config.variant,'largest-city');
+});

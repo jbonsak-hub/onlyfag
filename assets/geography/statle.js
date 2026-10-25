@@ -7,11 +7,11 @@
   const municipalities = document.body.dataset.quiz === 'kommuner';
   const boroughs = document.body.dataset.quiz === 'bydeler';
   const statle = document.body.dataset.quiz === 'statle';
-  let capitalData = null, capitalsMode = false;
-  const capitalPoints = new Map();
+  let cityData = null, citiesMode = false;
+  const cityPoints = new Map(), stateTransforms = new Map();
   const showNames = () => statle && !!$('statle-show-names')?.checked;
-  const answerName = name => capitalsMode ? capitalData[name].name + ' · ' + name : name;
-  const questionName = state => capitalsMode ? capitalData[state.n].name : state.n;
+  const answerName = name => citiesMode ? cityData[name].name + ' · ' + name : name;
+  const questionName = state => citiesMode ? cityData[state.n].name : state.n;
   const themeButtons = [];
   function applyTheme(dark) {
     document.documentElement.dataset.theme = dark ? 'dark' : 'light';
@@ -105,9 +105,10 @@
       const state = states.find(s => s.n === el.dataset.state), box = el.getBBox();
       const c = state.a === 'AK' || state.a === 'HI' ? [box.x + box.width / 2, box.y + box.height / 2] : state.c;
       centers.set(state.n, {x:c[0] * scale + x, y:c[1] * scale + y, radius:Math.max(box.width, box.height) * scale / 2 + 10});
-      if (capitalData?.[state.n]) {
-        const p = capitalData[state.n].p;
-        capitalPoints.set(state.n, {x:p[0] * scale + x, y:p[1] * scale + y});
+      if(statle)stateTransforms.set(state.n,{x,y,scale});
+      if (cityData?.[state.n]) {
+        const p = cityData[state.n].p;
+        cityPoints.set(state.n, {x:p[0] * scale + x, y:p[1] * scale + y});
       }
     }
     return {x:b.x * scale + x, y:b.y * scale + y, width:b.width * scale, height:b.height * scale};
@@ -276,7 +277,7 @@
   }
   function flashLabel(name, kind, duration = 1050) {
     const label = answerName(name);
-    const c = capitalsMode ? capitalPoints.get(name) : centers.get(name), unit = 1 / ($('map').getScreenCTM()?.a || 1), width = Math.max(70, label.length * 7 + 22) * unit;
+    const c = citiesMode ? cityPoints.get(name) : centers.get(name), unit = 1 / ($('map').getScreenCTM()?.a || 1), width = Math.max(70, label.length * 7 + 22) * unit;
     const view = $('map').viewBox.baseVal;
     const x = Math.max(view.x + width / 2 + 9 * unit, Math.min(view.x + view.width - 9 * unit - width / 2, c.x));
     const y = Math.max(view.y + 26 * unit, Math.min(view.y + view.height - 25 * unit, c.y - 21 * unit));
@@ -288,16 +289,11 @@
   }
   function prepareRelief(groups,hawaiiBox) {
     const host=svgNode('g',{id:'statle-relief','aria-hidden':'true','pointer-events':'none'});
-    const hiClip=svgNode('clipPath',{id:'us-hawaii-context-clip',clipPathUnits:'userSpaceOnUse'});hiClip.append(svgNode('rect',hawaiiBox));host.append(hiClip);
     const layers={};
+    // Coastlines, rivers and inset cutouts are already composited at full resolution.
     for(const area of ['main','AK','HI']) {
-      const clip=svgNode('clipPath',{id:'statle-relief-clip-'+area,clipPathUnits:'userSpaceOnUse'});
-      for(const state of states.filter(state=>(['AK','HI'].includes(state.a)?state.a:'main')===area))clip.append(svgNode('path',{d:state.d,'clip-rule':'evenodd'}));
-      for(const country of usContext.areas[area]||[])clip.append(svgNode('path',{d:country.d,'clip-rule':'evenodd'}));
-      const outer=svgNode('g',{'clip-path':`url(#us-${area==='main'?'main':area==='AK'?'alaska':'hawaii'}-context-clip)`});
-      const projected=svgNode('g',{transform:groups[area].getAttribute('transform')});
-      const layer=svgNode('g',{'clip-path':'url(#statle-relief-clip-'+area+')'});
-      projected.append(clip,layer);outer.append(projected);host.append(outer);layers[area]=layer;
+      const layer=svgNode('g',{transform:groups[area].getAttribute('transform')});
+      host.append(layer);layers[area]=layer;
     }
     groups.main.before(host);
     const tools=document.createElement('div');tools.className='statle-basemap-tools';
@@ -310,12 +306,12 @@
       button.disabled=true;button.setAttribute('aria-busy','true');
       try {
         if(!loaded) {
-          const data=await readMap('../assets/geography/us-relief.json');
+          const data=await readMap('../assets/geography/us-relief-raster.json');
           await Promise.all(Object.entries(data.areas).map(async([area,entry])=>{
             const url=new URL('../assets/geography/'+entry.image,document.baseURI).href;
             const preload=new Image();preload.src=url;await preload.decode();
             const [x,y,width,height]=entry.bounds;
-            layers[area].append(svgNode('image',{href:url,x,y,width,height,preserveAspectRatio:'none'}),svgNode('path',{d:entry.rivers,class:'statle-rivers','vector-effect':'non-scaling-stroke'}));
+            layers[area].append(svgNode('image',{href:url,x,y,width,height,preserveAspectRatio:'none'}));
           }));
           loaded=true;
         }
@@ -328,7 +324,7 @@
   }
   function showHint() {
     if(physical){const el=elements.get(target().n);el.classList.add('hinted');later(()=>el.classList.remove('hinted'),1800);return;}
-    const c = capitalsMode ? capitalPoints.get(target().n) : centers.get(target().n), radius = capitalsMode ? 22 : Math.max(25, Math.min(120, c.radius));
+    const c = citiesMode ? cityPoints.get(target().n) : centers.get(target().n), radius = citiesMode ? 22 : Math.max(25, Math.min(120, c.radius));
     const circle = svgNode('circle', {cx:c.x, cy:c.y, r:radius, class:'hint-ring'});
     $('hintLayer').replaceChildren(circle);
     later(() => circle.remove(), 1450);
@@ -380,7 +376,7 @@
     setFeedback('Riktig! ' + answerName(name) + ' · ' + (roundTime / 1000).toFixed(1).replace('.', ',') + ' s', 'good');
     updateStats(); later(next, 650);
   }
-  function start(){retrying=false;mastered.clear();if(statle){$('statle-capitals').disabled=true;$('statle-show-names').disabled=true;$('start').disabled=true;$('restart').disabled=false;}document.querySelectorAll('[name="water-category"]').forEach(input=>input.disabled=true);continentPractice=!!$('continent-practice')?.checked&&['rivers','lakes','mountains'].includes(document.body.dataset.region);practice=continentPractice;document.body.dataset.practice=String(practice);if($('continent-practice'))$('continent-practice').disabled=true;if(practice){window.GeoOnline?.resetStatle();return begin();}if(window.GeoOnline)return GeoOnline.startStatle(begin);return begin();}
+  function start(){retrying=false;mastered.clear();if(statle){$('statle-advanced').disabled=true;$('statle-show-names').disabled=true;$('start').disabled=true;$('restart').disabled=false;}document.querySelectorAll('[name="water-category"]').forEach(input=>input.disabled=true);continentPractice=!!$('continent-practice')?.checked&&['rivers','lakes','mountains'].includes(document.body.dataset.region);practice=continentPractice;document.body.dataset.practice=String(practice);if($('continent-practice'))$('continent-practice').disabled=true;if(practice){window.GeoOnline?.resetStatle();return begin();}if(window.GeoOnline)return GeoOnline.startStatle(begin);return begin();}
   function begin(names) {
     generation++; clearEffects();if($('statle-score'))$('statle-score').hidden=true;
     results = new Map(); index = 0; totalTime = 0; roundTime = 0; lastTick = performance.now();
@@ -466,46 +462,49 @@
     markers.forEach(el=>{delete el.dataset.band;el.classList.remove('mastered','retry-pending');el.setAttribute('aria-label','Ekstra klikkfelt for en liten delstat');});
     setPhase('ready');repeatOffer.hidden=true;$('overlay').hidden=false;
     $('statle-score').hidden=true;$('restart').disabled=true;$('start').disabled=false;
-    $('statle-capitals').disabled=false;$('statle-show-names').disabled=false;
+    $('statle-advanced').disabled=false;$('statle-show-names').disabled=false;
     $('targetVerb').textContent='Klar for en runde?';$('elapsed').textContent='00:00';
     updateStatleOptions();updateStats();setFeedback('');
   }
   $('restart').addEventListener('click', statle ? cancelStatle : start);
+  const studyLayouts=new Map();
   function drawStudyNames() {
     if(!statle)return;
     const layer=$('statle-study-names');layer.replaceChildren();
     if(phase!=='ready'||!showNames())return;
-    const occupied=[];
-    for(const state of states) {
-      let c=capitalsMode?capitalPoints.get(state.n):centers.get(state.n),anchor='middle';
-      const small=markers.get(state.n)?.querySelector('.visible');
-      if(small){c={x:small.cx.baseVal.value-16,y:small.cy.baseVal.value};anchor='end';}
-      const lines=capitalsMode?[capitalData[state.n].name,state.n]:[state.n];
-      const width=Math.max(...lines.map(line=>line.length))*4.1+5,height=lines.length*9+4;
-      let position,box;
-      for(const dy of [-7,-22,10,-37,25,-52,40]) {
-        const left=anchor==='end'?c.x-width:c.x-width/2;
-        box={x:left,y:c.y+dy-8,w:width,h:height};position={x:c.x,y:c.y+dy};
-        if(!occupied.some(b=>box.x<b.x+b.w&&box.x+box.w>b.x&&box.y<b.y+b.h&&box.y+box.h>b.y))break;
+    const key=String(citiesMode);
+    if(!studyLayouts.has(key)) {
+      const project=(state,p)=>{const t=stateTransforms.get(state.n);return [p[0]*t.scale+t.x,p[1]*t.scale+t.y];};
+      const cities=citiesMode?new Map(states.map(state=>[state.n,{name:cityData[state.n].name,...cityPoints.get(state.n)}])):null;
+      const callouts=new Map();
+      markers.forEach((marker,name)=>{const dot=marker.querySelector('.visible');callouts.set(name,{x:dot.cx.baseVal.value-17,y:dot.cy.baseVal.value,anchor:'end'});});
+      const canvas=document.createElement('canvas'),context=canvas.getContext('2d'),widths=new Map();
+      const measure=(text,size,kind)=>{const id=kind+'|'+size+'|'+text;if(!widths.has(id)){context.font=(kind==='state'?'700':'600')+' '+size+'px Inter,"Segoe UI",sans-serif';widths.set(id,context.measureText(text).width);}return widths.get(id);};
+      studyLayouts.set(key,StatleLabelLayout.layout({states,project,cities,callouts,measure,fontSize:7.7,cityFontSize:7,dotRadius:4.5,bounds:{x:8,y:8,w:884,h:534}}));
+    }
+    const result=studyLayouts.get(key);
+    layer.dataset.layoutIssues=JSON.stringify(result.issues);
+    for(const label of [...result.stateLabels,...result.cityLabels]) {
+      if(label.leader&&(label.kind==='city'||label.state==='Hawaii')) {
+        const p=label.leader,d=`M${p.x1} ${p.y1}L${p.x2} ${p.y2}`;
+        layer.append(svgNode('path',{d,class:'study-city-leader-halo'}),svgNode('path',{d,class:label.kind==='city'?'study-city-leader':'study-state-leader'}));
       }
-      occupied.push(box);
-      if(capitalsMode&&!small&&Math.abs(position.y-c.y)>12)layer.append(svgNode('path',{d:`M${c.x} ${c.y}L${position.x} ${position.y}`,class:'study-leader'}));
-      const text=svgNode('text',{x:position.x,y:position.y,class:'study-name','text-anchor':anchor});
-      lines.forEach((line,i)=>{const span=svgNode('tspan',{x:position.x,dy:i?'1.15em':'0'});span.textContent=line;text.append(span);});
+      const text=svgNode('text',{x:label.x,y:label.y,class:'study-name study-'+label.kind,'text-anchor':label.anchor||'middle','font-size':label.fontSize,'data-label-state':label.state,'data-label-box':JSON.stringify(label.box),'data-no-translate':''});
+      label.lines.forEach((line,i)=>{const span=svgNode('tspan',{x:label.x,dy:i?'1.12em':'0'});span.textContent=line;text.append(span);});
       layer.append(text);
     }
   }
   function updateStatleOptions() {
     if(!statle)return;
-    capitalsMode=$('statle-capitals').checked;
-    if(capitalsMode)document.body.dataset.statleVariant='capitals';else delete document.body.dataset.statleVariant;
-    $('start').textContent=capitalsMode?'Start Statle Capitals':'Start Statle →';
+    citiesMode=$('statle-advanced').checked;
+    if(citiesMode)document.body.dataset.statleVariant='largest-city';else delete document.body.dataset.statleVariant;
+    $('start').textContent='Start Statle →';
     if(phase==='ready')$('targetName').textContent='USAs 50 delstater';
-    $('statle-capital-points').toggleAttribute('hidden',!capitalsMode);
+    $('statle-city-points').toggleAttribute('hidden',!citiesMode);
     drawStudyNames();
   }
   if(statle) {
-    for(const id of ['statle-capitals','statle-show-names'])$(id).addEventListener('change',()=>{window.GeoOnline?.resetStatle();updateStatleOptions();});
+    for(const id of ['statle-advanced','statle-show-names'])$(id).addEventListener('change',()=>{window.GeoOnline?.resetStatle();updateStatleOptions();});
   }
   const menu = $('geoMenu'), menuButton = $('geoMenuButton');
   let menuOpener=menuButton;
@@ -652,19 +651,24 @@
   const contextData = counties ? Promise.resolve(null) : fetch('../assets/geography/us-context.json').then(response => {
     if (!response.ok) throw new Error('Nabokartet kunne ikke hentes'); return response.json();
   });
-  const capitalsData = statle ? readMap('../assets/geography/us-capitals.json') : Promise.resolve(null);
-  Promise.all([mapData, contextData, capitalsData]).then(([data, context, capitals]) => {
+  const citiesData = statle ? readMap('../assets/geography/us-largest-cities.json') : Promise.resolve(null);
+  Promise.all([mapData, contextData, citiesData]).then(([data, context, cities]) => {
     usContext = context;
-    capitalData = capitals;
+    cityData = cities;
     states = data;
     if (states.length !== total || new Set(states.map(s=>s.n)).size !== total) throw new Error('Ufullstendig kart');
-    if(statle&&states.some(state=>!capitalData[state.n]?.name||capitalData[state.n].p?.length!==2))throw Error('Ufullstendige hovedsteder');
+    if(statle&&states.some(state=>!cityData[state.n]?.name||cityData[state.n].p?.length!==2))throw Error('Ufullstendige byer');
     buildMap();
     if(statle) {
-      const layer=svgNode('g',{id:'statle-capital-points'}),names=svgNode('g',{id:'statle-study-names','aria-hidden':'true','pointer-events':'none'});
-      for(const state of states){const c=capitalPoints.get(state.n),point=svgNode('g',{class:'capital-point',role:'button',tabindex:'0','aria-label':'Delstat på kartet'});point.dataset.state=state.n;point.append(svgNode('circle',{cx:c.x,cy:c.y,r:7,class:'capital-hit'}),svgNode('circle',{cx:c.x,cy:c.y,r:2.6,class:'capital-dot','vector-effect':'non-scaling-stroke'}));layer.append(point);}
-      $('hintLayer').before(layer,names);updateStatleOptions();
-      $('statle-capitals').disabled=false;$('statle-show-names').disabled=false;
+      const layer=svgNode('g',{id:'statle-city-points'}),names=svgNode('g',{id:'statle-study-names','aria-hidden':'true','pointer-events':'none'});
+      for(const state of states){
+        const c=cityPoints.get(state.n),point=svgNode('g',{class:'city-point','aria-hidden':'true','pointer-events':'none'});
+        const nearest=Math.min(...[...cityPoints].filter(([name])=>name!==state.n).map(([,p])=>Math.hypot(p.x-c.x,p.y-c.y)));
+        point.dataset.state=state.n;
+        point.append(svgNode('circle',{cx:c.x,cy:c.y,r:Math.min(2.6,nearest*.32),class:'city-dot','vector-effect':'non-scaling-stroke'}));layer.append(point);
+      }
+      $('hintLayer').before(names,layer);updateStatleOptions();
+      $('statle-advanced').disabled=false;$('statle-show-names').disabled=false;
     }
     window.ClickMapZoom?.setBase(); $('start').disabled = false; if(!statle)$('start').textContent = counties ? 'Start Norske fylker →' : 'Start Statle →';
   }).catch(() => { $('start').textContent = 'Kartet kunne ikke lastes'; setFeedback('Last siden på nytt for å hente kartet.','error'); });
