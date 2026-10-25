@@ -1,0 +1,36 @@
+const fs=require('node:fs'),assert=require('node:assert/strict'),path=require('node:path');
+const root=path.resolve(__dirname,'..'),layout=require('../assets/geography/statle-label-layout.js');
+const read=file=>JSON.parse(fs.readFileSync(path.join(root,'assets/geography',file),'utf8'));
+const states=read('us-states.json'),cities=read('us-largest-cities.json');
+const ext=rows=>{const pts=rows.flatMap(s=>layout.parsePath(s.d).flat()),x=Math.min(...pts.map(p=>p[0])),y=Math.min(...pts.map(p=>p[1]));return{x,y,w:Math.max(...pts.map(p=>p[0]))-x,h:Math.max(...pts.map(p=>p[1]))-y};};
+const groups={main:states.filter(s=>!['AK','HI'].includes(s.a)),AK:states.filter(s=>s.a==='AK'),HI:states.filter(s=>s.a==='HI')},matrices={};
+const fit=(group,rect)=>{const b=ext(groups[group]),scale=Math.min(rect.w/b.w,rect.h/b.h);return{scale,x:rect.x+(rect.w-b.w*scale)/2-b.x*scale,y:rect.y+(rect.h-b.h*scale)*(rect.bottom?1:.5)-b.y*scale};};
+matrices.main=fit('main',{x:20,y:16,w:825,h:522});
+const fl=ext(states.filter(s=>s.a==='FL')),southEdge=(fl.y+fl.h)*matrices.main.scale+matrices.main.y;
+matrices.AK=fit('AK',{x:25,y:southEdge-125,w:165,h:100,bottom:true});matrices.HI=fit('HI',{x:215,y:southEdge-41,w:110,h:41,bottom:true});
+const project=(state,p)=>{const m=matrices[['AK','HI'].includes(state.a)?state.a:'main'];return[p[0]*m.scale+m.x,p[1]*m.scale+m.y];};
+const points=new Map(states.map(s=>{const p=project(s,cities[s.n].p);return[s.n,{name:cities[s.n].name,x:p[0],y:p[1]}];}));
+const names=['New Hampshire','Vermont','Massachusetts','Rhode Island','Connecticut','New Jersey','Delaware','Maryland'];
+const callouts=new Map(names.map((name,i)=>[name,{x:851,y:162+i*35,anchor:'end'}]));
+const started=performance.now(),result=layout.layout({states,project,cities:points,callouts});
+console.log('layout ms',Math.round(performance.now()-started),result.stateLabels.length,result.cityLabels.length,'issues',result.issues);
+assert.equal(result.stateLabels.length,50);assert.equal(result.cityLabels.length,50);assert.deepEqual(result.issues,[]);
+for(const label of result.stateLabels){
+ if(label.callout)continue;
+ const state=states.find(s=>s.n===label.state),rings=layout.parsePath(state.d).map(r=>r.map(p=>project(state,p)));
+ assert.ok(rings.some(r=>layout.boxInside(label.box,r)),label.state+' state label is fully inside its own state');
+ for(let step=0;step<=24;step++)for(const p of [[label.box.x+label.box.w*step/24,label.box.y],[label.box.x+label.box.w*step/24,label.box.y+label.box.h],[label.box.x,label.box.y+label.box.h*step/24],[label.box.x+label.box.w,label.box.y+label.box.h*step/24]])assert.ok(rings.some(r=>layout.contains(p,r)),label.state+' text edge stays within the state');
+}
+for(const label of [...result.stateLabels,...result.cityLabels])for(const point of points.values())assert.ok(layout.pointBox(point,label.box)>=4.3,label.state+' clears every city dot');
+for(let i=0;i<result.stateLabels.length;i++)for(const other of [...result.stateLabels.slice(i+1),...result.cityLabels])assert.ok(!layout.intersects(result.stateLabels[i].box,other.box),result.stateLabels[i].state+' state label does not overlap another label');
+for(let i=0;i<result.cityLabels.length;i++)for(const other of result.cityLabels.slice(i+1))assert.ok(!layout.intersects(result.cityLabels[i].box,other.box),result.cityLabels[i].state+' city label does not overlap another city');
+for(const label of result.stateLabels.filter(l=>['Idaho','California','Louisiana','Kentucky','Virginia','West Virginia','Michigan','Oklahoma','Florida'].includes(l.state)))console.log(label.state,label.x.toFixed(1),label.y.toFixed(1),label.fontSize,label.lines.join('/'));
+const repeat=performance.now();layout.layout({states,project,cities:points,callouts});console.log('cached layout ms',Math.round(performance.now()-repeat));
+console.log('PASS all 50 state and city labels are present, dots clear, and state names stay inside their own boundaries');
+const stress=layout.layout({states,project,cities:points,callouts:new Map(names.map((name,i)=>[name,{x:850,y:162+i*35,anchor:'end'}])),fontSize:7.7,cityFontSize:7,dotRadius:4.5,bounds:{x:8,y:8,w:884,h:534},measure:(text,size,kind)=>text.length*size*(kind==='state'?.64:.59)});
+assert.equal(stress.stateLabels.length,50);assert.equal(stress.cityLabels.length,50);assert.deepEqual(stress.issues,[]);
+for(const label of [...stress.stateLabels,...stress.cityLabels])for(const point of points.values())assert.ok(layout.pointBox(point,label.box)>=4.5,label.state+' clears every dot at larger measured widths');
+const wv=stress.cityLabels.find(l=>l.state==='West Virginia'),wvPoint=points.get('West Virginia');
+console.log('stress WV city:',JSON.stringify(wv));
+assert.ok(layout.pointBox(wvPoint,wv.box)<35,'Charleston stays near its own dot instead of drifting north');
+console.log('PASS conservative font-width and full bounds stress test');

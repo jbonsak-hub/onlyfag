@@ -1,0 +1,552 @@
+{
+  "Alabama": {
+    "name": "Huntsville",
+    "lon": -86.609995,
+    "lat": 34.71996,
+    "p": [
+      638.788,
+      310.415
+    ],
+    "population2025": 233627,
+    "censusGeoid": "0137000"
+  },
+  "Alaska": {
+    "name": "Anchorage",
+    "lon": -149.887446,
+    "lat": 61.214004,
+    "p": [
+      198.999,
+      515.298
+    ],
+    "population2025": 287155,
+    "censusGeoid": "0203000"
+  },
+  "Arizona": {
+    "name": "Phoenix",
+    "lon": -112.067365,
+    "lat": 33.448322,
+    "p": [
+      280.12,
+      319.624
+    ],
+    "population2025": 1665481,
+    "censusGeoid": "0455000"
+  },
+  "Arkansas": {
+    "name": "Little Rock",
+    "lon": -92.331093,
+    "lat": 34.736083,
+    "p": [
+      558.917,
+      315.632
+    ],
+    "population2025": 206427,
+    "censusGeoid": "0541000"
+  },
+  "California": {
+    "name": "Los Angeles",
+    "lon": -118.231986,
+    "lat": 34.049219,
+    "p": [
+      196.623,
+      291.97
+    ],
+    "population2025": 3869089,
+    "censusGeoid": "0644000"
+  },
+  "Colorado": {
+    "name": "Denver",
+    "lon": -104.985962,
+    "lat": 39.741134,
+    "p": [
+      390.25,
+      224.338
+    ],
+    "population2025": 740613,
+    "censusGeoid": "0820000"
+  },
+  "Connecticut": {
+    "name": "Bridgeport",
+    "lon": -73.201907,
+    "lat": 41.181925,
+    "p": [
+      796.985,
+      170.064
+    ],
+    "population2025": 152273,
+    "censusGeoid": "0908000"
+  },
+  "Delaware": {
+    "name": "Wilmington",
+    "lon": -75.546898,
+    "lat": 39.746268,
+    "p": [
+      773.016,
+      201.132
+    ],
+    "population2025": 73512,
+    "censusGeoid": "1077580"
+  },
+  "Florida": {
+    "name": "Jacksonville",
+    "lon": -81.671933,
+    "lat": 30.331967,
+    "p": [
+      718.721,
+      376.695
+    ],
+    "population2025": 1017689,
+    "censusGeoid": "1235000"
+  },
+  "Georgia": {
+    "name": "Atlanta",
+    "lon": -84.367642,
+    "lat": 33.739457,
+    "p": [
+      672.046,
+      323.789
+    ],
+    "population2025": 529110,
+    "censusGeoid": "1304000"
+  },
+  "Hawaii": {
+    "name": "Honolulu",
+    "lon": -157.858301,
+    "lat": 21.303429,
+    "p": [
+      357.476,
+      526.629
+    ],
+    "population2025": 341868,
+    "censusGeoid": "1571550"
+  },
+  "Idaho": {
+    "name": "Boise",
+    "lon": -116.22749,
+    "lat": 43.60859,
+    "p": [
+      259.171,
+      136.475
+    ],
+    "population2025": 238429,
+    "censusGeoid": "1608830"
+  },
+  "Illinois": {
+    "name": "Chicago",
+    "lon": -87.635237,
+    "lat": 41.847961,
+    "p": [
+      613.65,
+      188.747
+    ],
+    "population2025": 2731585,
+    "censusGeoid": "1714000"
+  },
+  "Indiana": {
+    "name": "Indianapolis",
+    "lon": -86.171994,
+    "lat": 39.751934,
+    "p": [
+      635.886,
+      223.064
+    ],
+    "population2025": 901116,
+    "censusGeoid": "1836003"
+  },
+  "Iowa": {
+    "name": "Des Moines",
+    "lon": -93.619981,
+    "lat": 41.57998,
+    "p": [
+      537.925,
+      197.672
+    ],
+    "population2025": 212086,
+    "censusGeoid": "1921000"
+  },
+  "Kansas": {
+    "name": "Wichita",
+    "lon": -97.327657,
+    "lat": 37.676338,
+    "p": [
+      489.735,
+      265.554
+    ],
+    "population2025": 400987,
+    "censusGeoid": "2079000"
+  },
+  "Kentucky": {
+    "name": "Louisville",
+    "lon": -85.75065,
+    "lat": 38.226963,
+    "p": [
+      644.209,
+      248.761
+    ],
+    "population2025": 641962,
+    "censusGeoid": "2148006"
+  },
+  "Louisiana": {
+    "name": "New Orleans",
+    "lon": -90.088368,
+    "lat": 29.968908,
+    "p": [
+      595.368,
+      396.15
+    ],
+    "population2025": 362154,
+    "censusGeoid": "2255000"
+  },
+  "Maine": {
+    "name": "Portland",
+    "lon": -70.245527,
+    "lat": 43.672162,
+    "p": [
+      822.127,
+      119.037
+    ],
+    "population2025": 69911,
+    "censusGeoid": "2360545"
+  },
+  "Maryland": {
+    "name": "Baltimore",
+    "lon": -76.614582,
+    "lat": 39.281516,
+    "p": [
+      760.99,
+      211.923
+    ],
+    "population2025": 569997,
+    "censusGeoid": "2404000"
+  },
+  "Massachusetts": {
+    "name": "Boston",
+    "lon": -71.07196,
+    "lat": 42.331906,
+    "p": [
+      818.269,
+      144.074
+    ],
+    "population2025": 672973,
+    "censusGeoid": "2507000"
+  },
+  "Michigan": {
+    "name": "Detroit",
+    "lon": -83.051334,
+    "lat": 42.333558,
+    "p": [
+      670.33,
+      173.92
+    ],
+    "population2025": 649095,
+    "censusGeoid": "2622000"
+  },
+  "Minnesota": {
+    "name": "Minneapolis",
+    "lon": -93.253732,
+    "lat": 44.981925,
+    "p": [
+      540.895,
+      138.884
+    ],
+    "population2025": 430324,
+    "censusGeoid": "2743000"
+  },
+  "Mississippi": {
+    "name": "Jackson",
+    "lon": -90.184997,
+    "lat": 32.298815,
+    "p": [
+      591.482,
+      356.186
+    ],
+    "population2025": 141196,
+    "censusGeoid": "2836000"
+  },
+  "Missouri": {
+    "name": "Kansas City",
+    "lon": -94.550313,
+    "lat": 39.125155,
+    "p": [
+      526.72,
+      240.419
+    ],
+    "population2025": 521220,
+    "censusGeoid": "2938000"
+  },
+  "Montana": {
+    "name": "Billings",
+    "lon": -108.54,
+    "lat": 45.788302,
+    "p": [
+      357.8,
+      115.621
+    ],
+    "population2025": 121239,
+    "censusGeoid": "3006550"
+  },
+  "Nebraska": {
+    "name": "Omaha",
+    "lon": -96.00999,
+    "lat": 41.240001,
+    "p": [
+      507.47,
+      203.934
+    ],
+    "population2025": 488797,
+    "censusGeoid": "3137000"
+  },
+  "Nevada": {
+    "name": "Las Vegas",
+    "lon": -115.151362,
+    "lat": 36.164763,
+    "p": [
+      246.412,
+      265.474
+    ],
+    "population2025": 679817,
+    "censusGeoid": "3240000"
+  },
+  "New Hampshire": {
+    "name": "Manchester",
+    "lon": -71.455287,
+    "lat": 42.995992,
+    "p": [
+      810.67,
+      134.228
+    ],
+    "population2025": 116818,
+    "censusGeoid": "3345140"
+  },
+  "New Jersey": {
+    "name": "Newark",
+    "lon": -74.170005,
+    "lat": 40.700421,
+    "p": [
+      786.816,
+      181.066
+    ],
+    "population2025": 323808,
+    "censusGeoid": "3451000"
+  },
+  "New Mexico": {
+    "name": "Albuquerque",
+    "lon": -106.641331,
+    "lat": 35.104975,
+    "p": [
+      359.739,
+      301.95
+    ],
+    "population2025": 556588,
+    "censusGeoid": "3502000"
+  },
+  "New York": {
+    "name": "New York City",
+    "lon": -73.995718,
+    "lat": 40.721562,
+    "p": [
+      788.921,
+      180.196
+    ],
+    "population2025": 8584629,
+    "censusGeoid": "3651000"
+  },
+  "North Carolina": {
+    "name": "Charlotte",
+    "lon": -80.831984,
+    "lat": 35.20694,
+    "p": [
+      717.62,
+      291.676
+    ],
+    "population2025": 964784,
+    "censusGeoid": "3712000"
+  },
+  "North Dakota": {
+    "name": "Fargo",
+    "lon": -96.789426,
+    "lat": 46.877228,
+    "p": [
+      498.296,
+      106.832
+    ],
+    "population2025": 136275,
+    "censusGeoid": "3825700"
+  },
+  "Ohio": {
+    "name": "Columbus",
+    "lon": -82.991956,
+    "lat": 39.98192,
+    "p": [
+      676.624,
+      214.133
+    ],
+    "population2025": 938396,
+    "censusGeoid": "3918000"
+  },
+  "Oklahoma": {
+    "name": "Oklahoma City",
+    "lon": -97.520629,
+    "lat": 35.471989,
+    "p": [
+      486.528,
+      303.711
+    ],
+    "population2025": 719849,
+    "censusGeoid": "4055000"
+  },
+  "Oregon": {
+    "name": "Portland",
+    "lon": -122.681936,
+    "lat": 45.52197,
+    "p": [
+      190.855,
+      85.333
+    ],
+    "population2025": 635109,
+    "censusGeoid": "4159000"
+  },
+  "Pennsylvania": {
+    "name": "Philadelphia",
+    "lon": -75.179841,
+    "lat": 39.945942,
+    "p": [
+      776.951,
+      196.721
+    ],
+    "population2025": 1574281,
+    "censusGeoid": "4260000"
+  },
+  "Rhode Island": {
+    "name": "Providence",
+    "lon": -71.416926,
+    "lat": 41.823048,
+    "p": [
+      816.317,
+      153.698
+    ],
+    "population2025": 195310,
+    "censusGeoid": "4459000"
+  },
+  "South Carolina": {
+    "name": "Charleston",
+    "lon": -79.992105,
+    "lat": 32.792377,
+    "p": [
+      736.142,
+      330.94
+    ],
+    "population2025": 159423,
+    "censusGeoid": "4513330"
+  },
+  "South Dakota": {
+    "name": "Sioux Falls",
+    "lon": -96.729998,
+    "lat": 43.549989,
+    "p": [
+      498.557,
+      163.987
+    ],
+    "population2025": 213748,
+    "censusGeoid": "4659020"
+  },
+  "Tennessee": {
+    "name": "Nashville",
+    "lon": -86.781931,
+    "lat": 36.17192,
+    "p": [
+      633.959,
+      285.622
+    ],
+    "population2025": 721074,
+    "censusGeoid": "4752006"
+  },
+  "Texas": {
+    "name": "Houston",
+    "lon": -95.348436,
+    "lat": 29.741273,
+    "p": [
+      517.305,
+      402.758
+    ],
+    "population2025": 2397315,
+    "censusGeoid": "4835000"
+  },
+  "Utah": {
+    "name": "Salt Lake City",
+    "lon": -111.931998,
+    "lat": 40.776962,
+    "p": [
+      303.199,
+      194.777
+    ],
+    "population2025": 218428,
+    "censusGeoid": "4967000"
+  },
+  "Vermont": {
+    "name": "Burlington",
+    "lon": -73.212467,
+    "lat": 44.475798,
+    "p": [
+      783.349,
+      114.855
+    ],
+    "population2025": 44019,
+    "censusGeoid": "5010675"
+  },
+  "Virginia": {
+    "name": "Virginia Beach",
+    "lon": -75.980265,
+    "lat": 36.85516,
+    "p": [
+      777.954,
+      251.334
+    ],
+    "population2025": 453737,
+    "censusGeoid": "5182000"
+  },
+  "Washington": {
+    "name": "Seattle",
+    "lon": -122.315322,
+    "lat": 47.600423,
+    "p": [
+      204.816,
+      52.337
+    ],
+    "population2025": 784777,
+    "censusGeoid": "5363000"
+  },
+  "West Virginia": {
+    "name": "Charleston",
+    "lon": -81.632728,
+    "lat": 38.349738,
+    "p": [
+      698.418,
+      239.555
+    ],
+    "population2025": 46117,
+    "censusGeoid": "5414600"
+  },
+  "Wisconsin": {
+    "name": "Milwaukee",
+    "lon": -87.916673,
+    "lat": 43.029608,
+    "p": [
+      608.356,
+      168.713
+    ],
+    "population2025": 562407,
+    "censusGeoid": "5553000"
+  },
+  "Wyoming": {
+    "name": "Cheyenne",
+    "lon": -104.819711,
+    "lat": 41.140007,
+    "p": [
+      394.66,
+      200.42
+    ],
+    "population2025": 66507,
+    "censusGeoid": "5613900"
+  }
+}

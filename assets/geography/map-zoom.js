@@ -2,18 +2,22 @@
 (() => {
   const svg=document.getElementById('map');if(!svg)return;
   const read=()=>{const v=svg.viewBox.baseVal;return {x:v.x,y:v.y,w:v.width,h:v.height};};
-  let base=read(),view={...base},camera=null,suppressUntil=0,last=null,pinch=null;
+  let base=read(),view={...base},camera=null,suppressUntil=0,last=null,pinch=null,paintFrame=0,lastView='',markerScale='';
   const pointers=new Map(),point=(x,y)=>new DOMPoint(x,y).matrixTransform(svg.getScreenCTM().inverse());
   const scale=()=>base.w/view.w;
-  function render(){
+  function render(){if(!paintFrame)paintFrame=requestAnimationFrame(()=>{paintFrame=0;paint();});}
+  function paint(){
     view.w=Math.min(base.w,Math.max(base.w/14,view.w));view.h=view.w*base.h/base.w;
     view.x=Math.max(base.x,Math.min(base.x+base.w-view.w,view.x));view.y=Math.max(base.y,Math.min(base.y+base.h-view.h,view.y));
-    svg.setAttribute('viewBox',`${view.x} ${view.y} ${view.w} ${view.h}`);
+    const rect=svg.getBoundingClientRect(),stretch=svg.preserveAspectRatio.baseVal.align===1;
+    const screenScale=stretch?rect.width/view.w:Math.min(rect.width/view.w,rect.height/view.h),screenScaleY=stretch?rect.height/view.h:screenScale;
+    const nextView=`${view.x} ${view.y} ${view.w} ${view.h}`;
+    if(nextView!==lastView){svg.setAttribute('viewBox',nextView);lastView=nextView;}
     // Keep small-country targets usable without turning them into giant dots.
-    const screenMatrix=svg.getScreenCTM(),screenScale=screenMatrix?.a,screenScaleY=screenMatrix?.d;
-    if(screenScale>0)svg.querySelectorAll('.small-marker').forEach(marker=>{const circle=marker.querySelector('circle'),x=circle.cx.baseVal.value,y=circle.cy.baseVal.value;marker.setAttribute('transform',`translate(${x} ${y}) scale(${1/screenScale} ${1/screenScaleY}) translate(${-x} ${-y})`);});
+    const nextScale=screenScale+','+screenScaleY;
+    if(screenScale>0&&markerScale!==nextScale){markerScale=nextScale;svg.querySelectorAll('.small-marker').forEach(marker=>{const circle=marker.querySelector('circle'),x=circle.cx.baseVal.value,y=circle.cy.baseVal.value;marker.setAttribute('transform',`translate(${x} ${y}) scale(${1/screenScale} ${1/screenScaleY}) translate(${-x} ${-y})`);});}
     svg.classList.toggle('map-is-zoomed',scale()>1.01);
-    const out=document.getElementById('map-zoom-value');if(out)out.textContent=Math.round(scale()*100)+'%';
+    const out=document.getElementById('map-zoom-value'),label=Math.round(scale()*100)+'%';if(out&&out.textContent!==label)out.textContent=label;
     const minus=document.getElementById('map-zoom-out'),plus=document.getElementById('map-zoom-in');if(minus)minus.disabled=scale()<=1.001;if(plus)plus.disabled=scale()>=13.999;
   }
   function zoom(factor,client){const anchor=client?point(client.x,client.y):{x:view.x+view.w/2,y:view.y+view.h/2},width=Math.max(base.w/14,Math.min(base.w,view.w/factor)),ratio=width/view.w;view={x:anchor.x-(anchor.x-view.x)*ratio,y:anchor.y-(anchor.y-view.y)*ratio,w:width,h:view.h*ratio};render();}
@@ -41,7 +45,7 @@
         throw new TypeError('Map camera requires a finite center, positive height and nonnegative minWidth');
       next={center:[...value.center],height:value.height,minWidth:value.minWidth};
     }
-    camera=next;base=read();
+    camera=next;base=read();lastView='';markerScale='';
     // Set the new map to home before deriving its responsive base. Subsequent
     // resizes preserve the user's zoom level and world-space view centre.
     view={...base};
