@@ -11,14 +11,14 @@
   const countryRegions=new Set(['europe','asia','northAmerica','southAmerica','africa','oceania']);
   const countryRegion=()=>kart&&countryRegions.has(document.body.dataset.region);
   const enhanced=()=>statle||countryRegion()||localMap;
-  const advancedInput=()=>$(statle?'statle-advanced':'region-capitals');
+  const advancedInput=()=>$(municipalities?'municipality-centres':statle?'statle-advanced':'region-capitals');
   const namesInput=()=>$(localMap?'local-show-names':statle?'statle-show-names':'region-show-names');
-  let cityData = null, citiesMode = false, basemap=null, regionalCapitals=null;
+  let cityData = null, citiesMode = false, basemap=null, regionalCapitals=null, municipalityCentres=null, cityMarkerScale='';
   const cityPoints = new Map(), stateTransforms = new Map();
   const showNames = () => enhanced() && !!namesInput()?.checked;
   const answerName = name => citiesMode ? displayCityName(states.find(state=>state.n===name)) + ' · ' + (window.QuizLanguage?.translate(name)||name) : name;
   const displayCityName=state=>statle?StatleLabelLayout.cityName(state,cityData):(window.QuizLanguage?.language==='en'?cityData[state.n].en||cityData[state.n].name:cityData[state.n].name);
-  const questionName = state => citiesMode ? displayCityName(state) : state.n;
+  const questionName = state => citiesMode ? municipalities?cityData[state.n].promptName||displayCityName(state):displayCityName(state) : state.n;
   const themeButtons = [];
   function applyTheme(dark) {
     document.documentElement.dataset.theme = dark ? 'dark' : 'light';
@@ -168,8 +168,13 @@
           $('states').append(svgNode('path',{d:state.islands,class:'oslo-lake-islands','fill-rule':'evenodd','aria-hidden':'true','pointer-events':'none'}));
         }
       }
-      $('hintLayer').before(svgNode('g',{id:'statle-study-names','aria-hidden':'true','pointer-events':'none'}));
-      namesInput().disabled=false;updateStatleOptions();
+      if(municipalities){
+        for(const state of states){const p=cityData[state.n].p;cityPoints.set(state.n,{x:p[0],y:p[1]});}
+        buildCityLayer();
+      }else{
+        $('hintLayer').before(svgNode('g',{id:'statle-study-names','aria-hidden':'true','pointer-events':'none'}));
+        namesInput().disabled=false;updateStatleOptions();
+      }
       prepareBasemap('../assets/geography/norway-relief.json',undefined,boroughs?'oslo':'county-'+document.body.dataset.county);
       return;
     }
@@ -417,7 +422,7 @@
     }
     if($('target-continent'))$('target-continent').hidden=true;
     $('targetVerb').textContent = 'Godt jobbet!';
-    $('targetName').textContent = boroughs ? 'Alle stedene er fullført.' : municipalities ? 'Alle kommunene er på plass.' : physical ? 'Alle stedene er fullført.' : counties ? 'Alle fylkene er på plass.' : kart ? (citiesMode?'Alle hovedstedene er på plass.':'Alle landene er på plass.') : 'Hele USA er på plass.';
+    $('targetName').textContent = boroughs ? 'Alle stedene er fullført.' : municipalities ? (citiesMode?'Alle kommunesentrene er på plass.':'Alle kommunene er på plass.') : physical ? 'Alle stedene er fullført.' : counties ? 'Alle fylkene er på plass.' : kart ? (citiesMode?'Alle hovedstedene er på plass.':'Alle landene er på plass.') : 'Hele USA er på plass.';
     const counts = [0,0,0,0]; results.forEach(r => counts[r.band]++);
     results.forEach((r,name) => { if(r.band === 0)mastered.add(name); });
     repeatOffer.hidden = mastered.size === states.length;
@@ -483,54 +488,77 @@
     if(!enhanced())return;
     const layer=$('statle-study-names');if(!layer)return;layer.replaceChildren();
     if(phase!=='ready'||!showNames())return;
-    const view=$('map').viewBox.baseVal,localView=[view.x,view.y,view.width,view.height],localFont=10/($('map').getScreenCTM()?.a||1);
+    const view=$('map').viewBox.baseVal,matrix=$('map').getScreenCTM(),rect=$('map').getBoundingClientRect(),localFont=10/(matrix?.a||1);
+    let localView=[view.x,view.y,view.width,view.height];
+    if(localMap&&matrix&&rect.width&&rect.height){
+      const inverse=matrix.inverse(),a=new DOMPoint(rect.left,rect.top).matrixTransform(inverse),b=new DOMPoint(rect.right,rect.bottom).matrixTransform(inverse);
+      localView=[a.x,a.y,b.x-a.x,b.y-a.y];
+    }
     const key=(document.body.dataset.region||'statle')+'|'+citiesMode+'|'+(window.QuizLanguage?.language||'no')+(localMap?'|'+localView.map(n=>n.toFixed(2)).join(',')+'|'+localFont.toFixed(3):'');
     if(!studyLayouts.has(key)) {
       const project=(state,p)=>{const t=stateTransforms.get(state.n);return [p[0]*t.scale+t.x,p[1]*t.scale+t.y];};
-      const cities=citiesMode?new Map(states.map(state=>[state.n,{name:window.QuizLanguage?.translate(displayCityName(state))||displayCityName(state),...cityPoints.get(state.n)}])):null;
+      const cities=citiesMode?new Map(states.map(state=>[state.n,{name:municipalities?displayCityName(state):window.QuizLanguage?.translate(displayCityName(state))||displayCityName(state),...cityPoints.get(state.n),...(municipalities?{locations:cityData[state.n].locations}:{} )}])):null;
       const callouts=new Map();
       markers.forEach((marker,name)=>{const dot=marker.querySelector('.visible');callouts.set(name,{x:dot.cx.baseVal.value-17,y:dot.cy.baseVal.value,anchor:'end'});});
       const canvas=document.createElement('canvas'),context=canvas.getContext('2d'),widths=new Map();
       const measure=(text,size,kind)=>{const id=kind+'|'+size+'|'+text;if(!widths.has(id)){context.font=(kind==='state'?'700':'600')+' '+size+'px Inter,"Segoe UI",sans-serif';widths.set(id,context.measureText(text).width);}return widths.get(id);};
       measure.metrics=(size,kind)=>{context.font=(kind==='state'?'700':'600')+' '+size+'px Inter,"Segoe UI",sans-serif';const metrics=context.measureText('Mg');return{fontBoundingBoxAscent:metrics.fontBoundingBoxAscent??size*1.05,fontBoundingBoxDescent:metrics.fontBoundingBoxDescent??size*.3};};
       if(localMap&&studyLayouts.size>24)studyLayouts.clear();
-      studyLayouts.set(key,localMap?LocalLabelLayout.layout({states,viewBox:localView,measure,fontSize:localFont}):statle?StatleLabelLayout.layout({states,project,cities,callouts,measure,fontSize:7.7,cityFontSize:7,dotRadius:4.5,bounds:{x:8,y:8,w:884,h:534}}):RegionLabelLayout.layout({states,capitalData:cityData,showCapitals:citiesMode,measure,countryName:name=>window.QuizLanguage?.translate(name)||name,capitalName:(name,row)=>window.QuizLanguage?.language==='en'?row.en||name:name,dotRadius:4.5,bounds:{x:6,y:6,w:888,h:638}}));
+      studyLayouts.set(key,localMap?LocalLabelLayout.layout({states,viewBox:localView,measure,fontSize:localFont,cities}):statle?StatleLabelLayout.layout({states,project,cities,callouts,measure,fontSize:7.7,cityFontSize:7,dotRadius:4.5,bounds:{x:8,y:8,w:884,h:534}}):RegionLabelLayout.layout({states,capitalData:cityData,showCapitals:citiesMode,measure,countryName:name=>window.QuizLanguage?.translate(name)||name,capitalName:(name,row)=>window.QuizLanguage?.language==='en'?row.en||name:name,dotRadius:4.5,bounds:{x:6,y:6,w:888,h:638}}));
     }
     const result=studyLayouts.get(key);
     layer.dataset.layoutIssues=JSON.stringify(result.issues);
     for(const label of [...result.stateLabels,...result.cityLabels]) {
       if(label.leader&&(localMap||countryRegion()||label.kind==='city'||label.state==='Hawaii')) {
         const p=label.leader,d=`M${p.x1} ${p.y1}L${p.x2} ${p.y2}`;
-        layer.append(svgNode('path',{d,class:'study-city-leader-halo'}),svgNode('path',{d,class:label.kind==='city'?'study-city-leader':'study-state-leader'}));
+        const stroke=localMap?{'vector-effect':'non-scaling-stroke'}:{};
+        layer.append(svgNode('path',{d,class:'study-city-leader-halo',...stroke}),svgNode('path',{d,class:label.kind==='city'?'study-city-leader':'study-state-leader',...stroke}));
       }
       const text=svgNode('text',{x:label.x,y:label.y,class:'study-name study-'+label.kind,'text-anchor':label.anchor||'middle','font-size':label.fontSize,'data-label-state':label.state,'data-label-box':JSON.stringify(label.box),'data-no-translate':''});
+      if(localMap){text.setAttribute('vector-effect','non-scaling-stroke');text.style.strokeWidth='1.2px';}
       label.lines.forEach((line,i)=>{const span=svgNode('tspan',{x:label.x,dy:i?'1.12em':'0'});span.textContent=line;text.append(span);});
       layer.append(text);
     }
   }
   function buildCityLayer() {
     const layer=svgNode('g',{id:'statle-city-points'}),names=svgNode('g',{id:'statle-study-names','aria-hidden':'true','pointer-events':'none'});
-    for(const state of states){
-      const c=cityPoints.get(state.n),point=svgNode('g',{class:'city-point',...(statle?{'aria-hidden':'true','pointer-events':'none'}:{role:'button',tabindex:'0','aria-label':'Hovedstad på kartet'})});
-      const nearest=Math.min(...[...cityPoints].filter(([name])=>name!==state.n).map(([,p])=>Math.hypot(p.x-c.x,p.y-c.y)));
+    const locations=states.flatMap(state=>municipalities&&cityData[state.n].locations?.length?cityData[state.n].locations.map(place=>({state,name:place.name,x:place.p[0],y:place.p[1]})):[{state,...cityPoints.get(state.n)}]);
+    for(const c of locations){
+      const state=c.state,point=svgNode('g',{class:'city-point',...(statle?{'aria-hidden':'true','pointer-events':'none'}:{role:'button',tabindex:'0','aria-label':municipalities?'Kommunesenter på kartet':'Hovedstad på kartet'})});
+      const nearest=Math.min(...locations.filter(other=>other!==c).map(p=>Math.hypot(p.x-c.x,p.y-c.y)));
       point.dataset.state=state.n;
+      if(c.name)point.dataset.centre=c.name;
       if(!statle)point.append(svgNode('circle',{cx:c.x,cy:c.y,r:Math.max(.05,Math.min(6,nearest*.4)),class:'city-hit'}));
       point.append(svgNode('circle',{cx:c.x,cy:c.y,r:Math.max(.05,Math.min(2.6,nearest*.32)),class:'city-dot','vector-effect':'non-scaling-stroke'}));layer.append(point);
     }
-    $('hintLayer').before(names,layer);updateStatleOptions();advancedInput().disabled=false;namesInput().disabled=false;
+    $('hintLayer').before(names,layer);scaleLocalCityPoints();updateStatleOptions();advancedInput().disabled=false;namesInput().disabled=false;
+  }
+  function scaleLocalCityPoints(){
+    if(!municipalities||!cityPoints.size)return;
+    const scale=$('map').getScreenCTM()?.a||1;
+    if(cityMarkerScale===String(scale))return;cityMarkerScale=String(scale);
+    const points=[...($('statle-city-points')?.children||[])].map(point=>{const dot=point.querySelector('.city-dot');return{point,x:dot.cx.baseVal.value,y:dot.cy.baseVal.value};});
+    for(const c of points){
+      const point=c.point,nearest=Math.min(...points.filter(other=>other!==c).map(p=>Math.hypot(p.x-c.x,p.y-c.y)));
+      point.querySelector('.city-hit').setAttribute('r',Math.max(.05,Math.min(11/scale,nearest*.4)));
+      point.querySelector('.city-dot').setAttribute('r',Math.max(.05,Math.min(3/scale,nearest*.32)));
+    }
   }
   function updateStatleOptions() {
     if(!enhanced())return;
     citiesMode=!!advancedInput()?.checked;
-    const variant=statle?'statleVariant':'kartVariant';
-    if(citiesMode)document.body.dataset[variant]=statle?'largest-city':'capitals';else delete document.body.dataset[variant];
+    const variant=municipalities?'municipalityQuestionMode':statle?'statleVariant':'kartVariant';
+    if(citiesMode)document.body.dataset[variant]=municipalities?'centres':statle?'largest-city':'capitals';else delete document.body.dataset[variant];
     $('start').textContent=statle?'Start Statle →':'Start →';
     if(phase==='ready')$('targetName').textContent=statle?'USAs 50 delstater':regionData.title;
     $('statle-city-points')?.toggleAttribute('hidden',!citiesMode);
+    $('statle-city-points')?.setAttribute('aria-hidden',String(!citiesMode));
+    if(!statle)for(const point of $('statle-city-points')?.children||[])point.setAttribute('tabindex',citiesMode?'0':'-1');
     drawStudyNames();
   }
   for(const input of [advancedInput(),namesInput()])input?.addEventListener('change',()=>{window.GeoOnline?.resetStatle();updateStatleOptions();});
   if(localMap)window.ClickMapZoom?.subscribe(()=>{
+    scaleLocalCityPoints();
     clearTimeout(localPreviewTimer);
     if(phase==='ready'&&showNames())localPreviewTimer=setTimeout(drawStudyNames,125);
   });
@@ -561,7 +589,7 @@
     clearTimeout(localPreviewTimer);
     basemap?.clear();document.body.dataset.statleBasemap='original';document.querySelector('.statle-basemap-tools')?.remove();
     $('statle-city-points')?.remove();$('statle-study-names')?.remove();cityPoints.clear();stateTransforms.clear();studyLayouts.clear();
-    citiesMode=false;cityData=null;delete document.body.dataset.kartVariant;
+    citiesMode=false;cityData=null;cityMarkerScale='';delete document.body.dataset.kartVariant;delete document.body.dataset.municipalityQuestionMode;
     mastered.clear();retrying=false;continentPractice=false;repeatOffer.hidden=true;delete document.body.dataset.retry;
     generation++;clearEffects();elements.clear();markers.clear();centers.clear();
     $('states').replaceChildren();$('smallStates').replaceChildren();$('insetSeparators').setAttribute('d','');
@@ -610,13 +638,18 @@
       else delete document.body.dataset.municipalityVariant;
       $('municipality-selection').hidden=true;$('kart-game').hidden=false;
       namesInput().checked=false;namesInput().disabled=true;
+      advancedInput().checked=false;advancedInput().disabled=true;
       $('targetVerb').textContent='Kan du plassere alle?';$('targetName').textContent=county.quizTitle||county.name;
       $('start').textContent='Laster kart …';setFeedback('');
       const url=new URL(location.href);url.searchParams.set('fylke',code);history.replaceState(null,'',url);
       try {
         if(!maps.has(code))maps.set(code,readMap('../assets/geography/municipalities/'+county.file+'?v='+encodeURIComponent(county.revision||municipalityIndex.version||'1')).catch(error=>{maps.delete(code);throw error;}));
-        const data=await maps.get(code);if(token!==mapGeneration)return;
+        if(!municipalityCentres)municipalityCentres=readMap('../assets/geography/municipality-centres.json').catch(error=>{municipalityCentres=null;throw error;});
+        const [data,centreAtlas]=await Promise.all([maps.get(code),municipalityCentres]);if(token!==mapGeneration)return;
         if(!data.states?.length||new Set(data.states.map(state=>state.n)).size!==data.states.length||data.variant!==county.variant)throw Error('Ufullstendig kart');
+        const centres=centreAtlas.regions['county-'+code]?.centres;
+        if(!centres||data.states.some(state=>!centres[state.n]?.name||!Array.isArray(centres[state.n].p)||centres[state.n].p.length!==2||!centres[state.n].p.every(Number.isFinite)))throw Error('Ufullstendige kommunesentre');
+        cityData=centres;
         regionData=data;states=data.states;total=states.length;
         $('targetName').textContent=data.title||county.quizTitle||county.name;
         const countyLabel=$('municipality-current-county');if(countyLabel)countyLabel.textContent=data.title||county.quizTitle||county.name;

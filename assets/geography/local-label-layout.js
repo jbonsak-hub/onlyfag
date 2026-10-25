@@ -73,13 +73,39 @@
       row.candidates.sort((a,b)=>Math.hypot(a[0]-row.state.c[0],a[1]-row.state.c[1])-Math.hypot(b[0]-row.state.c[0],b[1]-row.state.c[1]));
       row.anchor=row.candidates[0];
     }
-    const labels=[],occupied=[],issues=[];
+    const labels=[],cityLabels=[],occupied=[],issues=[];
+    const cityRows=options.cities?states.flatMap(state=>{
+      const city=options.cities instanceof Map?options.cities.get(state.n):options.cities[state.n];
+      if(!city)return[];
+      return(city.locations?.length?city.locations.map(place=>({name:place.name,x:place.p[0],y:place.p[1]})):[city]).filter(place=>inside(bounds,place.x,place.y)).map(place=>({state,place}));
+    }):[];
+    const dotRadius=fontSize*.4;
+    for(const {place}of cityRows)occupied.push({x:place.x-dotRadius,y:place.y-dotRadius,w:dotRadius*2,h:dotRadius*2});
     const within=box=>box.x>=bounds.x&&box.y>=bounds.y&&box.x+box.w<=bounds.x+bounds.w&&box.y+box.h<=bounds.y+bounds.h;
     const free=box=>within(box)&&!occupied.some(other=>intersects(box,other,fontSize*.16));
-    function make(row,lines,x,cy,size){
-      const metrics=typeof measure.metrics==='function'?measure.metrics(size,'state')||{}:{},ascent=metrics.fontBoundingBoxAscent??metrics.ascent??size*1.05,descent=metrics.fontBoundingBoxDescent??metrics.descent??size*.3,stroke=size*.12,lineHeight=size*1.12;
-      const w=Math.max(...lines.map(s=>measure(s,size,'state')))+2*stroke,h=ascent+descent+(lines.length-1)*lineHeight+2*stroke,y=cy+(ascent-descent)/2-(lines.length-1)*lineHeight/2;
-      return{state:row.state.n,kind:'state',lines,x,y,fontSize:size,anchor:'middle',box:{x:x-w/2,y:cy-h/2,w,h}};
+    function make(row,lines,x,cy,size,kind='state'){
+      const metrics=typeof measure.metrics==='function'?measure.metrics(size,kind)||{}:{},ascent=metrics.fontBoundingBoxAscent??metrics.ascent??size*1.05,descent=metrics.fontBoundingBoxDescent??metrics.descent??size*.3,stroke=size*.12,lineHeight=size*1.12;
+      const w=Math.max(...lines.map(s=>measure(s,size,kind)))+2*stroke,h=ascent+descent+(lines.length-1)*lineHeight+2*stroke,y=cy+(ascent-descent)/2-(lines.length-1)*lineHeight/2;
+      return{state:row.state.n,kind,lines,x,y,fontSize:size,anchor:'middle',box:{x:x-w/2,y:cy-h/2,w,h}};
+    }
+    // Centre labels reserve nearby space first. Both text layers avoid every dot.
+    for(const row of cityRows){
+      let best=null;const a=[row.place.x,row.place.y];
+      for(const size of [fontSize*.9,minFont*.9])for(const lines of variants(row.place.name)){
+        const template=make(row,lines,0,0,size,'city');
+        for(const step of [0,.5,1,2,3,4,6,8,11,15,20,28,38]){
+          for(let i=0;i<32;i++){
+            const angle=i*Math.PI/16,x=a[0]+Math.cos(angle)*(template.box.w/2+dotRadius+step*fontSize),cy=a[1]+Math.sin(angle)*(template.box.h/2+dotRadius+step*fontSize),label=make(row,lines,x,cy,size,'city'),box=label.box;
+            if(!free(box))continue;
+            const end=[Math.max(box.x,Math.min(box.x+box.w,a[0])),Math.max(box.y,Math.min(box.y+box.h,a[1]))];
+            const crosses=occupied.filter(other=>segmentBox(a,end,other)).length;
+            const score=Math.hypot(x-a[0],cy-a[1])+(fontSize-size)*10+(lines.length-1)*fontSize*.3+crosses*fontSize*2;
+            if(!best||score<best.score)best={...label,callout:true,leader:{x1:a[0],y1:a[1],x2:end[0],y2:end[1]},score};
+          }
+          if(best&&step*fontSize>best.score+fontSize*3)break;
+        }
+      }
+      if(best){cityLabels.push(best);occupied.push(best.box);}else issues.push({state:row.state.n,kind:'city-label-no-room'});
     }
     // Small areas reserve their close labels first; large areas have more interior choices.
     const pending=[];
@@ -114,7 +140,7 @@
       }
       if(best){labels.push(best);occupied.push(best.box);}else issues.push({state:row.state.n,kind:'state-label-no-room'});
     }
-    return{stateLabels:labels,cityLabels:[],issues};
+    return{stateLabels:labels,cityLabels,issues};
   }
   const api={layout};if(typeof module==='object'&&module.exports)module.exports=api;else root.LocalLabelLayout=api;
 })(typeof window!=='undefined'?window:globalThis);

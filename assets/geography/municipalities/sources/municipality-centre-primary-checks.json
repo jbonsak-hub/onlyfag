@@ -1,0 +1,132 @@
+{
+  "checkedAt": "2026-10-25",
+  "records": [
+    {
+      "code": "4602",
+      "municipality": "Kinn",
+      "centres": ["Florø", "Måløy"],
+      "finding": "The municipality's merger agreement assigns shared municipal-centre functions to both towns. A current municipal property inventory lists administration/town-hall facilities in both towns.",
+      "sources": ["https://nyekinn.kommune.custompublish.com/intensjonsavtala.460774.no.html", "https://kinn.kommune.no/_f/p1/ibb459984-0f54-47cc-88e2-ba22248e9a70/tilstandsrapport-formalsbygg.pdf"]
+    },
+    {
+      "code": "5060",
+      "municipality": "Nærøysund",
+      "centres": ["Kolvereid", "Rørvik"],
+      "finding": "The municipal land-use plan explicitly describes a shared municipal centre and administration distributed between both town halls. Both visitor addresses remain on the current municipality homepage.",
+      "sources": ["https://www.naroysund.kommune.no/_f/p5/ia87b8088-7d4f-4c0e-88bc-b1f5d5103904/v01_planbeskrivelse_kpa_naroysund-datert-19102023.pdf", "https://www.naroysund.kommune.no/", "https://virksomhet.brreg.no/nb/oppslag/enheter/974782480"]
+    },
+    {
+      "code": "3207",
+      "municipality": "Nordre Follo",
+      "centres": ["Ski"],
+      "finding": "The municipal contact page identifies its town hall in Ski. The council chamber is separately located at the former Oppegård town hall in Kolbotn, which does not turn the administrative seat into Kolbotn.",
+      "sources": ["https://nordrefollo.kommune.no/om-nordre-follo-kommune/kontakt-oss/"]
+    },
+    {
+      "code": "3118",
+      "municipality": "Indre Østfold",
+      "centres": ["Askim"],
+      "finding": "The current municipality contact page explicitly places the administration, mayor and deputy mayor at the town hall in Askim. The Trøgstad postal address should not be used as the administrative seat.",
+      "sources": ["https://www.io.kommune.no/tjenester/kontakt-oss/"]
+    },
+    {
+      "code": "3203",
+      "municipality": "Asker",
+      "centres": ["Asker sentrum"],
+      "finding": "The county's current municipality facts table identifies Asker as the administrative centre, and the public legal registry gives Asker town hall as the municipality's business address. Its postal address is in Røyken, which should not replace the centre.",
+      "sources": ["https://afk.no/om-fylkeskommunen/fakta-og-kart-over-akershus/fakta-og-tall-om-akershus/", "https://virksomhet.brreg.no/nb/oppslag/enheter/920125298"]
+    },
+    {
+      "code": "3205",
+      "municipality": "Lillestrøm",
+      "centres": ["Lillestrøm"],
+      "finding": "Municipal administration pages identify Lillestrøm town hall and its main service reception in Lillestrøm. Some specialist services also use Fetsund's municipality building.",
+      "sources": ["https://www.lillestrom.kommune.no/politikk-og-administrasjon/administrasjon/", "https://www.lillestrom.kommune.no/politikk-og-administrasjon/administrasjon/servicesenteret/"]
+    },
+    {
+      "code": "4205",
+      "municipality": "Lindesnes",
+      "centres": ["Mandal"],
+      "finding": "The municipality's town-hall page explicitly places administrative and political leadership in Mandal. Secondary administrative offices remain in Marnardal and Vigeland.",
+      "sources": ["https://www.lindesnes.kommune.no/raadhuset-i-lindesnes-kommune.6287634.html"]
+    },
+    {
+      "code": "3226",
+      "municipality": "Aurskog-Høland",
+      "centres": ["Bjørkelangen"],
+      "finding": "The municipality identifies Aurskog-Høland town hall on Bjørkelangen, including the current municipal NAV/service offices.",
+      "sources": ["https://www.aurskog-holand.kommune.no/innhold/helse-omsorg-mestring/arbeid-og-velferd-nav/", "https://www.aurskog-holand.kommune.no/innhold/naring-etablering-og-landbruk/salg-servering-skjenking-tobakk/kunnskapsprover/"]
+    },
+    {
+      "code": "1532",
+      "municipality": "Giske",
+      "centres": ["Valderhaugstrand"],
+      "finding": "The municipality's adopted 2023-2033 community plan names Valderhaugstrand as the municipal centre. The broader overview also calls its island Valderøya the municipal centre; the more precise settlement name is preferable for the quiz point.",
+      "sources": ["https://www.giske.kommune.no/_f/i9289f96f-a13e-4b4a-9a71-444d31d46731/kommuneplanen-sin-samfunnsdel-2023-2033-vedtatt-270423-5.pdf", "https://www.giske.kommune.no/tenester/organisasjon/om-giske-kommune/"]
+    },
+    {
+      "code": "3222",
+      "municipality": "Lørenskog",
+      "centres": ["Kjenn"],
+      "finding": "The municipality's own current strategy and cultural-history pages place its administration in Kjenn, after the move from Fjellhamar in 1972. Prefer these direct municipal sources over the county facts table's conflicting Solheim row.",
+      "sources": ["https://www.lorenskog.kommune.no/postliste-og-innsyn/kommunens-planer/naringsstrategi/innsatsomrader/sterk-stedsidentitet-med-et-levende-sentrum-og-et-mangfold-av-destinasjoner/", "https://www.lorenskog.kommune.no/postliste-og-innsyn/kommunens-planer/kulturminneplan-2022-2030/lorenskogs-kulturarv/"]
+    }
+  ],
+  "additionalAliases": [
+    {
+      "code": "1144", "municipality": "Kvitsøy", "names": ["Ydstebøhavn", "Ydstebøhamn"],
+      "finding": "The municipality uses Ydstebøhavn in current planning material and Ydstebøhamn in its cultural heritage plan. SSR's registered settlement is Ydstebøhamn.",
+      "ssrSettlement": {"name": "Ydstebøhamn", "lat": 59.06226, "lon": 5.40244},
+      "sources": ["https://kvitsoy.kommune.no/innhold/sider-koblet-til-forsiden/kunngjoringer-og-horinger/", "https://www.kvitsoy.kommune.no/globalassets/planer-og-veiledere/kulturminneplan/komplett-kulturminneplan-med-forside.pdf"]
+    },
+    {
+      "code": "5034", "municipality": "Meråker", "names": ["Midtbygda", "Meråker"],
+      "finding": "The municipal planning programme calls the municipal centre Midtbygda. SSR registers the central settlement as Meråker. Code5034 is Meråker, not Indre Fosen.",
+      "ssrSettlement": {"name": "Meråker", "lat": 63.41406, "lon": 11.74298},
+      "sources": ["https://www.meraker.kommune.no/_f/p5/i3555a7f0-ef92-4578-bf0e-74cb14e903c5/planprogram-horingsversjon-februar-2022.pdf", "https://www.statsforvalteren.no/contentassets/b8f4086abf6443889f7a482ee6ae8a71/kommunebilde-meraker-2020---05.11.20.pdf"]
+    },
+    {
+      "code": "5054", "municipality": "Indre Fosen", "names": ["Rissa", "Årnset"],
+      "finding": "The merger agreement and subsequent central-government planning decision identify Rissa as the municipal centre. Årnset is another name used for the settlement. Do not apply this name to code5034.",
+      "sources": ["https://distriktssenteret.no/wp-content/uploads/2017/02/Intensjonsavtale-Rissa-og-Leksvik.pdf", "https://www.regjeringen.no/no/dokumenter/indre-fosen-kommune-innsigelse-til-omraderegulering-for-rissa-sentrum/id2913334/"]
+    },
+    {
+      "code": "4032", "municipality": "Fyresdal", "names": ["Fyresdal", "Moland"],
+      "finding": "The municipal centre plan describes Moland as the older name for Fyresdal's centre. SSR's current settlement is Fyresdal.",
+      "ssrSettlement": {"name": "Fyresdal", "lat": 59.18343, "lon": 8.0921},
+      "sources": ["https://www.fyresdal.kommune.no/download/18.34951818193deb62ce1e1a6/1736942125782/Kommunedelplan%20for%20Fyresdal%20sentrum%202006-2020.pdf"]
+    },
+    {
+      "code": "3220", "municipality": "Enebakk", "names": ["Kirkebygda"],
+      "finding": "A current2026 municipal event/service page explicitly locates the town hall in Kirkebygda. SSR name-prefix queries with the correct municipality filter found no settlement record; the Wikidata settlement point remains necessary here.",
+      "sources": ["https://www.enebakk.kommune.no/aktuelt/foreldreveiledningskurs-tuning-in-to-toddlers-kids-teens.5792.aspx", "https://www.enebakk.kommune.no/om-kommunen/kontakt-oss/kontakt-oss/"]
+    },
+    {
+      "code": "1848", "municipality": "Steigen", "names": ["Leinesfjord", "Leinesfjorden"],
+      "finding": "The adopted municipal planning programme calls the municipal centre Leinesfjord. SSR's corresponding settlement is Leinesfjorden, distinct from the fjord record of the same name.",
+      "ssrSettlement": {"name": "Leinesfjorden", "lat": 67.77465, "lon": 15.01609},
+      "sources": ["https://steigen.custompublish.com/getfile.php/5378556.1295.lakqttkmmjaabz/Planprogram.pdf"]
+    },
+    {
+      "code": "4646", "municipality": "Fjaler", "names": ["Dale", "Dale i Fjaler", "Dale i Sunnfjord"],
+      "finding": "The municipal community plan uses Dale as the municipal centre. Longer names disambiguate it from other places named Dale; SSR's local settlement record uses Dale.",
+      "ssrSettlement": {"name": "Dale", "lat": 61.36353, "lon": 5.40037},
+      "sources": ["https://www.fjaler.kommune.no/_f/p7/i74059890-2c62-4d51-8d79-285b9ce8ae76/kommuneplanen-sin-samfunnsdel-2014-225.pdf", "https://www.helsetilsynet.no/tilsyn/tilsynsrapporter/vestland/2021/fjaler-kommune-tilsyn-med-kommunal-beredskap-og-helseberedskap-2021/"]
+    },
+    {
+      "code": "4621", "municipality": "Voss", "names": ["Vossavangen", "Vossevangen"],
+      "finding": "Both spellings appear in municipal sources. Current2026 school pages use Vossevangen; the adopted2022 cultural environment plan uses Vossavangen. SSR's current registered settlement record uses Vossavangen.",
+      "ssrSettlement": {"name": "Vossavangen", "lat": 60.62869, "lon": 6.41474},
+      "sources": ["https://voss.herad.no/tenester/barn-og-familie/vossaskulen/skulane-i-voss-herad/voss-ungdomsskule/", "https://voss.herad.no/_f/p1/i3a53f174-62fe-4b8a-9486-b42d5d5448c8/kulturmiljoplan-voss-herad-2022.pdf"]
+    },
+    {
+      "code": "3114", "municipality": "Våler", "names": ["Kirkebygden", "Kirkebygda"],
+      "finding": "Current2026 municipal planning, school and leisure pages continue to use Kirkebygden. Its centre plan identifies Kirkebygden as the municipal centre; SSR's settlement name is Kirkebygda. No primary evidence for replacement by Vålerbyen was found.",
+      "ssrSettlement": {"name": "Kirkebygda", "lat": 59.4921, "lon": 10.87432},
+      "sources": ["https://www.valer.kommune.no/aktuelt/detaljregulering-for-folkestad-4", "https://www.valer.kommune.no/kultur-idrett-og-fritid/fritidsaktiviteter-barn-og-unge/turkart-og-turforslag", "https://d3drm168xorg4j.cloudfront.net/assets/Planprogram-Sentrumsplanen.pdf"]
+    }
+  ],
+  "ssrFilterDocumentation": "The documented municipality filter for /navn is knr, not kommunenummer. Unknown kommunenummer is silently ignored. See https://ws.geonorge.no/stedsnavn/v1/openapi.json and https://www.kartverket.no/api-og-data/stedsnavndata/brukarrettleiing-stadnamn-api. Correct-filter raw responses are saved in work/municipal-centre-alias-ssr-knr.json; earlier work/municipal-centre-alias-ssr.json exploratory responses were nationwide and must be filtered client-side.",
+  "wikidataJoinCaution": "P2504 codes are reused by historical municipalities. A code-only join found historical alternatives for Narvik1806, Evenes1853, Vestvågøy1860, Rana1833, Brønnøy1813, Hå1119, Averøy1554, Karmøy1149 and Andøy1871. Select the current municipality entity before reading P36. Same-name seat entities may still carry an old municipality's broad coordinate rather than a settlement point; refine with a settlement source.",
+  "unrelatedBulkAttempt": "work/wikidata-municipality-seats.json was a duplicate exploratory request and is not the final source. Use work/municipality-centres-wikidata-raw.json fetched by municipal_centres_data."
+}

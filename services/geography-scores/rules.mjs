@@ -17,6 +17,7 @@ export function config(input){
  else if(c.game==='statle'){if(input.variant!==undefined){if(!['capitals','largest-city'].includes(input.variant))throw Error('invalid_config');c.variant=input.variant;}}
  else if(shapeQuiz(c.game)){}else if(c.game==='countries'){c.region=input.region||'world';if(!Object.hasOwn(data.regions,c.region))throw Error('invalid_config');}
  else{c.variant=input.variant||variants[c.game][0];if(!variants[c.game].includes(c.variant))throw Error('invalid_config');c.region=input.region||'world';if(c.game!=='places'&&!Object.hasOwn(data.regions,c.region))throw Error('invalid_config');if(c.game==='places')c.region='world';}
+ if(input.questionMode!==undefined){if(c.game!=='kommuner'||input.questionMode!=='centres')throw Error('invalid_config');c.questionMode=input.questionMode;}
  return c;
 }
 export const board=c=>{const {language,...ranking}=config(c);return 'v'+data.version+':'+JSON.stringify(ranking);};
