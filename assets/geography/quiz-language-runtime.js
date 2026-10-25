@@ -90,7 +90,7 @@
  const mode=document.body.dataset.quiz||new URLSearchParams(location.search).get('quiz');
  function languageLocked(){
   if(document.querySelector('.world-game,#jeopardy-shell.playing,.geo-map-stage'))return true;
-  if(mode==='statle'||mode==='fylker'||mode==='kommuner'||mode==='bydeler'){
+  if(mode==='statle'||mode==='kart'||mode==='fylker'||mode==='kommuner'||mode==='bydeler'){
    const overlay=document.getElementById('overlay');if(overlay?.hidden)return true;
   }
   if(typeof state!=='undefined'){
@@ -104,7 +104,7 @@
   if(!['no','en'].includes(next)||next===language||languageLocked())return;
   language=next;if(persist)try{localStorage.setItem(key,language);}catch(_){}
   if(mode==='geogrid'&&typeof newGeoGrid==='function')newGeoGrid();
-  apply();
+  apply();window.dispatchEvent(new CustomEvent('quiz-language-change',{detail:{language}}));
  }
  function makeControl(game=false){
   const flags=document.createElement('span');flags.className='geoquiz-language';flags.setAttribute('aria-label','Language / Språk');

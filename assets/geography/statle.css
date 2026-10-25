@@ -190,13 +190,13 @@ body[data-quiz] .game-panel footer{flex-direction:column;align-items:stretch;gap
 :root[data-theme="dark"] .oslo-lake-islands{fill:#436e47;stroke:#a4c9d0}
 
 /* Statle keeps preview choices above a quieter, lower leaderboard action. */
-body[data-quiz="statle"][data-phase="ready"] .legend{display:none}
-body[data-quiz="statle"] #feedback:empty{display:none}
-body[data-quiz="statle"] #statle-top-ten{margin-top:auto}
-body[data-quiz="statle"] footer{margin-top:0}
+:is(body[data-quiz="statle"],body[data-country-region="true"])[data-phase="ready"] .legend{display:none}
+:is(body[data-quiz="statle"],body[data-country-region="true"]) #feedback:empty{display:none}
+:is(body[data-quiz="statle"],body[data-country-region="true"]) #statle-top-ten{margin-top:auto}
+:is(body[data-quiz="statle"],body[data-country-region="true"]) footer{margin-top:0}
 .statle-option{display:flex;align-items:flex-start;gap:7px;font-size:12px;line-height:1.5;cursor:pointer}
 .statle-option input{margin:2px 0 0;accent-color:#245845;flex:none}
-body[data-quiz="statle"] .ready-actions{gap:14px}
+:is(body[data-quiz="statle"],body[data-country-region="true"]) .ready-actions{gap:14px}
 .city-hit{fill:transparent;pointer-events:all}
 .city-dot{fill:#fff2bf;stroke:#173e32;stroke-width:1.2;pointer-events:none}
 .city-point:hover .city-dot,.city-point:focus-visible .city-dot{fill:#fff;stroke-width:2}
@@ -207,16 +207,14 @@ body[data-quiz="statle"] .ready-actions{gap:14px}
 .study-city-leader{fill:none;stroke:#343584;stroke-width:.65;opacity:.9}
 .study-state-leader{fill:none;stroke:#344c3f;stroke-width:.65;opacity:.9}
 
-@media(min-width:701px){body[data-quiz="statle"] .game-panel{gap:22px}body[data-quiz="statle"] #statle-top-ten{margin-top:auto;margin-bottom:14px}}
-@media(max-width:700px){body[data-quiz="statle"] #statle-top-ten{margin-top:14px}body[data-quiz="statle"][data-phase="playing"] .legend{display:grid!important;grid-column:1/-1;grid-template-columns:1fr 1fr;font-size:8px;gap:5px}body[data-quiz="statle"] .legend>strong{grid-column:1/-1}body[data-quiz="statle"] .ready-actions{gap:9px}}
+@media(min-width:701px){:is(body[data-quiz="statle"],body[data-country-region="true"]) .game-panel{gap:22px}:is(body[data-quiz="statle"],body[data-country-region="true"]) #statle-top-ten{margin-top:auto;margin-bottom:14px}}
+@media(max-width:700px){:is(body[data-quiz="statle"],body[data-country-region="true"]) #statle-top-ten{margin-top:14px}:is(body[data-quiz="statle"],body[data-country-region="true"])[data-phase="playing"] .legend{display:grid!important;grid-column:1/-1;grid-template-columns:1fr 1fr;font-size:8px;gap:5px}:is(body[data-quiz="statle"],body[data-country-region="true"]) .legend>strong{grid-column:1/-1}:is(body[data-quiz="statle"],body[data-country-region="true"]) .ready-actions{gap:9px}}
 
 .study-leader{fill:none;stroke:#f8fff2;stroke-width:.7;opacity:.8}
 
 .statle-basemap-tools{position:absolute;left:12px;top:12px;z-index:3}
 .statle-basemap-tools button{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:1px solid #a7bfb1;border-radius:7px;background:#fffefaed;color:#245845;box-shadow:0 2px 8px #234c3718}
 .statle-basemap-tools button[aria-pressed="true"]{background:#245845;color:white}
-#statle-relief{display:none}
-body[data-statle-basemap="physical"] #statle-relief{display:initial}
 body[data-statle-basemap="physical"] #us-context{display:none}
 /* Answer colours must paint immediately and remain visible under the pointer.
    Stroke-only hover also avoids filtering/repainting the terrain beneath a state. */
@@ -229,3 +227,6 @@ body[data-statle-basemap="physical"] .state[data-band="3"]{fill:var(--red);fill-
 body[data-statle-basemap="physical"] .state.correct{stroke:#efffe8;stroke-width:1.8}
 body[data-statle-basemap="physical"] .state.wrong{fill:#c3645c;fill-opacity:.8;stroke:#ffe1cd;stroke-width:1.5}
 .statle-rivers{fill:none;stroke:#448ba3;stroke-width:.9;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+
+body[data-statle-basemap="physical"] .map-context{display:none}
+body[data-statle-basemap="physical"] #map{background:transparent}

@@ -2,7 +2,8 @@
 (() => {
   const svg=document.getElementById('map');if(!svg)return;
   const read=()=>{const v=svg.viewBox.baseVal;return {x:v.x,y:v.y,w:v.width,h:v.height};};
-  let base=read(),view={...base},camera=null,suppressUntil=0,last=null,pinch=null,paintFrame=0,lastView='',markerScale='';
+  let base=read(),view={...base},camera=null,suppressUntil=0,last=null,pinch=null,paintFrame=0,lastView='',markerScale='',cameraSignature='',lastSnapshot=null;
+  const cameraListeners=new Set();
   const pointers=new Map(),point=(x,y)=>new DOMPoint(x,y).matrixTransform(svg.getScreenCTM().inverse());
   const scale=()=>base.w/view.w;
   function render(){if(!paintFrame)paintFrame=requestAnimationFrame(()=>{paintFrame=0;paint();});}
@@ -19,6 +20,10 @@
     svg.classList.toggle('map-is-zoomed',scale()>1.01);
     const out=document.getElementById('map-zoom-value'),label=Math.round(scale()*100)+'%';if(out&&out.textContent!==label)out.textContent=label;
     const minus=document.getElementById('map-zoom-out'),plus=document.getElementById('map-zoom-in');if(minus)minus.disabled=scale()<=1.001;if(plus)plus.disabled=scale()>=13.999;
+    const preserve=svg.preserveAspectRatio.baseVal;
+    const snapshot={viewBox:[view.x,view.y,view.w,view.h],rect:{left:rect.left??0,top:rect.top??0,width:rect.width,height:rect.height},align:preserve.align,meetOrSlice:preserve.meetOrSlice||1};
+    const signature=JSON.stringify(snapshot);
+    if(signature!==cameraSignature){cameraSignature=signature;lastSnapshot=snapshot;for(const listener of cameraListeners)listener(snapshot);}
   }
   function zoom(factor,client){const anchor=client?point(client.x,client.y):{x:view.x+view.w/2,y:view.y+view.h/2},width=Math.max(base.w/14,Math.min(base.w,view.w/factor)),ratio=width/view.w;view={x:anchor.x-(anchor.x-view.x)*ratio,y:anchor.y-(anchor.y-view.y)*ratio,w:width,h:view.h*ratio};render();}
   function reset(){pointers.clear();last=null;pinch=null;view={...base};render();}
@@ -52,7 +57,8 @@
     if(camera)resizeCamera();
     reset();
   }
-  window.ClickMapZoom={setBase,reset,zoom};
+  function subscribe(listener){if(typeof listener!=='function')throw new TypeError('Map camera listener must be a function');cameraListeners.add(listener);if(lastSnapshot)listener(lastSnapshot);else render();return()=>cameraListeners.delete(listener);}
+  window.ClickMapZoom={setBase,reset,zoom,subscribe};
   addEventListener('resize',resizeCamera);
   if(window.ResizeObserver)new ResizeObserver(()=>{if(camera)resizeCamera();}).observe(svg);
   document.getElementById('map-zoom-in')?.addEventListener('click',()=>zoom(1.5));document.getElementById('map-zoom-out')?.addEventListener('click',()=>zoom(1/1.5));document.getElementById('map-zoom-reset')?.addEventListener('click',reset);
