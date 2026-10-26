@@ -356,8 +356,17 @@ function quizCapitalName(capital, country = '') {
   while (/\([^()]*\)/.test(text)) text = text.replace(/\([^()]*\)/g, '');
   return text.replace(/\s*\/\s*/g, ', ').replace(/\s+/g, ' ').trim();
 }
-function capitalQuestionPrompt(country) {
-  return `<span class="capital-question"><span class="capital-question-label">Hva heter hovedstaden i</span><span class="capital-country"><span>${escapeGeoHtml(country.country)}?</span>${flagHtml(country,120)}</span></span>`;
+function capitalCountryDisplay(value){return ['name','flag'].includes(value)?value:'both';}
+function capitalCountryAnswer(country,display='both'){
+  return `<span class="capital-answer">${display!=='name'?flagHtml(country,64):''}${display!=='flag'?`<span>${escapeGeoHtml(country.country)}</span>`:''}</span>`;
+}
+function capitalQuestionPrompt(country,display='both') {
+  const label=display==='flag'?'Hvilken hovedstad hører til dette flagget?':'Hva heter hovedstaden i';
+  return `<span class="capital-question"><span class="capital-question-label">${label}</span><span class="capital-country">${display!=='flag'?`<span>${escapeGeoHtml(country.country)}?</span>`:''}${display!=='name'?flagHtml(country,120):''}</span></span>`;
+}
+function capitalReversePrompt(country,display='both'){
+  const capital=quizCapitalName(country.capital,country.country);
+  return display==='flag'?`Hvilket flagg hører til landet med hovedstaden ${capital}?`:`Hvilket land har ${capital} som hovedstad?`;
 }
 function makeCapitalQuestions(){
   const rows = shuffleArray(getLandRows()).slice(0,5);
@@ -632,16 +641,16 @@ function quizSetupPreviewFlag(country,code){
   const source=window.MapSymbols?.lookup(country,{kind:'country',code})?.src||flagUrlFromCode(code);
   return `<img class="quiz-preview-flag" src="${escapeGeoHtml(source)}" alt="" decoding="async">`;
 }
-function quizSetupQuestionPreview(kind){
+function quizSetupQuestionPreview(kind,display='both'){
   const countries=[['Norge','no'],['Sverige','se'],['Danmark','dk'],['Finland','fi']];
   const capitals=['Oslo','Berlin','Roma','Paris'];
   let prompt='',answers='';
   if(kind==='country-capital-mc'){
-    prompt=`<span class="quiz-preview-question">Hva heter hovedstaden i</span><strong class="quiz-preview-subject">${quizSetupPreviewFlag('Norge','no')}<span>Norge?</span></strong>`;
+    prompt=`<span class="quiz-preview-question">${display==='flag'?'Hvilken hovedstad?':'Hva heter hovedstaden i'}</span><strong class="quiz-preview-subject">${display!=='name'?quizSetupPreviewFlag('Norge','no'):''}${display!=='flag'?'<span>Norge?</span>':''}</strong>`;
     answers=capitals.map(name=>`<span>${name}</span>`).join('');
   }else if(kind==='capital-country-mc'){
     prompt='<span class="quiz-preview-question">Hvilket land har hovedstaden</span><strong class="quiz-preview-subject">Oslo?</strong>';
-    answers=countries.map(([name])=>`<span>${name}</span>`).join('');
+    answers=countries.map(([name,code])=>`<span><span class="capital-answer">${display!=='name'?quizSetupPreviewFlag(name,code):''}${display!=='flag'?`<span>${name}</span>`:''}</span></span>`).join('');
   }else if(kind==='flag-country-mc'||kind==='flag-capital-mc'){
     prompt=`<span class="quiz-preview-question">${kind==='flag-country-mc'?'Hvilket land?':'Hvilken hovedstad?'}</span><strong class="quiz-preview-subject">${quizSetupPreviewFlag('Norge','no')}</strong>`;
     answers=(kind==='flag-country-mc'?countries.map(([name])=>name):capitals).map(name=>`<span>${name}</span>`).join('');
@@ -651,14 +660,25 @@ function quizSetupQuestionPreview(kind){
   }
   return `<span class="quiz-question-preview" aria-hidden="true"><span class="quiz-preview-prompt">${prompt}</span><span class="quiz-preview-options">${answers}</span></span>`;
 }
+function changeCapitalDisplay(input){
+  const setup=input.closest('.visual-quiz-setup'),name=setup.querySelector('#capital-show-name'),flag=setup.querySelector('#capital-show-flag');
+  if(!name.checked&&!flag.checked)input.checked=true;
+  name.disabled=name.checked&&!flag.checked;flag.disabled=flag.checked&&!name.checked;
+  const display=name.checked?(flag.checked?'both':'name'):'flag';
+  setup.querySelector('.world-country-display').value=display;
+  setup.querySelectorAll('.quiz-direction-grid .streak-direction-btn').forEach(button=>{
+    const preview=button.querySelector('.quiz-question-preview');
+    preview.outerHTML=quizSetupQuestionPreview(button.dataset.questionType,display);
+  });
+}
 function renderVisualStreakSetup(mode,title,first,second,firstVal,secondVal){
   const directions=[[first,firstVal],[second,secondVal]].map(([label,value],index)=>`<button type="button" class="streak-direction-btn${index===0?' selected':''}" data-question-type="${value}" aria-label="${label}" aria-pressed="${index===0}" onclick="selectStreakChoice(this,'world-submode','${value}')"><span class="quiz-direction-title">${label}</span>${quizSetupQuestionPreview(value)}</button>`).join('');
   return `<div class="world-setup streak-setup visual-quiz-setup">
-    <div class="quiz-setup-heading"><h3>${title}</h3><span>Velg region og spørsmålstype.</span></div>
-    <input type="hidden" class="world-region" value="world"><input type="hidden" class="world-submode" value="${firstVal}">
+    <div class="quiz-setup-heading"><h3>${title}</h3></div>
+    <input type="hidden" class="world-region" value="world"><input type="hidden" class="world-submode" value="${firstVal}">${mode==='capitals'?'<input type="hidden" class="world-country-display" value="both">':''}
     <div class="quiz-setup-grid">
       <section class="streak-choice-section quiz-region-section" aria-labelledby="quiz-region-label-${mode}"><span class="streak-choice-label" id="quiz-region-label-${mode}">Region</span><div class="streak-region-grid quiz-region-grid" role="group" aria-labelledby="quiz-region-label-${mode}">${visualQuizRegionButtonsHtml(mode)}</div></section>
-      <section class="streak-choice-section quiz-direction-section" aria-labelledby="quiz-direction-label-${mode}"><span class="streak-choice-label" id="quiz-direction-label-${mode}">Spørsmålstype</span><div class="streak-direction-grid quiz-direction-grid" role="group" aria-labelledby="quiz-direction-label-${mode}">${directions}</div></section>
+      <section class="streak-choice-section quiz-direction-section" aria-labelledby="quiz-direction-label-${mode}"><span class="streak-choice-label" id="quiz-direction-label-${mode}">Spørsmålstype</span>${mode==='capitals'?'<fieldset class="capital-display-options"><legend>Vis land som</legend><label><input id="capital-show-name" type="checkbox" checked onchange="changeCapitalDisplay(this)"> Navn</label><label><input id="capital-show-flag" type="checkbox" checked onchange="changeCapitalDisplay(this)"> Flagg</label></fieldset>':''}<div class="streak-direction-grid quiz-direction-grid" role="group" aria-labelledby="quiz-direction-label-${mode}">${directions}</div></section>
     </div>
     <div class="streak-start-row quiz-setup-actions"><button class="world-button streak-start-btn" type="button" onclick="startWorldTrainer('${mode}')">Start</button><span class="quiz-selection-summary" aria-live="polite"><span>Hele verden</span> · <span>${first}</span></span></div>
   </div>`;
@@ -755,13 +775,14 @@ function startWorldTrainer(mode){
   stopWorldTrainerTimer();
   const app=getWorldApp(mode); if(!app) return;
   const submode=app.querySelector('.world-submode')?.value || '';
+  const countryDisplay=capitalCountryDisplay(app.querySelector('.world-country-display')?.value);
   const streakMode=mode==='capitals'||mode==='flags'||mode==='flagcapital'||mode==='detective';
   const placesMode=mode==='places';
   const regionId=streakMode ? (app.querySelector('.world-region')?.value || 'world') : null;
   const pace=streakMode ? 'sudden' : (app.querySelector('.world-pace')?.value || (placesMode?'sudden':'timed'));
   let raw=streakMode||placesMode ? 0 : parseInt(app.querySelector('.world-target')?.value || '0',10);
   let target=streakMode ? Infinity : (placesMode ? (pace==='questions'?20:Infinity) : (raw===0?Infinity:(raw===120?10:(raw===180?20:40))));
-  worldTrainerState={mode,submode,regionId,pace,duration:raw,target,score:0,misses:0,answered:0,hintsUsed:0,found:[],askedCountries:[],askedPlaces:[],startedAt:Date.now(),endedAt:null,ended:false,current:null,answerLocked:false,runId:++worldTrainerRunSeq};
+  worldTrainerState={mode,submode,regionId,pace,duration:raw,target,score:0,misses:0,answered:0,hintsUsed:0,found:[],askedCountries:[],askedPlaces:[],startedAt:Date.now(),endedAt:null,ended:false,current:null,answerLocked:false,runId:++worldTrainerRunSeq,...(mode==='capitals'?{countryDisplay}:{})};
   app.innerHTML=`<div class="world-game"><div id="world-status" class="world-statusbar"></div><div id="world-play"></div></div>`;
   try{
     nextWorldQuestion();
@@ -1291,9 +1312,11 @@ function buildWorldQuestion(mode, submode){
     const p=sampleArray(fresh,1)[0]; worldTrainerState.askedPlaces.push(p.place); return p;
   }
   if(mode==='capitals'){
+    const display=capitalCountryDisplay(worldTrainerState?.countryDisplay);
+    if(display==='flag')usableCountries=usableCountries.filter(country=>country.flagCode&&country.flag);
     const c=nextCountry(usableCountries); if(!c) return null;
-    if(submode==='capital-country-mc') return mcQuestion(`Hvilket land har ${quizCapitalName(c.capital,c.country)} som hovedstad?`,c,usableCountries,x=>x.country,x=>x.country);
-    return mcQuestion(capitalQuestionPrompt(c),c,usableCountries,x=>x.capital,x=>quizCapitalName(x.capital,x.country),x=>quizCapitalName(x.capital,x.country));
+    if(submode==='capital-country-mc') return mcQuestion(capitalReversePrompt(c,display),c,usableCountries,x=>display==='flag'?x.flagCode:x.country,x=>capitalCountryAnswer(x,display),x=>x.country);
+    return mcQuestion(capitalQuestionPrompt(c,display),c,usableCountries,x=>x.capital,x=>quizCapitalName(x.capital,x.country),x=>quizCapitalName(x.capital,x.country));
   }
   if(mode==='flags'){
     const flagged=usableCountries.filter(x=>x.flagCode&&x.flag);

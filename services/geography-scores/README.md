@@ -136,3 +136,13 @@ add historical-board controls, migrate results, or delete them.
 Build `world-water-v2.json` and `data.json`, run the API/browser checks, then
 publish the compatible Worker before the frontend. No D1 schema change or
 migration is required; do not rerun `schema.sql` for this release.
+
+## Country representation in the capital quiz
+
+The capital quiz accepts `countryDisplay: "both" | "name" | "flag"` for either
+question direction. Omitted or explicit `both` keeps the original capital
+configuration and board. Name-only play uses a separate board. Flag-only play
+shares the corresponding historical `flagcapital` board, including its region
+and direction, without moving or deleting records. The standalone flag/capital
+page now redirects to the capital quiz; legacy API clients and active sessions
+remain supported. Deploy the Worker before publishing the new frontend.

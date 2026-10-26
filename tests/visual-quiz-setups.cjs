@@ -1,4 +1,4 @@
-/* Visual setup and in-game navigation for the three multiple-choice quizzes.
+/* Visual setup and in-game navigation for the flag and capital quizzes.
    Every remote request is mocked; this never creates a public score/session. */
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
@@ -12,8 +12,7 @@ const server=http.createServer((request,response)=>{
 });
 const quizzes=[
   {mode:'flags',url:'/geografi/flaggquiz.html',first:'flag-country-mc',second:'country-flag-mc'},
-  {mode:'capitals',url:'/geografi/hovedstadsquiz.html',first:'country-capital-mc',second:'capital-country-mc'},
-  {mode:'flagcapital',url:'/geografi/flagg-og-hovedstad.html',first:'flag-capital-mc',second:'capital-flag-mc'}
+  {mode:'capitals',url:'/geografi/hovedstadsquiz.html',first:'country-capital-mc',second:'capital-country-mc'}
 ];
 const regionIds=['world','asia','europe','northamerica','southamerica','oceania','africa'];
 async function frames(page){await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));}
@@ -39,6 +38,7 @@ async function visibleChrome(page,label){
 }
 async function inspectSetup(page,quiz,label,{desktop=true,expectedWidth=220}={}){
   const setup=page.locator('.visual-quiz-setup');await setup.waitFor({state:'visible'});await frames(page);
+  assert(!/Velg region og spørsmålstype\.|Choose a region and question type\./.test(await setup.innerText()),label+' omits the redundant setup instruction');
   assert.equal(await setup.locator('.quiz-region-grid .streak-region-btn').count(),7,label+' has world and six continent cards');
   assert.deepEqual((await setup.locator('.quiz-region-grid .streak-region-btn').evaluateAll(els=>els.map(el=>el.dataset.region))).sort(),regionIds.slice().sort(),label+' preserves the seven region identifiers');
   assert.equal(await setup.locator('.quiz-region-icon').count(),7,label+' gives each region its own illustration');
@@ -61,6 +61,13 @@ async function inspectSetup(page,quiz,label,{desktop=true,expectedWidth=220}={})
   }
   assert.equal(await setup.locator('.quiz-region-section').count(),1,label+' regions have their own section');
   assert.equal(await setup.locator('.quiz-direction-section').count(),1,label+' question type has its own section');
+  if(quiz.mode==='capitals'){
+    const options=setup.locator('.capital-display-options');assert.equal(await options.count(),1,label+' groups the country display controls');
+    assert.equal(await options.locator('input[type="checkbox"]').count(),2,label+' offers name and flag');
+    assert(await options.locator('#capital-show-name').isChecked(),label+' name is selected by default');
+    assert(await options.locator('#capital-show-flag').isChecked(),label+' flag is selected by default');
+    assert.equal(await setup.locator('.world-country-display').inputValue(),'both',label+' defaults to both country clues');
+  }
   assert.equal(await setup.getByRole('button',{name:/Topp\s*10|Top\s*10/i}).count(),0,label+' setup omits ranking controls');
   assert.equal(await page.locator('.quiz-in-game-top-ten:visible').count(),0,label+' in-game ranking stays out of the setup');
   await noHorizontalOverflow(page,label);await visibleChrome(page,label);
@@ -101,6 +108,15 @@ async function exerciseGame(page,quiz,label,sessions,boards){
   assert(await footer.locator('.quiz-in-game-top-ten').count(),label+' ranking belongs to the in-game footer');
   const placement=await top.evaluate(el=>{const back=el.parentElement.querySelector('.quiz-page-back'),b=back.getBoundingClientRect(),t=el.getBoundingClientRect();return {sameFooter:!!back,next:el.nextElementSibling===back,above:t.bottom<=b.top+1,inside:t.left>=0&&t.right<=innerWidth};});
   assert(placement.sameFooter&&placement.next&&placement.above&&placement.inside,label+' Top 10 is immediately above navigation');
+  const spacing=await page.evaluate(()=>{
+    const panel=document.querySelector('.quiz-status-panel'),header=panel.querySelector('.quiz-page-header').getBoundingClientRect(),pills=[...panel.querySelectorAll('.world-pill')].map(el=>{const b=el.getBoundingClientRect();return {top:b.top,bottom:b.bottom,height:b.height,font:parseFloat(getComputedStyle(el).fontSize)};});
+    const t=panel.querySelector('.quiz-in-game-top-ten').getBoundingClientRect(),b=panel.querySelector('.quiz-page-back').getBoundingClientRect(),p=panel.getBoundingClientRect();
+    return {desktop:innerWidth>700,headerBottom:header.bottom,pills,footerGap:b.top-t.bottom,bottomPadding:p.bottom-b.bottom};
+  });
+  assert.equal(spacing.pills.length,2,label+' has two separate counters');
+  assert(spacing.pills[1].top-spacing.pills[0].bottom>=(spacing.desktop?8:6),label+' counters use separate generously spaced lines: '+JSON.stringify(spacing));
+  assert(spacing.pills.every(pill=>pill.font>=(spacing.desktop?14:13)&&pill.height>=(spacing.desktop?40:34)),label+' counters remain easy to read');
+  if(spacing.desktop){assert(spacing.pills[0].top-spacing.headerBottom>=10,label+' header has breathing room before the counters: '+JSON.stringify(spacing));assert(spacing.footerGap>=10&&spacing.bottomPadding>=14,label+' footer actions have breathing room');}
   await visibleChrome(page,label+' game');await noHorizontalOverflow(page,label+' game');
   await page.evaluate(()=>{window.__visualQuizGame=document.querySelector('.world-game');});
   const response=page.waitForResponse(response=>new URL(response.url()).hostname==='onlyfag-geography-scores.jack-bonsak.workers.dev'&&new URL(response.url()).pathname==='/scores'&&response.request().method()==='GET');

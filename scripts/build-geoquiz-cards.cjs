@@ -151,11 +151,6 @@ const cards = {
     civicBuilding(89, 19, 1) + rect(0, 87, 240, 3, p.forest) +
     rect(192, 53, 22, 34, p.leaf) + rect(197, 42, 12, 11, p.leaf))],
 
-  'flagg-og-hovedstad.html': ['flagcapital', svg('Flags and capital cities', p.sage,
-    flag('fr', 14, 15, 84, 56) +
-    stroke('M110 34h21m-6-6 6 6-6 6M131 56h-21m6-6-6 6 6 6', p.ink, 2.8) +
-    civicBuilding(151, 17, .93) + rect(140, 83, 100, 3, p.forest))],
-
   'worldle.html': ['worldle', svg('Country outline challenge', p.sea,
     circle(120, 45, 66, '#c9dddc') +
     stroke('M0 22H240M0 45H240M0 68H240M40 0V90M80 0V90M120 0V90M160 0V90M200 0V90', '#a9c7c6', .7) +
@@ -244,7 +239,7 @@ const manifestFile = path.join(output, 'manifest.json');
 if (checking) assert.equal(fs.readFileSync(manifestFile, 'utf8'), manifestContent, 'Rebuild hub artwork manifest');
 else fs.writeFileSync(manifestFile, manifestContent);
 
-// Update only these eleven hub previews, keeping routes, order, labels, event
+// Update only these ten hub previews, keeping routes, order, labels, event
 // handlers, and the independently maintained Kart/Globle/Travle artwork untouched.
 const htmlFile = path.join(root, 'geografi.html');
 const html = fs.readFileSync(htmlFile, 'utf8').replace(/\r\n/g, '\n');
@@ -268,7 +263,7 @@ const updated = html.replace(/<button\b[^>]*onclick="location\.href='geografi\/(
       `<span class="geoquiz-preview image-preview geoquiz-art"><img alt="" src="${manifest[route]}"/></span>` +
       button.slice(end);
   });
-assert.equal(replaced.size, Object.keys(cards).length, 'All eleven hub previews updated');
+assert.equal(replaced.size, Object.keys(cards).length, 'All ten hub previews updated');
 if (checking) assert.equal(html, updated, 'Rebuild geography hub preview references');
 else fs.writeFileSync(htmlFile, updated);
 console.log(`PASS ${checking ? 'verified' : 'built'} ${Object.keys(cards).length} full-bleed geography hub illustrations`);

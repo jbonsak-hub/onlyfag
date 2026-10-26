@@ -25,6 +25,70 @@ test('streaks stop on a wrong answer and cannot be finalized early',()=>{
   assert.throws(()=>answer(s,{},2001),/complete/);
  }
 });
+test('capital display choices retain normal boards and alias the former flag-capital challenges',()=>{
+ const variants=[['country-capital-mc','flag-capital-mc'],['capital-country-mc','capital-flag-mc']];
+ for(const region of Object.keys(data.regions))for(const [variant,oldVariant]of variants){
+  const normal={game:'capitals',region,variant},both={...normal,countryDisplay:'both'},name={...normal,countryDisplay:'name'},flag={...normal,countryDisplay:'flag'},legacy={game:'flagcapital',region,variant:oldVariant};
+  assert.deepEqual(config(both),config(normal),'Default name and flag keeps the legacy normal config');
+  assert.equal(board(both),'v'+data.version+':'+JSON.stringify({game:'capitals',variant,region}));
+  assert.equal(board(flag),board(legacy),'Flag-only is the former quiz, with its exact published ranking');
+  assert.equal(board(flag),board({...flag,language:'en'}));
+  assert.notEqual(board(name),board(normal),'Removing the flag clue is an independent challenge');
+  assert.notEqual(board(name),board(flag));
+  const round=create(flag,1000),oldRound=create(legacy,1000);
+  assert.deepEqual(round.targets.slice().sort(),oldRound.targets.slice().sort());
+  const byId=new Map(data.countries.map(country=>[country.id,country]));
+  for(const q of round.plan){
+   assert(q.options.includes(q.target));assert.equal(q.options.length,4);
+   assert(q.options.every(id=>byId.get(id).hasFlag),'Flag-only prompts and answers require available flags');
+   const field=variant==='capital-country-mc'?'flagCode':'capital';
+   assert.equal(new Set(q.options.map(id=>byId.get(id)[field])).size,4,'Rendered answer identities are distinct');
+  }
+  const first=round.current;assert.equal(answer(round,{question:first.id,choice:first.target},1100).correct,true);
+  const second=round.current;assert.equal(answer(round,{question:second.id,choice:second.options.find(id=>id!==second.target)},1200).correct,false);
+  assert(round.complete);assert.equal(round.score,1);
+ }
+ for(const countryDisplay of ['',null,0,false,[],{},'none','names','both,flag'])assert.throws(()=>config({game:'capitals',countryDisplay}),/invalid_config/);
+ for(const game of ['flags','flagcapital','places','countries','statle'])assert.throws(()=>config({game,countryDisplay:'both'}),/invalid_config/);
+});
+test('capital display API preserves published records and cached sessions while publishing to the selected board',async()=>{
+ const {env,db}=fixture(),region='europe',normal={game:'capitals',region,variant:'country-capital-mc'},flag={...normal,countryDisplay:'flag'},name={...normal,countryDisplay:'name'},legacyFlag={game:'flagcapital',region,variant:'flag-capital-mc'};
+ const call=async(url,input,token)=>{const response=await worker.fetch(req(url,input,token),env);return {status:response.status,body:await response.json()};};
+ const rows=async c=>{const response=await call('/scores?config='+encodeURIComponent(JSON.stringify(c)));assert.equal(response.status,200);return response.body.rows;};
+ try{
+  for(const [key,c]of [['normal',normal],['flag',legacyFlag]])db.prepare('INSERT INTO scores VALUES(?,?,?,?,?,?)').run('existing-capital-'+key,board(c),'Existing '+key,9,1234,1000);
+  const original=db.prepare("SELECT * FROM scores WHERE run_hash LIKE 'existing-capital-%' ORDER BY run_hash").all();
+  const legacyRuns=[];
+  for(const [index,c]of [normal,legacyFlag].entries()){
+   const state=create(c,Date.now()),token=String(index+1).repeat(64),key=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(token))),byte=>byte.toString(16).padStart(2,'0')).join('');
+   assert.equal(Object.hasOwn(state.config,'countryDisplay'),false);
+   db.prepare('INSERT INTO sessions VALUES(?,?,?,?,?)').run(key,board(c),JSON.stringify(state),0,Date.now()+60000);legacyRuns.push({token,state,c,key});
+  }
+  assert.equal((await call('/session',{...normal,countryDisplay:'none'})).status,400);
+  for(const [label,c]of [['Both',{...normal,countryDisplay:'both'}],['Name',name],['Flag',flag]]){
+   const start=await call('/session',c);assert.equal(start.status,201);assert.equal(start.body.board,board(c));
+   assert.equal(start.body.config.countryDisplay,c.countryDisplay==='both'?undefined:c.countryDisplay);
+   const q=start.body.question,wrong=q.options.find(id=>id!==q.target);
+   const completed=await call('/answer',{requestId:crypto.randomUUID(),question:q.id,choice:wrong},start.body.token);
+   assert.equal(completed.status,200);assert(completed.body.complete);
+   const saved=await call('/publish',{requestId:crypto.randomUUID(),nickname:label+' display fixture'},start.body.token);
+   assert.equal(saved.status,200);assert.equal(saved.body.board,board(c));
+   assert((await rows(c)).some(row=>row.nickname===label+' display fixture'));
+  }
+  assert.deepEqual(await rows(normal),await rows({...normal,countryDisplay:'both',language:'en'}));
+  assert.deepEqual(await rows(flag),await rows({...legacyFlag,language:'en'}));
+  assert.equal((await rows(name)).length,1,'Name-only never receives previous normal or flag results');
+  assert(!(await rows(normal)).some(row=>row.nickname.startsWith('Flag')));
+  for(const {token,state,c,key}of legacyRuns){
+   const status=await call('/status',{},token);assert.equal(status.status,200);assert.equal(status.body.question.id,state.current.id);assert.equal(status.body.board,board(c));
+   const wrong=state.current.options.find(id=>id!==state.current.target);
+   const completed=await call('/answer',{requestId:crypto.randomUUID(),question:state.current.id,choice:wrong},token);assert.equal(completed.status,200);assert(completed.body.complete);
+   const saved=await call('/publish',{requestId:crypto.randomUUID(),nickname:'Cached '+c.game},token);assert.equal(saved.status,200);
+   assert.equal(db.prepare('SELECT board FROM scores WHERE run_hash=?').get(key).board,board(c));
+  }
+  assert.deepEqual(db.prepare("SELECT * FROM scores WHERE run_hash LIKE 'existing-capital-%' ORDER BY run_hash").all(),original,'Every existing result survives without migration');
+ }finally{db.close();}
+});
 test('countries validate names, reject duplicates and apply server hint/time penalties',()=>{
  const s=create({game:'countries',region:'europe',language:'en'},1000);assert.equal(answer(s,{country:'Germany'},2000).country,'Tyskland');assert.equal(answer(s,{country:'Germany'},2001).correct,false);assert.equal(answer(s,{country:'Imaginary'},2002).correct,false);s.hints=2;finish(s,3000);assert.ok(s.score<1100);assert.equal(s.found.length,1);
 });

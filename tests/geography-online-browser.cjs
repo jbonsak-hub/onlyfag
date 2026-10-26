@@ -21,7 +21,7 @@ const server=http.createServer((req,res)=>{try{const file=path.join(root,new URL
   const c=await context(),page=await c.newPage();page.on('dialog',d=>d.dismiss());
   for(const language of ['no','en']){
    await page.goto(base+'geografi.html#verden-quiz');await chooseLanguage(page,language);
-   for(const [game,file]of [['flags','flaggquiz'],['capitals','hovedstadsquiz'],['flagcapital','flagg-og-hovedstad'],['places','stedsquiz']]){
+   for(const [game,file]of [['flags','flaggquiz'],['capitals','hovedstadsquiz'],['places','stedsquiz']]){
     for(const direction of [0,1]){
      await page.goto(base+'geografi/'+file+'.html');await page.locator('.streak-direction-btn').nth(game==='places'?direction+2:direction).click();await page.getByRole('button',{name:'Start',exact:true}).click();await page.locator('.world-option').first().waitFor();
      const right=await page.evaluate(()=>worldTrainerState.current.options.findIndex(o=>worldTrainerState.current.isCorrect(o)));await page.locator('.world-option').nth(right).click();await page.waitForFunction(()=>worldTrainerState.score===1&&!worldTrainerState.answerLocked);
@@ -54,6 +54,6 @@ const server=http.createServer((req,res)=>{try{const file=path.join(root,new URL
   // Slow verification cannot delay local feedback or the following prefetched question.
   apiDelay=900;await page.goto(base+'geografi/flaggquiz.html');await page.getByRole('button',{name:'Start',exact:true}).click();await page.locator('.world-option').first().waitFor();const feedback=await page.evaluate(()=>{const i=worldTrainerState.current.options.findIndex(o=>worldTrainerState.current.isCorrect(o)),button=document.querySelectorAll('.world-option')[i],before=performance.now();chooseWorldOption(i,button);return {correct:button.classList.contains('correct'),ms:performance.now()-before};});assert.ok(feedback.correct&&feedback.ms<200,JSON.stringify(feedback));await page.waitForFunction(()=>!worldTrainerState.answerLocked);await page.waitForTimeout(1000);apiDelay=0;
   failApi=true;await p2.goto(base+'geografi/flaggquiz.html');await p2.getByRole('button',{name:'Start',exact:true}).click();await p2.locator('.world-option').first().waitFor();assert.ok(await p2.locator('#geo-online-notice').isVisible());assert.equal(await p2.evaluate(()=>worldTrainerState.mode),'flags');
-  assert.equal(db.prepare('SELECT COUNT(*) n FROM scores').get().n,19);assert.deepEqual(errors,[]);console.log(JSON.stringify({globalGames:6,languageDirections:16,mapwizRounds:20,countries:true,secondBrowser:true,mobile:true,offlineFallback:true,desktopReturnPreserved:true,errors}));
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM scores').get().n,15);assert.deepEqual(errors,[]);console.log(JSON.stringify({globalGames:5,languageDirections:12,mapwizRounds:20,countries:true,secondBrowser:true,mobile:true,offlineFallback:true,desktopReturnPreserved:true,errors}));
  }finally{await browser.close();db.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(()=>server.close());

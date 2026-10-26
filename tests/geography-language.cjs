@@ -22,10 +22,10 @@ const server=http.createServer((req,res)=>{try{const file=path.join(root,new URL
   };
   await page.goto(base+'geografi.html#verden-quiz');
   await checkLanguageButton('en');await shot('overview-norwegian');
-  assert.deepEqual(await page.locator('.geoquiz-copy strong').allTextContents().then(a=>a.slice(0,4)),['Flagg','Hovedsteder','Flagg ↔ Hovedstad','Kart']);
+  assert.deepEqual(await page.locator('.geoquiz-copy strong').allTextContents().then(a=>a.slice(0,4)),['Flagg','Hovedsteder','Kart','MapWiz']);
   await page.evaluate(()=>localStorage.setItem('geoHighscoresV1',JSON.stringify({'flags|world':[{name:'Norge',rank:[99],scoreText:'99 på rad',timeSec:10}]})));
   await page.getByRole('button',{name:'English',exact:true}).click();await page.waitForFunction(()=>document.querySelector('.geoquiz-copy strong').textContent==='Flags');
-  assert.deepEqual(await page.locator('.geoquiz-copy strong').allTextContents().then(a=>a.slice(0,4)),['Flags','Capitals','Flag ↔ Capital','Map']);
+  assert.deepEqual(await page.locator('.geoquiz-copy strong').allTextContents().then(a=>a.slice(0,4)),['Flags','Capitals','Map','MapWiz']);
   await checkLanguageButton('no');
   await languageButton.focus();await page.keyboard.press('Enter');await page.waitForFunction(()=>QuizLanguage.language==='no'&&document.querySelector('.geoquiz-copy strong').textContent==='Flagg');
   assert.equal(await page.evaluate(()=>localStorage.getItem('onlyfag-geo-language')),'no');await checkLanguageButton('en');
@@ -37,8 +37,8 @@ const server=http.createServer((req,res)=>{try{const file=path.join(root,new URL
   await page.goto(base+'geografi/landquiz.html');await page.locator('.country-region-btn').first().click();await page.locator('#country-guess').fill('Germany');await page.locator('#country-guess').press('Enter');await page.waitForFunction(()=>document.querySelector('#country-found').textContent.includes('Germany'));assert.ok(await page.evaluate(()=>worldTrainerState.found.some(c=>c.country==='Tyskland')));
   await page.evaluate(()=>finishCountryMapQuiz(true));await page.waitForTimeout(50);assert.doesNotMatch(await page.locator('#country-map-complete').innerText(),/\b(Manglet|Velg|Poeng|Tid)\b/);
   const saved=await page.evaluate(()=>localStorage.getItem('geoHighscoresV1'));
-  for(const mode of ['flags','capitals','flagcapital','places']){
-   const files={flags:'flaggquiz',capitals:'hovedstadsquiz',flagcapital:'flagg-og-hovedstad',places:'stedsquiz'};
+  for(const mode of ['flags','capitals','places']){
+   const files={flags:'flaggquiz',capitals:'hovedstadsquiz',places:'stedsquiz'};
    for(let direction=0;direction<2;direction++){
     await page.goto(base+'geografi/'+files[mode]+'.html');await page.locator('.streak-direction-btn').nth(mode==='places'?direction+2:direction).click();await page.getByRole('button',{name:'Start',exact:true}).click();
     const english=await page.locator('.world-card').innerText();assert.doesNotMatch(english,/\b(Hvilke[nt]?|Hva|Riktig|Feil|beskrivelse|hovedstaden)\b/);

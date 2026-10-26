@@ -13,10 +13,6 @@ window.GEO_QUIZ_ROUTES={
     "geografi/flaggquiz.html",
     "Flagg"
   ],
-  "flagcapital": [
-    "geografi/flagg-og-hovedstad.html",
-    "Flagg+Hovedstad"
-  ],
   "places": [
     "geografi/stedsquiz.html",
     "Kjente steder på jorda"

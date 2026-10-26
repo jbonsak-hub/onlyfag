@@ -20,15 +20,22 @@ export function config(input){
  if(input.questionMode!==undefined){if(c.game!=='kommuner'||input.questionMode!=='centres')throw Error('invalid_config');c.questionMode=input.questionMode;}
  if(input.scoring!==undefined){if(!shapeQuiz(c.game)||input.scoring!=='attempts-v1')throw Error('invalid_config');c.scoring='attempts-v1';}
  if(input.mode!==undefined){if(c.game!=='kart'||data.kartPhysical.includes(c.region)||input.mode!=='flags')throw Error('invalid_config');c.mode='flags';}
+ if(input.countryDisplay!==undefined){if(c.game!=='capitals'||!['name','flag','both'].includes(input.countryDisplay))throw Error('invalid_config');if(input.countryDisplay!=='both')c.countryDisplay=input.countryDisplay;}
  return c;
 }
 // Presentation scoring is versioned per session, while the normal board keeps
 // its published identity so every existing top-ten result remains available.
-export const board=c=>{const {language,scoring,...ranking}=config(c);return 'v'+data.version+':'+JSON.stringify(ranking);};
+export const board=c=>{
+ const normalized=config(c);
+ // The former flag/capital quiz remains the same challenge when selected
+ // through the capital quiz's display controls. Keep its published identity.
+ if(normalized.game==='capitals'&&normalized.countryDisplay==='flag')return board({game:'flagcapital',region:normalized.region,variant:normalized.variant==='capital-country-mc'?'capital-flag-mc':'flag-capital-mc'});
+ const {language,scoring,...ranking}=normalized;return 'v'+data.version+':'+JSON.stringify(ranking);
+};
 export function pool(c){
  if(c.game==='places')return data.places;
  const names=new Set(data.regions[c.region]||data.regions.world);
- return data.countries.filter(t=>names.has(t.country)&&(c.game==='flags'||c.game==='flagcapital'?t.hasFlag:true));
+ return data.countries.filter(t=>names.has(t.country)&&(c.game==='flags'||c.game==='flagcapital'||c.game==='capitals'&&c.countryDisplay==='flag'?t.hasFlag:true));
 }
 function mapRounds(c){
  const norway=c.categories.length===1&&c.categories[0]==='place:Norge';
@@ -40,7 +47,7 @@ const mapTarget=id=>{const [category]=JSON.parse(id);return data.mapwiz[category
 const target=(s,id)=>s.config.game==='mapwiz'?mapTarget(id):pool(s.config).find(t=>t.id===id);
 function questionReference(c){
  if(shapeQuiz(c.game)||['mapwiz','countries'].includes(c.game))return null;
- const items=pool(c),field=c.game==='places'?(c.variant==='place-desc-mc'?'explanation':'place'):(c.variant.includes('capital')&&!c.variant.startsWith('capital-')?'capital':c.variant.endsWith('flag-mc')?'flagCode':'country');
+ const items=pool(c),field=c.game==='places'?(c.variant==='place-desc-mc'?'explanation':'place'):(c.variant.includes('capital')&&!c.variant.startsWith('capital-')?'capital':c.variant.endsWith('flag-mc')||c.game==='capitals'&&c.countryDisplay==='flag'?'flagCode':'country');
  const byId=new Map(items.map(t=>[t.id,t])),labels=new Map(items.map(t=>[t.id,c.language==='en'?(data.names[t[field]]||t[field]):t[field]])),groups=new Map();
  if(c.game==='places')for(const t of items){if(!groups.has(t.category))groups.set(t.category,[]);groups.get(t.category).push(t);}
  return {items,byId,labels,groups};
