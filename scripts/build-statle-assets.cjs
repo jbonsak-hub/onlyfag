@@ -10,10 +10,10 @@ const assets = ['statle.css', 'statle.js', 'panel-resize.js', 'map-zoom.js'].map
   let content = fs.readFileSync(path.join(root, 'assets/geography/' + source), 'utf8').replace(/\r\n/g, '\n');
   if (source === 'statle.js') {
     content = ['statle-label-layout.js','region-label-layout.js','local-label-layout.js','map-basemap.js'].map(file=>fs.readFileSync(path.join(root,'assets/geography',file),'utf8').replace(/\r\n/g,'\n')).join('\n') + '\n' + content;
-    for (const dataFile of ['us-states.json', 'us-largest-cities.json', 'us-capitals.json', 'us-relief-raster.json', 'region-capitals.json', 'region-relief.json', 'norway-relief.json', 'municipality-centres.json', 'us-context.json', 'norway-counties.json', 'continent-maps.json', 'physical-maps/world-water.json', 'physical-maps/mountain-europe.json', 'oslo-bydeler/oslo.json']) {
+    for (const dataFile of ['us-states.json', 'us-largest-cities.json', 'us-capitals.json', 'us-relief-raster.json', 'region-capitals.json', 'region-relief.json', 'norway-relief.json', 'norway-county-relief.json', 'municipality-centres.json', 'us-context.json', 'norway-counties.json', 'continent-maps.json', 'physical-maps/world-water.json', 'physical-maps/world-water-v2.json', 'physical-maps/mountain-europe.json', 'oslo-bydeler/oslo.json']) {
       const data = fs.readFileSync(path.join(root, 'assets/geography', dataFile), 'utf8').replace(/\r\n/g, '\n');
       const revision = crypto.createHash('sha256').update(data).digest('hex').slice(0,12);
-      if(dataFile==='oslo-bydeler/oslo.json') {
+      if(dataFile==='oslo-bydeler/oslo.json'||dataFile==='physical-maps/world-water-v2.json') {
         const versioned=dataFile.replace('.json','-'+revision+'.json');
         const destination=path.join(root,'assets/geography',versioned);
         if(checking) {

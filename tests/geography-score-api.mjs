@@ -568,3 +568,67 @@ test('flag-only country-click rounds have separate rankings and complete the sam
  for(const input of [{game:'statle',mode:'flags'},{game:'kart',region:'lakes',mode:'flags'},{game:'kart',region:'seas',mode:'flags'},{game:'kart',region:'mountains',mode:'flags'},{game:'kart',region:'europe',mode:'names'},{game:'kart',region:'europe',mode:null}])assert.throws(()=>config(input),/invalid_config/);
  db.close();
 });
+
+test('reduced rivers keep Lena, use a forty-one-target board and preserve cached49 targets',()=>{
+ const removed=['Glomma','Ohio','Uruguay','Paraguay','Don','Elbe','Loire','Limpopo','Mackenzie','Jenisej'];
+ assert.equal(data.kart.rivers.length,49,'The legacy pool remains frozen for old clients');
+ assert.equal(data.kartRiversV2.length,41);assert.equal(new Set(data.kartRiversV2).size,41);
+ assert.deepEqual(data.kart.rivers.filter(name=>!data.kartRiversV2.includes(name)).sort(),removed.slice().sort());
+ assert.deepEqual(data.kartRiversV2.filter(name=>!data.kart.rivers.includes(name)).sort(),['Irrawaddy','Jordan']);
+ for(const retained of ['Lena','Ob','Orange','Senegal','Irrawaddy','Jordan'])assert(data.kartRiversV2.includes(retained),retained+' was not approved for removal');
+ const current={game:'kart',region:'rivers',variant:'rivers-v2',scoring:'attempts-v1'};
+ const old={game:'kart',region:'rivers',scoring:'attempts-v1'};
+ assert.notEqual(board(current),board(old),'Different question counts never compete on the same board');
+ assert.equal(board(current),board({...current,language:'en'}));
+ assert.equal(board(current),board({...current,scoring:undefined}));
+ for(const [c,count]of [[current,41],[old,49]]){
+  const session=create(c,0),restored=JSON.parse(JSON.stringify(session));
+  assert.equal(restored.targets.length,count);assert.equal(restored.plan.length,count);
+  assert.deepEqual(restored.targets.slice().sort(),(count===41?data.kartRiversV2:data.kart.rivers).slice().sort());
+  for(const [i,q]of restored.plan.entries()){
+   assert.equal(answer(restored,{question:q.id,choice:q.target},i*1000+100).correct,true);
+   if(i<count-1)issue(restored,i*1000+200);
+  }
+  assert.equal(restored.complete,true);assert.equal(restored.score,count*100);
+ }
+ for(const c of [{game:'kart',region:'seas',variant:'rivers-v2'},{game:'kart',region:'europe',variant:'rivers-v2'},{game:'kart',region:'rivers',variant:'rivers-v3'},{game:'kart',region:'rivers',variant:'capitals'}])assert.throws(()=>config(c),/invalid_config/);
+});
+
+test('reduced river API publishes forty-one answers while old scores and active49 sessions survive',async()=>{
+ const {env,db}=fixture(),call=async(url,body,token)=>{const response=await worker.fetch(req(url,body,token),env);return {status:response.status,body:await response.json()};};
+ try{
+  const old={game:'kart',region:'rivers',scoring:'attempts-v1'},current={...old,variant:'rivers-v2'};
+  db.prepare('INSERT INTO scores VALUES(?,?,?,?,?,?)').run('published49',board(old),'Original49',4900,60000,1000);
+  const original=db.prepare('SELECT * FROM scores WHERE run_hash=?').get('published49');
+  const cached=await call('/session',old);assert.equal(cached.status,201);assert.equal(cached.body.questions.length,49);
+  const prior=await call('/status',{},cached.body.token);
+  assert.equal((await call('/answer',{requestId:crypto.randomUUID(),question:cached.body.question.id,choice:'Jordan'},cached.body.token)).status,400,'Cached49 clients cannot receive new targets');
+  const start=await call('/session',current);assert.equal(start.status,201);assert.equal(start.body.questions.length,41);
+  assert.equal(start.body.config.variant,'rivers-v2');
+  assert.deepEqual(start.body.questions.map(q=>q.target).sort(),data.kartRiversV2.slice().sort());
+  const token=start.body.token,mutate=(url,input={})=>call(url,{requestId:crypto.randomUUID(),...input},token);
+  assert.equal((await mutate('/publish',{nickname:'Incomplete41'})).status,400);
+  assert.equal((await mutate('/answer',{question:start.body.question.id,choice:'Ohio'})).status,400,'Removed targets cannot be submitted to the reduced round');
+  for(const [i,q]of start.body.questions.entries()){
+   const input={requestId:crypto.randomUUID(),question:q.id,choice:q.target};
+   const response=await call('/answer',input,token);assert.equal(response.status,200);assert.equal(response.body.complete,i===40);
+   if(i===0)assert.deepEqual((await call('/answer',input,token)).body,response.body,'Replayed reduced answers never score twice');
+   if(i<40)assert.equal((await mutate('/next')).body.question.id,start.body.questions[i+1].id);
+  }
+  assert.equal((await mutate('/publish',{nickname:'Reduced41'})).status,200);
+  const rows=async c=>{const response=await call('/scores?config='+encodeURIComponent(JSON.stringify(c)));assert.equal(response.status,200);return response.body.rows;};
+  const reduced=await rows(current);assert.equal(reduced.length,1);assert.equal(reduced[0].nickname,'Reduced41');assert.equal(reduced[0].score,4100);
+  assert.deepEqual(await rows({...current,language:'en'}),reduced);
+  assert.equal((await rows(old))[0].nickname,'Original49');
+  assert.deepEqual(db.prepare('SELECT * FROM scores WHERE run_hash=?').get('published49'),original,'Existing rankings never migrate or disappear');
+  assert.deepEqual((await call('/status',{},cached.body.token)).body,prior.body,'An active49 session is unchanged by reduced sessions');
+  assert(cached.body.questions.some(q=>q.target==='Ohio'));
+  for(const [i,q]of cached.body.questions.entries()){
+   const response=await call('/answer',{requestId:crypto.randomUUID(),question:q.id,choice:q.target},cached.body.token);assert.equal(response.status,200,'Cached49 questions still validate: '+q.target);
+   if(i<48)assert.equal((await call('/next',{requestId:crypto.randomUUID()},cached.body.token)).status,200);
+  }
+  assert.equal((await call('/publish',{requestId:crypto.randomUUID(),nickname:'Cached49'},cached.body.token)).status,200);
+  assert.equal((await rows(old)).length,2);assert.equal((await rows(current)).length,1);
+  assert.deepEqual(db.prepare('SELECT * FROM scores WHERE run_hash=?').get('published49'),original);
+ }finally{db.close();}
+});

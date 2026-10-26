@@ -1,0 +1,132 @@
+{
+  "version": 1,
+  "geometrySHA256": "a785cd12272fec82452541bec14b6343385779cb29ac6e948a463cfb14ca34d6",
+  "method": "Robust fit of spherical Lambert-conic cone constant and affine frame to 60 interior samples on each of 23 shared county seams from pinned official municipality boundaries. Eight endpoint/junction checkpoints below were held out from those interior samples. This is a measured registration of an SVG without explicit CRS metadata, not a claim that the original author used this exact projection.",
+  "centralMeridian": 15,
+  "coneConstant": 0.8990395456797843,
+  "matrix": [
+    [
+      11.431284357479102,
+      0.18007866650580012
+    ],
+    [
+      0.1788572971879697,
+      -11.411085457473396
+    ],
+    [
+      680.1042916371192,
+      -2211.155025382398
+    ]
+  ],
+  "checkpoints": [
+    {
+      "name": "Rogaland/Telemark/Agder",
+      "lon": 7.214669529494348,
+      "lat": 59.672692996609214,
+      "svg": [
+        194.506101190297,
+        1284.0416491432943
+      ],
+      "counties": [
+        "11",
+        "40",
+        "42"
+      ]
+    },
+    {
+      "name": "Møre og Romsdal/Innlandet/Trøndelag",
+      "lon": 9.062053804186398,
+      "lat": 62.37260802178344,
+      "svg": [
+        328.3617303810073,
+        1002.7242508155641
+      ],
+      "counties": [
+        "15",
+        "34",
+        "50"
+      ]
+    },
+    {
+      "name": "Akershus/Buskerud/Innlandet",
+      "lon": 10.194284091512827,
+      "lat": 60.400315367710846,
+      "svg": [
+        365.94717570433704,
+        1223.4764952902028
+      ],
+      "counties": [
+        "32",
+        "33",
+        "34"
+      ]
+    },
+    {
+      "name": "Oslo/Buskerud/Akershus north",
+      "lon": 10.600733538631427,
+      "lat": 60.13161287411302,
+      "svg": [
+        385.4027469065292,
+        1254.7484879128024
+      ],
+      "counties": [
+        "03",
+        "32",
+        "33"
+      ]
+    },
+    {
+      "name": "Buskerud/Vestfold/Telemark",
+      "lon": 9.7780933626222,
+      "lat": 59.41200252462576,
+      "svg": [
+        332.9095710862004,
+        1329.1807743683548
+      ],
+      "counties": [
+        "33",
+        "39",
+        "40"
+      ]
+    },
+    {
+      "name": "18/50 eastern boundary",
+      "lon": 14.325982160818388,
+      "lat": 65.11892381264146,
+      "svg": [
+        603.0784066608059,
+        720.5236329154254
+      ],
+      "counties": [
+        "18",
+        "50"
+      ]
+    },
+    {
+      "name": "18/55 eastern boundary",
+      "lon": 18.125925684391298,
+      "lat": 68.53651185507051,
+      "svg": [
+        765.7031116198344,
+        345.8759269624866
+      ],
+      "counties": [
+        "18",
+        "55"
+      ]
+    },
+    {
+      "name": "55/56 eastern boundary",
+      "lon": 22.894452527695893,
+      "lat": 69.64738738876721,
+      "svg": [
+        943.7489778219392,
+        211.0817862556023
+      ],
+      "counties": [
+        "55",
+        "56"
+      ]
+    }
+  ]
+}

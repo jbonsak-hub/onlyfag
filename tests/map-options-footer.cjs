@@ -118,8 +118,8 @@ async function capture(page,name){
         assert.equal(await page.locator('#terrain-selection-scope [data-state],#terrain-selection-scope [tabindex]').count(),0,'The outside treatment never becomes a quiz target');
         assert(styles.filter(style=>style.forest).every(style=>style.dash!=='none'),'Forests retain their original thin dashed outline');
         if(name==='municipalities'||name==='oslo'){
-          assert(await page.locator('.municipality-border-line').first().evaluate(el=>parseFloat(getComputedStyle(el).strokeWidth)===1.65));
-          assert(await page.locator('.municipality-border-halo').first().evaluate(el=>parseFloat(getComputedStyle(el).strokeWidth)===3.6));
+          assert.equal(await page.locator('.municipality-border-line').first().evaluate(el=>parseFloat(getComputedStyle(el).strokeWidth)),name==='oslo'?.8:1.65);
+          assert.equal(await page.locator('.municipality-border-halo').first().evaluate(el=>parseFloat(getComputedStyle(el).strokeWidth)),name==='oslo'?1.8:3.6);
         }
         await capture(page,'terrain-'+name+'-'+viewport.width);
       }

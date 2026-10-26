@@ -106,3 +106,24 @@ Ved oppgradering fra språkdelte lister kjøres `migrations/0001-shared-language
 Innsjøer og hav er egne Kart-valg. Innsjøer bruker fortsatt region=lakes med standardkategorien lakes. Hav bruker region=seas, med kategoriene seas/gulfsStraits. Eldre kombinasjoner av region=lakes beholdes i API-et for kompatibilitet med publiserte klienter. Kontinentvis øving i elver/fjell/innsjøer sender ingen API-kall og gir ingen rangering.
 
 Kommunevarianten `oslo-surroundings-v2` beholder sitt frosne 30-målssett og sin opprinnelige liste. Gjeldende v3 legger bare Ringerike til dette utvalget.
+
+## Revised river map:41 questions
+
+The current river map sends `{game:"kart",region:"rivers",variant:"rivers-v2"}`
+(and `scoring:"attempts-v1"`). Its forty-one-target pool is `kartRiversV2` in the
+server catalogue and comes from `physical-maps/world-water-v2.json`. Lena,
+Ob, Orange and Senegal remain included. The approved ten names are removed:
+Glomma, Ohio, Uruguay, Paraguay, Don, Elbe, Loire, Limpopo, Mackenzie and Jenisej.
+Irrawaddy and Jordan are added as new quiz targets. MapWiz's river pool is unchanged.
+
+The original `physical-maps/world-water.json` is frozen byte-for-byte for cached
+clients. A Kart river configuration without a variant still uses its original
+49 targets, score board and active-session validation. The new forty-one-target
+variant has a separate, language-shared board, so records from different round
+lengths are not compared. Existing49 results and serialized sessions are neither
+deleted nor migrated. The data builder checks the old file checksum and the
+exact approved removal and addition sets before emitting the catalogue.
+
+Build `world-water-v2.json` and `data.json`, run the API/browser checks, then
+publish the compatible Worker before the frontend. No D1 schema change or
+migration is required; do not rerun `schema.sql` for this release.

@@ -1,6 +1,49 @@
 # World rivers, lakes and marine areas
 
-The offline builder creates 49 rivers, a separate map of 33 lakes and a map of 73 marine areas. The marine page offers seas/oceans and gulfs/straits, initially both selected. Lakes are never included there. An empty marine selection disables Start. Each page has its own server-validated ranking. The separate European water quiz has been removed.
+The offline builder creates the current 41-river selection in `world-water-v2.json`, a separate map of 33 lakes and a map of 73 marine areas. The marine page offers seas/oceans and gulfs/straits, initially both selected. Lakes are never included there. An empty marine selection disables Start. Each page has its own server-validated ranking. The separate European water quiz has been removed.
+
+## Current river selection and cached editions
+
+The current river round has **41 targets** and variant `rivers-v2`. The ten
+removed targets are **Glomma, Ohio, Uruguay, Paraguay, Don, Elbe, Loire, Limpopo,
+Mackenzie and Jenisej**. **Lena remains**, as do Ob, Orange and Senegal.
+**Irrawaddy and Jordan** are added using pinned Natural Earth main-stem vectors.
+
+`assets/geography/physical-maps/world-water.json` remains the unchanged published
+49-river snapshot for cached old scripts and active 49-target sessions. Its
+SHA-256 is `e70efb54a9af9045cba6ddf193c5c985e4a62d4b4f8d6705e459fc8424031f95`.
+The new client uses `world-water-v2.json`; this avoids changing the payload
+returned to historical query-versioned URLs. Existing 49-river rankings must
+retain their original board, while the current 41-target round uses its explicit
+variant. Lakes, seas, background geometry and retained river paths are unchanged.
+The builder checks these invariants offline and only writes the new snapshot.
+
+## Added Irrawaddy and Jordan geometry
+
+The additions are pinned in
+`assets/geography/physical-maps/sources/river-additions-v2.geojson`, with original
+Natural Earth vertices, source feature/line selections, and source checksum.
+The complete upstream 1:10m river/lake-centerline GeoJSON was retrieved on
+26 October 2026, SHA-256
+`bb854a900ecbd3b408df46d5e16e3e0f974ba55993f9d8b5c26e855273c0905a`.
+The small committed extract has SHA-256
+`4738d2f0c2db8f19445baf5739897f72bc3cd35d0b5fce2d6670435ecf2da82d`;
+the builder checks it before using it. Natural Earth data is public domain.
+
+- **Irrawaddy** uses the `Ayeyarwady` / `name_en=Irrawaddy` main-stem feature
+  (491 vertices), from about 25.70°N to the coast at 16.25°N. Separately named
+  Nmai and the five extra delta distributaries are not additional targets or
+  extra branches in this compact map.
+- **Jordan** joins the upper river, the Lake Tiberias/Galilee centerline and
+  the lower river at identical source endpoints (138 vertices total). It stops
+  at the northern mouth of the Dead Sea, about 31.7655°N. The source's centerline
+  through the Dead Sea and its disconnected southern fragment are deliberately
+  excluded, rather than implying that Jordan flows through and out of that
+  terminal lake. These are generalized mapped courses, not surveyed channels.
+
+Both names use the same Norwegian and English display names and belong to Asia
+for continent-by-continent practice. Existing retained rivers, lakes and marine
+features are not reinterpreted by this addition.
 
 ## Sources
 
@@ -18,22 +61,23 @@ on 22 October 2026:
 - [10m marine polygons](https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_10m_geography_marine_polys.geojson).
 - The original compact country geometry bundled in `core.js` supplies the background coast and country borders. The detailed 10m replacement has been removed; only the 33 quiz lakes are drawn, without thousands of incidental lakes.
 
-The packed geographic extract in scripts/build-world-water-maps.cjs is sufficient
-for a deterministic offline rebuild. No external tiles, geographic API or map
+The packed geographic extract in scripts/build-world-water-maps.cjs and the
+small pinned river-additions-v2.geojson extract are sufficient for a deterministic
+offline rebuild. No external tiles, geographic API or map
 server is contacted during play. The builder emits geographic SVG paths with
 three decimal places, on a 1000×540 canvas spanning 180°W–180°E, 70°S–84°N.
 The southern Antarctic coast is land, and the Southern Ocean is visible south of 60°S.
 
 ## Source corrections and interpretation
 
-- Mackenzie includes Canadian segments only. The Australian namesake is excluded
+- In the retained 49-river source, Mackenzie includes Canadian segments only. The Australian namesake is excluded
   by its coordinates, rather than silently merging equal names.
 - Congo includes its upstream Lualaba sections. Matching endpoints are stitched;
   the only near-endpoint gap closed is less than 0.012 degree. No straight
   shortcut is drawn across the missing middle course.
 - Yangtze retains its differently named upper sections; Mekong retains Lancang
   and Za. Existing detailed courses and lake shorelines remain vectors.
-- Glomma now uses the complete NVE ELVIS main stem (620.9 km), queried on 22 October 2026 as elvenavn=Glommavassdraget, vnrnfelt=002.Z, outSR=4326. It reaches Fredrikstad (10.956666°E, 59.176492°N); the former Natural Earth course stopped inland. Its geographic line is simplified to 660 vertices. Thames, Po and Elbe are also included. Yarlung Tsangpo, Darling, Arkansas and
+- In the retained 49-river source, Glomma uses the complete NVE ELVIS main stem (620.9 km), queried on 22 October 2026 as elvenavn=Glommavassdraget, vnrnfelt=002.Z, outSR=4326. It reaches Fredrikstad (10.956666°E, 59.176492°N); the former Natural Earth course stopped inland. Its geographic line is simplified to 660 vertices. Thames and Po remain in the current map; Elbe remains in the historical source. Yarlung Tsangpo, Darling, Arkansas and
   Columbia are removed from this river quiz.
 - Superior uses that short Norwegian display name. Mjøsa and Garda use actual
   lake polygons. Lake Tana and Lake Van are removed. Black Sea is a marine
@@ -55,8 +99,8 @@ The southern Antarctic coast is land, and the Southern Ocean is visible south of
 ## Game and checks
 
 Discovery clicks show names without opening a ranked session. Rounds use the
-same time/error bands as Statle: 100/75/50/0, unlimited corrective attempts and
-optional skip. There are no practice/test/strict variants. Every assigned target
+same attempt-only bands as Statle: 100/75/50/0 and unlimited corrective
+attempts. Time does not reduce the band; a hint appears after three wrong answers. There are no practice/test/strict variants. Every assigned target
 must be completed before publication. Norwegian and English share each list;
 water category combinations have separate lists. After a completed round, the panel offers another practice round containing only targets that were not green. Previously mastered targets stay light green; the remaining targets restart white. This can be repeated until all are green. Retry rounds never create or publish an online session, and do not alter the first round's score. A full restart clears mastery and begins a fresh ordinary round. The shared engine applies this to states, counties, continents and all physical maps.
 
@@ -72,9 +116,9 @@ water selections and complete a server-verified round with shared-language
 ranking.
 
 
-## Glomma source and attribution
+## Historical Glomma source and attribution
 
-Kilde: NVE, [ELVIS hovedelv service](https://kart.nve.no/enterprise/rest/services/Elvenett1/MapServer/1). The [ELVIS dataset](https://www.nve.no/kart/kartdata/vassdragsdata/elvenettverk-elvis/) is made available under [NLOD](https://www.nve.no/kart/kartdata/), with NVE attribution in the river map. Coordinates are a generalized main stem, including mathematical centerlines through lakes, not a copied image. The user’s basin illustration was used only to check the course.
+Kilde: NVE, [ELVIS hovedelv service](https://kart.nve.no/enterprise/rest/services/Elvenett1/MapServer/1). The [ELVIS dataset](https://www.nve.no/kart/kartdata/vassdragsdata/elvenettverk-elvis/) is made available under [NLOD](https://www.nve.no/kart/kartdata/), with NVE attribution in the historical river map. Coordinates are a generalized main stem, including mathematical centerlines through lakes, not a copied image. The user’s basin illustration was used only to check the course.
 
 ## Complete marine coverage
 
@@ -82,24 +126,18 @@ The twelve provisional extra questions have been absorbed into neighbouring seas
 
 ## Rivers
 
-- Mackenzie — Mackenzie
 - Missouri — Missouri
-- Ohio — Ohio
 - Saint Lawrence — Saint Lawrence
 - Colorado — Colorado
 - Mississippi — Mississippi
 - Rio Grande — Rio Grande
 - Amazonas — Amazon
 - São Francisco — São Francisco
-- Paraguay — Paraguay
 - Paraná — Paraná
-- Uruguay — Uruguay
 - Ob — Ob
-- Jenisej — Yenisei
 - Lena — Lena
 - Volga — Volga
 - Dnipro — Dnipro
-- Don — Don
 - Amur — Amur
 - Huang He (Gule flod) — Huang He (Yellow River)
 - Yangtze — Yangtze
@@ -117,20 +155,18 @@ The twelve provisional extra questions have been absorbed into neighbouring seas
 - Murray — Murray
 - Rhinen — Rhine
 - Donau — Danube
-- Loire — Loire
 - Rhône — Rhône
 - Tigris — Tigris
 - Eufrat — Euphrates
 - Syr-Darja — Syr Darya
 - Amu-Darja — Amu Darya
 - Senegal — Senegal
-- Limpopo — Limpopo
 - Yukon — Yukon
 - Orinoco — Orinoco
-- Glomma — Glomma
 - Themsen — Thames
 - Po — Po
-- Elbe — Elbe
+- Irrawaddy — Irrawaddy
+- Jordan — Jordan
 
 ## Lakes (33)
 

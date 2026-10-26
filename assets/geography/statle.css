@@ -273,3 +273,12 @@ body[data-statle-basemap="physical"] #terrain-selection-scope{display:inline}
 body[data-quiz] .game-panel footer #statle-top-ten{display:block!important;margin:0;width:100%;flex-shrink:0}
 body[data-quiz] .game-panel footer{gap:10px}
 .statle-names-option{margin-top:14px}
+
+/* Oslo terrain uses a quiet base grid; the complete hover contour is painted
+   above neighboring regions by the passive foreground layer. */
+body[data-quiz="bydeler"][data-statle-basemap="physical"] #map .municipality-border-halo{stroke-width:1.8}
+body[data-quiz="bydeler"][data-statle-basemap="physical"] #map .municipality-border-line{stroke-width:.8}
+body[data-quiz="bydeler"][data-statle-basemap="physical"] #map .state.oslo-forest{stroke-width:.8;stroke-dasharray:3 2}
+body[data-quiz="bydeler"][data-statle-basemap="physical"] #map .state.oslo-lake{stroke-width:.8}
+.terrain-hover-outline{display:none;fill:none;stroke:#fffefa;stroke-width:2.2;stroke-dasharray:none;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;pointer-events:none;filter:none}
+body[data-statle-basemap="physical"] .terrain-hover-outline{display:inline}
