@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Øv på næringsstoffer, fordøyelse og energi i naturfag. En variert oppgavebank med organplassering, sortering, figurer og forklaringsoppgaver.">
+  <meta name="theme-color" content="#fafbf8">
+  <title>Ernæring og helse · OnlyFag</title>
+  <link rel="stylesheet" href="ernaering/style.css">
+  <script type="module" src="ernaering/app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Hopp til oppgaven</a>
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="../naturfag.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M27 4C13 5 4 13 5 22c1 7 9 8 14 2 5-6 7-12 8-20Z" fill="currentColor"/><path d="M9 25 23 9" stroke="#fff" stroke-width="1.5"/></svg><span>OnlyFag<span class="brand-sub">NATURFAG</span></span></a>
+    <div class="side-title">Ernæring og helse</div>
+    <p class="nav-caption">Øv på et tema</p>
+    <nav id="topics" aria-label="Velg tema"></nav>
+    <div class="side-bottom">
+      <button class="review-button" id="review-button"><span>↻</span> Øv på nytt <span id="review-count">0</span></button>
+      <p>Fremgangen lagres i denne nettleseren.</p>
+      <a href="./">← Alle prototyper</a>
+    </div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar">
+      <button class="menu-button" id="menu-button" aria-label="Åpne temamenyen" aria-controls="sidebar" aria-expanded="false">☰</button>
+      <span class="breadcrumb">Naturfag <span>/</span> Ernæring og helse</span>
+      <button class="text-button about-button" id="about-button">Om modulen <span aria-hidden="true">↗</span></button>
+    </header>
+    <main id="main">
+      <div class="page-heading"><div><p class="eyebrow">OPPGAVEBANK</p><h1>Ernæring og helse</h1><p class="intro">Fra maten du spiser til stoffene cellene trenger.</p></div><span class="heading-art" aria-hidden="true">C<span>H</span>O</span></div>
+      <div class="view-bar"><div class="view-tabs" aria-label="Visning"><button id="practice-tab" class="active" aria-pressed="true">Øving</button><button id="bank-tab" aria-pressed="false">Alle oppgaver</button></div><span class="progress-copy" id="progress-copy"></span></div>
+      <div id="filter-bar" class="filter-bar"></div>
+      <section id="content" aria-label="Oppgaver"></section>
+      <footer class="page-footer"><span>Bygd på undervisningen din · Øving i naturfag</span><button class="text-button" id="sources-button">Fagkilder og avgrensninger</button></footer>
+    </main>
+  </div>
+  <dialog id="about-dialog" aria-labelledby="about-title"><div class="dialog-head"><h2 id="about-title">Om øvingsmodulen</h2><button class="icon-button" id="close-dialog" aria-label="Lukk">×</button></div>
+    <p>Oppgavene følger de fem presentasjonene om karbohydrater, proteiner, fett, fordøyelse og vitaminer, mineraler og vann. Opptak, celleånding og blodsukkerregulering er med fordi dette inngår i materialet.</p>
+    <p>Velg tema eller bland oppgavene. Du får forklaring etter svar og kan øve på nytt på det som var vanskelig. Åpne svar vurderer du selv mot et veiledende svar og tydelige kjennetegn.</p>
+    <h3>Faglige avgrensninger</h3><p>Figurene er skjematiske og viser ikke riktige størrelsesforhold. Tolvfingertarmen er den første delen av tynntarmen. I oppgaver som gjelder hele tynntarmen, velger du «Tynntarm» én gang.</p>
+    <p>Galle finfordeler fett, mens lipase spalter fettmolekylene. Fett tas hovedsakelig opp som fettsyrer og monoglyserider, og fraktes videre som fettpartikler via lymfen. Mest vann tas opp i tynntarmen. Glykogen lagres i lever og muskler, ikke i blodet.</p>
+    <h3>Kilder og oppgaveinspirasjon</h3><ul><li>De fem presentasjonene fra undervisningen, 105 lysbilder.</li><li><a href="https://ndla.no/en/r/naturfag-el/oppsummeringsoppgaver-om-naringsstoffer/c846680a39" target="_blank" rel="noopener">NDLA: Oppsummeringsoppgaver om næringsstoffer</a></li><li><a href="https://ndla.no/nb/r/naturfag-fd/fordoyelsessystemet/c1f4800953" target="_blank" rel="noopener">NDLA: Fordøyelsessystemet</a></li><li><a href="https://openstax.org/books/anatomy-and-physiology-2e/pages/23-7-chemical-digestion-and-absorption-a-closer-look" target="_blank" rel="noopener">OpenStax: Kjemisk fordøyelse og næringsopptak</a></li><li><a href="https://openstax.org/books/anatomy-and-physiology-2e/pages/23-5-the-small-and-large-intestines" target="_blank" rel="noopener">OpenStax: Tynntarm og tykktarm</a></li></ul>
+    <p class="muted">Oppgavene og tegningene er laget for denne modulen. Fremgangen lagres lokalt. Ingen innlogging er nødvendig.</p>
+    <button class="text-button reset-button" id="reset-progress">Nullstill min øvingshistorikk</button><div id="reset-confirm" hidden><p>Vil du fjerne øvingshistorikken for denne modulen i denne nettleseren?</p><button class="secondary" id="confirm-reset">Ja, nullstill</button> <button class="text-button" id="cancel-reset">Avbryt</button></div>
+  </dialog>
+  <div class="sr-only" id="announcer" aria-live="polite"></div>
+  <noscript><p class="noscript">Du må aktivere JavaScript for å bruke øvingsoppgavene.</p></noscript>
+</body>
+</html>
