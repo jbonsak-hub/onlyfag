@@ -256,17 +256,46 @@ body[data-quiz="kommuner"] #kart-game .panel-header .brand{font-size:16px}
 :root{--green:#76ed35;--yellow:#fff32b;--orange:#ffb347;--red:#ff1717}
 #target-symbol{display:block;align-self:center;width:auto;max-width:min(100%,116px);height:70px;object-fit:contain;margin:8px 0 14px;filter:drop-shadow(0 0 1px #ffffff80)}
 #target-symbol[data-type="arms"]{height:78px;max-width:80px}
-.map-question-mode{flex-direction:column;gap:5px}
-.map-question-mode select{width:100%;padding:9px;border:1px solid #a7bfb1;border-radius:6px;background:#fffefa;color:#245845;font:inherit}
-body[data-phase="playing"] #map-question-mode-option{display:none}
-body.map-flag-question #target-symbol{height:86px;max-width:150px}
-body.map-flag-question #targetName{font-size:19px}
 body[data-quiz] .game-panel #statle-top-ten{margin-top:10px;margin-bottom:0}
 body[data-quiz] .game-panel footer{margin-top:auto;padding-top:18px;flex-shrink:0}
 @media(max-width:700px){
  #target-symbol{height:43px;max-width:74px;margin:5px 0 8px}
  #target-symbol[data-type="arms"]{height:43px;max-width:46px}
- body.map-flag-question #target-symbol{height:50px;max-width:90px}
- body.map-flag-question #targetName{font-size:15px}
  body[data-quiz] .game-panel footer{padding-top:4px}
 }
+
+/* Terrain has its own detail and shadows: region edges need a stronger,
+   continuous foreground outline, including the playable outer boundary. */
+body[data-statle-basemap="physical"] #map .state{
+ stroke:#203c2d;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round;
+ vector-effect:non-scaling-stroke;
+}
+body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physical"] #map .state.oslo-forest{
+ stroke:#203c2d;stroke-width:2;stroke-dasharray:none;
+}
+body[data-statle-basemap="physical"] #map .state:hover,
+body[data-statle-basemap="physical"] #map .state:focus-visible,
+body[data-statle-basemap="physical"] #map .state.hovered{
+ stroke:#fffdf0;stroke-width:2.5;
+}
+body[data-statle-basemap="physical"] #map .state.correct{
+ stroke:#efffe8;stroke-width:2.5;
+}
+body[data-statle-basemap="physical"] #map .state.wrong{
+ stroke:#ffe1cd;stroke-width:2.1;
+}
+body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physical"] #map .municipality-border-halo{
+ stroke:#fffdf0;stroke-width:4.2;
+}
+body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physical"] #map .municipality-border-line{
+ stroke:#203c2d;stroke-width:1.8;
+}
+
+/* A pale under-stroke keeps administrative outer edges legible over relief. */
+#terrain-boundary-halos{display:none;pointer-events:none}
+body[data-statle-basemap="physical"] #terrain-boundary-halos{display:block}
+.terrain-boundary-halo{fill:none;stroke:#fffbe8;stroke-width:4.4;stroke-linejoin:round;stroke-linecap:round;pointer-events:none}
+/* Ranking is a navigation action, beside map choice rather than round options. */
+body[data-quiz] .game-panel footer #statle-top-ten{display:block!important;margin:0;width:100%;flex-shrink:0}
+body[data-quiz] .game-panel footer{gap:10px}
+.statle-names-option{margin-top:14px}

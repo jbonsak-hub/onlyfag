@@ -1,4 +1,4 @@
-/* Attempts, flag-only prompts, local symbols and panel navigation. No public scores are sent. */
+/* Attempts, named flag prompts, local symbols and panel navigation. No public scores are sent. */
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const root=path.resolve(__dirname,'..');
@@ -34,7 +34,7 @@ async function checkSymbol(page,name,type,flags){
 async function checkFooter(page){
   const footer=page.locator('.game-panel footer');
   assert(await footer.locator('.game-controls,#restart').count()>0,'Round controls live in the panel footer');
-  const order=await footer.evaluate(el=>({afterTopTen:!!(document.querySelector('#statle-top-ten').compareDocumentPosition(el)&Node.DOCUMENT_POSITION_FOLLOWING),last:el===el.parentElement.lastElementChild}));
+  const order=await footer.evaluate(el=>({afterTopTen:el.contains(document.querySelector('#statle-top-ten'))&&document.querySelector('#statle-top-ten').nextElementSibling?.classList.contains('quiz-page-back'),last:el===el.parentElement.lastElementChild}));
   assert(order.afterTopTen&&order.last,'Navigation and source credits are at the bottom of the panel');
   await footer.scrollIntoViewIfNeeded();
   const bounds=await footer.evaluate(el=>{const b=el.getBoundingClientRect(),p=el.parentElement.getBoundingClientRect();return {inside:b.left>=p.left-1&&b.right<=p.right+1,visible:b.bottom<=p.bottom+1&&b.top>=p.top-1,overflow:document.documentElement.scrollWidth>innerWidth};});
@@ -64,14 +64,13 @@ async function capture(page,name){if(!process.env.MAP_SYMBOL_SCREENSHOTS)return;
       await page.clock.install();
       for(const quiz of [
         {name:'countries',url:'/geografi/kart.html?region=europe',type:'flag'},
-        {name:'flags',url:'/geografi/kart.html?region=europe',type:'flag',flags:true},
+
         {name:'states',url:'/geografi/statle.html',type:'flag'},
         {name:'counties',url:'/geografi/fylker.html',type:'arms'},
         {name:'municipalities',url:'/geografi/kommuner.html?fylke=39',type:'arms'}
       ]){
         await page.goto(base+quiz.url);await page.locator('#start:enabled').waitFor();
-        if(quiz.flags){await page.locator('#map-question-mode').selectOption('flags');assert.equal(await page.locator('body').getAttribute('data-kart-mode'),'flags');}
-        else if(quiz.name==='countries')assert.equal(await page.locator('#map-question-mode').inputValue(),'names');
+        assert.equal(await page.locator('#map-question-mode,#map-question-mode-option').count(),0,'Country maps always show name and flag');
         await page.locator('#start').click();await page.waitForFunction(()=>document.body.dataset.phase==='playing');
         const request=sessions.at(-1);assert.equal(request.scoring,'attempts-v1');assert.equal(request.mode,quiz.flags?'flags':undefined,'Only flag rounds use the separate mode');
         assert.equal(await page.locator('#map-question-mode-option').isVisible(),false,'The mode cannot change during a round');
@@ -94,6 +93,6 @@ async function capture(page,name){if(!process.env.MAP_SYMBOL_SCREENSHOTS)return;
       await context.close();
     }
     assert.deepEqual(errors,[],'No page errors');assert.deepEqual(missing,[],'Every local script, map and symbol loads');
-    console.log('PASS attempts/symbols: no time penalty, hint after three misses, four bands, hidden flag-only answers, country/state flags, county/municipality arms and footer on desktop/mobile; API requests intercepted locally');
+    console.log('PASS attempts/symbols: no time penalty, hint after three misses, four bands, country/state flags, county/municipality arms and footer on desktop/mobile; API requests intercepted locally');
   }finally{await browser.close();}
 })().catch(error=>{console.error(error);process.exitCode=1;}).finally(()=>server.close());
