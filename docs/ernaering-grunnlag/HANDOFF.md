@@ -1,5 +1,13 @@
 # Ernæring og helse: videreføring i skyen
 
+## Fullført i skyen 26. oktober 2026
+
+Modulen er ferdig og publisert på https://onlyfag.no/prototyper/ernaering.html, med lenke fra prototypeoversikten. Ferdig kode ligger på `main`, senest verifiserte commit `579292fbea7577489dd0ed7a17921d55ac709026`. GitHub Pages-utrullingen er bekreftet vellykket, og riktig ressursversjon er kontrollert på den faktiske siden.
+
+67 oppgaver, ni oppgavetyper og seks temaer. Alle punkter i question-review.md er fulgt opp. Alle 67 oppgaveflyter er funksjonstestet, i tillegg til fasiter, repetisjon, delvis retting, lagring, egenvurdering og nullstilling. Organplassering med tastatur og flere andre flyter er også prøvd på live-siden. Visuell kontroll utført i skrivebordsvisning i skynettleseren; mobilmeny er funksjonstestet i DOM, men faktisk mobilvisning er ikke visuelt emulert. Se `prototyper/ernaering/README.md` og testene på main.
+
+**Avsnittene nedenfor beskriver checkpointen før ferdigstilling. «Gjenstår» er historikk, ikke utestående arbeid.** Denne grenen bevarer faggrunnlaget og checkpointfilene; hent ferdig modul fra main ved videre arbeid.
+
 Brukeren har bedt om at arbeidet videreføres i en ny skychat fordi PC-en skal lukkes. Denne filen gjør oppgaven uavhengig av lokale filer. Alt nødvendig faglig innhold fra de fem presentasjonene er trukket ut i `pptx-fulltext.md`, og 105 lysbilder er gjennomgått. De opprinnelige PowerPoint-filene skal ikke være nødvendige for å fullføre modulen. Ingen opprinnelige undervisningsbilder skal kopieres til nettsiden. Lag egne didaktiske SVG-figurer.
 
 ## Brukerens bestilling
