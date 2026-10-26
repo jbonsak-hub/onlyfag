@@ -251,3 +251,22 @@ body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physi
 /* Keep the longer municipality title beside all three menu controls at 260px. */
 body[data-quiz="kommuner"] #kart-game .panel-header{gap:4px}
 body[data-quiz="kommuner"] #kart-game .panel-header .brand{font-size:16px}
+
+/* Attempts determine map colours; elapsed time remains visible for reference. */
+:root{--green:#76ed35;--yellow:#fff32b;--orange:#ffb347;--red:#ff1717}
+#target-symbol{display:block;align-self:center;width:auto;max-width:min(100%,116px);height:70px;object-fit:contain;margin:8px 0 14px;filter:drop-shadow(0 0 1px #ffffff80)}
+#target-symbol[data-type="arms"]{height:78px;max-width:80px}
+.map-question-mode{flex-direction:column;gap:5px}
+.map-question-mode select{width:100%;padding:9px;border:1px solid #a7bfb1;border-radius:6px;background:#fffefa;color:#245845;font:inherit}
+body[data-phase="playing"] #map-question-mode-option{display:none}
+body.map-flag-question #target-symbol{height:86px;max-width:150px}
+body.map-flag-question #targetName{font-size:19px}
+body[data-quiz] .game-panel #statle-top-ten{margin-top:10px;margin-bottom:0}
+body[data-quiz] .game-panel footer{margin-top:auto;padding-top:18px;flex-shrink:0}
+@media(max-width:700px){
+ #target-symbol{height:43px;max-width:74px;margin:5px 0 8px}
+ #target-symbol[data-type="arms"]{height:43px;max-width:46px}
+ body.map-flag-question #target-symbol{height:50px;max-width:90px}
+ body.map-flag-question #targetName{font-size:15px}
+ body[data-quiz] .game-panel footer{padding-top:4px}
+}

@@ -4,13 +4,31 @@ Cloudflare Worker `onlyfag-geography-scores` bruker den separate D1-databasen me
 
 ## Spill og rangering
 
+Alle nye klikkartrunder bruker `scoring: "attempts-v1"`: grønn ved riktig på
+første forsøk (100 poeng), gul på andre (75), oransje på tredje (50), og rød
+etter tre feil (0). Tidsbruk påvirker ikke farge eller poeng. Samlet rundetid
+registreres fortsatt og brukes til å skille like poengsummer. Klienten viser
+hint først etter tre feil.
+
+Den nye scoringsmarkøren lagres i sesjonen, men inngår **ikke** i den normale
+resultatlistens identitet. Alle eksisterende topp 10-resultater forblir på de
+samme listene; ingen rader slettes, flyttes eller omskrives. Bufrede sider og
+allerede aktive sesjoner uten markøren fortsetter med sine opprinnelige
+regler for tid og feil. Dette lar også en gammel runde fullføres etter utrulling.
+
+Landkart kan i tillegg sende `mode: "flags"` for å vise flagget uten navnet.
+Denne modusen har en egen liste per verdensdel og endrer ingen normal liste.
+Fysiske kart og andre karttyper godtar ikke flaggmodusen. Oppdater Worker før
+nettsiden; endringen trenger ingen databaseskjemaendring eller migrering.
+
+
 - MapWiz: topp 10 for fullførte runder med ti spørsmål, egen liste per kategorivalg. Serveren fordeler oppgavene og tillater maks to fra samme kategori når mer enn fem kategorier er valgt. Den beregner avstand, tidsbonus og samlet tid, med eksisterende Norge-/verdensformler.
 - Flagg, Hovedsteder og Flagg+Hovedstad: topp 10, egen liste per område og retning. Runde avsluttes ved første feil eller når alle oppgavene er løst.
 - Kjente steder: topp 10 for «på rad», egen liste per retning. Varianten med 20 spørsmål forblir lokal uten ny konkurranseregel.
 - Statle: topp 10 etter fullførte 50 stater. Serveren tildeler 100/75/50/0 poeng etter grønn/gul/oransje/rød kategori, maksimalt 5000. Feil, tidsbruk og hopp over kontrolleres; ufullførte runder kan ikke publiseres.
 - Norske fylker: egen topp 10 etter fullførte 15 fylker, med samme regler som Statle og maksimalt 1500 poeng. Norsk og engelsk deler listen. Krever oppdatert Worker ved publisering; ingen databaseendring eller migrering er nødvendig.
 - Kart, verdensdeler: én topp 10 per verdensdel etter at alle målene i kartet er besvart. De seks kartene omfatter til sammen 197 land uten gjentakelser og tre uttrykkelig merkede territorier: Fransk Guyana (fransk), Ny-Caledonia (fransk) og Vest-Sahara (omstridt). Samme poengregler som Statle, med maksimalt 100 poeng per mål. Fylker-valget i Kart bruker fylkenes eksisterende liste; USA-valget lenker til Statle og beholder listen der. Norsk og engelsk deler hver liste. Krever oppdatert Worker ved publisering, uten databaseendring.
-- Kart, elver/fjellkjeder/vannområder: samme regler som Statle, med 100/75/50/0 poeng etter tid og feil, ubegrenset antall rettingsforsøk og 0 for hopp over. Alle mål må fullføres. Egen liste per kart og valgt kombinasjon av vannkategorier.
+- Kart, elver/fjellkjeder/vannområder: samme regler som Statle, med 100/75/50/0 poeng etter antall forsøk, ubegrenset antall rettingsforsøk og 0 for hopp over. Alle mål må fullføres. Egen liste per kart og valgt kombinasjon av vannkategorier.
 - Kommuner: én topp 10 per fylkeskart, med `game: "kommuner"` og fylkets tosifrede `county`, for eksempel `"39"` for Vestfold. Det reduserte «Oslo og omegn»-kartet bruker `county: "03", variant: "oslo-surroundings-v3"` og en egen ny liste for 31 kommuner, med maksimalt 3100 poeng. Målene hentes fra gjeldende `index-v3.json` / `county-03-v3.json`. Serveren bruker nøyaktig de samme navnene som kartet; alle kommunene i valgt kart må fullføres. De andre fjorten fylkeskartene beholder målsett og resultatidentitet uten `variant`.
 - Bufrede kommunevelgere bruker fortsatt den bevarte `index.json` og `county-03.json` med alle 54 gamle mål. Oslo-runder uten `variant` beholder den opprinnelige listen (`v1:{"game":"kommuner","county":"03"}`) og de 54 navnene i `legacy-oslo-surroundings-54-targets.json`, inkludert Sør-Odal og Kongsvinger. Allerede aktive 54-runder kan svare, fullføre og publisere på sin eksisterende liste etter oppdateringen. De gamle resultatene flyttes eller slettes ikke. Andre varianter, og `variant` på andre fylker, avvises.
 - Oslo: egen topp 10 med `game: "bydeler", variant: "oslo-areas-v5"` for kartets 43 gjeldende land-, skog-, innsjø- og øyområder. Alle mål er polygoner; punktmarkører brukes ikke. Antall oppgaver og maksimal poengsum hentes fra `oslo.json`: 100/75/50/0-reglene gir maksimalt 100 poeng per mål (4300 for denne utgaven). Norsk og engelsk deler listen, som holdes adskilt fra alle fire historiske Oslo-varianter og andre quizer.

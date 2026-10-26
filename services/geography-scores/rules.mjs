@@ -18,9 +18,13 @@ export function config(input){
  else if(shapeQuiz(c.game)){}else if(c.game==='countries'){c.region=input.region||'world';if(!Object.hasOwn(data.regions,c.region))throw Error('invalid_config');}
  else{c.variant=input.variant||variants[c.game][0];if(!variants[c.game].includes(c.variant))throw Error('invalid_config');c.region=input.region||'world';if(c.game!=='places'&&!Object.hasOwn(data.regions,c.region))throw Error('invalid_config');if(c.game==='places')c.region='world';}
  if(input.questionMode!==undefined){if(c.game!=='kommuner'||input.questionMode!=='centres')throw Error('invalid_config');c.questionMode=input.questionMode;}
+ if(input.scoring!==undefined){if(!shapeQuiz(c.game)||input.scoring!=='attempts-v1')throw Error('invalid_config');c.scoring='attempts-v1';}
+ if(input.mode!==undefined){if(c.game!=='kart'||data.kartPhysical.includes(c.region)||input.mode!=='flags')throw Error('invalid_config');c.mode='flags';}
  return c;
 }
-export const board=c=>{const {language,...ranking}=config(c);return 'v'+data.version+':'+JSON.stringify(ranking);};
+// Presentation scoring is versioned per session, while the normal board keeps
+// its published identity so every existing top-ten result remains available.
+export const board=c=>{const {language,scoring,...ranking}=config(c);return 'v'+data.version+':'+JSON.stringify(ranking);};
 export function pool(c){
  if(c.game==='places')return data.places;
  const names=new Set(data.regions[c.region]||data.regions.world);
@@ -75,7 +79,7 @@ export function answer(s,input,now){
   const name=input.choice;if(!shapeTargets(s.config).includes(name)||s.found.includes(name))throw Error('invalid_answer');
   const correct=name===s.current.target;if(!correct&&!input.skip){s.hints++;s.mistakes=(s.mistakes||0)+1;return {correct:false};}
   if(input.skip&&name!==s.current.target)throw Error('invalid_answer');
-  const seconds=Math.max(0,(now-s.current.issuedAt)/1000),band=input.skip?3:Math.max(seconds<=5?0:seconds<=10?1:2,Math.min(s.hints,3)),points=[100,75,50,0][band];
+  const seconds=Math.max(0,(now-s.current.issuedAt)/1000),band=input.skip?3:s.config.scoring==='attempts-v1'?Math.min(s.hints,3):Math.max(seconds<=5?0:seconds<=10?1:2,Math.min(s.hints,3)),points=[100,75,50,0][band];
   s.score+=points;s.results.push({name,band,points});s.found.push(name);s.hints=0;s.index++;
   if(s.index===s.targets.length)finish(s,now);else s.awaitingNext=true;return {correct,band,points};
  }

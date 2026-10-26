@@ -653,5 +653,16 @@
   "Avansert - hovedsteder": "Advanced - capitals",
   "Topp 10 · Hovedsteder": "Top 10 · Capitals",
   "Hovedstad på kartet": "Capital on the map",
-  "Alle hovedstedene er på plass.": "All capitals completed."
+  "Alle hovedstedene er på plass.": "All capitals completed.",
+  "Riktig på 1. forsøk": "Correct in 1 attempt",
+  "Riktig på 2. forsøk": "Correct in 2 attempts",
+  "Riktig på 3. forsøk": "Correct in 3 attempts",
+  "Mer enn 3 forsøk": "More than 3 attempts",
+  "Oppgave": "Question",
+  "Oppgavemodus": "Question mode",
+  "Navn og flagg": "Name and flag",
+  "Bare flagg": "Flag only",
+  "Flagg til landet du skal finne": "Flag of the country to find",
+  "Flagget kunne ikke lastes. Finn landet etter navn.": "The flag could not load. Find the country by name.",
+  "Hva heter hovedstaden i": "What is the capital of"
 }

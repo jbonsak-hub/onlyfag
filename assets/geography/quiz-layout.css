@@ -466,3 +466,26 @@ body[data-quiz-layout="globle"] .quiz-distance-help{margin-top:auto!important;fo
  body[data-quiz-layout="geogrid"] .geogrid-criterion{font-size:10px!important;padding:6px!important}
  body[data-quiz-layout="geogrid"] .geogrid-side-actions{grid-template-columns:1fr 1fr!important}
 }
+
+/* Status rows must keep their own size inside the navigation panel. */
+body[data-quiz] #verden-quiz .quiz-status-panel{min-width:0;min-height:0;align-items:stretch;justify-content:flex-start;gap:14px}
+body[data-quiz] #verden-quiz .quiz-status-panel>.quiz-page-header{flex:0 0 auto;position:static!important;inset:auto!important;width:100%!important;margin:0!important}
+body[data-quiz] #verden-quiz .quiz-status-panel>.world-statusbar{position:static!important;inset:auto!important;display:flex!important;flex:0 0 auto!important;flex-direction:row!important;flex-wrap:wrap!important;align-items:center!important;align-content:flex-start!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;margin:0!important;gap:8px!important}
+body[data-quiz] #verden-quiz .quiz-status-panel .world-pill{display:inline-flex!important;flex:0 1 auto!important;align-items:center!important;justify-content:center!important;width:auto!important;height:auto!important;min-height:32px!important;max-height:none!important;gap:4px!important;border-radius:7px!important;white-space:normal;overflow-wrap:anywhere}
+body[data-quiz] #verden-quiz .quiz-status-panel>.quiz-layout-footer{margin-top:auto!important;flex:0 0 auto}
+/* Capital prompts place the flag beside the country, with room for both. */
+body[data-quiz] #verden-quiz .capital-question{display:flex;flex-direction:column;align-items:center;gap:20px;width:100%}
+body[data-quiz] #verden-quiz .capital-question-label{display:block}
+body[data-quiz] #verden-quiz .capital-country{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:24px 36px;width:100%}
+body[data-quiz] #verden-quiz .capital-country>span{min-width:0;overflow-wrap:anywhere}
+body[data-quiz] #verden-quiz .capital-country img.quiz-flag-img{max-width:150px!important;max-height:100px!important;flex:0 0 auto;margin:0!important}
+@media(max-width:700px){
+ body[data-quiz] #verden-quiz .world-game{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto minmax(0,1fr)!important}
+ body[data-quiz] #verden-quiz .quiz-status-panel{display:flex!important;flex-direction:column!important;grid-column:1!important;grid-row:1!important;gap:9px;padding:10px 12px!important;overflow:visible!important}
+ body[data-quiz] #verden-quiz .quiz-status-panel>.world-statusbar{margin:0!important}
+ body[data-quiz] #verden-quiz .quiz-status-panel>.quiz-layout-footer{padding:0!important;align-self:flex-start}
+ body[data-quiz] #verden-quiz #world-play{grid-column:1!important;grid-row:2!important}
+ body[data-quiz] #verden-quiz .capital-question{gap:15px}
+ body[data-quiz] #verden-quiz .capital-country{gap:16px 24px}
+ body[data-quiz] #verden-quiz .capital-country img.quiz-flag-img{max-width:110px!important;max-height:72px!important}
+}

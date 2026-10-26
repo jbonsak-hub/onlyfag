@@ -32,7 +32,7 @@
   const previousFlagHtml=flagHtml;
   flagHtml=function(c,size=100){
     const code=String(c.flagCode||"").toLowerCase();
-    let src=SIMPLE_FLAGS[code]||c.flag||flagUrlFromCode(c.flagCode);
+    let src=window.MapSymbols?.lookup(c.country,{kind:"country",code})?.src||SIMPLE_FLAGS[code]||c.flag||flagUrlFromCode(c.flagCode);
     // Nepal is not rectangular; trim only its transparent SVG canvas in quizzes.
     if(code==='np'&&['flags','flagcapital'].includes(document.body.dataset.quiz)){
       try{const svg=/;base64,/.test(src)?atob(src.split(',')[1]):decodeURIComponent(src.slice(src.indexOf(',')+1));

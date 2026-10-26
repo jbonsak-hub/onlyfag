@@ -213,8 +213,8 @@
       const askCapital=Math.random()<.55;
       return {
         value:JVALUES[i],difficulty:i+1,
-        q:askCapital?`Hva heter hovedstaden i ${row.country}?`:`Hvilket land har ${row.capital} som hovedstad?`,
-        a:askCapital?row.capital:row.country
+        q:askCapital?`Hva heter hovedstaden i ${row.country}?`:`Hvilket land har ${quizCapitalName(row.capital,row.country)} som hovedstad?`,
+        a:askCapital?quizCapitalName(row.capital,row.country):row.country
       };
     });
   };

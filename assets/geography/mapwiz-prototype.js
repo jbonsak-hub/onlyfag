@@ -105,7 +105,7 @@
  function placeBox(){
   const hud=document.getElementById('geo-hud');if(!hud)return;
   const r=hud.getBoundingClientRect(),margin=8;
-  const desired=position||{x:16,y:innerHeight-r.height-16};
+  const desired=position||{x:16,y:innerWidth<=700?96:72};
   position={x:Math.max(margin,Math.min(innerWidth-r.width-margin,desired.x)),y:Math.max(margin,Math.min(innerHeight-r.height-margin,desired.y))};
   hud.style.setProperty('--hud-x',position.x+'px');hud.style.setProperty('--hud-y',position.y+'px');
  }

@@ -156,7 +156,8 @@ const server = http.createServer((req,res) => {
   assert.equal(await page.locator('.quiz-page-header').count(),0);
   const map=await checkBox(page,'#openguessr-frame',200);assert.ok(Math.abs(map.top)<1);assert.ok(Math.abs(map.height-viewport.height)<1);
   await checkBox(page,'.quiz-floating-menu');await checkBox(page,'.quiz-external-overview .quiz-page-back');
-  assert.equal(await page.locator('.openguessr-actions:visible,.openguessr-menu-button:visible,.quiz-page-theme:visible').count(),0);
+  assert.equal(await page.locator('.openguessr-actions:visible,.openguessr-menu-button:visible').count(),0);
+  assert.equal(await page.locator('.quiz-page-theme:visible').count(),1,'External quiz keeps the shared theme button');
   await page.locator('.quiz-page-menu').click();await page.keyboard.press('Escape');
  }
  await page.setViewportSize({width:1366,height:643});await page.goto(base+'geografi.html#verden-quiz');

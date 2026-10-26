@@ -57,7 +57,7 @@ function svgUri(svg){return "data:image/svg+xml;charset=utf-8,"+encodeURICompone
   const oldFlagHtml=flagHtml;
   flagHtml=function(c,size=100){
     const code=String(c.flagCode||"").toLowerCase();
-    const src=SIMPLE_FLAGS[code]||c.flag||flagUrlFromCode(c.flagCode),isVector=String(src).startsWith("data:image/svg+xml");
+    const src=window.MapSymbols?.lookup(c.country,{kind:"country",code})?.src||SIMPLE_FLAGS[code]||c.flag||flagUrlFromCode(c.flagCode),isVector=String(src).startsWith("data:image/svg+xml")||String(src).endsWith(".svg");
     const asked=Math.max(36,Number(size)||100);
     const w=isVector?Math.min(220,Math.max(90,asked)):Math.min(148,Math.max(80,asked));
     return `<img class="quiz-flag-img ${isVector?"flag-vector-upgraded":"flag-bitmap-detail"}" src="${src}" alt="Flagget til ${c.country}" style="width:${w}px;max-width:100%;height:auto" loading="eager">`;

@@ -19,6 +19,31 @@
   const answerName = name => citiesMode ? displayCityName(states.find(state=>state.n===name)) + ' · ' + (window.QuizLanguage?.translate(name)||name) : name;
   const displayCityName=state=>statle?StatleLabelLayout.cityName(state,cityData):(window.QuizLanguage?.language==='en'?cityData[state.n].en||cityData[state.n].name:cityData[state.n].name);
   const questionName = state => citiesMode ? municipalities?cityData[state.n].promptName||displayCityName(state):displayCityName(state) : state.n;
+  const flagMode = () => countryRegion() && document.body.dataset.kartMode === 'flags';
+  const questionSymbol = document.createElement('img');
+  questionSymbol.id='target-symbol';questionSymbol.hidden=true;questionSymbol.decoding='async';
+  $('targetName').before(questionSymbol);
+  function renderQuestion() {
+    const state=target(),symbol=state&&window.MapSymbols?.lookup(state.n,{kind:countryRegion()?'country':statle?'state':municipalities?'municipality':counties?'county':boroughs?'municipality':'none',code:state.a});
+    const show=!!symbol&&!citiesMode;
+    questionSymbol.hidden=!show;
+    if(show){questionSymbol.src=symbol.src;questionSymbol.alt=flagMode()?'Flagg til landet du skal finne':symbol.alt;questionSymbol.dataset.type=symbol.type;}
+    else questionSymbol.removeAttribute('src');
+    $('targetName').textContent=flagMode()&&show?'Hvilket land?':questionName(state);
+    document.body.classList.toggle('map-flag-question',flagMode()&&show);
+    if(flagMode()&&!show)setFeedback('Flagget kunne ikke lastes. Finn landet etter navn.');
+  }
+  questionSymbol.addEventListener('error',()=>{questionSymbol.hidden=true;if(flagMode()){$('targetName').textContent=questionName(target());setFeedback('Flagget kunne ikke lastes. Finn landet etter navn.');}});
+  const modeOption=document.createElement('label');modeOption.id='map-question-mode-option';modeOption.className='statle-option map-question-mode';modeOption.hidden=true;
+  const modeTitle=document.createElement('span');modeTitle.textContent='Oppgave';
+  const modeSelect=document.createElement('select');modeSelect.id='map-question-mode';modeSelect.setAttribute('aria-label','Oppgavemodus');
+  for(const [value,text] of [['names','Navn og flagg'],['flags','Bare flagg']]){const option=document.createElement('option');option.value=value;option.textContent=text;modeSelect.append(option);}
+  modeOption.append(modeTitle,modeSelect);$('overlay').prepend(modeOption);
+  modeSelect.addEventListener('change',()=>{
+    window.GeoOnline?.resetStatle();document.body.dataset.kartMode=modeSelect.value;
+    if(flagMode()&&advancedInput()){advancedInput().checked=false;updateStatleOptions();}
+    if(advancedInput())advancedInput().disabled=flagMode();
+  });
   const themeButtons = [];
   function applyTheme(dark) {
     document.documentElement.dataset.theme = dark ? 'dark' : 'light';
@@ -353,8 +378,9 @@
   }
   function setPhase(value){
     phase=value;document.body.dataset.phase=value;
+    if(value!=='playing'){questionSymbol.hidden=true;questionSymbol.removeAttribute('src');document.body.classList.remove('map-flag-question');}
     $('targetName').toggleAttribute('data-no-translate',enhanced()&&citiesMode&&value==='playing');
-    if(statle||kart||localMap){if(value==='ready'&&enhanced())$('targetName').after($('targetVerb'));else $('targetName').before($('targetVerb'));}
+    if(statle||kart||localMap){if(value==='ready'&&enhanced())$('targetName').after($('targetVerb'));else questionSymbol.before($('targetVerb'));}
   }
   function prompt(){const action=retrying?'Øvingsrunde · klikk på':'Klikk på';$('targetVerb').textContent=boroughs&&target()?.category==='postal-area'?'Postområde · '+action.toLowerCase():action;const subtitle=$('target-continent');if(subtitle){subtitle.hidden=!continentPractice;subtitle.textContent=continentPractice?continentNames[target()?.continent]||'':'';}}
   function next() {
@@ -363,7 +389,7 @@
     elements.forEach(el => el.classList.remove('correct', 'wrong', 'hinted'));
     if (!target()) return finish();
     if(!practice)window.GeoOnline?.statleNext();
-    $('targetName').textContent = questionName(target());
+    renderQuestion();
     prompt();setFeedback('');
   }
   function choose(name) {
@@ -377,12 +403,12 @@
       const el = elements.get(name); el.classList.add('wrong');
       flashLabel(name, 'error');
       later(() => el.classList.remove('wrong'), 1050);
-      if (roundMistakes >= 2) showHint();
+      if (roundMistakes >= 3) showHint();
       setFeedback('Det var ' + answerName(name) + '.', 'error');
       return;
     }
-    // Slower times and mistakes can only lower the performance category.
-    const band = Math.max(roundTime <= 5000 ? 0 : roundTime <= 10000 ? 1 : 2, Math.min(roundMistakes, 3));
+    // Colour depends only on attempts; the clock is informational.
+    const band = Math.min(roundMistakes, 3);
     results.set(name, {band, ms:roundTime, mistakes:roundMistakes});
     setBand(name, band); locked = true;
     $('hintLayer').replaceChildren();
@@ -390,7 +416,7 @@
     setFeedback('Riktig! ' + answerName(name) + ' · ' + (roundTime / 1000).toFixed(1).replace('.', ',') + ' s', 'good');
     updateStats(); later(next, 650);
   }
-  function start(){retrying=false;mastered.clear();if(enhanced()){if(advancedInput())advancedInput().disabled=true;namesInput().disabled=true;$('start').disabled=true;$('restart').disabled=false;}document.querySelectorAll('[name="water-category"]').forEach(input=>input.disabled=true);continentPractice=!!$('continent-practice')?.checked&&['rivers','lakes','mountains'].includes(document.body.dataset.region);practice=continentPractice;document.body.dataset.practice=String(practice);if($('continent-practice'))$('continent-practice').disabled=true;if(practice){window.GeoOnline?.resetStatle();return begin();}if(window.GeoOnline)return GeoOnline.startStatle(begin);return begin();}
+  function start(){modeSelect.disabled=true;retrying=false;mastered.clear();if(enhanced()){if(advancedInput())advancedInput().disabled=true;namesInput().disabled=true;$('start').disabled=true;$('restart').disabled=false;}document.querySelectorAll('[name="water-category"]').forEach(input=>input.disabled=true);continentPractice=!!$('continent-practice')?.checked&&['rivers','lakes','mountains'].includes(document.body.dataset.region);practice=continentPractice;document.body.dataset.practice=String(practice);if($('continent-practice'))$('continent-practice').disabled=true;if(practice){window.GeoOnline?.resetStatle();return begin();}if(window.GeoOnline)return GeoOnline.startStatle(begin);return begin();}
   function begin(names) {
     generation++; clearEffects();if($('statle-score'))$('statle-score').hidden=true;
     results = new Map(); index = 0; totalTime = 0; roundTime = 0; lastTick = performance.now();
@@ -406,7 +432,7 @@
     if($('continent-practice-option'))$('continent-practice-option').hidden=true;
     $('mapViewport').scrollTo({left:0,top:0});
     prompt();
-    $('targetName').textContent = questionName(target()); $('elapsed').textContent = '00:00';
+    renderQuestion(); $('elapsed').textContent = '00:00';
     $('restart').disabled = false;
     updateStats(); setFeedback('');
   }
@@ -477,7 +503,7 @@
     markers.forEach(el=>{delete el.dataset.band;el.classList.remove('mastered','retry-pending');el.setAttribute('aria-label',statle?'Ekstra klikkfelt for en liten delstat':'Ekstra klikkfelt for et lite land');});
     setPhase('ready');repeatOffer.hidden=true;$('overlay').hidden=false;
     $('statle-score').hidden=true;$('restart').disabled=true;$('start').disabled=false;
-    if(advancedInput())advancedInput().disabled=false;namesInput().disabled=false;
+    modeSelect.disabled=false;if(advancedInput())advancedInput().disabled=flagMode();if(namesInput())namesInput().disabled=false;
     $('targetVerb').textContent='Kan du plassere alle?';$('elapsed').textContent='00:00';
     updateStatleOptions();updateStats();setFeedback('');
   }
@@ -546,7 +572,7 @@
   }
   function updateStatleOptions() {
     if(!enhanced())return;
-    citiesMode=!!advancedInput()?.checked;
+    citiesMode=!flagMode()&&!!advancedInput()?.checked;
     const variant=municipalities?'municipalityQuestionMode':statle?'statleVariant':'kartVariant';
     if(citiesMode)document.body.dataset[variant]=municipalities?'centres':statle?'largest-city':'capitals';else delete document.body.dataset[variant];
     $('start').textContent=statle?'Start Statle →':'Start →';
@@ -589,7 +615,7 @@
     clearTimeout(localPreviewTimer);
     basemap?.clear();document.body.dataset.statleBasemap='original';document.querySelector('.statle-basemap-tools')?.remove();
     $('statle-city-points')?.remove();$('statle-study-names')?.remove();cityPoints.clear();stateTransforms.clear();studyLayouts.clear();
-    citiesMode=false;cityData=null;cityMarkerScale='';delete document.body.dataset.kartVariant;delete document.body.dataset.municipalityQuestionMode;
+    citiesMode=false;cityData=null;cityMarkerScale='';modeSelect.value='names';modeSelect.disabled=false;delete document.body.dataset.kartMode;delete document.body.dataset.kartVariant;delete document.body.dataset.municipalityQuestionMode;
     mastered.clear();retrying=false;continentPractice=false;repeatOffer.hidden=true;delete document.body.dataset.retry;
     generation++;clearEffects();elements.clear();markers.clear();centers.clear();
     $('states').replaceChildren();$('smallStates').replaceChildren();$('insetSeparators').setAttribute('d','');
@@ -686,6 +712,7 @@
     panel.style.removeProperty('top');panel.style.removeProperty('left');panel.style.removeProperty('bottom');const token=++mapGeneration;window.GeoOnline?.resetStatle();resetMap();document.body.dataset.region=region;counties=region==='fylker';physical=['rivers','lakes','seas','mountains'].includes(region);document.body.dataset.physical=String(physical);document.body.dataset.countryRegion=String(countryRegions.has(region));shapeLabel=physical?'Sted på kartet':counties?'Fylke på kartet':'Land på kartet';
     $('kart-selection').hidden=true;$('kart-game').hidden=false;$('targetName').textContent=titles[region];$('targetVerb').textContent=countryRegion()?'Kan du plassere alle?':'Klar for en runde?';$('start').textContent='Laster kart …';setFeedback('Laster kart …');
     for(const id of ['region-capital-option','region-names-option'])$(id).hidden=!countryRegion();
+    modeOption.hidden=!countryRegion();modeSelect.disabled=true;
     if(countryRegion()){advancedInput().disabled=true;namesInput().disabled=true;}
     const url=new URL(location.href);url.searchParams.set('region',region);history.replaceState(null,'',url);
     try {
@@ -706,7 +733,7 @@
       $('restart').textContent=countryRegion()?'Avbryt':'↻ Ny runde';$('restart').setAttribute('aria-label',countryRegion()?'Avbryt':'Start en ny runde');
       if(countryRegion()){advancedInput().checked=false;namesInput().checked=false;}setPhase('ready');
       updateStats();
-      $('map').setAttribute('preserveAspectRatio',physical&&innerWidth>700?'none':'xMidYMid meet');buildMap();window.ClickMapZoom?.setBase();window.dispatchEvent(new Event('resize'));$('statle-top-ten').disabled=!total;$('start').disabled=!total;$('start').textContent=total?'Start →':'Velg minst én kategori';setFeedback('');
+      $('map').setAttribute('preserveAspectRatio',physical&&innerWidth>700?'none':'xMidYMid meet');buildMap();window.ClickMapZoom?.setBase();window.dispatchEvent(new Event('resize'));modeSelect.disabled=!total;$('statle-top-ten').disabled=!total;$('start').disabled=!total;$('start').textContent=total?'Start →':'Velg minst én kategori';setFeedback('');
     }catch(_){if(token!==mapGeneration)return;$('start').textContent='Kartet kunne ikke lastes';setFeedback('Velg kart på nytt for å prøve igjen.','error');}
   }
   if(kart){

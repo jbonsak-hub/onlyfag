@@ -62,7 +62,7 @@ const publishedPoint = name => {
   const projectedY=oldNorth-(state.c[1]-publishedMap.viewBox[1])/publishedMap.viewBox[3]*(oldNorth-oldSouth);
   return canvasPoint([projectedX,projectedY]);
 };
-const mime = {'.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css', '.json':'application/json'};
+const mime = {'.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css', '.json':'application/json','.svg':'image/svg+xml','.png':'image/png'};
 const server = http.createServer((request, response) => {
   const url = new URL(request.url, 'http://localhost');
   const file = path.resolve(root, '.' + decodeURIComponent(url.pathname));
@@ -100,6 +100,7 @@ const server = http.createServer((request, response) => {
   const advance = () => page.clock.fastForward(700);
   const clickTarget = async (name, touch=false) => {
     await page.evaluate(()=>ClickMapZoom.reset());
+    await page.clock.runFor(40); // Let responsive camera observers settle before measuring a click.
     // Frogner remains answerable at an actual overlapping part of Bygdøy.
     let coordinates=name==='Malmøya'&&!touch?malmoykalven:map.states.find(state=>state.n===name).c;
     if(['Lutvann','Nøklevann'].includes(name)) {
@@ -129,6 +130,7 @@ const server = http.createServer((request, response) => {
     const desired=touch?9:3;
     if(point.radius<desired){
       await page.evaluate(({factor,point})=>ClickMapZoom.zoom(factor,point),{factor:Math.min(14,desired/Math.max(.1,point.radius)),point:{x:point.x,y:point.y}});
+      await page.clock.runFor(40);
       point=await inspect();
     }
     assert(point.visible,name+' stays visible when zooming to its real area');
@@ -180,9 +182,9 @@ const server = http.createServer((request, response) => {
     assert.equal(await page.locator('#total-count').textContent(),' / '+total);
     assert.equal(await page.locator('.panel-header .brand').textContent(),'Oslo');
     assert.equal(await page.locator('#targetName').textContent(),'Oslo');
-    assert.equal(await page.locator('.game-panel').evaluate(el=>el.getBoundingClientRect().width),386,'Oslo has a wider default panel');
-    const edgeTargets=await page.evaluate(()=>{const b=document.querySelector('#mapViewport').getBoundingClientRect();return [[.65,1],[.9,b.height-2],[1,b.height*.7]].map(([x,y])=>document.elementFromPoint(x===1?b.right-2:b.left+b.width*x,b.top+y)?.closest('[data-state]')?.dataset.state);});
-    assert(edgeTargets.every(Boolean),'Sourced target areas reach the top, bottom and right of the home view');
+    assert.equal(await page.locator('.game-panel').evaluate(el=>el.getBoundingClientRect().width),260,'Oslo uses the current shared default panel width');
+    const extent=await page.evaluate(()=>{const b=document.querySelector('#mapViewport').getBoundingClientRect(),areas=[...document.querySelectorAll('#states .state')].map(el=>el.getBoundingClientRect());return {top:Math.min(...areas.map(a=>a.top))<=b.top,bottom:Math.max(...areas.map(a=>a.bottom))>=b.bottom,right:Math.max(...areas.map(a=>a.right))>=b.right};});
+    assert(extent.top&&extent.bottom&&extent.right,'Sourced target extent continues past the top, bottom and right of the home view');
     for(const name of ['Lutvann','Nøklevann']){
       const fill=await page.locator('.state[data-state="'+name+'"]').evaluate(el=>getComputedStyle(el.nextElementSibling).fill);
       assert.equal(fill,'rgb(121, 161, 107)','Lake islands share the forest colour');
@@ -295,6 +297,9 @@ const server = http.createServer((request, response) => {
     await checkPanelCamera();
     await capture('boroughs-light');
     const initial = await targets.evaluateAll(elements => Object.fromEntries(elements.map(element => [element.dataset.state, getComputedStyle(element).fill])));
+    // Pin two retry targets first, so a lake or postal area is never the last
+    // unanswered target (where every other click would be already mastered).
+    await page.evaluate(names=>{window.GeoOnline.startStatle=begin=>begin(names);},['Jar','Bogstadvannet',...map.states.map(s=>s.n).filter(name=>!['Jar','Bogstadvannet'].includes(name))]);
     await page.locator('#start').click();
     await page.waitForFunction(() => document.body.dataset.phase === 'playing');
     const backgroundBefore=await page.locator('#completed,#mistakes').allTextContents();
@@ -303,12 +308,16 @@ const server = http.createServer((request, response) => {
       await page.mouse.click(screen.x,screen.y);
       assert.deepEqual(await page.locator('#completed,#mistakes').allTextContents(),backgroundBefore,'Background clicks never answer a question or add a mistake');
     }
-    const slow = new Set(['Jar','Bogstadvannet']), seen = new Set();
+    const needsRetry = new Set(['Jar','Bogstadvannet']), seen = new Set();
     for (let i = 0; i < total; i++) {
       const name = await page.locator('#targetName').textContent();seen.add(name);
       if(postalAreas.includes(name))assert.equal(await page.locator('#targetVerb').textContent(),'Postområde · klikk på','The bordering Bærum polygons use the truthful postal-area prompt');
-      if(slow.has(name))await page.clock.fastForward(6000);
-      await clickTarget(name);await advance();
+      if(needsRetry.has(name)){const wrong=map.states.find(state=>!seen.has(state.n));await choose(wrong.n);}
+      await page.clock.fastForward(6000);
+      assert.equal(await page.locator('.hint-ring').count(),0,'Waiting six seconds never reveals an Oslo hint');
+      await clickTarget(name);
+      assert.equal(await targets.evaluateAll((els,name)=>els.find(el=>el.dataset.state===name).dataset.band,name),needsRetry.has(name)?'1':'0','Only wrong attempts affect the colour, including slow Oslo answers');
+      await advance();
     }
     assert(seen.has('Sentrum'),'Sentrum is included in the full quiz round');
     for(const name of additions)assert(seen.has(name),name+' is asked and answered in the full round');
@@ -317,15 +326,17 @@ const server = http.createServer((request, response) => {
     assert.equal(await page.locator('#targetName').textContent(), 'Alle stedene er fullført.');
     await page.locator('#repeat-practice-start').click();
     assert.equal(await page.locator('#states .mastered').count(),total-2);
-    assert.equal(await page.locator('#states .retry-pending').count(),2,'Only the slow postal area and lake return to practice');
+    assert.equal(await page.locator('#states .retry-pending').count(),2,'Only the postal area and lake with a wrong attempt return to practice');
     await page.waitForFunction(initial => [...document.querySelectorAll('#states .retry-pending')].every(element => getComputedStyle(element).fill === initial[element.dataset.state]), initial);
     const retried=new Set();
-    for(let i=0;i<2;i++){const name=await page.locator('#targetName').textContent();assert(slow.has(name));retried.add(name);await choose(name);await advance();}
-    assert.deepEqual([...retried].sort(),[...slow].sort(),'Both land and water areas can be practised using the keyboard');
+    for(let i=0;i<2;i++){const name=await page.locator('#targetName').textContent();assert(needsRetry.has(name));retried.add(name);await choose(name);await advance();}
+    assert.deepEqual([...retried].sort(),[...needsRetry].sort(),'Both land and water areas can be practised using the keyboard');
     assert.equal(await page.locator('#targetName').textContent(), 'Alle er grønne!');
     await page.reload(); await page.locator('#start:enabled').waitFor();
+    await page.clock.runFor(60);
     const beforeZoom = await page.locator('#map').getAttribute('viewBox');
     await page.evaluate(() => ClickMapZoom.zoom(1.5));
+    await page.clock.runFor(40); // The camera batches its SVG paint on animation frames.
     assert.notEqual(await page.locator('#map').getAttribute('viewBox'), beforeZoom);
     await page.evaluate(() => ClickMapZoom.reset());
     await page.locator('.map-theme-toggle:visible').first().click();

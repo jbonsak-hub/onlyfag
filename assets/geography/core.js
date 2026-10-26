@@ -348,14 +348,25 @@ function getLandRows(){
     };
   }).filter(x=>x.country&&x.capital&&x.capital!=='—');
 }
+// Keep reference and leaderboard identifiers unchanged; quiz text uses short
+// city names without role/status explanations.
+function quizCapitalName(capital, country = '') {
+  if (country === 'Nederland') return 'Amsterdam';
+  let text = String(capital || '');
+  while (/\([^()]*\)/.test(text)) text = text.replace(/\([^()]*\)/g, '');
+  return text.replace(/\s*\/\s*/g, ', ').replace(/\s+/g, ' ').trim();
+}
+function capitalQuestionPrompt(country) {
+  return `<span class="capital-question"><span class="capital-question-label">Hva heter hovedstaden i</span><span class="capital-country"><span>${escapeGeoHtml(country.country)}?</span>${flagHtml(country,120)}</span></span>`;
+}
 function makeCapitalQuestions(){
   const rows = shuffleArray(getLandRows()).slice(0,5);
   return rows.map((row, i) => {
     const askCapital = Math.random() < 0.55;
     return {
       value: JEOPARDY_VALUES[i],
-      q: askCapital ? `Hva heter hovedstaden i ${row.country}?` : `Hvilket land har ${row.capital} som hovedstad?`,
-      a: askCapital ? row.capital : row.country
+      q: askCapital ? `Hva heter hovedstaden i ${row.country}?` : `Hvilket land har ${quizCapitalName(row.capital,row.country)} som hovedstad?`,
+      a: askCapital ? quizCapitalName(row.capital,row.country) : row.country
     };
   });
 }
@@ -564,7 +575,7 @@ function detectiveHintList(c){
     {label:'Største innsjø',value:c.lake},
     {label:'Lengste elv',value:c.river},
     {label:'Høyeste punkt',value:c.high},
-    {label:'Hovedstad',value:c.capital}
+    {label:'Hovedstad',value:quizCapitalName(c.capital,c.country)}
   ].filter(h=>h.value&&h.value!=='–'&&h.value!=='—');
 }
 function requestDetectiveHint(){
@@ -1110,7 +1121,7 @@ function countryMapCapital(country){
   try{
     const data=getWorldData(), target=normalizeAnswer(country);
     const c=(data.countries||[]).find(x=>normalizeAnswer(x.country)===target);
-    return c&&c.capital?c.capital:null;
+    return c&&c.capital?quizCapitalName(c.capital,c.country):null;
   }catch(e){return null}
 }
 function countryMapHint(){
@@ -1225,8 +1236,8 @@ function buildWorldQuestion(mode, submode){
   }
   if(mode==='capitals'){
     const c=nextCountry(usableCountries); if(!c) return null;
-    if(submode==='capital-country-mc') return mcQuestion(`Hvilket land har ${c.capital} som hovedstad?`,c,usableCountries,x=>x.country,x=>x.country);
-    return mcQuestion(`Hva heter hovedstaden i ${c.country}?`,c,usableCountries,x=>x.capital,x=>x.capital);
+    if(submode==='capital-country-mc') return mcQuestion(`Hvilket land har ${quizCapitalName(c.capital,c.country)} som hovedstad?`,c,usableCountries,x=>x.country,x=>x.country);
+    return mcQuestion(capitalQuestionPrompt(c),c,usableCountries,x=>x.capital,x=>quizCapitalName(x.capital,x.country),x=>quizCapitalName(x.capital,x.country));
   }
   if(mode==='flags'){
     const flagged=usableCountries.filter(x=>x.flagCode&&x.flag);
@@ -1236,8 +1247,8 @@ function buildWorldQuestion(mode, submode){
   }
   if(mode==='flagcapital'){
     const flagged=usableCountries.filter(x=>x.flagCode&&x.flag),c=nextCountry(flagged); if(!c) return null;
-    if(submode==='capital-flag-mc'){const q=imageMcQuestion(`Hvilket flagg hører til landet med hovedstaden ${c.capital}?`,c,flagged,x=>x.flagCode,x=>flagHtml(x,120),x=>x.country);q.correctFeedback=`Riktig. Flagget tilhører ${c.country}.`;q.wrongFeedback=`Feil. Riktig svar: ${c.country}.`;return q;}
-    const q=mcQuestion(`Hvilken hovedstad hører til dette flagget?<br>${flagHtml(c,135)}`,c,flagged,x=>x.capital,x=>x.capital);q.correctFeedback=`Riktig. Flagget tilhører ${c.country}.`;q.wrongFeedback=`Feil. Riktig svar: ${c.capital}. Flagget tilhører ${c.country}.`;return q;
+    if(submode==='capital-flag-mc'){const q=imageMcQuestion(`Hvilket flagg hører til landet med hovedstaden ${quizCapitalName(c.capital,c.country)}?`,c,flagged,x=>x.flagCode,x=>flagHtml(x,120),x=>x.country);q.correctFeedback=`Riktig. Flagget tilhører ${c.country}.`;q.wrongFeedback=`Feil. Riktig svar: ${c.country}.`;return q;}
+    const q=mcQuestion(`Hvilken hovedstad hører til dette flagget?<br>${flagHtml(c,135)}`,c,flagged,x=>x.capital,x=>quizCapitalName(x.capital,x.country),x=>quizCapitalName(x.capital,x.country));q.correctFeedback=`Riktig. Flagget tilhører ${c.country}.`;q.wrongFeedback=`Feil. Riktig svar: ${quizCapitalName(c.capital,c.country)}. Flagget tilhører ${c.country}.`;return q;
   }
   if(mode==='detective'){
     const detectivePool=usableCountries.filter(x=>detectiveCountryFeature(x.country));
@@ -1273,7 +1284,7 @@ function imageMcQuestion(prompt, correct, all, answerFn, optionHtmlFn, answerTex
   return mcQuestion(prompt, correct, all, answerFn, optionHtmlFn, answerTextFn, optionCount);
 }
 function flagHtml(c,size=100){
-  const src=c.flag||flagUrlFromCode(c.flagCode),w=Math.max(36,Number(size)||100);
+  const src=window.MapSymbols?.lookup(c.country,{kind:'country',code:c.flagCode})?.src||c.flag||flagUrlFromCode(c.flagCode),w=Math.max(36,Number(size)||100);
   return `<img class="quiz-flag-img" src="${src}" alt="Flagget til ${c.country}" style="width:${w}px;max-width:100%;height:auto" loading="eager">`;
 }
 

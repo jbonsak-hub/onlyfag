@@ -94,3 +94,11 @@ body[data-mapwiz-prototype].quiz-mapwiz-playing .geo-map-stage .geo-hud.prototyp
  body[data-mapwiz-prototype].mapwiz-setup .geo-setup-actions{position:fixed;left:0;right:0;bottom:0;z-index:80;margin:0;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--q-paper);border-top:1px solid var(--q-line);box-shadow:0 -3px 15px #173b3310}
  body[data-mapwiz-prototype].mapwiz-setup #geo-start-button{width:100%;min-height:46px}
 }
+
+/* A stale inset from an older panel layout must never hide the task box. */
+body[data-mapwiz-prototype].quiz-mapwiz-playing .geo-map-stage .geo-hud{position:fixed!important;inset:auto!important;left:var(--hud-x,16px)!important;top:var(--hud-y,72px)!important;right:auto!important;bottom:auto!important;height:auto!important;min-height:0!important;max-height:calc(100dvh - 80px)!important;display:flex!important;flex-direction:column!important;overflow:auto!important;z-index:25!important;visibility:visible!important;opacity:1!important}
+body[data-mapwiz-prototype].quiz-mapwiz-playing .geo-map-stage>.quiz-page-header{position:fixed!important;inset:10px auto auto 10px!important;height:auto!important;min-height:32px!important;max-width:calc(100vw - 110px)!important;flex-wrap:wrap;z-index:30!important}
+@media(max-width:700px){
+ body[data-mapwiz-prototype].quiz-mapwiz-playing .geo-map-stage .geo-hud{max-height:46dvh!important}
+ body[data-mapwiz-prototype].quiz-mapwiz-playing .geo-map-stage .geo-hud.prototype-summary{max-height:calc(100dvh - 80px)!important}
+}

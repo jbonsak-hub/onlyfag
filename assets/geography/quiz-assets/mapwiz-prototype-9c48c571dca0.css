@@ -1,0 +1,104 @@
+
+/* A centered setup keeps text, categories and guidance in one compact group. */
+body[data-quiz][data-mapwiz-prototype].mapwiz-setup:not(.quiz-integrated-nav):not(.quiz-frame-host):not(.quiz-external-host) main.content{width:100%!important;margin-left:0!important}
+body[data-mapwiz-prototype].mapwiz-setup .quiz-fullscreen-body{padding:0!important}
+body[data-mapwiz-prototype].mapwiz-setup .geo-guessr-setup-wrap{min-height:100dvh!important;box-sizing:border-box;padding:76px 28px 32px!important;place-items:safe center!important}
+body[data-mapwiz-prototype].mapwiz-setup .quiz-panel-resizer{display:none!important}
+body[data-mapwiz-prototype].mapwiz-setup .quiz-control-rail{width:280px!important;height:auto!important;bottom:auto!important;display:flex;flex-direction:row;align-items:center;gap:6px;padding:12px;background:transparent!important;border:0!important;overflow:visible;pointer-events:none}
+body[data-mapwiz-prototype].mapwiz-setup .quiz-control-rail>*{pointer-events:auto}
+body[data-mapwiz-prototype].mapwiz-setup .quiz-control-rail .quiz-page-header{width:auto!important;margin:0;gap:6px}
+body[data-mapwiz-prototype].mapwiz-setup .quiz-control-rail .quiz-layout-footer{margin:0;padding:0}
+body[data-mapwiz-prototype].mapwiz-setup .quiz-page-back{font-size:12px!important;padding:6px 8px!important}
+body[data-mapwiz-prototype] .mapwiz-prototype-setup{display:grid;grid-template-columns:minmax(230px,280px) minmax(0,1fr);grid-template-rows:auto auto;gap:24px 34px;width:100%!important;max-width:1120px!important;min-height:0!important;margin:0 auto!important;border:1px solid var(--q-line)!important;border-radius:14px!important;padding:28px!important;box-sizing:border-box;box-shadow:0 8px 32px #173b3310!important}
+.prototype-setup-intro{grid-column:1;grid-row:1;padding-top:8px;max-width:280px}
+body[data-mapwiz-prototype] .prototype-setup-intro h3{margin:0 0 12px!important;font-size:30px!important}
+.prototype-intro{font-size:14px;line-height:1.5;color:var(--q-muted);margin:0 0 20px}
+body[data-mapwiz-prototype] .geo-selection-tools{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 12px}
+body[data-mapwiz-prototype] .geo-setup-actions{margin-top:16px;display:flex;gap:8px}
+#prototype-selection{font-size:12px;color:var(--q-muted)}
+.mapwiz-top-ten-button{margin-top:12px;padding:7px 12px;border:1px solid var(--q-line);border-radius:6px;background:var(--q-soft);color:var(--q-ink);font:inherit;font-weight:650;cursor:pointer}
+.mapwiz-top-ten-button:disabled{opacity:.55;cursor:default}
+.mapwiz-top-ten{position:fixed;inset:0;margin:auto;width:min(440px,calc(100vw - 24px));max-height:calc(100dvh - 24px);padding:18px;border:1px solid var(--q-line);border-radius:12px;background:var(--q-paper);color:var(--q-ink);box-shadow:0 12px 48px #0004;overflow:auto;font-size:13px;line-height:1.4}
+.mapwiz-top-ten::backdrop{background:#10251c88}
+.mapwiz-top-ten-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.mapwiz-top-ten-heading h3{margin:0;padding:0;border:0;color:var(--q-ink);font-size:22px}
+.mapwiz-top-ten button{color:var(--q-ink);background:var(--q-soft);border:1px solid var(--q-line);border-radius:5px;padding:7px 10px;font:inherit;font-weight:650;cursor:pointer}
+.mapwiz-top-ten-close{font-size:20px!important;line-height:1;min-width:36px;min-height:36px}
+.mapwiz-top-ten p{color:var(--q-muted);margin:6px 0}
+.mapwiz-top-ten-categories{display:flex;flex-wrap:wrap;gap:4px;margin:10px 0}
+.mapwiz-top-ten-categories span{background:var(--q-soft);border-radius:4px;padding:2px 5px;font-size:11px}
+.mapwiz-score-form{margin:12px 0}
+.mapwiz-score-form label{display:block;margin-bottom:5px;font-weight:650}
+.mapwiz-score-form>div{display:flex;gap:6px}
+.mapwiz-score-form input{width:100%;min-width:0;padding:8px;border:1px solid var(--q-line);border-radius:5px;background:var(--q-paper);color:var(--q-ink);font-size:16px}
+.mapwiz-score-form button{flex:none}
+.mapwiz-top-ten table{font-size:12px;width:100%;border-collapse:collapse;background:var(--q-paper);color:var(--q-ink)}
+.mapwiz-top-ten :is(th,td){padding:7px 5px;border:0;border-bottom:1px solid var(--q-line);background:var(--q-paper)!important;color:var(--q-ink);overflow-wrap:anywhere}
+.mapwiz-top-ten th{background:var(--q-soft)!important}
+.mapwiz-top-ten :is(th,td):nth-child(n+3){text-align:right;white-space:nowrap}
+.mapwiz-top-ten td:nth-child(2){font-weight:650}
+body[data-mapwiz-prototype] .geo-selection-grid{grid-column:2;grid-row:1;align-self:start;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important;margin:0!important}
+body[data-mapwiz-prototype] .geo-selection-item{display:flex;align-items:center;gap:8px;min-height:54px!important;padding:9px!important;border-radius:7px!important;line-height:1.35;min-width:0}
+body[data-mapwiz-prototype] .geo-selection-item strong{font-size:13px!important;display:inline!important}
+body[data-mapwiz-prototype] .geo-selection-item:has(input:checked){background:var(--q-soft)!important;border-color:var(--q-green)!important}
+body[data-mapwiz-prototype] .geo-selection-item input{accent-color:#245845;flex:none;margin:0}
+.prototype-category-count{display:inline!important;font-size:12px;color:var(--q-muted);white-space:nowrap}
+.prototype-notes{grid-column:1/-1;grid-row:2;max-width:none;font-size:12px;color:var(--q-muted);padding:12px 14px;border:1px solid var(--q-line);background:var(--q-soft);border-radius:7px;line-height:1.5;align-self:start}
+.prototype-notes strong{display:block;color:var(--q-ink);margin-bottom:4px}
+/* Only the question, live score and answer feedback belong in the floating box. */
+body[data-mapwiz-prototype].quiz-mapwiz-playing .geo-map-stage .geo-hud{left:var(--hud-x,16px)!important;top:var(--hud-y,auto)!important;bottom:auto!important;right:auto!important;transform:none!important;width:300px!important;max-width:calc(100vw - 16px)!important;gap:8px!important;padding:12px!important;border-radius:10px!important;cursor:grab;touch-action:none;user-select:none}
+body[data-mapwiz-prototype] .geo-hud.is-dragging{cursor:grabbing!important}
+body[data-mapwiz-prototype] .geo-hud:focus-visible{outline:2px solid var(--q-green);outline-offset:2px}
+body[data-mapwiz-prototype] .geo-hud .geo-hud-top{padding-right:0;justify-content:space-between!important;flex-wrap:wrap!important}
+body[data-mapwiz-prototype] .geo-hud .geo-hud-spacer{display:none}
+.prototype-flag{display:block;width:auto!important;max-width:180px!important;height:95px!important;object-fit:contain;align-self:center;pointer-events:auto;-webkit-user-drag:none;cursor:default;filter:drop-shadow(0 1px 3px #15382c30)}
+body[data-mapwiz-prototype].quiz-mapwiz-playing .geo-map-stage .geo-hud.prototype-summary{width:340px!important;max-height:calc(100dvh - 68px)!important;gap:8px!important;overflow:visible!important}
+.prototype-summary h3{font-size:19px!important;text-align:center;margin:0!important;color:var(--q-ink)!important}
+.prototype-results{width:100%;border-collapse:collapse;table-layout:fixed;color:var(--q-ink);font-size:12px;line-height:1.35;text-align:left}
+.prototype-results th{font-size:10px;font-weight:700;color:var(--q-muted);padding:5px 3px;border-bottom:1px solid var(--q-line)}
+.prototype-results td{padding:5px 3px;border-bottom:1px solid var(--q-line);font-variant-numeric:tabular-nums}
+.prototype-results :is(th,td):not(:first-child){width:51px;text-align:right}
+.prototype-result-name{display:flex;align-items:center;gap:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prototype-result-name i{display:inline-block;flex:none;width:7px;height:7px;border-radius:50%}
+.prototype-summary-actions{display:flex;justify-content:center;gap:7px}
+body[data-mapwiz-prototype] .prototype-summary-actions .geo-next-button{margin:0!important;font-size:11px!important;padding:7px 9px!important;min-height:28px}
+@media(min-width:701px) and (max-width:1100px){body[data-mapwiz-prototype] .mapwiz-prototype-setup{grid-template-columns:220px minmax(0,1fr);column-gap:20px;padding:22px!important}body[data-mapwiz-prototype] .geo-selection-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-height:500px){
+ body[data-mapwiz-prototype].quiz-mapwiz-playing .geo-map-stage .geo-hud.prototype-summary{padding:8px!important;gap:5px!important}
+ .prototype-results{font-size:11px;line-height:1.2}.prototype-results td,.prototype-results th{padding:3px}
+ .prototype-summary h3{font-size:17px!important}
+}
+@media(max-width:700px){
+ body[data-mapwiz-prototype] .mapwiz-prototype-setup{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto;gap:18px;min-height:0;padding:18px!important}
+ .prototype-setup-intro{grid-column:1;grid-row:1;padding-top:0;max-width:none}
+ body[data-mapwiz-prototype] .geo-selection-grid{grid-column:1;grid-row:2;grid-template-columns:repeat(2,minmax(0,1fr))!important;width:100%}
+ body[data-mapwiz-prototype] .geo-selection-item{min-height:62px!important;padding:8px!important}
+ body[data-mapwiz-prototype].mapwiz-setup .geo-guessr-setup-wrap{padding:62px 12px 18px!important;place-items:start center!important}
+ body[data-mapwiz-prototype].mapwiz-setup .mapwiz-prototype-setup{margin-top:0!important}
+ .prototype-notes{grid-column:1;grid-row:3;max-width:none}
+ body[data-mapwiz-prototype].mapwiz-setup .quiz-control-rail{position:absolute!important;left:0;top:0;width:280px!important;padding:12px}
+ body[data-mapwiz-prototype].quiz-mapwiz-playing .geo-map-stage .geo-hud{width:min(300px,calc(100vw - 16px))!important;gap:6px!important;padding:10px!important;max-height:46dvh!important}
+ .prototype-flag{height:75px!important;max-width:140px!important}
+ body[data-mapwiz-prototype].quiz-mapwiz-playing .geo-map-stage .geo-hud.prototype-summary{width:min(340px,calc(100vw - 16px))!important;max-height:calc(100dvh - 68px)!important}
+}
+
+body[data-mapwiz-prototype] .prototype-summary h3{border:0!important;padding:0!important}
+body[data-mapwiz-prototype].quiz-mapwiz-playing .geo-map-stage .geo-hud.prototype-summary table.prototype-results :is(thead,tbody,tr,th,td){background:var(--q-paper)!important;color:var(--q-ink)!important;border:0!important}
+body[data-mapwiz-prototype].quiz-mapwiz-playing .geo-map-stage .geo-hud.prototype-summary table.prototype-results :is(th,td){border-bottom:1px solid var(--q-line)!important}
+body[data-mapwiz-prototype].quiz-mapwiz-playing .geo-map-stage .geo-hud.prototype-summary table.prototype-results th{background:var(--q-soft)!important;color:var(--q-muted)!important}
+.prototype-result-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Start stays reachable after scrolling, including landscape phones. */
+@media(max-width:700px),(max-width:1000px) and (max-height:500px){
+ body[data-mapwiz-prototype].mapwiz-setup .geo-guessr-setup-wrap{padding-bottom:calc(94px + env(safe-area-inset-bottom))!important}
+ body[data-mapwiz-prototype].mapwiz-setup .geo-setup-actions{position:fixed;left:0;right:0;bottom:0;z-index:80;margin:0;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--q-paper);border-top:1px solid var(--q-line);box-shadow:0 -3px 15px #173b3310}
+ body[data-mapwiz-prototype].mapwiz-setup #geo-start-button{width:100%;min-height:46px}
+}
+
+/* A stale inset from an older panel layout must never hide the task box. */
+body[data-mapwiz-prototype].quiz-mapwiz-playing .geo-map-stage .geo-hud{position:fixed!important;inset:auto!important;left:var(--hud-x,16px)!important;top:var(--hud-y,72px)!important;right:auto!important;bottom:auto!important;height:auto!important;min-height:0!important;max-height:calc(100dvh - 80px)!important;display:flex!important;flex-direction:column!important;overflow:auto!important;z-index:25!important;visibility:visible!important;opacity:1!important}
+body[data-mapwiz-prototype].quiz-mapwiz-playing .geo-map-stage>.quiz-page-header{position:fixed!important;inset:10px auto auto 10px!important;height:auto!important;min-height:32px!important;max-width:calc(100vw - 110px)!important;flex-wrap:wrap;z-index:30!important}
+@media(max-width:700px){
+ body[data-mapwiz-prototype].quiz-mapwiz-playing .geo-map-stage .geo-hud{max-height:46dvh!important}
+ body[data-mapwiz-prototype].quiz-mapwiz-playing .geo-map-stage .geo-hud.prototype-summary{max-height:calc(100dvh - 80px)!important}
+}

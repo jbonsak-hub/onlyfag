@@ -509,3 +509,62 @@ test('municipality centre API publishes only to its board while preserving norma
   assert.equal(db.prepare('SELECT COUNT(*) n FROM scores').get().n,4);
  }finally{db.close();}
 });
+
+
+test('attempt-only map scoring counts errors without a time penalty and preserves legacy timed sessions',()=>{
+ const configs=[{game:'statle'},{game:'fylker'},{game:'kart',region:'europe'},{game:'kart',region:'rivers'},{game:'kart',region:'lakes',categories:['lakes','seas']},{game:'kommuner',county:'39'},{game:'bydeler',variant:'oslo-areas-v5'}];
+ for(const c of configs)for(const misses of [0,1,2,3,5]){
+  const s=create({...c,scoring:'attempts-v1'},0),q=s.current;
+  const wrong=s.targets.find(name=>name!==q.target);
+  for(let i=0;i<misses;i++)assert.equal(answer(s,{question:q.id,choice:wrong},60000+i*60000).correct,false);
+  const result=answer(s,{question:q.id,choice:q.target},600000);
+  assert.equal(result.band,Math.min(misses,3),c.game+' counts attempts after ten minutes');
+  assert.equal(result.points,[100,75,50,0][Math.min(misses,3)]);
+  assert.equal(s.index,1,'Wrong answers never advance to the next question');
+  assert.equal(s.hints,0,'The error count resets per completed target');
+  assert.equal(s.config.scoring,'attempts-v1');
+  assert.equal(board(s.config),board(c),'The new rules retain the published normal board');
+ }
+ for(const c of configs){
+  const old=create(c,0);assert.equal(answer(old,{question:old.current.id,choice:old.current.target},11000).band,2,'Cached pages and serialized sessions keep timed scoring');
+  const current=create({...c,scoring:'attempts-v1'},0);assert.equal(answer(current,{question:current.current.id,choice:current.current.target,skip:true},1).band,3,'An explicit skip remains zero points');
+ }
+ for(const scoring of [null,'','attempts-v2',{},[]])assert.throws(()=>config({game:'statle',scoring}),/invalid_config/);
+ assert.throws(()=>config({game:'capitals',scoring:'attempts-v1'}),/invalid_config/);
+});
+
+test('new attempts-based board queries retain every existing normal top ten without migrating records',async()=>{
+ const {env,db}=fixture();
+ const configs=[{game:'statle'},{game:'fylker'},...Object.keys(data.kart).map(region=>({game:'kart',region})),...Object.keys(data.kommuner).map(municipalityConfig),{game:'bydeler',variant:'oslo-areas-v5'}];
+ for(const [i,c]of configs.entries())db.prepare('INSERT INTO scores VALUES(?,?,?,?,?,?)').run('existing-'+i,board(c),'Existing '+i,100+i,10000+i,1000+i);
+ const before=db.prepare('SELECT * FROM scores ORDER BY run_hash').all();
+ for(const [i,c]of configs.entries()){
+  const response=await worker.fetch(req('/scores?config='+encodeURIComponent(JSON.stringify({...c,scoring:'attempts-v1',language:'en'}))),env);
+  assert.equal(response.status,200);const {rows}=await response.json();assert.equal(rows.length,1);assert.equal(rows[0].nickname,'Existing '+i);assert.equal(rows[0].score,100+i);
+ }
+ assert.deepEqual(db.prepare('SELECT * FROM scores ORDER BY run_hash').all(),before,'Reading the new rule configuration never changes stored results');
+ db.close();
+});
+
+test('flag-only country-click rounds have separate rankings and complete the same country pool',async()=>{
+ const {env,db}=fixture(),call=async(url,body,token)=>{const r=await worker.fetch(req(url,body,token),env);return {status:r.status,body:await r.json()};};
+ const c={game:'kart',region:'oceania',scoring:'attempts-v1',mode:'flags'};
+ assert.deepEqual(config(c),{game:'kart',language:'no',region:'oceania',scoring:'attempts-v1',mode:'flags'});
+ assert.notEqual(board(c),board({game:'kart',region:'oceania',scoring:'attempts-v1'}));
+ assert.equal(board(c),board({...c,language:'en'}));
+ assert.equal(board(c),board({...c,scoring:undefined}),'Session scoring does not split the mode leaderboard');
+ const start=await call('/session',c);assert.equal(start.status,201);assert.equal(start.body.config.mode,'flags');
+ assert.deepEqual(start.body.questions.map(q=>q.target).sort(),[...data.kart.oceania].sort());
+ const token=start.body.token,mutate=(url,body={})=>call(url,{requestId:crypto.randomUUID(),...body},token);
+ assert.equal((await mutate('/publish',{nickname:'Too early'})).status,400);
+ for(const [i,q]of start.body.questions.entries()){
+  const reply=await mutate('/answer',{question:q.id,choice:q.target});assert.equal(reply.status,200);assert.equal(reply.body.feedback.band,0);
+  if(i<start.body.questions.length-1)assert.equal((await mutate('/next')).status,200);
+ }
+ assert.equal((await mutate('/publish',{nickname:'Flag cartographer'})).status,200);
+ const rows=async c=>(await call('/scores?config='+encodeURIComponent(JSON.stringify(c)))).body.rows;
+ assert.equal((await rows(c))[0].nickname,'Flag cartographer');assert.deepEqual(await rows({...c,language:'en'}),await rows(c));
+ assert.deepEqual(await rows({game:'kart',region:'oceania'}),[],'A flag round never replaces a normal map result');
+ for(const input of [{game:'statle',mode:'flags'},{game:'kart',region:'lakes',mode:'flags'},{game:'kart',region:'seas',mode:'flags'},{game:'kart',region:'mountains',mode:'flags'},{game:'kart',region:'europe',mode:'names'},{game:'kart',region:'europe',mode:null}])assert.throws(()=>config(input),/invalid_config/);
+ db.close();
+});

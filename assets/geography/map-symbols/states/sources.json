@@ -1,0 +1,358 @@
+{
+  "source": "https://github.com/lynnandtonic/usflags.design",
+  "retrieved": "2026-10-26",
+  "archiveSha256": "d722df369b9dea30e82bcff85f506e74a7369a9b1ef996d28467eb92f8bee473",
+  "notes": "Current flag artwork from US Flags [dot] Design, whose guides cite official laws and specifications. Utah and Minnesota are the 2024 designs; Mississippi is the In God We Trust flag adopted 2020/2021. Flag designs are state insignia; no license claim for the upstream website code is made.",
+  "states": [
+    {
+      "name": "Alabama",
+      "code": "AL",
+      "file": "al-1abb4ef7ad52.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-alabama.svg",
+      "sha256": "1abb4ef7ad52f20cbe7cff6301846fb57a9f1188a43b918348607b7abe892054"
+    },
+    {
+      "name": "Alaska",
+      "code": "AK",
+      "file": "ak-e3033d00feef.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-alaska.svg",
+      "sha256": "e3033d00feef8fc01f20de4b91b7b9ab22b2d77179d99565e32d5be1c81fb6a0"
+    },
+    {
+      "name": "Arizona",
+      "code": "AZ",
+      "file": "az-9857c632f6fd.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-arizona.svg",
+      "sha256": "9857c632f6fd2ff0f34e231f318f3e45f2128503fc49bcb72abcfd0c5934a4d3"
+    },
+    {
+      "name": "Arkansas",
+      "code": "AR",
+      "file": "ar-f1463ede35b6.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-arkansas.svg",
+      "sha256": "f1463ede35b67c3424d562fa14abfa1ce648f5a0844b44af172da050e786dec7"
+    },
+    {
+      "name": "California",
+      "code": "CA",
+      "file": "ca-37ccdfcf6a6d.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-california.svg",
+      "sha256": "37ccdfcf6a6db8bc9bf2134e1c6fc6dcc18a1887cd51335a65d98bb33b2169a6"
+    },
+    {
+      "name": "Colorado",
+      "code": "CO",
+      "file": "co-7fdc86b49cf6.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-colorado.svg",
+      "sha256": "7fdc86b49cf6a88e77e6e6c2579b24c2178a039dbe1b4933904862ac4113ebbe"
+    },
+    {
+      "name": "Connecticut",
+      "code": "CT",
+      "file": "ct-08b2c29d9a2b.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-connecticut.svg",
+      "sha256": "08b2c29d9a2b4aa39d5a5f7c315be70a53dec2e415b817496adc34b6b431884c"
+    },
+    {
+      "name": "Delaware",
+      "code": "DE",
+      "file": "de-1bf1f506f029.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-delaware.svg",
+      "sha256": "1bf1f506f0296dec398f517a398cefc5449d672afeb959e53eacbb5cc4840048"
+    },
+    {
+      "name": "Florida",
+      "code": "FL",
+      "file": "fl-907f0f53d5a9.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-florida.svg",
+      "sha256": "907f0f53d5a9345ad62059d66061f8c80c8b3eb92d2c22f9422d1fbdafa13c14"
+    },
+    {
+      "name": "Georgia",
+      "code": "GA",
+      "file": "ga-a39b997fb1c9.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-georgia.svg",
+      "sha256": "a39b997fb1c9532efbc596428c044828b434006341c8e9be40f25084da8ca5e5"
+    },
+    {
+      "name": "Hawaii",
+      "code": "HI",
+      "file": "hi-3fea7d40dfe8.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-hawaii.svg",
+      "sha256": "3fea7d40dfe8ad1679163717696107a01f6a1c868bb4fd61c3a311d948f89994"
+    },
+    {
+      "name": "Idaho",
+      "code": "ID",
+      "file": "id-63e1b849f594.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-idaho.svg",
+      "sha256": "63e1b849f5947369d7137c119d176bd5ba6c1927c392ebc36e99746a95741021"
+    },
+    {
+      "name": "Illinois",
+      "code": "IL",
+      "file": "il-6922d9728017.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-illinois.svg",
+      "sha256": "6922d9728017f6d82f0a4625cf223d54a72420b4009124b927e2cc9a7c78c682"
+    },
+    {
+      "name": "Indiana",
+      "code": "IN",
+      "file": "in-bca977b81fc6.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-indiana.svg",
+      "sha256": "bca977b81fc61f7650bcc971e231573a8676cdf4408353c1d1cb6a02107abf99"
+    },
+    {
+      "name": "Iowa",
+      "code": "IA",
+      "file": "ia-f16324fdbc18.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-iowa.svg",
+      "sha256": "f16324fdbc1868367adb1b33763db17d3ee57975c68e98187c675c1e566fbb89"
+    },
+    {
+      "name": "Kansas",
+      "code": "KS",
+      "file": "ks-ec3392e86ba3.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-kansas.svg",
+      "sha256": "ec3392e86ba3277a75782f668663d0adcd8360cf7d84ef7312ae6e603932bbf9"
+    },
+    {
+      "name": "Kentucky",
+      "code": "KY",
+      "file": "ky-6042304bcc52.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-kentucky.svg",
+      "sha256": "6042304bcc52c42bf99990e2f36e9f084b3e5eecb33d0ee6ac10c9aa4d89bd19"
+    },
+    {
+      "name": "Louisiana",
+      "code": "LA",
+      "file": "la-7c6ca46439ad.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-louisiana.svg",
+      "sha256": "7c6ca46439adf72959d9132147db55870615202b3e067cac919656294d5f6f75"
+    },
+    {
+      "name": "Maine",
+      "code": "ME",
+      "file": "me-218c2b3d0a4b.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-maine.svg",
+      "sha256": "218c2b3d0a4b44df2517b46dac1bf1186a712957bca353665c78786acb6e54e4"
+    },
+    {
+      "name": "Maryland",
+      "code": "MD",
+      "file": "md-7910a2ac2c1e.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-maryland.svg",
+      "sha256": "7910a2ac2c1e2bc923e5fd4394b7355c728ffbbde0173bcbaa90eedabeba2198"
+    },
+    {
+      "name": "Massachusetts",
+      "code": "MA",
+      "file": "ma-32d60410f758.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-massachusetts.svg",
+      "sha256": "32d60410f758218e1ddae11f8c5c1b52b2656efeb08a775fc5b3f3452e940699"
+    },
+    {
+      "name": "Michigan",
+      "code": "MI",
+      "file": "mi-dfc5fbf8b574.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-michigan.svg",
+      "sha256": "dfc5fbf8b574a2e844de44250766dbde3b8585ba16af1fc18e7ab6ae6220b1da"
+    },
+    {
+      "name": "Minnesota",
+      "code": "MN",
+      "file": "mn-605d77f69464.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-minnesota.svg",
+      "sha256": "605d77f69464432797f143d67c95a907724849fc9a77e18f000e2cc0dcfb01bc"
+    },
+    {
+      "name": "Mississippi",
+      "code": "MS",
+      "file": "ms-407d98faf122.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-mississippi.svg",
+      "sha256": "407d98faf12222574f79932f96760bd7710dc7013b5682c0781337b72bb9b307"
+    },
+    {
+      "name": "Missouri",
+      "code": "MO",
+      "file": "mo-ccc17b2e516a.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-missouri.svg",
+      "sha256": "ccc17b2e516a8d8c0ac0eb3295323eb2f2a2f362de2491f077d7c0989e40b7ae"
+    },
+    {
+      "name": "Montana",
+      "code": "MT",
+      "file": "mt-487109f3e89d.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-montana.svg",
+      "sha256": "487109f3e89d13a6940fe09356d94b604758cd4b9866ea006e68d5d68aa4601c"
+    },
+    {
+      "name": "Nebraska",
+      "code": "NE",
+      "file": "ne-688dd18fa6ab.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-nebraska.svg",
+      "sha256": "688dd18fa6ab4e11695bab3d1c63e0b384ec8d76d1407f458f25c73a54b50bf8"
+    },
+    {
+      "name": "Nevada",
+      "code": "NV",
+      "file": "nv-486cacbcb2a6.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-nevada.svg",
+      "sha256": "486cacbcb2a6594d4a5ba390c7d039b711984d4fe9ec49ba7a71ddee3bc4889a"
+    },
+    {
+      "name": "New Hampshire",
+      "code": "NH",
+      "file": "nh-afd83e771b14.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-new-hampshire.svg",
+      "sha256": "afd83e771b143958b453fde5402e2b0db6583766734e24f68d6829885cdbdf9d"
+    },
+    {
+      "name": "New Jersey",
+      "code": "NJ",
+      "file": "nj-94918d1c5bda.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-new-jersey.svg",
+      "sha256": "94918d1c5bda539c379203188625db31da69427b16260d481019cf56de8bc5a8"
+    },
+    {
+      "name": "New Mexico",
+      "code": "NM",
+      "file": "nm-e260bb1ea113.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-new-mexico.svg",
+      "sha256": "e260bb1ea1137a508829d070f5fb4d4812d59629ba41e84660e450a55c64a74e"
+    },
+    {
+      "name": "New York",
+      "code": "NY",
+      "file": "ny-d393ae8f7896.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-new-york.svg",
+      "sha256": "d393ae8f7896cc99515de8a3bde1cd897974bc1ee3ab531690e72f3368ec983c"
+    },
+    {
+      "name": "North Carolina",
+      "code": "NC",
+      "file": "nc-baeaa45de039.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-north-carolina.svg",
+      "sha256": "baeaa45de039a4e1af250a816e30f6e7b63ce2ebe273d220b0225f70333e8c9d"
+    },
+    {
+      "name": "North Dakota",
+      "code": "ND",
+      "file": "nd-453a0dd0dfcc.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-north-dakota.svg",
+      "sha256": "453a0dd0dfccf81cb294c17f9f5529236b4e8d039c467f6822cc349ab8b8de29"
+    },
+    {
+      "name": "Ohio",
+      "code": "OH",
+      "file": "oh-c4255f71b6c6.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-ohio.svg",
+      "sha256": "c4255f71b6c6dd192b5485eb08c9dd5e44f5200ee6b5c9e1c962796901e941c5"
+    },
+    {
+      "name": "Oklahoma",
+      "code": "OK",
+      "file": "ok-138b26e0e4dc.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-oklahoma.svg",
+      "sha256": "138b26e0e4dc2962f0250a61d1157f0e49b80e22a66766169bb267626f47482a"
+    },
+    {
+      "name": "Oregon",
+      "code": "OR",
+      "file": "or-f20667379fc1.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-oregon.svg",
+      "sha256": "f20667379fc134613baf25f2d189084e6d3e2c40b834d9ca85044b29aec89d17"
+    },
+    {
+      "name": "Pennsylvania",
+      "code": "PA",
+      "file": "pa-84e9093426e7.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-pennsylvania.svg",
+      "sha256": "84e9093426e70463dff5a1e4d86068fe64deae17a5de818decf349d08bc33329"
+    },
+    {
+      "name": "Rhode Island",
+      "code": "RI",
+      "file": "ri-5f949fa99f86.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-rhode-island.svg",
+      "sha256": "5f949fa99f8679ab3780f6f14bce19808dd76a015558c10af43f5905159487c6"
+    },
+    {
+      "name": "South Carolina",
+      "code": "SC",
+      "file": "sc-001d890a7b4b.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-south-carolina.svg",
+      "sha256": "001d890a7b4b8c3fd62ca03766824ef01b374180063a5656743d52c360b11cbe"
+    },
+    {
+      "name": "South Dakota",
+      "code": "SD",
+      "file": "sd-bd875b08f3c1.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-south-dakota.svg",
+      "sha256": "bd875b08f3c17f6abf3070f628283f9507411fc2833dc991a87605d1c90a5ae6"
+    },
+    {
+      "name": "Tennessee",
+      "code": "TN",
+      "file": "tn-5b023122e46d.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-tennessee.svg",
+      "sha256": "5b023122e46d2aa088f9e1aa3a34e13eae16755404efb4feaf05da533c26ba0d"
+    },
+    {
+      "name": "Texas",
+      "code": "TX",
+      "file": "tx-5c29b7143e2f.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-texas.svg",
+      "sha256": "5c29b7143e2f23934e356bc873484a4b01f20aee3b6fb01b400f48731bd7daa5"
+    },
+    {
+      "name": "Utah",
+      "code": "UT",
+      "file": "ut-21dc3faa3a51.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-utah.svg",
+      "sha256": "21dc3faa3a51a564ed318a6164a745eea19fc27b36ed19b2e486a5e8f77256e3"
+    },
+    {
+      "name": "Vermont",
+      "code": "VT",
+      "file": "vt-02e2296ed4ee.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-vermont.svg",
+      "sha256": "02e2296ed4ee7d5bdf2a6367f61903aa9c22f907473b1c1241051cd63758187c"
+    },
+    {
+      "name": "Virginia",
+      "code": "VA",
+      "file": "va-bfcc6c01cc73.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-virginia.svg",
+      "sha256": "bfcc6c01cc73a1f0be0926798b93f7a2888463180e77bfc5b0373edfb82629d4"
+    },
+    {
+      "name": "Washington",
+      "code": "WA",
+      "file": "wa-744c38070f36.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-washington.svg",
+      "sha256": "744c38070f369b07594aabd28c0e7c61365b59743dab00c9fc841925cd700f2f"
+    },
+    {
+      "name": "West Virginia",
+      "code": "WV",
+      "file": "wv-4c09268d6b43.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-west-virginia.svg",
+      "sha256": "4c09268d6b43da098e70d61d668311c78134b3aa2d70395b361927c5b8568f97"
+    },
+    {
+      "name": "Wisconsin",
+      "code": "WI",
+      "file": "wi-06b356f56fd9.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-wisconsin.svg",
+      "sha256": "06b356f56fd94841488b3a6724edcdd6e1171f2a0c16bb197496ff9f2b7d0841"
+    },
+    {
+      "name": "Wyoming",
+      "code": "WY",
+      "file": "wy-08ee6b8688ed.svg",
+      "source": "https://github.com/lynnandtonic/usflags.design/blob/main/_assets/images/flag-wyoming.svg",
+      "sha256": "08ee6b8688ed7c3bc0b2f9122f5ae2f004f519da0caa28a61069429b87f96497"
+    }
+  ]
+}
