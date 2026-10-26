@@ -27,6 +27,6 @@ DOM-testen krever `jsdom` (testet med v26). Den kan kjøres med `NODE_PATH` til 
 
 - Ren Node-test: skjema og fasiter for alle oppgaver, feil/ekstra valg, svarnormalisering, hjelpetilstand og repetisjon, stokking.
 - DOM-test: alle 67 oppgaver fullføres via grensesnittets kontroller; delvis riktige svar, fasit, egenvurdering, filter, persistens, mobilmeny, utilgjengelig lagring og avgrenset nullstilling.
-- Visuell kontroll av publisert side utføres separat i skynettleseren. DOM-testen er ikke en visuell nettlesertest.
+- Publisert side kontrollert i skynettleseren: organfigur, organplassering med tastatur og figurmodeller. Ingen horisontal overflyt ved kontrollert skrivebordsbredde. Mobilmenyen er funksjonstestet i DOM; en faktisk mobilvisning ble ikke emulert i skynettleseren.
 
 Felles `assets/analytics.js` lastes én gang på siden. Elevsvar sendes ikke til noen tjeneste av øvingsmotoren.
