@@ -1,4 +1,4 @@
-/* Current river inventory, geographic courses and archived top-ten selection. */
+/* Current river inventory, geographic courses and the current top ten. */
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),crypto=require('node:crypto'),assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..'),asset=name=>path.join(root,'assets/geography/physical-maps',name);
 const legacyBytes=fs.readFileSync(asset('world-water.json')),legacy=JSON.parse(legacyBytes),current=JSON.parse(fs.readFileSync(asset('world-water-v2.json'),'utf8'));
@@ -87,7 +87,7 @@ async function browserChecks(){
           let result,status=200;
           if(endpoint.pathname==='/scores'){
             const config=JSON.parse(endpoint.searchParams.get('config'));boards.push(config);
-            result={rows:[{nickname:config.variant==='rivers-v2'?'Current River Explorer':'Archived River Explorer',score:config.variant==='rivers-v2'?4100:4900,time_ms:120000}]};
+            result={rows:[{nickname:'Current River Explorer',score:4100,time_ms:120000}]};
           }else if(endpoint.pathname==='/session'){
             const {requestId,...config}=JSON.parse(request.postData());sessions.push(config);
             const names=['Jordan','Irrawaddy',...rivers.map(s=>s.n).filter(n=>!additions.includes(n))];
@@ -113,19 +113,12 @@ async function browserChecks(){
       assert.equal(sessions.length,0,'Discovering new rivers does not start a ranked game');
       const scoreResponse=()=>page.waitForResponse(response=>new URL(response.url()).hostname==='river-scores.test'&&new URL(response.url()).pathname==='/scores');
       let response=scoreResponse();await page.locator('#statle-top-ten').click();await response;
-      let board=page.locator('#geo-online-board[open]'),select=board.locator('.river-ranking-selection select');
+      const board=page.locator('#geo-online-board[open]');
       await board.getByText('Current River Explorer',{exact:true}).waitFor();
-      assert.equal(await select.inputValue(),'rivers-v2');assert.equal(await select.locator('option[value="rivers-v2"]').textContent(),'41 elver');
-      assert.match(await select.locator('option[value="legacy"]').textContent(),/49 elver/);
+      assert.equal(await board.locator('select,.river-ranking-selection').count(),0,'The river top ten has no old-selection control');
+      assert(!/49 elver|Previous selection|Tidligere utvalg/.test(await board.innerText()),'The current board does not offer the former 49-river selection');
       assert.equal(boards.at(-1).variant,'rivers-v2');assert.equal(boards.at(-1).scoring,'attempts-v1');
-      response=scoreResponse();await select.selectOption('legacy');await response;
-      board=page.locator('#geo-online-board[open]');select=board.locator('.river-ranking-selection select');
-      await board.getByText('Archived River Explorer',{exact:true}).waitFor();
-      assert.equal(await select.inputValue(),'legacy');assert.equal(Object.hasOwn(boards.at(-1),'variant'),false,'The legacy49 request uses its original board identity');
-      assert.equal(boards.at(-1).game,'kart');assert.equal(boards.at(-1).region,'rivers');assert.equal(boards.at(-1).scoring,'attempts-v1');
-      assert(!await board.getByText('Current River Explorer',{exact:true}).count(),'Old and current results remain separate');
-      response=scoreResponse();await select.selectOption('rivers-v2');await response;
-      board=page.locator('#geo-online-board[open]');await board.getByText('Current River Explorer',{exact:true}).waitFor();assert.equal(boards.at(-1).variant,'rivers-v2');
+      assert(boards.every(config=>config.game==='kart'&&config.region==='rivers'&&config.variant==='rivers-v2'),'Every visible ranking request uses the current river selection');
       await board.locator('.mapwiz-top-ten-close').click();
       await page.locator('#start').click();await page.waitForFunction(()=>document.body.dataset.phase==='playing');
       assert.equal(sessions.length,1);assert.equal(sessions[0].game,'kart');assert.equal(sessions[0].region,'rivers');assert.equal(sessions[0].variant,'rivers-v2');assert.equal(sessions[0].scoring,'attempts-v1');
@@ -138,12 +131,12 @@ async function browserChecks(){
       await page.waitForFunction(()=>document.querySelector('.physical-target[data-state="Irrawaddy"]').classList.contains('found'));
       assert.deepEqual(answers.slice(0,2).map(answer=>answer.choice),['Jordan','Irrawaddy'],'Both added courses submit their own exact river names');
       assert.equal(await page.locator('.physical-target').count(),41,'Ranked play preserves the selected inventory');
-      assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'The river quiz and ranking selection fit the viewport');
+      assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'The river quiz and ranking fit the viewport');
       if(process.env.RIVER_SELECTION_SCREENSHOTS){fs.mkdirSync(process.env.RIVER_SELECTION_SCREENSHOTS,{recursive:true});await page.screenshot({path:path.join(process.env.RIVER_SELECTION_SCREENSHOTS,'rivers41-'+viewport.width+'.png')});}
       await context.close();
     }
     assert.deepEqual(errors,[],'No page errors');assert.deepEqual(missing,[],'Every local dependency loads');
-    console.log('PASS river browser: all41 targets, real Jordan/Irrawaddy discovery and answers, rivers-v2 session, separate current41/archived49 ranking selection on desktop/mobile; all external requests mocked');
+    console.log('PASS river browser: all41 targets, real Jordan/Irrawaddy discovery and answers, rivers-v2 session, current ranking without archived-selection controls on desktop/mobile; all external requests mocked');
   }finally{await browser.close();}
 }
 (async()=>{dataChecks();if(!process.argv.includes('--data-only'))await browserChecks();})().catch(error=>{console.error(error);process.exitCode=1;}).finally(()=>server.close());

@@ -59,7 +59,7 @@ og kategoriorden påvirker ikke listeidentiteten. Gamle verdensdelslister behold
 
 | Fysisk kart | Mål | Maks poeng |
 | --- | ---: | ---: |
-| Verdens elver | 49 | 4900 |
+| Verdens elver | 41 | 4100 |
 | Fjellkjeder og høyland | 34 | 3400 |
 | Innsjøer | 33 | 3300 |
 | Hav og sjøområder | 44 | 4400 |
@@ -123,6 +123,15 @@ variant has a separate, language-shared board, so records from different round
 lengths are not compared. Existing49 results and serialized sessions are neither
 deleted nor migrated. The data builder checks the old file checksum and the
 exact approved removal and addition sets before emitting the catalogue.
+
+The current frontend only offers the 41-river top ten. It does not expose the
+former 49-river board through a selection control. The legacy backend contract
+remains for cached clients; this interface change neither deletes database
+records nor changes the current board identity.
+
+For future reductions of quiz target pools, ask the user how existing results
+should be handled before implementing a ranking policy. Do not automatically
+add historical-board controls, migrate results, or delete them.
 
 Build `world-water-v2.json` and `data.json`, run the API/browser checks, then
 publish the compatible Worker before the frontend. No D1 schema change or

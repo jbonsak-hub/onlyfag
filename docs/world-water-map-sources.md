@@ -18,6 +18,13 @@ retain their original board, while the current 41-target round uses its explicit
 variant. Lakes, seas, background geometry and retained river paths are unchanged.
 The builder checks these invariants offline and only writes the new snapshot.
 
+The current top-ten dialog only shows the current 41-river board; it has no
+control for viewing the former 49-river selection. Legacy assets and server
+validation remain for cached clients, without an archive entry in the current
+interface. Before a future reduction of a quiz selection, ask the user how to
+handle its existing results. Do not automatically add a historical ranking
+selector or choose a migration/deletion policy.
+
 ## Added Irrawaddy and Jordan geometry
 
 The additions are pinned in
