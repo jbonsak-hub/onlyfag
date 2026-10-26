@@ -111,19 +111,21 @@ async function capture(page,name){
         await page.goto(base+url);await page.locator('#start:enabled').waitFor();
         await page.locator('#statle-basemap').click();await page.locator('.map-basemap-layer:not([hidden])').waitFor();await page.mouse.move(2,2);
         const styles=await page.locator('#states .state').evaluateAll(els=>els.map(el=>({width:parseFloat(getComputedStyle(el).strokeWidth),stroke:getComputedStyle(el).stroke,dash:getComputedStyle(el).strokeDasharray,forest:el.classList.contains('oslo-forest')})));
-        assert(styles.length>0&&styles.every(style=>style.width>=1.8&&style.stroke!=='none'),'Terrain has clearly drawn target outlines: '+name);
-        assert.equal(await page.locator('#terrain-boundary-halos path').count(),styles.length,'Every target edge has a passive contrast halo');
-        assert.equal(await page.locator('#terrain-boundary-halos [data-state],#terrain-boundary-halos [tabindex]').count(),0,'Halos never become quiz targets');
-        assert(styles.filter(style=>style.forest).every(style=>style.dash==='none'),'Forest outlines stay continuous over terrain');
+        assert(styles.length>0&&styles.every(style=>style.width>0&&style.width<=1.25&&style.stroke!=='none'),'Original thin target strokes are restored: '+name);
+        assert.equal(await page.locator('#terrain-boundary-halos').count(),0,'The thick all-target halo is removed');
+        assert.equal(await page.locator('#terrain-playable-mask path').count(),styles.length,'Separate mask paths preserve the union of playable areas');
+        assert(await page.locator('#terrain-selection-scope').isVisible(),'Only outside the selection is quietened');
+        assert.equal(await page.locator('#terrain-selection-scope [data-state],#terrain-selection-scope [tabindex]').count(),0,'The outside treatment never becomes a quiz target');
+        assert(styles.filter(style=>style.forest).every(style=>style.dash!=='none'),'Forests retain their original thin dashed outline');
         if(name==='municipalities'||name==='oslo'){
-          assert(await page.locator('.municipality-border-line').first().evaluate(el=>parseFloat(getComputedStyle(el).strokeWidth)>=1.8));
-          assert(await page.locator('.municipality-border-halo').first().evaluate(el=>parseFloat(getComputedStyle(el).strokeWidth)>=4.2));
+          assert(await page.locator('.municipality-border-line').first().evaluate(el=>parseFloat(getComputedStyle(el).strokeWidth)===1.65));
+          assert(await page.locator('.municipality-border-halo').first().evaluate(el=>parseFloat(getComputedStyle(el).strokeWidth)===3.6));
         }
         await capture(page,'terrain-'+name+'-'+viewport.width);
       }
       await context.close();
     }
     assert.deepEqual(errors,[],'No page errors');assert.deepEqual(missing,[],'Every local dependency loads');
-    console.log('PASS map options/footer: named country flags, exclusive Statle city/capital options with state flags, separated names option, footer Top 10 and strong terrain boundaries on desktop/mobile');
+    console.log('PASS map options/footer: named country flags, exclusive Statle city/capital options with state flags, separated names option, footer Top 10 and original thin terrain boundaries and quiet outside areas on desktop/mobile');
   }finally{await browser.close();}
 })().catch(error=>{console.error(error);process.exitCode=1;}).finally(()=>server.close());

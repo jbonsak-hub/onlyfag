@@ -264,37 +264,11 @@ body[data-quiz] .game-panel footer{margin-top:auto;padding-top:18px;flex-shrink:
  body[data-quiz] .game-panel footer{padding-top:4px}
 }
 
-/* Terrain has its own detail and shadows: region edges need a stronger,
-   continuous foreground outline, including the playable outer boundary. */
-body[data-statle-basemap="physical"] #map .state{
- stroke:#203c2d;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round;
- vector-effect:non-scaling-stroke;
-}
-body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physical"] #map .state.oslo-forest{
- stroke:#203c2d;stroke-width:2;stroke-dasharray:none;
-}
-body[data-statle-basemap="physical"] #map .state:hover,
-body[data-statle-basemap="physical"] #map .state:focus-visible,
-body[data-statle-basemap="physical"] #map .state.hovered{
- stroke:#fffdf0;stroke-width:2.5;
-}
-body[data-statle-basemap="physical"] #map .state.correct{
- stroke:#efffe8;stroke-width:2.5;
-}
-body[data-statle-basemap="physical"] #map .state.wrong{
- stroke:#ffe1cd;stroke-width:2.1;
-}
-body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physical"] #map .municipality-border-halo{
- stroke:#fffdf0;stroke-width:4.2;
-}
-body:is([data-quiz="kommuner"],[data-quiz="bydeler"])[data-statle-basemap="physical"] #map .municipality-border-line{
- stroke:#203c2d;stroke-width:1.8;
-}
-
-/* A pale under-stroke keeps administrative outer edges legible over relief. */
-#terrain-boundary-halos{display:none;pointer-events:none}
-body[data-statle-basemap="physical"] #terrain-boundary-halos{display:block}
-.terrain-boundary-halo{fill:none;stroke:#fffbe8;stroke-width:4.4;stroke-linejoin:round;stroke-linecap:round;pointer-events:none}
+/* Only areas outside the playable map are quietened over terrain.
+   The original internal and coastal strokes keep their former weights. */
+#terrain-selection-scope{display:none;pointer-events:none}
+body[data-statle-basemap="physical"] #terrain-selection-scope{display:inline}
+.terrain-outside-shade{fill:#e8ece7;fill-opacity:.42;pointer-events:none}
 /* Ranking is a navigation action, beside map choice rather than round options. */
 body[data-quiz] .game-panel footer #statle-top-ten{display:block!important;margin:0;width:100%;flex-shrink:0}
 body[data-quiz] .game-panel footer{gap:10px}

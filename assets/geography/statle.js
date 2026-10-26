@@ -138,17 +138,31 @@
     }
     return {x:b.x * scale + x, y:b.y * scale + y, width:b.width * scale, height:b.height * scale};
   }
+  let stopTerrainScope=null;
+  function clearTerrainScope(){stopTerrainScope?.();stopTerrainScope=null;$('terrain-selection-scope')?.remove();}
   function buildMap() {
-    $('terrain-boundary-halos')?.remove();
+    clearTerrainScope();
     buildMapGeometry();
-    // A passive cream outline separates all target edges from terrain textures.
-    const halos=svgNode('g',{id:'terrain-boundary-halos','aria-hidden':'true','pointer-events':'none'});
+    // Separate black paths make a union, preserving overlaps such as forest
+    // inside a borough. Only neighboring areas receive the passive tint.
+    const scope=svgNode('g',{id:'terrain-selection-scope','aria-hidden':'true','pointer-events':'none'});
+    const mask=svgNode('mask',{id:'terrain-playable-mask',maskUnits:'userSpaceOnUse',maskContentUnits:'userSpaceOnUse',style:'mask-type:luminance'});
+    const outside=svgNode('rect',{fill:'white'});mask.append(outside);
     for(const shape of $('states').querySelectorAll('path.state')) {
       const transforms=[];
       for(let node=shape;node&&node!==$('states');node=node.parentElement)if(node.hasAttribute('transform'))transforms.unshift(node.getAttribute('transform'));
-      halos.append(svgNode('path',{d:shape.getAttribute('d'),transform:transforms.join(' '),'fill-rule':'evenodd',class:'terrain-boundary-halo','vector-effect':'non-scaling-stroke'}));
+      mask.append(svgNode('path',{d:shape.getAttribute('d'),transform:transforms.join(' '),'fill-rule':'evenodd',fill:'black',stroke:'none'}));
     }
-    $('states').before(halos);
+    const shade=svgNode('rect',{class:'terrain-outside-shade',mask:'url(#terrain-playable-mask)'});
+    scope.append(mask,shade);$('states').before(scope);
+    // Keep the mask raster bounded to the visible canvas, also when zooming.
+    const sizeScope=()=>{
+      const svg=$('map'),rect=svg.getBoundingClientRect(),matrix=svg.getScreenCTM();
+      if(!matrix||!rect.width||!rect.height)return;
+      const inverse=matrix.inverse(),a=new DOMPoint(rect.left,rect.top).matrixTransform(inverse),b=new DOMPoint(rect.right,rect.bottom).matrixTransform(inverse);
+      for(const node of [mask,outside,shade])for(const [key,value] of Object.entries({x:a.x,y:a.y,width:b.x-a.x,height:b.y-a.y}))if(node.getAttribute(key)!==String(value))node.setAttribute(key,value);
+    };
+    stopTerrainScope=window.ClickMapZoom?.subscribe(sizeScope);sizeScope();
   }
   function buildMapGeometry() {
     if (municipalities || boroughs) {
@@ -631,7 +645,7 @@
     citiesMode=false;cityData=null;cityMarkerScale='';delete document.body.dataset.kartVariant;delete document.body.dataset.municipalityQuestionMode;
     mastered.clear();retrying=false;continentPractice=false;repeatOffer.hidden=true;delete document.body.dataset.retry;
     generation++;clearEffects();elements.clear();markers.clear();centers.clear();
-    $('terrain-boundary-halos')?.remove();$('states').replaceChildren();$('smallStates').replaceChildren();$('insetSeparators').setAttribute('d','');
+    clearTerrainScope();$('states').replaceChildren();$('smallStates').replaceChildren();$('insetSeparators').setAttribute('d','');
     $('map').setAttribute('viewBox','0 0 900 550');
     results=new Map();index=0;mistakes=0;totalTime=0;setPhase('ready');locked=false;
     $('completed').textContent='0';$('elapsed').textContent='00:00';$('mistakes').textContent='0';$('progressFill').style.width='0%';
