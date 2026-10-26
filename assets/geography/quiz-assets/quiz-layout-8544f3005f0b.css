@@ -1,0 +1,645 @@
+/* Statle palette and compact chrome. Scoped so geography reference modules keep
+   their layout; framed games receive this stylesheet only on their own pages. */
+:root{--quiz-nav-height:0px}
+.geoquiz-language[data-game-language]{display:inline-flex;flex:none;align-items:center}
+.geoquiz-language[data-game-language] button{display:flex;align-items:center;justify-content:center;width:26px;height:26px;padding:2px;border:1px solid var(--q-line,#c6d9ce);border-radius:6px;background:var(--q-paper,#fffefa);color:var(--q-green,#245845);cursor:pointer}
+.geoquiz-language[data-game-language] button:disabled{opacity:.4;cursor:default}
+.geoquiz-language[data-game-language] button:focus-visible{outline:2px solid var(--q-green,#245845);outline-offset:2px}
+.quiz-external-tools{position:fixed;left:10px;top:10px;display:flex;align-items:center;gap:6px;z-index:11000}
+.quiz-external-tools .quiz-floating-menu{position:static!important}
+body[data-quiz],body[data-quiz-layout]{--q-bg:#f6f7f3;--q-paper:#fffefa;--q-ink:#28463d;--q-muted:#586b5b;--q-line:#d8e2d3;--q-soft:#eaf1e2;--q-green:#245845;--q-water:#abd2d9;--q-panel:280px;font-family:Inter,"Segoe UI",sans-serif;background:var(--q-bg);color:var(--q-ink)}
+body[data-quiz].dark-mode,body[data-quiz-layout].dark{--q-bg:#15251d;--q-paper:#1c3025;--q-ink:#e7f1e5;--q-muted:#b1c2ac;--q-line:#3c5540;--q-soft:#2c4633;--q-green:#80bb8d}
+body[data-quiz] .quiz-page-header{position:static;inset:auto;display:flex;height:auto;min-height:32px;gap:8px;padding:0;margin:0 0 16px;background:transparent;color:var(--q-ink);border:0;z-index:auto}
+body[data-quiz] .quiz-page-title{display:none}.quiz-home{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:28px;font-weight:700;line-height:1;letter-spacing:-.055em;color:var(--q-ink);text-decoration:none;margin-right:auto}
+body[data-quiz] .quiz-page-theme,body[data-quiz-layout] .quiz-page-theme{border:1px solid var(--q-line);background:var(--q-paper);color:var(--q-green);border-radius:6px;width:32px;height:32px;padding:0;font-size:17px;cursor:pointer}
+.quiz-layout-footer{margin-top:auto;padding-top:16px}.quiz-page-back{display:inline-flex;font:650 14px/1.25 "Segoe UI",sans-serif!important;padding:9px 11px!important;border:1px solid var(--q-line)!important;border-radius:6px!important;background:var(--q-soft)!important;color:var(--q-green)!important;text-decoration:none!important}
+body[data-quiz] .quiz-floating-menu{display:block!important;position:fixed;left:10px;top:10px;z-index:11000;border:1px solid var(--q-line);border-radius:7px;padding:8px 11px;background:var(--q-paper);color:var(--q-green);font:650 12px "Segoe UI",sans-serif;box-shadow:0 2px 7px #234f4515}
+body[data-quiz] .sidebar{display:block!important;position:fixed!important;top:0!important;left:0;width:300px!important;max-width:calc(100vw - 20px);height:100dvh!important;z-index:10990;background:var(--q-paper)!important;color:var(--q-ink);transform:translateX(-105%);visibility:hidden;box-shadow:6px 0 30px #173b3328;padding-top:48px!important}
+body[data-quiz].sidebar-open .sidebar{transform:none;visibility:visible}body[data-quiz] .sidebar h1,body[data-quiz] .sidebar .menu-header,body[data-quiz] .sidebar .submenu-item{color:var(--q-ink)!important;background:transparent!important}.sidebar .onlyfag-back-arrow{color:var(--q-green)!important}
+body[data-quiz]{display:block!important;overflow:hidden}.quiz-control-rail{position:fixed;right:0;top:0;width:var(--q-panel);height:100dvh;display:flex;flex-direction:column;gap:12px;padding:20px;background:var(--q-paper);border-left:1px solid var(--q-line);overflow:auto}
+body[data-quiz] main.content{margin:0!important;padding:0!important;width:calc(100% - var(--q-panel))!important;height:100dvh!important;min-height:0!important;overflow:auto!important;background:var(--q-bg)!important}
+body[data-quiz].quiz-integrated-nav main.content,body[data-quiz].quiz-frame-host main.content{width:100%!important}
+body[data-quiz] #verden-quiz.page-section,body[data-quiz] .quiz-fullscreen-stage,body[data-quiz] #quiz-geoguessr.active,body[data-quiz] .geo-guessr-shell{height:100%!important;min-height:0!important;background:var(--q-bg)!important;color:var(--q-ink)!important}
+body[data-quiz] .quiz-fullscreen-body{padding:12px!important;min-height:0!important;align-items:safe start!important;justify-content:safe center!important;overflow:auto!important;background:var(--q-bg)!important}
+body[data-quiz].quiz-integrated-nav .quiz-fullscreen-body{padding:0!important}.quiz-frame-host .quiz-control-rail{display:none!important}.quiz-frame-host .maplab-frame{height:100dvh!important;min-height:0!important;border:0}
+/* Setup forms, streak quizzes and answer cards. Do not recolor flag graphics. */
+body[data-quiz] :is(.world-setup,.world-game,.world-card,.world-end,.country-region-setup,.jeopardy-shell,.jeopardy-setup,.jeopardy-card,.geo-guessr-setup,.geo-summary-hud){background:var(--q-paper)!important;color:var(--q-ink)!important;border-color:var(--q-line)!important;box-shadow:none!important;border-radius:9px}
+body[data-quiz] :is(.world-setup h3,.world-game h3,.world-prompt,.country-region-setup h2,.jeopardy-title,.jeopardy-setup h3,.geo-guessr-setup h3,.geo-target-label){color:var(--q-ink)!important}
+body[data-quiz] :is(.world-setup p,.world-muted,.country-region-setup p,.geo-guessr-setup p,.jeopardy-setup p){color:var(--q-muted)!important;font-size:13px;line-height:1.45}
+body[data-quiz] :is(.world-options label,.streak-group-title,.streak-control-title,.streak-selected-count){color:var(--q-ink)!important}
+body[data-quiz] :is(select,input[type=text],input:not([type]),.world-written input){min-width:0;background:var(--q-paper)!important;color:var(--q-ink)!important;border-color:var(--q-line)!important;border-radius:6px!important;font-size:16px}
+body[data-quiz] :is(.streak-region-btn,.streak-direction-btn,.country-region-btn,.geo-selection-item,.geo-source-button,.jeopardy-option,.world-option,.world-pill,.worldle-pill,.worldle-back,.worldle-history-row span,.geo-hud-pill,.country-map-stat){background:var(--q-soft)!important;background-image:none!important;color:var(--q-ink)!important;border-color:var(--q-line)!important;box-shadow:none!important}
+body[data-quiz] :is(.streak-region-btn.selected,.streak-direction-btn.selected,.jeopardy-option:has(input:checked)){background:#d5e6c9!important;border-color:#9dbb8d!important;color:#244d35!important}
+body[data-quiz] :is(.streak-region-btn small,.country-region-btn small,.geo-selection-item small){color:var(--q-muted)!important}.geo-selection-item strong{color:var(--q-ink)!important}
+body[data-quiz] :is(.world-button,.worldle-guess-btn,.worldle-next,.worldle-hint-button,.geo-start-button,.jeopardy-reveal,.country-map-action){background:#245845!important;background-image:none!important;color:#fff!important;border:0!important;box-shadow:none!important;border-radius:6px}
+body[data-quiz] .world-option.correct{background:#d4ebd4!important;color:#225b32!important;border-color:#75b383!important}body[data-quiz] .world-option.wrong{background:#f8ded8!important;color:#8b3e35!important;border-color:#d99186!important}
+body[data-quiz] .streak-setup{padding:18px!important;width:100%!important;max-width:960px!important}.streak-setup>p{margin:0 0 12px!important}.streak-region-grid{gap:7px!important}.streak-region-btn{padding:10px!important;min-height:52px!important}.streak-direction-grid{gap:7px!important}.streak-direction-btn{padding:10px!important;min-height:44px!important}
+body[data-quiz] .world-game{display:grid;grid-template-columns:minmax(0,1fr) var(--q-panel);gap:0;width:100%;height:100dvh;max-width:none!important;margin:0!important;padding:0!important;border:0!important}
+body[data-quiz] #world-play{min-width:0;min-height:0;overflow:auto;padding:18px;grid-column:1;grid-row:1}.quiz-status-panel{grid-column:2;grid-row:1;display:flex;flex-direction:column;min-width:0;padding:20px;border-left:1px solid var(--q-line);overflow:auto;background:var(--q-paper)}
+body[data-quiz] .world-statusbar{gap:7px!important;justify-content:flex-start!important;margin:0!important;font-size:12px}.quiz-status-panel .world-statusbar{flex-direction:column!important;align-items:stretch}.world-pill{padding:7px 10px!important;font-size:12px!important}
+body[data-quiz] .world-card{max-width:900px!important;width:100%!important;margin:0 auto!important;padding:18px!important;border-radius:9px!important}.world-prompt{font-size:clamp(18px,2.2vw,28px)!important;margin:8px 0 14px!important}.world-option-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;width:100%!important}
+body[data-quiz] .world-option{min-width:0;min-height:60px!important;padding:10px 12px!important;border-radius:7px!important;font-size:16px!important;line-height:1.3!important}.world-option:hover{transform:none!important}.world-card .quiz-flag-img{max-height:150px!important;object-fit:contain!important}
+body[data-quiz] .country-region-setup{max-width:900px!important;width:100%;padding:18px!important}.country-region-setup h2{font-size:26px!important;margin-bottom:8px!important}.country-region-setup p{margin-bottom:14px!important}.country-region-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}.country-region-btn{padding:13px!important;border-radius:8px!important}.country-region-btn strong{font-size:20px!important}.country-region-kicker{padding:4px 6px!important;margin-bottom:7px!important;background:var(--q-soft)!important;color:var(--q-muted)!important;border:0!important;font-size:10px!important}
+body[data-quiz] .country-region-hs-button{position:static!important;transform:none!important;margin:3px 0 0!important;background:var(--q-soft)!important;color:var(--q-green)!important;border-color:var(--q-line)!important;padding:6px 8px!important}
+/* Worldle: the artwork gets the full height; controls share the Statle rail. */
+body[data-quiz] .worldle-game{display:grid!important;grid-template-columns:minmax(0,1fr) var(--q-panel)!important;gap:0!important;width:100%;height:100dvh!important;min-height:0!important;max-height:none!important;max-width:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:var(--q-water)!important}
+.worldle-target{grid-column:1;grid-row:1;min-height:0!important;height:100%!important;border:0!important;border-radius:0!important;background:var(--q-water)!important}.worldle-side{grid-column:2;grid-row:1;padding:18px!important;border-left:1px solid var(--q-line);background:var(--q-paper);overflow:auto;gap:10px}.worldle-side-title{margin:0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important}.worldle-side-title em{color:var(--q-muted)!important;font-size:10px!important}.worldle-side-title h3{color:var(--q-ink)!important;font-size:22px!important}.worldle-side .worldle-game-head{gap:5px;margin:0!important}.worldle-game-head .worldle-pill:first-child{display:none}.worldle-side .worldle-history{min-height:60px!important;max-height:170px!important;flex:1 1 100px!important}.worldle-hint-panel,.worldle-hint-chip{background:var(--q-soft)!important;color:var(--q-ink)!important;border-color:var(--q-line)!important}.worldle-feedback{font-size:13px!important;color:#a04e46!important}.worldle-feedback.good{color:#347148!important}.worldle-side input{padding:10px!important}.worldle-guess-btn,.worldle-hint-button{padding:10px!important}
+/* MapWiz: keep the map's click rectangle separate from its right-hand HUD. */
+body[data-quiz] .geo-guessr-setup-wrap{background:var(--q-bg)!important;padding:12px!important;place-items:start center!important;overflow:auto!important}.geo-guessr-setup{max-height:none!important;width:100%!important;padding:18px!important}.geo-selection-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:7px!important}.geo-selection-item{padding:8px!important;min-height:46px!important}.geo-selection-tools button,.geo-setup-back{background:var(--q-soft)!important;color:var(--q-green)!important;border-color:var(--q-line)!important}.geo-selection-count{color:var(--q-muted)!important}
+body[data-quiz] .geo-map-stage{width:calc(100% - var(--q-panel))!important;height:100dvh!important;overflow:visible!important;background:var(--q-water)!important}.geo-hud{position:fixed!important;left:auto!important;right:0!important;top:0!important;bottom:0!important;transform:none!important;width:var(--q-panel)!important;max-width:none!important;border:0!important;border-left:1px solid var(--q-line)!important;border-radius:0!important;background:var(--q-paper)!important;color:var(--q-ink)!important;padding:18px!important;display:flex;flex-direction:column;gap:12px;overflow:auto;box-shadow:none!important;backdrop-filter:none!important}.geo-hud-top{gap:6px!important;flex-wrap:wrap}.geo-target-label{font-size:23px!important;line-height:1.2!important}.geo-hint,.geo-feedback{color:var(--q-muted)!important;font-size:13px!important}.geo-map-exit{position:static!important;inset:auto!important;background:var(--q-soft)!important;color:var(--q-green)!important;box-shadow:none!important;border-color:var(--q-line)!important;align-self:flex-start}
+/* Country map games use their original inputs in a narrower rail. */
+body[data-quiz] .country-map-game{height:100dvh!important;min-height:0!important;display:flex;flex-direction:column;background:var(--q-bg)!important}.country-map-primary{min-height:0!important;flex:1;display:grid!important;grid-template-columns:minmax(0,1fr) var(--q-panel)!important}.country-map-wrap{height:100%!important;min-height:0!important;grid-column:1;grid-row:1;background:var(--q-water)!important}.country-map-side,.country-map-bottom-bar{grid-column:2;grid-row:1;display:flex!important;flex-direction:column;align-items:stretch!important;padding:16px!important;gap:10px;background:var(--q-paper)!important;border-left:1px solid var(--q-line);overflow:auto}.country-map-side h2{font-size:21px!important;color:var(--q-ink)!important}.country-map-side p{font-size:12px!important;color:var(--q-muted)!important}.country-found-section{padding:7px 12px!important;max-height:90px;overflow:auto;background:var(--q-paper)!important;color:var(--q-ink)!important}.country-found-section h4{margin:0 0 4px!important}
+/* Jeopardy retains its question and scoring logic with neutral, compact cards. */
+body[data-quiz] #jeopardy-shell{height:100%!important;max-height:none!important;padding:12px!important;background:var(--q-bg)!important}.jeopardy-setup{padding:16px!important;margin:0!important}.jeopardy-setup-grid{gap:12px!important}.jeopardy-option{padding:8px!important;border-radius:6px!important;font-size:13px!important}.jeopardy-options{gap:6px!important}.jeopardy-setup h3{font-size:23px!important}.jeopardy-play-area{grid-template-columns:var(--q-panel) minmax(0,1fr)!important;gap:10px!important}.jeopardy-side{background:var(--q-paper)!important;border-color:var(--q-line)!important;max-height:100%;overflow:auto}.jeopardy-cell{background:var(--q-soft)!important;color:var(--q-green)!important;border-color:var(--q-line)!important;min-width:0!important;min-height:42px!important;border-radius:6px!important}.jeopardy-head,.jeopardy-category{background:#d7e6cb!important;color:#294f36!important}.jeopardy-question-text,.jeopardy-answer{color:var(--q-ink)!important}.jeopardy-question{background:var(--q-paper)!important;color:var(--q-ink)!important}
+/* Same-origin map frame: no parent topbar, no minimum 600/760px canvas. */
+body[data-quiz-layout]{--green:var(--q-green);--green2:var(--q-green);--greenSoft:var(--q-soft);--ink:var(--q-ink);--muted:var(--q-muted);--bg:var(--q-bg);--card:var(--q-paper);--line:var(--q-line);--shadow:none;display:block!important;height:100dvh;overflow:hidden!important}
+body[data-quiz-layout] main.content{width:100%!important;height:100dvh!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important}body[data-quiz-layout] .footer-note{display:none}body[data-quiz-layout] .module.active{height:100%}
+body[data-quiz-layout] :is(.globle-layout,.travle-lab-layout,.tradle-layout,.geogrid-layout){display:grid!important;grid-template-columns:minmax(0,1fr) var(--q-panel)!important;gap:0!important;height:100dvh!important;min-height:0!important;align-items:stretch!important}
+body[data-quiz-layout] :is(.globle-side,.travle-side,.tradle-side,.geogrid-side){grid-column:2;grid-row:1;height:100%!important;min-height:0!important;overflow:auto!important;display:flex!important;flex-direction:column!important;align-content:start;gap:12px!important;padding:18px!important;border:0!important;border-left:1px solid var(--q-line)!important;border-radius:0!important;background:var(--q-paper)!important}
+.quiz-frame-nav{display:flex;align-items:center;gap:8px;margin-bottom:4px}.quiz-help{font-size:12px;color:var(--q-muted);line-height:1.4}.quiz-help summary{cursor:pointer;padding:6px 0}.quiz-help .geo-distance-note,.quiz-help .geogrid-score-note{font-size:11px;margin:6px 0 0!important}.quiz-layout-footer .quiz-page-back{font-size:13px!important}
+body[data-quiz-layout] :is(.globle-map-panel,.travle-map-panel,.tradle-chart-panel,.geogrid-board-panel){grid-column:1;grid-row:1;height:100%!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;overflow:hidden!important;background:var(--q-water)!important}
+body[data-quiz-layout] :is(.globle-map-fit,.travle-mapbox){height:100%!important;min-height:0!important;max-height:none!important;border:0!important;border-radius:0!important}.travle-map-panel{position:relative;display:block!important}.travle-map-head{position:absolute;left:12px;top:10px;z-index:4;padding:4px 7px!important;background:var(--q-paper);border-radius:6px}.travle-map-head>strong{display:none}.travle-zoom{bottom:12px!important;top:auto!important}
+body[data-quiz-layout] #globleMap{background:var(--q-water)!important;border-radius:0!important}body[data-quiz-layout] #globleMap .sphere{fill:var(--q-water)!important;stroke:#83b5bd!important}body[data-quiz-layout] #globleMap .graticule{stroke:#77a6b0!important;opacity:.45!important}.globle-map-panel .chart-title{font-size:10px;padding:4px 7px}
+body[data-quiz-layout] :is(.globle-side h2,.travle-side h2,.tradle-side h2,.geogrid-side h2){font-size:21px!important;line-height:1.2!important;margin:0!important}body[data-quiz-layout] :is(.globle-side p,.travle-side p,.tradle-side p,.geogrid-side p){font-size:12px!important;line-height:1.45!important}.badge{font-size:10px!important;margin-bottom:5px!important;padding:4px 7px!important}.travle-heading-row{flex-direction:column;gap:8px}.travle-heading-row>button{align-self:flex-end}.travle-route-card{grid-template-columns:auto 1fr!important;gap:5px!important;padding:8px!important}.travle-route-card b{display:none}.travle-side-columns{grid-template-columns:1fr!important;gap:8px!important}.travle-hints{display:flex!important;gap:5px!important;flex-wrap:wrap}.travle-hints button{padding:6px!important;font-size:11px!important}.travle-history{max-height:130px!important}.globle-history{max-height:180px!important}
+body[data-quiz-layout] .tradle-chart-panel{display:flex;flex-direction:column}.tradle-chart-head{padding:10px!important;background:var(--q-paper)}body[data-quiz-layout] #tradleChart{flex:1;min-height:0!important;height:100%!important}
+body[data-quiz-layout] .geogrid-board-panel{display:flex!important;padding:12px!important;background:var(--q-bg)!important;position:relative}.geogrid-board{grid-template-columns:minmax(90px,.8fr) repeat(3,minmax(0,1fr))!important;grid-template-rows:minmax(80px,.7fr) repeat(3,minmax(0,1fr))!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;gap:7px!important}.geogrid-cell,.geogrid-criterion,.geogrid-corner{min-width:0!important;min-height:0!important;padding:8px!important;border-radius:7px!important;overflow-wrap:anywhere}.geogrid-criterion{font-size:13px!important}.geogrid-cell .cell-country{font-size:15px!important}.geogrid-cell .cell-points{font-size:11px!important}.geogrid-overlay{position:fixed!important;inset:0!important;padding:20px 8px!important;align-items:start!important;background:#f6f7f3b0!important;overflow:auto}.geogrid-modal{max-width:480px!important;padding:16px!important;max-height:calc(100dvh - 24px);overflow:auto}
+@media(max-width:700px){
+ body[data-quiz]{--q-panel:100%;overflow:auto!important}body[data-quiz] main.content{width:100%!important;height:auto!important;min-height:calc(100dvh - 44px)!important}body[data-quiz].quiz-frame-host main.content{height:100dvh!important;min-height:0!important;overflow:hidden!important}
+ .quiz-control-rail{position:sticky;bottom:0;width:100%;height:44px;min-height:44px;overflow:visible;display:flex;flex-direction:row;align-items:center;gap:8px;padding:5px 9px;border:0;border-top:1px solid var(--q-line);z-index:30}.quiz-control-rail .quiz-page-header{flex:1;margin:0!important;min-height:30px}.quiz-control-rail .quiz-layout-footer{margin:0;padding:0}.quiz-home{font-size:22px}.quiz-page-back{font-size:11px!important;padding:7px!important}.quiz-page-theme{width:28px!important;height:28px!important}.quiz-floating-menu{top:6px!important;left:6px!important;font-size:11px!important;padding:7px 9px!important}
+ body[data-quiz] .quiz-fullscreen-body{padding:8px!important;height:auto!important;min-height:0!important}.streak-setup{padding:12px!important}.streak-setup h3{font-size:21px!important}.streak-region-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:5px!important}.streak-direction-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:5px!important}.streak-region-btn{padding:7px!important;min-height:42px!important;font-size:12px!important}.streak-region-btn small{font-size:10px!important}.streak-direction-btn{padding:8px 6px!important;font-size:12px!important;min-height:40px!important}.world-options{grid-template-columns:1fr!important;gap:8px!important;margin:10px 0!important}
+ body[data-quiz] .world-game{grid-template-columns:minmax(0,1fr);grid-template-rows:auto 1fr;height:auto;min-height:100dvh}.quiz-status-panel{grid-column:1;grid-row:1;display:grid;grid-template-columns:1fr auto;padding:7px 9px;gap:6px;border-left:0;border-bottom:1px solid var(--q-line);overflow:visible}.quiz-status-panel .quiz-page-header{margin:0!important}.quiz-status-panel .quiz-layout-footer{grid-column:2;grid-row:1;padding:0;margin:0}.quiz-status-panel .world-statusbar{grid-column:1/-1;flex-direction:row!important;gap:5px!important}.world-pill{font-size:10px!important;padding:5px 7px!important}body[data-quiz] #world-play{grid-column:1;grid-row:2;padding:8px!important}.world-card{padding:12px!important}.world-prompt{font-size:20px!important;margin:5px 0 9px!important}.world-option-grid{gap:7px!important}.world-option{font-size:14px!important;min-height:48px!important;padding:9px!important}.world-card .quiz-flag-img{max-height:100px!important;max-width:160px!important}.world-option .quiz-flag-img{max-height:56px!important;max-width:100%!important}.world-written{gap:6px!important}
+ .country-region-setup{padding:10px!important}.country-region-grid{gap:7px!important}.country-region-btn{padding:10px!important}.country-region-btn strong{font-size:17px!important}.country-region-kicker{font-size:9px!important}.country-region-btn small{font-size:11px!important}.country-region-hs-button{font-size:10px!important;padding:5px!important}
+ body[data-quiz] .worldle-game{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:40svh auto!important;height:auto!important;min-height:100dvh!important;overflow:visible!important}.worldle-target{grid-column:1;grid-row:1;height:40svh!important;min-height:190px!important}.worldle-side{grid-column:1;grid-row:2;padding:10px!important;gap:8px;border:0}.worldle-side .quiz-page-header{margin:0!important}.worldle-side-title{display:none}.worldle-side .worldle-input-row{grid-template-columns:minmax(0,1fr) auto!important;gap:6px}.worldle-side .worldle-guess-btn{width:auto!important;padding:9px 12px!important}.worldle-side .worldle-history{flex:none!important;height:auto!important;min-height:0!important;max-height:150px!important}.worldle-side .quiz-layout-footer{margin:0;padding-top:3px}.worldle-bottom-actions{padding-top:0!important}.worldle-hint-panel{padding:7px!important}.worldle-side .worldle-history-row{font-size:11px!important;grid-template-columns:minmax(0,1fr) 74px 38px!important}
+ .geo-selection-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.geo-guessr-setup{padding:11px!important}.geo-selection-item{min-height:45px!important;padding:7px!important}.geo-selection-item strong{font-size:12px!important}.geo-selection-item small{font-size:10px!important}.geo-selection-count{font-size:11px!important}.geo-guessr-setup p{font-size:12px!important}
+ body[data-quiz] .geo-guessr-shell{overflow:auto!important;height:100dvh!important}.geo-guessr-shell:has(.geo-map-stage){padding-bottom:290px}.geo-map-stage{height:42svh!important;min-height:220px;width:100%!important}.geo-hud{position:absolute!important;top:100%!important;bottom:auto!important;left:0!important;right:auto!important;width:100%!important;max-width:none!important;min-height:290px;padding:10px!important;overflow:visible;gap:8px;border-left:0!important;border-top:1px solid var(--q-line)!important}.geo-hud .quiz-page-header{margin:0!important}.geo-hud .quiz-layout-footer{padding-top:0}.geo-target-label{font-size:21px!important}
+ .jeopardy-setup{padding:10px!important}.jeopardy-setup-grid{grid-template-columns:1fr!important;gap:8px!important}.jeopardy-option{padding:6px!important;font-size:12px!important}.jeopardy-play-area{grid-template-columns:1fr!important;overflow:auto!important;height:auto!important}.jeopardy-side{position:static!important;padding:9px!important}.jeopardy-board{gap:4px!important}.jeopardy-cell{font-size:12px!important;padding:6px 3px!important;min-height:38px!important}.jeopardy-card{padding:12px!important}.jeopardy-question-text{font-size:20px!important}
+ body[data-quiz-layout]{--q-panel:100%;height:auto!important;min-height:100dvh;overflow:auto!important}body[data-quiz-layout] main.content{height:auto!important;overflow:visible!important}body[data-quiz-layout] .module.active{height:auto!important}body[data-quiz-layout] :is(.globle-layout,.travle-lab-layout,.tradle-layout,.geogrid-layout){height:auto!important;min-height:100dvh!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:48svh auto!important}
+ body[data-quiz-layout] :is(.globle-map-panel,.travle-map-panel,.tradle-chart-panel,.geogrid-board-panel){grid-column:1;grid-row:1;height:48svh!important;min-height:240px!important}body[data-quiz-layout] :is(.globle-side,.travle-side,.tradle-side,.geogrid-side){grid-column:1;grid-row:2;height:auto!important;overflow:visible!important;padding:11px!important;gap:9px!important;border-left:0!important;border-top:1px solid var(--q-line)!important}.quiz-frame-nav{margin:0}.quiz-layout-footer{padding-top:4px}.quiz-frame-nav .quiz-home{font-size:22px}.globle-side>p,.travle-intro,.tradle-side>p,.geogrid-side>p{font-size:11px!important}.globle-history{max-height:150px!important}.travle-heading-row{flex-direction:row!important}.travle-route-card{grid-template-columns:auto 1fr auto 1fr!important}.travle-route-card b{display:none}.travle-route-card span:nth-of-type(2){display:block}.travle-side-columns{grid-template-columns:1fr 1fr!important}.travle-map-head{left:8px;top:8px}.globle-map-panel .chart-title{left:80px;top:8px;font-size:9px!important}
+ body[data-quiz-layout="geogrid"] .geogrid-layout{grid-template-rows:53svh auto!important}body[data-quiz-layout="geogrid"] .geogrid-board-panel{height:53svh!important;padding:5px!important;min-height:320px!important}.geogrid-board{grid-template-columns:minmax(70px,.9fr) repeat(3,minmax(0,1fr))!important;grid-template-rows:minmax(70px,.8fr) repeat(3,minmax(0,1fr))!important;gap:4px!important}.geogrid-cell,.geogrid-criterion{padding:5px!important;font-size:11px!important;line-height:1.2!important}.geogrid-criterion{font-size:10px!important}.geogrid-cell .cell-country{font-size:11px!important}.geogrid-cell .cell-number{font-size:8px;left:4px;top:4px}.geogrid-cell .cell-rarity{font-size:8px!important;padding:2px 3px}.geogrid-cell .cell-points{font-size:9px!important;margin-top:3px}.geogrid-modal{width:calc(100% - 12px)!important;padding:12px!important}.geogrid-modal-input input{font-size:16px!important}.geogrid-modal-criteria{gap:5px!important;margin-bottom:10px!important}.geogrid-modal-criteria span{font-size:11px!important;padding:6px 8px!important}
+}
+
+@media(max-width:700px){body[data-quiz] .country-map-game{height:auto!important;min-height:100dvh!important}.country-map-primary{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:45svh auto!important;flex:none!important}.country-map-wrap{grid-column:1!important;grid-row:1!important;height:45svh!important}.country-map-side,.country-map-bottom-bar{grid-column:1!important;grid-row:2!important;overflow:visible!important;border-left:0!important}.country-found-section{max-height:120px}}
+
+/* Explicitly defeat inherited fullscreen and hidden-rail rules. */
+body[data-quiz] .quiz-control-rail[hidden]{display:none!important}
+body[data-quiz] .world-trainer{width:100%;max-width:none!important;margin:0}
+body[data-quiz] .quiz-page-header .quiz-home{display:block!important;visibility:visible!important;color:var(--q-ink)!important}
+body[data-quiz].jeopardy-fullscreen main.content{width:calc(100% - var(--q-panel))!important}
+body[data-quiz].jeopardy-fullscreen.quiz-integrated-nav main.content{width:100%!important}
+@media(max-width:700px){body[data-quiz].jeopardy-fullscreen main.content{width:100%!important}body[data-quiz] .quiz-fullscreen-stage{height:auto!important;min-height:calc(100dvh - 44px)!important}body[data-quiz].quiz-integrated-nav .quiz-fullscreen-stage{min-height:100dvh!important}}
+
+/* The original site styles anchors as cards; navigation stays a simple wordmark. */
+body[data-quiz] .quiz-page-header .quiz-home{padding:0!important;margin:0 auto 0 0!important;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;min-height:0!important;width:auto!important;transform:none!important;white-space:nowrap;font-size:27px!important}
+body[data-quiz] .worldle-target-online svg>rect{fill:var(--q-water)!important}
+body[data-quiz] .world-setup h4,body[data-quiz] .world-setup label,body[data-quiz] .world-setup .streak-selection-label{color:var(--q-ink)!important}
+body[data-quiz] .world-hs-button{background:var(--q-soft)!important;color:var(--q-green)!important;border-color:var(--q-line)!important}
+body[data-quiz]{--j-setup-bg:var(--q-paper);--j-settings-line:var(--q-line);--j-settings-bg:var(--q-paper);--j-cats-line:var(--q-line);--j-cats-bg:var(--q-paper);--j-trivia-bg:var(--q-soft);--j-trivia-line:var(--q-line);--j-trivia-hover:#d7e6cb;--j-pensum-bg:var(--q-soft);--j-pensum-line:var(--q-line);--j-pensum-hover:#d7e6cb}
+body[data-quiz] #jeopardy-setup{width:100%!important;max-width:1100px!important;min-height:0!important;max-height:none!important;overflow:visible!important;background:var(--q-paper)!important;border-color:var(--q-line)!important;box-shadow:none!important;padding:18px!important;margin:0 auto!important}
+body[data-quiz] #jeopardy-setup .jeopardy-setup-grid{grid-template-columns:240px minmax(0,1fr)!important;gap:10px!important}
+body[data-quiz] #jeopardy-setup .jeopardy-setup-grid>div:first-child{background:var(--q-soft)!important;padding:12px!important}
+body[data-quiz] #jeopardy-setup .jeopardy-setup-grid>div:first-child::before{display:none!important}
+body[data-quiz] #jeopardy-setup :is(.setup-field label,.category-picker-title,.jeopardy-setup-header h3){color:var(--q-ink)!important}
+body[data-quiz] #jeopardy-setup :is(.jeopardy-setup-header p,.jeopardy-status){color:var(--q-muted)!important}
+body[data-quiz] #jeopardy-setup :is(input,select){background:var(--q-paper)!important;color:var(--q-ink)!important;border-color:var(--q-line)!important}
+body[data-quiz] #jeopardy-setup #jeopardy-category-picker{grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-template-rows:repeat(7,minmax(43px,1fr))!important}
+body[data-quiz] #jeopardy-setup #jeopardy-category-picker .jeopardy-option{background:var(--q-soft)!important;border-color:var(--q-line)!important;min-height:43px!important;padding:7px!important}
+body[data-quiz] #jeopardy-setup #jeopardy-category-picker .jeopardy-option:has(input:checked){background:#d5e6c9!important;border-color:#9dbb8d!important}
+body[data-quiz] #jeopardy-setup .jeopardy-option.pensum span::after{color:var(--q-green)!important;background:var(--q-paper)!important;border-color:var(--q-line)!important}
+body[data-quiz] :is(.jeopardy-actions button,.score-button,.jeopardy-close){background:#245845!important;color:white!important}
+body[data-quiz] .score-button.minus{background:#a4554e!important}
+body[data-quiz] :is(.score-card,.jeopardy-answer,.timer-pill){background:var(--q-soft)!important;color:var(--q-ink)!important;border-color:var(--q-line)!important}
+body[data-quiz] .score-card strong,body[data-quiz] .score-card span{color:var(--q-ink)!important}
+@media(max-width:700px){body[data-quiz] .quiz-page-header .quiz-home{font-size:22px!important}body[data-quiz] .worldle-side .worldle-history:empty{display:none}body[data-quiz] .worldle-game{min-height:0!important}body[data-quiz] .worldle-side .quiz-layout-footer{margin-top:8px}body[data-quiz] #jeopardy-setup{padding:10px!important}body[data-quiz] #jeopardy-setup .jeopardy-setup-grid{grid-template-columns:minmax(0,1fr)!important}body[data-quiz] #jeopardy-setup #jeopardy-category-picker{grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:none!important;grid-auto-flow:row!important;grid-auto-rows:minmax(43px,auto)}body[data-quiz] .world-card{padding:12px!important}body[data-quiz] .streak-setup{padding:12px!important}}
+
+body[data-quiz-layout] :is(.globle-side,.travle-side,.tradle-side,.geogrid-side)>*{flex-shrink:0}
+body[data-quiz-layout] .travle-mapbox svg{background:var(--q-water)!important;border-radius:0!important}body[data-quiz-layout] .travle-mapbox svg>rect{fill:var(--q-water)!important}
+body[data-quiz] .world-setup :is(h4,h5,.streak-group-label,.streak-field-label,.streak-section-title){color:var(--q-ink)!important}
+body[data-quiz] :is(.geo-hs-open,.world-highscore-button,.geo-highscore-button,.geo-hs-button){background:var(--q-soft)!important;color:var(--q-green)!important;border-color:var(--q-line)!important}
+body[data-quiz] .geo-selection-item.norway strong{color:var(--q-ink)!important}
+body[data-quiz] .geo-hud>*{flex-shrink:0}
+@media(max-width:700px){body[data-quiz] .world-setup{margin-top:34px!important}body[data-quiz] .geo-guessr-setup{margin-top:32px!important}body[data-quiz] #jeopardy-setup{margin-top:28px!important}}
+
+/* ID-scoped legacy rules require matching specificity at the presentation boundary. */
+body[data-quiz] #verden-quiz .world-trainer{width:100%!important;max-width:none!important}
+body[data-quiz] #verden-quiz .world-game{display:grid!important;grid-template-columns:minmax(0,1fr) var(--q-panel)!important;grid-template-rows:minmax(0,1fr)!important;gap:0!important;height:100dvh!important;min-height:0!important}
+body[data-quiz] #verden-quiz #world-play{display:flex!important;align-items:center!important;justify-content:center!important;grid-column:1!important;grid-row:1!important;padding:18px!important}
+body[data-quiz].quiz-integrated-nav #verden-quiz .quiz-fullscreen-body{padding:0!important}
+body[data-quiz] #quiz-jeopardy .jeopardy-play-area{grid-template-columns:minmax(0,1fr) 360px!important;height:calc(100dvh - 60px)!important;gap:12px!important;overflow:auto!important}
+body[data-quiz] #quiz-jeopardy .jeopardy-side{background:var(--q-paper)!important;border-color:var(--q-line)!important;overflow:auto!important;padding:16px!important;border-radius:8px!important}
+body[data-quiz] #quiz-jeopardy #jeopardy-board :is(.jeopardy-head,.jeopardy-value){background:var(--q-soft)!important;background-image:none!important;color:var(--q-green)!important;border-color:var(--q-line)!important;min-width:0!important}
+body[data-quiz] #quiz-jeopardy #jeopardy-board .jeopardy-head{background:#d5e6c9!important}
+body[data-quiz] #quiz-jeopardy #jeopardy-board .jeopardy-value.done{opacity:.45;text-decoration:line-through}
+body[data-quiz] #quiz-jeopardy :is(.score-card,#jeopardy-card,#jeopardy-answer){background:var(--q-paper)!important;color:var(--q-ink)!important;border-color:var(--q-line)!important;box-shadow:none!important}
+body[data-quiz] #quiz-jeopardy :is(.score-card span,.score-card strong,.jeopardy-question,.jeopardy-meta){color:var(--q-ink)!important}
+body[data-quiz] #quiz-jeopardy #jeopardy-card:not(.open)::before{color:var(--q-muted)!important}
+body[data-quiz] #quiz-jeopardy #jeopardy-card{padding:12px!important;min-height:160px!important}
+body[data-quiz] #quiz-jeopardy #jeopardy-reveal{background:#245845!important;color:#fff!important;box-shadow:none!important}
+body[data-quiz] .geo-hud-top{white-space:normal!important;flex-wrap:wrap!important;justify-content:flex-start!important}.geo-hud-top>*{flex:0 1 auto}
+body[data-quiz] .country-found-section{min-height:0!important;max-height:90px!important;flex:0 0 auto}.country-found-section h4{color:var(--q-muted)!important;font-size:12px!important}
+@media(max-width:700px){
+body[data-quiz] #verden-quiz .quiz-fullscreen-body{padding:8px!important}
+body[data-quiz].quiz-integrated-nav #verden-quiz .quiz-fullscreen-body{padding:0!important}
+body[data-quiz] #verden-quiz .world-game{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto minmax(0,1fr)!important;height:auto!important;min-height:100dvh!important}
+body[data-quiz] #verden-quiz #world-play{grid-column:1!important;grid-row:2!important;padding:10px!important;align-items:flex-start!important}
+body[data-quiz] #verden-quiz .quiz-status-panel{grid-column:1!important;grid-row:1!important;padding:10px 9px 8px 80px!important;align-content:start}
+body[data-quiz] #verden-quiz .quiz-status-panel .world-statusbar{margin-left:-68px!important}
+body[data-quiz] .geo-map-stage{position:relative!important;inset:auto!important;width:100%!important;height:42svh!important;min-height:200px!important}
+body[data-quiz] .geo-guessr-shell:has(.geo-map-stage){padding-bottom:0!important;height:auto!important;min-height:100dvh!important;overflow:visible!important}
+body[data-quiz] .geo-hud{top:100%!important;bottom:auto!important;left:0!important;right:auto!important;width:100%!important;min-width:0!important;height:auto!important;min-height:0!important;overflow:visible!important}
+body[data-quiz] #quiz-jeopardy .jeopardy-play-area{grid-template-columns:minmax(0,1fr)!important;height:auto!important;overflow:visible!important}
+body[data-quiz] #quiz-jeopardy .jeopardy-board-wrap{height:320px!important}
+body[data-quiz] #quiz-jeopardy .jeopardy-side{min-height:0!important;max-height:none!important;overflow:visible!important;padding:10px!important}
+body[data-quiz] #quiz-jeopardy #jeopardy-board .jeopardy-head{font-size:11px!important}
+body[data-quiz] #quiz-jeopardy #jeopardy-board .jeopardy-value{font-size:19px!important}
+body[data-quiz] #quiz-jeopardy #jeopardy-board .jeopardy-cell{padding:5px 3px!important}
+}
+
+body[data-quiz] .streak-choice-label{color:var(--q-ink)!important}
+body[data-quiz] #quiz-jeopardy .jeopardy-reveal{background:#245845!important;color:white!important;box-shadow:none!important}
+body[data-quiz] #quiz-jeopardy .jeopardy-actions{padding-left:75px!important}.globle-map-panel .chart-title{left:85px!important}
+@media(max-width:700px){body[data-quiz-layout] :is(.globle-layout,.travle-lab-layout,.tradle-layout){grid-template-rows:minmax(240px,48svh) auto!important}body[data-quiz-layout=geogrid] .geogrid-layout{grid-template-rows:minmax(320px,53svh) auto!important}body[data-quiz] .worldle-game{grid-template-rows:minmax(190px,40svh) auto!important}body[data-quiz] .geo-map-stage{height:55vw!important;max-height:320px!important}}
+@media(max-width:380px){body[data-quiz] .quiz-status-panel .quiz-home{font-size:19px!important}body[data-quiz] .quiz-status-panel .quiz-page-back{font-size:10px!important;padding:6px!important}}
+
+body[data-quiz] .hs-button{background:var(--q-soft)!important;color:var(--q-green)!important;border-color:var(--q-line)!important;box-shadow:none!important}
+
+body[data-quiz] :is(.world-place-desc,.world-place-question-desc,.world-place-question-name,.world-question-heading){color:var(--q-ink)!important}
+body[data-quiz] #quiz-jeopardy :is(.jeopardy-meta span,.jeopardy-meta-pill,.jeopardy-section-label,.score-actions button){background:var(--q-soft)!important;color:var(--q-green)!important;border-color:var(--q-line)!important}
+body[data-quiz] #quiz-jeopardy .score-button{background:#245845!important;color:#fff!important}
+@media(max-width:700px){body[data-quiz] .country-map-game .country-map-wrap{height:45svh!important;max-height:45svh!important;min-height:0!important}body[data-quiz] .country-map-primary{height:auto!important}body[data-quiz] .country-map-input{font-size:16px!important}}
+
+body[data-quiz] :is(.hs-dialog,.hs-dialog-head h3,.hs-dialog strong,.hs-close,.hs-mini){background:var(--q-paper)!important;color:var(--q-ink)!important;border-color:var(--q-line)!important;box-shadow:none!important}
+body[data-quiz] .hs-dialog :is(th,td,td strong){background:var(--q-paper)!important;color:var(--q-ink)!important;border-color:var(--q-line)!important}
+body[data-quiz] .hs-dialog .hs-table tbody tr td{background:var(--q-paper)!important;color:var(--q-ink)!important}body[data-quiz] .hs-dialog .hs-table th{background:var(--q-soft)!important}
+body[data-quiz] :is(.hs-empty,.hs-note){color:var(--q-muted)!important}
+body[data-quiz] #quiz-jeopardy :is(.jeopardy-meta>*,.score-team-row,.score-team-name,.score-team-name strong,.score-team-name small){background:var(--q-soft)!important;color:var(--q-ink)!important;border-color:var(--q-line)!important}
+body[data-quiz] #quiz-jeopardy .score-team-buttons .score-button{background:#245845!important;color:#fff!important}body[data-quiz] #quiz-jeopardy .score-team-buttons .score-button.minus{background:#a4554e!important}
+
+body[data-quiz] .country-map-game .country-map-primary{grid-template-columns:minmax(0,1fr) var(--q-panel)!important;height:auto!important;min-height:0!important}
+@media(max-width:700px){body[data-quiz] .country-map-game .country-map-primary{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:45svh auto!important}}
+
+/* Compact controls at native browser zoom. Help never competes with attempts. */
+body[data-quiz],body[data-quiz-layout]{font-size:13px}
+.quiz-mobile-answers{display:none}
+.mobile-streak-shell{display:none}
+body.quiz-mobile-streak #world-detective2-app>:not(.mobile-streak-shell),body.quiz-mobile-streak #tradle>.tradle-layout{display:none!important}
+body.quiz-mobile-streak .mobile-streak-shell{display:grid;grid-template-columns:minmax(0,1fr);gap:13px;width:min(100%,660px);margin:auto;padding:18px 14px 22px;color:var(--q-ink);background:var(--q-paper);border:1px solid var(--q-line);border-radius:14px;text-align:center}
+.mobile-streak-shell h2{font-size:23px!important;line-height:1.2;margin:0!important;color:var(--q-ink)!important}
+.mobile-streak-meta{font-size:12px;font-weight:700;color:var(--q-green)}
+.mobile-streak-visual{height:34svh;min-height:170px;max-height:330px;overflow:hidden;border-radius:8px;background:var(--q-soft)}
+.mobile-streak-visual>svg{display:block;width:100%!important;height:100%!important}
+body.quiz-mobile-streak .quiz-mobile-answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0}
+body.quiz-mobile-streak .quiz-mobile-answers button{min-height:66px;padding:12px 8px;font-size:15px;border-radius:9px}
+body.quiz-mobile-streak .quiz-mobile-answers button.is-correct{background:#d5ead1!important;border-color:#69aa73!important;color:#244e2d!important;opacity:1}
+body.quiz-mobile-streak .quiz-mobile-answers button.is-wrong{background:#f3d9d4!important;border-color:#c7847a!important;color:#843d36!important;opacity:1}
+.mobile-streak-feedback{margin:0!important;min-height:1.5em;font-size:14px!important;line-height:1.4;color:var(--q-ink)!important}
+.mobile-streak-restart{justify-self:center;background:var(--q-green);color:var(--q-paper);padding:11px 22px;border:0;border-radius:7px;font-weight:700}
+.mobile-streak-shell>.quiz-frame-nav,.mobile-streak-shell>.quiz-page-header{display:flex;justify-content:space-between;margin:0!important}
+.mobile-streak-shell>.quiz-layout-footer{justify-self:start;padding:0;margin:0}
+body[data-quiz="detective2"] .mobile-streak-visual svg>rect{fill:var(--q-water)!important}
+@media(max-width:700px){body.quiz-mobile-streak #world-detective2-app{padding-top:10px!important}body.quiz-mobile-streak #tradle{padding:44px 10px 10px!important}.mobile-streak-shell{scroll-margin-top:50px}}
+@media(max-width:700px),(max-width:1000px) and (max-height:500px){
+ .quiz-mobile-answer-input{display:none!important}
+ .quiz-mobile-answers:not([hidden]){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:4px 0}
+ .quiz-mobile-answers button{min-width:0;min-height:44px;padding:7px 8px;border:1px solid var(--q-line);border-radius:6px;background:var(--q-soft);color:var(--q-ink);font:650 13px/1.25 'Segoe UI',sans-serif;overflow-wrap:anywhere;cursor:pointer}
+ .quiz-mobile-answers button:focus-visible{outline:2px solid var(--q-green);outline-offset:2px}
+ .quiz-mobile-answers button.is-tried{opacity:.55;text-decoration:line-through}
+ .quiz-mobile-answers button:disabled{cursor:default}
+}
+body[data-quiz] .quiz-page-header{min-height:0;justify-content:flex-end;margin:0 0 6px;gap:5px}
+body[data-quiz] .quiz-page-theme,body[data-quiz-layout] .quiz-page-theme{width:26px!important;height:26px!important;font-size:14px!important}
+body[data-quiz] .quiz-page-back,body[data-quiz-layout] .quiz-page-back{font-size:12px!important;padding:6px 8px!important;border-radius:5px!important}
+.quiz-layout-footer{margin-top:0;padding-top:6px}
+body[data-quiz] .quiz-control-rail{top:7px;right:8px;bottom:auto;width:auto;height:auto;min-height:0;padding:0;gap:6px;flex-direction:row;align-items:center;overflow:visible;background:none;border:0;z-index:10020}
+body[data-quiz] .quiz-control-rail .quiz-page-header{margin:0}.quiz-control-rail .quiz-layout-footer{padding:0}
+body[data-quiz]:not(.quiz-integrated-nav):not(.quiz-frame-host) main.content{width:100%!important}
+body[data-quiz] .quiz-floating-menu{top:7px;left:7px;padding:6px 9px;font-size:11px}
+body[data-quiz] .quiz-help,body[data-quiz-layout] .quiz-help{font-size:11px;line-height:1.35;color:var(--q-muted)}
+body[data-quiz] .quiz-help summary,body[data-quiz-layout] .quiz-help summary{padding:4px 0;cursor:pointer}
+body[data-quiz] .quiz-help p,body[data-quiz-layout] .quiz-help p,body[data-quiz-layout] .quiz-help .geo-distance-note{font-size:11px!important;line-height:1.35!important;margin:5px 0!important;padding:0!important}
+body[data-quiz-layout] :is(.globle-side,.travle-side,.tradle-side,.geogrid-side){padding:11px!important;gap:7px!important;position:relative}
+.quiz-frame-nav{position:absolute;top:8px;right:10px;margin:0;z-index:3}
+body[data-quiz-layout] :is(.globle-side,.travle-side,.tradle-side,.geogrid-side)>div:first-of-type:not(.quiz-frame-nav){padding-right:30px}
+body[data-quiz-layout] :is(.globle-side h2,.travle-side h2,.tradle-side h2,.geogrid-side h2){font-size:18px!important;line-height:1.15!important}
+body[data-quiz-layout] .badge{font-size:9px!important;padding:2px 5px!important;margin-bottom:3px!important}
+body[data-quiz-layout] :is(.primary-btn,.soft-btn,.travle-hints button,.tradle-globe-help-btn){font-size:12px!important;line-height:1.2!important;padding:7px 8px!important;border-radius:5px!important;min-height:30px}
+body[data-quiz-layout] :is(.field input,.globle-input-box input,.travle-input-box input){font-size:14px!important;line-height:1.25;padding:8px!important;border-radius:5px!important;min-height:34px}
+body[data-quiz-layout] .game-input-space{margin-top:0!important}
+body[data-quiz-layout] .pill{font-size:11px!important;line-height:1.2!important;padding:4px 6px!important;border-radius:5px!important}
+body[data-quiz-layout] :is(.globle-stats,.travle-progress-row){gap:4px!important;flex-wrap:wrap}
+body[data-quiz-layout] :is(.feedback,.travle-feedback){font-size:12px!important;line-height:1.3!important;margin:0!important;min-height:0!important}
+body[data-quiz-layout] :is(.feedback,.travle-feedback,.travle-solution):empty{display:none}
+body[data-quiz-layout] :is(.globle-side,.travle-side,.tradle-side,.geogrid-side)>.quiz-help{margin-top:auto}
+body[data-quiz-layout] :is(.globle-row,.tradle-row){padding:3px 5px!important;font-size:11px!important;line-height:1.25!important;border-radius:3px!important;gap:4px!important;min-height:23px}
+body[data-quiz-layout] :is(.globle-history,.tradle-history){gap:2px!important;margin:0!important}
+body[data-quiz-layout=globle]{--q-space:#fff}
+body[data-quiz-layout=globle].dark{--q-space:#000}
+body[data-quiz-layout=globle] :is(.globle-map-panel,.globle-map-fit),body[data-quiz-layout=globle] #globleMap{background:var(--q-space)!important}
+body[data-quiz-layout=globle] #globlePlayControls:not([hidden]){display:flex;flex-direction:column;gap:6px;flex:1 1 auto;min-height:0}
+body[data-quiz-layout=globle] #globlePlayControls>.row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;flex-wrap:nowrap}
+body[data-quiz-layout=globle] #globlePlayControls>.row button{white-space:nowrap;padding:7px 4px!important;font-size:11px!important}
+body[data-quiz-layout=globle] #globleHistory{flex:1 1 auto;min-height:0;max-height:none!important;overflow:auto;align-content:start}
+body[data-quiz-layout] .globle-row .arrow{font-size:13px!important}
+body[data-quiz-layout] .travle-heading-row{flex-direction:row!important;gap:6px;align-items:center}
+body[data-quiz-layout] .travle-heading-row h2{font-size:16px!important}
+body[data-quiz-layout] .travle-heading-row>button{white-space:nowrap;align-self:center}
+body[data-quiz-layout] .travle-route-card{grid-template-columns:auto minmax(0,1fr) auto minmax(0,1fr)!important;padding:6px!important;gap:4px!important;font-size:11px!important}
+body[data-quiz-layout] .travle-route-card strong{font-size:12px!important}
+body[data-quiz-layout] .travle-input-row{grid-template-columns:minmax(0,1fr) auto!important;gap:4px}
+body[data-quiz-layout] .travle-side-columns{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr) auto;gap:7px!important;flex:1 1 auto;min-height:0}
+body[data-quiz-layout] .travle-history-section{min-height:0;display:flex;flex-direction:column}
+body[data-quiz-layout] .travle-history{max-height:none!important;min-height:0;overflow:auto;gap:2px!important}
+body[data-quiz-layout] .travle-guess-chip{font-size:11px!important;padding:3px 5px!important;border-radius:3px!important}
+body[data-quiz-layout] :is(.travle-column-title,.travle-hint-title){font-size:11px!important;margin-bottom:3px!important}
+body[data-quiz-layout] .travle-hints{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px!important}
+body[data-quiz-layout] .travle-hints button{font-size:10px!important;min-width:0;padding:5px 3px!important}
+body[data-quiz-layout] .tradle-history{flex:1 1 auto;min-height:0;max-height:none!important;overflow:auto;align-content:start}
+body[data-quiz-layout] .tradle-help-bottom{margin-top:0!important;gap:5px}
+body[data-quiz-layout] .geogrid-stats{gap:4px!important}
+body[data-quiz-layout] .geogrid-side-actions{display:grid!important;grid-template-columns:1fr 1fr;gap:5px!important;margin:0!important}
+body[data-quiz-layout] .tradle-chart-head{padding:7px!important;font-size:11px!important}
+/* The external game keeps its own fullscreen UI, with just two floating links. */
+body[data-quiz].quiz-external-host main.content{width:100%!important;height:100dvh!important;min-height:0!important}
+.quiz-external-host .quiz-control-rail{display:none!important}
+.quiz-external-overview{position:fixed;right:8px;top:7px;z-index:11000;margin:0;padding:0}
+body[data-quiz=openguessr] #quiz-openguessr{top:0!important;height:100dvh!important}
+/* Apply the same density to the other quiz controls, without shrinking maps. */
+body[data-quiz] :is(.worldle-side,.geo-hud,.country-map-side,.country-map-bottom-bar,.quiz-status-panel){padding:11px!important;gap:7px!important}
+body[data-quiz] :is(.worldle-side-title h3,.geo-target-label){font-size:19px!important}
+body[data-quiz] :is(.worldle-pill,.world-pill,.geo-hud-pill,.country-map-stat){font-size:11px!important;padding:5px 7px!important;line-height:1.2}
+body[data-quiz] :is(.worldle-guess-btn,.worldle-next,.worldle-hint-button,.geo-map-exit,.country-map-action,.world-button){font-size:12px!important;padding:7px 9px!important;min-height:30px}
+body[data-quiz] .worldle-side .worldle-history{flex:1 1 auto!important;min-height:0!important;max-height:none!important;grid-auto-rows:30px!important;gap:3px!important}
+body[data-quiz] .worldle-side .worldle-history-row,body[data-quiz] .worldle-side .worldle-history-row span{height:30px!important;font-size:11px!important;padding:4px!important}
+body[data-quiz] :is(.worldle-hint-panel,.worldle-hint-chip){padding:6px!important;font-size:11px!important}
+body[data-quiz] .worldle-feedback{min-height:0!important;margin:0!important;font-size:12px!important}
+body[data-quiz] .worldle-feedback:empty{display:none}
+body[data-quiz] :is(.streak-setup,.country-region-setup,.geo-guessr-setup){padding:14px!important}
+body[data-quiz] .streak-region-btn{min-height:40px!important;padding:7px!important;font-size:12px!important}
+body[data-quiz] .streak-direction-btn{min-height:36px!important;padding:7px!important;font-size:12px!important}
+body[data-quiz] :is(.streak-choice-section,.streak-start-row){margin-top:9px!important}
+body[data-quiz] .streak-choice-label{font-size:11px!important;margin-bottom:4px!important}
+body[data-quiz] .world-card{padding:14px!important}
+body[data-quiz] .world-option{font-size:14px!important;min-height:44px!important;padding:8px!important}
+body[data-quiz] .world-prompt{font-size:23px!important;margin:5px 0 10px!important}
+body[data-quiz] .geo-selection-item{padding:6px!important;min-height:38px!important;font-size:12px!important}
+body[data-quiz] .geo-selection-item strong{font-size:12px!important}
+body[data-quiz] .geo-selection-item small{font-size:10px!important}
+@media(max-width:700px){
+ body[data-quiz] .quiz-control-rail{position:fixed;top:5px;right:6px;height:auto;min-height:0;z-index:10020}
+ body[data-quiz] main.content{min-height:100dvh!important}
+ body[data-quiz-layout] :is(.globle-side,.travle-side,.tradle-side,.geogrid-side){padding:9px!important;gap:6px!important}
+ body[data-quiz-layout] :is(.field input,.globle-input-box input,.travle-input-box input){font-size:16px!important}
+ body[data-quiz-layout=globle] #globleHistory{max-height:220px!important;flex:0 1 auto}
+ body[data-quiz-layout] .tradle-history,body[data-quiz-layout] .travle-history{max-height:170px!important}
+ body[data-quiz-layout] .travle-side-columns{flex:none}
+ body[data-quiz] #verden-quiz .quiz-status-panel{padding:7px 9px 7px 76px!important;grid-template-columns:auto 1fr!important}
+ body[data-quiz] .quiz-status-panel .quiz-page-header{grid-column:1;grid-row:1}
+ body[data-quiz] .quiz-status-panel .quiz-layout-footer{grid-column:2;grid-row:1;justify-self:end}
+ body[data-quiz] .quiz-status-panel .world-statusbar{grid-column:1/-1;grid-row:2}
+ body[data-quiz] .worldle-side .worldle-history{flex:none!important;max-height:180px!important}
+ body[data-quiz] .world-prompt{font-size:20px!important}
+}
+
+body[data-quiz-layout] .travle-heading-row{padding-right:32px!important}
+body[data-quiz].quiz-external-host :is(.openguessr-actions,.openguessr-menu-button){display:none!important}
+body[data-quiz] .geo-selection-item strong{color:var(--q-ink)!important}
+
+@media(max-width:700px){body[data-quiz-layout] :is(.primary-btn,.soft-btn,.travle-hints button,.tradle-globe-help-btn){min-height:34px}body[data-quiz-layout=globle] #globlePlayControls>.row button{font-size:12px!important}}
+
+body[data-quiz] .geo-feedback strong,body[data-quiz] .geo-summary-hud strong{color:var(--q-ink)!important}
+body[data-quiz] .geo-next-button{font-size:12px!important;padding:7px 9px!important;min-height:30px;background:#245845!important;color:#fff!important;box-shadow:none!important}
+
+/* Keep the same rail width after a MapWiz answer and on the Norway map. */
+body[data-quiz] .geo-map-stage .geo-hud{left:auto!important;right:0!important;top:0!important;bottom:0!important;width:var(--q-panel)!important;transform:none!important;padding:11px!important}
+@media(max-width:700px){body[data-quiz] .geo-map-stage .geo-hud{left:0!important;right:auto!important;top:100%!important;bottom:auto!important;width:100%!important}}
+
+/* Integrated navigation and a left-hand game panel in every local quiz. */
+body[data-quiz] .quiz-page-header{display:flex;align-items:center;justify-content:space-between;width:100%;gap:7px;margin:0 0 10px}
+body[data-quiz] .quiz-page-header .quiz-page-menu,body[data-quiz-layout] .quiz-frame-nav .quiz-page-menu{display:inline-flex;align-items:center;position:static;border:1px solid var(--q-line);background:var(--q-paper);color:var(--q-green);font:650 12px 'Segoe UI',sans-serif;padding:6px 9px;border-radius:5px;min-height:28px;cursor:pointer}
+body[data-quiz] .quiz-page-menu[hidden]{display:none!important}
+body[data-quiz-layout] .quiz-frame-nav{position:static;display:flex;align-items:center;justify-content:space-between;width:100%;margin:0 0 4px;min-height:28px}
+body[data-quiz-layout] .travle-heading-row{padding-right:0!important}
+body[data-quiz] .quiz-status-panel .quiz-layout-footer{margin-top:auto}
+body[data-quiz] .quiz-status-panel .world-end{flex:none;width:100%;margin:18px 0 0!important;padding:13px!important;background:var(--q-soft)!important;font-size:13px;line-height:1.5}
+/* Results and feedback use the same readable palette as questions. */
+body[data-quiz] #verden-quiz :is(.world-feedback,.world-end,.world-end strong,.hs-mini-head strong,.hs-mini-head button,.hs-mini-row b,.hs-mini-row span){color:var(--q-ink)!important}
+body[data-quiz] #verden-quiz .world-card:has(.world-option.wrong) .world-feedback{color:#8b3e35!important}
+body[data-quiz] #verden-quiz .world-card:has(.world-option.correct):not(:has(.world-option.wrong)) .world-feedback{color:#225b32!important}
+body[data-quiz] #verden-quiz .hs-mini{padding:10px!important;margin-top:12px!important;background:var(--q-paper)!important;border-color:var(--q-line)!important}
+body[data-quiz] #verden-quiz .hs-mini-row{grid-template-columns:16px minmax(0,1fr) auto;gap:4px;font-size:11px}
+body[data-quiz] #verden-quiz .hs-mini-row b,body[data-quiz] #verden-quiz .hs-mini-row span:last-child{white-space:normal;overflow-wrap:anywhere}
+body[data-quiz] #verden-quiz .world-end>strong{display:inline-block;font-size:22px;margin-bottom:6px}
+/* Give questions breathing room; compact navigation does not mean flat answers. */
+body[data-quiz] #verden-quiz #world-play{align-items:safe center!important;padding:28px!important}
+body[data-quiz] #verden-quiz .world-card{display:flex;flex-direction:column;justify-content:center;gap:22px;min-height:min(570px,calc(100dvh - 56px));max-width:900px!important;padding:30px!important;border-radius:17px!important}
+body[data-quiz] #verden-quiz .world-prompt{font-size:clamp(26px,2.4vw,34px)!important;line-height:1.25!important;margin:0!important}
+body[data-quiz] #verden-quiz .world-option-grid{gap:14px!important}
+body[data-quiz] #verden-quiz .world-option{min-height:76px!important;padding:16px!important;font-size:18px!important;border-radius:11px!important;line-height:1.35!important;text-align:center;justify-content:center}
+body[data-quiz] #verden-quiz .world-feedback{min-height:27px!important;margin:0!important;font-size:15px!important;line-height:1.4!important}
+body[data-quiz] #verden-quiz .world-place-question-desc{font-size:20px!important;line-height:1.5!important}
+body[data-quiz] #verden-quiz .world-question-heading{font-size:12px!important;letter-spacing:.06em}
+/* A used Jeopardy square has an explicit mark and a different surface. */
+body[data-quiz] #quiz-jeopardy #jeopardy-board .jeopardy-value:is(.done,.used){position:relative;flex-direction:column;gap:7px;background:repeating-linear-gradient(135deg,#d6dfd2,#d6dfd2 9px,#e2e8df 9px,#e2e8df 18px)!important;color:#465a42!important;border:2px solid #81967a!important;opacity:1!important;text-decoration:line-through!important;box-shadow:inset 0 0 0 1px #fff!important;cursor:default;pointer-events:none}
+body[data-quiz] #quiz-jeopardy #jeopardy-board .jeopardy-value:is(.done,.used)::after{content:'✓ Valgt';font-size:11px;line-height:1.2;font-weight:750;letter-spacing:.03em;text-decoration:none;background:#405e3b;color:#fff;padding:3px 7px;border-radius:4px}
+@media(min-width:701px){
+ body[data-quiz] .quiz-control-rail{left:0;right:auto;top:0;bottom:0;display:flex;flex-direction:column;align-items:stretch;width:var(--q-panel);height:100dvh;padding:12px;background:var(--q-paper);border:0;border-right:1px solid var(--q-line);overflow:auto}
+ body[data-quiz] .quiz-control-rail .quiz-layout-footer{margin-top:auto}
+ body[data-quiz]:not(.quiz-integrated-nav):not(.quiz-frame-host):not(.quiz-external-host) main.content{width:calc(100% - var(--q-panel))!important;margin-left:var(--q-panel)!important}
+ body[data-quiz] .quiz-integrated-nav main.content{margin-left:0!important}
+ body[data-quiz] #verden-quiz .world-game,body[data-quiz] .worldle-game{grid-template-columns:var(--q-panel) minmax(0,1fr)!important}
+ body[data-quiz] #verden-quiz .quiz-status-panel,body[data-quiz] .worldle-side{grid-column:1!important;grid-row:1!important;border-left:0;border-right:1px solid var(--q-line)}
+ body[data-quiz] #verden-quiz #world-play,body[data-quiz] .worldle-target{grid-column:2!important;grid-row:1!important}
+ body[data-quiz-layout] :is(.globle-layout,.travle-lab-layout,.tradle-layout,.geogrid-layout){grid-template-columns:var(--q-panel) minmax(0,1fr)!important}
+ body[data-quiz-layout] :is(.globle-side,.travle-side,.tradle-side,.geogrid-side){grid-column:1!important;grid-row:1!important;border-left:0!important;border-right:1px solid var(--q-line)!important}
+ body[data-quiz-layout] :is(.globle-map-panel,.travle-map-panel,.tradle-chart-panel,.geogrid-board-panel){grid-column:2!important;grid-row:1!important}
+ body[data-quiz] .geo-map-stage{left:var(--q-panel)!important;right:0!important;width:calc(100% - var(--q-panel))!important}
+ body[data-quiz] .geo-map-stage .geo-hud{left:0!important;right:auto!important;border-left:0!important;border-right:1px solid var(--q-line)!important}
+ body[data-quiz] .country-map-game .country-map-primary{grid-template-columns:var(--q-panel) minmax(0,1fr)!important}
+ body[data-quiz] .country-map-game :is(.country-map-side,.country-map-bottom-bar){grid-column:1!important;border-left:0;border-right:1px solid var(--q-line)}
+ body[data-quiz] .country-map-game .country-map-wrap{grid-column:2!important}
+ body[data-quiz] #quiz-jeopardy .jeopardy-play-area{grid-template-columns:320px minmax(0,1fr)!important}
+ body[data-quiz] #quiz-jeopardy .jeopardy-side{grid-column:1;grid-row:1}
+ body[data-quiz] #quiz-jeopardy .jeopardy-board-wrap{grid-column:2;grid-row:1}
+ body[data-quiz] #quiz-jeopardy .jeopardy-actions{padding-left:0!important}
+}
+body[data-quiz].quiz-external-host .quiz-external-overview{left:84px;right:auto}
+@media(max-width:700px){
+ body[data-quiz] .quiz-control-rail{left:6px;right:auto;top:5px;bottom:auto;width:calc(100% - 12px);justify-content:space-between}
+ body[data-quiz] #verden-quiz .quiz-status-panel{padding:9px!important;grid-template-columns:minmax(0,1fr) auto!important}
+ body[data-quiz] #verden-quiz .quiz-status-panel .world-statusbar{margin-left:0!important}
+ body[data-quiz] #verden-quiz .world-card{min-height:0;padding:19px!important;gap:16px;border-radius:12px!important}
+ body[data-quiz] #verden-quiz #world-play{padding:12px!important}
+ body[data-quiz] #verden-quiz .world-option{min-height:62px!important;font-size:16px!important;padding:12px 10px!important}
+ body[data-quiz] #verden-quiz .world-option-grid{gap:11px!important}
+ body[data-quiz] #verden-quiz .world-prompt{font-size:23px!important}
+ body[data-quiz] #verden-quiz .world-place-question-desc{font-size:17px!important}
+ body[data-quiz] .quiz-status-panel .world-end{grid-column:1/-1;grid-row:3;margin-top:8px!important}
+ body[data-quiz] .quiz-status-panel .quiz-layout-footer{grid-column:2;grid-row:1;margin-top:0}
+ body[data-quiz] #quiz-jeopardy #jeopardy-board .jeopardy-value:is(.done,.used){gap:3px}
+ body[data-quiz] #quiz-jeopardy #jeopardy-board .jeopardy-value:is(.done,.used)::after{font-size:9px;padding:2px 4px}
+}
+
+body[data-quiz] #quiz-jeopardy #jeopardy-answer::before,body[data-quiz] #quiz-jeopardy #score-actions::before{color:var(--q-muted)!important}
+@media(max-width:700px){body[data-quiz] #verden-quiz #world-play{align-items:flex-start!important}}
+
+body[data-quiz] .quiz-drawer-close{position:absolute;top:10px;right:10px;border:1px solid var(--q-line);border-radius:5px;background:var(--q-soft);color:var(--q-ink);padding:6px 10px;font:650 12px 'Segoe UI',sans-serif;cursor:pointer}
+.quiz-drawer-shade{display:none;position:fixed;inset:0;z-index:10980;border:0;background:#244c4020;cursor:default}body[data-quiz].sidebar-open .quiz-drawer-shade{display:block}
+
+body[data-quiz].sidebar-open .sidebar{z-index:11010!important}
+
+/* MapWiz keeps the whole map visible, with compact controls above it. */
+body[data-quiz].quiz-mapwiz-playing .geo-guessr-shell{padding:0!important;overflow:hidden!important}
+body[data-quiz].quiz-mapwiz-playing .geo-map-stage{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;min-height:0!important;max-height:none!important;overflow:hidden!important}
+body[data-quiz].quiz-mapwiz-playing .geo-map-stage .geo-hud{position:absolute!important;left:50%!important;right:auto!important;top:auto!important;bottom:10px!important;transform:translateX(-50%)!important;width:min(420px,calc(100vw - 20px))!important;min-width:0!important;height:auto!important;min-height:0!important;max-height:calc(100dvh - 66px)!important;overflow:auto!important;padding:10px 12px!important;gap:5px!important;background:var(--q-paper)!important;border:1px solid var(--q-line)!important;border-radius:10px!important;box-shadow:0 3px 16px #173b3330!important}
+body[data-quiz].quiz-mapwiz-playing .geo-hud .geo-hud-top{display:flex;flex-wrap:nowrap!important;gap:5px!important}
+body[data-quiz].quiz-mapwiz-playing .geo-hud .geo-hud-pill{font-size:10px!important;white-space:nowrap;padding:4px 5px!important}
+body[data-quiz].quiz-mapwiz-playing .geo-hud .geo-target-label{font-size:21px!important;margin:0!important}
+body[data-quiz].quiz-mapwiz-playing .geo-hud :is(.geo-hint,.geo-feedback){font-size:12px!important;color:var(--q-ink)!important;line-height:1.35;margin:0!important}
+body[data-quiz].quiz-mapwiz-playing .geo-hud .geo-next-button{margin-top:5px}
+body[data-quiz].quiz-mapwiz-playing .geo-map-stage>.quiz-page-header{position:absolute!important;left:10px;top:10px;width:auto!important;margin:0;gap:7px;z-index:30;background:var(--q-paper);padding:5px;border:1px solid var(--q-line);border-radius:7px;box-shadow:0 2px 8px #173b3320}
+body[data-quiz].quiz-mapwiz-playing .quiz-page-header .quiz-layout-footer{margin:0;padding:0}
+body[data-quiz].quiz-mapwiz-playing .quiz-page-back{font-size:12px!important;padding:6px 8px!important}
+body[data-quiz].quiz-mapwiz-playing .geo-map-exit{position:absolute!important;top:15px!important;right:10px!important;left:auto!important;bottom:auto!important;z-index:30;border:1px solid var(--q-line)!important;border-radius:5px}
+body[data-quiz].quiz-mapwiz-playing .geo-hud .geo-summary{max-height:45dvh;overflow:auto}
+@media(max-width:700px){
+ body[data-quiz].quiz-mapwiz-playing .geo-map-stage>.quiz-page-header{left:5px;top:5px;gap:4px;padding:3px}
+ body[data-quiz].quiz-mapwiz-playing .geo-map-exit{top:9px!important;right:5px!important;font-size:11px!important;padding:6px!important}
+ body[data-quiz].quiz-mapwiz-playing .geo-map-stage .geo-hud{bottom:max(7px,env(safe-area-inset-bottom))!important;padding:8px 10px!important;max-height:calc(100dvh - 64px)!important}
+}
+/* Found countries share the left panel instead of taking height from the map. */
+body[data-quiz=countries] .country-found-section{display:flex;flex-direction:column;flex:1 1 auto;min-height:70px!important;max-height:none!important;padding:8px 0 0!important;border-top:1px solid var(--q-line);overflow:hidden}
+body[data-quiz=countries] .country-found-section h4{font-size:12px;color:var(--q-ink);flex:none}
+body[data-quiz=countries] .country-found-list-map{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:min-content;align-content:start;gap:3px!important;min-height:0;overflow:auto;scrollbar-width:thin;padding-right:3px}
+body[data-quiz=countries] .country-found-list-map .world-chip{font-size:11px!important;line-height:1.25;padding:4px 6px!important;border-radius:4px!important;white-space:normal;overflow-wrap:anywhere;text-align:left;color:var(--q-ink)!important;background:var(--q-soft)!important}
+body[data-quiz=countries] .country-map-primary{min-height:0!important}
+body[data-quiz=countries] :is(.country-map-side,.country-map-bottom-bar){min-height:0!important;max-height:100dvh;overflow:auto}
+body[data-quiz=countries] .country-map-feedback{color:var(--q-green)!important;font-size:12px!important}
+body[data-quiz=countries] .country-map-wrap{border:0!important}
+.country-zoom-tip{position:absolute;left:10px;bottom:10px;z-index:3;pointer-events:none;font:600 11px/1.4 'Segoe UI',sans-serif;color:var(--q-ink);background:var(--q-paper);padding:5px 8px;border-radius:5px;border:1px solid var(--q-line)}
+@media(min-width:701px){
+ body[data-quiz] #quiz-jeopardy .jeopardy-play-area{grid-template-columns:var(--q-panel) minmax(0,1fr)!important}
+ body[data-quiz=countries] .country-map-game .country-map-wrap{height:100dvh!important;max-height:none!important}
+}
+@media(max-width:700px){
+ body[data-quiz=countries] :is(.country-map-side,.country-map-bottom-bar){max-height:none;overflow:visible}
+ body[data-quiz=countries] .country-found-section{flex:none;min-height:0!important;max-height:210px!important}
+ body[data-quiz=countries] .country-found-list-map{max-height:170px}
+ .country-zoom-tip{bottom:7px;left:7px;font-size:10px}
+}
+
+/* Keep the world projection readable on portrait phones instead of stretching it. */
+body[data-quiz].quiz-mapwiz-playing .geo-world-scroll{position:absolute;inset:0;overflow:hidden}
+body[data-quiz].quiz-mapwiz-playing .geo-world-content{position:relative;width:100%;height:100%}
+body[data-quiz].quiz-mapwiz-playing .geo-world-content .geo-map-image{position:absolute;inset:0;width:100%;height:100%;max-width:none;user-select:none;-webkit-user-drag:none}
+.geo-mobile-pan-tip{display:none}
+@media(max-width:700px) and (orientation:portrait){
+ body[data-quiz].quiz-mapwiz-playing .geo-world-scroll{overflow-x:auto;overflow-y:hidden;touch-action:pan-x;scrollbar-width:thin}
+ body[data-quiz].quiz-mapwiz-playing .geo-world-content{width:200dvh}
+ body[data-quiz].quiz-mapwiz-playing .geo-mobile-pan-tip{display:block;position:absolute;left:10px;top:57px;z-index:20;pointer-events:none;font:600 10px/1.4 'Segoe UI',sans-serif;color:var(--q-ink);background:var(--q-paper);padding:4px 6px;border:1px solid var(--q-line);border-radius:4px}
+}
+
+/* Size the image itself to its intrinsic ratio, without a letterboxed white canvas. */
+body[data-quiz] #verden-quiz :is(.world-prompt,.world-option) img.quiz-flag-img{width:auto!important;height:auto!important;aspect-ratio:auto!important;max-width:min(220px,100%)!important;max-height:150px!important;padding:0!important;background:transparent!important;border:0!important;border-radius:2px!important;outline:0!important;box-shadow:none!important;filter:drop-shadow(0 0 .6px #48675880) drop-shadow(0 3px 5px #173b3330)}
+body[data-quiz] #verden-quiz .world-option img.quiz-flag-img{max-height:80px!important}
+@media(max-width:700px){body[data-quiz] #verden-quiz .world-prompt img.quiz-flag-img{max-height:100px!important}body[data-quiz] #verden-quiz .world-option img.quiz-flag-img{max-height:62px!important}}
+
+html[lang=en] body[data-quiz] #quiz-jeopardy #jeopardy-board .jeopardy-value:is(.done,.used)::after{content:'✓ Used'}
+html[lang=en] body[data-quiz=jeopardy] #jeopardy-answer::before{content:'Answer'}
+html[lang=en] body[data-quiz=jeopardy] #score-actions:not(:empty)::before{content:'Points'}
+html[lang=en] body[data-quiz=jeopardy] #jeopardy-setup .jeopardy-setup-grid>div:first-child::before{content:'Game setup'}
+html[lang=en] body[data-quiz=jeopardy] #jeopardy-setup .jeopardy-option.pensum span::after{content:'Curriculum'!important}
+html[lang=en] body[data-quiz=jeopardy] .jeopardy-card:not(.open)::before{content:'Choose a cell on the board'}
+
+/* GeoGrid leaves space around both the controls and the board. */
+body[data-quiz].quiz-mapwiz-playing .geo-map-stage .geo-hud{box-sizing:border-box!important}
+body[data-quiz-layout="geogrid"] .geogrid-side{padding:22px 18px!important;gap:16px!important}
+body[data-quiz-layout="geogrid"] .quiz-frame-nav{position:static!important;justify-content:space-between!important;margin:0 0 8px!important;width:100%}
+body[data-quiz-layout="geogrid"] .geogrid-side>div:first-of-type:not(.quiz-frame-nav){padding-right:0!important}
+body[data-quiz-layout="geogrid"] .geogrid-side-actions{grid-template-columns:1fr!important;gap:8px!important}
+body[data-quiz-layout="geogrid"] .geogrid-board-panel{align-items:center!important;justify-content:center!important;padding:clamp(20px,3vw,42px)!important}
+body[data-quiz-layout="geogrid"] .geogrid-board{max-width:1020px!important;max-height:610px!important;height:calc(100% - 20px)!important}
+body[data-quiz-layout="geogrid"] .geogrid-criterion{font-size:12px!important;line-height:1.4!important;padding:12px!important}
+body[data-quiz-layout="globle"] .quiz-distance-help{margin-top:auto!important;font-size:11px!important}
+@media(max-width:700px){
+ body[data-quiz-layout="geogrid"] .geogrid-side{padding:14px!important;gap:12px!important}
+ body[data-quiz-layout="geogrid"] .geogrid-board-panel{padding:10px!important}
+ body[data-quiz-layout="geogrid"] .geogrid-board{height:100%!important}
+ body[data-quiz-layout="geogrid"] .geogrid-criterion{font-size:10px!important;padding:6px!important}
+ body[data-quiz-layout="geogrid"] .geogrid-side-actions{grid-template-columns:1fr 1fr!important}
+}
+
+/* Status rows must keep their own size inside the navigation panel. */
+body[data-quiz] #verden-quiz .quiz-status-panel{min-width:0;min-height:0;align-items:stretch;justify-content:flex-start;gap:14px}
+body[data-quiz] #verden-quiz .quiz-status-panel>.quiz-page-header{flex:0 0 auto;position:static!important;inset:auto!important;width:100%!important;margin:0!important}
+body[data-quiz] #verden-quiz .quiz-status-panel>.world-statusbar{position:static!important;inset:auto!important;display:flex!important;flex:0 0 auto!important;flex-direction:row!important;flex-wrap:wrap!important;align-items:center!important;align-content:flex-start!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;margin:0!important;gap:8px!important}
+body[data-quiz] #verden-quiz .quiz-status-panel .world-pill{display:inline-flex!important;flex:0 1 auto!important;align-items:center!important;justify-content:center!important;width:auto!important;height:auto!important;min-height:32px!important;max-height:none!important;gap:4px!important;border-radius:7px!important;white-space:normal;overflow-wrap:anywhere}
+body[data-quiz] #verden-quiz .quiz-status-panel>.quiz-layout-footer{margin-top:auto!important;flex:0 0 auto}
+/* Capital prompts place the flag beside the country, with room for both. */
+body[data-quiz] #verden-quiz .capital-question{display:flex;flex-direction:column;align-items:center;gap:20px;width:100%}
+body[data-quiz] #verden-quiz .capital-question-label{display:block}
+body[data-quiz] #verden-quiz .capital-country{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:24px 36px;width:100%}
+body[data-quiz] #verden-quiz .capital-country>span{min-width:0;overflow-wrap:anywhere}
+body[data-quiz] #verden-quiz .capital-country img.quiz-flag-img{max-width:150px!important;max-height:100px!important;flex:0 0 auto;margin:0!important}
+@media(max-width:700px){
+ body[data-quiz] #verden-quiz .world-game{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto minmax(0,1fr)!important}
+ body[data-quiz] #verden-quiz .quiz-status-panel{display:flex!important;flex-direction:column!important;grid-column:1!important;grid-row:1!important;gap:9px;padding:10px 12px!important;overflow:visible!important}
+ body[data-quiz] #verden-quiz .quiz-status-panel>.world-statusbar{margin:0!important}
+ body[data-quiz] #verden-quiz .quiz-status-panel>.quiz-layout-footer{padding:0!important;align-self:flex-start}
+ body[data-quiz] #verden-quiz #world-play{grid-column:1!important;grid-row:2!important}
+ body[data-quiz] #verden-quiz .capital-question{gap:15px}
+ body[data-quiz] #verden-quiz .capital-country{gap:16px 24px}
+ body[data-quiz] #verden-quiz .capital-country img.quiz-flag-img{max-width:110px!important;max-height:72px!important}
+}
+
+/* Region and question direction are separate, visual choices for these quizzes. */
+.quiz-in-game-top-ten[hidden]{display:none!important}
+@media(min-width:701px){
+ body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]){--q-panel:220px}
+}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-fullscreen-body:has(.visual-quiz-setup){padding:clamp(18px,3vh,30px) clamp(18px,3vw,40px)!important;align-items:safe center!important;justify-content:center!important}
+body[data-quiz] #verden-quiz .visual-quiz-setup{--choice-row:clamp(66px,11.2vh,84px);width:100%!important;max-width:1100px!important;margin:0 auto!important;padding:clamp(20px,2.3vw,30px)!important;border-radius:15px!important;border:1px solid var(--q-line);box-sizing:border-box}
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-setup-heading{display:flex;flex-direction:column;gap:7px;margin-bottom:23px}
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-setup-heading h3{margin:0!important;padding:0!important;border:0!important;font-size:clamp(25px,2.5vw,33px)!important;font-weight:750;line-height:1.12;letter-spacing:-.035em}
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-setup-heading>span{color:var(--q-muted);font-size:12px;line-height:1.4}
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-setup-grid{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(0,1fr);gap:clamp(20px,2.6vw,34px);align-items:stretch}
+body[data-quiz] #verden-quiz .visual-quiz-setup :is(.quiz-region-section,.quiz-direction-section){display:flex;flex-direction:column;min-width:0;margin:0!important}
+body[data-quiz] #verden-quiz .visual-quiz-setup .streak-choice-label{display:block;flex:none;margin:0 0 10px;font-size:12px;font-weight:750;letter-spacing:.02em;line-height:1.25;color:var(--q-ink)!important}
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-region-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:repeat(4,var(--choice-row));gap:9px!important}
+body[data-quiz] #verden-quiz .visual-quiz-setup .streak-region-btn{position:relative;display:flex;align-items:center;gap:13px;min-width:0;min-height:0!important;margin:0;padding:12px 27px 12px 14px!important;border:1px solid var(--q-line)!important;border-radius:10px;text-align:left!important;transition:background-color .15s,border-color .15s,transform .15s;overflow:hidden;isolation:isolate}
+body[data-quiz] #verden-quiz .visual-quiz-setup .streak-region-btn[data-region="world"]{grid-column:1/-1;padding-left:20px!important;gap:18px;background:var(--q-soft)!important}
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-region-icon{display:block;flex:0 0 57px;width:57px;height:49px;object-fit:contain;margin:0;opacity:.75;filter:none}
+body[data-quiz] #verden-quiz .visual-quiz-setup [data-region="world"] .quiz-region-icon{flex-basis:59px;width:59px;height:59px;opacity:.9}
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-region-copy{display:flex;flex-direction:column;gap:5px;min-width:0}
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-region-copy strong{display:block;font-size:14px;font-weight:750;line-height:1.18;letter-spacing:-.015em;color:inherit}
+body[data-quiz] #verden-quiz .visual-quiz-setup [data-region="world"] .quiz-region-copy strong{font-size:19px}
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-region-copy small{display:block;margin:0;font-size:11px;line-height:1.2;font-weight:500;color:var(--q-muted)!important}
+body[data-quiz] #verden-quiz .visual-quiz-setup :is(.streak-region-btn,.streak-direction-btn)::after{content:'';position:absolute;right:10px;top:10px;width:15px;height:15px;display:grid;place-items:center;border:1px solid #aec2a7;border-radius:50%;font-size:10px;font-weight:900;line-height:1;color:transparent;background:var(--q-paper)}
+body[data-quiz] #verden-quiz .visual-quiz-setup :is(.streak-region-btn,.streak-direction-btn).selected{background:#dce9d2!important;border-color:#86aa74!important;color:#244d35!important;box-shadow:inset 0 0 0 1px #86aa741f!important}
+body[data-quiz] #verden-quiz .visual-quiz-setup :is(.streak-region-btn,.streak-direction-btn).selected::after{content:'✓';background:#245845;border-color:#245845;color:#fff}
+body[data-quiz] #verden-quiz .visual-quiz-setup :is(.streak-region-btn,.streak-direction-btn):hover{border-color:#8daa7e!important;background:#e1ebd8!important;transform:translateY(-1px)}
+body[data-quiz] #verden-quiz .visual-quiz-setup :is(.streak-region-btn,.streak-direction-btn):focus-visible{outline:3px solid #245845;outline-offset:3px}
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-direction-grid{display:grid;flex:1;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:repeat(2,minmax(0,1fr));gap:10px!important}
+body[data-quiz] #verden-quiz .visual-quiz-setup .streak-direction-btn{position:relative;display:flex;flex-direction:column;gap:10px;min-width:0;min-height:0!important;padding:11px!important;margin:0;border:1px solid var(--q-line)!important;border-radius:11px;text-align:left!important;transition:background-color .15s,border-color .15s,transform .15s}
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-direction-title{display:block;flex:none;padding-right:24px;font-size:13px;line-height:1.25;font-weight:750;color:inherit}
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-question-preview{display:flex;flex:1;flex-direction:column;justify-content:center;gap:7px;min-height:0;width:100%;padding:9px 11px;border:1px solid var(--q-line);border-radius:7px;background:var(--q-paper);color:var(--q-ink);pointer-events:none;box-sizing:border-box}
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-preview-prompt{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:39px;text-align:center}
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-preview-question{font-size:9px;line-height:1.2;font-weight:500;color:var(--q-muted)}
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-preview-subject{display:flex;align-items:center;justify-content:center;gap:10px;min-height:26px;font-size:20px;line-height:1.15;letter-spacing:-.02em;font-weight:750;color:var(--q-ink)}
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-preview-flag{display:block;width:42px!important;height:28px!important;max-width:100%!important;max-height:28px!important;object-fit:contain!important;padding:0!important;border:0!important;border-radius:1px!important;box-shadow:0 0 0 1px #244d351a;filter:none!important}
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-preview-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;width:100%;min-width:0}
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-preview-options>span{display:flex;align-items:center;justify-content:center;min-height:22px;min-width:0;padding:3px 5px;border:1px solid var(--q-line);border-radius:4px;background:var(--q-soft);font-size:10px;font-weight:650;line-height:1.2;color:var(--q-ink);text-align:center}
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-preview-options .quiz-preview-flag{width:31px!important;height:19px!important;max-height:19px!important}
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-setup-actions{display:flex;align-items:center;justify-content:flex-start;gap:18px;margin-top:22px;padding-top:17px;border-top:1px solid var(--q-line)}
+body[data-quiz] #verden-quiz .visual-quiz-setup .streak-start-btn{min-width:158px;padding:12px 26px!important;font-size:14px;line-height:1.2;font-weight:750;border-radius:7px!important;letter-spacing:0;box-shadow:none!important;transform:none}
+body[data-quiz] #verden-quiz .visual-quiz-setup .streak-start-btn:hover{background:#173f30!important;transform:none}
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-selection-summary{font-size:11px;font-weight:500;line-height:1.4;color:var(--q-muted)}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) .quiz-in-game-top-ten{display:block;width:100%;margin:0 0 10px;padding:11px 9px;border:0;border-radius:6px;background:#245845;color:#fff;font:700 12px/1.25 "Segoe UI",sans-serif;cursor:pointer}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) .quiz-in-game-top-ten:hover{background:#173f30}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]).dark-mode #verden-quiz .visual-quiz-setup :is(.streak-region-btn,.streak-direction-btn).selected{background:#35523a!important;border-color:#85a97c!important;color:#e7f1e5!important}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]).dark-mode #verden-quiz .visual-quiz-setup :is(.streak-region-btn,.streak-direction-btn):hover{background:#344a36!important}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]).dark-mode #verden-quiz .visual-quiz-setup .quiz-region-icon{filter:brightness(1.55);opacity:.85}
+@media(min-width:701px) and (max-height:680px){
+ body[data-quiz] #verden-quiz .visual-quiz-setup{--choice-row:65px;padding:20px!important}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-setup-heading{margin-bottom:17px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-setup-heading h3{font-size:28px!important}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-setup-actions{margin-top:17px;padding-top:13px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-region-icon{height:44px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup [data-region="world"] .quiz-region-icon{height:50px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-question-preview{padding:7px 10px;gap:5px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-preview-prompt{min-height:34px}
+}
+@media(min-width:701px) and (max-width:1100px){
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-setup-grid{gap:18px;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr)}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .streak-region-btn{gap:9px;padding-left:10px!important}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-region-icon{flex-basis:42px;width:42px;height:42px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-region-copy strong{font-size:12px}
+}
+@media(max-width:700px){
+ body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-fullscreen-body:has(.visual-quiz-setup){padding:53px 10px 14px!important;align-items:flex-start!important}
+ body[data-quiz] #verden-quiz .visual-quiz-setup{padding:16px!important;border-radius:11px!important;margin:0!important}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-setup-heading{gap:5px;margin-bottom:19px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-setup-heading h3{font-size:26px!important}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-setup-heading>span{font-size:11px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-setup-grid{grid-template-columns:minmax(0,1fr);gap:19px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .streak-choice-label{font-size:11px;margin-bottom:8px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-region-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-template-rows:56px repeat(2,88px);gap:7px!important}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .streak-region-btn{flex-direction:column;justify-content:center;gap:6px;padding:7px 6px!important;border-radius:8px;text-align:center!important}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .streak-region-btn[data-region="world"]{grid-column:1/-1;flex-direction:row;justify-content:flex-start;gap:15px;padding:6px 16px!important}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-region-icon{flex:0 0 30px;width:40px;height:30px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup [data-region="world"] .quiz-region-icon{flex-basis:42px;width:42px;height:42px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-region-copy{gap:3px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-region-copy strong{font-size:10.5px;line-height:1.15}
+ body[data-quiz] #verden-quiz .visual-quiz-setup [data-region="world"] .quiz-region-copy strong{font-size:16px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-region-copy small{font-size:9px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup :is(.streak-region-btn,.streak-direction-btn)::after{width:12px;height:12px;right:6px;top:6px;font-size:8px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-direction-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:minmax(0,1fr);gap:8px!important}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .streak-direction-btn{padding:8px!important;gap:8px;border-radius:8px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-direction-title{font-size:10px;line-height:1.3;padding-right:10px;min-height:26px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-question-preview{padding:8px 5px;gap:7px;min-height:122px;border-radius:5px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-preview-question{font-size:8px;line-height:1.2}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-preview-subject{font-size:17px;gap:6px;min-height:26px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-preview-flag{width:31px!important;height:23px!important;max-height:23px!important}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-preview-options{gap:4px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-preview-options>span{font-size:8px;min-height:22px;padding:3px 2px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-preview-options .quiz-preview-flag{width:26px!important;height:17px!important;max-height:17px!important}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-setup-actions{gap:12px;align-items:flex-start;margin-top:18px;padding-top:14px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .streak-start-btn{min-width:110px;padding:12px 17px!important;font-size:13px}
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-selection-summary{font-size:10px;padding-top:2px}
+ body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) .quiz-in-game-top-ten{display:inline-flex;width:auto;justify-content:center;align-items:center;margin:0;padding:8px 10px;font-size:11px}
+ body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) .quiz-status-panel>.quiz-layout-footer{display:flex;flex-direction:column;align-items:stretch;gap:8px;width:100%}
+}
+
+/* Give the running quiz's controls, counters and bottom actions room to breathe. */
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel{padding:20px 12px 22px!important;gap:20px!important}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel>.quiz-page-header{margin:0 0 2px!important}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel>.world-statusbar{flex-direction:column!important;align-items:stretch!important;flex-wrap:nowrap!important;gap:12px!important}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel .world-pill{flex:0 0 auto!important;justify-content:flex-start!important;width:100%!important;min-height:46px!important;padding:12px 13px!important;font-size:14px!important;font-weight:650;line-height:1.4!important}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel>.quiz-layout-footer{display:flex;flex-direction:column;align-items:stretch;gap:14px;width:100%;padding:20px 0 0!important}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel .quiz-in-game-top-ten{min-height:42px;margin:0;padding:12px 10px;font-size:13px}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel .quiz-layout-footer>.quiz-page-back{display:flex!important;align-items:center;min-height:40px;padding:10px 11px!important;font-size:12px!important;line-height:1.35!important}
+
+/* The country representation is a separate form choice, outside the direction buttons. */
+body[data-quiz="capitals"] #verden-quiz .capital-display-options{display:flex;align-items:center;flex-wrap:wrap;gap:6px 17px;min-width:0;margin:0 0 10px;padding:6px 11px 8px;border:1px solid var(--q-line);border-radius:8px;background:var(--q-soft);color:var(--q-ink)}
+body[data-quiz="capitals"] #verden-quiz .capital-display-options legend{padding:0 4px;margin:0;font-size:11px;font-weight:650;line-height:1.3;color:var(--q-muted)}
+body[data-quiz="capitals"] #verden-quiz .capital-display-options label{display:inline-flex;align-items:center;gap:7px;margin:0;min-height:24px;font-size:12px;font-weight:650;line-height:1.3;color:var(--q-ink)!important;cursor:pointer}
+body[data-quiz="capitals"] #verden-quiz .capital-display-options input[type="checkbox"]{flex:0 0 auto;width:16px;height:16px;margin:0;accent-color:#245845;cursor:pointer}
+body[data-quiz="capitals"] #verden-quiz .capital-display-options input[type="checkbox"]:focus-visible{outline:2px solid var(--q-green);outline-offset:3px}
+body[data-quiz="capitals"] #verden-quiz .capital-answer{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-width:0;max-width:100%;color:inherit}
+body[data-quiz="capitals"] #verden-quiz .capital-answer>span{min-width:0;overflow-wrap:anywhere}
+body[data-quiz="capitals"] #verden-quiz .world-option .capital-answer img.quiz-flag-img{display:block;flex:0 0 auto;width:auto!important;height:34px!important;max-width:56px!important;max-height:34px!important;object-fit:contain!important;margin:0!important}
+body[data-quiz="capitals"] #verden-quiz .quiz-preview-options .capital-answer{gap:5px}
+body[data-quiz="capitals"] #verden-quiz .quiz-preview-options .capital-answer img{max-width:26px!important;max-height:18px!important}
+@media(min-width:701px) and (max-height:680px){
+ body[data-quiz="capitals"] #verden-quiz .visual-quiz-setup .quiz-direction-grid{gap:8px!important}
+ body[data-quiz="capitals"] #verden-quiz .visual-quiz-setup .streak-direction-btn{gap:7px;padding:9px!important}
+ body[data-quiz="capitals"] #verden-quiz .capital-display-options{margin-bottom:8px;padding-top:4px;padding-bottom:6px}
+}
+@media(max-width:700px){
+ body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel{padding:14px 12px 16px!important;gap:12px!important}
+ body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel>.world-statusbar{gap:8px!important}
+ body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel .world-pill{min-height:38px!important;padding:8px 11px!important;font-size:13px!important}
+ body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel>.quiz-layout-footer{gap:10px;padding:6px 0 0!important}
+ body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel .quiz-in-game-top-ten{min-height:38px;padding:9px 10px;font-size:12px}
+ body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel .quiz-layout-footer>.quiz-page-back{min-height:36px;padding:8px 10px!important;font-size:11px!important}
+ body[data-quiz="capitals"] #verden-quiz .capital-display-options{margin-bottom:9px;gap:5px 18px;padding:5px 10px 7px}
+ body[data-quiz="capitals"] #verden-quiz .capital-display-options legend{font-size:10px}
+ body[data-quiz="capitals"] #verden-quiz .capital-display-options label{font-size:11px}
+ body[data-quiz="capitals"] #verden-quiz .visual-quiz-setup .quiz-preview-options .capital-answer{flex-direction:column;gap:3px}
+ body[data-quiz="capitals"] #verden-quiz .visual-quiz-setup .quiz-preview-options .capital-answer>span{white-space:nowrap;overflow-wrap:normal}
+ body[data-quiz="capitals"] #verden-quiz .capital-answer{gap:8px}
+ body[data-quiz="capitals"] #verden-quiz .world-option .capital-answer img.quiz-flag-img{height:27px!important;max-width:42px!important;max-height:27px!important}
+}
+
+/* Keep representation controls alongside the question-type heading. */
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-direction-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;min-width:0}
+body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-direction-heading>.streak-choice-label{margin:0;flex:0 0 auto}
+body[data-quiz="capitals"] #verden-quiz .quiz-direction-heading .capital-display-options{flex:0 1 auto;margin:0;padding:7px 10px;gap:6px 12px;flex-wrap:nowrap}
+body[data-quiz="capitals"] #verden-quiz .quiz-direction-heading .capital-display-options legend{float:left;padding:0;margin:0 4px 0 0;line-height:24px;white-space:nowrap}
+@media(max-width:1100px){
+ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-direction-heading{gap:8px}
+ body[data-quiz="capitals"] #verden-quiz .quiz-direction-heading .capital-display-options{gap:6px 8px;padding:6px 8px}
+ body[data-quiz="capitals"] #verden-quiz .quiz-direction-heading .capital-display-options legend{font-size:10px}
+ body[data-quiz="capitals"] #verden-quiz .quiz-direction-heading .capital-display-options label{gap:5px;font-size:11px}
+}
+
+.quiz-layout-footer .geo-online-result{margin:0 0 12px}
+.quiz-layout-footer .geo-online-result>button{width:100%}

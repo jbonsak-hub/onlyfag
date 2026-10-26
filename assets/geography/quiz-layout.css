@@ -640,3 +640,6 @@ body[data-quiz="capitals"] #verden-quiz .quiz-direction-heading .capital-display
  body[data-quiz="capitals"] #verden-quiz .quiz-direction-heading .capital-display-options legend{font-size:10px}
  body[data-quiz="capitals"] #verden-quiz .quiz-direction-heading .capital-display-options label{gap:5px;font-size:11px}
 }
+
+.quiz-layout-footer .geo-online-result{margin:0 0 12px}
+.quiz-layout-footer .geo-online-result>button{width:100%}
