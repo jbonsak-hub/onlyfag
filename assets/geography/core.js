@@ -603,10 +603,65 @@ function worldRegionButtonsHtml(){
   const order=['world','africa','asia','europe','northamerica','oceania','southamerica'];
   return order.map((id,i)=>`<button type="button" class="streak-region-btn${i===0?' selected':''}" onclick="selectStreakChoice(this,'world-region','${id}')">${COUNTRY_MAP_META[id].label}</button>`).join('');
 }
+function visualQuizRegionButtonsHtml(mode){
+  const order=['world','asia','europe','northamerica','southamerica','oceania','africa'];
+  const countries=getWorldData().countries||[];
+  return order.map((id,i)=>{
+    const label=COUNTRY_MAP_META[id].label;
+    const eligible=worldCountriesForRegion(countries,id).filter(country=>mode==='flags'||mode==='flagcapital'?country.flagCode:true);
+    const content=`<img class="quiz-region-icon" src="/assets/geography/quiz-regions/${id}.svg" alt="" aria-hidden="true"><span class="quiz-region-copy"><strong>${label}</strong><small>${eligible.length} land</small></span>`;
+    return `<button type="button" class="streak-region-btn${i===0?' selected':''}" data-region="${id}" aria-pressed="${i===0}" onclick="selectStreakChoice(this,'world-region','${id}')">${content}</button>`;
+  }).join('');
+}
 function selectStreakChoice(btn,inputClass,value){
   const setup=btn.closest('.streak-setup'); if(!setup) return;
   const input=setup.querySelector('.'+inputClass); if(input) input.value=value;
-  const group=btn.parentElement; if(group) group.querySelectorAll('button').forEach(b=>b.classList.toggle('selected',b===btn));
+  const group=btn.parentElement; if(group) group.querySelectorAll('button').forEach(b=>{b.classList.toggle('selected',b===btn);if(b.hasAttribute('aria-pressed'))b.setAttribute('aria-pressed',String(b===btn));});
+  const summary=setup.querySelector('.quiz-selection-summary');
+  if(summary){
+    const region=setup.querySelector('.world-region').value;
+    const direction=setup.querySelector('.quiz-direction-grid .selected .quiz-direction-title')?.textContent||'';
+    summary.replaceChildren();
+    for(const [index,label] of [COUNTRY_MAP_META[region].label,direction].entries()){
+      if(index)summary.append(document.createTextNode(' · '));
+      const text=document.createElement('span');text.textContent=label;summary.append(text);
+    }
+  }
+}
+function quizSetupPreviewFlag(country,code){
+  const source=window.MapSymbols?.lookup(country,{kind:'country',code})?.src||flagUrlFromCode(code);
+  return `<img class="quiz-preview-flag" src="${escapeGeoHtml(source)}" alt="" decoding="async">`;
+}
+function quizSetupQuestionPreview(kind){
+  const countries=[['Norge','no'],['Sverige','se'],['Danmark','dk'],['Finland','fi']];
+  const capitals=['Oslo','Berlin','Roma','Paris'];
+  let prompt='',answers='';
+  if(kind==='country-capital-mc'){
+    prompt=`<span class="quiz-preview-question">Hva heter hovedstaden i</span><strong class="quiz-preview-subject">${quizSetupPreviewFlag('Norge','no')}<span>Norge?</span></strong>`;
+    answers=capitals.map(name=>`<span>${name}</span>`).join('');
+  }else if(kind==='capital-country-mc'){
+    prompt='<span class="quiz-preview-question">Hvilket land har hovedstaden</span><strong class="quiz-preview-subject">Oslo?</strong>';
+    answers=countries.map(([name])=>`<span>${name}</span>`).join('');
+  }else if(kind==='flag-country-mc'||kind==='flag-capital-mc'){
+    prompt=`<span class="quiz-preview-question">${kind==='flag-country-mc'?'Hvilket land?':'Hvilken hovedstad?'}</span><strong class="quiz-preview-subject">${quizSetupPreviewFlag('Norge','no')}</strong>`;
+    answers=(kind==='flag-country-mc'?countries.map(([name])=>name):capitals).map(name=>`<span>${name}</span>`).join('');
+  }else{
+    prompt=`<span class="quiz-preview-question">Hvilket flagg hører til</span><strong class="quiz-preview-subject">${kind==='country-flag-mc'?'Norge?':'Oslo?'}</strong>`;
+    answers=countries.map(([name,code])=>`<span>${quizSetupPreviewFlag(name,code)}</span>`).join('');
+  }
+  return `<span class="quiz-question-preview" aria-hidden="true"><span class="quiz-preview-prompt">${prompt}</span><span class="quiz-preview-options">${answers}</span></span>`;
+}
+function renderVisualStreakSetup(mode,title,first,second,firstVal,secondVal){
+  const directions=[[first,firstVal],[second,secondVal]].map(([label,value],index)=>`<button type="button" class="streak-direction-btn${index===0?' selected':''}" data-question-type="${value}" aria-label="${label}" aria-pressed="${index===0}" onclick="selectStreakChoice(this,'world-submode','${value}')"><span class="quiz-direction-title">${label}</span>${quizSetupQuestionPreview(value)}</button>`).join('');
+  return `<div class="world-setup streak-setup visual-quiz-setup">
+    <div class="quiz-setup-heading"><h3>${title}</h3><span>Velg region og spørsmålstype.</span></div>
+    <input type="hidden" class="world-region" value="world"><input type="hidden" class="world-submode" value="${firstVal}">
+    <div class="quiz-setup-grid">
+      <section class="streak-choice-section quiz-region-section" aria-labelledby="quiz-region-label-${mode}"><span class="streak-choice-label" id="quiz-region-label-${mode}">Region</span><div class="streak-region-grid quiz-region-grid" role="group" aria-labelledby="quiz-region-label-${mode}">${visualQuizRegionButtonsHtml(mode)}</div></section>
+      <section class="streak-choice-section quiz-direction-section" aria-labelledby="quiz-direction-label-${mode}"><span class="streak-choice-label" id="quiz-direction-label-${mode}">Spørsmålstype</span><div class="streak-direction-grid quiz-direction-grid" role="group" aria-labelledby="quiz-direction-label-${mode}">${directions}</div></section>
+    </div>
+    <div class="streak-start-row quiz-setup-actions"><button class="world-button streak-start-btn" type="button" onclick="startWorldTrainer('${mode}')">Start</button><span class="quiz-selection-summary" aria-live="polite"><span>Hele verden</span> · <span>${first}</span></span></div>
+  </div>`;
 }
 function renderStreakSetup(mode){
   const title=WORLD_MODE_TITLES[mode]||'Test deg selv';
@@ -620,6 +675,7 @@ function renderStreakSetup(mode){
   }else{
     first='Flagg → hovedstad'; second='Hovedstad → flagg'; firstVal='flag-capital-mc'; secondVal='capital-flag-mc';
   }
+  if(['flags','capitals','flagcapital'].includes(mode))return renderVisualStreakSetup(mode,title,first,second,firstVal,secondVal);
   return `<div class="world-setup streak-setup"><h3>${title}</h3><p>Velg region og retning. Spillet fortsetter til første feil.</p>
     <input type="hidden" class="world-region" value="world"><input type="hidden" class="world-submode" value="${firstVal}">
     <div class="streak-choice-section"><span class="streak-choice-label">Region</span><div class="streak-region-grid">${worldRegionButtonsHtml()}</div></div>

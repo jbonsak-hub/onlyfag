@@ -29,6 +29,12 @@
  }
  function resultButton(target){if(!target||target.querySelector('.geo-online-result')||!active)return;const box=document.createElement('div');box.className='geo-online-result';const button=document.createElement('button');button.type='button';button.className='world-button';button.textContent='Topp 10';const run=active;button.onclick=()=>{if(run.reply.complete&&!run.saved)run.prompted=false;showBoard(run.config,run);};box.append(button);target.append(box);}
  window.GeoOnline={enabled:true,
+  showWorld(game){
+   if(!['flags','capitals','flagcapital'].includes(game))return false;
+   const state=typeof worldTrainerState!=='undefined'&&worldTrainerState?.mode===game?worldTrainerState:null;
+   if(!state)return false;
+   showBoard(active?.config||{game,region:state.regionId||'world',variant:state.submode,language:language()});return true;
+  },
   showMapWiz(categories){showBoard(active?.config||{game:'mapwiz',categories:[...categories].sort(),language:language()});return true;},
   showLegacy(key){const [kind,region]=key.split('|'),game=kind==='countries2'?'countries':kind;if(!['flags','capitals','flagcapital','places','countries'].includes(game))return false;showBoard(active?.config||{game,region:region==='streak'?'world':region||'world',variant:document.querySelector('.world-submode')?.value,language:language()});return true;},
   finishLocal(result,target){if(active){resultButton(target);finish();}return true;},

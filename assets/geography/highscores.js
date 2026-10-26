@@ -60,7 +60,9 @@
   function updateHsVisibility(setup){if(!setup)return;const worldBtn=setup.querySelector('[data-hs-world-only="1"]');if(worldBtn){const region=setup.querySelector('.world-region')?.value||'world';worldBtn.hidden=region!=='world'}const streakBtn=setup.querySelector('[data-hs-streak-only="1"]');if(streakBtn){const pace=setup.querySelector('.world-pace')?.value||'sudden';streakBtn.hidden=pace!=='sudden'}}
   const oldSelect=window.selectStreakChoice;
   window.selectStreakChoice=function(btn,inputClass,value){oldSelect.apply(this,arguments);updateHsVisibility(btn&&btn.closest('.world-setup'))};
+  const nativeStreakSetup=window.renderStreakSetup;
   window.renderStreakSetup=function(mode){
+    if(['flags','capitals','flagcapital'].includes(mode))return nativeStreakSetup(mode);
     const title=WORLD_MODE_TITLES[mode]||'Test deg selv';let first='',second='',firstVal='',secondVal='';
     if(mode==='capitals'){first='Land → hovedstad';second='Hovedstad → land';firstVal='country-capital-mc';secondVal='capital-country-mc'}
     else if(mode==='flags'){first='Flagg → land';second='Land → flagg';firstVal='flag-country-mc';secondVal='country-flag-mc'}

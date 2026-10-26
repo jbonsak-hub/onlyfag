@@ -27,6 +27,12 @@
     syncBack();
   }
   const footer = document.createElement('div'); footer.className = 'quiz-layout-footer'; footer.append(back);
+  let topTen=null;
+  if(setupLabels[mode]){
+    topTen=document.createElement('button');topTen.type='button';topTen.className='quiz-in-game-top-ten';topTen.textContent='Topp 10';topTen.hidden=true;
+    topTen.addEventListener('click',()=>{if(!window.GeoOnline?.showWorld(mode))window.geoHsShowCurrentWorld?.(mode,topTen);});
+    footer.prepend(topTen);
+  }
   const rail = document.createElement('aside'); rail.className = 'quiz-control-rail';
   rail.append(header, footer); document.body.append(rail);
   // Map-only host documents do not load core.js, so provide the same drawer actions.
@@ -115,8 +121,9 @@
     if (frame.contentDocument?.readyState === 'complete') frameLayout(frame);
     return;
   }
-  const panelResize = window.OnlyfagPanelResize({active:() => !document.body.classList.contains('quiz-mapwiz-playing')});
+  const panelResize = window.OnlyfagPanelResize({defaultWidth:setupLabels[mode]?220:280,active:() => !document.body.classList.contains('quiz-mapwiz-playing')});
   function update() {
+    if(topTen)topTen.hidden=!document.querySelector('.world-game');
     document.querySelectorAll('.jeopardy-value.done,.jeopardy-value.used').forEach(cell => {
       if (!cell.hasAttribute('aria-disabled')) {cell.setAttribute('aria-disabled','true');cell.setAttribute('aria-label',cell.textContent.trim()+' poeng, allerede valgt');}
     });
