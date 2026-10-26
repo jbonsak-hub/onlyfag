@@ -3,6 +3,7 @@
   document.querySelector('.quiz-page-theme').addEventListener('click', () => {
     const dark = !document.body.classList.contains('dark-mode');
     document.body.classList.toggle('dark-mode', dark);
+    if(typeof window.scheduleCountryMapDraw==='function')window.scheduleCountryMapDraw();
     try { localStorage.setItem('geoDarkMode', dark ? '1' : '0'); } catch (_) {}
     document.getElementById('maplab-frame')?.contentWindow.postMessage({type:'maplab-control', dark}, location.origin);
   });

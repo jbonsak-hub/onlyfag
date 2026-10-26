@@ -28,10 +28,10 @@
   }
   const footer = document.createElement('div'); footer.className = 'quiz-layout-footer'; footer.append(back);
   let topTen=null;
-  if(setupLabels[mode]){
+  if(setupLabels[mode]||mode==='countries'){
     topTen=document.createElement('button');topTen.type='button';topTen.className='quiz-in-game-top-ten';topTen.textContent='Topp 10';topTen.hidden=true;
     topTen.addEventListener('click',()=>{if(!window.GeoOnline?.showWorld(mode))window.geoHsShowCurrentWorld?.(mode,topTen);});
-    footer.prepend(topTen);
+    if(mode==='countries')footer.append(topTen);else footer.prepend(topTen);
   }
   const rail = document.createElement('aside'); rail.className = 'quiz-control-rail';
   rail.append(header, footer); document.body.append(rail);
@@ -123,7 +123,7 @@
   }
   const panelResize = window.OnlyfagPanelResize({defaultWidth:setupLabels[mode]?220:280,active:() => !document.body.classList.contains('quiz-mapwiz-playing')});
   function update() {
-    if(topTen)topTen.hidden=!document.querySelector('.world-game');
+    if(topTen)topTen.hidden=!document.querySelector('.world-game,.country-map-game');
     document.querySelectorAll('.jeopardy-value.done,.jeopardy-value.used').forEach(cell => {
       if (!cell.hasAttribute('aria-disabled')) {cell.setAttribute('aria-disabled','true');cell.setAttribute('aria-label',cell.textContent.trim()+' poeng, allerede valgt');}
     });

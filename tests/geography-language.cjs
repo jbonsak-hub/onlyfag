@@ -22,10 +22,10 @@ const server=http.createServer((req,res)=>{try{const file=path.join(root,new URL
   };
   await page.goto(base+'geografi.html#verden-quiz');
   await checkLanguageButton('en');await shot('overview-norwegian');
-  assert.deepEqual(await page.locator('.geoquiz-copy strong').allTextContents().then(a=>a.slice(0,4)),['Flagg','Hovedsteder','Kart','MapWiz']);
+  assert.deepEqual(await page.locator('.geoquiz-copy strong').allTextContents().then(a=>a.slice(0,4)),['Flagg','Hovedsteder','Kart','Land']);
   await page.evaluate(()=>localStorage.setItem('geoHighscoresV1',JSON.stringify({'flags|world':[{name:'Norge',rank:[99],scoreText:'99 på rad',timeSec:10}]})));
   await page.getByRole('button',{name:'English',exact:true}).click();await page.waitForFunction(()=>document.querySelector('.geoquiz-copy strong').textContent==='Flags');
-  assert.deepEqual(await page.locator('.geoquiz-copy strong').allTextContents().then(a=>a.slice(0,4)),['Flags','Capitals','Map','MapWiz']);
+  assert.deepEqual(await page.locator('.geoquiz-copy strong').allTextContents().then(a=>a.slice(0,4)),['Flags','Capitals','Map','Countries']);
   await checkLanguageButton('no');
   await languageButton.focus();await page.keyboard.press('Enter');await page.waitForFunction(()=>QuizLanguage.language==='no'&&document.querySelector('.geoquiz-copy strong').textContent==='Flagg');
   assert.equal(await page.evaluate(()=>localStorage.getItem('onlyfag-geo-language')),'no');await checkLanguageButton('en');

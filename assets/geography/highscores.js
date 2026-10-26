@@ -76,9 +76,9 @@
 
   // One independent list per region in "Kan du verdens land?".
   window.renderCountryRegionSetup=function(){
-    const worldId='world',others=['africa','asia','europe','northamerica','oceania','southamerica'];
-    function card(id,isWorld){const n=countryMapNames(id).length,label=COUNTRY_MAP_META[id].label,key='countries2|'+id,hsLabel=isWorld?modeLabel('countries'):modeLabel('countries')+' · '+label;return '<div class="country-region-hs-card'+(isWorld?' world':'')+'"><button class="country-region-btn'+(isWorld?' world':'')+'" onclick="startCountryMapQuiz(\''+id+'\')">'+(isWorld?'<span class="country-region-kicker">Hele utfordringen</span>':'')+'<strong>'+label+'</strong><small>'+n+' land</small></button><button type="button" class="country-region-hs-button" onclick="geoHsShow(\''+key+'\',\''+hsLabel.replace(/'/g,"\'")+'\')">'+(isWorld?'🏆 Topp 10 (hele verden)':'🏆 Topp 10')+'</button></div>'}
-    return '<div class="country-region-setup"><h2>Velg område</h2><p>Hvor mange land husker du navnet på?</p><div class="country-region-world">'+card(worldId,true)+'</div><div class="country-region-grid">'+others.map(id=>card(id,false)).join('')+'</div></div>';
+    const order=['world','asia','europe','northamerica','southamerica','oceania','africa'];
+    const cards=order.map(id=>`<button type="button" class="streak-region-btn country-region-btn" data-region="${id}" onclick="startCountryMapQuiz('${id}')"><img class="quiz-region-icon" src="/assets/geography/quiz-regions/${id}.svg" alt=""><span class="quiz-region-copy"><strong>${COUNTRY_MAP_META[id].label}</strong><small>${countryMapNames(id).length} land</small></span></button>`).join('');
+    return `<div class="world-setup country-region-setup visual-quiz-setup country-visual-setup"><div class="quiz-setup-heading"><h3>Land</h3></div><section class="quiz-region-section"><span class="streak-choice-label">Region</span><div class="streak-region-grid quiz-region-grid">${cards}</div></section></div>`;
   };
 
   const oldEndWorld=window.endWorldTrainer;

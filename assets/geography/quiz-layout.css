@@ -643,3 +643,19 @@ body[data-quiz="capitals"] #verden-quiz .quiz-direction-heading .capital-display
 
 .quiz-layout-footer .geo-online-result{margin:0 0 12px}
 .quiz-layout-footer .geo-online-result>button{width:100%}
+
+/* Country recall shares the illustrated region selector, with room for the list. */
+body[data-quiz="countries"] #verden-quiz .country-visual-setup{max-width:940px!important}
+body[data-quiz="countries"] #verden-quiz .country-visual-setup .quiz-region-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-template-rows:88px repeat(2,100px)}
+body[data-quiz="countries"] #verden-quiz .country-visual-setup .country-region-btn strong{font-size:16px!important}
+body[data-quiz="countries"] .quiz-layout-footer{display:flex;align-items:stretch;gap:8px;width:100%}
+body[data-quiz="countries"] .quiz-layout-footer>.quiz-page-back{flex:1;justify-content:center;font-size:11px!important;padding:9px 7px!important;white-space:nowrap}
+body[data-quiz="countries"] .quiz-in-game-top-ten{flex:0 0 auto;margin:0;padding:9px 12px;border:0;border-radius:6px;background:#245845;color:white;font:650 11px "Segoe UI",sans-serif;cursor:pointer}
+body[data-quiz="countries"] .quiz-in-game-top-ten[hidden]{display:none!important}
+body[data-quiz="countries"] .quiz-fullscreen-body:has(.country-visual-setup){padding:24px!important;align-items:center!important}
+@media(max-width:700px){
+ body[data-quiz="countries"] .quiz-fullscreen-body:has(.country-visual-setup){padding:53px 10px 14px!important;align-items:flex-start!important}
+ body[data-quiz="countries"] #verden-quiz .country-visual-setup .quiz-region-grid{grid-template-rows:56px repeat(2,95px)}
+ body[data-quiz="countries"] #verden-quiz .country-visual-setup .country-region-btn strong{font-size:11px!important}
+ body[data-quiz="countries"] .quiz-layout-footer{width:auto}
+}

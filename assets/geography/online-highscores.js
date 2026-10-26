@@ -38,7 +38,7 @@
 
  window.GeoOnline={enabled:true,
   showWorld(game){
-   if(!['flags','capitals','flagcapital'].includes(game))return false;
+   if(!['flags','capitals','flagcapital','countries'].includes(game))return false;
    const state=typeof worldTrainerState!=='undefined'&&worldTrainerState?.mode===game?worldTrainerState:null;
    if(!state)return false;
    showBoard(active?.config||{game,region:state.regionId||'world',variant:state.submode,...(game==='capitals'?{countryDisplay:capitalCountryDisplay(state.countryDisplay)}:{}),language:language()});return true;

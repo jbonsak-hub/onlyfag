@@ -3,7 +3,7 @@ window.GEO_QUIZ_ROUTES={
   "kart": ["geografi/kart.html", "Kart"],
   "countries": [
     "geografi/landquiz.html",
-    "Verdens land-quiz"
+    "Land"
   ],
   "capitals": [
     "geografi/hovedstadsquiz.html",
