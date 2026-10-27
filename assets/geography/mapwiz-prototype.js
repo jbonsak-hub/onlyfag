@@ -18,7 +18,8 @@
   ["straits","Stred, kanaler, bukter og kapp","Stred, kanaler, bukter og kapp"],
   ["landmarks","Kjente byggverk og historiske steder","Kjente byggverk og historiske steder"],
   ["nature","Kjente naturfenomener","Kjente natursteder"],
-  ["place:Norge","Norge","Norge"]
+  ["place:Norge","Norge","Norge"],
+  ["historical","Historiske navn","Historiske riker og gamle navn"]
  ];
  const midpoints=new Map(window.MAPWIZ_RIVER_MIDPOINTS.map(t=>[t.name,t]));
  const pools=new Map(categoryDefinitions.map(([key,label,category])=>{
@@ -28,7 +29,8 @@
   else if(key==='cities')items=reference.cities.map(c=>({...c,kind:'By',explanation:GEO_QUIZ_DATA.countries.find(n=>n.flagCode===c.countryCode.toLowerCase())?.country||c.country}));
   else if(key==='rivers')items=[...midpoints.values()].map(t=>({...t,kind:'Elv',explanation:'Siktepunkt omtrent midt i det kartlagte hovedløpet.'}));
   else items=geoPlayablePlaces().filter(t=>t.category===category);
-  return [key,items.map(t=>({...t,quizCategory:key,categoryLabel:label,category:category||label,difficulty:reference.difficulties.assignments[key][t.name]}))];
+  for(const target of reference.extraTargets||[])if(target.category===category&&!items.some(t=>t.name===target.name))items.push(target);
+  return [key,items.filter(t=>Object.hasOwn(reference.difficulties.assignments[key],t.name)).map(t=>({...t,quizCategory:key,categoryLabel:label,category:category||label,difficulty:reference.difficulties.assignments[key][t.name]}))];
  }));
  const definitions=reference.difficulties.levels.map(level=>[level.id,level.label]);
  const difficultyPools=new Map(definitions.map(([key])=>[key,[...pools.values()].flat().filter(target=>target.difficulty===key)]));
@@ -67,25 +69,30 @@
  initGeoGuessr=function(){
   stopGeoGuessrClock();geoGuessrState=null;hudObserver?.disconnect();document.body.classList.add('mapwiz-setup');
   app().innerHTML=`<div class="geo-guessr-setup-wrap"><div class="geo-guessr-setup mapwiz-prototype-setup">
-   <div class="prototype-setup-intro"><h3>MapWiz</h3><div class="prototype-intro">Velg ett eller flere nivåer. Hver runde har 10 spørsmål.</div></div>
-   <div class="geo-selection-grid" role="group" aria-label="Vanskelighetsgrad">${definitions.map(([key,label])=>`<label class="geo-selection-item mapwiz-level-card" data-level="${key}"><input type="checkbox" data-prototype-difficulty="${key}" ${selected.has(key)?'checked':''}><span class="mapwiz-level-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${levelIcons[key]}</svg></span><span class="mapwiz-level-copy"><strong>${label}</strong><span class="mapwiz-level-description">${levelDescriptions[key]}</span><small class="prototype-category-count">${difficultyPools.get(key).length} oppgaver</small></span><span class="mapwiz-level-meter" aria-hidden="true">${[0,1,2].map(i=>`<i class="${i<=definitions.findIndex(([id])=>id===key)?'filled':''}"></i>`).join('')}</span></label>`).join('')}</div>
+   <div class="prototype-setup-intro"><h3>MapWiz</h3><div class="prototype-intro">Velg nivå. Hver runde har 10 spørsmål.</div></div>
+   <div class="mapwiz-difficulty-control"><div class="mapwiz-level-readout"><span id="mapwiz-level-icon" aria-hidden="true"></span><div><strong id="mapwiz-level-title"></strong><span id="mapwiz-level-count"></span></div></div><label class="mapwiz-slider-label" for="mapwiz-level-slider">Vanskelighetsgrad</label><input id="mapwiz-level-slider" type="range" min="0" max="2" step="1" value="${definitions.findIndex(([key])=>selected.has(key))}"><div class="mapwiz-level-stops">${definitions.map(([key,label],index)=>`<button type="button" data-mapwiz-level="${key}" data-index="${index}">${label}</button>`).join('')}</div></div>
    <div class="mapwiz-setup-bottom"><div class="geo-setup-actions"><button class="geo-start-button" id="geo-start-button">Start 10 spørsmål →</button><div id="prototype-selection" aria-live="polite"></div></div><button class="mapwiz-top-ten-button" id="mapwiz-show-top-ten" type="button">Topp 10</button></div>
    <div class="prototype-notes"><span>Sikt mot midten av større områder.</span><a class="mapwiz-places-link" href="/geografi/mapwiz-steder.html">Kjente steder ↗</a></div>
   </div></div>`;
-  app().querySelectorAll('[data-prototype-difficulty]').forEach(input=>input.addEventListener('change',()=>{
-   input.checked?selected.add(input.dataset.prototypeDifficulty):selected.delete(input.dataset.prototypeDifficulty);refresh();
-  }));
+  const slider=app().querySelector('#mapwiz-level-slider');
+  const choose=index=>{selected=new Set([definitions[index][0]]);refresh();};
+  slider.addEventListener('input',()=>choose(Number(slider.value)));
+  app().querySelectorAll('[data-mapwiz-level]').forEach(button=>button.onclick=()=>choose(Number(button.dataset.index)));
   app().querySelector('#geo-start-button').onclick=startGeoGuessr;
   app().querySelector('#mapwiz-show-top-ten').onclick=()=>showTopTen();
   refresh();
  };
  function refresh(){
-  const labels=definitions.filter(([key])=>selected.has(key)).map(([,label])=>label);
-  document.getElementById('prototype-selection').innerHTML=labels.map(label=>`<span>${escape(label)}</span>`).join('<span aria-hidden="true"> + </span>');
-  app().querySelectorAll('[data-prototype-difficulty]').forEach(input=>{input.disabled=input.checked&&selected.size===1;});
-  document.getElementById('mapwiz-show-top-ten').disabled=!selected.size;
-  const start=document.getElementById('geo-start-button');start.disabled=!selected.size;start.textContent=selected.size?'Start 10 spørsmål →':'Velg nivå';
+  const index=definitions.findIndex(([key])=>selected.has(key)),[key,label]=definitions[index];
+  const slider=document.getElementById('mapwiz-level-slider');slider.value=index;slider.setAttribute('aria-valuetext',label);slider.style.setProperty('--level-progress',index*50+'%');
+  document.getElementById('mapwiz-level-title').textContent=label;
+  document.getElementById('mapwiz-level-count').textContent=difficultyPools.get(key).length+' oppgaver';
+  document.getElementById('mapwiz-level-icon').innerHTML=`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${levelIcons[key]}</svg>`;
+  document.getElementById('prototype-selection').textContent=levelDescriptions[key];
+  app().querySelectorAll('[data-mapwiz-level]').forEach(button=>{const active=button.dataset.mapwizLevel===key;button.classList.toggle('selected',active);button.setAttribute('aria-pressed',String(active));});
+  document.getElementById('mapwiz-show-top-ten').innerHTML=`<span>Topp 10</span> · <span>${escape(label)}</span>`;
  }
+
  function rounds(){
   const buckets=shuffleArray([...selected].map(key=>shuffleArray(difficultyPools.get(key)))),out=[],seen=new Set();
   while(out.length<10){
@@ -176,7 +183,7 @@
   const hud=document.getElementById('geo-hud');hud.className='geo-hud prototype-summary';
   hud.innerHTML=`<h3>${s.total.toFixed(1)} / ${s.rounds.length*110} poeng</h3><table class="prototype-results"><thead><tr><th>Sted</th><th title="Poeng for avstand">Avst.p.</th><th title="Poeng for tid">Tidsp.</th></tr></thead><tbody>${s.results.map((r,index)=>`<tr data-result-index="${index}"><td><span class="prototype-result-name" title="${escape(r.name)}"><i style="background:${colors[index]}" aria-hidden="true"></i><span class="prototype-result-label">${escape(r.name)}</span></span></td><td>${r.base.toFixed(1)}</td><td>${r.bonus.toFixed(1)}</td></tr>`).join('')}</tbody></table><div class="prototype-summary-actions"><button class="geo-next-button" id="prototype-again">Spill igjen</button><button class="geo-next-button" id="prototype-settings">Endre nivå</button></div>`;
   position=null;enableDragging(hud);placeBox();
-  const topTen=document.createElement('button');topTen.type='button';topTen.className='geo-next-button';topTen.textContent='Topp 10';topTen.onclick=()=>showTopTen();hud.querySelector('.prototype-summary-actions').append(topTen);
+  const topTen=document.createElement('button');topTen.type='button';topTen.className='geo-next-button';topTen.innerHTML=`<span>Topp 10</span> · <span>${escape(definitions.find(([key])=>selected.has(key))[1])}</span>`;topTen.onclick=()=>showTopTen();hud.querySelector('.prototype-summary-actions').append(topTen);
   document.getElementById('prototype-again').onclick=startGeoGuessr;document.getElementById('prototype-settings').onclick=initGeoGuessr;
  };
  // Never restore the original module's remembered category selection here.

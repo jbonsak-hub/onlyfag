@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build MapWiz's northern-extended physical world map from pinned local data.
+"""Build MapWiz's polar-extended physical world map from pinned local data.
 
 Normal builds and --check are offline. To bootstrap the compact public-domain
 source, pass --source-raster NE2_50M_LC_SR_W.tif once. The original global TIFF
@@ -15,15 +15,17 @@ import math
 from pathlib import Path
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageEnhance
 
 ROOT = Path(__file__).resolve().parents[1]
 GEO = ROOT / 'assets/geography'
 SOURCE_DIR = GEO / 'sources/mapwiz-world'
 SOURCE_MANIFEST = SOURCE_DIR / 'source.json'
 MANIFEST = GEO / 'mapwiz-world-map.json'
-TOP = 82.0
-BOTTOM = -58.8
+TOP = 81.0
+BOTTOM = -84.0
+INITIAL_VIEW = {'top': 81.0, 'bottom': -58.8}
+ENHANCEMENT = {'color': 1.35, 'contrast': 1.12, 'brightness': .98}
 WIDTH = 3840
 SOURCE_SIZE = (5400, 2700)
 
@@ -80,14 +82,14 @@ def sample(raster, sx, sy):
 def checkpoints():
     targets = json.loads((ROOT / 'services/geography-scores/data.json').read_text())['mapwiz']
     all_targets = [target for items in targets.values() for target in items]
-    assert len(all_targets) == 776, 'Review target coverage if the game changes its pool'
+    assert len(all_targets) == 794, 'Review target coverage if the game changes its pool'
     min_lat, max_lat = min(t['lat'] for t in all_targets), max(t['lat'] for t in all_targets)
     assert BOTTOM <= min_lat <= max_lat <= TOP
     assert all(-180 <= t['lon'] <= 180 for t in all_targets)
     y_top, y_bottom = float(mercator(TOP)), float(mercator(BOTTOM))
     result = []
-    for name in ['Svalbard', 'Jan Mayen', 'Galdhøpiggen', 'Oslo']:
-        target = next(t for t in targets['place:Norge'] if t['name'] == name)
+    for category, name in [('place:Norge', 'Svalbard'), ('place:Norge', 'Jan Mayen'), ('place:Norge', 'Galdhøpiggen'), ('place:Norge', 'Oslo'), ('regions', 'Arktis'), ('regions', 'Antarktis'), ('regions', 'Dronning Mauds land')]:
+        target = next(t for t in targets[category] if t['name'] == name)
         x = (target['lon'] + 180) / 360
         y = (y_top - float(mercator(target['lat']))) / (y_top - y_bottom)
         lat = (2 * math.atan(math.exp(y_top - y * (y_top-y_bottom))) - math.pi/2) * 180/math.pi
@@ -114,6 +116,9 @@ def build():
         sy = (90-latitude)/180*raster.shape[0]-.5
         output[top:stop] = np.clip(sample(raster, sx, sy), 0, 255).astype(np.uint8)
     image = Image.fromarray(output)
+    image = ImageEnhance.Color(image).enhance(ENHANCEMENT['color'])
+    image = ImageEnhance.Contrast(image).enhance(ENHANCEMENT['contrast'])
+    image = ImageEnhance.Brightness(image).enhance(ENHANCEMENT['brightness'])
     buffer = io.BytesIO()
     image.save(buffer, format='WEBP', quality=93, method=6)
     payload = buffer.getvalue()
@@ -122,11 +127,13 @@ def build():
     directory.mkdir(parents=True, exist_ok=True)
     (directory / name).write_bytes(payload)
     manifest = {
-        'version': 1,
+        'version': 3,
         'image': '/assets/geography/mapwiz-world-map/' + name,
         'projection': 'mercator',
         'top': TOP,
         'bottom': BOTTOM,
+        'initialView': INITIAL_VIEW,
+        'enhancement': ENHANCEMENT,
         'west': -180,
         'east': 180,
         'width': WIDTH,
@@ -144,7 +151,10 @@ def build():
 
 def verify():
     manifest = json.loads(MANIFEST.read_text())
+    assert manifest['version'] == 3
     assert manifest['projection'] == 'mercator'
+    assert manifest['initialView'] == INITIAL_VIEW
+    assert manifest['enhancement'] == ENHANCEMENT
     assert [manifest['top'], manifest['bottom'], manifest['west'], manifest['east']] == [TOP, BOTTOM, -180, 180]
     assert [manifest['width'], manifest['height']] == [WIDTH, expected_height()]
     assert manifest['coverage'] == checkpoints()
@@ -160,7 +170,7 @@ def verify():
     with Image.open(io.BytesIO(payload)) as image:
         assert list(image.size) == manifest['pixelDimensions'] == [WIDTH, expected_height()]
         assert image.mode == 'RGB'
-    print('PASS MapWiz world map: all 776 targets within bounds, northern checkpoints, projection and pinned image/source hashes')
+    print('PASS MapWiz world map: all 794 targets within bounds, Arctic/Antarctic checkpoints, Svalbard-edge initial view, contrast settings and pinned image/source hashes')
     return manifest
 
 

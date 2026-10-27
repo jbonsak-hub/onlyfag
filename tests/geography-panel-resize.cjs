@@ -64,7 +64,7 @@ const server = http.createServer((req,res) => {
   await page.setViewportSize({width:1366,height:643});
 
   // MapWiz navigation floats above the map and never scores a guess.
-  await page.goto(base+'geografi/mapwiz.html');await page.locator('[data-prototype-difficulty=medium]').check();await page.locator('[data-prototype-difficulty=hard]').check();await page.locator('#geo-start-button').click();
+  await page.goto(base+'geografi/mapwiz.html');await page.locator('#mapwiz-level-slider').waitFor();await page.locator('[data-mapwiz-level=hard]').click();await page.locator('#geo-start-button').click();
   assert.equal(await page.getByRole('separator').isVisible(),false);
   await page.locator('.geo-map-stage .quiz-page-menu').click();await page.keyboard.press('Escape');
   assert.equal(await page.evaluate(()=>geoGuessrState.answered),false);
@@ -77,7 +77,7 @@ const server = http.createServer((req,res) => {
   assert.equal(await page.evaluate(()=>geoGuessrState.results.length),10);
   assert.ok(await page.locator('.prototype-summary').isVisible());
 
-  await page.goto(base+'geografi/mapwiz.html');await page.setViewportSize({width:390,height:844});await page.locator('[data-prototype-difficulty=medium]').check();await page.locator('[data-prototype-difficulty=hard]').check();await page.locator('#geo-start-button').click();await page.evaluate(()=>{const s=geoGuessrState,i=s.rounds.findIndex(t=>t.quizCategory!=='place:Norge');[s.rounds[0],s.rounds[i]]=[s.rounds[i],s.rounds[0]];renderGeoGuessrRound();});
+  await page.goto(base+'geografi/mapwiz.html');await page.setViewportSize({width:390,height:844});await page.locator('#mapwiz-level-slider').waitFor();await page.locator('[data-mapwiz-level=hard]').click();await page.locator('#geo-start-button').click();await page.evaluate(()=>{const s=geoGuessrState,i=s.rounds.findIndex(t=>t.quizCategory!=='place:Norge');[s.rounds[0],s.rounds[i]]=[s.rounds[i],s.rounds[0]];renderGeoGuessrRound();});
   assert.ok(await page.locator('.geo-world-scroll').evaluate(e=>e.scrollWidth>e.clientWidth*2),'Portrait map can pan instead of stretching');
   await page.waitForTimeout(100);
   const scrollBefore=await page.locator('.geo-world-scroll').evaluate(e=>e.scrollLeft);

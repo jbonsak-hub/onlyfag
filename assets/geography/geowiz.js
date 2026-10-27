@@ -179,7 +179,7 @@
     template.innerHTML=norwayOnly?noMapHtml()+overlays:`<div class="geo-world-scroll"><div class="geo-world-content"><img class="geo-map-image" alt="Fysisk verdenskart" src="${worldMapImage()}">${overlays}</div></div><span class="geo-mobile-pan-tip">Dra kartet sidelengs</span>`;
     stage.prepend(template.content);
     const scroll=stage.querySelector('.geo-world-scroll');
-    if(scroll)requestAnimationFrame(()=>{if(scroll.isConnected)scroll.scrollLeft=(scroll.scrollWidth-scroll.clientWidth)/2;});
+    if(scroll&&window.MapWizZoom)MapWizZoom.attach(scroll,worldMap);else if(scroll)requestAnimationFrame(()=>{if(scroll.isConnected)scroll.scrollLeft=(scroll.scrollWidth-scroll.clientWidth)/2;});
     return stage;
   }};
   window.MapWizNorway.html=noMapHtml;
@@ -249,7 +249,7 @@
       </div>
     </div>`;
     const scroll=app.querySelector(".geo-world-scroll");
-    if(scroll)requestAnimationFrame(()=>{if(scroll.isConnected)scroll.scrollLeft=(scroll.scrollWidth-scroll.clientWidth)/2;});
+    if(scroll&&window.MapWizZoom)MapWizZoom.attach(scroll,worldMap);else if(scroll)requestAnimationFrame(()=>{if(scroll.isConnected)scroll.scrollLeft=(scroll.scrollWidth-scroll.clientWidth)/2;});
     geoGuessrClock=setInterval(updateGeoGuessrClock,100);
   };
 

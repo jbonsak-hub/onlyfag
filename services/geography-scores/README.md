@@ -22,7 +22,7 @@ Fysiske kart og andre karttyper godtar ikke flaggmodusen. Oppdater Worker før
 nettsiden; endringen trenger ingen databaseskjemaendring eller migrering.
 
 
-- MapWiz: topp 10 for fullførte runder med ti spørsmål, egen liste per nivåvalg (`difficulties`: én eller flere av `easy`, `medium`, `hard`). Serveren fordeler spørsmålene jevnt mellom valgte nivåer. Nye klienter sender `map: "world"` og bruker verdensformelen for alle oppgaver, også norske steder. `map` godtar bare `"world"` og er bare gyldig for MapWiz; feltet holdes utenfor topplistenøkkelen slik at nivålistene beholdes. Bufrede klienter og pågående økter uten `map` bruker fortsatt sine opprinnelige kartspesifikke poengregler. Tidligere klienters kategorivalg (`categories`) og topplister støttes fortsatt. Nivå- og kategorivalg kan ikke kombineres; alle 776 oppføringer og eksisterende resultater beholdes, uten migrering eller sletting.
+- MapWiz: topp 10 for fullførte runder med ti spørsmål, egen liste per nivåvalg (`difficulties`: én eller flere av `easy`, `medium`, `hard`). Serveren fordeler spørsmålene jevnt mellom valgte nivåer. Nye klienter sender `map: "world"` og bruker verdensformelen for alle oppgaver, også norske steder. `map` godtar bare `"world"` og er bare gyldig for MapWiz; feltet holdes utenfor topplistenøkkelen slik at nivålistene beholdes. Bufrede klienter og pågående økter uten `map` bruker fortsatt sine opprinnelige kartspesifikke poengregler. Tidligere klienters kategorivalg (`categories`) og topplister støttes fortsatt. Nivå- og kategorivalg kan ikke kombineres; alle 776 opprinnelige oppføringer og eksisterende resultater beholdes; 18 godkjente historiske/polare steder gir 794 mål totalt, uten migrering eller sletting.
 - Flagg, Hovedsteder og Flagg+Hovedstad: topp 10, egen liste per område og retning. Runde avsluttes ved første feil eller når alle oppgavene er løst.
 - Kjente steder: topp 10 for «på rad», egen liste per retning. Varianten med 20 spørsmål forblir lokal uten ny konkurranseregel.
 - Statle: topp 10 etter fullførte 50 stater. Serveren tildeler 100/75/50/0 poeng etter grønn/gul/oransje/rød kategori, maksimalt 5000. Feil, tidsbruk og hopp over kontrolleres; ufullførte runder kan ikke publiseres.
@@ -150,15 +150,24 @@ remain supported. Deploy the Worker before publishing the new frontend.
 ## MapWiz difficulty pools
 
 The shared classification in `assets/geography/mapwiz-difficulties.json` covers
-all 776 original category/name entries. The generated client reference and
-server data use the same assignment. `data.mapwizDifficulties` references the
-original target IDs, while `data.mapwiz` remains available unchanged to cached
-category clients and in-progress sessions. Norway includes all 111 targets,
-including Svalbard above the world map's northern crop.
+all 776 original category/name entries and 18 approved historical/polar additions
+(794 total): Normal 216, Vanskelig 350, Hjerterå 228. The generated client
+reference and server data use the same assignment. `reference.extraTargets`
+contains the source records for the additions; historical targets use
+`historical`, and the three polar targets join `regions`. Existing target IDs,
+all 111 Norwegian targets and their coordinates are retained. The new Arctic
+region target uses 80° N, 0° E as a representative point inside the requested
+northern crop; the original core-data record at 82° N is untouched.
 
-For level sessions, each question selects its map and scoring radius by its
-original category: `place:Norge` uses the physical Norway atlas and the existing
-15 km/190 km formula; other categories use the world map and 90 km/1800 km
-formula. Legacy category sessions keep their original per-session rule. Each
+`data.mapwizDifficulties` references the original-format target IDs.
+`data.mapwizAdditions` records the 18 additions so cached level clients without
+`map: "world"` still receive only their original 776 possible targets. Cached
+category clients and in-progress sessions retain their previous target IDs and
+scoring rules.
+
+New clients send `map: "world"` and use the world map and 90 km/1800 km formula
+for every target. The world map covers the polar answers too. Omitted `map`
+retains the previous category-specific scoring for cached clients. The map marker
+is excluded from board identity so existing level scores remain visible. Each
 normalized difficulty combination has its own language-independent board,
 separate from every historical category board. No database migration is needed.

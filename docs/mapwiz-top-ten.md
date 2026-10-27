@@ -1,6 +1,6 @@
 # MapWiz topp 10
 
-MapWiz har global topp 10 på startsiden og sluttskjermen. Brukeren velger ett eller flere av nivåene Lett, Middels og Hjerterå. Hver runde har ti spørsmål, og hvert nivåvalg har en egen toppliste. Bare fullførte runder med positiv poengsum kan lagres. Brukeren velger selv om resultatet skal publiseres, og oppgir et kallenavn. Poeng sorteres synkende, deretter total rundetid stigende. Kallenavnvinduet åpnes automatisk når resultatet kvalifiserer. Norsk og engelsk deler liste.
+MapWiz har global topp 10 på startsiden og sluttskjermen. Brukeren velger ett eller flere av nivåene Normal, Vanskelig og Hjerterå. Hver runde har ti spørsmål, og hvert nivåvalg har en egen toppliste. Bare fullførte runder med positiv poengsum kan lagres. Brukeren velger selv om resultatet skal publiseres, og oppgir et kallenavn. Poeng sorteres synkende, deretter total rundetid stigende. Kallenavnvinduet åpnes automatisk når resultatet kvalifiserer. Norsk og engelsk deler liste.
 
 Lokale resultater ligger i `geoHighscoresV1`. De gamle kategorilistene under `mapwiz3|<sorterte kategorier>` bevares uendret. Nivåspillene bruker `mapwiz-levels-v1|<sorterte nivåer>`. Eldre lister lastes aldri opp eller flyttes inn i de nye nivålistene. Lenken til lokale lister er fjernet fra grensesnittet. Nettrunder kontrolleres av Cloudflare-API-et, og bare resultater brukeren velger å publisere får et offentlig kallenavn. Det sendes ingen resultater eller kallenavn til analytics.
 
@@ -31,14 +31,23 @@ Offisiell dokumentasjon: [D1 og Worker-binding](https://developers.cloudflare.co
 
 `assets/geography/mapwiz-difficulties.json` inneholder én nivåtilordning per
 eksisterende oppføring, med de opprinnelige kategoriene og navnene som nøkler.
-De ni godkjente flyttingene til Lett er Mexico by, Mekka, K2, Atlas,
+De ni godkjente flyttingene til Normal er Mexico by, Mekka, K2, Atlas,
 Adriaterhavet, Machu Picchu, Stonehenge, Taj Mahal og Pompeii. Fordelingen er
-216 oppføringer i Lett, 350 i Middels og 210 i Hjerterå.
+216 oppføringer i Normal, 350 i Vanskelig og 228 i Hjerterå.
 
 `scripts/build-mapwiz-prototype.cjs` inkluderer samme definisjon i den lokale
 klientreferansen. `scripts/build-geography-score-data.cjs` validerer full
 dekning og lager `mapwizDifficulties` med referanser til de opprinnelige
-mål-ID-ene. Alle 776 oppføringer, geografiske data og flagg beholdes.
+mål-ID-ene. Alle 776 opprinnelige oppføringer, geografiske data og flagg beholdes.
+I tillegg er 15 historiske riker/navn og de tre polområdene Antarktis, Arktis
+og Dronning Mauds land hentet fra de eksisterende stedsdataene.
+Disse 18 oppføringene ligger i Hjerterå og gir 794 oppføringer totalt.
+Klientreferansens `extraTargets` inneholder navn, kategorier og geografiske
+siktepunkter, slik at polområdene også tas med uten det tidligere
+breddegradsfilteret. Arktis er et stort område og bruker nå 80° N, 0° Ø som
+representativt siktepunkt innenfor det ønskede kartutsnittet. Kildedataenes
+opprinnelige punkt på 82° N beholdes uendret; bare den nye MapWiz-oppføringen
+bruker det tilpassede punktet. De øvrige 17 tilleggene beholder sine koordinater.
 
 Det nye API-valget er `difficulties`, en liste med én eller flere av `easy`,
 `medium` og `hard`. Ti spørsmål fordeles jevnt mellom de valgte nivåene, uten
@@ -50,7 +59,8 @@ API-et støtter fortsatt `categories` for tidligere klienter. `categories` og
 `difficulties` kan ikke kombineres. Eksisterende topplister og pågående økter
 beholder sine ID-er og regler; det kjøres ingen migrering eller sletting.
 `map` godtar bare `"world"` for MapWiz. Når feltet mangler i en bufret klient
-eller en eksisterende økt, beholdes den tidligere kartspesifikke poengregelen.
+eller en eksisterende økt, beholdes den tidligere kartspesifikke poengregelen
+og det opprinnelige 776-målssettet. Nye verdenskartøkter får alle 794 mål.
 Kartvalget holdes utenfor topplistenøkkelen, slik at nivålistene fra før
 verdenskartendringen fortsatt vises og kan motta nye resultater.
 Nivåspill og eldre kategorispill har fortsatt separate topplister.

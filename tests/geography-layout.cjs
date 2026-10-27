@@ -58,7 +58,7 @@ const server = http.createServer((req,res) => {
    } else {
     if(['flags','capitals','flagcapital','places'].includes(mode))await page.getByRole('button',{name:'Start',exact:true}).click();
     if(mode==='countries')await page.locator('.country-region-btn').nth(viewport.width===360?1:0).click();
-    if(mode==='geoguessr'){await page.locator('[data-prototype-difficulty=medium]').check();await page.locator('[data-prototype-difficulty=hard]').check();await page.locator('#geo-start-button').click();}
+    if(mode==='geoguessr'){await page.locator('#mapwiz-level-slider').waitFor();await page.locator('[data-mapwiz-level=hard]').click();await page.locator('#geo-start-button').click();}
     if(mode==='jeopardy'){
      for(let i=0;i<3;i++)await page.locator('#jeopardy-category-picker input').nth(i).check();
      await page.locator('[onclick="startJeopardyGame()"]').click();

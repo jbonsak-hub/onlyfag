@@ -3,11 +3,11 @@
   "levels": [
     {
       "id": "easy",
-      "label": "Lett"
+      "label": "Normal"
     },
     {
       "id": "medium",
-      "label": "Middels"
+      "label": "Vanskelig"
     },
     {
       "id": "hard",
@@ -495,7 +495,10 @@
       "Mekongdeltaet": "medium",
       "Ruhr-området": "medium",
       "Silicon Valley": "medium",
-      "Loessplatået": "hard"
+      "Loessplatået": "hard",
+      "Antarktis": "hard",
+      "Arktis": "hard",
+      "Dronning Mauds land": "hard"
     },
     "seas": {
       "Adriaterhavet": "easy",
@@ -820,6 +823,23 @@
       "Setesdalsheiene": "hard",
       "Romsdalshorn": "hard",
       "Gaula": "hard"
+    },
+    "historical": {
+      "Assyriske riket": "hard",
+      "Babylonia": "hard",
+      "Burma": "hard",
+      "Bysants": "hard",
+      "Ceylon": "hard",
+      "Kartago": "hard",
+      "Konstantinopel": "hard",
+      "Osmanske riket": "hard",
+      "Persia": "hard",
+      "Preussen": "hard",
+      "Seylon": "hard",
+      "Siam": "hard",
+      "Sparta": "hard",
+      "Teotihuacan": "hard",
+      "Zaire": "hard"
     }
   }
 }

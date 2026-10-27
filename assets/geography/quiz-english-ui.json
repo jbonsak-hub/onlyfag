@@ -29,6 +29,9 @@
   "Hovedsteder": "Capitals",
   "Flagg+Hovedstad": "Flags+Capitals",
   "Verdens land-quiz": "Find the countries",
+  "Verdens land": "Countries of the world",
+  "Nullstill zoom": "Reset zoom",
+  "Kartzoom": "Map zoom",
   "Kjente steder på jorda": "Famous places",
   "Hvor mange klarer du uten å bomme?": "How many can you get without a mistake?",
   "Kan du både landets hovedstad og flagg?": "Do you know each country's capital and flag?",
@@ -689,5 +692,7 @@
   "216 oppgaver": "216 questions",
   "350 oppgaver": "350 questions",
   "210 oppgaver": "210 questions",
-  "Kjente steder ↗": "Famous places ↗"
+  "Kjente steder ↗": "Famous places ↗",
+  "Normal": "Normal",
+  "Velg nivå. Hver runde har 10 spørsmål.": "Choose a level. Each round has 10 questions."
 }

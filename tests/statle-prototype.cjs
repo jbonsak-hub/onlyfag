@@ -84,7 +84,7 @@ assert.ok(process.env.STATLE_PREVIEW_URL, 'Set STATLE_PREVIEW_URL to the prototy
  }
  await page.locator('#geoMenuButton').click();
  await page.locator('#geoMenu summary').filter({hasText:'Fakta og quiz'}).click();
- await page.locator('#geoMenu a').filter({hasText:/^Land$/}).click();
+ await page.locator('#geoMenu a').filter({hasText:/^Verdens land$/}).click();
  await page.waitForURL('**/geografi.html#verden-land');
  await page.locator('#verden-land.active').waitFor();
  await page.goto(url);

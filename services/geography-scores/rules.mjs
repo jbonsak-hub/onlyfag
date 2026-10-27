@@ -46,7 +46,8 @@ export function pool(c){
 }
 function mapRounds(c){
  if(c.difficulties){
-  const buckets=c.difficulties.map(level=>shuffle(data.mapwizDifficulties[level].map(mapTarget))),out=[],seen=new Set();
+  const additions=c.map==='world'?null:new Set(data.mapwizAdditions);
+  const buckets=c.difficulties.map(level=>shuffle(data.mapwizDifficulties[level].filter(id=>!additions||!additions.has(id)).map(mapTarget))),out=[],seen=new Set();
   while(out.length<10){let added=false;for(const bucket of shuffle(buckets)){if(out.length===10)break;const target=bucket.find(t=>!seen.has(t.name));if(target){out.push(target);seen.add(target.name);added=true;}}if(!added)throw Error('invalid_config');}
   return out;
  }

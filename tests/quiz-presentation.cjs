@@ -16,7 +16,7 @@ for(const viewport of [{width:1366,height:643},{width:390,height:844}]){
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'No horizontal overflow');
   if(process.env.PRESENTATION_SCREENSHOTS){fs.mkdirSync(process.env.PRESENTATION_SCREENSHOTS,{recursive:true});await page.screenshot({path:path.join(process.env.PRESENTATION_SCREENSHOTS,file+'-'+variant+'-'+viewport.width+'.png')});}
  }
- await page.goto(base+'/geografi/mapwiz.html');await page.locator('[data-prototype-difficulty=medium]').check();await page.locator('[data-prototype-difficulty=hard]').check();await page.locator('#geo-start-button').click();await page.locator('#geo-hud').waitFor();
+ await page.goto(base+'/geografi/mapwiz.html');await page.locator('#mapwiz-level-slider').waitFor();await page.locator('[data-mapwiz-level=hard]').click();await page.locator('#geo-start-button').click();await page.locator('#geo-hud').waitFor();
  const hud=await page.locator('#geo-hud').boundingBox();assert(hud.width>150&&hud.height>60&&hud.x>=0&&hud.y>=0&&hud.x+hud.width<=viewport.width+1&&hud.y+hud.height<=viewport.height+1,'MapWiz question is visible inside the viewport');
  assert(await page.locator('#geo-hud').innerText().then(t=>t.trim().length>10));await page.locator('.quiz-page-theme').click();assert.equal(await page.evaluate(()=>geoGuessrState.answered),false,'Theme button never answers a map question');
  if(process.env.PRESENTATION_SCREENSHOTS)await page.screenshot({path:path.join(process.env.PRESENTATION_SCREENSHOTS,'mapwiz-'+viewport.width+'.png')});

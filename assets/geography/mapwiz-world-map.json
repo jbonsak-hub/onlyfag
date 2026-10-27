@@ -1,25 +1,34 @@
 {
-  "version": 1,
-  "image": "/assets/geography/mapwiz-world-map/physical-071298add332.webp",
+  "version": 3,
+  "image": "/assets/geography/mapwiz-world-map/physical-4ad4b776a727.webp",
   "projection": "mercator",
-  "top": 82.0,
-  "bottom": -58.8,
+  "top": 81.0,
+  "bottom": -84.0,
+  "initialView": {
+    "top": 81.0,
+    "bottom": -58.8
+  },
+  "enhancement": {
+    "color": 1.35,
+    "contrast": 1.12,
+    "brightness": 0.98
+  },
   "west": -180,
   "east": 180,
   "width": 3840,
-  "height": 2406,
+  "height": 3356,
   "pixelDimensions": [
     3840,
-    2406
+    3356
   ],
-  "imageSHA256": "071298add332f21d7af155670ab70b3c7d6bfaef298f950eefbcb2742725b494",
+  "imageSHA256": "4ad4b776a7279b343c75af373cac5b7c6beec61029e632098f9ff0468f92ab93",
   "sourceManifest": "sources/mapwiz-world/source.json",
   "sourceManifestSHA256": "2c28b9d0ab7d5dc92e55b42e9deb9b06c85dc11e05e9f3d4c28cd29a78da16c3",
   "coverage": {
-    "targetCount": 776,
+    "targetCount": 794,
     "latitudeRange": [
-      -55.9833,
-      78.75
+      -82,
+      80
     ],
     "checkpoints": [
       {
@@ -27,28 +36,49 @@
         "lat": 78.75,
         "lon": 17.5,
         "x": 0.5486111111111112,
-        "y": 0.0870198435553337
+        "y": 0.04085102477166334
       },
       {
         "name": "Jan Mayen",
         "lat": 70.987,
         "lon": -8.421,
         "x": 0.47660833333333336,
-        "y": 0.2218661750816966
+        "y": 0.13751664338893338
       },
       {
         "name": "Galdhøpiggen",
         "lat": 61.636,
         "lon": 8.312,
         "x": 0.5230888888888889,
-        "y": 0.32640617820518614
+        "y": 0.212456939930911
       },
       {
         "name": "Oslo",
         "lat": 59.9139,
         "lon": 10.7522,
         "x": 0.5298672222222222,
-        "y": 0.34205041294138094
+        "y": 0.22367162861728734
+      },
+      {
+        "name": "Arktis",
+        "lat": 80,
+        "lon": 0,
+        "x": 0.5,
+        "y": 0.01927671051529963
+      },
+      {
+        "name": "Antarktis",
+        "lat": -82,
+        "lon": 0,
+        "x": 0.5,
+        "y": 0.9474767608932557
+      },
+      {
+        "name": "Dronning Mauds land",
+        "lat": -75,
+        "lon": 20,
+        "x": 0.5555555555555556,
+        "y": 0.8322444121854229
       }
     ]
   },

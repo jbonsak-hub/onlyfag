@@ -219,7 +219,7 @@ const server = http.createServer((req, res) => {
   await page.locator('.country-region-btn').first().click();
   assert.ok((await page.locator('#country-map-input').count()) || (await page.locator('#country-guess').count()));
   await page.goto(base + 'geografi/mapwiz.html');
-  await page.locator('[data-prototype-difficulty=medium]').check();await page.locator('[data-prototype-difficulty=hard]').check();
+  await page.locator('#mapwiz-level-slider').waitFor();await page.locator('[data-mapwiz-level=hard]').click();
   await page.locator('#geo-start-button').click();
   assert.equal(await page.locator('#geo-map-stage').count(), 1);
   console.log('PASS GeoWiz start');
@@ -300,7 +300,7 @@ const server = http.createServer((req, res) => {
   await page.locator(`path.state[data-state="${statleTarget}"]`).dispatchEvent('click');
   assert.equal(await page.locator('#completed').innerText(), '1');
   await page.goto(base + 'geografi/mapwiz.html');
-  await page.locator('[data-prototype-difficulty=medium]').check();await page.locator('[data-prototype-difficulty=hard]').check();
+  await page.locator('#mapwiz-level-slider').waitFor();await page.locator('[data-mapwiz-level=hard]').click();
   await page.locator('#geo-start-button').click();
   await page.locator('#geo-map-stage').click({
     position: {
@@ -327,7 +327,7 @@ const server = http.createServer((req, res) => {
   await page.waitForURL(base + 'geografi/flaggquiz.html');
   await page.locator('.quiz-page-menu').click();
   await page.locator('.sidebar .menu-header.world').click();
-  await page.locator('.sidebar .submenu-item').filter({hasText:/^Land$/}).click();
+  await page.locator('.sidebar .submenu-item').filter({hasText:/^Verdens land$/}).click();
   await page.waitForURL(base + 'geografi.html#verden-land');
   assert.ok(await page.locator('#verden-land').evaluate(e => e.classList.contains('active')));
   await page.goto(base + 'geografi/flaggquiz.html');
