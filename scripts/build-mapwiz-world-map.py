@@ -26,7 +26,7 @@ MANIFEST = GEO / 'mapwiz-world-map.json'
 TOP = 81.0
 BOTTOM = -84.0
 INITIAL_VIEW = {'top': 81.0, 'bottom': -58.8}
-ENHANCEMENT = {'color': 1.35, 'contrast': 1.12, 'brightness': .98}
+ENHANCEMENT = {'color': 1.55, 'contrast': 1.22, 'brightness': .90}
 WIDTH = 3840
 SOURCE_SIZE = (5400, 2700)
 
@@ -121,7 +121,7 @@ def build():
     image = ImageEnhance.Contrast(image).enhance(ENHANCEMENT['contrast'])
     image = ImageEnhance.Brightness(image).enhance(ENHANCEMENT['brightness'])
     buffer = io.BytesIO()
-    image.save(buffer, format='WEBP', quality=93, method=6)
+    image.save(buffer, format='WEBP', quality=84, method=6)
     payload = buffer.getvalue()
     name = 'physical-' + sha(payload)[:12] + '.webp'
     directory = GEO / 'mapwiz-world-map'
@@ -144,7 +144,7 @@ def build():
         'sourceManifest': str(SOURCE_MANIFEST.relative_to(GEO)),
         'sourceManifestSHA256': sha(SOURCE_MANIFEST.read_bytes()),
         'coverage': checkpoints(),
-        'encoding': {'format': 'WebP', 'quality': 93, 'method': 6},
+        'encoding': {'format': 'WebP', 'quality': 84, 'method': 6},
     }
     manifest['hydrology'] = build_hydrology(manifest)
     MANIFEST.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')

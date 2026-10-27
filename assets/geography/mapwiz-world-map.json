@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "image": "/assets/geography/mapwiz-world-map/physical-4ad4b776a727.webp",
+  "image": "/assets/geography/mapwiz-world-map/physical-dc1c74a143b2.webp",
   "projection": "mercator",
   "top": 81.0,
   "bottom": -84.0,
@@ -9,9 +9,9 @@
     "bottom": -58.8
   },
   "enhancement": {
-    "color": 1.35,
-    "contrast": 1.12,
-    "brightness": 0.98
+    "color": 1.55,
+    "contrast": 1.22,
+    "brightness": 0.9
   },
   "west": -180,
   "east": 180,
@@ -21,7 +21,7 @@
     3840,
     3356
   ],
-  "imageSHA256": "4ad4b776a7279b343c75af373cac5b7c6beec61029e632098f9ff0468f92ab93",
+  "imageSHA256": "dc1c74a143b20351420af51e6c5b4f7951dddb443dddb87cd6c44e6e8cf0618e",
   "sourceManifest": "sources/mapwiz-world/source.json",
   "sourceManifestSHA256": "2c28b9d0ab7d5dc92e55b42e9deb9b06c85dc11e05e9f3d4c28cd29a78da16c3",
   "coverage": {
@@ -84,7 +84,7 @@
   },
   "encoding": {
     "format": "WebP",
-    "quality": 93,
+    "quality": 84,
     "method": 6
   },
   "hydrology": {

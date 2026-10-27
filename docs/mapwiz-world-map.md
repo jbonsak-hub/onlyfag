@@ -22,8 +22,9 @@ Den store TIFF-filen ligger ikke i nettstedet.
 `scripts/build-mapwiz-world-map.py` projiserer kildebildet til Mercator.
 Hver utpiksel samles ved sin inverse Mercator-posisjon og bilineær prøving av
 kilderastren. Bredde er 3840 piksler; høyden følger kartets faktiske
-Mercator-utstrekning. Fargemetning er økt med faktor 1,35 og kontrast med 1,12,
-med lysstyrke 0,98. Disse faste bildeinnstillingene er lagret i manifestet,
+Mercator-utstrekning. Fargemetning er økt med faktor 1,55 og kontrast med 1,22,
+med lysstyrke 0,90. WebP-kvalitet 84 gir et bilde på omtrent 1,06 MB, mot 2,31 MB
+for den tidligere kvalitet 93-filen. Disse faste bildeinnstillingene er lagret i manifestet,
 og endrer ikke georeferansen. Bilde, hash, dimensjoner, grenser og nordlige kontrollpunkter
 lagres i `assets/geography/mapwiz-world-map.json`. Klienten skal bruke akkurat
 manifestets `top` og `bottom` for klikk og fasit.
@@ -77,3 +78,13 @@ Bajkal, Titicaca, Vänern og de store østafrikanske sjøene.
 innsjøobjekter og navngitte kontroller. `tests/mapwiz-water.cjs` kontrollerer at
 laget er lastet og på plass under zoom, lar et ekte innsjøklikk gi riktig
 poengsum, gjenbrukes mellom spørsmål og fungerer på mobil og i mørk modus.
+
+
+Kartbildet og vannlaget forhåndslastes som bilder fra `<head>` på begge
+MapWiz-sidene. `build-mapwiz-prototype.cjs` holder adressene i synk med manifestet,
+slik at nedlastingen starter mens menyen vises. De tidligere kartfilene beholdes
+for klienter som fortsatt har gamle dokumenter i hurtigbufferen.
+
+Zoom med musehjul, berøring og panorering er beholdt; kartet har ingen synlige
+zoomknapper. Mørk modus demper begge kartlag med lysstyrke 0,38 og beholder
+kontrasten i spørsmål og markører.
