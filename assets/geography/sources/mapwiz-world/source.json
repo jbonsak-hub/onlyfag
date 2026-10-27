@@ -1,0 +1,28 @@
+{
+  "title": "Natural Earth II with land cover, shaded relief and water",
+  "url": "https://github.com/nvkelso/natural-earth-raster/blob/master/50m_rasters/NE2_50M_LC_SR_W/NE2_50M_LC_SR_W.tif",
+  "license": "Public domain",
+  "originalSHA256": "d8616f4753a9d4cb2e02e8e1e577c103f6009c5962a07a1e445d36507c3ca52a",
+  "originalDimensions": [
+    10800,
+    5400
+  ],
+  "image": "sources/mapwiz-world/natural-earth-ii-8648628c3415.webp",
+  "imageSHA256": "8648628c34154873c5e13b4c206be7fa07bc80fd3d1644ceb13f96e51c030891",
+  "pixelDimensions": [
+    5400,
+    2700
+  ],
+  "projection": "equirectangular",
+  "bounds": {
+    "west": -180,
+    "east": 180,
+    "north": 90,
+    "south": -90
+  },
+  "encoding": {
+    "format": "WebP",
+    "quality": 95,
+    "method": 6
+  }
+}

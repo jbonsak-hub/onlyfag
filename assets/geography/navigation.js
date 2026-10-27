@@ -15,6 +15,7 @@
   function openLink() {
     const params = new URLSearchParams(location.search);
     const raw = location.hash.slice(1) || params.get('quiz') || params.get('mode') || params.get('tab') || params.get('section') || '';
+    if (raw === 'verden-landformer') { window.__onlyfagRedirecting = true; location.replace('/geografi/mapwiz-steder.html'); return; }
     const mode = quizKey(raw);
     if (routes[mode]) { window.__onlyfagRedirecting = true; location.replace(routes[mode][0]); return; }
     if (mapTabs.includes(raw)) { showMapLab(raw, null); return; }

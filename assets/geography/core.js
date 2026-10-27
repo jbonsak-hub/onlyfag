@@ -389,7 +389,7 @@ function makeFlagQuestions(){
 }
 function getPlaceRowsByHeading(headingText){
   const section = document.getElementById('verden-landformer');
-  if(!section) return [];
+  if(!section) return (window.GEO_QUIZ_DATA?.places||[]).filter(row=>row.category===headingText).map(({place,explanation})=>({place,explanation}));
   const heading = Array.from(section.querySelectorAll('h3')).find(h => h.textContent.trim() === headingText);
   if(!heading) return [];
   let el = heading.nextElementSibling;
@@ -728,6 +728,7 @@ function getWorldData(){
       });
     });
   }
+  if(!section)places.push(...(window.GEO_QUIZ_DATA?.places||[]));
   worldDataCache = {countries, places};
   return worldDataCache;
 }

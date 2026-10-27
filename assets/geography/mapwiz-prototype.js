@@ -1,6 +1,7 @@
 /* Extended MapWiz. Shared by the published page and its preview. */
 (() => {
  const reference=window.MAPWIZ_PROTOTYPE_DATA;
+ window.MapWizWorld.install(reference.worldMap);
  const escape=escapeGeoHtml;
  const categoryDefinitions=[
   ["flags","Flagg",null],
@@ -62,14 +63,14 @@
   });
   dialog.showModal();
  }
- window.MapWizPrototype={definitions,pools,difficultyPools,reference,selected:()=>[...selected],begin:questions=>beginRound(questions),showLocalTopTen:()=>showTopTen(true),showSummaryMap:kind=>showSummaryMap(kind)};
+ window.MapWizPrototype={definitions,pools,difficultyPools,reference,selected:()=>[...selected],begin:questions=>beginRound(questions),showLocalTopTen:()=>showTopTen(true)};
  initGeoGuessr=function(){
   stopGeoGuessrClock();geoGuessrState=null;hudObserver?.disconnect();document.body.classList.add('mapwiz-setup');
   app().innerHTML=`<div class="geo-guessr-setup-wrap"><div class="geo-guessr-setup mapwiz-prototype-setup">
    <div class="prototype-setup-intro"><h3>MapWiz</h3><div class="prototype-intro">Velg ett eller flere nivåer. Hver runde har 10 spørsmål.</div></div>
    <div class="geo-selection-grid" role="group" aria-label="Vanskelighetsgrad">${definitions.map(([key,label])=>`<label class="geo-selection-item mapwiz-level-card" data-level="${key}"><input type="checkbox" data-prototype-difficulty="${key}" ${selected.has(key)?'checked':''}><span class="mapwiz-level-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${levelIcons[key]}</svg></span><span class="mapwiz-level-copy"><strong>${label}</strong><span class="mapwiz-level-description">${levelDescriptions[key]}</span><small class="prototype-category-count">${difficultyPools.get(key).length} oppgaver</small></span><span class="mapwiz-level-meter" aria-hidden="true">${[0,1,2].map(i=>`<i class="${i<=definitions.findIndex(([id])=>id===key)?'filled':''}"></i>`).join('')}</span></label>`).join('')}</div>
    <div class="mapwiz-setup-bottom"><div class="geo-setup-actions"><button class="geo-start-button" id="geo-start-button">Start 10 spørsmål →</button><div id="prototype-selection" aria-live="polite"></div></div><button class="mapwiz-top-ten-button" id="mapwiz-show-top-ten" type="button">Topp 10</button></div>
-   <div class="prototype-notes">Sikt mot midten av større områder. Norske steder får et eget Norgeskart.</div>
+   <div class="prototype-notes"><span>Sikt mot midten av større områder.</span><a class="mapwiz-places-link" href="/geografi/mapwiz-steder.html">Kjente steder ↗</a></div>
   </div></div>`;
   app().querySelectorAll('[data-prototype-difficulty]').forEach(input=>input.addEventListener('change',()=>{
    input.checked?selected.add(input.dataset.prototypeDifficulty):selected.delete(input.dataset.prototypeDifficulty);refresh();
@@ -101,7 +102,7 @@
  function beginRound(questions){
   if(!questions.length)return;
   stopGeoGuessrClock();geoGuessrSelection=new Set(selected);document.body.classList.remove('mapwiz-setup');
-  geoGuessrState={rounds:questions,index:0,total:0,baseTotal:0,bonusTotal:0,results:[],answered:false,questionStarted:performance.now(),startedAt:Date.now(),norwayOnly:questions[0].quizCategory==='place:Norge',hsMode:null,hsHandled:true};
+  geoGuessrState={rounds:questions,index:0,total:0,baseTotal:0,bonusTotal:0,results:[],answered:false,questionStarted:performance.now(),startedAt:Date.now(),norwayOnly:false,hsMode:null,hsHandled:true};
   renderGeoGuessrRound();
  }
  startGeoGuessr=function(){beginRound(rounds());};
@@ -109,15 +110,16 @@
  function placeBox(){
   const hud=document.getElementById('geo-hud');if(!hud)return;
   const r=hud.getBoundingClientRect(),margin=8;
-  const desired=position||{x:16,y:innerWidth<=700?96:72};
-  position={x:Math.max(margin,Math.min(innerWidth-r.width-margin,desired.x)),y:Math.max(margin,Math.min(innerHeight-r.height-margin,desired.y))};
-  hud.style.setProperty('--hud-x',position.x+'px');hud.style.setProperty('--hud-y',position.y+'px');
+  const desired=position||{x:Math.round(innerWidth*.047),y:Math.round(innerHeight*.72)};
+  const placed={x:Math.max(margin,Math.min(innerWidth-r.width-margin,desired.x)),y:Math.max(margin,Math.min(innerHeight-r.height-margin,desired.y))};
+  if(position)position=placed;
+  hud.style.setProperty('--hud-x',placed.x+'px');hud.style.setProperty('--hud-y',placed.y+'px');
  }
  function enableDragging(hud){
   if(hud.dataset.draggable)return;hud.dataset.draggable='true';
   let drag=null;hud.tabIndex=0;hud.setAttribute('aria-label','Oppgaveboks. Dra bakgrunnen eller bruk piltastene for å flytte.');
   hud.addEventListener('pointerdown',event=>{
-   if(event.button!==0||event.target.closest('button,a,input,select,textarea,img,tr[data-result-index]'))return;
+   if(event.button!==0||event.target.closest('button,a,input,select,textarea,img'))return;
    event.preventDefault();event.stopPropagation();const r=hud.getBoundingClientRect();
    drag={id:event.pointerId,x:event.clientX,y:event.clientY,left:r.left,top:r.top};hud.setPointerCapture(event.pointerId);hud.classList.add('is-dragging');
   });
@@ -134,28 +136,14 @@
   });
   hudObserver?.disconnect();hudObserver=new ResizeObserver(()=>{if(hud.isConnected)placeBox();});hudObserver.observe(hud);
  }
- function showSummaryMap(kind){
-  const s=geoGuessrState;if(!s?.completedAt)return;
-  s.summaryMap=kind==='norway'?'norway':'world';
-  window.MapWizMapView.set(s.summaryMap==='norway');
-  document.querySelectorAll('[data-summary-map]').forEach(button=>{const active=button.dataset.summaryMap===s.summaryMap;button.classList.toggle('selected',active);button.setAttribute('aria-pressed',String(active));});
-  drawResults();
- }
  function drawResults(){
   const s=geoGuessrState,stage=app().querySelector('.geo-map-stage');if(!s||!stage)return;
   const lines=stage.querySelector('.geo-line-layer'),markers=stage.querySelector('#geo-markers');lines.replaceChildren();markers.replaceChildren();
-  const norway=s.summaryMap?s.summaryMap==='norway':s.norwayOnly;
-  const frame=stage.querySelector(norway?'[data-no-frame]':'.geo-world-content'),bounds=stage.getBoundingClientRect();
-  const project=point=>{
-   if(!norway)return geoToPercent(point.lat,point.lon);
-   const position=MapWizNorway.project(point.lat,point.lon),rect=frame.getBoundingClientRect();
-   return {x:(rect.left-bounds.left+position.x*rect.width)/bounds.width*100,y:(rect.top-bounds.top+position.y*rect.height)/bounds.height*100};
-  };
+  const project=point=>geoToPercent(point.lat,point.lon);
   s.results.forEach((result,index)=>{
-   if(result.norwayMap!==norway)return;
    const guess=project(result.guessLocation),answer=project(result.answerLocation);
    const color=colors[index],group=document.createElementNS('http://www.w3.org/2000/svg','g');group.dataset.resultIndex=index;
-   group.innerHTML=norway?`<line x1="${guess.x}" y1="${guess.y}" x2="${answer.x}" y2="${answer.y}"></line>`:geoWrappedLineSvg(guess.x,guess.y,answer.x,answer.y);
+   group.innerHTML=geoWrappedLineSvg(guess.x,guess.y,answer.x,answer.y);
    group.querySelectorAll('line').forEach(line=>line.style.stroke=color);lines.append(group);
    for(const [kind,point] of [['guess',guess],['answer',answer]]){
     const marker=document.createElement('div');marker.className='geo-marker '+kind;marker.style.left=point.x+'%';marker.style.top=point.y+'%';marker.style.borderColor=color;marker.dataset.resultIndex=index;
@@ -166,7 +154,7 @@
  }
  window.addEventListener('resize',()=>{placeBox();if(document.querySelector('.prototype-summary'))drawResults();});
  renderGeoGuessrRound=function(){
-  const state=geoGuessrState;if(state&&state.index<state.rounds.length)state.norwayOnly=state.rounds[state.index].quizCategory==='place:Norge';
+  const state=geoGuessrState;if(state)state.norwayOnly=false;
   renderOriginal();const s=geoGuessrState;if(!s||s.index>=s.rounds.length)return;
   const t=s.rounds[s.index],hud=document.getElementById('geo-hud');
   const label=hud.querySelector('.geo-target-label');
@@ -176,27 +164,20 @@
   document.getElementById('geo-hint')?.remove();enableDragging(hud);requestAnimationFrame(()=>{if(hud.isConnected)placeBox();});
  };
  geoMapClick=function(event){
-  const s=geoGuessrState;if(!s||s.answered)return;const rect=app().querySelector(s.norwayOnly?'[data-no-frame]':'.geo-world-content').getBoundingClientRect(),x=(event.clientX-rect.left)/rect.width,y=(event.clientY-rect.top)/rect.height,guessLocation=s.norwayOnly?MapWizNorway.inverse(x,y):geoPercentToLatLon(x*100,y*100);clickOriginal(event);if(!s.answered)return;
+  const s=geoGuessrState;if(!s||s.answered)return;const rect=app().querySelector('.geo-world-content').getBoundingClientRect(),x=(event.clientX-rect.left)/rect.width,y=(event.clientY-rect.top)/rect.height,guessLocation=geoPercentToLatLon(x*100,y*100);clickOriginal(event);if(!s.answered)return;
   const point=selector=>{const el=document.querySelector(selector);return {x:parseFloat(el.style.left),y:parseFloat(el.style.top)};};
-  const result=s.results.at(-1);Object.assign(result,{guess:point('.geo-marker.guess'),answer:point('.geo-marker.answer'),norwayMap:s.norwayOnly,mapType:s.norwayOnly?'norway':'world',guessLocation,answerLocation:{lat:s.rounds[s.index].lat,lon:s.rounds[s.index].lon}});
-  if(s.norwayOnly){const stage=document.querySelector('.geo-map-stage').getBoundingClientRect(),frame=document.querySelector('[data-no-frame]').getBoundingClientRect();const relative=p=>({x:(stage.left+p.x*stage.width/100-frame.left)/frame.width,y:(stage.top+p.y*stage.height/100-frame.top)/frame.height});result.frameGuess=relative(result.guess);result.frameAnswer=relative(result.answer);}
+  const result=s.results.at(-1);Object.assign(result,{guess:point('.geo-marker.guess'),answer:point('.geo-marker.answer'),mapType:'world',guessLocation,answerLocation:{lat:s.rounds[s.index].lat,lon:s.rounds[s.index].lon}});
   const t=s.rounds[s.index];if(t.presentation)document.querySelector('.geo-target-label').textContent=t.name;
  };
  renderGeoGuessrSummary=function(){
   stopGeoGuessrClock();const s=geoGuessrState,stage=app().querySelector('.geo-map-stage');if(!stage)return;
   if(s.results.length===10&&!s.completedAt)s.completedAt=Date.now();
-  s.summaryMap=s.norwayOnly?'norway':'world';
   drawResults();
-  const maps=new Set(s.results.map(result=>result.norwayMap?'norway':'world'));
-  const mapChoices=maps.size>1?`<div class="prototype-summary-maps" role="group" aria-label="Vis resultater på kart"><button type="button" data-summary-map="world">Verdenskart</button><button type="button" data-summary-map="norway">Norgeskart</button></div>`:'';
   const hud=document.getElementById('geo-hud');hud.className='geo-hud prototype-summary';
-  hud.innerHTML=`<h3>${s.total.toFixed(1)} / ${s.rounds.length*110} poeng</h3>${mapChoices}<table class="prototype-results"><thead><tr><th>Sted</th><th title="Poeng for avstand">Avst.p.</th><th title="Poeng for tid">Tidsp.</th></tr></thead><tbody>${s.results.map((r,index)=>`<tr data-result-index="${index}" tabindex="0"><td><span class="prototype-result-name" title="${escape(r.name)}"><i style="background:${colors[index]}" aria-hidden="true"></i><span class="prototype-result-label">${escape(r.name)}</span></span></td><td>${r.base.toFixed(1)}</td><td>${r.bonus.toFixed(1)}</td></tr>`).join('')}</tbody></table><div class="prototype-summary-actions"><button class="geo-next-button" id="prototype-again">Spill igjen</button><button class="geo-next-button" id="prototype-settings">Endre nivå</button></div>`;
+  hud.innerHTML=`<h3>${s.total.toFixed(1)} / ${s.rounds.length*110} poeng</h3><table class="prototype-results"><thead><tr><th>Sted</th><th title="Poeng for avstand">Avst.p.</th><th title="Poeng for tid">Tidsp.</th></tr></thead><tbody>${s.results.map((r,index)=>`<tr data-result-index="${index}"><td><span class="prototype-result-name" title="${escape(r.name)}"><i style="background:${colors[index]}" aria-hidden="true"></i><span class="prototype-result-label">${escape(r.name)}</span></span></td><td>${r.base.toFixed(1)}</td><td>${r.bonus.toFixed(1)}</td></tr>`).join('')}</tbody></table><div class="prototype-summary-actions"><button class="geo-next-button" id="prototype-again">Spill igjen</button><button class="geo-next-button" id="prototype-settings">Endre nivå</button></div>`;
   position=null;enableDragging(hud);placeBox();
   const topTen=document.createElement('button');topTen.type='button';topTen.className='geo-next-button';topTen.textContent='Topp 10';topTen.onclick=()=>showTopTen();hud.querySelector('.prototype-summary-actions').append(topTen);
   document.getElementById('prototype-again').onclick=startGeoGuessr;document.getElementById('prototype-settings').onclick=initGeoGuessr;
-  hud.querySelectorAll('[data-summary-map]').forEach(button=>button.onclick=()=>showSummaryMap(button.dataset.summaryMap));
-  hud.querySelectorAll('tr[data-result-index]').forEach(row=>{const select=()=>showSummaryMap(s.results[Number(row.dataset.resultIndex)].norwayMap?'norway':'world');row.onclick=select;row.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();select();}};});
-  hud.querySelectorAll('[data-summary-map]').forEach(button=>{const active=button.dataset.summaryMap===s.summaryMap;button.classList.toggle('selected',active);button.setAttribute('aria-pressed',String(active));});
  };
  // Never restore the original module's remembered category selection here.
  initGeoGuessr();

@@ -678,7 +678,7 @@
   "Velg ett eller flere nivåer. Hver runde har 10 spørsmål.": "Choose one or more levels. Each round has 10 questions.",
   "En større utfordring": "A bigger challenge",
   "For geografinerder": "For geography buffs",
-  "Sikt mot midten av større områder. Norske steder får et eget Norgeskart.": "Aim for the middle of larger areas. Norwegian places use a separate Norway map.",
+  "Sikt mot midten av større områder.": "Aim for the middle of larger areas.",
   "Velg nivå": "Choose a level",
   "Endre nivå": "Change levels",
   "Verdenskart": "World map",
@@ -688,5 +688,6 @@
   "Lagres bare i denne nettleseren. Egen liste for hvert nivåvalg.": "Saved only in this browser. A separate board for each level selection.",
   "216 oppgaver": "216 questions",
   "350 oppgaver": "350 questions",
-  "210 oppgaver": "210 questions"
+  "210 oppgaver": "210 questions",
+  "Kjente steder ↗": "Famous places ↗"
 }

@@ -42,10 +42,15 @@ mål-ID-ene. Alle 776 oppføringer, geografiske data og flagg beholdes.
 
 Det nye API-valget er `difficulties`, en liste med én eller flere av `easy`,
 `medium` og `hard`. Ti spørsmål fordeles jevnt mellom de valgte nivåene, uten
-gjentatte navn i samme runde. Norske oppgaver bruker Norgeskartets avstandsregel
-(15 km for full uttelling); øvrige oppgaver bruker verdensregelen (90 km).
+gjentatte navn i samme runde. Nye klienter sender `map: "world"` og bruker
+verdenskartet og verdensregelen for alle oppgaver, også de norske
+(90 km for full uttelling). Hele målsettet beholdes, inkludert Svalbard.
 
 API-et støtter fortsatt `categories` for tidligere klienter. `categories` og
 `difficulties` kan ikke kombineres. Eksisterende topplister og pågående økter
 beholder sine ID-er og regler; det kjøres ingen migrering eller sletting.
-Nye nivåspill får egne topplister.
+`map` godtar bare `"world"` for MapWiz. Når feltet mangler i en bufret klient
+eller en eksisterende økt, beholdes den tidligere kartspesifikke poengregelen.
+Kartvalget holdes utenfor topplistenøkkelen, slik at nivålistene fra før
+verdenskartendringen fortsatt vises og kan motta nye resultater.
+Nivåspill og eldre kategorispill har fortsatt separate topplister.

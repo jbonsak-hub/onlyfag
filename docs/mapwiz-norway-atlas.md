@@ -1,5 +1,8 @@
 # MapWiz: fysisk Norgeskart
 
+> Historisk kartgrunnlag. MapWiz bruker nå verdenskartet for alle spørsmål,
+> også norske steder. Atlaset beholdes for tidligere publiserte klienter.
+
 Norske spørsmål i MapWiz viser fastlandet i et stort fysisk kart med egne
 utsnitt for Svalbard og Jan Mayen. Kartet velges automatisk for spørsmålet,
 uavhengig av om Lett, Middels eller Hjerterå er valgt. Fastlandets nord–sør-utstrekning fyller kartets

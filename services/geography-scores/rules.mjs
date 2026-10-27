@@ -22,6 +22,7 @@ export function config(input){
  else if(c.game==='statle'){if(input.variant!==undefined){if(!['capitals','largest-city'].includes(input.variant))throw Error('invalid_config');c.variant=input.variant;}}
  else if(shapeQuiz(c.game)){}else if(c.game==='countries'){c.region=input.region||'world';if(!Object.hasOwn(data.regions,c.region))throw Error('invalid_config');}
  else{c.variant=input.variant||variants[c.game][0];if(!variants[c.game].includes(c.variant))throw Error('invalid_config');c.region=input.region||'world';if(c.game!=='places'&&!Object.hasOwn(data.regions,c.region))throw Error('invalid_config');if(c.game==='places')c.region='world';}
+ if(input.map!==undefined){if(c.game!=='mapwiz'||input.map!=='world')throw Error('invalid_config');c.map='world';}
  if(input.questionMode!==undefined){if(c.game!=='kommuner'||input.questionMode!=='centres')throw Error('invalid_config');c.questionMode=input.questionMode;}
  if(input.scoring!==undefined){if(!shapeQuiz(c.game)||input.scoring!=='attempts-v1')throw Error('invalid_config');c.scoring='attempts-v1';}
  if(input.mode!==undefined){if(c.game!=='kart'||data.kartPhysical.includes(c.region)||input.mode!=='flags')throw Error('invalid_config');c.mode='flags';}
@@ -35,7 +36,8 @@ export const board=c=>{
  // The former flag/capital quiz remains the same challenge when selected
  // through the capital quiz's display controls. Keep its published identity.
  if(normalized.game==='capitals'&&normalized.countryDisplay==='flag')return board({game:'flagcapital',region:normalized.region,variant:normalized.variant==='capital-country-mc'?'capital-flag-mc':'flag-capital-mc'});
- const {language,scoring,...ranking}=normalized;return 'v'+data.version+':'+JSON.stringify(ranking);
+ // MapWiz's world-only presentation keeps each existing level board.
+ const {language,scoring,map,...ranking}=normalized;return 'v'+data.version+':'+JSON.stringify(ranking);
 };
 export function pool(c){
  if(c.game==='places')return data.places;
@@ -103,7 +105,7 @@ export function answer(s,input,now){
  const t=target(s,s.current.target);
  if(s.config.game==='mapwiz'){
   if(typeof input.lat!=='number'||typeof input.lon!=='number'||!Number.isFinite(input.lat)||!Number.isFinite(input.lon)||Math.abs(input.lat)>90||Math.abs(input.lon)>180)throw Error('invalid_answer');
-  const km=distance(input,t),elapsed=Math.max(0,(now-s.current.issuedAt)/1000),norway=s.config.difficulties?t.category==='place:Norge':s.config.categories.length===1&&s.config.categories[0]==='place:Norge',points=mapScore(km,elapsed,norway);
+  const km=distance(input,t),elapsed=Math.max(0,(now-s.current.issuedAt)/1000),norway=s.config.map!=='world'&&(s.config.difficulties?t.category==='place:Norge':s.config.categories.length===1&&s.config.categories[0]==='place:Norge'),points=mapScore(km,elapsed,norway);
   s.score+=points.points;s.baseTotal+=points.base;s.bonusTotal+=points.bonus;s.results.push({name:t.name,...points,km});s.index++;
   if(s.index===10)finish(s,now);else s.awaitingNext=true;
   return {correct:true,...points,km,answer:{lat:t.lat,lon:t.lon}};

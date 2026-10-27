@@ -70,7 +70,7 @@ const server = http.createServer((req,res) => {
   assert.equal(await page.evaluate(()=>geoGuessrState.answered),false);
   for(let i=0;i<10;i++){
    // Use the real click path and the projection of the displayed question.
-   await page.evaluate(()=>{const s=geoGuessrState,t=s.rounds[s.index],r=document.querySelector(s.norwayOnly?'[data-no-frame]':'.geo-world-content').getBoundingClientRect(),p=s.norwayOnly?MapWizNorway.project(t.lat,t.lon):geoToPercent(t.lat,t.lon),scale=s.norwayOnly?1:100;geoMapClick({clientX:r.left+r.width*p.x/scale,clientY:r.top+r.height*p.y/scale});});
+   await page.evaluate(()=>{const s=geoGuessrState,t=s.rounds[s.index],r=document.querySelector('.geo-world-content').getBoundingClientRect(),p=geoToPercent(t.lat,t.lon);geoMapClick({clientX:r.left+r.width*p.x/100,clientY:r.top+r.height*p.y/100});});
    assert.ok(await page.evaluate(()=>geoGuessrState.results.at(-1).base>99),'Map fills the same coordinate system');
    await page.locator('.geo-next-button').click();
   }
@@ -103,10 +103,10 @@ const server = http.createServer((req,res) => {
   await page.setViewportSize({width:1366,height:643});
   await page.goto(base+'geografi/mapwiz.html');
   await page.locator('#geo-start-button').click();await page.evaluate(()=>MapWizPrototype.begin(MapWizPrototype.pools.get('place:Norge').slice(0,10)));
-  assert.equal(await page.evaluate(()=>geoGuessrState.norwayOnly),true);
+  assert.equal(await page.evaluate(()=>geoGuessrState.norwayOnly),false);assert.equal(await page.locator('[data-no-frame]').count(),0);
   const norway=await page.locator('.geo-map-stage').boundingBox();assert.ok(Math.abs(norway.width-1366)<1);assert.ok(Math.abs(norway.height-643)<1);
-  await page.evaluate(()=>{const s=geoGuessrState,t=s.rounds[0],r=document.querySelector('[data-no-frame]').getBoundingClientRect(),p=MapWizNorway.project(t.lat,t.lon);geoMapClick({clientX:r.left+p.x*r.width,clientY:r.top+p.y*r.height});});
-  assert.equal(await page.evaluate(()=>geoGuessrState.results.length),1,'Norway map still scores a click');
+  await page.evaluate(()=>{const s=geoGuessrState,t=s.rounds[0],r=document.querySelector('.geo-world-content').getBoundingClientRect(),p=geoToPercent(t.lat,t.lon);geoMapClick({clientX:r.left+p.x/100*r.width,clientY:r.top+p.y/100*r.height});});
+  assert.equal(await page.evaluate(()=>geoGuessrState.results.length),1,'Norwegian targets score their click on the world map');
   assert.deepEqual(errors,[]);
 
   console.log('PASS found-list scroll, full-height map, zoom, persistence, viewport clamp, full MapWiz round and navigation; no script errors');

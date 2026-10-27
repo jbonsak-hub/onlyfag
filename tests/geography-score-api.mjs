@@ -50,21 +50,36 @@ test('MapWiz permits all seven level combinations with balanced questions and in
   const feedback=answer(state,{question:state.current.id,lat:target.lat+.3,lon:target.lon},1100);assert(feedback.km>30&&feedback.km<40);assert.equal(feedback.base<100,norway,'Only Norway-map questions use the 15 km scoring radius');
  }
 });
+test('world-only MapWiz uses world scoring for every target and retains level ranking identities',()=>{
+ const previous={game:'mapwiz',difficulties:['hard','easy']},world={...previous,map:'world'};
+ assert.deepEqual(config(world),{game:'mapwiz',language:'no',difficulties:['easy','hard'],map:'world'});
+ assert.equal(board(world),board(previous),'The map change preserves the published level board');
+ assert.equal(board({...world,language:'en'}),board(previous),'Both languages retain the same level ranking');
+ for(const map of ['norway','World','',null,false,[],{}])assert.throws(()=>config({...previous,map}),/invalid_config/);
+ for(const game of ['flags','capitals','countries','statle'])assert.throws(()=>config({game,map:'world'}),/invalid_config/);
+ for(const [input,category,name,norway]of [[{difficulties:['easy'],map:'world'},'place:Norge','Galdhøpiggen',false],[{difficulties:['easy'],map:'world'},'capitals','Paris',false],[{difficulties:['easy']},'place:Norge','Galdhøpiggen',true],[{categories:['place:Norge'],map:'world'},'place:Norge','Galdhøpiggen',false],[{categories:['place:Norge']},'place:Norge','Galdhøpiggen',true]]){
+  const state=create({game:'mapwiz',...input},1000),target=data.mapwiz[category].find(target=>target.name===name);state.current.target=target.id;state.targets[0]=target.id;state.plan[0].target=target.id;
+  const feedback=answer(state,{question:state.current.id,lat:target.lat+.3,lon:target.lon},1100);assert(feedback.km>30&&feedback.km<40);assert.equal(feedback.base<100,norway,'World-map sessions use the 90 km radius, while cached sessions retain their original scoring');
+ }
+ const svalbard=data.mapwiz['place:Norge'].find(target=>target.name==='Svalbard');assert(data.mapwizDifficulties.easy.includes(svalbard.id),'World-only sessions keep the Arctic target');
+});
 test('MapWiz level API publishes separately while retaining existing category results and cached sessions',async()=>{
- const {env,db}=fixture(),legacy={game:'mapwiz',categories:['flags']},input={game:'mapwiz',difficulties:['hard','easy'],language:'en'};
+ const {env,db}=fixture(),legacy={game:'mapwiz',categories:['flags']},input={game:'mapwiz',difficulties:['hard','easy'],map:'world',language:'en'};
  const call=async(url,body,token)=>{const response=await worker.fetch(req(url,body,token),env);return {status:response.status,body:await response.json()};};
  try{
   db.prepare('INSERT INTO scores VALUES(?,?,?,?,?,?)').run('mapwiz-existing-category',board(legacy),'Earlier category result',1090,10000,1000);
   const original=db.prepare("SELECT * FROM scores WHERE run_hash='mapwiz-existing-category'").get();
+  db.prepare('INSERT INTO scores VALUES(?,?,?,?,?,?)').run('mapwiz-existing-level',board({game:'mapwiz',difficulties:['easy','hard']}),'Earlier level result',1090,10000,1000);
+  const previousLevel=db.prepare("SELECT * FROM scores WHERE run_hash='mapwiz-existing-level'").get();
   const cached=create(legacy,Date.now()),token='8'.repeat(64),hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(token))),byte=>byte.toString(16).padStart(2,'0')).join('');
   db.prepare('INSERT INTO sessions VALUES(?,?,?,?,?)').run(hash,board(legacy),JSON.stringify(cached),0,Date.now()+60000);
-  const start=await call('/session',input);assert.equal(start.status,201);assert.deepEqual(start.body.config.difficulties,['easy','hard']);assert.equal(start.body.config.categories,undefined);assert.equal(start.body.questions.length,10);
+  const start=await call('/session',input);assert.equal(start.status,201);assert.deepEqual(start.body.config.difficulties,['easy','hard']);assert.equal(start.body.config.categories,undefined);assert.equal(start.body.config.map,'world');assert.equal(start.body.questions.length,10);
   for(let i=0;i<10;i++){
    const q=start.body.questions[i],[category]=JSON.parse(q.target),target=data.mapwiz[category].find(target=>target.id===q.target),reply=await call('/answer',{requestId:crypto.randomUUID(),question:q.id,lat:target.lat,lon:target.lon},start.body.token);assert.equal(reply.status,200);assert.equal(reply.body.feedback.base,100);assert.equal(reply.body.complete,i===9);
    if(i<9)assert.equal((await call('/next',{requestId:crypto.randomUUID()},start.body.token)).status,200);
   }
   assert.equal((await call('/publish',{requestId:crypto.randomUUID(),nickname:'New level result'},start.body.token)).status,200);
-  const rows=await call('/scores?config='+encodeURIComponent(JSON.stringify({...input,language:'no',difficulties:['easy','hard']})));assert.equal(rows.status,200);assert.equal(rows.body.rows.length,1);assert.equal(rows.body.rows[0].nickname,'New level result');
+  const rows=await call('/scores?config='+encodeURIComponent(JSON.stringify({...input,language:'no',difficulties:['easy','hard']})));assert.equal(rows.status,200);assert.equal(rows.body.rows.length,2);assert.equal(rows.body.rows[0].nickname,'New level result');assert.equal(rows.body.rows[1].nickname,'Earlier level result');assert.deepEqual(db.prepare("SELECT * FROM scores WHERE run_hash='mapwiz-existing-level'").get(),previousLevel);
   const previous=await call('/scores?config='+encodeURIComponent(JSON.stringify(legacy)));assert.equal(previous.body.rows[0].nickname,'Earlier category result');assert.deepEqual(db.prepare("SELECT * FROM scores WHERE run_hash='mapwiz-existing-category'").get(),original);
   const status=await call('/status',{},token);assert.equal(status.status,200);assert.equal(status.body.question.id,cached.current.id);const [category]=JSON.parse(cached.current.target),target=data.mapwiz[category].find(target=>target.id===cached.current.target);
   assert.equal((await call('/answer',{requestId:crypto.randomUUID(),question:cached.current.id,lat:target.lat,lon:target.lon},token)).status,200,'Existing in-progress category sessions still accept their original targets');

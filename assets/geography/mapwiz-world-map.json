@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "image": "/assets/geography/mapwiz-world-map/physical-071298add332.webp",
+  "projection": "mercator",
+  "top": 82.0,
+  "bottom": -58.8,
+  "west": -180,
+  "east": 180,
+  "width": 3840,
+  "height": 2406,
+  "pixelDimensions": [
+    3840,
+    2406
+  ],
+  "imageSHA256": "071298add332f21d7af155670ab70b3c7d6bfaef298f950eefbcb2742725b494",
+  "sourceManifest": "sources/mapwiz-world/source.json",
+  "sourceManifestSHA256": "2c28b9d0ab7d5dc92e55b42e9deb9b06c85dc11e05e9f3d4c28cd29a78da16c3",
+  "coverage": {
+    "targetCount": 776,
+    "latitudeRange": [
+      -55.9833,
+      78.75
+    ],
+    "checkpoints": [
+      {
+        "name": "Svalbard",
+        "lat": 78.75,
+        "lon": 17.5,
+        "x": 0.5486111111111112,
+        "y": 0.0870198435553337
+      },
+      {
+        "name": "Jan Mayen",
+        "lat": 70.987,
+        "lon": -8.421,
+        "x": 0.47660833333333336,
+        "y": 0.2218661750816966
+      },
+      {
+        "name": "Galdhøpiggen",
+        "lat": 61.636,
+        "lon": 8.312,
+        "x": 0.5230888888888889,
+        "y": 0.32640617820518614
+      },
+      {
+        "name": "Oslo",
+        "lat": 59.9139,
+        "lon": 10.7522,
+        "x": 0.5298672222222222,
+        "y": 0.34205041294138094
+      }
+    ]
+  },
+  "encoding": {
+    "format": "WebP",
+    "quality": 93,
+    "method": 6
+  }
+}

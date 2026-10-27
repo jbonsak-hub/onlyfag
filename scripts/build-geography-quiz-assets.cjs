@@ -6,7 +6,7 @@ const root = path.resolve(__dirname, '..');
 const check = process.argv.includes('--check');
 require('node:child_process').execFileSync(process.execPath, [path.join(root, 'scripts/build-geoquiz-cards.cjs'), ...(check ? ['--check'] : [])], {stdio:'inherit'});
 const routes = JSON.parse(fs.readFileSync(path.join(root, 'assets/geography/routes.js'), 'utf8').match(/window.GEO_QUIZ_ROUTES=([\s\S]*);/)[1]);
-const pages = ['geografi.html', 'prototypes/mapwiz.html', 'prototypes/statle.html', 'geografi/kommuner.html', 'geografi/oslo-bydeler.html', ...Object.values(routes).map(([file]) => file)];
+const pages = ['geografi.html', 'geografi/mapwiz-steder.html', 'prototypes/mapwiz.html', 'prototypes/statle.html', 'geografi/kommuner.html', 'geografi/oslo-bydeler.html', ...Object.values(routes).map(([file]) => file)];
 const mobileHash=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'assets/geography/quiz-mobile-answers.js'),'utf8').replace(/\r\n/g,'\n')).digest('hex').slice(0,12);
 const navigationHash=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'assets/geography/maplab-navigation.js'),'utf8').replace(/\r\n/g,'\n')).digest('hex').slice(0,12);
 const mapFile=path.join(root,'assets/geography/maplab.html'),mapOriginal=fs.readFileSync(mapFile,'utf8');
