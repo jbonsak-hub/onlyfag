@@ -22,7 +22,7 @@ Fysiske kart og andre karttyper godtar ikke flaggmodusen. Oppdater Worker før
 nettsiden; endringen trenger ingen databaseskjemaendring eller migrering.
 
 
-- MapWiz: topp 10 for fullførte runder med ti spørsmål, egen liste per kategorivalg. Serveren fordeler oppgavene og tillater maks to fra samme kategori når mer enn fem kategorier er valgt. Den beregner avstand, tidsbonus og samlet tid, med eksisterende Norge-/verdensformler.
+- MapWiz: topp 10 for fullførte runder med ti spørsmål, egen liste per nivåvalg (`difficulties`: én eller flere av `easy`, `medium`, `hard`). Serveren fordeler spørsmålene jevnt mellom valgte nivåer og bruker Norge-formelen for norske kartoppgaver, verdensformelen for de øvrige. Tidligere klienters kategorivalg (`categories`) og topplister støttes fortsatt med sine opprinnelige regler. Nivå- og kategorivalg kan ikke kombineres; ingen eksisterende resultater flyttes eller slettes.
 - Flagg, Hovedsteder og Flagg+Hovedstad: topp 10, egen liste per område og retning. Runde avsluttes ved første feil eller når alle oppgavene er løst.
 - Kjente steder: topp 10 for «på rad», egen liste per retning. Varianten med 20 spørsmål forblir lokal uten ny konkurranseregel.
 - Statle: topp 10 etter fullførte 50 stater. Serveren tildeler 100/75/50/0 poeng etter grønn/gul/oransje/rød kategori, maksimalt 5000. Feil, tidsbruk og hopp over kontrolleres; ufullførte runder kan ikke publiseres.
@@ -146,3 +146,19 @@ shares the corresponding historical `flagcapital` board, including its region
 and direction, without moving or deleting records. The standalone flag/capital
 page now redirects to the capital quiz; legacy API clients and active sessions
 remain supported. Deploy the Worker before publishing the new frontend.
+
+## MapWiz difficulty pools
+
+The shared classification in `assets/geography/mapwiz-difficulties.json` covers
+all 776 original category/name entries. The generated client reference and
+server data use the same assignment. `data.mapwizDifficulties` references the
+original target IDs, while `data.mapwiz` remains available unchanged to cached
+category clients and in-progress sessions. Norway includes all 111 targets,
+including Svalbard above the world map's northern crop.
+
+For level sessions, each question selects its map and scoring radius by its
+original category: `place:Norge` uses the physical Norway atlas and the existing
+15 km/190 km formula; other categories use the world map and 90 km/1800 km
+formula. Legacy category sessions keep their original per-session rule. Each
+normalized difficulty combination has its own language-independent board,
+separate from every historical category board. No database migration is needed.

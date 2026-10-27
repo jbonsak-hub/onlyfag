@@ -9,8 +9,13 @@ export function config(input){
  if(!input||!modes.has(input.game))throw Error('invalid_config');
  const c={game:input.game,language:input.language==='en'?'en':'no'};
  if(c.game==='mapwiz'){
-  if(!Array.isArray(input.categories)||!input.categories.length||input.categories.length>15)throw Error('invalid_config');
-  c.categories=[...new Set(input.categories)].sort();if(c.categories.some(k=>!Object.hasOwn(data.mapwiz,k)))throw Error('invalid_config');
+  if(input.difficulties!==undefined){
+   if(input.categories!==undefined||!Array.isArray(input.difficulties)||!input.difficulties.length||input.difficulties.length>3||input.difficulties.some(k=>typeof k!=='string'||!Object.hasOwn(data.mapwizDifficulties,k)))throw Error('invalid_config');
+   c.difficulties=[...new Set(input.difficulties)].sort();
+  }else{
+   if(!Array.isArray(input.categories)||!input.categories.length||input.categories.length>15)throw Error('invalid_config');
+   c.categories=[...new Set(input.categories)].sort();if(c.categories.some(k=>!Object.hasOwn(data.mapwiz,k)))throw Error('invalid_config');
+  }
  }else if(c.game==='kommuner'){c.county=input.county;if(typeof c.county!=='string'||!Object.hasOwn(data.kommuner,c.county))throw Error('invalid_config');if(input.variant!==undefined){if(c.county!=='03'||!['oslo-surroundings-v2','oslo-surroundings-v3'].includes(input.variant))throw Error('invalid_config');c.variant=input.variant;}}
  else if(c.game==='kart'){c.region=input.region;if(typeof c.region!=='string'||!Object.hasOwn(data.kart,c.region))throw Error('invalid_config');if(input.variant!==undefined&&input.variant!=='strict'){if(!(input.variant==='rivers-v2'&&c.region==='rivers')&&!(input.variant==='capitals'&&['europe','asia','northAmerica','southAmerica','africa','oceania'].includes(c.region)))throw Error('invalid_config');c.variant=input.variant;}if(['lakes','seas'].includes(c.region)){const groups=input.categories===undefined?(c.region==='lakes'?['lakes']:['seas','gulfsStraits']):input.categories;if(!Array.isArray(groups)||!groups.length||groups.length>3||groups.some(group=>typeof group!=='string'||(!Object.hasOwn(data.kartWaterGroups,group)||(c.region==='seas'&&group==='lakes'))))throw Error('invalid_config');c.categories=[...new Set(groups)].sort();}}
  else if(c.game==='bydeler'){if(input.variant!==undefined){if(!['oslo-28','oslo-areas-v3','oslo-areas-v4','oslo-areas-v5'].includes(input.variant))throw Error('invalid_config');c.variant=input.variant;}}
@@ -38,6 +43,11 @@ export function pool(c){
  return data.countries.filter(t=>names.has(t.country)&&(c.game==='flags'||c.game==='flagcapital'||c.game==='capitals'&&c.countryDisplay==='flag'?t.hasFlag:true));
 }
 function mapRounds(c){
+ if(c.difficulties){
+  const buckets=c.difficulties.map(level=>shuffle(data.mapwizDifficulties[level].map(mapTarget))),out=[],seen=new Set();
+  while(out.length<10){let added=false;for(const bucket of shuffle(buckets)){if(out.length===10)break;const target=bucket.find(t=>!seen.has(t.name));if(target){out.push(target);seen.add(target.name);added=true;}}if(!added)throw Error('invalid_config');}
+  return out;
+ }
  const norway=c.categories.length===1&&c.categories[0]==='place:Norge';
  const buckets=c.categories.map(k=>({items:shuffle(data.mapwiz[k].filter(t=>norway||t.lat<=75&&t.lat>=-58.8)),count:0})),out=[],seen=new Set(),limit=c.categories.length>5?2:10;
  while(out.length<10){let added=false;for(const b of shuffle(buckets)){if(out.length===10)break;if(b.count>=limit)continue;const t=b.items.find(t=>!seen.has(t.name)&&t.name!==out.at(-1)?.name);if(t){out.push(t);seen.add(t.name);b.count++;added=true;}}if(!added){if(buckets.every(b=>b.count>=limit||!b.items.length))throw Error('invalid_config');seen.clear();}}
@@ -93,7 +103,7 @@ export function answer(s,input,now){
  const t=target(s,s.current.target);
  if(s.config.game==='mapwiz'){
   if(typeof input.lat!=='number'||typeof input.lon!=='number'||!Number.isFinite(input.lat)||!Number.isFinite(input.lon)||Math.abs(input.lat)>90||Math.abs(input.lon)>180)throw Error('invalid_answer');
-  const km=distance(input,t),elapsed=Math.max(0,(now-s.current.issuedAt)/1000),points=mapScore(km,elapsed,s.config.categories.length===1&&s.config.categories[0]==='place:Norge');
+  const km=distance(input,t),elapsed=Math.max(0,(now-s.current.issuedAt)/1000),norway=s.config.difficulties?t.category==='place:Norge':s.config.categories.length===1&&s.config.categories[0]==='place:Norge',points=mapScore(km,elapsed,norway);
   s.score+=points.points;s.baseTotal+=points.base;s.bonusTotal+=points.bonus;s.results.push({name:t.name,...points,km});s.index++;
   if(s.index===10)finish(s,now);else s.awaitingNext=true;
   return {correct:true,...points,km,answer:{lat:t.lat,lon:t.lon}};

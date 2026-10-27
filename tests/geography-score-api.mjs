@@ -17,6 +17,59 @@ test('server chooses ten balanced MapWiz questions and computes geography/time p
  }
  assert.equal(mapScore(0,40,false).points,100);assert.ok(mapScore(10000,0,false).points<1);assert.equal(mapScore(0,0,true).points,110);
 });
+test('MapWiz levels cover every existing target exactly once and include the approved easy moves',()=>{
+ const definition=JSON.parse(fs.readFileSync(new URL('../assets/geography/mapwiz-difficulties.json',import.meta.url),'utf8'));
+ assert.deepEqual(definition.levels.map(level=>[level.id,level.label]),[['easy','Lett'],['medium','Middels'],['hard','Hjerterå']]);
+ assert.deepEqual(Object.fromEntries(Object.entries(data.mapwizDifficulties).map(([level,ids])=>[level,ids.length])),{easy:216,medium:350,hard:210});
+ const legacy=Object.values(data.mapwiz).flat(),assigned=Object.values(data.mapwizDifficulties).flat();
+ assert.equal(legacy.length,776);assert.equal(new Set(assigned).size,776);assert.deepEqual(assigned.slice().sort(),legacy.map(target=>target.id).sort());
+ for(const [category,targets]of Object.entries(data.mapwiz))for(const target of targets){const level=definition.assignments[category][target.name];assert(data.mapwizDifficulties[level].includes(target.id));}
+ for(const [category,name]of [['capitals','Mexico by'],['cities','Mekka'],['mountains','K2'],['ranges','Atlas'],['seas','Adriaterhavet'],['landmarks','Machu Picchu'],['landmarks','Stonehenge'],['landmarks','Taj Mahal'],['landmarks','Pompeii']])assert.equal(definition.assignments[category][name],'easy',name+' was moved to easy');
+ const svalbard=data.mapwiz['place:Norge'].find(target=>target.name==='Svalbard');assert(svalbard.lat>75);assert(data.mapwizDifficulties.easy.includes(svalbard.id),'Arctic Norway remains available in the easy pool');
+});
+test('MapWiz permits all seven level combinations with balanced questions and independent ranking identities',()=>{
+ const levels=['easy','medium','hard'],byId=new Map(Object.values(data.mapwiz).flat().map(target=>[target.id,target])),levelById=new Map(Object.entries(data.mapwizDifficulties).flatMap(([level,ids])=>ids.map(id=>[id,level]))),boards=[];
+ for(let mask=1;mask<8;mask++){
+  const difficulties=levels.filter((_,index)=>mask&(1<<index)),c={game:'mapwiz',difficulties};
+  const key=board(c);boards.push(key);assert.equal(key,board({...c,difficulties:difficulties.slice().reverse(),language:'en'}));
+  for(let run=0;run<20;run++){
+   const state=create(c,1000),counts=Object.fromEntries(difficulties.map(level=>[level,0]));assert.equal(state.targets.length,10);assert.equal(new Set(state.targets.map(id=>byId.get(id).name)).size,10);
+   for(const id of state.targets){const level=levelById.get(id);assert(difficulties.includes(level));counts[level]++;}
+   assert(Math.max(...Object.values(counts))-Math.min(...Object.values(counts))<=1,'Chosen levels receive a balanced share of the ten questions');
+  }
+ }
+ assert.equal(new Set(boards).size,7);assert(!boards.includes(board({game:'mapwiz',categories:Object.keys(data.mapwiz)})));
+ assert.deepEqual(config({game:'mapwiz',difficulties:['hard','easy','easy']}),{game:'mapwiz',language:'no',difficulties:['easy','hard']});
+ assert.equal(board({game:'mapwiz',categories:['flags']}),'v'+data.version+':'+JSON.stringify({game:'mapwiz',categories:['flags']}),'The published category board identity is unchanged');
+ for(const difficulties of [[],null,'easy',['unknown'],['Easy'],[null],[{}],['easy','medium','hard','easy']])assert.throws(()=>config({game:'mapwiz',difficulties}),/invalid_config/);
+ assert.throws(()=>config({game:'mapwiz',difficulties:['easy'],categories:['flags']}),/invalid_config/);
+ // Fix the first selected target to exercise each geographic scoring branch
+ // deterministically; these targets are present in their selected pools.
+ for(const [input,category,name,norway]of [[{difficulties:['easy']},'place:Norge','Galdhøpiggen',true],[{difficulties:['easy']},'capitals','Paris',false],[{categories:['place:Norge']},'place:Norge','Galdhøpiggen',true],[{categories:['place:Norge','cities']},'place:Norge','Galdhøpiggen',false]]){
+  const state=create({game:'mapwiz',...input},1000),target=data.mapwiz[category].find(target=>target.name===name);state.current.target=target.id;state.targets[0]=target.id;state.plan[0].target=target.id;
+  const feedback=answer(state,{question:state.current.id,lat:target.lat+.3,lon:target.lon},1100);assert(feedback.km>30&&feedback.km<40);assert.equal(feedback.base<100,norway,'Only Norway-map questions use the 15 km scoring radius');
+ }
+});
+test('MapWiz level API publishes separately while retaining existing category results and cached sessions',async()=>{
+ const {env,db}=fixture(),legacy={game:'mapwiz',categories:['flags']},input={game:'mapwiz',difficulties:['hard','easy'],language:'en'};
+ const call=async(url,body,token)=>{const response=await worker.fetch(req(url,body,token),env);return {status:response.status,body:await response.json()};};
+ try{
+  db.prepare('INSERT INTO scores VALUES(?,?,?,?,?,?)').run('mapwiz-existing-category',board(legacy),'Earlier category result',1090,10000,1000);
+  const original=db.prepare("SELECT * FROM scores WHERE run_hash='mapwiz-existing-category'").get();
+  const cached=create(legacy,Date.now()),token='8'.repeat(64),hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(token))),byte=>byte.toString(16).padStart(2,'0')).join('');
+  db.prepare('INSERT INTO sessions VALUES(?,?,?,?,?)').run(hash,board(legacy),JSON.stringify(cached),0,Date.now()+60000);
+  const start=await call('/session',input);assert.equal(start.status,201);assert.deepEqual(start.body.config.difficulties,['easy','hard']);assert.equal(start.body.config.categories,undefined);assert.equal(start.body.questions.length,10);
+  for(let i=0;i<10;i++){
+   const q=start.body.questions[i],[category]=JSON.parse(q.target),target=data.mapwiz[category].find(target=>target.id===q.target),reply=await call('/answer',{requestId:crypto.randomUUID(),question:q.id,lat:target.lat,lon:target.lon},start.body.token);assert.equal(reply.status,200);assert.equal(reply.body.feedback.base,100);assert.equal(reply.body.complete,i===9);
+   if(i<9)assert.equal((await call('/next',{requestId:crypto.randomUUID()},start.body.token)).status,200);
+  }
+  assert.equal((await call('/publish',{requestId:crypto.randomUUID(),nickname:'New level result'},start.body.token)).status,200);
+  const rows=await call('/scores?config='+encodeURIComponent(JSON.stringify({...input,language:'no',difficulties:['easy','hard']})));assert.equal(rows.status,200);assert.equal(rows.body.rows.length,1);assert.equal(rows.body.rows[0].nickname,'New level result');
+  const previous=await call('/scores?config='+encodeURIComponent(JSON.stringify(legacy)));assert.equal(previous.body.rows[0].nickname,'Earlier category result');assert.deepEqual(db.prepare("SELECT * FROM scores WHERE run_hash='mapwiz-existing-category'").get(),original);
+  const status=await call('/status',{},token);assert.equal(status.status,200);assert.equal(status.body.question.id,cached.current.id);const [category]=JSON.parse(cached.current.target),target=data.mapwiz[category].find(target=>target.id===cached.current.target);
+  assert.equal((await call('/answer',{requestId:crypto.randomUUID(),question:cached.current.id,lat:target.lat,lon:target.lon},token)).status,200,'Existing in-progress category sessions still accept their original targets');
+ }finally{db.close();}
+});
 test('streaks stop on a wrong answer and cannot be finalized early',()=>{
  for(const game of ['flags','capitals','flagcapital','places']){
   const s=create({game,language:'en'},0);assert.throws(()=>finish(s,1),/incomplete/);assert.equal(s.current.options.length,game==='places'?6:4);

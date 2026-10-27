@@ -64,21 +64,20 @@ const server = http.createServer((req,res) => {
   await page.setViewportSize({width:1366,height:643});
 
   // MapWiz navigation floats above the map and never scores a guess.
-  await page.goto(base+'geografi/mapwiz.html');await page.locator('#prototype-all').click();await page.locator('#geo-start-button').click();
+  await page.goto(base+'geografi/mapwiz.html');await page.locator('[data-prototype-difficulty=medium]').check();await page.locator('[data-prototype-difficulty=hard]').check();await page.locator('#geo-start-button').click();
   assert.equal(await page.getByRole('separator').isVisible(),false);
   await page.locator('.geo-map-stage .quiz-page-menu').click();await page.keyboard.press('Escape');
   assert.equal(await page.evaluate(()=>geoGuessrState.answered),false);
   for(let i=0;i<10;i++){
-   const point=await page.evaluate(()=>{const t=geoGuessrState.rounds[geoGuessrState.index];return geoToPercent(t.lat,t.lon)});
-   // Use the engine's real map click path at its projected coordinate (HUD may overlay a target).
-   await page.evaluate(p=>geoMapClick({clientX:innerWidth*p.x/100,clientY:innerHeight*p.y/100}),point);
+   // Use the real click path and the projection of the displayed question.
+   await page.evaluate(()=>{const s=geoGuessrState,t=s.rounds[s.index],r=document.querySelector(s.norwayOnly?'[data-no-frame]':'.geo-world-content').getBoundingClientRect(),p=s.norwayOnly?MapWizNorway.project(t.lat,t.lon):geoToPercent(t.lat,t.lon),scale=s.norwayOnly?1:100;geoMapClick({clientX:r.left+r.width*p.x/scale,clientY:r.top+r.height*p.y/scale});});
    assert.ok(await page.evaluate(()=>geoGuessrState.results.at(-1).base>99),'Map fills the same coordinate system');
    await page.locator('.geo-next-button').click();
   }
   assert.equal(await page.evaluate(()=>geoGuessrState.results.length),10);
   assert.ok(await page.locator('.prototype-summary').isVisible());
 
-  await page.goto(base+'geografi/mapwiz.html');await page.setViewportSize({width:390,height:844});await page.locator('#prototype-all').click();await page.locator('#geo-start-button').click();
+  await page.goto(base+'geografi/mapwiz.html');await page.setViewportSize({width:390,height:844});await page.locator('[data-prototype-difficulty=medium]').check();await page.locator('[data-prototype-difficulty=hard]').check();await page.locator('#geo-start-button').click();await page.evaluate(()=>{const s=geoGuessrState,i=s.rounds.findIndex(t=>t.quizCategory!=='place:Norge');[s.rounds[0],s.rounds[i]]=[s.rounds[i],s.rounds[0]];renderGeoGuessrRound();});
   assert.ok(await page.locator('.geo-world-scroll').evaluate(e=>e.scrollWidth>e.clientWidth*2),'Portrait map can pan instead of stretching');
   await page.waitForTimeout(100);
   const scrollBefore=await page.locator('.geo-world-scroll').evaluate(e=>e.scrollLeft);
@@ -91,7 +90,7 @@ const server = http.createServer((req,res) => {
   assert.equal(await page.evaluate(()=>geoGuessrState.answered),false,'Swiping must not submit a guess');
   await cdp.send('Emulation.setTouchEmulationEnabled',{enabled:false});await cdp.detach();
   // Scroll a real target into view and click it using its map coordinates.
-  await page.evaluate(()=>{const s=geoGuessrState,i=s.rounds.findIndex(t=>t.lat>0&&t.lat<60);if(i>=0)[s.rounds[0],s.rounds[i]]=[s.rounds[i],s.rounds[0]];renderGeoGuessrRound();});
+  await page.evaluate(()=>{const s=geoGuessrState,i=s.rounds.findIndex(t=>t.quizCategory!=='place:Norge'&&t.lat>0&&t.lat<60);if(i>=0)[s.rounds[0],s.rounds[i]]=[s.rounds[i],s.rounds[0]];renderGeoGuessrRound();});
   await page.waitForTimeout(100); // Let the new map's initial centering frame finish before panning to the fixture.
   const targetPoint=await page.evaluate(()=>{
    const t=geoGuessrState.rounds[0],p=geoToPercent(t.lat,t.lon),scroll=document.querySelector('.geo-world-scroll'),content=document.querySelector('.geo-world-content');
@@ -103,10 +102,10 @@ const server = http.createServer((req,res) => {
   if(process.env.LAYOUT_SCREENSHOTS)await page.screenshot({path:path.join(process.env.LAYOUT_SCREENSHOTS,'mapwiz-portrait.png')});
   await page.setViewportSize({width:1366,height:643});
   await page.goto(base+'geografi/mapwiz.html');
-  await page.locator('[data-prototype-category="place:Norge"]').check();await page.locator('#geo-start-button').click();
+  await page.locator('#geo-start-button').click();await page.evaluate(()=>MapWizPrototype.begin(MapWizPrototype.pools.get('place:Norge').slice(0,10)));
   assert.equal(await page.evaluate(()=>geoGuessrState.norwayOnly),true);
   const norway=await page.locator('.geo-map-stage').boundingBox();assert.ok(Math.abs(norway.width-1366)<1);assert.ok(Math.abs(norway.height-643)<1);
-  await page.locator('.geo-map-stage').click({position:{x:600,y:200}});
+  await page.evaluate(()=>{const s=geoGuessrState,t=s.rounds[0],r=document.querySelector('[data-no-frame]').getBoundingClientRect(),p=MapWizNorway.project(t.lat,t.lon);geoMapClick({clientX:r.left+p.x*r.width,clientY:r.top+p.y*r.height});});
   assert.equal(await page.evaluate(()=>geoGuessrState.results.length),1,'Norway map still scores a click');
   assert.deepEqual(errors,[]);
 

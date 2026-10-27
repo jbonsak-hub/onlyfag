@@ -1,7 +1,8 @@
 # MapWiz: fysisk Norgeskart
 
-Når bare Norge er valgt, viser MapWiz fastlandet i et stort fysisk kart med egne
-utsnitt for Svalbard og Jan Mayen. Fastlandets nord–sør-utstrekning fyller kartets
+Norske spørsmål i MapWiz viser fastlandet i et stort fysisk kart med egne
+utsnitt for Svalbard og Jan Mayen. Kartet velges automatisk for spørsmålet,
+uavhengig av om Lett, Middels eller Hjerterå er valgt. Fastlandets nord–sør-utstrekning fyller kartets
 høyde. Øyutsnittene har egne målestokker og ligger i havområdet øverst til venstre.
 Kartet har ingen stedsnavn som røper svarene. Det gamle, grovt oppskalerte
 bredde-/lengdegradskartet er fjernet.

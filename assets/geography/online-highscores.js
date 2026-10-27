@@ -43,7 +43,7 @@
    if(!state)return false;
    showBoard(active?.config||{game,region:state.regionId||'world',variant:state.submode,...(game==='capitals'?{countryDisplay:capitalCountryDisplay(state.countryDisplay)}:{}),language:language()});return true;
   },
-  showMapWiz(categories){showBoard(active?.config||{game:'mapwiz',categories:[...categories].sort(),language:language()});return true;},
+  showMapWiz(difficulties){showBoard(active?.config||{game:'mapwiz',difficulties:[...difficulties].sort(),language:language()});return true;},
   showLegacy(key){const [kind,region]=key.split('|'),game=kind==='countries2'?'countries':kind;if(!['flags','capitals','flagcapital','places','countries'].includes(game))return false;showBoard(active?.config||{game,region:region==='streak'?'world':region||'world',variant:document.querySelector('.world-submode')?.value,language:language()});return true;},
   finishLocal(result,target){if(active){resultButton(target);finish();}return true;},
   startStatle(begin){return start(shapeConfig(),reply=>begin(reply.questions.map(q=>q.target)),()=>begin());},
@@ -78,7 +78,7 @@
  if(window.MapWizPrototype){
   const nativeMapStart=startGeoGuessr,nativeClick=geoMapClick,nativeNext=nextGeoGuessrRound,nativeMapInit=initGeoGuessr,nativeSummary=renderGeoGuessrSummary;
   window.initGeoGuessr=function(){reset();return nativeMapInit();};
-  window.startGeoGuessr=function(){const categories=MapWizPrototype.selected().sort();return start({game:'mapwiz',categories,language:language()},reply=>{const targets=reply.targets.map(id=>{const [cat,name,lat,lon]=JSON.parse(id);return MapWizPrototype.pools.get(cat).find(t=>t.name===name&&t.lat===lat&&t.lon===lon);});if(targets.some(t=>!t))throw Error('reference_changed');MapWizPrototype.begin(targets);},nativeMapStart);};
+  window.startGeoGuessr=function(){const difficulties=MapWizPrototype.selected().sort();return start({game:'mapwiz',difficulties,language:language()},reply=>{const targets=reply.targets.map(id=>{const [cat,name,lat,lon]=JSON.parse(id);return MapWizPrototype.pools.get(cat).find(t=>t.name===name&&t.lat===lat&&t.lon===lon);});if(targets.some(t=>!t))throw Error('reference_changed');MapWizPrototype.begin(targets);},nativeMapStart);};
   window.geoMapClick=function(event){const run=active,s=geoGuessrState;if(!run||run.config.game!=='mapwiz')return nativeClick(event);if(s.answered)return;const frame=document.getElementById('geo-map-stage').querySelector(s.norwayOnly?'[data-no-frame]':'.geo-world-content'),r=frame.getBoundingClientRect(),x=(event.clientX-r.left)/r.width,y=(event.clientY-r.top)/r.height;if(!s.norwayOnly&&(x<0||x>1||y<0||y>1))return;const point=s.norwayOnly?window.MapWizNorway.inverse(x,y):geoPercentToLatLon(x*100,y*100);if(!point)return;const index=s.index,q=run.plan[index]||run.reply.question;enqueue(run,'/answer',{question:q.id,...point},reply=>{const result=s.results[index];if(result){const {base,bonus,points,km}=reply.feedback;Object.assign(result,{base,bonus,points,km});}});nativeClick(event);return run.pending;};
   window.nextGeoGuessrRound=function(){if(!geoGuessrState.answered)return;const run=active;if(run&&geoGuessrState.index<9)enqueue(run,'/next',{});const result=nativeNext();return run?run.pending:result;};
   window.renderGeoGuessrSummary=function(){const result=nativeSummary.apply(this,arguments);finish();return result;};

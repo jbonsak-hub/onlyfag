@@ -155,6 +155,24 @@
       <div class="geo-no-continuous-source">Kart: Kartverket · Natural Earth · egne målestokker i øyutsnittene</div>`;
   }
 
+  // Summary views can switch between the world and Norway while keeping the
+  // result card, navigation and their handlers in place.
+  window.MapWizMapView={set(norwayOnly){
+    const stage=document.getElementById("geo-map-stage");if(!stage)return null;
+    const same=stage.classList.contains("norway-continuous-mode")===!!norwayOnly;
+    if(same&&stage.querySelector(norwayOnly?'[data-no-frame]':'.geo-world-content'))return stage;
+    stage.classList.toggle("norway-continuous-mode",!!norwayOnly);
+    stage.querySelectorAll('.geo-no-continuous-frame,.geo-no-continuous-source,.geo-world-scroll,.geo-mobile-pan-tip,.geo-map-image,.geo-line-layer,#geo-markers').forEach(node=>node.remove());
+    const overlays='<svg class="geo-line-layer" id="geo-line-layer" viewBox="0 0 100 100" preserveAspectRatio="none"></svg><div id="geo-markers"></div>';
+    const template=document.createElement('template');
+    template.innerHTML=norwayOnly?noMapHtml()+overlays:`<div class="geo-world-scroll"><div class="geo-world-content"><img class="geo-map-image" alt="Fysisk verdenskart" src="${GEO_MAP_DATA}">${overlays}</div></div><span class="geo-mobile-pan-tip">Dra kartet sidelengs</span>`;
+    stage.prepend(template.content);
+    const scroll=stage.querySelector('.geo-world-scroll');
+    if(scroll)requestAnimationFrame(()=>{if(scroll.isConnected)scroll.scrollLeft=(scroll.scrollWidth-scroll.clientWidth)/2;});
+    return stage;
+  }};
+  window.MapWizNorway.html=noMapHtml;
+
   function noFrameRect(stage){
     return stage.querySelector('[data-no-frame="all"]')?.getBoundingClientRect()||null;
   }
