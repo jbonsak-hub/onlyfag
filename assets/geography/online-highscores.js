@@ -82,6 +82,6 @@
   window.geoMapClick=function(event){const run=active,s=geoGuessrState;if(!run||run.config.game!=='mapwiz')return nativeClick(event);if(s.answered)return;const frame=document.getElementById('geo-map-stage').querySelector('.geo-world-content'),r=frame.getBoundingClientRect(),x=(event.clientX-r.left)/r.width,y=(event.clientY-r.top)/r.height;if(x<0||x>1||y<0||y>1)return;const point=geoPercentToLatLon(x*100,y*100);const index=s.index,q=run.plan[index]||run.reply.question;enqueue(run,'/answer',{question:q.id,...point},reply=>{const result=s.results[index];if(result){const {base,bonus,points,km}=reply.feedback;Object.assign(result,{base,bonus,points,km});}});nativeClick(event);return run.pending;};
   window.nextGeoGuessrRound=function(){if(!geoGuessrState.answered)return;const run=active;if(run&&geoGuessrState.index<9)enqueue(run,'/next',{});const result=nativeNext();return run?run.pending:result;};
   window.renderGeoGuessrSummary=function(){const result=nativeSummary.apply(this,arguments);finish();return result;};
-  document.getElementById('geo-start-button')?.addEventListener('click',event=>{event.stopImmediatePropagation();event.preventDefault();window.startGeoGuessr();},true);
+  // The menu shows instructions first; its Start button invokes this wrapped start.
  }
 })();

@@ -1,0 +1,18 @@
+{
+  "lakes": {
+    "file": "lakes-10m-f69176a4efac.geojson.gz",
+    "sha256": "f69176a4efacf26ccdd40e46673f082a8429359e87afffe7bafeb28a83c370d1",
+    "originalSHA256": "2d036f53dedec578001c5c30c2959ee7d4eebc1306900fa4367c49929ec8f2d9",
+    "url": "https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_10m_lakes.geojson",
+    "license": "Public domain",
+    "featureCount": 1355
+  },
+  "rivers": {
+    "file": "rivers-10m-e8399bdf7088.geojson.gz",
+    "sha256": "e8399bdf7088d1f2513393dc2e68b5eb86b8c058ea1911212e84939a8110de0f",
+    "originalSHA256": "bb854a900ecbd3b408df46d5e16e3e0f974ba55993f9d8b5c26e855273c0905a",
+    "url": "https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_10m_rivers_lake_centerlines.geojson",
+    "license": "Public domain",
+    "featureCount": 194
+  }
+}

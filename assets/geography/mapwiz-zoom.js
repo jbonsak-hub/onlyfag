@@ -13,6 +13,9 @@
  function attach(scroll,metadata){
   if(!scroll?.isConnected||!metadata)return;
   const content=scroll.querySelector('.geo-world-content');if(!content)return;
+  // Keep SVG layout fixed and scale a composited layer: resizing its viewport
+  // on each wheel event would rerasterize thousands of water paths per frame.
+  const water=content.querySelector('.geo-map-water');if(water){water.style.width=metadata.width+'px';water.style.height=metadata.height+'px';water.style.transformOrigin='0 0';water.style.willChange='transform';}
   if(active?.scroll===scroll)return;
   active?.destroy();installStyle();
   const run=typeof geoGuessrState!=='undefined'?geoGuessrState?.startedAt:null;
@@ -23,7 +26,7 @@
   const abort=new AbortController(),signal=abort.signal,pointers=new Map();
   let size=null,gesture=null,suppressUntil=0,frame=0,restoring=false;
   scroll.style.setProperty('position','absolute');scroll.style.setProperty('inset','0');scroll.style.setProperty('width','100%');scroll.style.setProperty('height','100%');
-  scroll.style.setProperty('overflow','auto','important');scroll.style.setProperty('touch-action','none','important');scroll.style.setProperty('overscroll-behavior','contain');scroll.style.setProperty('scrollbar-width','none');scroll.style.setProperty('cursor','grab');
+  scroll.style.setProperty('overflow','auto','important');scroll.style.setProperty('touch-action','none','important');scroll.style.setProperty('overscroll-behavior','contain');scroll.style.setProperty('scrollbar-width','none');scroll.style.setProperty('cursor','crosshair');
   content.style.setProperty('position','relative');content.style.setProperty('max-width','none');content.style.setProperty('max-height','none');
   const controls=document.createElement('div');controls.className='mapwiz-zoom-controls';controls.setAttribute('role','group');controls.setAttribute('aria-label','Kartzoom');
   controls.innerHTML='<button type="button" data-mapwiz-zoom="in" aria-label="Zoom inn" title="Zoom inn">+</button><button type="button" data-mapwiz-zoom="out" aria-label="Zoom ut" title="Zoom ut">−</button><button type="button" data-mapwiz-zoom="reset" aria-label="Nullstill zoom" title="Nullstill zoom">↺</button>';
@@ -35,6 +38,7 @@
    saved.zoom=clamp(zoom,1,6);restoring=true;
    const width=size.baseWidth*saved.zoom,height=size.baseHeight*saved.zoom;
    content.style.setProperty('width',width+'px','important');content.style.setProperty('height',height+'px','important');
+   if(water)water.style.transform=`scale(${width/metadata.width},${height/metadata.height})`;
    scroll.scrollLeft=anchor.x*width-point.x;scroll.scrollTop=anchor.y*height-point.y;
    restoring=false;save();buttonIn.disabled=saved.zoom>=6-1e-6;buttonOut.disabled=saved.zoom<=1+1e-6;
   }
@@ -62,13 +66,13 @@
    if(!pointers.has(event.pointerId)||!gesture||!size)return;pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});
    if(pointers.size>=2){if(gesture.mode!=='pinch')beginPinch();const p=pinch();position(gesture.zoom*p.distance/Math.max(1,gesture.distance),gesture.anchor,p.point);suppressUntil=performance.now()+700;event.preventDefault();event.stopPropagation();return;}
    if(gesture.mode!=='pan')return;const dx=event.clientX-gesture.x,dy=event.clientY-gesture.y;if(Math.hypot(dx,dy)>5)gesture.moved=true;if(!gesture.moved)return;
-   scroll.scrollLeft=gesture.left-dx;scroll.scrollTop=gesture.top-dy;scroll.style.cursor='grabbing';save();suppressUntil=performance.now()+700;event.preventDefault();event.stopPropagation();
+   scroll.scrollLeft=gesture.left-dx;scroll.scrollTop=gesture.top-dy;scroll.classList.add('is-panning');scroll.style.cursor='grabbing';save();suppressUntil=performance.now()+700;event.preventDefault();event.stopPropagation();
   },{signal});
   function end(event){
    if(!pointers.has(event.pointerId))return;const moved=gesture?.mode==='pinch'||gesture?.moved;pointers.delete(event.pointerId);if(moved){suppressUntil=performance.now()+700;event.preventDefault();event.stopPropagation();}
    if(scroll.hasPointerCapture(event.pointerId))scroll.releasePointerCapture(event.pointerId);
    if(pointers.size===1){const point=[...pointers.values()][0];gesture={mode:'pan',x:point.x,y:point.y,left:scroll.scrollLeft,top:scroll.scrollTop,moved:!!moved};}else if(!pointers.size)gesture=null;
-   scroll.style.cursor='grab';save();
+   scroll.classList.remove('is-panning');scroll.style.cursor='crosshair';save();
   }
   scroll.addEventListener('pointerup',end,{signal});scroll.addEventListener('pointercancel',end,{signal});scroll.addEventListener('lostpointercapture',event=>{if(pointers.has(event.pointerId))end(event);},{signal});
   scroll.addEventListener('click',event=>{if(performance.now()<suppressUntil){event.preventDefault();event.stopImmediatePropagation();}},{capture:true,signal});

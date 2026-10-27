@@ -86,5 +86,40 @@
     "format": "WebP",
     "quality": 93,
     "method": 6
+  },
+  "hydrology": {
+    "image": "/assets/geography/mapwiz-world-map/water-bd31480f30b4.svg",
+    "imageSHA256": "bd31480f30b418b5798fa3fd218f2e08cef16c1f161b7841c0e825a09af35b7b",
+    "bytes": 1335922,
+    "gzipBytes": 466094,
+    "featureCount": 1355,
+    "riverCount": 194,
+    "sourceManifest": "sources/mapwiz-world/water-source.json",
+    "sourceManifestSHA256": "e549e63dd6e60383b14696f483067d783e007c819c65c572621d501f6532b4cb",
+    "simplificationTolerancePixels": 0.09,
+    "checkpoints": [
+      "Lake Superior",
+      "Lake Michigan",
+      "Lake Huron",
+      "Lake Erie",
+      "Lake Ontario",
+      "Lake Victoria",
+      "Lake Tanganyika",
+      "Lake Malawi",
+      "Lake Albert",
+      "Lake Turkana",
+      "Lake Chad",
+      "Lake Baikal",
+      "Lago Titicaca",
+      "Vänern",
+      "Lake Ladoga",
+      "Lake Onega",
+      "Lake Balkhash",
+      "Great Bear Lake",
+      "Great Slave Lake",
+      "Lake Winnipeg",
+      "Lake Eyre North",
+      "Lake Eyre South"
+    ]
   }
 }

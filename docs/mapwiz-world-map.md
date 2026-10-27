@@ -47,3 +47,33 @@ Kontrollen validerer kilde- og bildehash, pikseldimensjoner, projeksjonsgrenser,
 alle 794 oppføringers geografiske dekning, standardutsnitt og fargeinnstillinger,
 samt numerisk rundtur for Svalbard, Jan Mayen, Galdhøpiggen, Oslo, Arktis,
 Antarktis og Dronning Mauds land.
+
+## Detaljerte vannflater
+
+Det samme relieffbildet brukes fortsatt. Et separat SVG-bilde legger til alle
+1 355 innsjøobjekter fra Natural Earth 10m og 194 hovedelveløp (skalarang 0–4).
+Vannlaget bruker nøyaktig de samme Mercator-grensene og samme bildeflate som
+relieffet. Begge skaleres og flyttes sammen; vannlaget fanger ingen pekere eller
+klikk. Øyringer bruker `evenodd`, slik at land på øyer ikke fylles med vann.
+Tørre/periodiske innsjøflater tegnes svakere. Kartet har ingen stedsnavn.
+
+De komprimerte, pinnede GeoJSON-kildene ligger ved siden av rasterkilden.
+`water-source.json` inneholder originalhash, hash for lokal kilde, opphav,
+lisens og objekttall. Natural Earth er public domain. Bygget trenger ingen
+nettverkstjeneste. `scripts/mapwiz_water.py` blir brukt av kartbyggeren og
+forenkler geometrien med høyst 0,09 kartpiksler før koordinater avrundes.
+Det tilsvarer under 0,6 kartpiksler selv ved seks ganger zoom.
+
+SVG-laget er omtrent 1,34 MB før HTTP-komprimering / 466 kB med gzip. Det
+lastes som ett cachebart bilde, uten tusenvis av DOM-elementer eller nye
+kartforespørsler ved zoom og panorering. SVG-ens layout holdes fast, mens et
+komposittlag skaleres med transformasjoner; dette hindrer ny rasterisering av
+alle vannkonturene for hvert musehjulsteg. Mørk modus behandler både relieff og
+vannlag. `hydrology` i kartmanifestet inneholder bildeadresse, hash, størrelse,
+kildehash og 22 navngitte innsjøkontroller, blant annet alle fem Great Lakes,
+Bajkal, Titicaca, Vänern og de store østafrikanske sjøene.
+
+`--check` kontrollerer også vannlagets hash, projeksjonsflate, samtlige
+innsjøobjekter og navngitte kontroller. `tests/mapwiz-water.cjs` kontrollerer at
+laget er lastet og på plass under zoom, lar et ekte innsjøklikk gi riktig
+poengsum, gjenbrukes mellom spørsmål og fungerer på mobil og i mørk modus.

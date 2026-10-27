@@ -20,7 +20,7 @@ test('server chooses ten balanced MapWiz questions and computes geography/time p
 test('MapWiz levels cover every existing target exactly once and include the approved easy moves',()=>{
  const definition=JSON.parse(fs.readFileSync(new URL('../assets/geography/mapwiz-difficulties.json',import.meta.url),'utf8'));
  assert.deepEqual(definition.levels.map(level=>[level.id,level.label]),[['easy','Normal'],['medium','Vanskelig'],['hard','Hjerterå']]);
- assert.deepEqual(Object.fromEntries(Object.entries(data.mapwizDifficulties).map(([level,ids])=>[level,ids.length])),{easy:216,medium:350,hard:228});
+ assert.deepEqual(Object.fromEntries(Object.entries(data.mapwizDifficulties).map(([level,ids])=>[level,ids.length])),{easy:218,medium:348,hard:228});
  const legacy=Object.values(data.mapwiz).flat(),assigned=Object.values(data.mapwizDifficulties).flat();
  assert.equal(legacy.length,794);assert.equal(new Set(assigned).size,794);assert.deepEqual(assigned.slice().sort(),legacy.map(target=>target.id).sort());
  for(const [category,targets]of Object.entries(data.mapwiz))for(const target of targets){const level=definition.assignments[category][target.name];assert(data.mapwizDifficulties[level].includes(target.id));}

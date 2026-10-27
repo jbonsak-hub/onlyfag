@@ -149,4 +149,16 @@ body[data-mapwiz-prototype] .prototype-notes{display:flex;justify-content:space-
 .mapwiz-level-stops button.selected{color:var(--q-ink);text-decoration:underline;text-decoration-color:var(--q-green);text-underline-offset:7px;text-decoration-thickness:3px}
 @media(max-width:700px){.mapwiz-difficulty-control{padding:20px 16px}.mapwiz-level-stops button{font-size:13px}#mapwiz-level-title{font-size:24px}}
 /* Dim only the physical basemap; questions, controls and answer markers keep their contrast. */
-body[data-mapwiz-prototype].dark-mode .geo-map-image{filter:brightness(.62) saturate(1.2) contrast(1.12)}
+body[data-mapwiz-prototype].dark-mode :is(.geo-map-image,.geo-map-water){filter:brightness(.62) saturate(1.2) contrast(1.12)}
+
+/* Keep the level track compact while leaving room for its three labels. */
+.mapwiz-slider-track{width:calc(100% * 2 / 7);min-width:min(238px,100%);margin-inline:auto}
+body[data-mapwiz-prototype] .geo-world-scroll,
+body[data-mapwiz-prototype] .geo-world-content,
+body[data-mapwiz-prototype] .geo-map-image{cursor:crosshair!important}
+body[data-mapwiz-prototype] .geo-world-scroll.is-panning,
+body[data-mapwiz-prototype] .geo-world-scroll.is-panning .geo-world-content,
+body[data-mapwiz-prototype] .geo-world-scroll.is-panning .geo-map-image{cursor:grabbing!important}
+body[data-mapwiz-prototype] .mapwiz-ready h3{margin:0!important;padding:0!important;border:0!important;font-size:21px!important}
+body[data-mapwiz-prototype] .mapwiz-ready p{font-size:14px;line-height:1.5;margin:0 0 6px;color:var(--q-ink)}
+body[data-mapwiz-prototype] .mapwiz-ready .geo-start-button{align-self:stretch;width:100%;margin:0;min-height:40px}

@@ -16,6 +16,7 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageEnhance
+from mapwiz_water import build_hydrology, verify_hydrology
 
 ROOT = Path(__file__).resolve().parents[1]
 GEO = ROOT / 'assets/geography'
@@ -145,6 +146,7 @@ def build():
         'coverage': checkpoints(),
         'encoding': {'format': 'WebP', 'quality': 93, 'method': 6},
     }
+    manifest['hydrology'] = build_hydrology(manifest)
     MANIFEST.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
     return manifest
 
@@ -170,6 +172,7 @@ def verify():
     with Image.open(io.BytesIO(payload)) as image:
         assert list(image.size) == manifest['pixelDimensions'] == [WIDTH, expected_height()]
         assert image.mode == 'RGB'
+    verify_hydrology(manifest)
     print('PASS MapWiz world map: all 794 targets within bounds, Arctic/Antarctic checkpoints, Svalbard-edge initial view, contrast settings and pinned image/source hashes')
     return manifest
 

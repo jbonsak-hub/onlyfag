@@ -3,6 +3,9 @@
 (function(){
   let worldMap=null;
   const worldMapImage=()=>worldMap?.image||GEO_MAP_DATA;
+  // Both images use the same full-map Mercator bounds. An external SVG keeps
+  // water outlines sharp at every zoom without adding interactive DOM geometry.
+  const worldMapHtml=()=>`<img class="geo-map-image" alt="Fysisk verdenskart" src="${worldMapImage()}">${worldMap?.hydrology?.image?`<img class="geo-map-water" alt="" aria-hidden="true" draggable="false" src="${worldMap.hydrology.image}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;user-select:none">`:''}`;
   // The map image and both click projections share one generated Mercator fit.
   // Keep the legacy fit until the current MapWiz page installs its metadata.
   window.MapWizWorld={install(metadata){
@@ -11,7 +14,7 @@
     const top=geoMercatorY(metadata.top),bottom=geoMercatorY(metadata.bottom);
     geoToPercent=function(lat,lon){return {x:(lon+180)/360*100,y:(top-geoMercatorY(lat))/(top-bottom)*100};};
     geoPercentToLatLon=function(x,y){return {lon:x/100*360-180,lat:geoInverseMercatorY(top-y/100*(top-bottom))};};
-  },get image(){return worldMapImage();},get metadata(){return worldMap;}};
+  },html:worldMapHtml,get image(){return worldMapImage();},get metadata(){return worldMap;}};
   // Generated atlas metadata is kept with its projection so rendered pixels and
   // submitted answers use exactly the same coordinates, including both insets.
   const NO_ATLAS = /* mapwiz-norway-atlas:start */ {"version":1,"width":1360.629,"height":1500.617,"areas":[{"id":"mainland","rect":[0,0,1360.629,1500.617],"projection":{"type":"registered-lambert-conic","coneConstant":0.8990395456797843,"centralMeridian":15,"matrix":[[11.431284357479102,0.18007866650580012],[0.1788572971879697,-11.411085457473396],[680.1042916371192,-2211.155025382398]]}},{"id":"svalbard","rect":[28,34,435,435],"projection":{"type":"equirectangular","bounds":[7,36,75.5,81.5]}},{"id":"jan-mayen","rect":[28,505,250,250],"projection":{"type":"equirectangular","bounds":[-9.4,-7.6,70.65,71.25]}}],"image":"/assets/geography/mapwiz-norway/physical-411ab1d39e2a.webp"} /* mapwiz-norway-atlas:end */;
@@ -176,7 +179,7 @@
     stage.querySelectorAll('.geo-no-continuous-frame,.geo-no-continuous-source,.geo-world-scroll,.geo-mobile-pan-tip,.geo-map-image,.geo-line-layer,#geo-markers').forEach(node=>node.remove());
     const overlays='<svg class="geo-line-layer" id="geo-line-layer" viewBox="0 0 100 100" preserveAspectRatio="none"></svg><div id="geo-markers"></div>';
     const template=document.createElement('template');
-    template.innerHTML=norwayOnly?noMapHtml()+overlays:`<div class="geo-world-scroll"><div class="geo-world-content"><img class="geo-map-image" alt="Fysisk verdenskart" src="${worldMapImage()}">${overlays}</div></div><span class="geo-mobile-pan-tip">Dra kartet sidelengs</span>`;
+    template.innerHTML=norwayOnly?noMapHtml()+overlays:`<div class="geo-world-scroll"><div class="geo-world-content">${worldMapHtml()}${overlays}</div></div><span class="geo-mobile-pan-tip">Dra kartet sidelengs</span>`;
     stage.prepend(template.content);
     const scroll=stage.querySelector('.geo-world-scroll');
     if(scroll&&window.MapWizZoom)MapWizZoom.attach(scroll,worldMap);else if(scroll)requestAnimationFrame(()=>{if(scroll.isConnected)scroll.scrollLeft=(scroll.scrollWidth-scroll.clientWidth)/2;});
@@ -232,7 +235,7 @@
     const t=s.rounds[s.index];
     const bg=s.norwayOnly
       ? noMapHtml()
-      : `<img class="geo-map-image" alt="Fysisk verdenskart" src="${worldMapImage()}">`;
+      : worldMapHtml();
 
     app.innerHTML=`<div class="geo-map-stage ${s.norwayOnly?"norway-continuous-mode":""}" id="geo-map-stage" onclick="geoMapClick(event)">
       ${s.norwayOnly?"":'<div class="geo-world-scroll"><div class="geo-world-content">'}
