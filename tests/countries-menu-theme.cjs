@@ -27,6 +27,11 @@ try{for(const viewport of [{width:1366,height:646},{width:1280,height:720},{widt
   const footer=page.locator('.quiz-layout-footer');assert.equal(await footer.locator('.quiz-in-game-top-ten').count(),1);
   const back=await footer.locator('.quiz-page-back').boundingBox(),top=await footer.locator('.quiz-in-game-top-ten').boundingBox();assert(top.x>=back.x+back.width-1&&Math.abs(top.y-back.y)<2,'Ranking is right of overview');
   await footer.locator('.quiz-in-game-top-ten').click();await page.locator('#geo-online-content').getByText('Ingen resultater ennå.').waitFor();assert.equal(configs.at(-1).game,'countries');assert.equal(configs.at(-1).region,region);await page.keyboard.press('Escape');
+  await page.locator('.country-map-action.finish').click();await page.locator('#country-map-complete').waitFor();
+  const result=await page.locator('#country-map-complete').boundingBox(),map=await page.locator('#country-map-wrap').boundingBox();assert(result.y>=map.y&&result.y+result.height<=map.y+map.height+1,'Compact result fits map on every screen');
+  assert(await page.locator('.country-map-missing span').first().evaluate(el=>parseFloat(getComputedStyle(el).fontSize)<=10));
+  await page.locator('.country-map-missing').evaluate(el=>el.scrollTop=el.scrollHeight);
+  const resultButton=await page.locator('.country-map-result-btn').boundingBox();assert(resultButton.y>=result.y&&resultButton.y+resultButton.height<=result.y+result.height,'Result navigation stays visible while scrolling names');
   if(process.env.COUNTRIES_SCREENSHOTS){fs.mkdirSync(process.env.COUNTRIES_SCREENSHOTS,{recursive:true});await page.screenshot({path:path.join(process.env.COUNTRIES_SCREENSHOTS,region+'-'+viewport.width+'.png')});}
  }
  await context.close();

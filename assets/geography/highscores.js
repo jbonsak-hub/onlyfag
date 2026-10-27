@@ -6,7 +6,7 @@
   function save(x){try{localStorage.setItem(STORE,JSON.stringify(x))}catch(e){}}
   function cmp(a,b){const ar=a.rank||[],br=b.rank||[],n=Math.max(ar.length,br.length);for(let i=0;i<n;i++){const d=(Number(ar[i])||0)-(Number(br[i])||0);if(d)return d>0?-1:1}return (a.created||0)-(b.created||0)}
   function list(key){const db=load();return (db[key]||[]).slice().sort(cmp).slice(0,10)}
-  function qualifies(result){const rows=list(result.key);if(rows.length<10)return true;return cmp(result,rows[rows.length-1])<0}
+  function qualifies(result){if(!(Number(result.rank?.[0])>0))return false;const rows=list(result.key);if(rows.length<10)return true;return cmp(result,rows[rows.length-1])<0}
   function fmtTime(s){if(s==null||!Number.isFinite(Number(s)))return '–';s=Math.max(0,Math.round(Number(s)));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
   function add(result){
     if(!result||!result.key||!Array.isArray(result.rank)||!qualifies(result))return {saved:false,qualifies:false};

@@ -68,7 +68,8 @@ test('capital display API preserves published records and cached sessions while 
   for(const [label,c]of [['Both',{...normal,countryDisplay:'both'}],['Name',name],['Flag',flag]]){
    const start=await call('/session',c);assert.equal(start.status,201);assert.equal(start.body.board,board(c));
    assert.equal(start.body.config.countryDisplay,c.countryDisplay==='both'?undefined:c.countryDisplay);
-   const q=start.body.question,wrong=q.options.find(id=>id!==q.target);
+   const first=start.body.question,correct=await call('/answer',{requestId:crypto.randomUUID(),question:first.id,choice:first.target},start.body.token);
+   const q=correct.body.question,wrong=q.options.find(id=>id!==q.target);
    const completed=await call('/answer',{requestId:crypto.randomUUID(),question:q.id,choice:wrong},start.body.token);
    assert.equal(completed.status,200);assert(completed.body.complete);
    const saved=await call('/publish',{requestId:crypto.randomUUID(),nickname:label+' display fixture'},start.body.token);
@@ -81,8 +82,8 @@ test('capital display API preserves published records and cached sessions while 
   assert(!(await rows(normal)).some(row=>row.nickname.startsWith('Flag')));
   for(const {token,state,c,key}of legacyRuns){
    const status=await call('/status',{},token);assert.equal(status.status,200);assert.equal(status.body.question.id,state.current.id);assert.equal(status.body.board,board(c));
-   const wrong=state.current.options.find(id=>id!==state.current.target);
-   const completed=await call('/answer',{requestId:crypto.randomUUID(),question:state.current.id,choice:wrong},token);assert.equal(completed.status,200);assert(completed.body.complete);
+   const correct=await call('/answer',{requestId:crypto.randomUUID(),question:state.current.id,choice:state.current.target},token),q=correct.body.question,wrong=q.options.find(id=>id!==q.target);
+   const completed=await call('/answer',{requestId:crypto.randomUUID(),question:q.id,choice:wrong},token);assert.equal(completed.status,200);assert(completed.body.complete);
    const saved=await call('/publish',{requestId:crypto.randomUUID(),nickname:'Cached '+c.game},token);assert.equal(saved.status,200);
    assert.equal(db.prepare('SELECT board FROM scores WHERE run_hash=?').get(key).board,board(c));
   }
@@ -695,4 +696,18 @@ test('reduced river API publishes forty-one answers while old scores and active4
   assert.equal((await rows(old)).length,2);assert.equal((await rows(current)).length,1);
   assert.deepEqual(db.prepare('SELECT * FROM scores WHERE run_hash=?').get('published49'),original);
  }finally{db.close();}
+});
+
+test('empty completed rounds cannot publish zero-point results',async()=>{
+ const {env,db}=fixture();
+ const call=async(url,body,token)=>{const response=await worker.fetch(req(url,body,token),env);return {status:response.status,body:await response.json()};};
+ for(const game of ['countries','flags']){
+  const start=await call('/session',{game}),token=start.body.token;
+  let ended;
+  if(game==='countries')ended=await call('/finish',{requestId:crypto.randomUUID()},token);
+  else{const q=start.body.question;ended=await call('/answer',{requestId:crypto.randomUUID(),question:q.id,choice:q.options.find(x=>x!==q.target)},token);}
+  assert.equal(ended.body.complete,true);assert.equal(ended.body.total,0);
+  assert.equal((await call('/publish',{requestId:crypto.randomUUID(),nickname:'Empty round'},token)).status,400);
+ }
+ assert.equal(db.prepare('SELECT COUNT(*) AS n FROM scores').get().n,0);db.close();
 });

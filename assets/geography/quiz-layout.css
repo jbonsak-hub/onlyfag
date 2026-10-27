@@ -659,3 +659,14 @@ body[data-quiz="countries"] #verden-quiz .quiz-fullscreen-body:has(.country-visu
  body[data-quiz="countries"] #verden-quiz .country-visual-setup .country-region-btn strong{font-size:11px!important}
  body[data-quiz="countries"] .quiz-layout-footer{width:auto}
 }
+
+/* Compact end-of-round country names without shrinking the navigation. */
+body[data-quiz="countries"] .country-map-complete:not([hidden]){display:flex;flex-direction:column;width:min(900px,calc(100% - 28px));max-height:calc(100% - 24px);padding:14px 16px!important;font-size:12px!important}
+body[data-quiz="countries"] .country-map-result-title{flex:none;font-size:20px;margin-bottom:7px}
+body[data-quiz="countries"] .country-map-result-stats{flex:none;gap:5px;margin-bottom:6px;font-size:11px}
+body[data-quiz="countries"] .country-map-result-stats span{padding:4px 7px}
+body[data-quiz="countries"] .country-map-missing{flex:1 1 auto;min-height:0;overflow:auto;margin-top:6px}
+body[data-quiz="countries"] .country-map-missing>strong{font-size:12px;margin-bottom:5px}
+body[data-quiz="countries"] .country-map-missing>div{gap:3px}
+body[data-quiz="countries"] .country-map-missing span{padding:2px 5px;font-size:10px;font-weight:600;line-height:1.25}
+body[data-quiz="countries"] .country-map-result-btn{flex:none;align-self:center;margin-top:10px;padding:7px 11px;font-size:12px}

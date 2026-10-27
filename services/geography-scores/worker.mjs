@@ -44,6 +44,7 @@ async function handler(request,env){
   if(s.lastRequest===input.requestId)return json(s.lastResponse,200,cors);
   if(url.pathname==='/publish'){
    if(!s.complete)throw Error('incomplete');
+   if(!(s.score>0))throw Error('invalid_action');
    if(typeof input.nickname!=='string')throw Error('invalid_nickname');
    const nickname=input.nickname.normalize('NFC').trim().replace(/\s+/g,' ');
    if(nickname.length<1||nickname.length>24||/[\p{C}<>@]|https?:|www\./iu.test(nickname))throw Error('invalid_nickname');
