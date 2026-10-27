@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#087e88">
+  <meta name="description" content="Utforsk definisjonen av den deriverte. Flytt punktene, og se sekanten nærme seg tangenten når Δx går mot null.">
+  <title>Den deriverte — interaktiv modul</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%23087e88'/%3E%3Ctext x='9' y='29' fill='white' font-size='30' font-family='serif' font-style='italic'%3Ef′%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.mjs"></script>
+</head>
+<body>
+  <main class="app">
+    <header class="page-header">
+      <div class="title"><span class="mark" aria-hidden="true">f′</span><h1>Den deriverte</h1></div>
+      <button class="reset-button" id="reset" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1 7M4 4v6h6"/></svg>Nullstill</button>
+    </header>
+
+    <div class="workspace">
+      <section class="graph-panel" aria-label="Interaktiv graf">
+        <div class="graph-top"><span class="function-label"><i>f</i>(<i>x</i>) = <i>x</i>²</span><span class="drag-hint" id="drag-hint"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2v16M2 10h16M7 5l3-3 3 3M7 15l3 3 3-3M5 7l-3 3 3 3M15 7l3 3-3 3"/></svg>Dra i A og B</span></div>
+        <svg id="graph" viewBox="0 0 900 620" role="group" aria-label="Grafen til f av x lik x i andre, med punktene A og B">
+          <defs>
+            <clipPath id="plot-clip"><rect x="55" y="22" width="790" height="528"/></clipPath>
+            <marker id="axis-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1L9 5L0 9" fill="none" stroke="#8c9698" stroke-width="1.5" stroke-linejoin="round"/></marker>
+            <marker id="delta-arrow" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M7 1L1 4L7 7" fill="none" stroke="#aa861c" stroke-width="1.3"/></marker>
+          </defs>
+          <g id="ticks"></g>
+          <g id="axes"></g>
+          <g id="projections"></g>
+          <g clip-path="url(#plot-clip)">
+            <g id="triangle"></g>
+            <path id="tangent" class="tangent-line"/>
+            <path id="secant" class="secant-line"/>
+            <path id="curve" class="function-line"/>
+          </g>
+          <g id="annotations"></g>
+          <g id="point-a" class="point" tabindex="0" role="slider" aria-label="Punkt A, x-verdi" aria-orientation="horizontal">
+            <circle class="point-hit" r="26"/><circle class="point-halo" r="13"/><circle class="point-dot" r="8"/><text class="point-label">A</text>
+          </g>
+          <g id="point-b" class="point" tabindex="0" role="slider" aria-label="Punkt B, x-verdi" aria-orientation="horizontal">
+            <circle class="point-hit" r="26"/><circle class="point-halo" r="13"/><circle class="point-dot" r="8"/><text class="point-label">B</text>
+          </g>
+        </svg>
+        <div class="readouts" aria-label="Stigningstall">
+          <div id="secant-readout"><span class="line-key secant-key"></span><span>Sekant</span><output id="secant-value">3,6</output></div>
+          <span class="readout-arrow" id="slope-arrow" aria-hidden="true">→</span>
+          <div id="tangent-readout"><span class="line-key tangent-key"></span><span>Tangent</span><output id="tangent-value">2</output></div>
+          <span class="delta-readout">Δx = <output id="delta-value">1,6</output></span>
+        </div>
+      </section>
+
+      <aside class="controls" aria-label="Grafinnstillinger">
+        <section class="formula-panel" aria-label="Definisjonen av den deriverte">
+          <math display="block" aria-label="f derivert av x er grenseverdien når delta x går mot null av f av x pluss delta x minus f av x, delt på delta x"><mrow>
+            <msup><mi>f</mi><mo>′</mo></msup><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo>
+            <munder><mo movablelimits="false">lim</mo><mrow><mi>Δx</mi><mo>→</mo><mn>0</mn></mrow></munder>
+            <mfrac><mrow><mi>f</mi><mo>(</mo><mi>x</mi><mo>+</mo><mi>Δx</mi><mo>)</mo><mo>−</mo><mi>f</mi><mo>(</mo><mi>x</mi><mo>)</mo></mrow><mi>Δx</mi></mfrac>
+          </mrow></math>
+        </section>
+        <fieldset class="visibility">
+          <legend>Vis i grafen</legend>
+          <div class="always"><span class="function-swatch"></span><span>Funksjon</span><span class="always-tag">Alltid</span></div>
+          <label class="check-row"><input id="show-points" type="checkbox" checked><span class="check-mark"></span><span>To punkter · A og B</span></label>
+          <label class="check-row"><input id="show-secant" type="checkbox" checked><span class="check-mark"></span><span>Sekant</span><span class="mini-line secant-key"></span></label>
+          <label class="check-row"><input id="show-tangent" type="checkbox" checked><span class="check-mark"></span><span>Tangent i A</span><span class="mini-line tangent-key"></span></label>
+          <label class="check-row"><input id="show-values" type="checkbox" checked><span class="check-mark"></span><span>Verdier langs aksene</span></label>
+          <label class="check-row"><input id="show-triangle" type="checkbox" checked><span class="check-mark"></span><span>Trekant med Δx</span><svg class="triangle-swatch" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 16H17V3Z"/></svg></label>
+        </fieldset>
+
+      </aside>
+    </div>
+  </main>
+</body>
+</html>
