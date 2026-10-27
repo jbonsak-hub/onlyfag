@@ -1,0 +1,111 @@
+{
+  "version": 1,
+  "width": 1360.629,
+  "height": 1500.617,
+  "areas": [
+    {
+      "id": "mainland",
+      "rect": [
+        0,
+        0,
+        1360.629,
+        1500.617
+      ],
+      "projection": {
+        "type": "registered-lambert-conic",
+        "coneConstant": 0.8990395456797843,
+        "centralMeridian": 15,
+        "matrix": [
+          [
+            11.431284357479102,
+            0.18007866650580012
+          ],
+          [
+            0.1788572971879697,
+            -11.411085457473396
+          ],
+          [
+            680.1042916371192,
+            -2211.155025382398
+          ]
+        ]
+      }
+    },
+    {
+      "id": "svalbard",
+      "rect": [
+        28,
+        34,
+        435,
+        435
+      ],
+      "projection": {
+        "type": "equirectangular",
+        "bounds": [
+          7,
+          36,
+          75.5,
+          81.5
+        ]
+      }
+    },
+    {
+      "id": "jan-mayen",
+      "rect": [
+        28,
+        505,
+        250,
+        250
+      ],
+      "projection": {
+        "type": "equirectangular",
+        "bounds": [
+          -9.4,
+          -7.6,
+          70.65,
+          71.25
+        ]
+      }
+    }
+  ],
+  "image": "/assets/geography/mapwiz-norway/physical-411ab1d39e2a.webp",
+  "imageSHA256": "411ab1d39e2a158bf15f3d099d525344445d15313640cd659de3e07073723461",
+  "pixelDimensions": [
+    2721,
+    3001
+  ],
+  "sources": [
+    {
+      "file": "norway-counties.json",
+      "sha256": "a785cd12272fec82452541bec14b6343385779cb29ac6e948a463cfb14ca34d6"
+    },
+    {
+      "file": "sources/norway-county-registration.json",
+      "sha256": "4ee176967e24ec5e8a5f9e0f28a1f3f0a7ef4d44de1c21b8bda9817ec0204c16"
+    },
+    {
+      "file": "norway-county-relief/fylker-117d1b5de1c1.webp",
+      "sha256": "117d1b5de1c14c89d0589005b5f4c706601fcc23c35a11e4d6f3179c593f9469"
+    },
+    {
+      "file": "sources/mapwiz-norway/sources.json",
+      "sha256": "84d27ac48a6dca0c18537b610c70e895cda7cf29f1f8f6d115d060da72c0d8a9"
+    },
+    {
+      "file": "sources/mapwiz-norway/mainland-physical-66f1ecce8990.webp",
+      "sha256": "66f1ecce89909090ef9a49944d03bf99744891f1628f6f7abbfad01ad7ade481"
+    },
+    {
+      "file": "sources/mapwiz-norway/svalbard-physical-cd1bf353a5e3.webp",
+      "sha256": "cd1bf353a5e3285d21517ca894c140b6b5b6f5dc5cc1c8752c47a1745c93ad0f"
+    },
+    {
+      "file": "sources/mapwiz-norway/jan-mayen-physical-e93c8b1f4788.webp",
+      "sha256": "e93c8b1f4788203740a6533507ac53f5b296419ea217e25ac613123304a1cc1b"
+    },
+    {
+      "file": "sources/mapwiz-norway/arctic-coast-3ea6b222f33a.json",
+      "sha256": "3ea6b222f33ae4095b61d2d05dbeaa290e39ddb61ee53b8d53c555d0d80ea1cc"
+    }
+  ]
+}

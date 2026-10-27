@@ -1,0 +1,58 @@
+{
+  "rasterURL": "https://github.com/nvkelso/natural-earth-raster",
+  "rasterSHA256": "d8616f4753a9d4cb2e02e8e1e577c103f6009c5962a07a1e445d36507c3ca52a",
+  "rasterDimensions": [
+    10800,
+    5400
+  ],
+  "geometryURL": "https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_10m_admin_0_map_units.geojson",
+  "geometrySHA256": "57da82be755f4afccd8f3b14251bb2752f5df1395f47d2d86f817470c4a48862",
+  "patches": {
+    "mainland": {
+      "image": "sources/mapwiz-norway/mainland-physical-66f1ecce8990.webp",
+      "imageSHA256": "66f1ecce89909090ef9a49944d03bf99744891f1628f6f7abbfad01ad7ade481",
+      "dimensions": [
+        960,
+        510
+      ],
+      "bounds": [
+        2.0,
+        34.0,
+        56.0,
+        73.0
+      ]
+    },
+    "svalbard": {
+      "image": "sources/mapwiz-norway/svalbard-physical-cd1bf353a5e3.webp",
+      "imageSHA256": "cd1bf353a5e3285d21517ca894c140b6b5b6f5dc5cc1c8752c47a1745c93ad0f",
+      "dimensions": [
+        870,
+        180
+      ],
+      "bounds": [
+        7.000000000000028,
+        36.0,
+        75.5,
+        81.5
+      ]
+    },
+    "jan-mayen": {
+      "image": "sources/mapwiz-norway/jan-mayen-physical-e93c8b1f4788.webp",
+      "imageSHA256": "e93c8b1f4788203740a6533507ac53f5b296419ea217e25ac613123304a1cc1b",
+      "dimensions": [
+        54,
+        19
+      ],
+      "bounds": [
+        -9.399999999999977,
+        -7.600000000000023,
+        70.63333333333333,
+        71.26666666666667
+      ]
+    }
+  },
+  "islands": {
+    "geometry": "sources/mapwiz-norway/arctic-coast-3ea6b222f33a.json",
+    "geometrySHA256": "3ea6b222f33ae4095b61d2d05dbeaa290e39ddb61ee53b8d53c555d0d80ea1cc"
+  }
+}

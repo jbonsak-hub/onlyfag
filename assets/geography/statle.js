@@ -406,6 +406,8 @@
   }
   function setPhase(value){
     phase=value;document.body.dataset.phase=value;
+    $('restart').textContent=value==='finished'?'Spill igjen':enhanced()?'Avbryt':'↻ Ny runde';
+    $('restart').setAttribute('aria-label',value==='finished'?'Spill igjen':enhanced()?'Avbryt':'Start en ny runde');
     if(value!=='playing'){questionSymbol.hidden=true;questionSymbol.removeAttribute('src');}
     $('targetName').toggleAttribute('data-no-translate',enhanced()&&citiesMode&&value==='playing');
     if(statle||kart||localMap){if(value==='ready'&&enhanced())$('targetName').after($('targetVerb'));else questionSymbol.before($('targetVerb'));}
@@ -549,7 +551,7 @@
     $('targetVerb').textContent='Kan du plassere alle?';$('elapsed').textContent='00:00';
     updateStatleOptions();updateStats();setFeedback('');
   }
-  $('restart').addEventListener('click',()=>enhanced()?cancelStatle():start());
+  $('restart').addEventListener('click',()=>phase==='finished'||!enhanced()?start():cancelStatle());
   const studyLayouts=new Map();
   let localPreviewTimer=0;
   function drawStudyNames() {

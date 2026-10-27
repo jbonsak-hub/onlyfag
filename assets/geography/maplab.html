@@ -3063,7 +3063,7 @@ function wire(){
   document.getElementById('dayTime').oninput=function(){state.day.hour=+this.value;drawDayNight()};
   document.getElementById('dayNow').onclick=function(){setDayToNow(true)};
   Array.prototype.forEach.call(document.querySelectorAll('.season-preset'),function(b){b.onclick=function(){var y=currentDayYear(),m=+b.getAttribute('data-month'),d=+b.getAttribute('data-date');state.day.n=m?dayOfYearFor(y,m,d):+b.getAttribute('data-day');document.getElementById('dayDate').max=daysInYear(y);document.getElementById('dayDate').value=state.day.n;Array.prototype.forEach.call(document.querySelectorAll('.season-preset'),function(x){x.classList.toggle('active-season',x===b)});drawDayNight()}});
-  document.getElementById('globleStartRandom').onclick=startGlobleRandom;document.getElementById('globleSubmit').onclick=submitGlobleGuess;document.getElementById('globleReveal').onclick=revealGlobleAnswer;document.getElementById('globleNew').onclick=newGlobleGame;
+  document.getElementById('globleStartRandom').onclick=startGlobleRandom;document.getElementById('globleSubmit').onclick=submitGlobleGuess;document.getElementById('globleReveal').onclick=revealGlobleAnswer;document.getElementById('globleNew').onclick=function(){newGlobleGame();startGlobleRandom();};
   document.getElementById('globleGuess').onkeydown=function(e){
     if(e.key==='ArrowDown'){if(globleMoveMenu(1))e.preventDefault();return}
     if(e.key==='ArrowUp'){if(globleMoveMenu(-1))e.preventDefault();return}
@@ -3155,5 +3155,5 @@ init();
 </script>
 <script src="maplab-navigation.js?v=05ac47a8083a"></script>
 <script src="quiz-mobile-answers.js?v=b6752b6c9021"></script>
-<script src="quiz-language.js?v=cca1982040a3"></script>
+<script src="quiz-language.js?v=5b2830a4f622"></script>
 </body></html>

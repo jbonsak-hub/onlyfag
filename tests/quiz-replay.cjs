@@ -1,0 +1,34 @@
+/* Replay is a fresh game with the same choices. Network failures are mocked;
+   no sessions or scores are sent to the public score service. */
+const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright'),root=path.resolve(__dirname,'..');
+const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml','.json':'application/json'};
+const server=http.createServer((req,res)=>{try{const file=path.resolve(root,'.'+new URL(req.url,'http://localhost').pathname);res.setHeader('Content-Type',mime[path.extname(file)]||'application/octet-stream');res.end(fs.readFileSync(file));}catch{res.writeHead(404).end();}});
+const snapshot=page=>page.evaluate(()=>{const {mode,submode,regionId,pace,duration,target,countryDisplay,runId,score,misses,answered,hints,found,ended}=worldTrainerState;return {mode,submode,regionId,pace,duration,target:Number.isFinite(target)?target:'infinity',countryDisplay,runId,score,misses,answered,hints,found:found.length,ended};});
+const sameSettings=(actual,previous)=>{const {requestId:actualRequest,...actualSettings}=actual,{requestId:previousRequest,...previousSettings}=previous;assert.deepEqual(actualSettings,previousSettings);assert.notEqual(actualRequest,previousRequest,'Replay starts with a fresh session request');};
+const answer=async(page,correct)=>{const index=await page.evaluate(correct=>worldTrainerState.current.options.findIndex(option=>worldTrainerState.current.isCorrect(option)===correct),correct);await page.locator('.world-option').nth(index).click();};
+(async()=>{
+ await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));const base='http://127.0.0.1:'+server.address().port,browser=await chromium.launch({headless:true,executablePath:process.env.BROWSER_EXECUTABLE||'/usr/bin/chromium'}),errors=[],sessions=[];
+ try{
+  const context=await browser.newContext({viewport:{width:1366,height:646}});await context.addInitScript(()=>localStorage.setItem('onlyfag-geo-language','no'));
+  await context.route('**/*',route=>{const request=route.request(),url=request.url();if(/\/score-service(?:-[a-f0-9]+)?\.js/.test(url))return route.fulfill({contentType:'text/javascript',body:"window.GEO_SCORE_API='https://replay-scores.test';"});if(url.startsWith('https://replay-scores.test')){if(url.endsWith('/session'))sessions.push(JSON.parse(request.postData()));return route.fulfill({status:503,headers:{'Access-Control-Allow-Origin':'*'},contentType:'application/json',body:'{"error":"unavailable"}'});}return url.startsWith(base)||/^(data|blob):/.test(url)?route.continue():route.abort();});
+  const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));await page.clock.install();
+  for(const direction of [0,1]){
+   await page.goto(base+'/geografi/flaggquiz.html');await page.locator('.visual-quiz-setup').waitFor();await page.locator('.quiz-region-grid [data-region="asia"]').click();await page.locator('.quiz-direction-grid .streak-direction-btn').nth(direction).click();await page.locator('.streak-start-btn').click();await page.locator('.world-option').first().waitFor();
+   await answer(page,true);await page.clock.fastForward(800);await answer(page,false);await page.waitForFunction(()=>worldTrainerState.ended);const before=await snapshot(page),config=sessions.at(-1),count=sessions.length;
+   await page.getByRole('button',{name:'Spill igjen',exact:true}).click();await page.waitForFunction(old=>worldTrainerState.runId!==old&&!worldTrainerState.ended,before.runId);const after=await snapshot(page);
+   for(const key of ['mode','submode','regionId','pace','duration','target'])assert.equal(after[key],before[key],'Flag replay preserves '+key);for(const key of ['score','misses','answered','found'])assert.equal(after[key],0,'Flag replay clears '+key);sameSettings(sessions.at(-1),config);assert.equal(sessions.length,count+1);assert.equal(await page.locator('.world-setup').count(),0);
+  }
+  for(const pace of ['sudden','questions'])for(const direction of [0,1]){
+   await page.goto(base+'/geografi/stedsquiz.html');await page.locator('.places-setup').waitFor();await page.locator('.places-setup .world-pace').evaluate((el,pace)=>el.value=pace,pace);await page.locator('.streak-direction-grid').last().locator('button').nth(direction).click();await page.locator('.streak-start-btn').click();await page.locator('.world-option').first().waitFor();
+   for(let i=0;i<(pace==='questions'?20:1);i++){await answer(page,pace==='questions'||i===0);await page.clock.fastForward(800);}if(pace==='sudden')await answer(page,false);await page.waitForFunction(()=>worldTrainerState.ended);const before=await snapshot(page);
+   await page.getByRole('button',{name:'Spill igjen',exact:true}).click();await page.waitForFunction(old=>worldTrainerState.runId!==old&&!worldTrainerState.ended,before.runId);const after=await snapshot(page);
+   for(const key of ['mode','submode','pace','duration','target'])assert.equal(after[key],before[key],'Places replay preserves '+key);for(const key of ['score','misses','answered','found'])assert.equal(after[key],0,'Places replay clears '+key);assert.equal(await page.locator('.world-option').count(),6);assert.equal(await page.locator('.world-setup').count(),0);
+  }
+  for(const [region,viewport] of [['world',{width:1366,height:646}],['europe',{width:390,height:844}]]){
+   await page.setViewportSize(viewport);await page.goto(base+'/geografi/landquiz.html');await page.locator('[data-region="'+region+'"]').click();await page.locator('#country-guess').fill('Norge');await page.locator('#country-guess').press('Enter');await page.locator('.country-map-action.hint').click();await page.locator('.country-map-action.finish').click();await page.waitForFunction(()=>worldTrainerState.ended);const before=await snapshot(page),config=sessions.at(-1),count=sessions.length;
+   await page.getByRole('button',{name:'Spill igjen',exact:true}).click();await page.waitForFunction(old=>worldTrainerState.runId!==old&&!worldTrainerState.ended,before.runId);const after=await snapshot(page);assert.equal(after.regionId,region);assert.equal(after.found,0);assert.equal(after.hints,0);assert.equal(after.score,0);assert.equal(await page.locator('#country-guess').inputValue(),'');assert(await page.locator('#country-guess').isEnabled());assert.equal(await page.locator('.country-visual-setup').count(),0);sameSettings(sessions.at(-1),config);assert.equal(sessions.length,count+1);
+  }
+  assert.deepEqual(errors,[]);console.log('PASS direct replay: both flag directions, both places directions in sudden/20-question games, country world/mobile-region games, identical settings and cleared scores/hints without setup');
+ }finally{await browser.close();}
+})().catch(error=>{console.error(error);process.exitCode=1;}).finally(()=>server.close());

@@ -130,11 +130,25 @@ async function checkQuestion(page,display,variant,label){
       await page.locator('#geo-online-board .mapwiz-top-ten-close').click();
       assert(await page.evaluate(run=>worldTrainerState.runId===run.id&&worldTrainerState.score===run.score&&!worldTrainerState.ended,run),label+' ranking does not reset the game');
       assert(report.run===run.id,label+' stays in one run');await screenshot(page,label);
+      const wrong=await page.evaluate(()=>worldTrainerState.current.options.findIndex(option=>!worldTrainerState.current.isCorrect(option)));
+      await page.locator('.world-option').nth(wrong).click();await page.waitForFunction(()=>worldTrainerState.ended);
+      if(!offline){await page.locator('#geo-online-save[open]').waitFor();await page.locator('#geo-online-save .mapwiz-top-ten-close').click();}
+      const previousSessions=sessions.length;
+      await page.getByRole('button',{name:'Spill igjen',exact:true}).click();
+      await page.waitForFunction(old=>worldTrainerState&&!worldTrainerState.ended&&worldTrainerState.runId!==old,run.id);
+      const replay=await checkQuestion(page,display,variant,label+' replay');
+      assert.equal(replay.score,0,label+' replay clears the score');
+      assert.equal(await page.evaluate(()=>worldTrainerState.regionId),'europe',label+' replay retains its continent');
+      assert.equal(await page.locator('.world-setup').count(),0,label+' replay starts directly without a setup screen');
+      assert.equal(sessions.length,previousSessions+1,label+' replay creates one fresh score session');
+      const {requestId:previousRequest,...previousSettings}=session,{requestId:replayRequest,...replaySettings}=sessions.at(-1);
+      assert.deepEqual(replaySettings,previousSettings,label+' replay sends the same settings to the score service');
+      assert.notEqual(replayRequest,previousRequest,label+' replay has a fresh session request');
       await page.locator('.quiz-layout-footer .quiz-page-back').click();await page.locator('.capital-display-options').waitFor();
       assert(await page.locator('#capital-show-name').isChecked()&&await page.locator('#capital-show-flag').isChecked(),label+' a fresh setup returns to the requested default');
     }
     await context.close();assert.deepEqual(errors,[],'No page errors');assert.deepEqual(missing,[],'Every local dependency loads');
     assert.equal(db.prepare('SELECT COUNT(*) n FROM scores').get().n,0,'The regression never publishes a score');
-    console.log('PASS capital display: both/name/flag in both directions online and offline, minimum one choice, synchronized previews, current/legacy ranking identities, actual clues/answers, and retired module navigation');
+    console.log('PASS capital display: both/name/flag in both directions online and offline, direct replay with identical continent/direction/clues and a fresh score session, minimum one choice, synchronized previews, current/legacy ranking identities, actual clues/answers, and retired module navigation');
   }finally{await browser.close();db.close();}
 })().catch(error=>{console.error(error);process.exitCode=1;}).finally(()=>server.close());

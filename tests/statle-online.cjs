@@ -26,8 +26,18 @@ const server=http.createServer((req,res)=>{try{const file=path.join(root,new URL
    const answer=await response;assert.equal(answer.status(),200,await answer.text());await answer.finished();const next=i<49?page.waitForResponse(r=>r.url().endsWith('/next')):null;await page.clock.fastForward(700);if(next){const r=await next;assert.equal(r.status(),200,await r.text());await r.finished();}
   }
   await page.locator('#geo-online-name').waitFor();assert.equal(await page.locator('.geo-score-dialog').count(),1);assert.equal(await page.locator('.geo-online-result').count(),0);assert.equal(await page.locator('#statle-top-ten').count(),1);assert.equal(await page.locator('#completed').innerText(),'50');assert.match(await page.locator('#geo-online-save').innerText(),/Du er på topp 10!/);await shot(page,'statle-prompt');await page.locator('#geo-online-name').fill('Statle Pilot');await page.locator('#geo-online-save form button').click();await page.locator('#geo-online-board tbody').waitFor();assert.equal(await page.locator('.geo-score-dialog').count(),1);assert.match(await page.locator('#geo-online-board').innerText(),/Statle Pilot/);assert.equal(db.prepare('SELECT COUNT(*) n FROM scores').get().n,1);assert.deepEqual(errors,[]);console.log(JSON.stringify({statle:true,states:50,prompt:true,published:true,errors}));
+  await page.locator('#geo-online-board .mapwiz-top-ten-close').click();
+  assert.equal(await page.locator('#restart').innerText(),'Spill igjen');
+  const fresh=page.waitForResponse(r=>r.url().endsWith('/session'));await page.locator('#restart').click();assert.equal((await fresh).status(),201);
+  await page.waitForFunction(()=>document.body.dataset.phase==='playing');
+  assert.equal(await page.locator('#completed').innerText(),'0');assert(await page.locator('#overlay').evaluate(el=>el.hidden),'A finished Statle replay starts directly, without the ready screen');
   const perfect=await c.newPage();await perfect.clock.install();await perfect.goto(base+'geografi/flaggquiz.html');const started=perfect.waitForResponse(r=>r.url().endsWith('/session'));await perfect.evaluate(()=>{document.querySelector('.world-region').value='oceania';return startWorldTrainer('flags');});const count=(await (await started).json()).questions.length;
   for(let i=0;i<count;i++){const response=perfect.waitForResponse(r=>r.url().endsWith('/answer'));await perfect.evaluate(()=>{const index=worldTrainerState.current.options.findIndex(o=>worldTrainerState.current.isCorrect(o));chooseWorldOption(index,document.querySelectorAll('.world-option')[index]);});const r=await response;assert.equal(r.status(),200);await r.finished();await perfect.clock.fastForward(700);}
-  await perfect.locator('.world-perfect').waitFor();await perfect.locator('#geo-online-name').waitFor();assert.equal(await perfect.evaluate(()=>worldTrainerState.score),count);console.log('PASS perfect streak ends once all regional questions are answered');
+  await perfect.locator('.world-perfect').waitFor();await perfect.locator('#geo-online-name').waitFor();assert.equal(await perfect.evaluate(()=>worldTrainerState.score),count);
+  await perfect.locator('#geo-online-save .mapwiz-top-ten-close').click();const again=perfect.waitForResponse(r=>r.url().endsWith('/session'));
+  await perfect.getByRole('button',{name:'Spill igjen',exact:true}).click();assert.equal((await again).status(),201);
+  await perfect.waitForFunction(()=>worldTrainerState&&!worldTrainerState.ended&&worldTrainerState.score===0);
+  assert.equal(await perfect.evaluate(()=>worldTrainerState.regionId),'oceania');assert.equal(await perfect.locator('.world-setup').count(),0);
+  console.log('PASS direct Statle replay and perfect regional flag replay with fresh sessions');
  }finally{await browser.close();db.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(()=>server.close());
