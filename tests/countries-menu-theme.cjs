@@ -15,7 +15,7 @@ try{for(const viewport of [{width:1366,height:646},{width:1280,height:720},{widt
   await page.goto(base+'/geografi/landquiz.html');await page.locator('.country-visual-setup').waitFor();
   assert.equal(await page.locator('.country-region-btn').count(),7);assert.equal(await page.locator('.country-region-setup button').filter({hasText:/Topp 10/}).count(),0);
   await page.waitForFunction(()=>[...document.querySelectorAll('.quiz-region-icon')].every(img=>img.complete&&img.naturalWidth>0));
-  const bounds=await page.locator('.country-visual-setup').boundingBox();assert(bounds.y>=0&&bounds.y+bounds.height<=viewport.height,'Region menu fits viewport');
+  const bounds=await page.locator('.country-visual-setup').boundingBox();assert(bounds.y>=(viewport.width>700?48:64)&&bounds.y+bounds.height<=viewport.height,'Region menu has clear space above it and fits viewport');
   if(process.env.COUNTRIES_SCREENSHOTS&&region==='world'){fs.mkdirSync(process.env.COUNTRIES_SCREENSHOTS,{recursive:true});await page.screenshot({path:path.join(process.env.COUNTRIES_SCREENSHOTS,'menu-'+viewport.width+'.png')});}
   await page.locator('[data-region="'+region+'"]').click();await page.locator('#country-map-canvas').waitFor();
   await page.locator('#country-guess').fill('Norge');await page.locator('#country-guess').press('Enter');await page.waitForFunction(()=>worldTrainerState.found.some(c=>c.country==='Norge'));
