@@ -35,7 +35,6 @@
             <path id="secant" class="secant-line"/>
             <path id="curve" class="function-line"/>
           </g>
-          <g id="annotations"></g>
           <g id="point-a" class="point" tabindex="0" role="slider" aria-label="Punkt A, x-verdi" aria-orientation="horizontal">
             <circle class="point-hit" r="26"/><circle class="point-halo" r="13"/><circle class="point-dot" r="8"/><text class="point-label">A</text>
           </g>
@@ -63,10 +62,12 @@
           <legend>Vis i grafen</legend>
           <div class="always"><span class="function-swatch"></span><span>Funksjon</span><span class="always-tag">Alltid</span></div>
           <label class="check-row"><input id="show-points" type="checkbox" checked><span class="check-mark"></span><span>To punkter · A og B</span></label>
+          <div class="fixed-key" id="point-key"><span>A = (x, f(x))</span><span>B = (x + Δx, f(x + Δx))</span></div>
           <label class="check-row"><input id="show-secant" type="checkbox" checked><span class="check-mark"></span><span>Sekant</span><span class="mini-line secant-key"></span></label>
           <label class="check-row"><input id="show-tangent" type="checkbox" checked><span class="check-mark"></span><span>Tangent i A</span><span class="mini-line tangent-key"></span></label>
           <label class="check-row"><input id="show-values" type="checkbox" checked><span class="check-mark"></span><span>Verdier langs aksene</span></label>
           <label class="check-row"><input id="show-triangle" type="checkbox" checked><span class="check-mark"></span><span>Trekant med Δx</span><svg class="triangle-swatch" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 16H17V3Z"/></svg></label>
+          <div class="fixed-key triangle-key" id="triangle-key"><span>Δx ↔</span><span>Δf(x) ↕</span></div>
         </fieldset>
 
       </aside>
