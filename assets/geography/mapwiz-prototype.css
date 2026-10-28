@@ -149,7 +149,7 @@ body[data-mapwiz-prototype] .prototype-notes{display:flex;justify-content:space-
 .mapwiz-level-stops button.selected{color:var(--q-ink);text-decoration:underline;text-decoration-color:var(--q-green);text-underline-offset:7px;text-decoration-thickness:3px}
 @media(max-width:700px){.mapwiz-difficulty-control{padding:20px 16px}.mapwiz-level-stops button{font-size:13px}#mapwiz-level-title{font-size:24px}}
 /* Dim only the physical basemap; questions, controls and answer markers keep their contrast. */
-body[data-mapwiz-prototype].dark-mode :is(.geo-map-image,.geo-map-water){filter:brightness(.38) saturate(1.05) contrast(1.08)}
+body[data-mapwiz-prototype].dark-mode :is(.geo-map-image,.geo-map-water){filter:none}
 
 /* Keep the level track compact while leaving room for its three labels. */
 .mapwiz-slider-track{width:calc(100% * 2 / 7);min-width:min(238px,100%);margin-inline:auto}
@@ -177,3 +177,36 @@ body[data-mapwiz-prototype] .mapwiz-ready .geo-start-button{align-self:stretch;w
  .mapwiz-setup-bottom{grid-column:1/-1;grid-row:2}
  body[data-mapwiz-prototype] .prototype-notes{grid-column:1/-1;grid-row:3}
 }
+
+/* The start panel is part of the map, with one Start action and no running clock. */
+body[data-mapwiz-prototype].mapwiz-setup .mapwiz-map-start{position:absolute;inset:0;z-index:25;background:transparent!important;display:grid;padding:72px 20px 24px!important;min-height:0!important;place-items:center!important;pointer-events:none;overflow:auto;box-sizing:border-box}
+body[data-mapwiz-prototype] .mapwiz-map-start .mapwiz-prototype-setup{width:min(700px,100%)!important;max-width:700px!important;pointer-events:auto;box-shadow:0 12px 50px #152d3428!important;gap:22px;background:var(--q-paper)!important}
+body[data-mapwiz-prototype] .mapwiz-map-start .prototype-setup-intro h3{margin:0!important}
+.mapwiz-start-instructions{display:flex;flex-direction:column;gap:5px;margin:42px 0 0;font-size:14px;line-height:1.45;color:var(--q-ink)}
+.mapwiz-start-instructions small{font-size:11px;color:var(--q-muted);margin-top:2px}
+body[data-mapwiz-prototype] .mapwiz-map-start .prototype-notes{margin:0;justify-content:flex-end}
+@media(min-width:701px){
+ body[data-mapwiz-prototype] .mapwiz-map-start .mapwiz-prototype-setup{grid-template-columns:minmax(0,1fr) 300px;column-gap:24px}
+ .mapwiz-map-start .mapwiz-difficulty-control{grid-column:2;grid-row:1;width:300px;box-sizing:border-box;padding:18px 22px}
+ .mapwiz-map-start .mapwiz-level-readout{gap:12px;margin-bottom:12px}
+ .mapwiz-map-start #mapwiz-level-icon{width:44px;height:44px;padding:6px}
+ .mapwiz-map-start #mapwiz-level-title{font-size:22px}
+ .mapwiz-map-start #mapwiz-level-count{font-size:11px}
+ .mapwiz-map-start .mapwiz-slider-track{width:100%;min-width:0}
+ .mapwiz-map-start #mapwiz-level-slider{margin:10px 0 14px}
+ .mapwiz-map-start .mapwiz-level-stops button{font-size:13px}
+ .mapwiz-map-start .mapwiz-setup-bottom{grid-column:1/-1;grid-row:2}
+ .mapwiz-map-start .prototype-notes{grid-column:1/-1;grid-row:3}
+}
+@media(max-width:700px){
+ body[data-mapwiz-prototype].mapwiz-setup .mapwiz-map-start{padding:64px 12px 16px!important;place-items:safe center!important}
+ .mapwiz-start-instructions{margin-top:14px;font-size:13px;gap:3px}
+ .mapwiz-map-start .mapwiz-difficulty-control{padding:14px 16px}
+ .mapwiz-map-start .mapwiz-level-readout{margin-bottom:10px;gap:12px}
+ .mapwiz-map-start #mapwiz-level-icon{width:44px;height:44px;padding:6px}
+ .mapwiz-map-start #mapwiz-level-title{font-size:22px}
+ .mapwiz-map-start #mapwiz-level-slider{margin:8px 0 14px}
+ .mapwiz-map-start .geo-setup-actions{width:auto!important}
+}
+
+.mapwiz-places-link{display:inline-flex;align-items:center;gap:4px}

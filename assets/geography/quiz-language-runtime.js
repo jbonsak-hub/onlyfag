@@ -89,7 +89,8 @@
  const controls=new Set();let flagSequence=0;
  const mode=document.body.dataset.quiz||new URLSearchParams(location.search).get('quiz');
  function languageLocked(){
-  if(document.querySelector('.world-game,#jeopardy-shell.playing,.geo-map-stage'))return true;
+  if(document.querySelector('.world-game,#jeopardy-shell.playing'))return true;
+  if(document.querySelector('.geo-map-stage')&&!document.body.classList.contains('mapwiz-setup'))return true;
   if(mode==='statle'||mode==='kart'||mode==='fylker'||mode==='kommuner'||mode==='bydeler'){
    const overlay=document.getElementById('overlay');if(overlay?.hidden)return true;
   }

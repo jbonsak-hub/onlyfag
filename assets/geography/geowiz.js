@@ -2,15 +2,19 @@
 
 (function(){
   let worldMap=null;
-  const worldMapImage=()=>worldMap?.image||GEO_MAP_DATA;
-  // Both images use the same full-map Mercator bounds. An external SVG keeps
-  // water outlines sharp at every zoom without adding interactive DOM geometry.
-  const worldMapHtml=()=>`<img class="geo-map-image" alt="Fysisk verdenskart" src="${worldMapImage()}">${worldMap?.hydrology?.image?`<img class="geo-map-water" alt="" aria-hidden="true" draggable="false" src="${worldMap.hydrology.image}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;user-select:none">`:''}`;
+  const darkMode=()=>document.body.classList.contains('dark-mode');
+  const worldMapImage=()=>darkMode()&&worldMap?.dark?.image?worldMap.dark.image:worldMap?.image||GEO_MAP_DATA;
+  const waterMapImage=()=>darkMode()&&worldMap?.dark?.hydrology?.image?worldMap.dark.hydrology.image:worldMap?.hydrology?.image;
+  // Light and night palettes share one geographic fit and the same water geometry.
+  const worldMapHtml=()=>`<img class="geo-map-image" data-mapwiz-palette alt="Fysisk verdenskart" src="${worldMapImage()}">${worldMap?.hydrology?.image?`<img class="geo-map-water" data-mapwiz-palette alt="" aria-hidden="true" draggable="false" src="${waterMapImage()}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;user-select:none">`:''}`;
+  let paletteObserver;
+  function syncPalette(){document.querySelectorAll('[data-mapwiz-palette]').forEach(image=>{const source=image.classList.contains('geo-map-water')?waterMapImage():worldMapImage();if(source&&image.getAttribute('src')!==source)image.src=source;});}
   // The map image and both click projections share one generated Mercator fit.
   // Keep the legacy fit until the current MapWiz page installs its metadata.
   window.MapWizWorld={install(metadata){
     if(metadata?.projection!=='mercator'||!metadata.image||!(metadata.top>metadata.bottom))throw Error('Invalid world map');
     worldMap=metadata;
+    if(!paletteObserver){paletteObserver=new MutationObserver(syncPalette);paletteObserver.observe(document.body,{attributes:true,attributeFilter:['class']});}
     const top=geoMercatorY(metadata.top),bottom=geoMercatorY(metadata.bottom);
     geoToPercent=function(lat,lon){return {x:(lon+180)/360*100,y:(top-geoMercatorY(lat))/(top-bottom)*100};};
     geoPercentToLatLon=function(x,y){return {lon:x/100*360-180,lat:geoInverseMercatorY(top-y/100*(top-bottom))};};

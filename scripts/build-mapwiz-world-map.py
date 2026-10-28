@@ -17,6 +17,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageEnhance
 from mapwiz_water import build_hydrology, verify_hydrology
+from mapwiz_palette import build_dark, verify_dark
 
 ROOT = Path(__file__).resolve().parents[1]
 GEO = ROOT / 'assets/geography'
@@ -25,7 +26,7 @@ SOURCE_MANIFEST = SOURCE_DIR / 'source.json'
 MANIFEST = GEO / 'mapwiz-world-map.json'
 TOP = 81.0
 BOTTOM = -84.0
-INITIAL_VIEW = {'top': 81.0, 'bottom': -58.8}
+INITIAL_VIEW = {'top': 78.5, 'bottom': -58.8}
 ENHANCEMENT = {'color': 1.55, 'contrast': 1.22, 'brightness': .90}
 WIDTH = 3840
 SOURCE_SIZE = (5400, 2700)
@@ -147,6 +148,7 @@ def build():
         'encoding': {'format': 'WebP', 'quality': 84, 'method': 6},
     }
     manifest['hydrology'] = build_hydrology(manifest)
+    manifest['dark'] = build_dark(image, manifest)
     MANIFEST.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
     return manifest
 
@@ -173,6 +175,7 @@ def verify():
         assert list(image.size) == manifest['pixelDimensions'] == [WIDTH, expected_height()]
         assert image.mode == 'RGB'
     verify_hydrology(manifest)
+    verify_dark(manifest)
     print('PASS MapWiz world map: all 794 targets within bounds, Arctic/Antarctic checkpoints, Svalbard-edge initial view, contrast settings and pinned image/source hashes')
     return manifest
 

@@ -68,17 +68,19 @@
  window.MapWizPrototype={definitions,pools,difficultyPools,reference,selected:()=>[...selected],begin:questions=>beginRound(questions),showLocalTopTen:()=>showTopTen(true)};
  initGeoGuessr=function(){
   stopGeoGuessrClock();geoGuessrState=null;hudObserver?.disconnect();document.body.classList.add('mapwiz-setup');
-  app().innerHTML=`<div class="geo-guessr-setup-wrap"><div class="geo-guessr-setup mapwiz-prototype-setup">
-   <div class="prototype-setup-intro"><h3>MapWiz</h3></div>
+  app().innerHTML=`<div class="geo-map-stage" id="geo-map-stage"><div class="geo-world-scroll"><div class="geo-world-content">${MapWizWorld.html()}</div></div><button class="geo-map-exit" id="mapwiz-setup-exit">Avslutt</button><div class="geo-guessr-setup-wrap mapwiz-map-start"><div class="geo-guessr-setup mapwiz-prototype-setup">
+   <div class="prototype-setup-intro"><h3>MapWiz</h3><p class="mapwiz-start-instructions"><span>Trykk så nær stedet som mulig.</span><span>Raske svar gir tidsbonus.</span><small>Sikt mot midten av større områder.</small></p></div>
    <div class="mapwiz-difficulty-control"><div class="mapwiz-level-readout"><span id="mapwiz-level-icon" aria-hidden="true"></span><div><strong id="mapwiz-level-title"></strong><span id="mapwiz-level-count"></span></div></div><div class="mapwiz-slider-track"><input id="mapwiz-level-slider" aria-label="Nivå" type="range" min="0" max="2" step="1" value="${definitions.findIndex(([key])=>selected.has(key))}"><div class="mapwiz-level-stops">${definitions.map(([key,label],index)=>`<button type="button" data-mapwiz-level="${key}" data-index="${index}">${label}</button>`).join('')}</div></div></div>
-   <div class="mapwiz-setup-bottom"><div class="geo-setup-actions"><button class="geo-start-button" id="geo-start-button">Start 10 spørsmål →</button><div id="prototype-selection" aria-live="polite"></div></div><button class="mapwiz-top-ten-button" id="mapwiz-show-top-ten" type="button">Topp 10</button></div>
-   <div class="prototype-notes"><span>Sikt mot midten av større områder.</span><a class="mapwiz-places-link" href="/geografi/mapwiz-steder.html">Kjente steder ↗</a></div>
-  </div></div>`;
+   <div class="mapwiz-setup-bottom"><div class="geo-setup-actions"><button class="geo-start-button" id="geo-start-button">Start 10 spørsmål →</button><div id="prototype-selection" aria-live="polite" hidden></div></div><button class="mapwiz-top-ten-button" id="mapwiz-show-top-ten" type="button">Topp 10</button></div>
+   <div class="prototype-notes"><a class="mapwiz-places-link" href="/geografi/mapwiz-steder.html"><span>Hvilke steder er med?</span><svg aria-hidden="true" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12 12 4M4 4h8v8"/></svg></a></div>
+  </div></div></div>`;
   const slider=app().querySelector('#mapwiz-level-slider');
   const choose=index=>{selected=new Set([definitions[index][0]]);refresh();};
   slider.addEventListener('input',()=>choose(Number(slider.value)));
   app().querySelectorAll('[data-mapwiz-level]').forEach(button=>button.onclick=()=>choose(Number(button.dataset.index)));
-  app().querySelector('#geo-start-button').onclick=prepareRound;
+  app().querySelector('#geo-start-button').onclick=()=>startGeoGuessr();
+  document.getElementById('mapwiz-setup-exit').onclick=()=>exitQuizMode();
+  MapWizZoom.attach(app().querySelector('.geo-world-scroll'),reference.worldMap);
   app().querySelector('#mapwiz-show-top-ten').onclick=()=>showTopTen();
   refresh();
  };
@@ -105,17 +107,6 @@
    if(!added)break;
   }
   return out;
- }
- function prepareRound(){
-  stopGeoGuessrClock();geoGuessrState=null;position=null;hudObserver?.disconnect();document.body.classList.remove('mapwiz-setup');
-  app().innerHTML=`<div class="geo-map-stage" id="geo-map-stage"><div class="geo-world-scroll"><div class="geo-world-content">${MapWizWorld.html()}</div></div>
-   <button class="geo-map-exit" id="mapwiz-ready-exit">Avslutt</button>
-   <div class="geo-hud mapwiz-ready" id="geo-hud"><h3>Klar for MapWiz?</h3><p>Trykk så nær stedet som mulig. Raske svar gir tidsbonus.</p><button type="button" class="geo-start-button" id="mapwiz-ready-start">Start spillet →</button></div>
-  </div>`;
-  document.getElementById('mapwiz-ready-exit').onclick=()=>initGeoGuessr();
-  document.getElementById('mapwiz-ready-start').onclick=function(){this.disabled=true;startGeoGuessr();};
-  MapWizZoom.attach(app().querySelector('.geo-world-scroll'),reference.worldMap);
-  const hud=document.getElementById('geo-hud');enableDragging(hud);requestAnimationFrame(()=>{if(hud.isConnected)placeBox();});
  }
  function beginRound(questions){
   if(!questions.length)return;

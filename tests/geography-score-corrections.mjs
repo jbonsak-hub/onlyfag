@@ -1,0 +1,16 @@
+import {DatabaseSync} from 'node:sqlite';
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {applyScoreCorrections,wizzyNormalCorrection as c} from '../services/geography-scores/score-corrections.mjs';
+const db=new DatabaseSync(':memory:');
+db.exec(fs.readFileSync(new URL('../services/geography-scores/schema.sql',import.meta.url),'utf8'));
+const ranking='v1:{"game":"mapwiz","difficulties":["easy"]}';
+const rows=[['original',ranking,'Wizzy',c.before,35250,c.createdAt],['new',ranking,'Wizzy',c.before,35000,c.createdAt+1],['other-name',ranking,'Other',c.before,35000,c.createdAt],['other-board','hard','Wizzy',c.before,35000,c.createdAt]];
+for(const row of rows)db.prepare('INSERT INTO scores VALUES(?,?,?,?,?,?)').run(...row);
+const adapter={prepare:sql=>({bind:(...args)=>({run:async()=>({meta:{changes:db.prepare(sql).run(...args).changes}})})})};
+await applyScoreCorrections(adapter,'hard');assert.equal(db.prepare("SELECT score FROM scores WHERE run_hash='original'").get().score,c.before);
+await Promise.all([applyScoreCorrections(adapter,ranking),applyScoreCorrections(adapter,ranking)]);
+assert.deepEqual(db.prepare("SELECT score,time_ms,created_at FROM scores WHERE run_hash='original'").get(),{__proto__:null,score:901.9,time_ms:35250,created_at:c.createdAt});
+for(const row of rows.slice(1))assert.equal(db.prepare('SELECT score FROM scores WHERE run_hash=?').get(row[0]).score,c.before);
+await applyScoreCorrections(adapter,ranking);assert.equal(db.prepare('SELECT COUNT(*) AS total FROM scores').get().total,4);
+console.log('PASS only Wizzy’s original Normal result becomes901.9; time, timestamp, other runs and boards unchanged; correction idempotent');

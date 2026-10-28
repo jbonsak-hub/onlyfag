@@ -2,12 +2,13 @@
 
 MapWiz bruker ett fysisk verdenskart for alle spørsmål, også norske steder.
 Kartets fulle bildeflate dekker 81° nord til 84° sør og alle lengdegrader.
-Nordkanten ligger like nord for Svalbard. Standardutsnittet er 81° nord til
+Nordkanten ligger like nord for Svalbard. Standardutsnittet er 78,5° nord til
 58,8° sør, lagret som `initialView` i manifestet, og fyller spillområdet.
 Den øvrige sørlige bildeflaten kan nås ved å flytte eller zoome kartet.
 Alle 794 oppføringer, inkludert Arktis, Antarktis og Dronning Mauds land,
 ligger innenfor det fulle kartet. Arktis har siktepunkt 80° nord, 0° øst,
-innenfor den beskårne nordkanten.
+innenfor det fulle kartet. Det nye startutsnittet skjærer omtrent midt gjennom
+Svalbard; nordlige siktepunkter nås ved panorering.
 
 ## Kartgrunnlag og projeksjon
 
@@ -86,5 +87,22 @@ slik at nedlastingen starter mens menyen vises. De tidligere kartfilene beholdes
 for klienter som fortsatt har gamle dokumenter i hurtigbufferen.
 
 Zoom med musehjul, berøring og panorering er beholdt; kartet har ingen synlige
-zoomknapper. Mørk modus demper begge kartlag med lysstyrke 0,38 og beholder
-kontrasten i spørsmål og markører.
+zoomknapper. Mørk modus bruker et eget geografisk palettkart og egne vannfarger, med mørkt
+blågrått hav, grønne skogområder, olivenfarget ørken og dempet is/snø.
+`scripts/mapwiz_palette.py` bruker en pinnet Natural Earth 50m-landmaske, slik
+at havfargen skiftes uavhengig av landrelieffet. Ingen lysstyrkefilter legges
+over kartet. Kun kartparet for valgt tema forhåndslastes.
+
+
+Spilleren åpner nå kartet direkte. Et sentrert panel samler nivåvalg,
+instruksjoner, Start, Topp 10 og «Hvilke steder er med?». Ingen timer eller
+nettøkt starter før Start trykkes. Panelet forsvinner ved start; «Spill igjen»
+beholder direkte omstart med samme nivå. Valg av språk er åpent i startpanelet
+og låses under runden som før.
+
+2026-10-28: Brukeren ba om at Wizzy sitt Normal-resultat fra
+1793130153191 ble rettet fra 1001,9 til 901,9. Den idempotente rettelsen i
+`services/geography-scores/score-corrections.mjs` matcher brett, kallenavn,
+opprinnelig poengsum og tidsstempel. Tid, dato, andre runder og andre topplister
+endres ikke. Direkte D1-API var ikke tilgjengelig for CLI-tokenet; rettelsen
+utføres gjennom Workerens eksisterende D1-binding ved første oppslag på Normal.

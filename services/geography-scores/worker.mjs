@@ -1,4 +1,5 @@
 import {data,config,board,create,answer,issue,finish,publicQuestion} from './rules.mjs';
+import {applyScoreCorrections} from './score-corrections.mjs';
 const TTL=2*60*60*1000,allowed=new Set(['https://onlyfag.no','https://www.onlyfag.no']);
 const json=(body,status=200,headers={})=>new Response(JSON.stringify(body),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...headers}});
 const hash=async value=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value))),b=>b.toString(16).padStart(2,'0')).join('');
@@ -29,6 +30,7 @@ async function handler(request,env){
   await limit(request,env,url.pathname==='/session'?'start':'request',now);
   if(url.pathname==='/scores'&&request.method==='GET'){
    let c;try{c=config(JSON.parse(url.searchParams.get('config')));}catch(_){throw Error('invalid_config');}
+   await applyScoreCorrections(env.DB,board(c));
    const result=await env.DB.prepare('SELECT nickname,score,time_ms,created_at FROM scores WHERE board=? ORDER BY score DESC,time_ms,created_at LIMIT 10').bind(board(c)).all();return json({rows:result.results},200,cors);
   }
   if(request.method!=='POST')return json({error:'not_found'},404,cors);

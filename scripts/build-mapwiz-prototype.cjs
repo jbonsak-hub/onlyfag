@@ -54,7 +54,8 @@ const outputs={'assets/geography/mapwiz-prototype-data.js':out,'assets/geography
 // Begin the two map downloads while the menu scripts are loading. Keep their
 // addresses in sync with the projection manifest and retain cached old assets.
 for(const page of ['geografi/mapwiz.html','prototypes/mapwiz.html']){
- const html=read(page),preloads='<!-- mapwiz-map-preload:start -->'+[worldMap.image,worldMap.hydrology.image].map(href=>`<link rel="preload" as="image" href="${href}" fetchpriority="low">`).join('')+'<!-- mapwiz-map-preload:end -->';
+ const choices={light:[worldMap.image,worldMap.hydrology.image],dark:[worldMap.dark.image,worldMap.dark.hydrology.image]};
+ const html=read(page),preloads='<!-- mapwiz-map-preload:start --><script>(()=>{const maps='+JSON.stringify(choices)+';let dark=false;try{dark=localStorage.getItem("geoDarkMode")==="1";}catch{}for(const href of maps[dark?"dark":"light"]){const link=document.createElement("link");link.rel="preload";link.as="image";link.href=href;link.fetchPriority="low";document.head.append(link);}})();</script><!-- mapwiz-map-preload:end -->';
  const updated=html.includes('<!-- mapwiz-map-preload:start -->')?html.replace(/<!-- mapwiz-map-preload:start -->[\s\S]*?<!-- mapwiz-map-preload:end -->/,preloads):html.replace('</head>',preloads+'</head>');
  outputs[page]=updated;
 }

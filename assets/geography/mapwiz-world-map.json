@@ -5,7 +5,7 @@
   "top": 81.0,
   "bottom": -84.0,
   "initialView": {
-    "top": 81.0,
+    "top": 78.5,
     "bottom": -58.8
   },
   "enhancement": {
@@ -121,5 +121,37 @@
       "Lake Eyre North",
       "Lake Eyre South"
     ]
+  },
+  "dark": {
+    "image": "/assets/geography/mapwiz-world-map/physical-dark-decca6a7d598.webp",
+    "imageSHA256": "decca6a7d59834c85eb204f5d03598cd9cc1965e276bf4c615fe91e6595f8c06",
+    "palette": {
+      "ocean": [
+        34,
+        60,
+        69
+      ],
+      "forest": [
+        37,
+        95,
+        69
+      ],
+      "desert": [
+        107,
+        96,
+        67
+      ],
+      "snow": [
+        150,
+        175,
+        167
+      ]
+    },
+    "landSourceManifest": "sources/mapwiz-world/land-source.json",
+    "landSourceManifestSHA256": "26a918820df3bd2045b05f578ea1d16fe4194c12bd21e55a9285773cabda72c2",
+    "hydrology": {
+      "image": "/assets/geography/mapwiz-world-map/water-dark-952f8726e966.svg",
+      "imageSHA256": "952f8726e966b7f82e2f09d1566918c6ca7ea45550b3fc4913ef5d72be2dcb58"
+    }
   }
 }

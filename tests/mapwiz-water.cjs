@@ -19,7 +19,7 @@ const server=http.createServer((req,res)=>{try{const file=path.resolve(root,'.'+
    const status=await page.evaluate(()=>{const image=document.querySelector('.geo-map-image'),water=document.querySelector('.geo-map-water'),content=document.querySelector('.geo-world-content'),a=image.getBoundingClientRect(),b=water.getBoundingClientRect(),c=content.getBoundingClientRect();return {count:document.querySelectorAll('.geo-map-water').length,loaded:water.complete&&water.naturalWidth>0,pointer:getComputedStyle(water).pointerEvents,error:Math.max(...['x','y','width','height'].flatMap(k=>[Math.abs(a[k]-b[k]),Math.abs(b[k]-c[k])]))};});
    assert.equal(status.count,1);assert(status.loaded);assert.equal(status.pointer,'none');assert(status.error<.1,'Water and relief must share the exact geographic rectangle '+JSON.stringify(status));
   }
-  await aligned();await page.locator('#mapwiz-ready-start').click();await aligned();
+  await aligned();await aligned();
   // Exercise maximum zoom, then use a real click through the water image.
   await page.evaluate(()=>document.querySelector('.geo-world-scroll').dispatchEvent(new WheelEvent('wheel',{deltaY:-2500,clientX:innerWidth*.65,clientY:innerHeight*.4,bubbles:true,cancelable:true})));
   await aligned();assert.equal(await page.evaluate(()=>MapWizZoom.getState().zoom),6);
@@ -28,7 +28,7 @@ const server=http.createServer((req,res)=>{try{const file=path.resolve(root,'.'+
   await aligned();await page.mouse.click(point.x,point.y);await page.waitForFunction(()=>geoGuessrState.answered);assert(await page.evaluate(()=>geoGuessrState.results[0].base>99),'The water layer must not block a correct lake click');
   await page.locator('.geo-next-button').click();await aligned();assert.equal(await page.locator('.geo-map-water').getAttribute('src'),source,'Every question reuses the same cacheable water asset');
   if(process.env.LAYOUT_SCREENSHOTS)await page.screenshot({path:path.join(process.env.LAYOUT_SCREENSHOTS,'mapwiz-lakes-day.png')});
-  await page.evaluate(()=>document.body.classList.add('dark-mode'));assert.notEqual(await page.locator('.geo-map-water').evaluate(el=>getComputedStyle(el).filter),'none');
+  await page.evaluate(()=>document.body.classList.add('dark-mode'));await page.waitForFunction(()=>document.querySelector('.geo-map-water').getAttribute('src')===MAPWIZ_PROTOTYPE_DATA.worldMap.dark.hydrology.image);await page.waitForFunction(()=>{const image=document.querySelector('.geo-map-image');return image.complete&&image.naturalWidth&&image.getAttribute('src')===MAPWIZ_PROTOTYPE_DATA.worldMap.dark.image;});assert.equal(await page.locator('.geo-map-water').evaluate(el=>getComputedStyle(el).filter),'none');
   if(process.env.LAYOUT_SCREENSHOTS){fs.mkdirSync(process.env.LAYOUT_SCREENSHOTS,{recursive:true});await page.screenshot({path:path.join(process.env.LAYOUT_SCREENSHOTS,'mapwiz-water-zoom.png')});}
   await page.setViewportSize({width:390,height:844});await aligned();assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   const manifest=JSON.parse(fs.readFileSync(path.join(root,'assets/geography/mapwiz-world-map.json'),'utf8')),waterBytes=fs.statSync(path.join(root,source)).size;assert(waterBytes<1_500_000,'Water overlay has a bounded download size');
