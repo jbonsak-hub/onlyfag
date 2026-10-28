@@ -55,9 +55,13 @@
 <link rel="stylesheet" href="assets/geography/quiz-assets/quiz-overview-9fb3a4584b89.css">
 <link rel="stylesheet" href="assets/geography/plate-boundaries/embed.css">
 <script src="assets/geography/plate-boundaries/embed.js" defer></script>
+<link rel="stylesheet" href="assets/geography/hotspot/embed.css?v=c7e7e8c2b816">
+<script src="assets/geography/hotspot/embed.js?v=8f3d3fafe1ab" defer></script>
 <link rel="stylesheet" href="assets/geography/tsunami/embed.css?v=6b03ba50b558">
 <script src="assets/geography/tsunami/embed.js?v=2e39e5039270" defer></script>
 <link rel="stylesheet" href="assets/geography/quiz-assets/inner-forces-b26eb93bec06.css">
+<link rel="stylesheet" href="assets/geography/earth-layers/model.css?v=6bf9a0b70e3a">
+<script src="assets/geography/earth-layers/model.js?v=b647c3f9b5bb" defer></script>
 <link rel="stylesheet" href="assets/geography/global-circulation/embed.css?v=f125fb32c337">
 </head>
 <body data-geography-page>
@@ -77,6 +81,7 @@
 <div class="menu-item"><div class="menu-header" onclick="toggleMenu(this)"><span class="menu-icon">▶</span>Indre krefter og landformer</div><div class="submenu">
 <div class="submenu-item" onclick="showContent('indre-fagstoff', this)">Fagstoff</div>
 <div class="submenu-item" onclick="showContent('indre-plategrenser', this)">Plategrenser</div>
+<div class="submenu-item" onclick="showContent('indre-hotspot', this)">Hotspot-vulkanisme</div>
 <div class="submenu-item" onclick="showContent('indre-tsunami', this)">Tsunami</div>
 <div class="submenu-item" onclick="showContent('indre-begreper', this)">Begrepsliste</div>
 <div class="submenu-item" onclick="showContent('indre-sporsmal', this)">Test deg selv</div>
@@ -139,25 +144,86 @@
 <iframe id="tsunami-model-frame" class="tsunami-model-frame" title="Slik oppstår en tsunami – 11 animerte trinn" data-src="geografi/tsunami.html?embedded=1&amp;v=40a943ccb4f7"></iframe>
 </section>
 <section class="page-section" id="indre-plategrenser" aria-label="Plategrenser – interaktive modeller">
-<iframe id="plate-model-frame" class="plate-model-frame" title="Plategrenser – fem interaktive modeller" data-src="geografi/plategrenser.html?embedded=1" allow="fullscreen"></iframe>
+<iframe id="plate-model-frame" class="plate-model-frame" title="Plategrenser – fem interaktive modeller" data-src="geografi/plategrenser.html?embedded=1&amp;v=701916ff90c4" allow="fullscreen"></iframe>
+</section>
+<section class="page-section" id="indre-hotspot" aria-label="Hotspot-vulkanisme – Hawaii, interaktiv prototype">
+<iframe id="hotspot-model-frame" class="hotspot-model-frame" title="Hotspot-vulkanisme – Hawaii" data-src="prototyper/hotspot.html?embedded=1" allow="fullscreen"></iframe>
 </section>
 <section class="page-section" id="indre-fagstoff">
 <span class="topic-label">Fagstoff</span>
 <h2>Indre krefter og landformer</h2>
 <p class="lead">Jordas oppbygning → litosfæreplater → platebevegelse → plategrenser → landformer, jordskjelv og vulkanisme.</p>
 <div class="geo-concept-grid indre-geo-grid">
-<article class="geo-concept-card">
+<div class="earth-intro geo-wide">
+<article class="geo-concept-card earth-description">
 <strong>1. Jordas oppbygning</strong>
 <p>Jorda ble dannet for omtrent <strong>4,6 milliarder år siden</strong>. Tidlig var store deler av jorda smeltet. Tunge grunnstoffer som jern og nikkel sank mot sentrum, mens lettere materiale ble liggende høyere. Slik ble jorda lagdelt.</p>
 <table class="geo-mini-table">
 <tr><th>Lag</th><th>Kjennetegn</th></tr>
-<tr><td>Jordskorpe</td><td>Fast. Ca. 5–70 km tykk.</td></tr>
-<tr><td>Mantel</td><td>Ca. 2900 km tykk. Stort sett fast bergart som kan deformeres langsomt.</td></tr>
-<tr><td>Ytre kjerne</td><td>Flytende. Består hovedsakelig av jern og nikkel.</td></tr>
-<tr><td>Indre kjerne</td><td>Fast. Består hovedsakelig av jern og nikkel.</td></tr>
+<tr><td>Jordskorpe</td><td>Fast. Havbunnsskorpa er vanligvis ca. 5–10 km tykk; kontinentskorpa ca. 30–70 km.</td></tr>
+<tr><td>Mantel</td><td>Når ned til ca. 2 890 km. Hovedsakelig fast bergart som kan deformeres svært langsomt.</td></tr>
+<tr><td>Ytre kjerne</td><td>Flytende metall, hovedsakelig jern. Fra ca. 2 890 til 5 150 km dyp.</td></tr>
+<tr><td>Indre kjerne</td><td>Fast metall, hovedsakelig jern. Fra ca. 5 150 km til sentrum på 6 371 km dyp.</td></tr>
 </table>
-<div class="geo-keyline"><strong>Litosfæren</strong> = jordskorpa + øverste, faste del av mantelen. <strong>Astenosfæren</strong> = svakere og plastisk lag under litosfæren som gjør platebevegelse mulig.</div>
+<div class="geo-keyline"><strong>Litosfæren</strong> = jordskorpa + den stive, øverste delen av mantelen. <strong>Astenosfæren</strong> ligger under og er hovedsakelig fast, men kan deformeres langsomt. Litosfæreplatene beveger seg over dette svakere laget.</div>
 </article>
+<figure class="geo-concept-card earth-figure" id="earth-layers" aria-labelledby="earth-layers-title">
+<figcaption><strong id="earth-layers-title">Fra overflata til sentrum</strong><span>Hold over, trykk eller bruk Tab for å utforske.</span></figcaption>
+<svg class="earth-diagram" viewBox="0 0 540 550" role="group" aria-label="Jordas lag i et forenklet utsnitt" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="earth-crust" x2="0" y2="1"><stop stop-color="#e9d09c"/><stop offset="1" stop-color="#c8a267"/></linearGradient>
+<linearGradient id="earth-upper" x2="0" y2="1"><stop stop-color="#f3c16f"/><stop offset="1" stop-color="#e9ac62"/></linearGradient>
+<linearGradient id="earth-lower" x2="0" y2="1"><stop stop-color="#e8b176"/><stop offset="1" stop-color="#d78c5e"/></linearGradient>
+<linearGradient id="earth-outer" x2="0" y2="1"><stop stop-color="#dd845c"/><stop offset="1" stop-color="#c45e43"/></linearGradient>
+<linearGradient id="earth-inner" x2="0" y2="1"><stop stop-color="#bc533d"/><stop offset="1" stop-color="#963d32"/></linearGradient>
+</defs>
+<path d="M90 77Q140 68 193 73T268 75L248 89H90Z" fill="#95c9da"/>
+<text class="earth-surface-label" x="165" y="61">Hav</text><text class="earth-surface-label" x="360" y="30">Kontinent</text>
+<g data-earth-layer="crust" role="button" tabindex="0" aria-label="Jordskorpa" aria-controls="earth-layer-info" aria-pressed="true">
+<path class="earth-zone" d="M90 88L248 88Q295 82 325 48L341 63L354 53L377 76L430 86L421 113Q280 96 102 115Z" fill="url(#earth-crust)"/>
+<text class="earth-layer-label earth-crust-label" x="296" y="88">Skorpe</text>
+</g>
+<g data-earth-layer="upper" role="button" tabindex="0" aria-label="Øvre mantel" aria-controls="earth-layer-info" aria-pressed="false">
+<path class="earth-zone" d="M102 115Q280 96 421 113L386 215Q278 182 146 215Z" fill="url(#earth-upper)"/>
+<path d="M102 115Q280 96 421 113L407 153Q278 124 119 153Z" fill="#71815a"/>
+<path d="M119 153Q278 124 407 153L395 189Q278 160 135 189Z" fill="#efbd70"/>
+<path d="M119 153Q278 124 407 153" fill="none" stroke="#59684a" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text class="earth-layer-label" x="269" y="181">Øvre mantel</text>
+</g>
+<g data-earth-layer="lower" role="button" tabindex="0" aria-label="Nedre mantel" aria-controls="earth-layer-info" aria-pressed="false">
+<path class="earth-zone" d="M146 215Q278 182 386 215L345 332Q278 305 197 332Z" fill="url(#earth-lower)"/>
+<text class="earth-layer-label" x="270" y="269">Nedre mantel</text>
+</g>
+<g data-earth-layer="outer" role="button" tabindex="0" aria-label="Ytre kjerne, flytende" aria-controls="earth-layer-info" aria-pressed="false">
+<path class="earth-zone" d="M197 332Q278 305 345 332L306 446Q278 431 247 446Z" fill="url(#earth-outer)"/>
+<text class="earth-layer-label" x="275" y="367">Ytre kjerne</text><text class="earth-state-label" x="275" y="390">flytende</text>
+</g>
+<g data-earth-layer="inner" role="button" tabindex="0" aria-label="Indre kjerne, fast" aria-controls="earth-layer-info" aria-pressed="false">
+<path class="earth-zone" d="M247 446Q278 431 306 446L280 520Z" fill="url(#earth-inner)"/>
+<text class="earth-layer-label earth-core-label" x="279" y="459">Indre</text><text class="earth-layer-label earth-core-label" x="279" y="476">kjerne</text><text class="earth-state-label earth-core-label" x="279" y="491">fast</text>
+</g>
+<g class="earth-mechanical" data-earth-layer="lithosphere" role="button" tabindex="0" aria-label="Litosfæren, skorpe og stiv øverste mantel" aria-controls="earth-layer-info" aria-pressed="false">
+<path class="earth-bracket" d="M87 99H76V150H99"/>
+<text x="70" y="124" text-anchor="end">Litosfære</text>
+<path class="earth-hit" d="M5 103H99V148H5Z"/>
+</g>
+<g class="earth-mechanical" data-earth-layer="asthenosphere" role="button" tabindex="0" aria-label="Astenosfæren, svakere og hovedsakelig fast mantel" aria-controls="earth-layer-info" aria-pressed="false">
+<path class="earth-bracket" d="M106 158H96V194H122"/>
+<text x="90" y="178" text-anchor="end">Astenosfære</text>
+<path class="earth-hit" d="M0 158H122V194H0Z"/>
+</g>
+<path class="earth-mechanical-outline" data-earth-outline="lithosphere" d="M90 88L248 88Q295 82 325 48L341 63L354 53L377 76L430 86L407 153Q278 124 119 153Z"/>
+<path class="earth-mechanical-outline" data-earth-outline="asthenosphere" d="M119 153Q278 124 407 153L395 189Q278 160 135 189Z"/>
+<g class="earth-depth" aria-label="Omtrentlig dybde under overflata">
+<text x="451" y="81">Dybde</text><path d="M446 88V520M430 88H454M386 215H454M345 332H454M306 446H454M280 520H454"/>
+<text x="460" y="93">0 km</text><text x="460" y="220">660 km</text><text x="460" y="337">2 890 km</text><text x="460" y="451">5 150 km</text><text x="460" y="525">6 371 km</text>
+</g>
+</svg>
+<div id="earth-layer-info" class="earth-layer-info" aria-live="polite" aria-atomic="true"><strong id="earth-layer-name">Jordskorpa</strong><p id="earth-layer-description">Det tynne, faste ytterlaget. Havbunnsskorpa er vanligvis ca. 5–10 km tykk, mens kontinentskorpa er ca. 30–70 km.</p></div>
+<p class="earth-model-note">Forenklet snitt. De ytterste lagene er tegnet tykkere enn i virkeligheten. Dybdene er omtrentlige.</p>
+<details class="earth-sources"><summary>Fagkilder</summary><p><a href="https://www.bgs.ac.uk/discovering-geology/earth-hazards/earthquakes/what-causes-earthquakes/" target="_blank" rel="noopener">BGS: Jordas oppbygning</a> · <a href="https://www.usgs.gov/faqs/are-tectonic-plates-floating-magma" target="_blank" rel="noopener">USGS: Fast mantel og platebevegelse</a></p></details>
+</figure>
+</div>
 <article class="geo-concept-card">
 <strong>2. To typer litosfæreplater</strong>
 <table class="geo-mini-table geo-compare-table">
@@ -279,6 +345,7 @@
 <tr><td>Stratovulkan</td><td>Lag av lava og løsmasser; ofte mer eksplosive utbrudd</td><td>Fuji / Mount St. Helens</td></tr>
 </table>
 <p><strong>Hotspot:</strong> Varmt mantelmateriale stiger under en plate. Når plata beveger seg, kan det dannes en kjede av vulkaner. Hawaii viser retningen på Stillehavsplatas bevegelse. Island ligger både på en midthavsrygg og over et område med stor magmatilførsel. Beerenberg på Jan Mayen er Norges aktive vulkan.</p>
+<a href="#indre-hotspot" class="notice indre-model-link"><strong>Utforsk hotspot-vulkanisme →</strong> Dra i glideren og se hvordan øyrekken Hawaii dannes i den nye prototypen.</a>
 <p><strong>Materiale og prosesser ved utbrudd:</strong> lava, aske/tefra, pyroklastiske strømmer og laharer. Store eksplosive utbrudd kan sende svovelholdige partikler høyt i atmosfæren og gi midlertidig global avkjøling, slik Tambora-utbruddet i 1815 bidro til «året uten sommer» i 1816.</p>
 </article>
 <article class="geo-concept-card">

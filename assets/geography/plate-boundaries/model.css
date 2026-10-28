@@ -32,3 +32,4 @@
 }
 /* In an embedded model the back control is the route to the mobile subject menu. */
 .embedded .back{display:inline-block!important}
+.example .example-map-link{font-size:11px;font-weight:450;white-space:nowrap}.example-map-link a{text-underline-offset:2px}

@@ -13,6 +13,7 @@ const server = http.createServer((req, res) => {
   catch { res.writeHead(404).end(); }
 });
 const modes = ['ocean-continent','ocean-ocean','continent-continent','divergent','transform'];
+const exampleMaps = {'ocean-continent':['-22,-70','3'],'ocean-ocean':['18,145','5'],'continent-continent':['31,85','5'],divergent:['42,-30','3'],transform:['36.5,-120','6']};
 (async () => {
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const base = `http://127.0.0.1:${server.address().port}`;
@@ -34,6 +35,12 @@ const modes = ['ocean-continent','ocean-ocean','continent-continent','divergent'
     if (shots) fs.mkdirSync(shots,{recursive:true});
     for (const mode of modes) {
       await page.locator(`[data-mode="${mode}"]`).click();
+      const mapLink=page.locator('#example-map'),mapUrl=new URL(await mapLink.getAttribute('href'));
+      assert.equal(mapUrl.origin+mapUrl.pathname,'https://www.google.com/maps/d/viewer');
+      assert.equal(mapUrl.searchParams.get('mid'),'105PobuL643Yr0Gh5O478-RHzWksbtCc');
+      assert.deepEqual([mapUrl.searchParams.get('ll'),mapUrl.searchParams.get('z')],exampleMaps[mode],mode+': the map opens at the example with its own zoom');
+      assert.equal(await mapLink.getAttribute('target'),'_blank');
+      assert.match(await mapLink.getAttribute('rel'),/noopener/);
       assert.equal(await range.inputValue(),'0',mode+': every tab starts at zero');
       await set(0);
       const beginning = await page.locator('#stage-explanation').innerText();

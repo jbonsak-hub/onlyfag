@@ -182,7 +182,7 @@ const server = http.createServer((req,res) => {
     await page.goto(base+'/geografi.html#indre-tsunami');
     const tsunamiMenu=page.locator('.submenu-item').filter({hasText:/^Tsunami$/});
     assert.equal(await tsunamiMenu.count(),1);
-    assert.equal(await tsunamiMenu.evaluate(el=>el.previousElementSibling.textContent.trim()),'Plategrenser');
+    assert.deepEqual(await tsunamiMenu.evaluate(el=>[el.previousElementSibling.previousElementSibling.textContent.trim(),el.previousElementSibling.textContent.trim()]),['Plategrenser','Hotspot-vulkanisme']);
     const model=page.frameLocator('#tsunami-model-frame');
     await model.locator('#stage-select').waitFor();
     assert.equal(await model.locator('#stage-select').inputValue(),'1');

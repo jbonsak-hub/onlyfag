@@ -25,6 +25,7 @@
       ],
       result: 'Dyphavsgrop · vulkansk fjellkjede · grunne og dype jordskjelv',
       example: ['Andesfjellene', 'Nazcaplaten synker under den søramerikanske platen.'],
+      map: {center: '-22,-70', zoom: 3},
       caveat: 'Magmaen kommer her fra mantelkilen, ikke fra en havbunnsplate som smelter. Foldene ved gropa viser sedimenter som kan skrapes av og hope seg opp; mengden varierer mellom subduksjonssoner. Skjelvsymbolene er mulige fokus, ikke samtidige skjelv. Gult: grunt, korall: mellomdypt, lilla: dypt (i noen soner ned mot 700 km).'
     },
     'ocean-ocean': {
@@ -45,6 +46,7 @@
       ],
       result: 'Dyphavsgrop · vulkansk øybue · grunne og dype jordskjelv',
       example: ['Marianegropa og Marianene', 'Stillehavsplaten synker under Marianedelen av den filippinske havplaten.'],
+      map: {center: '18,145', zoom: 5},
       caveat: 'Alder og temperatur påvirker tettheten, men geometrien og platens historie spiller også inn. En øybue ligger på den øvre platen, et stykke fra gropa. De bakre øyene viser skjematisk at buen fortsetter bak tverrsnittet. Foldene ved gropa viser sedimenter som kan skrapes av; ikke alle soner bygger et stort sedimentprism. Skjelvsymbolene viser mulige fokus: gult = grunt, korall = mellomdypt, lilla = dypt.'
     },
     'continent-continent': {
@@ -65,6 +67,7 @@
       ],
       result: 'Foldede fjellkjeder · tykk skorpe · jordskjelv · mulig granittdannelse i dypet',
       example: ['Himalaya og Tibet', 'Den indiske platen kolliderer med den eurasiske platen.'],
+      map: {center: '31,85', zoom: 5},
       caveat: 'Smelting er en mulighet når deler av den fortykkede kontinental­skorpa blir varme nok, ikke en automatisk følge av økt trykk eller enhver kollisjon. I dette eksemplet blir magmaen i skorpa; Himalayas lyse granitter viser at slik smelting har skjedd. Kontinentkollisjon gir vanligvis ingen vulkansk bue, men vulkanisme kan forekomme i enkelte kollisjons- og etterkollisjonsmiljøer. Tidligere subduksjon av havbunn er ikke med. Erosjon former fjellene mens de heves.'
     },
     divergent: {
@@ -83,6 +86,7 @@
       ],
       result: 'Midthavsrygg · ny havbunn · vulkanisme · grunne jordskjelv',
       example: ['Den midtatlantiske ryggen', 'På Island ligger deler av spredningssonen over havnivå.'],
+      map: {center: '42,-30', zoom: 3},
       caveat: 'Modellen viser en langsomt spredende rygg, som deler av Den midtatlantiske ryggen, med riftdal og tydelige forkastningstrinn. Raskt spredende rygger har ofte en jevnere, opphøyd akse uten stor riftdal. Havbunnens farge viser relativ alder og avkjøling, ikke magnetiske polvendinger. Toppen viser havbunnen uten vann; fronten er skåret opp for å vise lagene. Terrenget er sterkt forenklet.'
     },
     transform: {
@@ -101,6 +105,7 @@
       ],
       result: 'Sideveis forskyvning · forkastning · grunne jordskjelv',
       example: ['San Andreas-forkastningen', 'Stillehavsplaten og den nordamerikanske platen glir forbi hverandre i California.'],
+      map: {center: '36.5,-120', zoom: 6},
       caveat: 'Sideflatene er skåret åpne for å vise berglagene i et begrenset modellutsnitt; de er ikke stup eller åpne sprekker i landskapet. Platene har konstant tykkelse og beveger seg bare sidelengs. Ingen litosfære dannes eller forbrukes ved en ren glidegrense. Vulkanisme er ikke et typisk resultat. Glideren viser ett tenkt forløp fra fastlåsing til brudd, ikke når neste jordskjelv vil skje. Noen forkastningsdeler glir også langsomt uten store skjelv.'
     }
   };
@@ -275,6 +280,10 @@
     $('result').textContent = model.result;
     $('example-title').textContent = model.example[0];
     $('example-detail').textContent = model.example[1];
+    const mapUrl = new URL('https://www.google.com/maps/d/viewer');
+    mapUrl.search = new URLSearchParams({mid:'105PobuL643Yr0Gh5O478-RHzWksbtCc',ll:model.map.center,z:String(model.map.zoom)});
+    $('example-map').href = mapUrl.href;
+    $('example-map').setAttribute('aria-label', 'Se ' + model.example[0] + ' i plategrensekartet');
     $('model-caveat').textContent = model.caveat;
     $('collision-source').hidden = mode !== 'continent-continent';
     $('process-steps').innerHTML = model.steps.map(([title, body], i) => `<button class="process-step" data-topic="${i}" type="button" aria-pressed="${i === topic}"><span class="step-number">${i + 1}</span><span><strong>${title}</strong><span class="step-detail">${body}</span></span></button>`).join('');

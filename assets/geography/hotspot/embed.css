@@ -1,0 +1,7 @@
+body.hotspot-model-open{overflow:hidden}
+body.hotspot-model-open .content{max-width:none!important;min-width:0;width:auto;height:100vh;height:100svh;padding:0!important;overflow:hidden}
+#indre-hotspot.page-section{padding:0;margin:0;border-radius:0;box-shadow:none;background:transparent;overflow:hidden}
+#indre-hotspot.active{height:100vh;height:100svh;animation:none}
+.hotspot-model-frame{display:block;width:100%;height:100%;border:0;background:transparent}
+@media(max-width:1000px){body.hotspot-model-open .sidebar,body.hotspot-model-open .sidebar-collapse-toggle{display:none!important}body.hotspot-model-open .content{width:100%}}
+@media print{#indre-hotspot{display:none!important}}

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Følg Stillehavsplata over et hotspot. Dra i tiden og se hvordan Hawaiis øykjede blir til.">
+  <title>Hotspot – slik dannes Hawaii | OnlyFag</title>
+  <link rel="stylesheet" href="../assets/geography/hotspot/model.css?v=59965727836d">
+  <script src="../assets/analytics.js" defer></script>
+  <script src="../assets/geography/hotspot/model.js?v=7e469e05a0aa" defer></script>
+</head>
+<body>
+  <main class="lab">
+    <header class="lab-header">
+      <div><a class="back" href="../geografi.html#indre-fagstoff">← Geografi <span>/ Indre krefter</span></a><h1>En plate i bevegelse. Et spor av øyer.</h1></div>
+      <div class="header-tools">
+        <button id="info-toggle" type="button" class="tool" aria-controls="explanation" aria-haspopup="dialog">Faglig forklaring</button>
+        <button id="theme" type="button" class="tool" aria-label="Bytt til mørk visning" aria-pressed="false">◐ <span>Lys / mørk</span></button>
+        <button id="fullscreen" type="button" class="tool" aria-label="Åpne fullskjerm">⛶ <span>Fullskjerm</span></button>
+      </div>
+    </header>
+    <div class="workspace">
+      <section class="model" aria-labelledby="model-title">
+        <div class="model-heading"><div><span class="eyebrow">Hotspot-vulkanisme · Hawaii</span><h2 id="model-title">Øykjeden blir til</h2></div><span class="view-kind">Skrått utsnitt</span></div>
+        <div class="stage-caption" role="status" aria-live="polite" aria-atomic="true"><span id="stage-number" aria-hidden="true">01</span><p id="stage-explanation"></p></div>
+        <div class="scene" id="scene">
+          <svg id="diagram" viewBox="0 38 1000 485" role="group" aria-labelledby="diagram-title diagram-description">
+            <title id="diagram-title">Hawaiis øykjede over et hotspot</title>
+            <desc id="diagram-description">Stillehavsplata flytter vulkanene mot nordvest. Under plata stiger varmt mantelmateriale ved et relativt stasjonært hotspot. En liten del smelter øverst, og magma bygger nye vulkaner.</desc>
+            <defs>
+              <linearGradient id="ocean-top" x2=".2" y2="1"><stop stop-color="#85bdc4"/><stop offset="1" stop-color="#3f8f9f"/></linearGradient>
+              <linearGradient id="ocean-front" x2="0" y2="1"><stop stop-color="#67b7c9" stop-opacity=".3"/><stop offset="1" stop-color="#326d87" stop-opacity=".48"/></linearGradient>
+              <linearGradient id="plate-rock" x2="0" y2="1"><stop stop-color="#b2a583"/><stop offset=".16" stop-color="#8b8569"/><stop offset=".18" stop-color="#687761"/><stop offset="1" stop-color="#4d6155"/></linearGradient>
+              <linearGradient id="mantle-rock" x2="0" y2="1"><stop stop-color="#b98a68"/><stop offset="1" stop-color="#8d6055"/></linearGradient>
+              <linearGradient id="island-rock" x1="0" y1="0" x2="1" y2=".7"><stop stop-color="#bfa476"/><stop offset=".5" stop-color="#8c8c61"/><stop offset="1" stop-color="#5a7256"/></linearGradient>
+              <linearGradient id="plume-heat" x2="0" y2="1"><stop stop-color="#f7c880"/><stop offset=".5" stop-color="#e8ad72"/><stop offset="1" stop-color="#e2a079" stop-opacity=".3"/></linearGradient>
+              <radialGradient id="local-melt"><stop stop-color="#ffdf9d"/><stop offset=".4" stop-color="#eeaa65" stop-opacity=".8"/><stop offset="1" stop-color="#edaa66" stop-opacity="0"/></radialGradient>
+              <pattern id="mantle-grain" width="45" height="27" patternUnits="userSpaceOnUse"><path d="m5 16 12-2m12-8 9 1" stroke="#f1d2ae" stroke-width="1" opacity=".13"/></pattern>
+              <pattern id="plate-stripes" width="130" height="75" patternUnits="userSpaceOnUse"><path d="M0 17h130M0 32h130" stroke="#303d37" stroke-width="1" opacity=".17"/><path d="m20 45 8 3m57 12 12-3" stroke="#dfd8b6" stroke-width="2" opacity=".3"/></pattern>
+              <marker id="motion-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 10 5 0 10z" fill="#f2faf3"/></marker>
+              <clipPath id="plate-face-clip"><path d="M65 302H850V377H65Z"/></clipPath>
+              <clipPath id="water-face-clip"><path d="M65 214H850V302H65Z"/></clipPath>
+            </defs>
+            <path d="m65 377 785 0 95-78v112l-95 78H65Z" fill="url(#mantle-rock)"/>
+            <path d="M850 377 945 299V411L850 489Z" fill="#815c50" opacity=".6"/>
+            <path d="M65 377H850V489H65Z" fill="url(#mantle-grain)"/>
+            <g id="plume" data-feature="stationary-hotspot">
+              <path d="M750 489C761 457 762 431 752 415C741 402 708 397 711 381C724 359 820 358 838 380C845 398 806 401 796 417C784 438 794 467 799 489Z" fill="url(#plume-heat)" opacity=".8"/>
+              <path d="m773 461 0-34m-6 9 6-9 6 9m-6-38 0-23m-6 9 6-9 6 9" stroke="#fff1bb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity=".8"/>
+              <ellipse cx="775" cy="377" rx="90" ry="23" fill="url(#local-melt)"/>
+            </g>
+            <path d="m65 302 95-78h785l-95 78Z" fill="#9f9e7a"/>
+            <path d="M65 302H850V377H65Z" fill="url(#plate-rock)"/>
+            <path d="M850 302 945 224V299L850 377Z" fill="#5b6956"/>
+            <path d="M850 302 945 224V239L850 317Z" fill="#9c9375"/>
+            <g clip-path="url(#plate-face-clip)"><g id="plate-material" data-feature="moving-plate"></g></g>
+            <path d="m65 214 95-78h785l-95 78Z" fill="url(#ocean-top)"/>
+            <g class="ocean-detail" stroke="#c1e7e5" opacity=".2" fill="none"><path d="m186 178 56-9m72 27 48-4m-20-35 75-7m89 40 74-7m47-27 56-7m72 37 57-8m19-26 40-4"/><path d="m211 199 45-5m230-30 48-4m218 27 43-5"/></g>
+            <text x="183" y="76" class="ocean-name">STILLEHAVET</text>
+            <path d="M344 112 226 122" class="motion-arrow"/>
+            <text x="278" y="100" text-anchor="middle" class="motion-label">Mot nordvest</text>
+            <g id="islands"></g>
+            <path d="M65 214H850V302H65Z" fill="url(#ocean-front)" pointer-events="none"/>
+            <path d="M850 214 945 136V224L850 302Z" fill="#427e9b" opacity=".5"/>
+            <path d="M65 214H850L945 136" stroke="#c5e5df" stroke-width="1.5" opacity=".7" fill="none"/>
+            <g id="magma" data-feature="magma-path"></g>
+            <g class="cross-labels">
+              <text x="88" y="348" class="rock-label">Stillehavsplata</text><text x="88" y="367" class="rock-small">Skorpe + stiv øvre mantel</text>
+              <text x="88" y="442" class="rock-label">Mantel</text><text x="88" y="461" class="rock-small">Hovedsakelig fast bergart</text>
+              <path d="M806 442h69" stroke="#f5dfbf" fill="none" opacity=".7"/><text x="881" y="438" class="plume-label">Varmt</text><text x="881" y="456" class="plume-label">materiale</text>
+            </g>
+            <g id="island-labels"></g>
+            <g id="hotspot-label"><path d="M775 380v-13m0 0 24-15" class="hotspot-leader"/><text x="806" y="348" class="hotspot-text">Hotspot</text></g>
+            <text x="66" y="515" class="scale-note">Skjematisk utsnitt · ikke i målestokk</text>
+          </svg>
+        </div>
+        <div class="scene-footer"><span><i class="swatch" style="--swatch:#eeaa65"></i> Lokal delvis smelting</span><span>Velg en øy for å lese mer</span></div>
+        <div class="transport">
+          <div class="transport-top"><label for="progress">Utvikling <output id="progress-value" for="progress">0 %</output></label><span class="playback"><button id="reset" type="button" aria-label="Tilbakestill modellen">↺</button><button id="play" type="button" aria-pressed="false">▶ Spill av</button></span></div>
+          <input id="progress" type="range" min="0" max="100" step="1" value="0" aria-describedby="timeline-note">
+          <div class="timeline-caption"><span>Kauai begynner å dannes</span><span id="timeline-note">Forenklet forløp · ikke en tidsskala</span><span>Hawaii i dag</span></div>
+        </div>
+      </section>
+      <aside id="explanation" class="explanation" aria-labelledby="explanation-title">
+        <div class="explanation-heading"><span class="eyebrow">Se sammenhengen</span><button id="info-close" type="button" class="tool" aria-label="Lukk forklaringen">✕</button></div>
+        <h2 id="explanation-title">Plata flytter seg. Hotspotet blir igjen.</h2>
+        <div class="mini-diagram" aria-hidden="true"><svg viewBox="0 0 220 90"><path d="M22 27H197V43H22Z" fill="#779080"/><path d="M188 15H68m11-6-11 6 11 6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M134 83q5-24 0-30t-15-8h44q-16 3-18 10t0 28" fill="#dda575"/><path d="M136 45V26" stroke="#eb8c54" stroke-width="3"/><path d="m128 27 8-12 12 12" fill="#779080"/></svg></div>
+        <p>Stillehavsplata beveger seg mot nordvest over et <strong>relativt stasjonært hotspot</strong>. Derfor ligger de eldste øyene mot nordvest og de yngste mot sørøst.</p>
+        <div class="island-detail" aria-live="polite" aria-atomic="true"><span class="eyebrow" id="island-kicker">Følg vulkanen</span><h3 id="island-title">Kauai</h3><p id="island-description"></p></div>
+        <div class="island-picker" aria-label="Velg øy"><button type="button" data-island="0" aria-pressed="true">Kauai</button><button type="button" data-island="1" aria-pressed="false">Oahu</button><button type="button" data-island="2" aria-pressed="false">Molokai</button><button type="button" data-island="3" aria-pressed="false">Maui</button><button type="button" data-island="4" aria-pressed="false">Hawaii</button></div>
+        <details class="model-notes"><summary>Om modellen og kildene</summary><p>Varmt mantelmateriale stiger. Når trykket avtar, kan en liten del smelte. Magmaen stiger gjennom plata og bygger vulkaner. Den brede søylen viser varmt mantelmateriale, ikke flytende magma fra jordas indre.</p><p>Glideren viser hovedideen, ikke en beregnet tidsskala. Øyenes former, avstand, tykkelser og vekst er forenklet. Flere vulkaner kan være aktive samtidig, og hotspotet er ikke helt stillestående.</p><p>Aldrene er omtrentlige intervaller for øyenes hovedoppbygging. De er ikke datoer for siste utbrudd.</p><a href="https://pubs.usgs.gov/gip/hawaii/page12.html" target="_blank" rel="noopener">USGS: Hawaii og øykjedens alder ↗</a><a href="https://www.usgs.gov/observatories/hvo/evolution-hawaiian-volcanoes" target="_blank" rel="noopener">USGS: Vulkanenes utvikling ↗</a><a href="https://www.usgs.gov/faqs/what-a-hotspot-and-how-do-you-know-its-there" target="_blank" rel="noopener">USGS: Hva er et hotspot? ↗</a></details>
+      </aside>
+    </div>
+    <div id="info-backdrop" class="info-backdrop" hidden></div>
+  </main>
+  <noscript>Modellen trenger JavaScript. <a href="../geografi.html#indre-fagstoff">Les fagstoffet om indre krefter.</a></noscript>
+</body>
+</html>
