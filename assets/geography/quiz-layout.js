@@ -11,7 +11,7 @@
   header.prepend(menu);
   header.addEventListener('click', event => event.stopPropagation());
   back.textContent = '← Quizoversikt';
-  const setupLabels={flags:'Flaggquiz',capitals:'Hovedstadsquiz',flagcapital:'Flagg/hovedstad'};
+  const setupLabels={flags:'Flaggquiz',capitals:'Hovedstadsquiz',flagcapital:'Flagg/hovedstad',places:'Stedsquiz'};
   if(setupLabels[mode]){
     const syncBack=()=>{
       const local=!!document.querySelector('.world-game');

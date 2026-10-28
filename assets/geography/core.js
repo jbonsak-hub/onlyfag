@@ -628,10 +628,11 @@ function selectStreakChoice(btn,inputClass,value){
   const group=btn.parentElement; if(group) group.querySelectorAll('button').forEach(b=>{b.classList.toggle('selected',b===btn);if(b.hasAttribute('aria-pressed'))b.setAttribute('aria-pressed',String(b===btn));});
   const summary=setup.querySelector('.quiz-selection-summary');
   if(summary){
-    const region=setup.querySelector('.world-region').value;
+    const region=setup.querySelector('.world-region')?.value;
     const direction=setup.querySelector('.quiz-direction-grid .selected .quiz-direction-title')?.textContent||'';
     summary.replaceChildren();
-    for(const [index,label] of [COUNTRY_MAP_META[region].label,direction].entries()){
+    const first=region?COUNTRY_MAP_META[region].label:setup.querySelector('.places-pace-grid .selected .places-pace-title')?.textContent||'';
+    for(const [index,label] of [first,direction].entries()){
       if(index)summary.append(document.createTextNode(' · '));
       const text=document.createElement('span');text.textContent=label;summary.append(text);
     }
@@ -758,12 +759,28 @@ function initWorldTrainer(mode){
   const app = getWorldApp(mode); if(!app) return;
   app.innerHTML = renderWorldSetup(mode);
 }
+function placesQuestionPreview(reverse){
+  const names=['Mount Everest','K2','Kilimanjaro','Mont Blanc','Fuji','Denali'];
+  const descriptions=['Verdens høyeste fjell','Et høyt fjell i Karakorum','Afrikas høyeste fjell','Et kjent fjell i Alpene','Et kjent fjell i Japan','Nord-Amerikas høyeste fjell'];
+  return `<span class="quiz-question-preview" aria-hidden="true"><span class="quiz-preview-prompt"><span class="quiz-preview-question">${reverse?'Hvilken beskrivelse passer til':'Hvilket sted passer til beskrivelsen?'}</span><strong class="quiz-preview-subject">${reverse?'Mount Everest?':'Verdens høyeste fjell'}</strong></span><span class="quiz-preview-options">${(reverse?descriptions:names).map(text=>`<span>${text}</span>`).join('')}</span></span>`;
+}
 function renderPlacesSetup(){
-  return `<div class="world-setup streak-setup places-setup"><h3>Kjente steder på jorda</h3><p>Velg spillform og hva du vil finne. Hvert spørsmål har seks svaralternativer.</p>
+  const icon=path=>`<svg class="places-pace-icon" aria-hidden="true" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
+  const streakIcon=icon('<path d="M24 24c-8-14-20-13-20 0s12 14 20 0 20-13 20 0-12 14-20 0Z"/>');
+  const roundIcon=icon('<rect x="8" y="7" width="32" height="35" rx="5"/><path d="M17 7V4m14 3V4M16 17h4m8 0h4M16 25h4m8 0h4M16 33h4m8 0h4"/>');
+  return `<div class="world-setup streak-setup visual-quiz-setup places-setup places-visual-setup"><div class="quiz-setup-heading"><h3>Kjente steder på jorda</h3></div>
     <input type="hidden" class="world-pace" value="sudden"><input type="hidden" class="world-submode" value="desc-place-mc">
-    <div class="streak-choice-section"><span class="streak-choice-label">Spillform</span><div class="streak-direction-grid"><button type="button" class="streak-direction-btn selected" onclick="selectStreakChoice(this,'world-pace','sudden')">Hvor mange klarer du uten å bomme?</button><button type="button" class="streak-direction-btn" onclick="selectStreakChoice(this,'world-pace','questions')">20 spørsmål</button></div></div>
-    <div class="streak-choice-section"><span class="streak-choice-label">Spørsmålstype</span><div class="streak-direction-grid"><button type="button" class="streak-direction-btn selected" onclick="selectStreakChoice(this,'world-submode','desc-place-mc')">Finn riktig sted</button><button type="button" class="streak-direction-btn" onclick="selectStreakChoice(this,'world-submode','place-desc-mc')">Finn riktig beskrivelse</button></div></div>
-    <div class="streak-start-row"><button class="world-button streak-start-btn" onclick="startWorldTrainer('places')">Start</button></div></div>`;
+    <div class="quiz-setup-grid">
+      <section class="streak-choice-section quiz-region-section" aria-labelledby="places-pace-label"><span class="streak-choice-label" id="places-pace-label">Spillform</span><div class="places-pace-grid" role="group" aria-labelledby="places-pace-label">
+        <button type="button" class="streak-region-btn selected" aria-pressed="true" onclick="selectStreakChoice(this,'world-pace','sudden')">${streakIcon}<span class="places-pace-copy"><strong class="places-pace-title">På rad</strong><small>Hvor mange klarer du uten å bomme?</small></span></button>
+        <button type="button" class="streak-region-btn" aria-pressed="false" onclick="selectStreakChoice(this,'world-pace','questions')">${roundIcon}<span class="places-pace-copy"><strong class="places-pace-title">20 spørsmål</strong><small>En runde med 20 spørsmål.</small></span></button>
+      </div></section>
+      <section class="streak-choice-section quiz-direction-section" aria-labelledby="places-direction-label"><div class="quiz-direction-heading"><span class="streak-choice-label" id="places-direction-label">Spørsmålstype</span></div><div class="streak-direction-grid quiz-direction-grid" role="group" aria-labelledby="places-direction-label">
+        <button type="button" class="streak-direction-btn selected" aria-pressed="true" onclick="selectStreakChoice(this,'world-submode','desc-place-mc')"><span class="quiz-direction-title">Finn riktig sted</span>${placesQuestionPreview(false)}</button>
+        <button type="button" class="streak-direction-btn" aria-pressed="false" onclick="selectStreakChoice(this,'world-submode','place-desc-mc')"><span class="quiz-direction-title">Finn riktig beskrivelse</span>${placesQuestionPreview(true)}</button>
+      </div></section>
+    </div>
+    <div class="streak-start-row quiz-setup-actions"><button class="world-button streak-start-btn" type="button" onclick="startWorldTrainer('places')">Start</button><span class="quiz-selection-summary" aria-live="polite"><span>På rad</span> · <span>Finn riktig sted</span></span><a class="places-catalog-link" href="/geografi/mapwiz-steder.html"><span>Hvilke steder er med?</span><svg aria-hidden="true" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12 12 4M4 4h8v8"/></svg></a></div></div>`;
 }
 function renderWorldSetup(mode){
   if(mode === 'countries') return renderCountryRegionSetup();

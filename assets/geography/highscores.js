@@ -71,9 +71,6 @@
     return '<div class="world-setup streak-setup" data-hs-mode="'+mode+'"><h3>'+title+'</h3><p>Velg region og retning. Spillet fortsetter til første feil.</p><div class="hs-setup-row"><button type="button" class="hs-button" data-hs-world-only="1" onclick="geoHsShowCurrentWorld(\''+mode+'\',this)">🏆 Topp 10 (hele verden)</button></div><input type="hidden" class="world-region" value="world"><input type="hidden" class="world-submode" value="'+firstVal+'"><div class="streak-choice-section"><span class="streak-choice-label">Region</span><div class="streak-region-grid">'+worldRegionButtonsHtml(mode)+'</div></div><div class="streak-choice-section"><span class="streak-choice-label">Spørsmålstype</span><div class="streak-direction-grid"><button type="button" class="streak-direction-btn selected" onclick="selectStreakChoice(this,\'world-submode\',\''+firstVal+'\')">'+first+'</button><button type="button" class="streak-direction-btn" onclick="selectStreakChoice(this,\'world-submode\',\''+secondVal+'\')">'+second+'</button></div></div><div class="streak-start-row"><button class="world-button streak-start-btn" onclick="startWorldTrainer(\''+mode+'\')">Start</button></div></div>';
   };
 
-  const oldRenderPlaces=window.renderPlacesSetup;
-  window.renderPlacesSetup=function(){const html=oldRenderPlaces();return html.replace('<input type="hidden" class="world-pace"','<div class="hs-setup-row"><button type="button" class="hs-button" data-hs-streak-only="1" onclick="geoHsShow(\'places|streak\',\'Topp 10 (på rad)\')">🏆 Topp 10 (på rad)</button></div><input type="hidden" class="world-pace"')};
-
   // One independent list per region in "Kan du verdens land?".
   window.renderCountryRegionSetup=function(){
     const order=['world','asia','europe','northamerica','southamerica','oceania','africa'];

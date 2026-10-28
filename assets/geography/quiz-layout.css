@@ -493,9 +493,9 @@ body[data-quiz] #verden-quiz .capital-country img.quiz-flag-img{max-width:150px!
 /* Region and question direction are separate, visual choices for these quizzes. */
 .quiz-in-game-top-ten[hidden]{display:none!important}
 @media(min-width:701px){
- body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]){--q-panel:220px}
+ body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]){--q-panel:220px}
 }
-body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-fullscreen-body:has(.visual-quiz-setup){padding:clamp(18px,3vh,30px) clamp(18px,3vw,40px)!important;align-items:safe center!important;justify-content:center!important}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]) #verden-quiz .quiz-fullscreen-body:has(.visual-quiz-setup){padding:clamp(18px,3vh,30px) clamp(18px,3vw,40px)!important;align-items:safe center!important;justify-content:center!important}
 body[data-quiz] #verden-quiz .visual-quiz-setup{--choice-row:clamp(66px,11.2vh,84px);width:100%!important;max-width:1100px!important;margin:0 auto!important;padding:clamp(20px,2.3vw,30px)!important;border-radius:15px!important;border:1px solid var(--q-line);box-sizing:border-box}
 body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-setup-heading{display:flex;flex-direction:column;gap:7px;margin-bottom:23px}
 body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-setup-heading h3{margin:0!important;padding:0!important;border:0!important;font-size:clamp(25px,2.5vw,33px)!important;font-weight:750;line-height:1.12;letter-spacing:-.035em}
@@ -532,11 +532,11 @@ body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-setup-actions{display:flex
 body[data-quiz] #verden-quiz .visual-quiz-setup .streak-start-btn{min-width:158px;padding:12px 26px!important;font-size:14px;line-height:1.2;font-weight:750;border-radius:7px!important;letter-spacing:0;box-shadow:none!important;transform:none}
 body[data-quiz] #verden-quiz .visual-quiz-setup .streak-start-btn:hover{background:#173f30!important;transform:none}
 body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-selection-summary{font-size:11px;font-weight:500;line-height:1.4;color:var(--q-muted)}
-body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) .quiz-in-game-top-ten{display:block;width:100%;margin:0 0 10px;padding:11px 9px;border:0;border-radius:6px;background:#245845;color:#fff;font:700 12px/1.25 "Segoe UI",sans-serif;cursor:pointer}
-body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) .quiz-in-game-top-ten:hover{background:#173f30}
-body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]).dark-mode #verden-quiz .visual-quiz-setup :is(.streak-region-btn,.streak-direction-btn).selected{background:#35523a!important;border-color:#85a97c!important;color:#e7f1e5!important}
-body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]).dark-mode #verden-quiz .visual-quiz-setup :is(.streak-region-btn,.streak-direction-btn):hover{background:#344a36!important}
-body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]).dark-mode #verden-quiz .visual-quiz-setup .quiz-region-icon{filter:brightness(1.55);opacity:.85}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]) .quiz-in-game-top-ten{display:block;width:100%;margin:0 0 10px;padding:11px 9px;border:0;border-radius:6px;background:#245845;color:#fff;font:700 12px/1.25 "Segoe UI",sans-serif;cursor:pointer}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]) .quiz-in-game-top-ten:hover{background:#173f30}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]).dark-mode #verden-quiz .visual-quiz-setup :is(.streak-region-btn,.streak-direction-btn).selected{background:#35523a!important;border-color:#85a97c!important;color:#e7f1e5!important}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]).dark-mode #verden-quiz .visual-quiz-setup :is(.streak-region-btn,.streak-direction-btn):hover{background:#344a36!important}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]).dark-mode #verden-quiz .visual-quiz-setup .quiz-region-icon{filter:brightness(1.55);opacity:.85}
 @media(min-width:701px) and (max-height:680px){
  body[data-quiz] #verden-quiz .visual-quiz-setup{--choice-row:65px;padding:20px!important}
  body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-setup-heading{margin-bottom:17px}
@@ -554,7 +554,7 @@ body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]).da
  body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-region-copy strong{font-size:12px}
 }
 @media(max-width:700px){
- body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-fullscreen-body:has(.visual-quiz-setup){padding:53px 10px 14px!important;align-items:flex-start!important}
+ body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]) #verden-quiz .quiz-fullscreen-body:has(.visual-quiz-setup){padding:53px 10px 14px!important;align-items:flex-start!important}
  body[data-quiz] #verden-quiz .visual-quiz-setup{padding:16px!important;border-radius:11px!important;margin:0!important}
  body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-setup-heading{gap:5px;margin-bottom:19px}
  body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-setup-heading h3{font-size:26px!important}
@@ -584,18 +584,18 @@ body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]).da
  body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-setup-actions{gap:12px;align-items:flex-start;margin-top:18px;padding-top:14px}
  body[data-quiz] #verden-quiz .visual-quiz-setup .streak-start-btn{min-width:110px;padding:12px 17px!important;font-size:13px}
  body[data-quiz] #verden-quiz .visual-quiz-setup .quiz-selection-summary{font-size:10px;padding-top:2px}
- body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) .quiz-in-game-top-ten{display:inline-flex;width:auto;justify-content:center;align-items:center;margin:0;padding:8px 10px;font-size:11px}
- body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) .quiz-status-panel>.quiz-layout-footer{display:flex;flex-direction:column;align-items:stretch;gap:8px;width:100%}
+ body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]) .quiz-in-game-top-ten{display:inline-flex;width:auto;justify-content:center;align-items:center;margin:0;padding:8px 10px;font-size:11px}
+ body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]) .quiz-status-panel>.quiz-layout-footer{display:flex;flex-direction:column;align-items:stretch;gap:8px;width:100%}
 }
 
 /* Give the running quiz's controls, counters and bottom actions room to breathe. */
-body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel{padding:20px 12px 22px!important;gap:20px!important}
-body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel>.quiz-page-header{margin:0 0 2px!important}
-body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel>.world-statusbar{flex-direction:column!important;align-items:stretch!important;flex-wrap:nowrap!important;gap:12px!important}
-body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel .world-pill{flex:0 0 auto!important;justify-content:flex-start!important;width:100%!important;min-height:46px!important;padding:12px 13px!important;font-size:14px!important;font-weight:650;line-height:1.4!important}
-body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel>.quiz-layout-footer{display:flex;flex-direction:column;align-items:stretch;gap:14px;width:100%;padding:20px 0 0!important}
-body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel .quiz-in-game-top-ten{min-height:42px;margin:0;padding:12px 10px;font-size:13px}
-body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel .quiz-layout-footer>.quiz-page-back{display:flex!important;align-items:center;min-height:40px;padding:10px 11px!important;font-size:12px!important;line-height:1.35!important}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]) #verden-quiz .quiz-status-panel{padding:20px 12px 22px!important;gap:20px!important}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]) #verden-quiz .quiz-status-panel>.quiz-page-header{margin:0 0 2px!important}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]) #verden-quiz .quiz-status-panel>.world-statusbar{flex-direction:column!important;align-items:stretch!important;flex-wrap:nowrap!important;gap:12px!important}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]) #verden-quiz .quiz-status-panel .world-pill{flex:0 0 auto!important;justify-content:flex-start!important;width:100%!important;min-height:46px!important;padding:12px 13px!important;font-size:14px!important;font-weight:650;line-height:1.4!important}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]) #verden-quiz .quiz-status-panel>.quiz-layout-footer{display:flex;flex-direction:column;align-items:stretch;gap:14px;width:100%;padding:20px 0 0!important}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]) #verden-quiz .quiz-status-panel .quiz-in-game-top-ten{min-height:42px;margin:0;padding:12px 10px;font-size:13px}
+body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]) #verden-quiz .quiz-status-panel .quiz-layout-footer>.quiz-page-back{display:flex!important;align-items:center;min-height:40px;padding:10px 11px!important;font-size:12px!important;line-height:1.35!important}
 
 /* The country representation is a separate form choice, outside the direction buttons. */
 body[data-quiz="capitals"] #verden-quiz .capital-display-options{display:flex;align-items:center;flex-wrap:wrap;gap:6px 17px;min-width:0;margin:0 0 10px;padding:6px 11px 8px;border:1px solid var(--q-line);border-radius:8px;background:var(--q-soft);color:var(--q-ink)}
@@ -614,12 +614,12 @@ body[data-quiz="capitals"] #verden-quiz .quiz-preview-options .capital-answer im
  body[data-quiz="capitals"] #verden-quiz .capital-display-options{margin-bottom:8px;padding-top:4px;padding-bottom:6px}
 }
 @media(max-width:700px){
- body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel{padding:14px 12px 16px!important;gap:12px!important}
- body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel>.world-statusbar{gap:8px!important}
- body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel .world-pill{min-height:38px!important;padding:8px 11px!important;font-size:13px!important}
- body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel>.quiz-layout-footer{gap:10px;padding:6px 0 0!important}
- body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel .quiz-in-game-top-ten{min-height:38px;padding:9px 10px;font-size:12px}
- body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"]) #verden-quiz .quiz-status-panel .quiz-layout-footer>.quiz-page-back{min-height:36px;padding:8px 10px!important;font-size:11px!important}
+ body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]) #verden-quiz .quiz-status-panel{padding:14px 12px 16px!important;gap:12px!important}
+ body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]) #verden-quiz .quiz-status-panel>.world-statusbar{gap:8px!important}
+ body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]) #verden-quiz .quiz-status-panel .world-pill{min-height:38px!important;padding:8px 11px!important;font-size:13px!important}
+ body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]) #verden-quiz .quiz-status-panel>.quiz-layout-footer{gap:10px;padding:6px 0 0!important}
+ body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]) #verden-quiz .quiz-status-panel .quiz-in-game-top-ten{min-height:38px;padding:9px 10px;font-size:12px}
+ body:is([data-quiz="flags"],[data-quiz="capitals"],[data-quiz="flagcapital"],[data-quiz="places"]) #verden-quiz .quiz-status-panel .quiz-layout-footer>.quiz-page-back{min-height:36px;padding:8px 10px!important;font-size:11px!important}
  body[data-quiz="capitals"] #verden-quiz .capital-display-options{margin-bottom:9px;gap:5px 18px;padding:5px 10px 7px}
  body[data-quiz="capitals"] #verden-quiz .capital-display-options legend{font-size:10px}
  body[data-quiz="capitals"] #verden-quiz .capital-display-options label{font-size:11px}
@@ -670,3 +670,30 @@ body[data-quiz="countries"] .country-map-missing>strong{font-size:12px;margin-bo
 body[data-quiz="countries"] .country-map-missing>div{gap:3px}
 body[data-quiz="countries"] .country-map-missing span{padding:2px 5px;font-size:10px;font-weight:600;line-height:1.25}
 body[data-quiz="countries"] .country-map-result-btn{flex:none;align-self:center;margin-top:10px;padding:7px 11px;font-size:12px}
+
+/* Places keeps its two existing play forms, with the same visual setup as flags/capitals. */
+body[data-quiz] #verden-quiz .places-visual-setup .quiz-setup-grid{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)}
+.places-pace-grid{display:grid;grid-template-rows:repeat(2,minmax(0,1fr));gap:10px;flex:1}
+body[data-quiz] #verden-quiz .places-visual-setup .places-pace-grid button{padding:20px 30px 20px 20px!important;gap:20px}
+.places-pace-icon{flex:0 0 54px;width:54px;height:54px;color:var(--q-green)}
+.places-pace-copy{display:flex;flex-direction:column;gap:8px;min-width:0}
+.places-pace-title{font-size:21px;line-height:1.2}
+.places-pace-copy small{font-size:12px;line-height:1.5;color:var(--q-muted)}
+body[data-quiz] #verden-quiz .places-visual-setup .quiz-preview-subject{font-size:17px}
+body[data-quiz] #verden-quiz .places-visual-setup .quiz-preview-options{grid-template-columns:repeat(3,minmax(0,1fr))}
+body[data-quiz] #verden-quiz .places-visual-setup .quiz-preview-options>span{font-size:8px;min-height:27px}
+.places-catalog-link{display:inline-flex;align-items:center;justify-content:flex-end;gap:4px;margin-left:auto;color:var(--q-ink);font-size:11px;font-weight:650;text-underline-offset:3px;white-space:nowrap}
+@media(max-width:700px){
+ body[data-quiz] #verden-quiz .places-visual-setup .quiz-setup-grid{grid-template-columns:minmax(0,1fr);gap:18px}
+ .places-pace-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;gap:8px}
+ body[data-quiz] #verden-quiz .places-visual-setup .places-pace-grid button{padding:12px 15px!important;gap:8px;flex-direction:column;align-items:flex-start;text-align:left!important}
+ .places-pace-icon{flex-basis:34px;width:34px;height:34px}
+ .places-pace-title{font-size:17px}.places-pace-copy small{font-size:10px}.places-pace-copy{gap:4px}
+ body[data-quiz] #verden-quiz .places-visual-setup .quiz-preview-subject{font-size:13px}
+ body[data-quiz] #verden-quiz .places-visual-setup .quiz-preview-options{grid-template-columns:repeat(2,minmax(0,1fr))}
+ body[data-quiz] #verden-quiz .places-visual-setup .quiz-preview-options>span{font-size:7px;min-height:27px}
+ body[data-quiz] #verden-quiz .places-visual-setup .quiz-setup-actions{flex-wrap:wrap;align-items:center}
+ .places-catalog-link{flex-basis:100%;justify-content:flex-end}
+}
+
+body[data-quiz] #verden-quiz .places-visual-setup :is(.streak-region-btn,.streak-direction-btn){background:var(--q-soft)!important;color:var(--q-ink)!important}
