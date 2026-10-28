@@ -40,19 +40,19 @@ const viewports = [{width:1366,height:646},{width:1024,height:600},{width:390,he
       await layer.focus();
       assert.equal(await layer.getAttribute('aria-pressed'), 'true', key + ': focus selects the layer');
       assert.equal(await figure.locator('[data-earth-layer][aria-pressed=true]').count(), 1);
-      const description = await figure.locator('#earth-layer-description').innerText();
+      const description = await page.locator('#earth-layer-description').innerText();
       assert.ok(description.length > 40 && description.length < 300, key + ': one short description');
       assert.equal(await layer.getAttribute('aria-controls'), 'earth-layer-info');
     }
     await figure.locator('[data-earth-layer="lower"]').hover();
-    assert.match(await figure.locator('#earth-layer-name').innerText(), /Nedre mantel/);
+    assert.match(await page.locator('#earth-layer-name').innerText(), /Nedre mantel/);
     await figure.locator('[data-earth-layer="crust"]').focus();
     await page.keyboard.press('ArrowRight');
     assert.equal(await figure.locator('[data-earth-layer]:focus').getAttribute('data-earth-layer'), 'upper');
     await page.keyboard.press('End');
     assert.equal(await figure.locator('[data-earth-layer]:focus').getAttribute('data-earth-layer'), 'asthenosphere');
     await figure.locator('[data-earth-layer="asthenosphere"]').press('Enter');
-    assert.match(await figure.locator('#earth-layer-description').innerText(), /hovedsakelig fast/);
+    assert.match(await page.locator('#earth-layer-description').innerText(), /hovedsakelig fast/);
     const beside = await page.evaluate(() => {
       const a = document.querySelector('.earth-description').getBoundingClientRect();
       const b = document.querySelector('#earth-layers').getBoundingClientRect();
@@ -65,7 +65,7 @@ const viewports = [{width:1366,height:646},{width:1024,height:600},{width:390,he
       await figure.scrollIntoViewIfNeeded();
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Earth layout has no horizontal mobile scrolling');
       await figure.locator('[data-earth-layer="inner"]').click();
-      assert.match(await figure.locator('#earth-layer-name').innerText(), /Indre kjerne/);
+      assert.match(await page.locator('#earth-layer-name').innerText(), /Indre kjerne/);
     }
     await page.evaluate(() => applyDarkMode(true));
     assert.ok(await figure.evaluate(el => getComputedStyle(el).getPropertyValue('--earth-ink').trim() !== '#33443c'));

@@ -1,6 +1,6 @@
 # Jordas lag og hotspot-vulkanisme
 
-Jordfiguren ligger ved siden av «1. Jordas oppbygning» i `geografi.html#indre-fagstoff`. Den er et eget, interaktivt SVG-utsnitt med ett fast informasjonsfelt. Pek, trykk eller fokuser et lag for å lese den korte forklaringen. Tab flytter mellom lagene; piltaster, Home og End kan også brukes. På smale skjermer stables tekst og figur.
+Jordfiguren ligger ved siden av «1. Jordas oppbygning» i `geografi.html#indre-fagstoff`. Den er et eget, interaktivt SVG-utsnitt. Informasjonsfeltet «Valgt lag i figuren» ligger nederst i venstre kolonne, under beskrivelsesboksen. På mobil ligger feltet rett under figuren. Pek, trykk eller fokuser et lag for å lese den korte forklaringen. Tab flytter mellom lagene; piltaster, Home og End kan også brukes. På smale skjermer stables tekst og figur.
 
 Figuren skiller jordskorpe, øvre og nedre mantel, ytre og indre kjerne. Egne markører viser litosfære og astenosfære, som er en inndeling etter mekaniske egenskaper. Mantelen og astenosfæren er hovedsakelig faste. Dybdene 660, 2 890, 5 150 og 6 371 km er omtrentlige. De ytterste lagene er tegnet tykkere for lesbarhet. Temperaturer er utelatt. Fagkilder ligger i figurens foldbare kildefelt; CSS og JavaScript ligger i `assets/geography/earth-layers/`.
 

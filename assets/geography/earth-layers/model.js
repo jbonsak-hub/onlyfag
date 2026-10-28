@@ -13,8 +13,8 @@
     asthenosphere: ['Astenosfæren · svakere mantel', 'Et svakere område i øvre mantel under litosfæren. Bergarten er hovedsakelig fast, men kan deformeres langsomt. Platene beveger seg over dette laget.']
   };
   const controls = [...figure.querySelectorAll('[data-earth-layer]')];
-  const title = figure.querySelector('#earth-layer-name');
-  const description = figure.querySelector('#earth-layer-description');
+  const title = document.getElementById('earth-layer-name');
+  const description = document.getElementById('earth-layer-description');
   function select(control) {
     const key = control.dataset.earthLayer;
     if (!Object.hasOwn(layers, key)) return;

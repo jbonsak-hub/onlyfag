@@ -1,7 +1,7 @@
 /* A single earth cross-section beside the introduction; no floating popups. */
-#indre-fagstoff .earth-intro{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:14px;align-items:start;min-width:0}
-#indre-fagstoff .earth-description{min-width:0}
-#indre-fagstoff .earth-figure{--earth-ink:#33443c;--earth-muted:#617168;--earth-line:#ccd8ce;--earth-selected:#245f49;--earth-panel:#eef5ef;margin:0;padding:15px 16px 12px;min-width:0;overflow:hidden}
+#indre-fagstoff .earth-intro{--earth-ink:#33443c;--earth-muted:#617168;--earth-line:#ccd8ce;--earth-selected:#245f49;--earth-panel:#eef5ef;display:grid;grid-template-areas:"description figure" "info figure";grid-template-rows:auto 1fr;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:14px;align-items:start;min-width:0}
+#indre-fagstoff .earth-description{grid-area:description;min-width:0}
+#indre-fagstoff .earth-figure{grid-area:figure;margin:0;padding:15px 16px 12px;min-width:0;overflow:hidden}
 #indre-fagstoff .earth-figure figcaption strong{display:block;color:#24583e;font-size:1.04rem;line-height:1.25}
 #indre-fagstoff .earth-figure figcaption>span{display:block;margin-top:5px;color:var(--earth-muted);font-size:.76rem;line-height:1.4}
 #indre-fagstoff .earth-diagram{display:block;width:100%;height:auto;max-height:530px;margin:4px auto 0;overflow:visible;font-family:inherit}
@@ -26,7 +26,9 @@
 .earth-diagram .earth-mechanical:focus-visible .earth-bracket{stroke:#297dbe}
 .earth-diagram .earth-mechanical[aria-pressed=true] text{text-decoration:underline;text-underline-offset:4px}
 .earth-diagram [data-earth-outline].active{opacity:1}
-#indre-fagstoff .earth-layer-info{margin-top:3px;padding:10px 12px;border:1px solid var(--earth-line);border-radius:8px;background:var(--earth-panel);min-height:108px;box-sizing:border-box;color:var(--earth-ink)}
+#indre-fagstoff .earth-layer-info{grid-area:info;align-self:end;margin:0;min-width:0;padding:10px 12px;border:1px solid var(--earth-line);border-left:3px solid var(--earth-selected);border-radius:8px;background:var(--earth-panel);min-height:140px;box-sizing:border-box;color:var(--earth-ink)}
+#indre-fagstoff .earth-info-label{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;color:var(--earth-selected);font-size:.72rem;font-weight:650;letter-spacing:.03em}
+#indre-fagstoff .earth-info-arrow{font-size:1.3rem;line-height:1}
 #indre-fagstoff .earth-layer-info>strong{display:block;color:var(--earth-selected);font-size:.85rem;line-height:1.4}
 #indre-fagstoff .earth-layer-info>p{font-size:.8rem;line-height:1.5;margin:4px 0 0}
 #indre-fagstoff .earth-figure .earth-model-note{margin:8px 0 0;color:var(--earth-muted);font-size:.67rem;line-height:1.45}
@@ -34,11 +36,11 @@
 #indre-fagstoff .earth-sources summary{cursor:pointer;width:fit-content}
 #indre-fagstoff .earth-sources p{margin:5px 0 0}
 #indre-fagstoff .earth-sources a{color:var(--earth-selected);text-underline-offset:3px}
-body.dark-mode #indre-fagstoff .earth-figure{--earth-ink:#dfe8e3;--earth-muted:#b2c5b9;--earth-line:#41544a;--earth-selected:#9de3b7;--earth-panel:#16271e}
+body.dark-mode #indre-fagstoff .earth-intro{--earth-ink:#dfe8e3;--earth-muted:#b2c5b9;--earth-line:#41544a;--earth-selected:#9de3b7;--earth-panel:#16271e}
 body.dark-mode #indre-fagstoff .earth-figure figcaption strong{color:#a0e7bc}
 body.dark-mode .earth-diagram [data-earth-layer][aria-pressed=true]>.earth-zone{stroke:#c1efd3}
 body.dark-mode .earth-diagram .earth-mechanical-outline{stroke:#c1efd3}
 @media(max-width:1100px){#indre-fagstoff .earth-intro{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:12px}#indre-fagstoff .earth-figure{padding:13px 10px 11px}}
-@media(max-width:760px){#indre-fagstoff .earth-intro{grid-template-columns:minmax(0,1fr)}#indre-fagstoff .earth-figure{padding:15px 12px;max-width:620px;width:100%;box-sizing:border-box;justify-self:center}#indre-fagstoff .earth-diagram{max-height:560px}#indre-fagstoff .earth-layer-info{min-height:136px}.earth-diagram .earth-layer-label{font-size:20px}.earth-diagram .earth-core-label{font-size:14px}.earth-diagram .earth-mechanical text{font-size:14px}.earth-diagram .earth-depth text{font-size:14px}.earth-diagram .earth-surface-label{font-size:15px}.earth-diagram .earth-crust-label{font-size:15px}}
+@media(max-width:760px){#indre-fagstoff .earth-intro{grid-template-columns:minmax(0,1fr);grid-template-areas:"description" "figure" "info";grid-template-rows:auto auto auto}#indre-fagstoff .earth-info-arrow{transform:rotate(-90deg)}#indre-fagstoff .earth-figure{padding:15px 12px;max-width:620px;width:100%;box-sizing:border-box;justify-self:center}#indre-fagstoff .earth-diagram{max-height:560px}#indre-fagstoff .earth-layer-info{min-height:136px}.earth-diagram .earth-layer-label{font-size:20px}.earth-diagram .earth-core-label{font-size:14px}.earth-diagram .earth-mechanical text{font-size:14px}.earth-diagram .earth-depth text{font-size:14px}.earth-diagram .earth-surface-label{font-size:15px}.earth-diagram .earth-crust-label{font-size:15px}}
 @media(prefers-reduced-motion:reduce){.earth-diagram .earth-zone{transition:none}}
 @media print{#indre-fagstoff .earth-intro{break-inside:avoid}.earth-sources{display:none}}
