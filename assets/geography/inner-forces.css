@@ -1,4 +1,7 @@
 /* Learning resources within the inner-forces article. */
+#indre-fagstoff .indre-tectonics-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+#indre-fagstoff .indre-tectonics-columns>p{margin:0;line-height:1.48}
+@media(max-width:600px){#indre-fagstoff .indre-tectonics-columns{grid-template-columns:minmax(0,1fr);gap:10px}}
 #indre-fagstoff .geo-concept-card p a{color:#236644;text-underline-offset:3px}
 body.dark-mode #indre-fagstoff .geo-concept-card p a{color:#92dfb0}
 body.dark-mode #indre-fagstoff .geo-source-note,body.dark-mode #indre-fagstoff .geo-source-note a{color:#b2c5b9}

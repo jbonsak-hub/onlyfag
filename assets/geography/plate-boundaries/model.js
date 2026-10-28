@@ -25,7 +25,7 @@
       ],
       result: 'Dyphavsgrop · vulkansk fjellkjede · grunne og dype jordskjelv',
       example: ['Andesfjellene', 'Nazcaplaten synker under den søramerikanske platen.'],
-      map: {center: '-22,-70', zoom: 3},
+      map: {center: '-21,-70', zoom: 5},
       caveat: 'Magmaen kommer her fra mantelkilen, ikke fra en havbunnsplate som smelter. Foldene ved gropa viser sedimenter som kan skrapes av og hope seg opp; mengden varierer mellom subduksjonssoner. Skjelvsymbolene er mulige fokus, ikke samtidige skjelv. Gult: grunt, korall: mellomdypt, lilla: dypt (i noen soner ned mot 700 km).'
     },
     'ocean-ocean': {
@@ -46,7 +46,7 @@
       ],
       result: 'Dyphavsgrop · vulkansk øybue · grunne og dype jordskjelv',
       example: ['Marianegropa og Marianene', 'Stillehavsplaten synker under Marianedelen av den filippinske havplaten.'],
-      map: {center: '18,145', zoom: 5},
+      map: {center: '18,147.5', zoom: 6},
       caveat: 'Alder og temperatur påvirker tettheten, men geometrien og platens historie spiller også inn. En øybue ligger på den øvre platen, et stykke fra gropa. De bakre øyene viser skjematisk at buen fortsetter bak tverrsnittet. Foldene ved gropa viser sedimenter som kan skrapes av; ikke alle soner bygger et stort sedimentprism. Skjelvsymbolene viser mulige fokus: gult = grunt, korall = mellomdypt, lilla = dypt.'
     },
     'continent-continent': {
@@ -86,7 +86,7 @@
       ],
       result: 'Midthavsrygg · ny havbunn · vulkanisme · grunne jordskjelv',
       example: ['Den midtatlantiske ryggen', 'På Island ligger deler av spredningssonen over havnivå.'],
-      map: {center: '42,-30', zoom: 3},
+      map: {center: '32,-33', zoom: 4},
       caveat: 'Modellen viser en langsomt spredende rygg, som deler av Den midtatlantiske ryggen, med riftdal og tydelige forkastningstrinn. Raskt spredende rygger har ofte en jevnere, opphøyd akse uten stor riftdal. Havbunnens farge viser relativ alder og avkjøling, ikke magnetiske polvendinger. Toppen viser havbunnen uten vann; fronten er skåret opp for å vise lagene. Terrenget er sterkt forenklet.'
     },
     transform: {
@@ -105,7 +105,7 @@
       ],
       result: 'Sideveis forskyvning · forkastning · grunne jordskjelv',
       example: ['San Andreas-forkastningen', 'Stillehavsplaten og den nordamerikanske platen glir forbi hverandre i California.'],
-      map: {center: '36.5,-120', zoom: 6},
+      map: {center: '36.6,-120.2', zoom: 7},
       caveat: 'Sideflatene er skåret åpne for å vise berglagene i et begrenset modellutsnitt; de er ikke stup eller åpne sprekker i landskapet. Platene har konstant tykkelse og beveger seg bare sidelengs. Ingen litosfære dannes eller forbrukes ved en ren glidegrense. Vulkanisme er ikke et typisk resultat. Glideren viser ett tenkt forløp fra fastlåsing til brudd, ikke når neste jordskjelv vil skje. Noen forkastningsdeler glir også langsomt uten store skjelv.'
     }
   };

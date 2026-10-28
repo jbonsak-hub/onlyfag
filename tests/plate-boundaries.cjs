@@ -13,7 +13,7 @@ const server = http.createServer((req, res) => {
   catch { res.writeHead(404).end(); }
 });
 const modes = ['ocean-continent','ocean-ocean','continent-continent','divergent','transform'];
-const exampleMaps = {'ocean-continent':['-22,-70','3'],'ocean-ocean':['18,145','5'],'continent-continent':['31,85','5'],divergent:['42,-30','3'],transform:['36.5,-120','6']};
+const exampleMaps = {'ocean-continent':['-21,-70','5'],'ocean-ocean':['18,147.5','6'],'continent-continent':['31,85','5'],divergent:['32,-33','4'],transform:['36.6,-120.2','7']};
 (async () => {
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const base = `http://127.0.0.1:${server.address().port}`;

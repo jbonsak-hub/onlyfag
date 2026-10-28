@@ -6,6 +6,8 @@ Figuren skiller jordskorpe, øvre og nedre mantel, ytre og indre kjerne. Egne ma
 
 Hotspotmodellen ligger i `prototyper/hotspot.html`, med inngang fra prototypeoversikten og **Indre krefter og landformer → Hotspot-vulkanisme**, rett under Plategrenser i geografimenyen. Menyvalget viser prototypen i en iframe på `geografi.html#indre-hotspot`. Selve figuren og tidskontrollene skal passe i vinduet, mens utfyllende informasjon kan rulles i sidepanelet. Innbyggingen lastes ved første åpning, deler geografisidens tema og sender synlighet til modellen. Meldinger validerer både avsenderens origin og vindu.
 
+Punkt 4, «Platetektonikk», fyller hele bredden av fagstoffet med to tekstspalter på større skjermer og én på mobil. Hotspotmodellen har en kompakt topp uten slagordet. Lenken «Hawaii (se på kart)» åpner det samme plategrensekartet som de andre stedseksemplene, sentrert på 22° N, 158,5° V med zoom 6, etter brukerens referansebilde.
+
 Glideren viser et skjematisk utviklingsforløp med Stillehavsplata i bevegelse mot nordvest over et relativt stasjonært varmepunkt. En oppstrømming av varmt, hovedsakelig fast mantelmateriale gir delvis smelting nær toppen. Det er ikke en sammenhengende søyle av magma fra dyp mantel. Nye vulkaner vokser fra havbunnen; eldre vulkaner følger plata bort fra varmepunktet. Én kort forklaring følger forløpet. Tilbakespoling er et pedagogisk verktøy, ikke en prosess som skjer i naturen.
 
 Tid, avstander, øyformer, vekst og erosjon er forenklet. Øyene består av flere vulkaner med overlappende aktivitet. De oppgitte aldersintervallene gjelder omtrentlige lavastrømmer fra hovedoppbyggingen, ikke siste utbrudd. Maui omtales derfor ikke som utdødd. Ingen framtidig øy eller dato er forutsagt.
