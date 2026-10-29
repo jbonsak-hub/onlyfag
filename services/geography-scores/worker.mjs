@@ -1,5 +1,6 @@
 import {data,config,board,create,answer,issue,finish,publicQuestion} from './rules.mjs';
 import {applyScoreCorrections} from './score-corrections.mjs';
+import {handleQuizlab,cleanupQuizlab} from './quizlab.mjs';
 const TTL=2*60*60*1000,allowed=new Set(['https://onlyfag.no','https://www.onlyfag.no']);
 const json=(body,status=200,headers={})=>new Response(JSON.stringify(body),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...headers}});
 const hash=async value=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value))),b=>b.toString(16).padStart(2,'0')).join('');
@@ -11,7 +12,7 @@ async function limit(request,env,kind,now){
  const bucket=await hash(env.RATE_SECRET+':'+Math.floor(now/window)+':'+kind+':'+ip);
  const row=await env.DB.prepare('INSERT INTO request_limits(bucket,count,expires_at) VALUES(?,1,?) ON CONFLICT(bucket) DO UPDATE SET count=count+1 RETURNING count').bind(bucket,now+window*2).first();
  // A classroom can share one public address; do not limit it to a few pupils.
- if(row.count>(kind==='start'?120:2400))throw Error('rate_limited');
+ if(row.count>(kind==='start'?120:kind==='create'?30:2400))throw Error('rate_limited');
 }
 async function body(request){const raw=await request.text();if(raw.length>8192)throw Error('invalid_body');try{return JSON.parse(raw);}catch(_){throw Error('invalid_body');}}
 async function load(request,env,now){
@@ -27,7 +28,9 @@ async function handler(request,env){
  const cors={'Access-Control-Allow-Origin':origin,'Vary':'Origin','Access-Control-Allow-Methods':'GET,POST,OPTIONS','Access-Control-Allow-Headers':'Content-Type,Authorization','Access-Control-Max-Age':'600'};
  if(request.method==='OPTIONS')return new Response(null,{status:204,headers:cors});
  try{
-  await limit(request,env,url.pathname==='/session'?'start':'request',now);
+  const limitKind=request.method==='POST'&&url.pathname==='/quizlab/quizzes'?'create':url.pathname==='/session'||/^\/quizlab\/quizzes\/[^/]+\/sessions$/.test(url.pathname)?'start':'request';
+  await limit(request,env,limitKind,now);
+  if(url.pathname.startsWith('/quizlab/'))return handleQuizlab(request,env,{now,cors});
   if(url.pathname==='/scores'&&request.method==='GET'){
    let c;try{c=config(JSON.parse(url.searchParams.get('config')));}catch(_){throw Error('invalid_config');}
    await applyScoreCorrections(env.DB,board(c));
@@ -68,5 +71,5 @@ async function handler(request,env){
 }
 export default {
  fetch:handler,
- async scheduled(_event,env){const now=Date.now();await env.DB.batch([env.DB.prepare('DELETE FROM sessions WHERE expires_at<?').bind(now),env.DB.prepare('DELETE FROM request_limits WHERE expires_at<?').bind(now)]);}
+ async scheduled(_event,env){const now=Date.now();await env.DB.batch([env.DB.prepare('DELETE FROM sessions WHERE expires_at<?').bind(now),env.DB.prepare('DELETE FROM request_limits WHERE expires_at<?').bind(now)]);await cleanupQuizlab(env,now);}
 };

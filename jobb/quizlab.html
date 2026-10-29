@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta name="referrer" content="no-referrer">
+  <title>Quizlab · OnlyFag</title>
+  <link rel="stylesheet" href="/assets/quizlab/builder.css">
+  <script src="/assets/geography/score-service.js"></script>
+  <script src="/assets/quizlab/builder.js" defer></script>
+</head>
+<body>
+  <header class="site-header"><a class="brand" href="/">OnlyFag<span> / Jobb</span></a><a href="/jobb/">← Tilbake til Jobb</a></header>
+  <main>
+    <div class="intro"><span class="eyebrow">ONLYFAG QUIZLAB</span><h1>Din blanding.<br>Deres utfordring.</h1><p>Sett sammen en geografiquiz, del lenken og la klassen konkurrere på samme resultatliste.</p></div>
+    <div id="page-status" role="status" aria-live="polite"></div>
+    <div class="lab-layout">
+      <form id="quiz-builder">
+        <section class="panel" aria-labelledby="mode-title">
+          <div class="step-heading"><span class="step">01</span><div><h2 id="mode-title">Velg utfordring</h2><p>Hva skal elevene konkurrere om?</p></div></div>
+          <div class="modes">
+            <label class="mode-card"><input type="radio" name="mode" value="accuracy" checked><span><strong>Høyest riktigprosent</strong><small>Svar så presist som mulig innen tiden er ute.</small></span><span class="mode-symbol" aria-hidden="true">%</span></label>
+            <label class="mode-card"><input type="radio" name="mode" value="correct"><span><strong>Flest riktige på tid</strong><small>Hvor mange rekker du før klokken stopper?</small></span><span class="mode-symbol" aria-hidden="true">↗</span></label>
+            <label class="mode-card"><input type="radio" name="mode" value="fixed"><span><strong>Et fast antall spørsmål</strong><small>Like mange spørsmål, fordelt mellom kategoriene.</small></span><span class="mode-symbol" aria-hidden="true">#</span></label>
+          </div>
+          <div class="settings">
+            <label id="minutes-field">Samlet tid <span class="input-unit"><input id="minutes" type="number" min="1" max="60" value="5" required><span>minutter</span></span></label>
+            <label id="count-field" hidden>Antall spørsmål <input id="question-count" type="number" min="1" max="500" value="30" disabled required></label>
+            <label>Tid per spørsmål <select id="question-seconds"><option value="5">5 sekunder</option><option value="10">10 sekunder</option><option value="15" selected>15 sekunder · standard</option><option value="20">20 sekunder</option><option value="30">30 sekunder</option><option value="45">45 sekunder</option><option value="60">60 sekunder</option><option value="90">90 sekunder</option><option value="120">120 sekunder</option></select></label>
+          </div>
+          <p class="hint" id="grouping-description"></p>
+        </section>
+        <section class="panel" aria-labelledby="category-title">
+          <div class="step-heading"><span class="step">02</span><div><h2 id="category-title">Plukk innholdet</h2><p>De kjente modulene, samlet i én runde.</p></div><span id="selected-count" class="pill">0 valgt</span></div>
+          <div class="category-toolbar"><label class="search-label"><span class="sr-only">Søk etter kategori</span><input id="category-search" type="search" placeholder="Søk etter et kart eller en kategori …"></label><button id="select-none" type="button" class="text-button">Fjern valg</button></div>
+          <div id="categories" aria-live="polite"><p>Laster kategorier …</p></div>
+          <p id="no-categories" hidden>Ingen kategorier passer med søket.</p>
+        </section>
+        <section class="panel" aria-labelledby="share-title">
+          <div class="step-heading"><span class="step">03</span><div><h2 id="share-title">Gi quizen et navn</h2><p>Elevene trenger bare lenken for å delta.</p></div></div>
+          <label>Navn på quizen <input id="quiz-title" maxlength="100" required placeholder="For eksempel: Geografikampen i 9B"></label>
+          <label class="slug-label">Kortadresse <span class="input-unit address"><span>onlyfag.no/</span><input id="quiz-slug" pattern="quiz[a-z0-9-]{0,31}[a-z0-9]" minlength="5" maxlength="36" required autocomplete="off" spellcheck="false" placeholder="quiz01"></span></label>
+          <p class="hint">Bruk «quiz» etterfulgt av små bokstaver, tall eller bindestrek. Adressen må være ledig.</p>
+          <div id="form-error" class="error" role="alert" hidden></div>
+          <button id="create-quiz" class="primary-button" type="submit">Opprett quiz <span aria-hidden="true">→</span></button>
+          <p class="hint">Etter opprettelse får du en elevlenke og en privat administrasjonslenke. Ta vare på administrasjonslenken for å endre quizen.</p>
+        </section>
+      </form>
+      <aside class="summary panel" aria-labelledby="summary-title"><span class="eyebrow">KLAR FOR KLASSEN</span><h2 id="summary-title">Din quiz</h2><strong id="summary-mode">Høyest riktigprosent</strong><p id="summary-settings"></p><ul id="summary-categories"></ul><div class="summary-footer"><span class="status-dot" aria-hidden="true"></span> Egen highscore-liste for quizen</div><p class="hint">Elevene velger et kallenavn når de lagrer resultatet. Bruk gjerne fornavn eller et oppdiktet navn.</p></aside>
+    </div>
+    <section id="share-result" class="panel result-panel" aria-labelledby="result-title" tabindex="-1" hidden>
+      <span class="eyebrow">KLAR TIL Å DELE</span><h2 id="result-title">Quizen er opprettet</h2><p id="result-description"></p>
+      <label>Elevlenke <span class="copy-row"><input id="student-link" readonly><button id="copy-student" type="button">Kopier</button></span></label><a id="open-quiz" class="primary-button" target="_blank" rel="noopener noreferrer">Åpne quizen →</a>
+      <div class="private-link"><h3>Din private administrasjonslenke</h3><p>Alle som har denne lenken kan endre quizen. Del bare elevlenken med klassen.</p><span class="copy-row"><input id="admin-link" readonly aria-label="Privat administrasjonslenke"><button id="copy-admin" type="button">Kopier</button></span></div>
+      <button id="new-quiz" type="button" class="text-button">Lag en ny quiz</button>
+    </section>
+    <section class="saved-section" aria-labelledby="saved-title"><h2 id="saved-title">Dine quizer på denne enheten</h2><p class="hint">Lenkene huskes i denne nettleseren. Ta vare på administrasjonslenken hvis du bytter enhet.</p><div id="saved-quizzes"></div></section>
+  </main>
+  <noscript>Quizlab trenger JavaScript for å lage og gjennomføre quizer.</noscript>
+</body>
+</html>
