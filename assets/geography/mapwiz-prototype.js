@@ -29,7 +29,7 @@
   else if(key==='cities')items=reference.cities.map(c=>({...c,kind:'By',explanation:GEO_QUIZ_DATA.countries.find(n=>n.flagCode===c.countryCode.toLowerCase())?.country||c.country}));
   else if(key==='rivers')items=[...midpoints.values()].map(t=>({...t,kind:'Elv',explanation:'Siktepunkt omtrent midt i det kartlagte hovedløpet.'}));
   else items=geoPlayablePlaces().filter(t=>t.category===category);
-  for(const target of reference.extraTargets||[])if(target.category===category&&!items.some(t=>t.name===target.name))items.push(target);
+  for(const target of [...reference.extraTargets||[],...reference.curatedTargets||[]])if((target.quizCategory?target.quizCategory===key:target.category===category)&&!items.some(t=>t.name===target.name))items.push(target);
   return [key,items.filter(t=>Object.hasOwn(reference.difficulties.assignments[key],t.name)).map(t=>({...t,quizCategory:key,categoryLabel:label,category:category||label,difficulty:reference.difficulties.assignments[key][t.name]}))];
  }));
  const definitions=reference.difficulties.levels.map(level=>[level.id,level.label]);

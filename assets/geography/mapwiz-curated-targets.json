@@ -1,0 +1,78 @@
+{
+  "version": 1,
+  "contentVersion": 2,
+  "targets": [
+    {
+      "name": "Alaska",
+      "lat": 64.0,
+      "lon": -152.0,
+      "quizCategory": "regions",
+      "category": "Regioner og områder",
+      "kind": "Region",
+      "explanation": "USAs største delstat, nordvest i Nord-Amerika. Sikt mot midten av fastlandsområdet.",
+      "enExplanation": "The largest US state, in northwestern North America. Aim for the centre of the mainland area.",
+      "source": "Representative point in mainland Alaska; USGS geographic context."
+    },
+    {
+      "name": "Florida",
+      "lat": 28.3,
+      "lon": -82.0,
+      "quizCategory": "regions",
+      "category": "Regioner og områder",
+      "kind": "Region",
+      "explanation": "Delstat og halvøy sørøst i USA, mellom Mexicogolfen og Atlanterhavet.",
+      "enExplanation": "A state and peninsula in the southeastern USA, between the Gulf of Mexico and the Atlantic Ocean.",
+      "source": "Representative point in the Florida peninsula; USGS geographic context."
+    },
+    {
+      "name": "Bali",
+      "lat": -8.4095,
+      "lon": 115.1889,
+      "quizCategory": "islands",
+      "category": "Øyer, øygrupper og halvøyer",
+      "kind": "Øy",
+      "explanation": "Indonesisk øy mellom Java og Lombok, kjent som reisemål.",
+      "enExplanation": "An Indonesian island between Java and Lombok, well known as a travel destination.",
+      "source": "Representative point on Bali, Indonesia."
+    },
+    {
+      "name": "Hiroshima",
+      "lat": 34.3853,
+      "lon": 132.4553,
+      "quizCategory": "cities",
+      "category": "Byer",
+      "kind": "By",
+      "explanation": "Japansk by på Honshu, rammet av en atombombe i 1945.",
+      "enExplanation": "A Japanese city on Honshu, struck by an atomic bomb in 1945.",
+      "source": "Hiroshima city centre, Japan."
+    },
+    {
+      "name": "Tsjernobyl",
+      "lat": 51.2767,
+      "lon": 30.2219,
+      "quizCategory": "cities",
+      "category": "Byer",
+      "kind": "By",
+      "explanation": "By nord i Ukraina, kjent for atomkraftulykken i 1986 ved kraftverket i nærheten.",
+      "enExplanation": "A city in northern Ukraine, known for the 1986 nuclear disaster at the nearby power plant.",
+      "source": "Chernobyl town centre, Ukraine; not the power station."
+    },
+    {
+      "name": "Auschwitz",
+      "lat": 50.0359,
+      "lon": 19.1783,
+      "quizCategory": "landmarks",
+      "category": "Kjente byggverk og historiske steder",
+      "kind": "Historisk sted",
+      "explanation": "Tidligere nazistisk konsentrasjons- og utryddelsesleir ved Oświęcim i Polen.",
+      "enExplanation": "A former Nazi concentration and extermination camp near Oświęcim in Poland.",
+      "source": "Auschwitz I memorial site, Oświęcim, Poland."
+    }
+  ],
+  "flags": {
+    "Brasil": "br",
+    "Canada": "ca",
+    "Spania": "es",
+    "Argentina": "ar"
+  }
+}

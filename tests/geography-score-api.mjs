@@ -21,9 +21,9 @@ test('server chooses ten balanced MapWiz questions and computes geography/time p
 test('MapWiz levels cover every active target exactly once and include the approved easy moves',()=>{
  const definition=JSON.parse(fs.readFileSync(new URL('../assets/geography/mapwiz-difficulties.json',import.meta.url),'utf8'));
  assert.deepEqual(definition.levels.map(level=>[level.id,level.label]),[['easy','Normal'],['medium','Vanskelig'],['hard','Hjerterå']]);
- assert.deepEqual(Object.fromEntries(Object.entries(data.mapwizDifficulties).map(([level,ids])=>[level,ids.length])),{easy:212,medium:346,hard:227});
+ assert.deepEqual(Object.fromEntries(Object.entries(data.mapwizDifficulties).map(([level,ids])=>[level,ids.length])),{easy:236,medium:332,hard:227});
  const legacy=Object.values(data.mapwiz).flat(),assigned=Object.values(data.mapwizDifficulties).flat();
- assert.equal(legacy.length,794);assert.equal(new Set(assigned).size,785);assert.deepEqual(assigned.slice().sort(),legacy.filter(target=>!data.mapwizRetired.includes(target.id)).map(target=>target.id).sort());
+ assert.equal(legacy.length,804);assert.equal(new Set(assigned).size,795);assert.deepEqual(assigned.slice().sort(),legacy.filter(target=>!data.mapwizRetired.includes(target.id)).map(target=>target.id).sort());
  for(const [category,targets]of Object.entries(data.mapwiz))for(const target of targets){const level=definition.assignments[category][target.name];if(data.mapwizRetired.includes(target.id)){assert.equal(level,undefined);continue;}assert(data.mapwizDifficulties[level].includes(target.id));}
  for(const [category,name]of [['capitals','Mexico by'],['cities','Mekka'],['mountains','K2'],['ranges','Atlas'],['seas','Adriaterhavet'],['landmarks','Machu Picchu'],['landmarks','Stonehenge'],['landmarks','Taj Mahal'],['landmarks','Pompeii']])assert.equal(definition.assignments[category][name],'easy',name+' was moved to easy');
  const svalbard=data.mapwiz['place:Norge'].find(target=>target.name==='Svalbard');assert(svalbard.lat>75);assert(data.mapwizDifficulties.easy.includes(svalbard.id),'Arctic Norway remains available in the easy pool');
@@ -57,12 +57,36 @@ test('retired MapWiz duplicates and Valencia never enter new rounds while issued
   assert.equal(board(c),'v1:{"game":"mapwiz","difficulties":["easy"]}');
  }finally{db.close();}
 });
+test('approved MapWiz moves and ten new tasks work with the same scores and safe cached-client pools',()=>{
+ const definition=JSON.parse(fs.readFileSync(new URL('../assets/geography/mapwiz-difficulties.json',import.meta.url),'utf8'));
+ const capitals=['Luxemburg','Panama by','New Delhi','Sarajevo','Tunis','Vatikanstaten','Zagreb','Bangkok','Abu Dhabi','Andorra la Vella','Bagdad','Beograd','Havanna','Lima','Kyiv','Kabul'];
+ for(const name of capitals)assert.equal(definition.assignments.capitals[name],'easy',name);
+ assert.equal(definition.assignments.mountains['Mauna Kea'],'easy');
+ for(const [category,name]of [['landmarks','Hagia Sofia'],['landmarks','St. Basil-katedralen'],['place:Norge','Gudbrandsdalen']])assert.equal(definition.assignments[category][name],'medium');
+ assert.equal(definition.assignments.flags.Luxemburg,'medium','The requested capital move does not change the flag task');
+ const all=new Map(Object.values(data.mapwiz).flat().map(t=>[t.id,t])),added=data.mapwizExpansion.map(id=>all.get(id));
+ assert.deepEqual(added.map(t=>t.name).sort(),['Brasil','Canada','Spania','Argentina','Alaska','Florida','Bali','Hiroshima','Tsjernobyl','Auschwitz'].sort());
+ for(const t of added)assert(data.mapwizDifficulties.easy.includes(t.id));
+ const bounds={'Alaska':[55,72,-170,-130],'Florida':[24,31,-88,-80],'Bali':[-9,-8,114.4,115.8],'Hiroshima':[34.2,34.6,132.2,132.7],'Tsjernobyl':[51,51.5,29.9,30.5],'Auschwitz':[50,50.1,19.1,19.3]};
+ for(const [name,[south,north,west,east]]of Object.entries(bounds)){const t=added.find(t=>t.name===name);assert(t.lat>south&&t.lat<north&&t.lon>west&&t.lon<east,'Correct real-world location: '+name);}
+ const c={game:'mapwiz',difficulties:['easy'],map:'world',contentVersion:2};
+ assert.equal(board(c),board({game:'mapwiz',difficulties:['easy']}),'The new reference marker preserves every existing leaderboard');
+ for(const bad of [0,1,3,'2',null])assert.throws(()=>config({...c,contentVersion:bad}),/invalid_config/);
+ assert.throws(()=>config({game:'flags',contentVersion:2}),/invalid_config/);
+ for(let i=0;i<100;i++){
+  const cached=create({game:'mapwiz',difficulties:['easy'],map:'world'},0);assert(cached.targets.every(id=>!data.mapwizExpansion.includes(id)),'Old world-map tabs never receive targets missing from their snapshot');
+  const current=create(c,0);assert(current.targets.every(id=>data.mapwizDifficulties.easy.includes(id)));
+ }
+ const s=create(c,1000);s.targets=added.map(t=>t.id);s.plan.forEach((q,i)=>q.target=s.targets[i]);issue(s,1000);
+ for(let i=0;i<10;i++){const t=added[i],r=answer(s,{question:s.current.id,lat:t.lat,lon:t.lon},1100+i*1000);assert.equal(r.base,100,t.name);if(i<9)issue(s,1200+i*1000);}
+ assert(s.complete);assert.equal(s.score,1100);
+});
 test('all eighteen approved historical and polar additions remain hard and fit the world map',()=>{
  const referenceText=fs.readFileSync(new URL('../assets/geography/mapwiz-prototype-data.js',import.meta.url),'utf8'),reference=JSON.parse(referenceText.match(/window.MAPWIZ_PROTOTYPE_DATA=(.*);/)[1]);
  const expected=['Assyriske riket','Babylonia','Burma','Bysants','Ceylon','Kartago','Konstantinopel','Osmanske riket','Persia','Preussen','Seylon','Siam','Sparta','Teotihuacan','Zaire','Antarktis','Arktis','Dronning Mauds land'];
  assert.equal(reference.extraTargets.length,18);assert.equal(data.mapwizAdditions.length,18);assert.deepEqual(reference.extraTargets.map(target=>target.name).sort(),expected.slice().sort());
- const additions=Object.values(data.mapwiz).flat().filter(target=>data.mapwizAdditions.includes(target.id));assert.equal(additions.length,18);assert.equal(Object.values(data.mapwiz).flat().length-additions.length,776,'Every original target remains available');
- assert.equal(data.mapwiz.historical.length,15);assert.equal(data.mapwiz.regions.length,32);
+ const additions=Object.values(data.mapwiz).flat().filter(target=>data.mapwizAdditions.includes(target.id));assert.equal(additions.length,18);assert.equal(Object.values(data.mapwiz).flat().length-additions.length-data.mapwizExpansion.length,776,'Every original target remains available');
+ assert.equal(data.mapwiz.historical.length,15);assert.equal(data.mapwiz.regions.length,34);
  const core=fs.readFileSync(new URL('../assets/geography/core.js',import.meta.url),'utf8'),originals=JSON.parse(core.match(/const GEO_PLACE_TARGETS = (\[[^\n]+\]);/)[1]);
  for(const target of additions){const original=originals.find(item=>item.name===target.name);assert(original);if(target.name==='Arktis'){assert.equal(original.lat,82,'The original source remains unchanged');assert.equal(target.lat,80,'The Arctic region uses a representative point inside the requested northern crop');}else assert.equal(target.lat,original.lat);assert.equal(target.lon,original.lon);assert(target.lat>=-84&&target.lat<=81);assert.equal(data.mapwizDifficulties.hard.includes(target.id),!data.mapwizRetired.includes(target.id),'Every approved addition is hard unless explicitly retired as a duplicate');}
  for(let run=0;run<100;run++){const previous=create({game:'mapwiz',difficulties:['hard']},0);assert(previous.targets.every(id=>!data.mapwizAdditions.includes(id)),'Cached clients keep their original reference pool');}

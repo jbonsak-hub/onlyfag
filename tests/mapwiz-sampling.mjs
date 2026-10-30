@@ -33,7 +33,7 @@ for(const level of ['easy','medium','hard']){
  assert(newPacific/5000<rawPacific/5000*1.6+.02,'Balancing does not replace pool probabilities with equal-continent quotas');
  report.push({level,runs:5000,originalCrowded:rawCrowded,balancedCrowded:newCrowded,pacificBefore:rawPacific/5000,pacificAfter:newPacific/5000});
  // Exercise the actual verified server entry point and cached multi-level mode.
- for(let run=0;run<60;run++){const state=create({game:'mapwiz',difficulties:[level],map:'world'},0),round=state.targets.map(id=>all.get(id));assert.equal(round.length,10);assert(round.every(t=>allowed.has(t.id)));assert.equal(sampler.analyse(round).penalty,0);}
+ for(let run=0;run<60;run++){const state=create({game:'mapwiz',difficulties:[level],map:'world',contentVersion:2},0),round=state.targets.map(id=>all.get(id));assert.equal(round.length,10);assert(round.every(t=>allowed.has(t.id)));assert.equal(sampler.analyse(round).penalty,0);}
 }
 assert.equal(board({game:'mapwiz',difficulties:['easy'],map:'world'}),'v1:{"game":"mapwiz","difficulties":["easy"]}','Existing leaderboard identity remains unchanged');
 console.log(JSON.stringify({rounds:15000,serverAndBrowser:true,noContinentQuotas:true,report}));

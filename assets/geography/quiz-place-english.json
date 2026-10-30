@@ -2386,5 +2386,41 @@
     "description": "Fylke øst for Oslofjorden mot svenskegrensen, med Fredrikstad, Sarpsborg og Moss.",
     "name": "Østfold",
     "en": "County east of the Oslofjord towards Sweden, with Fredrikstad, Sarpsborg and Moss."
+  },
+  {
+    "source": "Alaska",
+    "description": "USAs største delstat, nordvest i Nord-Amerika. Sikt mot midten av fastlandsområdet.",
+    "name": "Alaska",
+    "en": "The largest US state, in northwestern North America. Aim for the centre of the mainland area."
+  },
+  {
+    "source": "Florida",
+    "description": "Delstat og halvøy sørøst i USA, mellom Mexicogolfen og Atlanterhavet.",
+    "name": "Florida",
+    "en": "A state and peninsula in the southeastern USA, between the Gulf of Mexico and the Atlantic Ocean."
+  },
+  {
+    "source": "Bali",
+    "description": "Indonesisk øy mellom Java og Lombok, kjent som reisemål.",
+    "name": "Bali",
+    "en": "An Indonesian island between Java and Lombok, well known as a travel destination."
+  },
+  {
+    "source": "Hiroshima",
+    "description": "Japansk by på Honshu, rammet av en atombombe i 1945.",
+    "name": "Hiroshima",
+    "en": "A Japanese city on Honshu, struck by an atomic bomb in 1945."
+  },
+  {
+    "source": "Tsjernobyl",
+    "description": "By nord i Ukraina, kjent for atomkraftulykken i 1986 ved kraftverket i nærheten.",
+    "name": "Chernobyl",
+    "en": "A city in northern Ukraine, known for the 1986 nuclear disaster at the nearby power plant."
+  },
+  {
+    "source": "Auschwitz",
+    "description": "Tidligere nazistisk konsentrasjons- og utryddelsesleir ved Oświęcim i Polen.",
+    "name": "Auschwitz",
+    "en": "A former Nazi concentration and extermination camp near Oświęcim in Poland."
   }
 ]

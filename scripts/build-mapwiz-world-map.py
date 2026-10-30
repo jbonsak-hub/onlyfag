@@ -84,7 +84,7 @@ def sample(raster, sx, sy):
 def checkpoints():
     targets = json.loads((ROOT / 'services/geography-scores/data.json').read_text())['mapwiz']
     all_targets = [target for items in targets.values() for target in items]
-    assert len(all_targets) == 794, 'Review target coverage if the game changes its pool'
+    assert len(all_targets) == 804, 'Review target coverage if the game changes its pool'
     min_lat, max_lat = min(t['lat'] for t in all_targets), max(t['lat'] for t in all_targets)
     assert BOTTOM <= min_lat <= max_lat <= TOP
     assert all(-180 <= t['lon'] <= 180 for t in all_targets)
@@ -176,7 +176,7 @@ def verify():
         assert image.mode == 'RGB'
     verify_hydrology(manifest)
     verify_dark(manifest)
-    print('PASS MapWiz world map: all 794 targets within bounds, Arctic/Antarctic checkpoints, Svalbard-edge initial view, contrast settings and pinned image/source hashes')
+    print('PASS MapWiz world map: all 804 current and reference targets within bounds, Arctic/Antarctic checkpoints, Svalbard-edge initial view, contrast settings and pinned image/source hashes')
     return manifest
 
 

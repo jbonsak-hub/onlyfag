@@ -5,7 +5,7 @@ Kartets fulle bildeflate dekker 81° nord til 84° sør og alle lengdegrader.
 Nordkanten ligger like nord for Svalbard. Standardutsnittet er 78,5° nord til
 58,8° sør, lagret som `initialView` i manifestet, og fyller spillområdet.
 Den øvrige sørlige bildeflaten kan nås ved å flytte eller zoome kartet.
-Alle 785 aktive oppføringer og de ni bevarte referanseoppføringene,
+Alle 795 aktive oppføringer og de ni bevarte referanseoppføringene,
 inkludert Arktis, Antarktis og Dronning Mauds land,
 ligger innenfor det fulle kartet. Arktis har siktepunkt 80° nord, 0° øst,
 innenfor det fulle kartet. Det nye startutsnittet skjærer omtrent midt gjennom
@@ -47,7 +47,7 @@ python scripts/build-mapwiz-world-map.py --source-raster NE2_50M_LC_SR_W.tif
 ```
 
 Kontrollen validerer kilde- og bildehash, pikseldimensjoner, projeksjonsgrenser,
-alle 794 oppføringers geografiske dekning, standardutsnitt og fargeinnstillinger,
+alle 804 nåværende og tidligere oppføringers geografiske dekning, standardutsnitt og fargeinnstillinger,
 samt numerisk rundtur for Svalbard, Jan Mayen, Galdhøpiggen, Oslo, Arktis,
 Antarktis og Dronning Mauds land.
 
@@ -134,7 +134,7 @@ rundetrekningen, mens API-testene følger verifiserte spill som før.
 
 ## Opprydding i oppgaveutvalget
 
-Normal har 212 oppføringer, Vanskelig 346 og Hjerterå 227.
+Normal har 236 oppføringer, Vanskelig 332 og Hjerterå 227.
 `retiredTargets` i `mapwiz-difficulties.json` dokumenterer åtte dobbeltføringer
 og Valencia (Natural Earth-oppføringen pekte til Venezuela). Normal bruker nå
 bare Everest og Østersjøen; Oslo, Bergen, Trondheim, Stavanger og Jan Mayen
@@ -147,3 +147,23 @@ og serveren trekker dem aldri i nye runder, heller ikke ved gamle kategori-
 valg. Serverens koordinatreferanse beholder deres id-er, slik at påbegynte
 runder fortsatt kan fullføres. Eksisterende topplister og deres nøkler beholdes;
 oppryddingen oppretter ingen ekstra historiske topplistevalg.
+
+
+## Godkjent utvidelse av Normal
+
+`mapwiz-curated-targets.json` legger til Alaska, Florida, Bali, Hiroshima,
+Tsjernobyl og Auschwitz. Områder bruker representative punkter; byer og
+Auschwitz bruker bysentrum/minnestedet. De fire nye flaggene er Brasil,
+Canada, Spania og Argentina. SVG-ene ligger lokalt i `flags/`, med kilde og
+SHA-256 i `flags/mapwiz-sources.json`, og bygges inn i nettleserreferansen.
+Ingen flagg må hentes fra en ekstern tjeneste under spill.
+
+Seksten hovedsteder (inkludert Luxemburg og Kyiv) og Mauna Kea flyttes til
+Normal. Hagia Sofia, St. Basil-katedralen og Gudbrandsdalen flyttes til Vanskelig.
+Flaggoppgaven Luxemburg beholder Vanskelig. Den delte oppslagslisten får de
+seks nye stedsforklaringene uten at utvalget i den separate stedsquizen endres.
+
+Nye nettleserfaner sender `contentVersion: 2` ved oppstart. Markøren tas ikke
+med i topplistenøkkelen. Eldre faner får fortsatt gyldige oppgaver fra sin
+referansesamling, mens nye faner kan få de ti nye oppføringene. Påbegynte
+runder og alle tidligere topplister beholdes.

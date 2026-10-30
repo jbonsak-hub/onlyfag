@@ -1,7 +1,7 @@
 import data from './data.json' with {type:'json'};
 import '../../assets/geography/mapwiz-sampling.js';
 const spreadMapRound=globalThis.MapWizSampling.spread;
-const retiredMapTargets=new Set(data.mapwizRetired);
+const retiredMapTargets=new Set(data.mapwizRetired),expandedMapTargets=new Set(data.mapwizExpansion);
 export {data};
 const modes=new Set(['flags','capitals','flagcapital','places','countries','mapwiz','statle','fylker','kart','kommuner','bydeler']);
 const shapeQuiz=game=>['statle','fylker','kart','kommuner','bydeler'].includes(game);
@@ -25,6 +25,7 @@ export function config(input){
  else if(c.game==='statle'){if(input.variant!==undefined){if(!['capitals','largest-city'].includes(input.variant))throw Error('invalid_config');c.variant=input.variant;}}
  else if(shapeQuiz(c.game)){}else if(c.game==='countries'){c.region=input.region||'world';if(!Object.hasOwn(data.regions,c.region))throw Error('invalid_config');}
  else{c.variant=input.variant||variants[c.game][0];if(!variants[c.game].includes(c.variant))throw Error('invalid_config');c.region=input.region||'world';if(c.game!=='places'&&!Object.hasOwn(data.regions,c.region))throw Error('invalid_config');if(c.game==='places')c.region='world';}
+ if(input.contentVersion!==undefined){if(c.game!=='mapwiz'||input.contentVersion!==2)throw Error('invalid_config');c.contentVersion=2;}
  if(input.map!==undefined){if(c.game!=='mapwiz'||input.map!=='world')throw Error('invalid_config');c.map='world';}
  if(input.questionMode!==undefined){if(c.game!=='kommuner'||input.questionMode!=='centres')throw Error('invalid_config');c.questionMode=input.questionMode;}
  if(input.scoring!==undefined){if(!shapeQuiz(c.game)||input.scoring!=='attempts-v1')throw Error('invalid_config');c.scoring='attempts-v1';}
@@ -40,7 +41,7 @@ export const board=c=>{
  // through the capital quiz's display controls. Keep its published identity.
  if(normalized.game==='capitals'&&normalized.countryDisplay==='flag')return board({game:'flagcapital',region:normalized.region,variant:normalized.variant==='capital-country-mc'?'capital-flag-mc':'flag-capital-mc'});
  // MapWiz's world-only presentation keeps each existing level board.
- const {language,scoring,map,...ranking}=normalized;return 'v'+data.version+':'+JSON.stringify(ranking);
+ const {language,scoring,map,contentVersion,...ranking}=normalized;return 'v'+data.version+':'+JSON.stringify(ranking);
 };
 export function pool(c){
  if(c.game==='places')return data.places;
@@ -51,13 +52,13 @@ function mapRounds(c){
  if(c.difficulties){
   const additions=c.map==='world'?null:new Set(data.mapwizAdditions);
   return spreadMapRound(()=>{
-   const buckets=c.difficulties.map(level=>shuffle(data.mapwizDifficulties[level].filter(id=>!additions||!additions.has(id)).map(mapTarget))),out=[],seen=new Set();
+   const buckets=c.difficulties.map(level=>shuffle(data.mapwizDifficulties[level].filter(id=>(!additions||!additions.has(id))&&(c.contentVersion===2||!expandedMapTargets.has(id))).map(mapTarget))),out=[],seen=new Set();
    while(out.length<10){let added=false;for(const bucket of shuffle(buckets)){if(out.length===10)break;const target=bucket.find(t=>!seen.has(t.name));if(target){out.push(target);seen.add(target.name);added=true;}}if(!added)throw Error('invalid_config');}
    return out;
   });
  }
  const norway=c.categories.length===1&&c.categories[0]==='place:Norge';
- const buckets=c.categories.map(k=>({items:shuffle(data.mapwiz[k].filter(t=>!retiredMapTargets.has(t.id)&&(norway||t.lat<=75&&t.lat>=-58.8))),count:0})),out=[],seen=new Set(),limit=c.categories.length>5?2:10;
+ const buckets=c.categories.map(k=>({items:shuffle(data.mapwiz[k].filter(t=>!retiredMapTargets.has(t.id)&&(c.contentVersion===2||!expandedMapTargets.has(t.id))&&(norway||t.lat<=75&&t.lat>=-58.8))),count:0})),out=[],seen=new Set(),limit=c.categories.length>5?2:10;
  while(out.length<10){let added=false;for(const b of shuffle(buckets)){if(out.length===10)break;if(b.count>=limit)continue;const t=b.items.find(t=>!seen.has(t.name)&&t.name!==out.at(-1)?.name);if(t){out.push(t);seen.add(t.name);b.count++;added=true;}}if(!added){if(buckets.every(b=>b.count>=limit||!b.items.length))throw Error('invalid_config');seen.clear();}}
  return out;
 }

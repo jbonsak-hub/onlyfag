@@ -25,7 +25,7 @@
   "sourceManifest": "sources/mapwiz-world/source.json",
   "sourceManifestSHA256": "2c28b9d0ab7d5dc92e55b42e9deb9b06c85dc11e05e9f3d4c28cd29a78da16c3",
   "coverage": {
-    "targetCount": 794,
+    "targetCount": 804,
     "latitudeRange": [
       -82,
       80
