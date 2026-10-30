@@ -54,7 +54,7 @@ const server=http.createServer((req,res)=>{try{const file=path.join(root,decodeU
   let randomRounds=0;
   for(const level of levels){
    await choose(level);
-   const report=await page.evaluate(level=>{for(let i=0;i<30;i++){startGeoGuessr();const s=geoGuessrState;if(s.rounds.length!==10||s.results.length||s.total)return 'uncleared';if(s.rounds.some(t=>t.difficulty!==level))return 'wrong-level';if(new Set(s.rounds.map(t=>t.name)).size!==10)return 'duplicate';if(MapWizPrototype.selected().length!==1)return 'multiple-levels';}return 'ok';},level);assert.equal(report,'ok',level);randomRounds+=30;
+   const report=await page.evaluate(level=>{for(let i=0;i<30;i++){startGeoGuessr();const s=geoGuessrState;if(s.rounds.length!==10||s.results.length||s.total)return 'uncleared';if(s.rounds.some(t=>t.difficulty!==level))return 'wrong-level';if(new Set(s.rounds.map(t=>t.name)).size!==10)return 'duplicate';if(MapWizSampling.analyse(s.rounds).penalty!==0)return 'clustered';if(MapWizPrototype.selected().length!==1)return 'multiple-levels';}return 'ok';},level);assert.equal(report,'ok',level);randomRounds+=30;
   }
   await choose('easy');await page.locator('#geo-start-button').click();
   await page.evaluate(()=>MapWizPrototype.begin(MapWizPrototype.difficultyPools.get('easy').filter(t=>t.quizCategory==='flags').slice(0,10)));

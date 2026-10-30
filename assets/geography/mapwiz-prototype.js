@@ -96,17 +96,19 @@
  }
 
  function rounds(){
-  const buckets=shuffleArray([...selected].map(key=>shuffleArray(difficultyPools.get(key)))),out=[],seen=new Set();
-  while(out.length<10){
-   let added=false;
-   for(const bucket of shuffleArray(buckets)){
-    if(out.length===10)break;
-    const target=bucket.find(t=>!seen.has(t.name));
-    if(target){seen.add(target.name);out.push(target);added=true;}
+  return MapWizSampling.spread(()=>{
+   const buckets=shuffleArray([...selected].map(key=>shuffleArray(difficultyPools.get(key)))),out=[],seen=new Set();
+   while(out.length<10){
+    let added=false;
+    for(const bucket of shuffleArray(buckets)){
+     if(out.length===10)break;
+     const target=bucket.find(t=>!seen.has(t.name));
+     if(target){seen.add(target.name);out.push(target);added=true;}
+    }
+    if(!added)break;
    }
-   if(!added)break;
-  }
-  return out;
+   return out;
+  });
  }
  function beginRound(questions){
   if(!questions.length)return;

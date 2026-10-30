@@ -106,3 +106,26 @@ og låses under runden som før.
 opprinnelig poengsum og tidsstempel. Tid, dato, andre runder og andre topplister
 endres ikke. Direkte D1-API var ikke tilgjengelig for CLI-tokenet; rettelsen
 utføres gjennom Workerens eksisterende D1-binding ved første oppslag på Normal.
+
+
+## Mild geografisk spredning i rundene
+
+`assets/geography/mapwiz-sampling.js` brukes både av Workerens verifiserte
+runder og av nettleserens lokale reservefunksjon. Den vanlige trekningen med
+valgt nivå og ti ulike stedsnavn er utgangspunktet. En hel runde trekkes på nytt
+hvis den blir for geografisk sammenklumpet: flere enn fem av punktene ligger
+innenfor 1800 km fra et av de valgte punktene, største avstand er under 6500 km,
+eller runden mangler tre punkter med minst 2500 km mellom hvert par.
+
+Det finnes ingen obligatoriske kontinenter eller like kontinentkvoter. En
+underrepresentert region får ingen egen plass som må fylles med de samme få
+stedene. Rundeomtrekking beholder vanlige målvekter så langt som de geografiske
+kravene tillater. Maksimalt 24 forsøk hindrer lange løkker; en uvanlig smal
+eldre oppgavegruppe bruker det beste hele forsøket som reserve. Eldre eksplisitte
+kategorispill, som bare Norge, følger sin opprinnelige trekning.
+
+Oppgaveutvalg, nivåplassering, poengberegning og topplisteidentiteter er beholdt.
+`tests/mapwiz-sampling.mjs` sammenligner 15 000 runder, sjekker den opprinnelige
+Norden-/Europa-opphopningen og at få mål i Stillehavsområdet ikke blir et
+obligatorisk innslag. Nettlesertesten kontrollerer også den faktiske lokale
+rundetrekningen, mens API-testene følger verifiserte spill som før.
