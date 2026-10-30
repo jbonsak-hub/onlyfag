@@ -1,6 +1,7 @@
 import data from './data.json' with {type:'json'};
 import '../../assets/geography/mapwiz-sampling.js';
 const spreadMapRound=globalThis.MapWizSampling.spread;
+const retiredMapTargets=new Set(data.mapwizRetired);
 export {data};
 const modes=new Set(['flags','capitals','flagcapital','places','countries','mapwiz','statle','fylker','kart','kommuner','bydeler']);
 const shapeQuiz=game=>['statle','fylker','kart','kommuner','bydeler'].includes(game);
@@ -56,7 +57,7 @@ function mapRounds(c){
   });
  }
  const norway=c.categories.length===1&&c.categories[0]==='place:Norge';
- const buckets=c.categories.map(k=>({items:shuffle(data.mapwiz[k].filter(t=>norway||t.lat<=75&&t.lat>=-58.8)),count:0})),out=[],seen=new Set(),limit=c.categories.length>5?2:10;
+ const buckets=c.categories.map(k=>({items:shuffle(data.mapwiz[k].filter(t=>!retiredMapTargets.has(t.id)&&(norway||t.lat<=75&&t.lat>=-58.8))),count:0})),out=[],seen=new Set(),limit=c.categories.length>5?2:10;
  while(out.length<10){let added=false;for(const b of shuffle(buckets)){if(out.length===10)break;if(b.count>=limit)continue;const t=b.items.find(t=>!seen.has(t.name)&&t.name!==out.at(-1)?.name);if(t){out.push(t);seen.add(t.name);b.count++;added=true;}}if(!added){if(buckets.every(b=>b.count>=limit||!b.items.length))throw Error('invalid_config');seen.clear();}}
  return out;
 }

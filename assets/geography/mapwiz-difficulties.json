@@ -443,7 +443,6 @@
       "Grønland": "easy",
       "Hawaii": "easy",
       "Ildlandet (Tierra del Fuego)": "medium",
-      "Jan Mayen": "medium",
       "Jylland": "easy",
       "Kanariøyene": "easy",
       "Kola": "medium",
@@ -504,7 +503,6 @@
       "Adriaterhavet": "easy",
       "Arabiske hav": "medium",
       "Atlanterhavet": "easy",
-      "Baltiske hav": "easy",
       "Barentshavet": "easy",
       "Beringhavet": "medium",
       "Egeerhavet": "medium",
@@ -603,7 +601,6 @@
       "Grand Canyon": "easy",
       "Great Barrier Reef": "easy",
       "Iguazu": "medium",
-      "Mount Everest": "easy",
       "Niagara": "easy",
       "Okavango": "medium",
       "Pampas": "medium",
@@ -665,7 +662,6 @@
       "Napoli": "medium",
       "Torino": "medium",
       "Sevilla": "medium",
-      "Valencia": "medium",
       "Lyon": "medium",
       "Marseille": "medium",
       "Nice": "medium",
@@ -716,24 +712,20 @@
       "Galdhøpiggen": "easy",
       "Mjøsa": "easy",
       "Glomma": "easy",
-      "Bergen": "easy",
       "Lindesnes": "easy",
       "Lofoten": "easy",
       "Nordkapp": "easy",
       "Preikestolen": "easy",
       "Svalbard": "easy",
-      "Trondheim": "easy",
       "Geirangerfjorden": "easy",
       "Hardangervidda": "easy",
       "Agder": "easy",
       "Finnmark": "easy",
       "Møre og Romsdal": "easy",
-      "Oslo": "easy",
       "Rogaland": "easy",
       "Tromsø": "easy",
       "Trøndelag": "easy",
       "Vestland": "easy",
-      "Stavanger": "easy",
       "Drammen": "easy",
       "Fredrikstad": "easy",
       "Kristiansand": "easy",
@@ -829,7 +821,6 @@
       "Babylonia": "hard",
       "Burma": "hard",
       "Bysants": "hard",
-      "Ceylon": "hard",
       "Kartago": "hard",
       "Konstantinopel": "hard",
       "Osmanske riket": "hard",
@@ -841,5 +832,76 @@
       "Teotihuacan": "hard",
       "Zaire": "hard"
     }
-  }
+  },
+  "retiredTargets": [
+    {
+      "category": "nature",
+      "name": "Mount Everest",
+      "duplicateOf": {
+        "category": "mountains",
+        "name": "Everest"
+      }
+    },
+    {
+      "category": "seas",
+      "name": "Baltiske hav",
+      "duplicateOf": {
+        "category": "seas",
+        "name": "Østersjøen"
+      }
+    },
+    {
+      "category": "place:Norge",
+      "name": "Oslo",
+      "duplicateOf": {
+        "category": "capitals",
+        "name": "Oslo"
+      }
+    },
+    {
+      "category": "place:Norge",
+      "name": "Bergen",
+      "duplicateOf": {
+        "category": "cities",
+        "name": "Bergen"
+      }
+    },
+    {
+      "category": "place:Norge",
+      "name": "Trondheim",
+      "duplicateOf": {
+        "category": "cities",
+        "name": "Trondheim"
+      }
+    },
+    {
+      "category": "place:Norge",
+      "name": "Stavanger",
+      "duplicateOf": {
+        "category": "cities",
+        "name": "Stavanger"
+      }
+    },
+    {
+      "category": "islands",
+      "name": "Jan Mayen",
+      "duplicateOf": {
+        "category": "place:Norge",
+        "name": "Jan Mayen"
+      }
+    },
+    {
+      "category": "historical",
+      "name": "Ceylon",
+      "duplicateOf": {
+        "category": "historical",
+        "name": "Seylon"
+      }
+    },
+    {
+      "category": "cities",
+      "name": "Valencia",
+      "reason": "Ambiguous name; source coordinates point to Venezuela rather than the Spanish city."
+    }
+  ]
 }

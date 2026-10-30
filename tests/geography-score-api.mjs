@@ -18,15 +18,44 @@ test('server chooses ten balanced MapWiz questions and computes geography/time p
  }
  assert.equal(mapScore(0,40,false).points,100);assert.ok(mapScore(10000,0,false).points<1);assert.equal(mapScore(0,0,true).points,110);
 });
-test('MapWiz levels cover every existing target exactly once and include the approved easy moves',()=>{
+test('MapWiz levels cover every active target exactly once and include the approved easy moves',()=>{
  const definition=JSON.parse(fs.readFileSync(new URL('../assets/geography/mapwiz-difficulties.json',import.meta.url),'utf8'));
  assert.deepEqual(definition.levels.map(level=>[level.id,level.label]),[['easy','Normal'],['medium','Vanskelig'],['hard','Hjerterå']]);
- assert.deepEqual(Object.fromEntries(Object.entries(data.mapwizDifficulties).map(([level,ids])=>[level,ids.length])),{easy:218,medium:348,hard:228});
+ assert.deepEqual(Object.fromEntries(Object.entries(data.mapwizDifficulties).map(([level,ids])=>[level,ids.length])),{easy:212,medium:346,hard:227});
  const legacy=Object.values(data.mapwiz).flat(),assigned=Object.values(data.mapwizDifficulties).flat();
- assert.equal(legacy.length,794);assert.equal(new Set(assigned).size,794);assert.deepEqual(assigned.slice().sort(),legacy.map(target=>target.id).sort());
- for(const [category,targets]of Object.entries(data.mapwiz))for(const target of targets){const level=definition.assignments[category][target.name];assert(data.mapwizDifficulties[level].includes(target.id));}
+ assert.equal(legacy.length,794);assert.equal(new Set(assigned).size,785);assert.deepEqual(assigned.slice().sort(),legacy.filter(target=>!data.mapwizRetired.includes(target.id)).map(target=>target.id).sort());
+ for(const [category,targets]of Object.entries(data.mapwiz))for(const target of targets){const level=definition.assignments[category][target.name];if(data.mapwizRetired.includes(target.id)){assert.equal(level,undefined);continue;}assert(data.mapwizDifficulties[level].includes(target.id));}
  for(const [category,name]of [['capitals','Mexico by'],['cities','Mekka'],['mountains','K2'],['ranges','Atlas'],['seas','Adriaterhavet'],['landmarks','Machu Picchu'],['landmarks','Stonehenge'],['landmarks','Taj Mahal'],['landmarks','Pompeii']])assert.equal(definition.assignments[category][name],'easy',name+' was moved to easy');
  const svalbard=data.mapwiz['place:Norge'].find(target=>target.name==='Svalbard');assert(svalbard.lat>75);assert(data.mapwizDifficulties.easy.includes(svalbard.id),'Arctic Norway remains available in the easy pool');
+});
+test('retired MapWiz duplicates and Valencia never enter new rounds while issued questions and scores survive',async()=>{
+ const all=new Map(Object.values(data.mapwiz).flat().map(target=>[target.id,target])),retired=new Set(data.mapwizRetired),active=Object.values(data.mapwizDifficulties).flat().map(id=>all.get(id));
+ assert.deepEqual([...retired].map(id=>{const t=all.get(id);return [t.category,t.name];}).sort(),[
+  ['nature','Mount Everest'],['seas','Baltiske hav'],['place:Norge','Oslo'],['place:Norge','Bergen'],['place:Norge','Trondheim'],['place:Norge','Stavanger'],['islands','Jan Mayen'],['historical','Ceylon'],['cities','Valencia']
+ ].sort());
+ for(const name of ['Oslo','Bergen','Trondheim','Stavanger','Jan Mayen'])assert.equal(active.filter(t=>t.name===name).length,1,name+' has only one active location entry');
+ assert.equal(active.filter(t=>['Everest','Mount Everest'].includes(t.name)).length,1);
+ assert.equal(active.filter(t=>['Baltiske hav','Østersjøen'].includes(t.name)).length,1);
+ assert.equal(active.filter(t=>t.name==='Valencia').length,0);assert.equal(active.filter(t=>['Ceylon','Seylon'].includes(t.name)).length,1);
+ // Genuine different prompts that share a name must remain available.
+ for(const name of ['Madagaskar','Jordan','Victoria'])assert.equal(active.filter(t=>t.name===name).length,2);
+ for(const category of ['cities','nature','seas','islands','place:Norge'])for(let run=0;run<30;run++)assert(create({game:'mapwiz',categories:[category]},0).targets.every(id=>!retired.has(id)));
+ const {env,db}=fixture(),now=Date.now(),c={game:'mapwiz',difficulties:['easy'],map:'world'},cached=create(c,now),token='c'.repeat(64),hash=Buffer.from(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(token))).toString('hex');
+ cached.targets=[...retired,...cached.targets.filter(id=>!retired.has(id))].slice(0,10);
+ cached.plan.forEach((q,i)=>q.target=cached.targets[i]);issue(cached,now);
+ db.prepare('INSERT INTO sessions VALUES(?,?,?,?,?)').run(hash,board(c),JSON.stringify(cached),now,now+60000);
+ db.prepare('INSERT INTO scores VALUES(?,?,?,?,?,?)').run('before-mapwiz-cleanup',board(c),'Earlier result',901.9,35250,1000);
+ const before=db.prepare('SELECT * FROM scores').all();
+ const call=async(url,body)=>{const r=await worker.fetch(req(url,body,token),env);return {status:r.status,body:await r.json()};};
+ try{
+  for(let i=0;i<10;i++){
+   const q=cached.plan[i],t=all.get(q.target),reply=await call('/answer',{requestId:crypto.randomUUID(),question:q.id,lat:t.lat,lon:t.lon});
+   assert.equal(reply.status,200,'Already-issued target remains answerable: '+t.name);assert.equal(reply.body.feedback.base,100);
+   if(i<9)assert.equal((await call('/next',{requestId:crypto.randomUUID()})).status,200);
+  }
+  assert.deepEqual(db.prepare('SELECT * FROM scores').all(),before,'Cleanup never deletes or migrates an existing score');
+  assert.equal(board(c),'v1:{"game":"mapwiz","difficulties":["easy"]}');
+ }finally{db.close();}
 });
 test('all eighteen approved historical and polar additions remain hard and fit the world map',()=>{
  const referenceText=fs.readFileSync(new URL('../assets/geography/mapwiz-prototype-data.js',import.meta.url),'utf8'),reference=JSON.parse(referenceText.match(/window.MAPWIZ_PROTOTYPE_DATA=(.*);/)[1]);
@@ -35,7 +64,7 @@ test('all eighteen approved historical and polar additions remain hard and fit t
  const additions=Object.values(data.mapwiz).flat().filter(target=>data.mapwizAdditions.includes(target.id));assert.equal(additions.length,18);assert.equal(Object.values(data.mapwiz).flat().length-additions.length,776,'Every original target remains available');
  assert.equal(data.mapwiz.historical.length,15);assert.equal(data.mapwiz.regions.length,32);
  const core=fs.readFileSync(new URL('../assets/geography/core.js',import.meta.url),'utf8'),originals=JSON.parse(core.match(/const GEO_PLACE_TARGETS = (\[[^\n]+\]);/)[1]);
- for(const target of additions){const original=originals.find(item=>item.name===target.name);assert(original);if(target.name==='Arktis'){assert.equal(original.lat,82,'The original source remains unchanged');assert.equal(target.lat,80,'The Arctic region uses a representative point inside the requested northern crop');}else assert.equal(target.lat,original.lat);assert.equal(target.lon,original.lon);assert(target.lat>=-84&&target.lat<=81);assert(data.mapwizDifficulties.hard.includes(target.id),'Every approved addition is in the hard pool');}
+ for(const target of additions){const original=originals.find(item=>item.name===target.name);assert(original);if(target.name==='Arktis'){assert.equal(original.lat,82,'The original source remains unchanged');assert.equal(target.lat,80,'The Arctic region uses a representative point inside the requested northern crop');}else assert.equal(target.lat,original.lat);assert.equal(target.lon,original.lon);assert(target.lat>=-84&&target.lat<=81);assert.equal(data.mapwizDifficulties.hard.includes(target.id),!data.mapwizRetired.includes(target.id),'Every approved addition is hard unless explicitly retired as a duplicate');}
  for(let run=0;run<100;run++){const previous=create({game:'mapwiz',difficulties:['hard']},0);assert(previous.targets.every(id=>!data.mapwizAdditions.includes(id)),'Cached clients keep their original reference pool');}
  for(const target of additions){const current=create({game:'mapwiz',difficulties:['hard'],map:'world'},1000);current.current.target=target.id;current.targets[0]=target.id;current.plan[0].target=target.id;assert.equal(answer(current,{question:current.current.id,lat:target.lat,lon:target.lon},1100).base,100,'Every added target accepts its original geographic answer');}
 });

@@ -5,7 +5,8 @@ Kartets fulle bildeflate dekker 81° nord til 84° sør og alle lengdegrader.
 Nordkanten ligger like nord for Svalbard. Standardutsnittet er 78,5° nord til
 58,8° sør, lagret som `initialView` i manifestet, og fyller spillområdet.
 Den øvrige sørlige bildeflaten kan nås ved å flytte eller zoome kartet.
-Alle 794 oppføringer, inkludert Arktis, Antarktis og Dronning Mauds land,
+Alle 785 aktive oppføringer og de ni bevarte referanseoppføringene,
+inkludert Arktis, Antarktis og Dronning Mauds land,
 ligger innenfor det fulle kartet. Arktis har siktepunkt 80° nord, 0° øst,
 innenfor det fulle kartet. Det nye startutsnittet skjærer omtrent midt gjennom
 Svalbard; nordlige siktepunkter nås ved panorering.
@@ -129,3 +130,20 @@ Oppgaveutvalg, nivåplassering, poengberegning og topplisteidentiteter er behold
 Norden-/Europa-opphopningen og at få mål i Stillehavsområdet ikke blir et
 obligatorisk innslag. Nettlesertesten kontrollerer også den faktiske lokale
 rundetrekningen, mens API-testene følger verifiserte spill som før.
+
+
+## Opprydding i oppgaveutvalget
+
+Normal har 212 oppføringer, Vanskelig 346 og Hjerterå 227.
+`retiredTargets` i `mapwiz-difficulties.json` dokumenterer åtte dobbeltføringer
+og Valencia (Natural Earth-oppføringen pekte til Venezuela). Normal bruker nå
+bare Everest og Østersjøen; Oslo, Bergen, Trondheim, Stavanger og Jan Mayen
+har én stedsoppgave hver. Det gamle navnet Seylon beholdes, mens
+den alternative skrivemåten Ceylon tas ut. Ulike oppgaver med samme navn, som flagget til
+Madagaskar og øya Madagaskar, beholdes.
+
+De ni utgåtte oppføringene mangler aktive nivåtilordninger. Nettleseren
+og serveren trekker dem aldri i nye runder, heller ikke ved gamle kategori-
+valg. Serverens koordinatreferanse beholder deres id-er, slik at påbegynte
+runder fortsatt kan fullføres. Eksisterende topplister og deres nøkler beholdes;
+oppryddingen oppretter ingen ekstra historiske topplistevalg.

@@ -66,15 +66,25 @@ const data={version:1,statle:JSON.parse(read('assets/geography/us-states.json'))
 const difficulties=JSON.parse(read('assets/geography/mapwiz-difficulties.json'));
 if(JSON.stringify(difficulties)!==JSON.stringify(reference.difficulties)||difficulties.version!==1||difficulties.levels.map(level=>level.id).join(',')!=='easy,medium,hard')throw Error('Rebuild MapWiz difficulty reference data');
 if(Object.keys(difficulties.assignments).sort().join('|')!==Object.keys(data.mapwiz).sort().join('|'))throw Error('Every MapWiz category requires difficulty assignments');
+// Retain retired ids in the reference map for already-issued questions. They
+// are absent from every new draw and from the browser's active assignments.
+const retiredKeys=new Set();
+for(const target of difficulties.retiredTargets||[]){
+ const key=JSON.stringify([target.category,target.name]);
+ if(retiredKeys.has(key)||!data.mapwiz[target.category]?.some(t=>t.name===target.name)||Object.hasOwn(difficulties.assignments[target.category],target.name))throw Error('Invalid retired MapWiz target: '+key);
+ if(target.duplicateOf&&!Object.hasOwn(difficulties.assignments[target.duplicateOf.category]||{},target.duplicateOf.name))throw Error('Retired duplicate requires an active canonical target: '+key);
+ retiredKeys.add(key);
+}
+data.mapwizRetired=Object.values(data.mapwiz).flat().filter(target=>retiredKeys.has(JSON.stringify([target.category,target.name]))).map(target=>target.id);
 data.mapwizDifficulties=Object.fromEntries(difficulties.levels.map(level=>[level.id,[]]));
 for(const [category,targets]of Object.entries(data.mapwiz)){
- const assignments=difficulties.assignments[category];
- if(Object.keys(assignments).length!==targets.length||targets.some(target=>!Object.hasOwn(assignments,target.name)))throw Error('Every MapWiz target requires exactly one difficulty: '+category);
- for(const target of targets){const level=assignments[target.name];if(!Object.hasOwn(data.mapwizDifficulties,level))throw Error('Invalid MapWiz difficulty: '+target.name);data.mapwizDifficulties[level].push(target.id);}
+ const assignments=difficulties.assignments[category],active=targets.filter(target=>!retiredKeys.has(JSON.stringify([category,target.name])));
+ if(Object.keys(assignments).length!==active.length||active.some(target=>!Object.hasOwn(assignments,target.name)))throw Error('Every active MapWiz target requires exactly one difficulty: '+category);
+ for(const target of active){const level=assignments[target.name];if(!Object.hasOwn(data.mapwizDifficulties,level))throw Error('Invalid MapWiz difficulty: '+target.name);data.mapwizDifficulties[level].push(target.id);}
 }
-// Cached clients without the world-map marker keep the original 776-target pool.
+// Cached clients without the world-map marker exclude the eighteen additions.
 data.mapwizAdditions=Object.values(data.mapwiz).flat().filter(target=>extraTargets.some(extra=>target.name===extra.name&&target.lat===extra.lat&&target.lon===extra.lon)).map(target=>target.id);
-if(data.mapwizAdditions.length!==18||Object.values(data.mapwiz).flat().length!==794)throw Error('MapWiz requires 794 targets including exactly eighteen approved additions');
+if(data.mapwizAdditions.length!==18||Object.values(data.mapwiz).flat().length!==794||data.mapwizRetired.length!==9||Object.values(data.mapwizDifficulties).flat().length!==785)throw Error('MapWiz requires 785 active targets, nine retired reference ids and eighteen approved additions');
 const files=['mapwiz-difficulties.json','core.js','quiz-data.js','mapwiz-prototype-data.js','mapwiz-river-data.js','quiz-english-names.json','us-states.json','norway-counties.json','continent-maps.json',...physicalFiles,'physical-maps/world-water-v2.json','municipalities/index-v3.json','municipalities/index-v2.json','municipalities/county-03-v2.json','municipalities/index.json','municipalities/county-03.json',...municipalityFiles,'oslo-bydeler/oslo.json','oslo-bydeler/map.json','oslo-bydeler/oslo-00fc86a8a4bf.json','oslo-bydeler/oslo-fa9842cf0c7a.json','oslo-bydeler/oslo-8350eadb74db.json'];data.sourceHash=crypto.createHash('sha256').update(files.map(f=>read('assets/geography/'+f)).join('\n')+'\n'+read('services/geography-scores/legacy-oslo-targets.json')+'\n'+read('services/geography-scores/legacy-oslo-28-targets.json')+'\n'+read('services/geography-scores/legacy-oslo-57-targets.json')+'\n'+read('services/geography-scores/legacy-oslo-35-targets.json')+'\n'+read('services/geography-scores/legacy-oslo-surroundings-54-targets.json')).digest('hex');
 const file=path.join(root,'services/geography-scores/data.json'),result=JSON.stringify(data)+'\n';
 if(process.argv.includes('--check')){if(fs.readFileSync(file,'utf8').replace(/\r\n/g,'\n')!==result)throw Error('Run scripts/build-geography-score-data.cjs');}else{fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,result);}
