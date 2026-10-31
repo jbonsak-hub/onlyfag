@@ -1,7 +1,7 @@
-import {nutrientMapSlots} from './figures.js?v=20261031-4';
-import {structureQuestions} from './structure-questions.js?v=20261031-4';
-import {documentQuestions} from './document-questions.js?v=20261031-4';
-import {ndlaQuestions} from './ndla-questions.js?v=20261031-4';
+import {nutrientMapSlots} from './figures.js?v=20261031-5';
+import {structureQuestions} from './structure-questions.js?v=20261031-5';
+import {documentQuestions} from './document-questions.js?v=20261031-5';
+import {ndlaQuestions} from './ndla-questions.js?v=20261031-5';
 
 // Oppgaver avgrenset til undervisningsmaterialet og oppgitt begrepsliste.
 const coreQuestions = [

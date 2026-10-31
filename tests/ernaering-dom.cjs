@@ -58,8 +58,14 @@ open('energy-fuels');click([...w.document.querySelectorAll('[data-option]')].fin
 const wrong=[...w.document.querySelectorAll('[data-option]')].find(b=>b.textContent.includes('Vann'));wrong.click();click('#check-answer');assert.ok([...w.document.querySelectorAll('[data-option]')].find(b=>b.textContent.includes('Karbohydrater')).disabled);assert.ok(![...w.document.querySelectorAll('[data-option]')].find(b=>b.textContent.includes('Vann')).disabled);
 // Open answers require writing and checklist; no keyword matching.
 open('protein-quality');click('#show-model');assert.equal($('.open-model'),null);set('#open-answer','Et helt fritt formulert svar.','input');click('#show-model');click('#self-confident');assert.match($('#feedback-title').textContent,/kjennetegn/);click('#self-review');assert.match($('#feedback-title').textContent,/repetisjon/);
-// Filtering and empty state.
-click('#bank-tab');set('#type-filter','anatomy');assert.equal(w.document.querySelectorAll('.bank-row').length,1);set('#bank-search','ingen_slike_ord','input');assert.equal(w.document.querySelectorAll('.bank-row').length,0);set('#bank-search','', 'input');set('#type-filter','all');
+// The task bank retains search and academic topic navigation without filter UI.
+click('#bank-tab');set('#bank-search','ingen_slike_ord','input');
+assert.equal(w.document.querySelectorAll('.bank-row').length,0);
+set('#bank-search','','input');click('[data-topic="digestion"]');
+assert.equal(w.document.querySelectorAll('.bank-row').length,questions.filter(q=>q.topic==='digestion').length);
+click('[data-topic="all"]');
+assert.equal(w.document.querySelectorAll('.bank-row').length,questions.length);
+for(const selector of ['#filter-toggle','#filter-bar','#type-filter','#level-filter','#status-filter','#shuffle-queue'])assert.equal($(selector),null,selector+' is removed');
 // Presented/skipped questions count in rotation, and reload does not restart the pool.
 const rotationFlow=boot();const shown=[];
 for(let i=0;i<15;i++){
@@ -67,9 +73,8 @@ for(let i=0;i<15;i++){
  assert.ok(!shown.includes(id),'skipped question repeated before completing the pool');shown.push(id);
  rotationFlow.click('#next-question');
 }
-assert.equal(rotationFlow.$('#filter-bar').hidden,true,'filters should be secondary by default');
-rotationFlow.click('#filter-toggle');assert.equal(rotationFlow.$('#filter-bar').hidden,false);
-rotationFlow.click('#filter-toggle');assert.equal(rotationFlow.$('#filter-bar').hidden,true);
+assert.equal(rotationFlow.$('#filter-toggle'),null,'practice has no filter control');
+assert.equal(rotationFlow.$('#filter-bar'),null,'practice has no hidden filter form');
 const rotationStored=rotationFlow.w.localStorage.getItem('onlyfag.nutrition.v1');
 const reloadedRotation=boot({stored:rotationStored});
 assert.ok(!shown.includes(reloadedRotation.$('[data-question]').dataset.question),'reload should preserve recent history and continue to an unseen question');
@@ -138,4 +143,4 @@ independent.click('#about-button');independent.click('#reset-progress');independ
 assert.equal(Object.values(JSON.parse(independent.w.localStorage.getItem('onlyfag.nutrition.v1')).recentResults).flat().length,0,'reset clears recent-answer windows');
 assert.equal(independent.w.localStorage.getItem('chemistryProgressV18'),'keep-chemistry','nutrition reset leaves chemistry history untouched');
 independent.dom.window.close();scores.dom.window.close();
-assert.equal(t.errors.length,0);w.close();console.log('Partial answers, review, reveal, filters, persistence, mobile navigation, isolated reset and last-twenty percentages: passed.');
+assert.equal(t.errors.length,0);w.close();console.log('Partial answers, review, reveal, bank search, filter removal, persistence, mobile navigation, isolated reset and last-twenty percentages: passed.');

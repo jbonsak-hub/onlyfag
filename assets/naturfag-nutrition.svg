@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" fill="none">
+  <title>Næringsstoffer og fordøyelsen</title>
+  <desc>Illustrasjon av planter, ringformede molekyler og en enkel modell av magesekk og tarm.</desc>
+  <rect width="640" height="360" fill="#f5f1e6"/>
+  <ellipse cx="330" cy="187" rx="242" ry="137" fill="#ece9d8"/>
+  <path d="M87 256c-23-24-29-58-18-88 30 10 49 40 47 72" fill="#a8c29d"/>
+  <path d="M109 272c-4-46 12-88 52-109 17 44-3 87-39 111" fill="#789e7c"/>
+  <path d="m91 208 26 75m24-76-24 76" stroke="#49765c" stroke-width="3" stroke-linecap="round"/>
+  <path d="M70 281c31 8 68 8 99 0l-17 26H86Z" fill="#d9b58c"/>
+  <path d="M70 281c31 8 68 8 99 0" stroke="#b28e66" stroke-width="3" stroke-linecap="round"/>
+  <g stroke="#72957a" stroke-width="5" stroke-linejoin="round">
+    <path d="m206 103 24-42h49l24 42-24 42h-49Z" fill="#d5e1bd"/>
+    <path d="m290 213 24-42h49l24 42-24 42h-49Z" fill="#c3d4b1"/>
+    <path d="m279 145 35 26" stroke-width="4"/>
+  </g>
+  <g fill="#f9fbf0" stroke="#72957a" stroke-width="3">
+    <circle cx="230" cy="61" r="8"/>
+    <circle cx="206" cy="103" r="8"/>
+    <circle cx="230" cy="145" r="8"/>
+    <circle cx="279" cy="145" r="8"/>
+    <circle cx="303" cy="103" r="8"/>
+    <circle cx="279" cy="61" r="8" fill="#d5ac87" stroke="#b68d69"/>
+    <circle cx="314" cy="171" r="8"/>
+    <circle cx="290" cy="213" r="8"/>
+    <circle cx="314" cy="255" r="8"/>
+    <circle cx="363" cy="255" r="8"/>
+    <circle cx="387" cy="213" r="8"/>
+    <circle cx="363" cy="171" r="8" fill="#d5ac87" stroke="#b68d69"/>
+  </g>
+  <g stroke="#72957a" stroke-width="3" stroke-linecap="round">
+    <path d="M197 104h-17M230 156l-8 16M363 266l8 15M398 213h16"/>
+  </g>
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M465 58c5 20 5 42 1 63" stroke="#bd9776" stroke-width="17"/>
+    <path d="M466 120c7 14 12 19 23 17 5-18 29-21 41-5 18 22 18 58-2 75-22 19-61 18-74-7-10-20-8-38 9-44 9-4 8-19 3-36Z" fill="#d5ab7e" stroke="#a9815d" stroke-width="3"/>
+    <path d="M524 145c9 15 9 31 0 43" stroke="#ecd1ad" stroke-width="6"/>
+    <path d="M464 209c-21-2-30 11-21 23 7 10 27 8 39 12" stroke="#af8f63" stroke-width="11"/>
+    <path d="M426 301v-57c0-12 8-20 21-20h73c15 0 23 10 23 24v48c0 13-10 20-25 17l-20-4v18" stroke="#7d9d82" stroke-width="16"/>
+    <path d="M452 244c60-7 73 7 18 16-32 6-31 14 21 15 39 1 35 14-33 17" stroke="#c9a275" stroke-width="10"/>
+  </g>
+  <circle cx="177" cy="68" r="5" fill="#d5bb8e"/>
+  <circle cx="570" cy="230" r="5" fill="#b2c7a4"/>
+  <path d="M543 75h14m-7-7v14M236 293h12m-6-6v12" stroke="#c6c9ad" stroke-width="2" stroke-linecap="round"/>
+</svg>

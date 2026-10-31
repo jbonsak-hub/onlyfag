@@ -1,7 +1,7 @@
-import {questions, sources} from './questions.js?v=20261031-4';
-import {organs, digestiveSVG} from './diagram.js?v=20261031-4';
-import {figure} from './figures.js?v=20261031-4';
-import {STORE_KEY, topics, types, shuffle, mixedOrder, evaluate, needsReview, resultRecord, pickNext, rememberQuestion, recentSummary, recordRecentResult} from './engine.js?v=20261031-4';
+import {questions, sources} from './questions.js?v=20261031-5';
+import {organs, digestiveSVG} from './diagram.js?v=20261031-5';
+import {figure} from './figures.js?v=20261031-5';
+import {STORE_KEY, topics, types, shuffle, mixedOrder, evaluate, needsReview, resultRecord, pickNext, rememberQuestion, recentSummary, recordRecentResult} from './engine.js?v=20261031-5';
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -15,7 +15,7 @@ const embedded=params.get('embedded')==='1'&&window.parent!==window;
 if(embedded)document.documentElement.classList.add('nutrition-embedded');
 const initialTopic=params.get('topic');
 const validTopic=topic=>topic==='all'||topic==='review'||Object.hasOwn(topics,topic);
-const state={topic:validTopic(initialTopic)?initialTopic:'all',type:'all',level:'all',status:'all',view:'practice',search:'',queue:[],id:null};
+const state={topic:validTopic(initialTopic)?initialTopic:'all',view:'practice',search:'',queue:[],id:null};
 if(!data.rotation || !Array.isArray(data.rotation.seen) || !Array.isArray(data.rotation.recent))data.rotation={seen:[],recent:[]};
 if(!data.recentResults||typeof data.recentResults!=='object'||Array.isArray(data.recentResults))data.recentResults={};
 const sessions=new Map();
@@ -28,10 +28,10 @@ function session(q=current()){
   if(!sessions.has(q.id)) sessions.set(q.id,{values:q.type==='order'?mixedOrder(q.items):[],options:shuffle(q.options||[]),right:shuffle(q.pairs?.map(p=>p.right)||[]),labels:shuffle(organs),locked:new Set(),marks:[],assisted:Number(data.records[q.id]?.assistedUntil)>Date.now(),done:false,revealed:false,model:false,checks:[],feedback:null,text:'',hint:false,selected:null,scored:false});
   return sessions.get(q.id);
 }
-function filtered(){return questions.filter(q=>(state.topic==='all'||state.topic==='review'&&needsReview(data.records[q.id])||q.topic===state.topic) && (state.type==='all'||q.type===state.type) && (state.level==='all'||q.level===Number(state.level)) && (state.status==='all'||state.status==='new'&&!data.records[q.id]||state.status==='review'&&needsReview(data.records[q.id])||data.records[q.id]?.status===state.status));}
+function topicQuestions(){return questions.filter(q=>state.topic==='all'||state.topic==='review'&&needsReview(data.records[q.id])||q.topic===state.topic);}
 function statusLabel(q){const r=data.records[q.id];if(!r)return 'Ikke prøvd';if(needsReview(r))return r.status==='review'?'Øv på nytt':'Tid for repetisjon';return r.status==='self'?'Egenvurdert':'Riktig uten hjelp';}
-function rebuildQueue(){state.queue=filtered().map(q=>q.id);}
-function chooseQuestion(){return pickNext(filtered(),data.rotation,data.records)?.id||null;}
+function rebuildQueue(){state.queue=topicQuestions().map(q=>q.id);}
+function chooseQuestion(){return pickNext(topicQuestions(),data.rotation,data.records)?.id||null;}
 function saveResult(outcome){const q=current();data.records[q.id]=resultRecord(data.records[q.id],outcome);save();renderProgress();}
 function markAssisted(){const s=session();s.assisted=true;saveResult({assisted:true,correct:false,completed:s.done,self:current().type==='open'});}
 function statsSnapshot(){return Object.fromEntries([...Object.keys(topics),'all'].map(topic=>[topic,recentSummary(data.recentResults,topic)]));}
@@ -63,14 +63,11 @@ function renderNav(){
   renderProgress();
 }
 function selectOptions(entries,value){return entries.map(([v,l])=>`<option value="${esc(v)}" ${String(value)===String(v)?'selected':''}>${esc(l)}</option>`).join('');}
-function renderFilters(){
-  $('#filter-bar').innerHTML=`<span class="filter-title">${esc(topics[state.topic]||(state.topic==='review'?'Øv på nytt':'Alle temaer'))}</span><label>Type <select id="type-filter">${selectOptions([['all','Alle oppgavetyper'],...Object.entries(types)],state.type)}</select></label><label>Nivå <select id="level-filter">${selectOptions([['all','Begge nivåer'],['1','Grunnleggende'],['2','Bruk og forklar']],state.level)}</select></label><label>Status <select id="status-filter">${selectOptions([['all','Alle'],['new','Ikke prøvd'],['review','Øv på nytt'],['independent','Riktig uten hjelp'],['self','Egenvurdert']],state.status)}</select></label>${state.view==='practice'?'<button class="text-button" id="shuffle-queue">Bland rekkefølgen ↔</button>':''}`;
-}
-function renderShell(){renderNav();renderFilters();$('#active-topic').textContent=topics[state.topic]||(state.topic==='review'?'Øv på nytt':'Blandet øving');for(const v of ['practice','bank']){$('#'+v+'-tab').classList.toggle('active',state.view===v);$('#'+v+'-tab').setAttribute('aria-pressed',state.view===v);}if(state.view==='bank')renderBank();else renderQuestion();}
+function renderShell(){renderNav();$('#active-topic').textContent=topics[state.topic]||(state.topic==='review'?'Øv på nytt':'Blandet øving');for(const v of ['practice','bank']){$('#'+v+'-tab').classList.toggle('active',state.view===v);$('#'+v+'-tab').setAttribute('aria-pressed',state.view===v);}if(state.view==='bank')renderBank();else renderQuestion();}
 function openQuestion(id,{focus=true,fresh=false}={}){
   if(!questions.some(q=>q.id===id))return;
   const changed=state.id!==id;state.id=id;state.view='practice';data.lastId=id;if(changed)rememberQuestion(data.rotation,current());if(fresh||sessions.get(id)?.done)sessions.delete(id);
-  if(!state.queue.includes(id))state.queue=filtered().map(q=>q.id);
+  if(!state.queue.includes(id))state.queue=topicQuestions().map(q=>q.id);
   history.replaceState(null,'','#'+id);save();renderShell();
   if(focus){$('.task-heading')?.focus();window.scrollTo({top:0,behavior:'instant'});}
 }
@@ -79,9 +76,9 @@ function renderBank(){
   $('#content').innerHTML='<label class="sr-only" for="bank-search">Søk etter oppgave eller fagbegrep</label><input id="bank-search" class="bank-search" type="search" placeholder="Søk etter oppgave eller fagbegrep…"><p class="bank-summary" id="bank-summary" aria-live="polite"></p><div class="bank-list" id="bank-list"></div>';
   $('#bank-search').value=state.search;renderBankRows();
 }
-function renderBankRows(){const query=state.search.toLocaleLowerCase('nb');const list=filtered().filter(q=>[q.title,q.prompt,topics[q.topic],types[q.type]].join(' ').toLocaleLowerCase('nb').includes(query));
+function renderBankRows(){const query=state.search.toLocaleLowerCase('nb');const list=topicQuestions().filter(q=>[q.title,q.prompt,topics[q.topic],types[q.type]].join(' ').toLocaleLowerCase('nb').includes(query));
   $('#bank-summary').textContent=`${list.length} oppgaver`;
-  $('#bank-list').innerHTML=list.length?list.map((q,i)=>`<button class="bank-row" data-open="${q.id}"><span class="bank-index">${String(i+1).padStart(2,'0')}</span><span><strong>${esc(q.title)}</strong><small>${esc(topics[q.topic])} · ${types[q.type]} · Nivå ${q.level}</small></span><span class="bank-state ${data.records[q.id]?.status==='independent'?'done':''}">${statusLabel(q)} →</span></button>`).join(''):'<p>Ingen treff. Prøv et annet søkeord eller juster filtrene.</p>';
+  $('#bank-list').innerHTML=list.length?list.map((q,i)=>`<button class="bank-row" data-open="${q.id}"><span class="bank-index">${String(i+1).padStart(2,'0')}</span><span><strong>${esc(q.title)}</strong><small>${esc(topics[q.topic])} · ${types[q.type]} · Nivå ${q.level}</small></span><span class="bank-state ${data.records[q.id]?.status==='independent'?'done':''}">${statusLabel(q)} →</span></button>`).join(''):'<p>Ingen treff. Prøv et annet søkeord.</p>';
 }
 function keepFocus(render){const active=document.activeElement;const id=active?.id;render();if(id){const el=document.getElementById(id);if(el&&!el.disabled)el.focus({preventScroll:true});else $('#check-answer')?.focus({preventScroll:true});}}
 function mark(i){const s=session();return s.marks[i]===true?'correct':s.marks[i]===false?'wrong':'';}
@@ -120,7 +117,7 @@ function answerUI(q,s){
   return '';
 }
 function renderQuestion(){
-  const q=current();if(!q){$('#content').innerHTML=`<div class="empty-state"><h2>${state.topic==='review'?'Ingen oppgaver til repetisjon nå':'Ingen oppgaver med disse filtrene'}</h2><p>${state.topic==='review'?'Oppgaver du fikk hjelp med, og oppgaver det er tid for å repetere, samles her.':'Prøv en annen kombinasjon av tema, type og nivå.'}</p><button id="clear-filters" class="primary">Vis alle oppgaver</button></div>`;return;}
+  const q=current();if(!q){$('#content').innerHTML=`<div class="empty-state"><h2>${state.topic==='review'?'Ingen oppgaver til repetisjon nå':'Ingen oppgaver i dette temaet'}</h2><p>${state.topic==='review'?'Oppgaver du fikk hjelp med, og oppgaver det er tid for å repetere, samles her.':'Velg et annet tema i menyen.'}</p><button id="show-all-topics" class="primary">Vis alle oppgaver</button></div>`;return;}
   const s=session(q);const i=state.queue.filter(id=>data.rotation.seen.includes(id)).length;
   const actions=`<div class="task-actions">${s.done?'<button id="next-question" class="primary">Neste oppgave →</button>':q.type==='open'?`<button id="show-model" class="primary" ${s.model?'disabled':''}>Sammenlign svaret</button>`:'<button id="check-answer" class="primary">Sjekk svaret</button>'}<button class="text-button" id="show-hint" aria-expanded="${s.hint}" ${s.done?'hidden':''}>Hint</button><button class="text-button" id="reveal-answer" ${s.done||s.model?'hidden':''}>Vis fasit</button>${!s.done?'<button id="next-question" class="text-button skip-task">Hopp over →</button>':'<button class="text-button" id="retry-question">Prøv på nytt</button>'}</div>`;
   const support=`${s.hint?`<p class="hint">${esc(q.hint)}</p>`:''}<div id="feedback-host"></div>`;
@@ -180,7 +177,7 @@ $('#content').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matche
 $('#content').addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b||b.disabled)return;
   if(b.dataset.open){openQuestion(b.dataset.open);return;}
-  if(b.id==='clear-filters'){Object.assign(state,{topic:'all',type:'all',level:'all',status:'all'});resetSelection();return;}
+  if(b.id==='show-all-topics'){state.topic='all';resetSelection();return;}
   if(b.id==='new-round'){sessions.clear();rebuildQueue();if(state.queue.length)openQuestion(chooseQuestion(),{fresh:true});else{state.id=null;renderShell();}return;}
   if(b.id==='go-bank'){state.view='bank';renderShell();return;}
   const q=current(),s=session();
@@ -201,18 +198,15 @@ $('#content').addEventListener('click',e=>{
 $('#content').addEventListener('dragstart',e=>{const b=e.target.closest('[data-label]');if(!b||b.disabled)return;e.dataTransfer.setData('text/plain',b.dataset.label);session().selected=b.dataset.label;});
 $('#content').addEventListener('dragover',e=>{if(current()?.type==='anatomy'&&e.target.closest('[data-target]:not(:disabled)'))e.preventDefault();});
 $('#content').addEventListener('drop',e=>{const b=e.target.closest('[data-target]');if(current()?.type!=='anatomy'||!b||b.disabled)return;e.preventDefault();const label=e.dataTransfer.getData('text/plain');if(ids.includes(label)){session().selected=label;target(b.dataset.target);}});
-$('#filter-toggle').onclick=()=>{const bar=$('#filter-bar');bar.hidden=!bar.hidden;$('#filter-toggle').setAttribute('aria-expanded',String(!bar.hidden));};
-$('#filter-bar').addEventListener('change',e=>{const key={'type-filter':'type','level-filter':'level','status-filter':'status'}[e.target.id];if(key){state[key]=e.target.value;resetSelection();}});
-$('#filter-bar').addEventListener('click',e=>{if(e.target.closest('#shuffle-queue')){rebuildQueue();if(state.queue.length)openQuestion(chooseQuestion(),{fresh:true});}});
 $('#topics').addEventListener('click',e=>{const b=e.target.closest('[data-topic]');if(b){state.topic=b.dataset.topic;resetSelection();closeMenu();}});
-$('#review-button').onclick=()=>{Object.assign(state,{topic:'review',status:'all',type:'all',level:'all'});resetSelection();closeMenu();};
+$('#review-button').onclick=()=>{Object.assign(state,{topic:'review'});resetSelection();closeMenu();};
 for(const v of ['practice','bank'])$('#'+v+'-tab').onclick=()=>{state.view=v;renderShell();closeMenu();};
 const dialog=$('#about-dialog');
 function showAbout(){dialog.showModal();$('#reset-confirm').hidden=true;}
 $('#about-button').onclick=showAbout;$('#sources-button').onclick=showAbout;$('#close-dialog').onclick=()=>dialog.close();
 $('#reset-progress').onclick=()=>{$('#reset-confirm').hidden=false;$('#cancel-reset').focus();};
 $('#cancel-reset').onclick=()=>{$('#reset-confirm').hidden=true;$('#reset-progress').focus();};
-$('#confirm-reset').onclick=()=>{data={version:1,records:{},lastId:questions[0].id,rotation:{seen:[],recent:[]},recentResults:{}};sessions.clear();save();dialog.close();Object.assign(state,{topic:'all',type:'all',level:'all',status:'all',view:'practice'});resetSelection();announce('Øvingshistorikken for ernæring og helse er nullstilt.');};
+$('#confirm-reset').onclick=()=>{data={version:1,records:{},lastId:questions[0].id,rotation:{seen:[],recent:[]},recentResults:{}};sessions.clear();save();dialog.close();Object.assign(state,{topic:'all',view:'practice'});resetSelection();announce('Øvingshistorikken for ernæring og helse er nullstilt.');};
 // Make the full, already-reviewed source list available only inside the dialog.
 const sourceList=dialog.querySelector('ul');sourceList.innerHTML=sources.map(s=>`<li>${s.url?`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>`:esc(s.title)}${s.description?` — ${esc(s.description)}`:''}</li>`).join('');
 const mobile=matchMedia('(max-width:760px)');
@@ -230,8 +224,8 @@ window.addEventListener('message',event=>{
   const message=event.data;
   if(message?.type==='onlyfag:nutrition:topic'&&validTopic(message.topic)){
     const view=message.view==='bank'?'bank':'practice';
-    if(message.topic===state.topic&&view===state.view&&state.type==='all'&&state.level==='all'&&state.status==='all'){publishState();return;}
-    state.topic=message.topic;state.type='all';state.level='all';state.status='all';
+    if(message.topic===state.topic&&view===state.view){publishState();return;}
+    state.topic=message.topic;
     state.view=message.view==='bank'?'bank':'practice';
     resetSelection();
   }

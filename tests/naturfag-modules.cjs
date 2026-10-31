@@ -25,17 +25,19 @@ const topicOrder=['carbs','protein','fat','micro','digestion','energy','all'];
  try{
   browser=await chromium.launch({headless:true,executablePath:process.env.BROWSER_EXECUTABLE||'/usr/bin/chromium'});
   async function nutritionFrame(page){return (await page.locator('#nutrition-module-frame').elementHandle()).contentFrame();}
-  async function newPage(viewport){
+  async function newPage(viewport,{route='#nutrition/carbs'}={}){
    const context=await browser.newContext({viewport,reducedMotion:'reduce'});
    await context.route('**/*',route=>{
     const req=route.request(),url=req.url();
     return ['GET','HEAD'].includes(req.method())&&(url.startsWith(base+'/')||/^(data|blob):/.test(url))?route.continue():route.abort();
    });
    const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
-   await page.goto(base+'/naturfag.html#nutrition/carbs');
-   await page.locator('#nutrition-module-frame').waitFor();
-   const frame=await nutritionFrame(page);
-   await frame.locator('[data-question]').waitFor();
+   await page.goto(base+'/naturfag.html'+route);
+   let frame=null;
+   if(route.startsWith('#nutrition/')){
+    await page.locator('#nutrition-module-frame').waitFor();frame=await nutritionFrame(page);
+    await frame.locator('[data-question]').waitFor();
+   }else await page.locator('#page-subjects.active').waitFor();
    return {page,context,frame};
   }
   async function showMenu(page){
@@ -76,6 +78,51 @@ const topicOrder=['carbs','protein','fat','micro','digestion','energy','all'];
     const r=document.querySelector(selector)?.getBoundingClientRect();return [selector,r&&r.width>0&&r.height>0?{left:r.left,top:r.top,right:r.right,bottom:r.bottom}:null];
    }))
   }));}
+  // A canonical visit always begins with the two illustrated subject choices.
+  for(const [width,height] of [[1366,768],[1280,720],[390,844]]){
+   const viewport={width,height},{page,context}=await newPage(viewport,{route:''});
+   assert.equal(await page.locator('#page-subjects.active').count(),1,'canonical arrival shows the subject chooser');
+   assert.equal(await page.locator('.nf-subject-card').count(),2,'only the two main subject cards are shown');
+   assert.equal(await page.locator('#nf-chemistry-group').evaluate(el=>el.open),false);
+   assert.equal(await page.locator('#nf-nutrition-group').evaluate(el=>el.open),false);
+   for(const subject of ['chemistry','nutrition']){
+    const card=page.locator(`.nf-subject-card[data-subject="${subject}"]`);
+    assert.ok(await card.isVisible(),subject+' card is visible');
+    const image=card.locator('img');assert.equal(await image.count(),1,subject+' has one illustration');
+    await image.evaluate(image=>image.decode());
+    assert.ok(await image.evaluate(image=>image.complete&&image.naturalWidth>0&&image.getBoundingClientRect().height>70),subject+' illustration is loaded and substantial');
+   }
+   const homeGeometry=await page.evaluate(()=>({innerWidth,innerHeight,scrollWidth:document.documentElement.scrollWidth,scrollHeight:document.documentElement.scrollHeight,bounds:Object.fromEntries([...document.querySelectorAll('.nf-subject-card')].map(el=>{const r=el.getBoundingClientRect();return [el.dataset.subject,{left:r.left,top:r.top,right:r.right,bottom:r.bottom}];}))}));
+   checkBounds('illustrated default landing',viewport,homeGeometry);
+   await shot(page,width+'-default-subjects');
+   const chemistryCard=page.locator('.nf-subject-card[data-subject="chemistry"]');
+   assert.equal(await chemistryCard.getAttribute('href'),'#chemistry/home');
+   await chemistryCard.focus();await page.keyboard.press('Enter');
+   await page.locator('#page-home.active').waitFor();
+   assert.equal(await page.locator('#nf-chemistry-group').evaluate(el=>el.open),true);
+   const chemistryText=page.locator('.nav-btn[data-page="atom"] .nav-txt');
+   const chemistryFont=await chemistryText.evaluate(el=>({size:getComputedStyle(el).fontSize,weight:getComputedStyle(el).fontWeight}));
+   await showMenu(page);await page.locator('#nfSubjectsHome').click();
+   await page.locator('#page-subjects.active').waitFor();
+   const nutritionCard=page.locator('.nf-subject-card[data-subject="nutrition"]');
+   assert.equal(await nutritionCard.getAttribute('href'),'#nutrition/all');await nutritionCard.click();
+   await page.waitForFunction(()=>location.hash==='#nutrition/all');
+   const frame=await nutritionFrame(page);await frame.locator('[data-question]').waitFor();
+   await showMenu(page);
+   const nutritionFont=await page.locator('.nf-nutrition-topic[data-nutrition-topic="carbs"]>span:first-child').evaluate(el=>({size:getComputedStyle(el).fontSize,weight:getComputedStyle(el).fontWeight}));
+   assert.deepEqual(nutritionFont,chemistryFont,'both subject submenus use identical typography');
+   assert.deepEqual(nutritionFont,{size:'13px',weight:'700'},'the shared submenu typography is medium-sized and bold');
+   if(width<=860){await page.keyboard.press('Escape');}
+   assert.equal(await frame.locator('#filter-toggle,#filter-bar').count(),0,'embedded nutrition has no filter controls');
+   assert.equal(await frame.getByRole('button',{name:'Filter',exact:true}).count(),0);
+   await page.goBack();await page.locator('#page-subjects.active').waitFor();
+   await page.goForward();await page.waitForFunction(()=>location.hash==='#nutrition/all');
+   await page.goto(base+'/naturfag.html');await page.locator('#page-subjects.active').waitFor();
+   await page.reload();await page.locator('#page-subjects.active').waitFor();
+   assert.equal(await page.locator('.nf-subject-card').count(),2,'a canonical reload stays on the subject landing rather than a remembered exercise');
+   await context.close();
+  }
+
   // Each embedded topic uses the host navigation. No duplicated child sidebar.
   const {page,context,frame}=await newPage({width:1366,height:768});
   assert.equal(await page.locator('#nf-chemistry-group summary').count(),1);
@@ -83,6 +130,7 @@ const topicOrder=['carbs','protein','fat','micro','digestion','energy','all'];
   assert.deepEqual(await page.locator('.nf-nutrition-topic').evaluateAll(els=>els.map(el=>el.dataset.nutritionTopic)),topicOrder);
   assert.equal(await frame.locator('#sidebar').isVisible(),false,'embedded mode has only the host sidebar');
   assert.equal(await frame.locator('#menu-button').isVisible(),false,'embedded mode has only the host menu opener');
+  assert.equal(await frame.locator('#filter-toggle,#filter-bar').count(),0,'filter controls are removed');
   await frame.locator('#about-button').click();
   assert.doesNotMatch(await frame.locator('#about-dialog').innerText(),/presentasjon|vedlegg|prøve(?:n|ark| fra)|2016|lærerens|timene/i,'public help and sources do not assume a particular classroom');
   await frame.locator('#close-dialog').click();
@@ -190,6 +238,6 @@ const topicOrder=['carbs','protein','fat','micro','digestion','energy','all'];
   console.log(JSON.stringify({metrics,overflows,errors},null,2));
   assert.deepEqual(errors,[],'no browser exceptions in either module');
   assert.deepEqual(overflows,[],'host and embedded task controls fit together without nested scrolling');
-  console.log('Naturfag module navigation, shared statistics, routes, preserved chemistry and embedded layouts: passed.');
+  console.log('Naturfag illustrated landing, shared typography, filter removal, module navigation, statistics, routes, preserved chemistry and embedded layouts: passed.');
  }catch(error){console.error(JSON.stringify({overflows,errors},null,2));throw error;}finally{if(browser)await browser.close();await new Promise(resolve=>server.close(resolve));}
 })().catch(error=>{console.error(error);process.exitCode=1;});

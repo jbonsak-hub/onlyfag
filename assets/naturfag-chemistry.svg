@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" fill="none">
+  <title>Kjemi</title>
+  <desc>Illustrasjon av en molekylmodell, en kolbe og et utsnitt med grunnstoffruter.</desc>
+  <rect width="640" height="360" fill="#edf4f2"/>
+  <ellipse cx="336" cy="189" rx="241" ry="139" fill="#e0ece7"/>
+  <path d="M71 105c29-49 84-60 137-42M451 290c54 13 96-1 127-36" stroke="#cadfd5" stroke-width="2"/>
+  <g opacity=".8">
+    <rect x="68" y="213" width="43" height="43" rx="7" fill="#bfd7cd"/>
+    <rect x="119" y="213" width="43" height="43" rx="7" fill="#d1e1d2"/>
+    <rect x="170" y="213" width="43" height="43" rx="7" fill="#e5d6b7"/>
+    <rect x="68" y="264" width="43" height="43" rx="7" fill="#d4e5df"/>
+    <rect x="119" y="264" width="43" height="43" rx="7" fill="#a9c8bd"/>
+    <rect x="170" y="264" width="43" height="43" rx="7" fill="#cbd9dc"/>
+    <path d="M80 227h18m-18 9h11m33 42h18m-18 9h11m39-59h18m-18 9h11" stroke="#6d9684" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <g stroke="#6e9486" stroke-width="12" stroke-linecap="round">
+    <path d="m274 145-63-69m68 78 76-52m-77 58-65 70m71-66 62 64"/>
+  </g>
+  <g stroke="#f5faf7" stroke-width="3">
+    <circle cx="209" cy="73" r="25" fill="#afcdbf"/>
+    <circle cx="359" cy="99" r="25" fill="#b6ccd0"/>
+    <circle cx="209" cy="234" r="25" fill="#c9d8c0"/>
+    <circle cx="349" cy="231" r="25" fill="#adcbbf"/>
+    <circle cx="278" cy="154" r="41" fill="#437a65"/>
+  </g>
+  <path d="M263 131a27 27 0 0 1 33 2" stroke="#8eb8a1" stroke-width="4" stroke-linecap="round"/>
+  <g stroke="#446e61" stroke-width="3" stroke-linejoin="round">
+    <path d="M438 65h61v14h-10v68l66 119c11 20 1 35-22 35H404c-23 0-33-15-22-35l66-119V79h-10Z" fill="#fbfdf8" fill-opacity=".75"/>
+    <path d="m414 210-30 57c-8 16-1 27 20 27h129c21 0 28-11 20-27l-30-57c-21 9-38 8-55 1-19-8-35-8-54-1Z" fill="#b6d2c1" stroke="none"/>
+    <path d="M438 65h61v14h-61M448 147h41"/>
+    <path d="M439 233h14m-22 17h22m-31 17h31" stroke="#7a9f8a" stroke-width="2"/>
+  </g>
+  <g fill="#ecf5eb" stroke="#8ab09b" stroke-width="2">
+    <circle cx="487" cy="250" r="8"/>
+    <circle cx="505" cy="271" r="5"/>
+    <circle cx="473" cy="216" r="4"/>
+  </g>
+  <circle cx="543" cy="99" r="6" fill="#d5bb8e"/>
+  <circle cx="105" cy="160" r="5" fill="#8ab09b"/>
+  <path d="M548 154h15m-7.5-7.5v15M139 92h13m-6.5-6.5v13" stroke="#adc8b9" stroke-width="2" stroke-linecap="round"/>
+</svg>

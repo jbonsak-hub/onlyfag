@@ -6,11 +6,11 @@ Minimalistisk øvingsmodul i eksisterende OnlyFag, tilgjengelig som modulen «N�
 
 Pensum er de fem opprinnelige PowerPoint-presentasjonene (105 lysbilder) og de fem oppgitte arkene. Arkivets PowerPoint-tekst er hentet og kontrollert fra checkpoint `d92f59d811ee8676d93a0ea135f5c204568cf45b`, `docs/ernaering-grunnlag/`. Se fagloggene i `docs/ernaering-materiale.md` og `docs/ernaering-ndla.md`. NDLA gir oppgaveinspirasjon, men innfører ikke nye nødvendige forkunnskaper.
 
-Kjemimodulen i `naturfag.html` er layoutreferanse: kort toppfelt, kompakt venstremeny, direkte oppgavestart, filtre bak sekundær kontroll. Ingen presentasjonsoverskrift eller dekorativ ramme. Viktige figurer står store til høyre; valg, svarknapper og tilbakemelding står samlet til venstre. På smale skjermer legges figuren over svarene. Modellbesvarelse deler plass med elevsvaret. Varige modulpreferanser står i rotens `AGENTS.md`.
+Kjemimodulen i `naturfag.html` er layoutreferanse: kort toppfelt, kompakt venstremeny, direkte oppgavestart, direkte temavalg uten filtermeny. Ingen presentasjonsoverskrift eller dekorativ ramme. Viktige figurer står store til høyre; valg, svarknapper og tilbakemelding står samlet til venstre. På smale skjermer legges figuren over svarene. Modellbesvarelse deler plass med elevsvaret. Varige modulpreferanser står i rotens `AGENTS.md`.
 
 Sukkerstrukturer vises som ringer. Fettsyrer er fullt tegnet med C og H, uten forkortede gjentakelsesgrupper. Omegaoppgaven viser verken nummererte karbonatomer eller tellemetode før svaret; metoden dukker opp i fasiten. Begrepskartet har ti tomme felt og fire faste holdepunkter. Én samlet karbohydratsortering erstatter de enklere duplikatene.
 
-Oppgavene roteres uten gjentakelser til hele utvalget er vist. De ti siste ID-ene unngås der utvalget tillater det, og samme figurfamilie unngås blant de tre siste når andre usette oppgaver finnes. Både besvarte og hoppede oppgaver teller som vist. Historikken overlever temabytte, filtrering og omlasting. Små utvalg slakker først på den eldste sperren. Eksplisitt åpning fra banken og «Prøv på nytt» er tilsiktede unntak. Svaralternativer og koblingssvar stokkes uavhengig.
+Oppgavene roteres uten gjentakelser til hele utvalget er vist. De ti siste ID-ene unngås der utvalget tillater det, og samme figurfamilie unngås blant de tre siste når andre usette oppgaver finnes. Både besvarte og hoppede oppgaver teller som vist. Historikken overlever temabytte og omlasting. Små utvalg slakker først på den eldste sperren. Eksplisitt åpning fra banken og «Prøv på nytt» er tilsiktede unntak. Svaralternativer og koblingssvar stokkes uavhengig.
 
 Anatomifiguren har klikk/tastatur, valgfri dra/slipp og en tekstliste. Prosessoppgaver grupperer tolvfingertarm med tynntarm. Riktige delsvar låses ved retting; rekkefølgepiler flytter mellom ledige plasser.
 
@@ -58,3 +58,5 @@ Rekkefølge: karbohydrater, proteiner, fett, vitaminer/mineraler/vann, fordøyel
 Kildepanelet viser korte eksterne fagreferanser; det har ingen avhengighet av en bestemt lærer, klasse eller prøve. Interne faglogger over undervisningsgrunnlaget er beholdt som vedlikeholdsdokumentasjon.
 
 Integrasjonen kontrolleres med `node tests/naturfag-modules.cjs` i tillegg til modulens eksisterende tester. Browserkontroller trenger samme lokale nettverkstilgang som de andre Playwright-testene.
+
+Naturfag starter nå på en emnevelger med to illustrerte kort. Modullenkene beholdes som direkte innganger, og Start i den felles menyen tar eleven tilbake til emnevalget. Undermenyene deler samme fete skriftstørrelse. Filterkontrollen og tilhørende tilstand/hendelser er fjernet fra ernæringsmodulen; bankens søk og temaenes oppgaveutvalg er beholdt.

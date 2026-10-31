@@ -27,3 +27,8 @@ Shared Naturfag modules and progress:
 - Show each topic's correct-answer percentage over its latest 20 answered automatic exercises. Count only the first submitted result per presentation; corrections do not replace the first result. Hints/fasit are supported practice. Writing and self-assessment are excluded. Do not manufacture an attempt sequence from older mastery records.
 - Public sources/help must be concise and professional for a general student audience. Do not refer to personal presentations, lessons, uploaded attachments or old exams. Internal evidence and curriculum logs may retain these references for maintenance; student-facing sources cite external references directly.
 - Embedded modules share the Naturfag navigation: avoid duplicate sidebars, mobile menu buttons and stacked headers. Preserve chemistry history and native behavior. Validate same-origin iframe messages, routes/back-forward, keyboard/mobile menu use, shared theme and compact layout at real viewport widths.
+
+Naturfag entry-page and typography preferences:
+- The canonical Naturfag page opens a subject chooser with two illustrated, clickable cards: Kjemi and Næringsstoffer og fordøyelsen. Keep explicit module deep links intact, and offer a compact route back to the chooser. This requested subject chooser is separate from the compact, direct exercise views.
+- Use the same bold submenu typography in both modules (13px, weight 700); question text is aligned at 17px/700 on desktop and 16px/700 on narrow screens.
+- There is no nutrition Filter control or settings panel. Select subjects directly and keep only useful bank search. Do not reintroduce filtering options as hidden or optional controls.
