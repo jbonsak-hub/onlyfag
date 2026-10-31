@@ -2,7 +2,7 @@
 
 Minimalistisk øvingsmodul i eksisterende OnlyFag, tilgjengelig som modulen «Næringsstoffer og fordøyelsen» på `/naturfag.html#nutrition/all`. Den selvstendige adressen `/prototyper/ernaering.html` støttes fortsatt.
 
-162 oppgaver, hvorav 57 med figur eller organmodell. Seks fagtemaer; figuroppgaver ligger under fagtemaet de hører til. Blandet øving står sist. Ingen installasjon eller byggesteg for nettsiden.
+173 oppgaver, hvorav 70 med figur eller organmodell. Seks fagtemaer; figuroppgaver ligger under fagtemaet de hører til. Blandet øving står sist. Ingen installasjon eller byggesteg for nettsiden.
 
 Pensum er de fem opprinnelige PowerPoint-presentasjonene (105 lysbilder) og de fem oppgitte arkene. Arkivets PowerPoint-tekst er hentet og kontrollert fra checkpoint `d92f59d811ee8676d93a0ea135f5c204568cf45b`, `docs/ernaering-grunnlag/`. Se fagloggene i `docs/ernaering-materiale.md` og `docs/ernaering-ndla.md`. NDLA gir oppgaveinspirasjon, men innfører ikke nye nødvendige forkunnskaper.
 
@@ -37,12 +37,13 @@ NODE_PATH=/workspace/work/nutrition-test-deps/node_modules:/workspace/shared/onl
 BROWSER_EXECUTABLE=/usr/bin/chromium node tests/ernaering-layout.cjs
 BROWSER_EXECUTABLE=/usr/bin/chromium node tests/naturfag-modules.cjs
 BROWSER_EXECUTABLE=/usr/bin/chromium node tests/nutrition-new-figures.cjs
+BROWSER_EXECUTABLE=/usr/bin/chromium node tests/nutrition-food.cjs
 ```
 
 DOM-testen krever `jsdom` (testet med v26; bundling med esbuild). Den kan kjøres med `NODE_PATH` til en isolert installasjon. Ingen pakkefiler eller avhengigheter trengs for selve nettsiden.
 
 - Ren Node-test: skjema og fasiter for alle oppgaver, feil/ekstra valg, svarnormalisering, hjelpetilstand og repetisjon, stokking.
-- DOM-test: alle 162 oppgaver fullføres via grensesnittets kontroller; delvis riktige svar, fasit, egenvurdering, fravær av filter, persistens, mobilmeny, utilgjengelig lagring og avgrenset nullstilling.
+- DOM-test: alle 173 oppgaver fullføres via grensesnittets kontroller; delvis riktige svar, fasit, egenvurdering, fravær av filter, persistens, mobilmeny, utilgjengelig lagring og avgrenset nullstilling.
 - Browserkontroll: alle oppgaver før svar og etter fasit ved 1366 × 768, 1280 × 720, 1024 × 768 og 390 × 844. Kontrollerer oppgave/figur/svar/knapper samlet, ingen horisontal overflyt og ingen nødvendig siderulling ved disse størrelsene med valgfrie ekstralister lukket. Utvidet «Hvorfor?», tekstalternativ og oppgavebank kan rulle etter elevens eget valg. Manuell bildeinspeksjon av blant annet sukkerstrukturer, cis/trans, glyserol/fettsyre og organplassering.
 
 Felles `assets/analytics.js` lastes én gang på siden. Elevsvar sendes ikke til noen tjeneste av øvingsmotoren.
@@ -74,3 +75,13 @@ Naturfag starter nå på en emnevelger med to illustrerte kort. Modullenkene beh
 ## Celleånding og ATP
 
 Fire nye oppgaver i `respiration-questions.js` dekker dominerende aerob/anaerob celleånding under aktivitet, omtrent 30 mot 2 ATP per glukosemolekyl, glukosebehov ved samme ATP-behov og mengdene ATP/ADP når ATP brukes uten nydanning. ATP-tallene følger Fordøyelsen-presentasjonens lysbilde 26; sammenligningen av aktivitet gjelder hvilken av de to formene for celleånding som bidrar mest, ikke at den andre slås av. Den eksisterende `doc-lactate` er omarbeidet til et kort stoffnavnsvar med melkesyre som forventet svar og laktat som godkjent alternativ. Fasiten skiller dette fra årsaken til stølhet dagen etter. Nært beslektede ATP- og celleåndingsoppgaver deler oppgavefamilie for å begrense raske gjentakelser.
+
+## Matfotografier og oppslag
+
+Ti nye avkrysningsoppgaver i `food-questions.js` bruker ekte, lokalt lagrede fotografier med navn under. De spør etter flere næringsstoffer i samme matvare. Svaralternativene er valgt for å unngå at små, men reelle mengder av et stoff blir feilaktig rettet som fravær. `food-photo-data.js` og `docs/ernaering-matbilder.md` dokumenterer originaler, fotografer og lisenser; alle lisensnotiser følger også bildefilene. Bildekreditering kan åpnes under hvert bilde.
+
+Tre eksisterende oppgaver om matvarer bruker nå navngitte bildegallerier: plante-/dyreopprinnelse, karbohydrater og fett. Overlappende innhold i matvarer vurderes med uavhengige avkrysningsutsagn, slik at én matvare ikke må tvinges til én eneste næringsstoffgruppe.
+
+`foodtable-question.js` ber eleven sammenligne vitamin C i 50 g rå rød paprika og 100 g rå appelsin. En tydelig lenke åpner Matvaretabellens søk i ny fane. Verdiene står bare i fasiten. Kontrollert 31.10.2026: henholdsvis 126 og 54 mg per 100 g spiselig del, som gir 63 mot 54 mg i de to porsjonene. Oppgaven trener både presist oppslag og omregning av porsjon.
+
+`tests/nutrition-food.cjs` prøver de ti nye bildeoppgavene, de tre omarbeidede oppgavene og oppslagsoppgaven på mobil og laptop. Den kontrollerer bildelasting, navn, flervalg, delvis retting, fasit, oppslagslenke og kompakt visning.

@@ -1,10 +1,12 @@
-import {nutrientMapSlots} from './figures.js?v=20261031-7';
-import {structureQuestions} from './structure-questions.js?v=20261031-7';
-import {documentQuestions} from './document-questions.js?v=20261031-7';
-import {ndlaQuestions} from './ndla-questions.js?v=20261031-7';
-import {recognitionQuestions} from './recognition-questions.js?v=20261031-7';
-import {appliedFigureQuestions} from './applied-figure-questions.js?v=20261031-7';
-import {respirationQuestions} from './respiration-questions.js?v=20261031-7';
+import {nutrientMapSlots} from './figures.js?v=20261031-8';
+import {structureQuestions} from './structure-questions.js?v=20261031-8';
+import {documentQuestions} from './document-questions.js?v=20261031-8';
+import {ndlaQuestions} from './ndla-questions.js?v=20261031-8';
+import {recognitionQuestions} from './recognition-questions.js?v=20261031-8';
+import {appliedFigureQuestions} from './applied-figure-questions.js?v=20261031-8';
+import {respirationQuestions} from './respiration-questions.js?v=20261031-8';
+import {foodQuestions} from './food-questions.js?v=20261031-8';
+import {foodTableQuestion} from './foodtable-question.js?v=20261031-8';
 
 // Oppgaver avgrenset til undervisningsmaterialet og oppgitt begrepsliste.
 const coreQuestions = [
@@ -571,44 +573,22 @@ const coreQuestions = [
     "topic": "protein",
     "type": "sort",
     "level": 1,
-    "title": "Proteiner fra planter og dyr",
-    "prompt": "Sorter proteinkildene etter hvor de kommer fra.",
+    "title": "Matvarer fra planter og dyr",
+    "prompt": "Sorter matvarene A–E på bildene etter om de kommer fra planter eller dyr.",
     "groups": [
       "Plantebasert kilde",
       "Animalsk kilde"
     ],
+    "figure": "food-protein-sources",
     "items": [
-      {
-        "label": "Linser",
-        "group": "Plantebasert kilde"
-      },
-      {
-        "label": "Bønner",
-        "group": "Plantebasert kilde"
-      },
-      {
-        "label": "Tofu av soya",
-        "group": "Plantebasert kilde"
-      },
-      {
-        "label": "Havre",
-        "group": "Plantebasert kilde"
-      },
-      {
-        "label": "Egg",
-        "group": "Animalsk kilde"
-      },
-      {
-        "label": "Fisk",
-        "group": "Animalsk kilde"
-      },
-      {
-        "label": "Melk",
-        "group": "Animalsk kilde"
-      }
+      {"label": "A", "group": "Plantebasert kilde"},
+      {"label": "B", "group": "Plantebasert kilde"},
+      {"label": "C", "group": "Animalsk kilde"},
+      {"label": "D", "group": "Animalsk kilde"},
+      {"label": "E", "group": "Animalsk kilde"}
     ],
-    "hint": "En proteinkilde trenger ikke komme fra et dyr.",
-    "explanation": "Både planter og dyr gir protein. Proteinkvalitet handler blant annet om sammensetningen av essensielle aminosyrer og hvor godt proteinet fordøyes. Et variert utvalg av kilder kan utfylle hverandre.",
+    "hint": "Bruk bildene og navnene under dem. Hvor kommer matvaren opprinnelig fra?",
+    "explanation": "A er mandler og B er avokado, som kommer fra planter. C er egg, D er laks og E er ost, som kommer fra dyr. Både planter og dyr kan gi protein, men mengden varierer mye mellom matvarene.",
     "family": "protein-sources"
   },
   {
@@ -1501,7 +1481,7 @@ const coreQuestions = [
   }
 ];
 
-export const questions = [...coreQuestions, ...structureQuestions, ...documentQuestions, ...ndlaQuestions, ...recognitionQuestions, ...appliedFigureQuestions, ...respirationQuestions, {
+export const questions = [...coreQuestions, ...structureQuestions, ...documentQuestions, ...ndlaQuestions, ...recognitionQuestions, ...appliedFigureQuestions, ...respirationQuestions, ...foodQuestions, foodTableQuestion, {
   "id": "nutrient-concept-map",
   "topic": "energy",
   "type": "match",
@@ -1517,6 +1497,10 @@ export const questions = [...coreQuestions, ...structureQuestions, ...documentQu
 for(const q of questions){if(!q.family)q.family=q.figure||q.id;}
 
 export const sources = [
+  {
+    "title": "Matvaretabellen",
+    "url": "https://www.matvaretabellen.no/"
+  },
   {
     "title": "NDLA: Næringsstoffer",
     "url": "https://ndla.no/r/naturfag-sf/karbohydrater/27d0d79021"

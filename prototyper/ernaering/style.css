@@ -121,3 +121,43 @@ body.dark{--paper:#101614;--white:#17201d;--ink:#edf4f1;--muted:#a8b8b0;--green:
 .prompt{font-size:17px;font-weight:700}
 @media(max-width:760px){.prompt{font-size:16px;font-weight:700}}
 .topic-button,.topic-button.active{font-size:13px;font-weight:700}
+
+/* Food photographs keep the task controls together and names below each image. */
+.food-photo>img{display:block;width:100%;height:min(370px,calc(100dvh - 270px));object-fit:contain;border-radius:5px}
+.food-photo>figcaption{margin-top:8px}
+.food-label{font-size:13px;font-weight:700;color:var(--ink);line-height:1.3}
+.food-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.food-card{min-width:0;text-align:center;margin:0}
+.food-card img{display:block;width:100%;height:120px;object-fit:contain;border-radius:4px}
+.food-card .food-label{margin:5px 0 0;font-size:13px}
+.food-gallery:has(.food-card:nth-child(5)) .food-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.photo-credits{font-size:11px;line-height:1.4;color:var(--muted);margin-top:4px}
+.photo-credits summary{cursor:pointer;color:var(--green-dark);width:fit-content;margin:auto}
+.photo-credits ul{text-align:left;margin:6px 0;padding-left:18px}
+.task-reference{margin:-5px 0 15px;font-size:13px}
+.task-reference a{font-weight:650;text-underline-offset:3px}
+.task-reference span{font-size:11px;font-weight:400}
+.dark .food-photo,.dark .food-gallery{background:transparent}
+.dark .food-photo figcaption,.dark .food-gallery figcaption{color:var(--muted)}
+@media(max-width:960px){
+ .food-photo>img{height:210px}
+ .food-card img{height:95px}
+ .food-grid{gap:8px}
+}
+@media(max-width:760px){
+ .food-photo>img{height:190px}
+ .food-card img{height:90px}
+ .food-card .food-label{font-size:12px}
+ .food-gallery:has(.food-card:nth-child(5)) .food-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:480px){
+ .type-multi:has(.food-photo) .answer-options{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .food-gallery:has(.food-card:nth-child(3)):not(:has(.food-card:nth-child(4))) .food-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .food-gallery:has(.food-card:nth-child(4)):not(:has(.food-card:nth-child(5))) .food-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+ .food-gallery:has(.food-card:nth-child(4)):not(:has(.food-card:nth-child(5))) .food-card img{height:80px}
+}
+@media(min-width:761px) and (max-width:960px){
+ .visual-workspace:has(>.food-gallery .food-card:nth-child(5)){grid-template-columns:minmax(0,.9fr) minmax(0,1.2fr)}
+ .visual-workspace:has(>.food-gallery .food-card:nth-child(5))>.visual-response{grid-column:1;grid-row:1}
+ .visual-workspace:has(>.food-gallery .food-card:nth-child(5))>.food-gallery{grid-column:2;grid-row:1}
+}

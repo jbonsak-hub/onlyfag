@@ -21,30 +21,23 @@ export const documentQuestions = [
   {
     "id": "doc-food-carbs",
     "topic": "carbs",
-    "type": "match",
+    "type": "multi",
     "level": 1,
+    "family": "food-comparison",
+    "figure": "food-carb-sources",
     "title": "Karbohydrater i mat",
-    "prompt": "Koble matvaren til et karakteristisk karbohydrat.",
-    "hint": "Tenk på plantens energilager, melkesukker, vanlig sukker og materialet som gir planteceller støtte.",
-    "explanation": "Matvarer inneholder ofte flere karbohydrater. Poteter er rike på stivelse; melk inneholder laktose; vanlig bordsukker er sukrose; cellulose er en del av plantecellevegger.",
-    "pairs": [
-      {
-        "left": "Potet",
-        "right": "Stivelse"
-      },
-      {
-        "left": "Vanlig melk",
-        "right": "Laktose"
-      },
-      {
-        "left": "Bordsukker",
-        "right": "Sukrose"
-      },
-      {
-        "left": "Plantecellevegg",
-        "right": "Cellulose"
-      }
-    ]
+    "prompt": "Se på matvarene A–C. Hvilke utsagn om karbohydratene er riktige?",
+    "options": [
+      "A inneholder stivelse.",
+      "B inneholder naturlige sukkerarter.",
+      "C inneholder kostfiber.",
+      "A inneholder melkesukker.",
+      "B er helt uten kostfiber.",
+      "C inneholder bare vann, ikke karbohydrater."
+    ],
+    "answer": ["A inneholder stivelse.", "B inneholder naturlige sukkerarter.", "C inneholder kostfiber."],
+    "hint": "Skill mellom plantens energilager, sukkerarter i frukt og kostfiber. Melkesukker heter laktose.",
+    "explanation": "A er ris med stivelse. B er banan med naturlige sukkerarter og kostfiber. C er appelsin, som også inneholder både sukkerarter og kostfiber. Ingen av disse matvarene inneholder melkesukker. En matvare kan inneholde flere typer karbohydrat."
   },
   {
     "id": "doc-surplus-carbs",
@@ -227,30 +220,23 @@ export const documentQuestions = [
   {
     "id": "doc-essential-fat-sources",
     "topic": "fat",
-    "type": "match",
+    "type": "multi",
     "level": 2,
+    "family": "food-comparison",
+    "figure": "food-fat-sources",
     "title": "Fett i matvarer",
-    "prompt": "Koble hver beskrivelse til en passende matvare.",
-    "hint": "Se etter forskjellen mellom plantekilder, fisk og smør.",
-    "explanation": "Valnøtter og fet fisk kan bidra med omega-3-fettsyrer. Rapsolje har mye umettet fett, mens smør har en høyere andel mettet fett. Matvarene inneholder flere typer fett; beskrivelsene peker på viktige forskjeller.",
-    "pairs": [
-      {
-        "left": "Plantebasert kilde til omega-3",
-        "right": "Valnøtter"
-      },
-      {
-        "left": "Animalsk kilde til omega-3",
-        "right": "Fet fisk"
-      },
-      {
-        "left": "Mye umettet fett",
-        "right": "Rapsolje"
-      },
-      {
-        "left": "Mye mettet fett",
-        "right": "Smør"
-      }
-    ]
+    "prompt": "Se på matvarene A–D. Hvilke utsagn om fettet er riktige?",
+    "options": [
+      "A og B inneholder mye umettet fett.",
+      "C kan bidra med omega-3-fettsyrer.",
+      "D har en høy andel mettet fett.",
+      "A og B inneholder kolesterol.",
+      "C inneholder bare fett, ikke protein.",
+      "D har bare umettet fett."
+    ],
+    "answer": ["A og B inneholder mye umettet fett.", "C kan bidra med omega-3-fettsyrer.", "D har en høy andel mettet fett."],
+    "hint": "Sammenlign plantekildene, den fete fisken og osten. En matvare kan ha flere typer fett.",
+    "explanation": "A er mandler og B er avokado, med mye umettet fett og uten kolesterol i Matvaretabellen. C er laks med protein og omega-3-fettsyrer. D er goudaost, der en høy andel av fettet er mettet. Osten har også umettet fett; matvarer er vanligvis blandinger av flere næringsstoffer."
   },
   {
     "id": "doc-ascorbic",

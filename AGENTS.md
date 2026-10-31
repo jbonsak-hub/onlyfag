@@ -21,6 +21,7 @@ Latest Ernæring og helse requirements:
 - Important figures may be larger: use a substantial right-hand figure and place controls, check/next and feedback together on the left on desktops. Verify readability as well as absence of overflow; shrinking everything to pass geometry checks is not sufficient.
 - Do not reveal answers in the prompt, labels or captions; a counting method belongs in feedback or an optional hint when finding that method is being tested. Omega tasks ask which omega fatty acid is shown with plausible alternatives, without numbered carbon atoms or explanatory captions giving it away.
 - Place figure exercises in their subject topic. No separate Figuroppgaver category. Consolidate redundant easier classification tasks. Include cellulose, kostfiber, stivelse and glykogen when asking for carbohydrate classification.
+- Use real food photographs with names underneath for food-content practice. Prefer visual versions of existing food questions where useful. Nutrient checkboxes must not mark small but real amounts as absent; select unambiguous alternatives. External lookup exercises should open the named source in a new tab and keep the values being looked up out of the prompt.
 
 Shared Naturfag modules and progress:
 - Naturfag has two collapsible sidebar groups: Kjemi and Næringsstoffer og fordøyelsen. Figure questions stay in their academic topic, and nutrition topic order is Karbohydrater, Proteiner, Fett, Vitaminer/mineraler/vann, Fordøyelsen, Energi og blodsukker, Blandet øving.

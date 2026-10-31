@@ -1,5 +1,6 @@
-import {recognitionFigure} from './recognition-figures.js?v=20261031-7';
-import {appliedFigure} from './applied-figures.js?v=20261031-7';
+import {recognitionFigure} from './recognition-figures.js?v=20261031-8';
+import {appliedFigure} from './applied-figures.js?v=20261031-8';
+import {foodFigure} from './food-figures.js?v=20261031-8';
 
 // Original didactic SVG models. Labels and descriptions do not reveal the answers.
 const svg=(description,body)=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 205" role="img" aria-label="${description}"><g font-family="system-ui,sans-serif" font-size="16" fill="#284c3b">${body}</g></svg>`;
@@ -152,4 +153,4 @@ molecularFigures['nutrient-map']=()=>{
  return wide.replace('</figure>',mobile+'</figure>');
 };
 molecularFigures['ndla-pepsin']=()=>structural('Søylediagram. Prøve A har pH 2 og enzymaktivitet 8 relative enheter. Prøve B har pH 7 og aktivitet 1 relativ enhet.',line(90,185,610,185)+line(90,185,90,32)+txt(90,22,'Aktivitet',16)+[0,2,4,6,8].map(n=>line(85,185-n*17,90,185-n*17)+txt(65,191-n*17,String(n),15)).join('')+`<rect x="180" y="49" width="100" height="136" fill="#7da795"/><rect x="420" y="168" width="100" height="17" fill="#7da795"/>`+txt(230,42,'8',17)+txt(470,161,'1',17)+txt(230,211,'A: pH 2',17)+txt(470,211,'B: pH 7',17),'',240);
-export function figure(key){return recognitionFigure(key)||appliedFigure(key)||(molecularFigures[key]?molecularFigures[key]():legacyFigure(key));}
+export function figure(key){return foodFigure(key)||recognitionFigure(key)||appliedFigure(key)||(molecularFigures[key]?molecularFigures[key]():legacyFigure(key));}

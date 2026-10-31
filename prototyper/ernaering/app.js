@@ -1,7 +1,7 @@
-import {questions, sources} from './questions.js?v=20261031-7';
-import {organs, digestiveSVG} from './diagram.js?v=20261031-7';
-import {figure} from './figures.js?v=20261031-7';
-import {STORE_KEY, topics, types, shuffle, mixedOrder, evaluate, needsReview, resultRecord, pickNext, rememberQuestion, recentSummary, recordRecentResult} from './engine.js?v=20261031-7';
+import {questions, sources} from './questions.js?v=20261031-8';
+import {organs, digestiveSVG} from './diagram.js?v=20261031-8';
+import {figure} from './figures.js?v=20261031-8';
+import {STORE_KEY, topics, types, shuffle, mixedOrder, evaluate, needsReview, resultRecord, pickNext, rememberQuestion, recentSummary, recordRecentResult} from './engine.js?v=20261031-8';
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -131,7 +131,8 @@ function renderQuestion(){
   }else{
     body=`<div class="exercise-content"><div class="answer-panel">${answerUI(q,s)}</div></div>${actions}${support}`;
   }
-  $('#content').innerHTML=`<article class="exercise ${q.figure?'has-figure':''} type-${q.type}" data-question="${q.id}"><div class="question-meta"><span>${esc(topics[q.topic])}</span><span>${types[q.type]}</span><span class="task-number">${i} / ${state.queue.length}</span></div><h2 class="task-heading sr-only" tabindex="-1">${esc(q.title)}</h2><p class="prompt">${esc(q.prompt)}</p>${body}</article>`;
+  const reference=q.referenceLink?`<p class="task-reference"><a href="${esc(q.referenceLink.url)}" target="_blank" rel="noopener noreferrer">${esc(q.referenceLink.label)} <span>(ny fane)</span></a></p>`:'';
+  $('#content').innerHTML=`<article class="exercise ${q.figure?'has-figure':''} type-${q.type}" data-question="${q.id}"><div class="question-meta"><span>${esc(topics[q.topic])}</span><span>${types[q.type]}</span><span class="task-number">${i} / ${state.queue.length}</span></div><h2 class="task-heading sr-only" tabindex="-1">${esc(q.title)}</h2><p class="prompt">${esc(q.prompt)}</p>${reference}${body}</article>`;
   renderFeedback();
 }
 function renderFeedback(){const s=session();const q=current();const f=s.feedback;if(!f){$('#feedback-host').innerHTML='';return;}

@@ -11,7 +11,7 @@ test('all questions have coherent schemas and every automatic key is accepted',(
  assert.ok(questions.length>0, 'the scoped bank contains exercises');assert.equal(new Set(questions.map(q=>q.id)).size,questions.length);
  for(const q of questions){for(const key of ['id','title','topic','type','prompt','hint','explanation'])assert.ok(q[key],q.id+': '+key);
   assert.ok(topics[q.topic],q.id+': known topic');assert.ok(types[q.type],q.id+': known type');
-  if(q.figure)assert.match(figure(q.figure),/<svg\b/,q.id+': figure must render');
+  if(q.figure)assert.match(figure(q.figure),/<(?:svg|img)\b/,q.id+': figure must render');
   if(q.options)assert.equal(new Set(q.options).size,q.options.length,q.id+': distinct alternatives');
   if(q.type==='open'){assert.ok(q.model);assert.ok(q.checklist.length);continue;}
   assert.ok(evaluate(q,answer(q),q.type==='anatomy'?ids:processIds).correct,q.id);
@@ -283,6 +283,51 @@ test('five additional applied figures span five subject themes and keep conclusi
  assert.doesNotMatch(figure('applied-glucose-regulation'),/insulin|glukagon/i,'the glucose curve must not identify the regulatory hormone');
  const protein=applied.find(q=>q.topic==='protein');
  assert.match(protein.prompt,/tre/i,'the simplified model is explicitly limited to its three amino acids');
+});
+
+test('food nutrient tasks use actual local photographs and require multiple selections',()=>{
+ const foods=questions.filter(q=>q.id.startsWith('food-nutrients-'));
+ assert.equal(foods.length,10,'ten photographed foods are available');
+ const credits=readFileSync(new URL('../docs/ernaering-matbilder.md',import.meta.url),'utf8');
+ const imageFiles=new Set();
+ for(const q of foods){
+  assert.equal(q.type,'multi',q.id+': pupils can check several nutrients');
+  assert.ok(q.answer.length>=2&&q.answer.length<q.options.length,q.id+': more than one nutrient and plausible incorrect alternatives');
+  assert.ok(!evaluate(q,[q.answer[0]]).correct,q.id+': one right nutrient is an incomplete answer');
+  const drawing=figure(q.figure),images=[...drawing.matchAll(/<img\b[^>]*\bsrc="([^"]+)"[^>]*>/g)];
+  assert.equal(images.length,1,q.id+': one named food is shown');
+  const caption=drawing.match(/<figcaption\b[^>]*>([\s\S]*?)<\/figcaption>/i)?.[1].replace(/<[^>]+>/g,'').trim();
+  assert.ok(caption,q.id+': its name is printed below the photo');
+  const url=new URL(images[0][1],'https://onlyfag.test/prototyper/ernaering.html');
+  assert.equal(url.origin,'https://onlyfag.test',q.id+': the photo is not a third-party hotlink');
+  assert.match(url.pathname,/^\/assets\/nutrition\/food\//,q.id+': the photograph is a stored site asset');
+  const bytes=readFileSync(new URL('..'+url.pathname,import.meta.url));
+  const photographicFile=bytes[0]===0xff&&bytes[1]===0xd8||bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10]))||bytes.toString('ascii',0,4)==='RIFF'&&bytes.toString('ascii',8,12)==='WEBP';
+  assert.ok(photographicFile&&bytes.length>1000,q.id+': real JPEG, PNG or WebP bytes exist');
+  const basename=url.pathname.split('/').at(-1);
+  assert.ok(credits.includes(basename),q.id+': photo provenance is recorded');
+  imageFiles.add(url.pathname);
+ }
+ assert.equal(imageFiles.size,10,'the food exercises use ten distinct photographs');
+ assert.match(credits,/https:\/\//,'photo sources can be inspected');
+ assert.match(credits,/CC0|CC BY|public domain|offentlig eie|Unsplash|Pexels|Pixabay/i,'reuse terms are recorded');
+});
+
+test('existing food questions use named photo galleries',()=>{
+ for(const id of ['protein-sources','doc-food-carbs','doc-essential-fat-sources']){
+  const q=questions.find(q=>q.id===id);assert.ok(q?.figure,id+': the existing food task has a visual');
+  const images=[...figure(q.figure).matchAll(/<img\b/g)];
+  assert.ok(images.length>=3,id+': several foods can be compared visually');
+ }
+});
+
+test('the Matvaretabellen exercise requires a real lookup and portion comparison',()=>{
+ const lookup=questions.find(q=>q.id==='foodtable-vitamin-c-portions');assert.ok(lookup);
+ assert.deepEqual(lookup.referenceLink,{url:'https://www.matvaretabellen.no/sok/',label:'Åpne Matvaretabellen'});
+ assert.match(lookup.prompt,/50\s*g/);assert.match(lookup.prompt,/100\s*g/);
+ assert.match(lookup.prompt,/Paprika, rød, rå/);assert.match(lookup.prompt,/Appelsin, rå/);
+ assert.doesNotMatch(lookup.prompt,/\b(?:126|63|54)\s*mg\b/,'the student must find the vitamin values');
+ assert.match(lookup.explanation,/63\s*mg/);assert.match(lookup.explanation,/54\s*mg/);
 });
 
 

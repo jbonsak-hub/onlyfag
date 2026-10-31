@@ -46,7 +46,7 @@ const server=http.createServer((req,res)=>{
   for(const [width,height] of [[1366,768],[1280,720],[1024,768],[390,844]]){
    const viewport={width,height},{page,context}=await createPage(viewport);
    const questions=await page.evaluate(async()=>{
-    const {questions}=await import('./ernaering/questions.js?v=20261031-7');
+    const {questions}=await import('./ernaering/questions.js?v=20261031-8');
     return questions.map(({id,type,figure,topic})=>({id,type,figure,topic}));
    });
    let maxHeight=0,maxActionsBottom=0;
@@ -115,7 +115,7 @@ const server=http.createServer((req,res)=>{
   await page.locator('#menu-button').click();await page.locator('#bank-tab').click();
   const topicBank=await page.locator('.bank-row').count();assert.ok(topicBank>0);
   const expectedProteinFigures=await page.evaluate(async()=>{
-   const {questions}=await import('./ernaering/questions.js?v=20261031-7');
+   const {questions}=await import('./ernaering/questions.js?v=20261031-8');
    return questions.filter(q=>q.topic==='protein'&&q.figure).map(q=>q.id);
   });
   for(const id of expectedProteinFigures)assert.equal(await page.locator(`[data-open="${id}"]`).count(),1,id+': figure exercise stays in its subject bank');
