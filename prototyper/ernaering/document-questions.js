@@ -516,6 +516,7 @@ export const documentQuestions = [
   {
     "id": "doc-atp-recharge",
     "topic": "energy",
+    "family": "energy-atp",
     "type": "choice",
     "level": 2,
     "title": "ATP og ADP",
@@ -570,19 +571,14 @@ export const documentQuestions = [
   {
     "id": "doc-lactate",
     "topic": "energy",
-    "type": "choice",
-    "level": 2,
-    "title": "Melkesyre ved muskelarbeid",
-    "prompt": "Hvilken prosess forbindes med dannelse av melkesyre i musklene under hardt arbeid?",
-    "hint": "Tenk på forskjellen mellom aerob og anaerob celleånding.",
-    "explanation": "I undervisningen knyttes melkesyre til anaerob celleånding i musklene. Denne prosessen kan bidra til rask energiforsyning, men gir langt mindre ATP per glukosemolekyl enn aerob celleånding. Det betyr ikke at hele kroppen må være uten oksygen.",
-    "options": [
-      "Anaerob nedbryting av glukose som gir lite ATP per glukosemolekyl.",
-      "Fotosyntese som gjør karbondioksid til stivelse.",
-      "Fordøyelse av protein i magesekken.",
-      "Omdanning av mineralstoffer til fett."
-    ],
-    "answer": "Anaerob nedbryting av glukose som gir lite ATP per glukosemolekyl."
+    "family": "energy-aerobic-anaerobic",
+    "type": "fill",
+    "level": 1,
+    "title": "Et stoff ved hardt muskelarbeid",
+    "prompt": "Hvilket stoff dannes når musklene bryter ned glukose ved anaerob celleånding?",
+    "blanks": [{"label": "Stoff", "answers": ["melkesyre", "laktat"]}],
+    "hint": "Stoffet forbindes med kortvarig, hardt muskelarbeid.",
+    "explanation": "Stoffet kalles ofte melkesyre. Det dannes ved anaerob nedbryting av glukose i musklene. Ubehag under hardt arbeid har flere årsaker; melkesyre som blir liggende i musklene, er ikke årsaken til stølhet dagen etter."
   },
   {
     "id": "doc-portal-route",

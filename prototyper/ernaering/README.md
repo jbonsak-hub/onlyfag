@@ -2,7 +2,7 @@
 
 Minimalistisk øvingsmodul i eksisterende OnlyFag, tilgjengelig som modulen «Næringsstoffer og fordøyelsen» på `/naturfag.html#nutrition/all`. Den selvstendige adressen `/prototyper/ernaering.html` støttes fortsatt.
 
-158 oppgaver, hvorav 57 med figur eller organmodell. Seks fagtemaer; figuroppgaver ligger under fagtemaet de hører til. Blandet øving står sist. Ingen installasjon eller byggesteg for nettsiden.
+162 oppgaver, hvorav 57 med figur eller organmodell. Seks fagtemaer; figuroppgaver ligger under fagtemaet de hører til. Blandet øving står sist. Ingen installasjon eller byggesteg for nettsiden.
 
 Pensum er de fem opprinnelige PowerPoint-presentasjonene (105 lysbilder) og de fem oppgitte arkene. Arkivets PowerPoint-tekst er hentet og kontrollert fra checkpoint `d92f59d811ee8676d93a0ea135f5c204568cf45b`, `docs/ernaering-grunnlag/`. Se fagloggene i `docs/ernaering-materiale.md` og `docs/ernaering-ndla.md`. NDLA gir oppgaveinspirasjon, men innfører ikke nye nødvendige forkunnskaper.
 
@@ -42,7 +42,7 @@ BROWSER_EXECUTABLE=/usr/bin/chromium node tests/nutrition-new-figures.cjs
 DOM-testen krever `jsdom` (testet med v26; bundling med esbuild). Den kan kjøres med `NODE_PATH` til en isolert installasjon. Ingen pakkefiler eller avhengigheter trengs for selve nettsiden.
 
 - Ren Node-test: skjema og fasiter for alle oppgaver, feil/ekstra valg, svarnormalisering, hjelpetilstand og repetisjon, stokking.
-- DOM-test: alle 158 oppgaver fullføres via grensesnittets kontroller; delvis riktige svar, fasit, egenvurdering, fravær av filter, persistens, mobilmeny, utilgjengelig lagring og avgrenset nullstilling.
+- DOM-test: alle 162 oppgaver fullføres via grensesnittets kontroller; delvis riktige svar, fasit, egenvurdering, fravær av filter, persistens, mobilmeny, utilgjengelig lagring og avgrenset nullstilling.
 - Browserkontroll: alle oppgaver før svar og etter fasit ved 1366 × 768, 1280 × 720, 1024 × 768 og 390 × 844. Kontrollerer oppgave/figur/svar/knapper samlet, ingen horisontal overflyt og ingen nødvendig siderulling ved disse størrelsene med valgfrie ekstralister lukket. Utvidet «Hvorfor?», tekstalternativ og oppgavebank kan rulle etter elevens eget valg. Manuell bildeinspeksjon av blant annet sukkerstrukturer, cis/trans, glyserol/fettsyre og organplassering.
 
 Felles `assets/analytics.js` lastes én gang på siden. Elevsvar sendes ikke til noen tjeneste av øvingsmotoren.
@@ -70,3 +70,7 @@ Naturfag starter nå på en emnevelger med to illustrerte kort. Modullenkene beh
 `applied-figure-questions.js` og `applied-figures.js` gir fem videre figuroppgaver fordelt på proteiner, fett, vitaminer/mineraler/vann, fordøyelsen og energi/blodsukker. De bruker en tabell over aminosyrer, modeller av dråper og molekyler, fordeling mellom vann og olje, overflatemodeller og en blodsukkerkurve. Tall og modellforutsetninger gis i oppgaven. Alle tretten bruker automatisk retting og deltar i den eksisterende rotasjonen og prosentberegningen.
 
 `tests/nutrition-new-figures.cjs` kontrollerer alle tretten i den felles Naturfag-visningen ved 1366 × 768, 1280 × 720, 1024 × 720 og 390 × 844. Den prøver faktisk besvarelse og fasit, måler overflyt, figurtekst på minst 12 px og at etiketter ikke klippes.
+
+## Celleånding og ATP
+
+Fire nye oppgaver i `respiration-questions.js` dekker dominerende aerob/anaerob celleånding under aktivitet, omtrent 30 mot 2 ATP per glukosemolekyl, glukosebehov ved samme ATP-behov og mengdene ATP/ADP når ATP brukes uten nydanning. ATP-tallene følger Fordøyelsen-presentasjonens lysbilde 26; sammenligningen av aktivitet gjelder hvilken av de to formene for celleånding som bidrar mest, ikke at den andre slås av. Den eksisterende `doc-lactate` er omarbeidet til et kort stoffnavnsvar med melkesyre som forventet svar og laktat som godkjent alternativ. Fasiten skiller dette fra årsaken til stølhet dagen etter. Nært beslektede ATP- og celleåndingsoppgaver deler oppgavefamilie for å begrense raske gjentakelser.

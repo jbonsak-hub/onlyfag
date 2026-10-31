@@ -54,7 +54,7 @@ body.nf-subjects-active>.main>.content{max-width:none!important;height:100dvh;pa
 .nf-subject-card{display:flex;flex-direction:column;min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--text);text-decoration:none;box-shadow:0 3px 14px #193b2b05;transition:border-color .15s,background .15s}
 .nf-subject-card:hover{border-color:var(--accent);background:var(--panel2)}
 .nf-subject-card:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
-.nf-subject-card img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#edf4f0}
+.nf-subject-card img{display:block;width:50%;height:auto;margin:0 auto;aspect-ratio:16/9;object-fit:contain;background:#edf4f0}
 .nf-subject-card[data-subject="nutrition"] img{background:#f3f3e9}
 .nf-subject-card-label{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 20px;min-height:82px}
 .nf-subject-card strong{font-size:21px;line-height:1.25;font-weight:700;max-width:90%}
@@ -66,7 +66,7 @@ body.nf-subjects-active>.main>.content{max-width:none!important;height:100dvh;pa
 @media(max-width:860px){
  body.nf-subjects-active>.main>.content{padding:58px 16px 20px!important}
  .nf-subject-cards{grid-template-columns:1fr;gap:14px;max-width:510px}
- .nf-subject-card img{height:clamp(120px,23dvh,190px);aspect-ratio:auto}
+ .nf-subject-card img{height:clamp(60px,11.5dvh,95px);aspect-ratio:auto}
  .nf-subject-card-label{padding:13px 16px;min-height:60px}
  .nf-subject-card strong{font-size:19px}
 }

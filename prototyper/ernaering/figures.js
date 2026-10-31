@@ -1,5 +1,5 @@
-import {recognitionFigure} from './recognition-figures.js?v=20261031-6';
-import {appliedFigure} from './applied-figures.js?v=20261031-6';
+import {recognitionFigure} from './recognition-figures.js?v=20261031-7';
+import {appliedFigure} from './applied-figures.js?v=20261031-7';
 
 // Original didactic SVG models. Labels and descriptions do not reveal the answers.
 const svg=(description,body)=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 205" role="img" aria-label="${description}"><g font-family="system-ui,sans-serif" font-size="16" fill="#284c3b">${body}</g></svg>`;
