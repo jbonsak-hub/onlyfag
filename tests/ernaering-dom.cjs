@@ -22,6 +22,7 @@ function boot({mobile=false,stored,blocked=false}={}){
 }
 const t=boot(),{w,$,click,set,open}=t;
 const questions=w.__qa.questions,organs=w.__qa.organs;
+assert.equal([...w.document.querySelectorAll('#topics [data-topic]')].at(-1).dataset.topic,'all','Mixed practice is last in the topic list');
 function fillCorrect(q){
  if(q.type==='anatomy'){for(const o of organs){click(`[data-label="${o.id}"]`);click(`[data-target="${o.id}"]`);}}
  if(q.type==='choice'||q.type==='multi'){const answers=q.type==='choice'?[q.answer]:q.answer;for(const answer of answers){const buttons=[...w.document.querySelectorAll('[data-option]')];buttons.find(b=>b.textContent.slice(1)===answer||b.querySelector('span:last-child').textContent===answer).click();}}

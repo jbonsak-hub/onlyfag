@@ -1,7 +1,7 @@
-import {structureQuestions} from './structure-questions.js?v=20261031-1';
-import {documentQuestions} from './document-questions.js?v=20261031-1';
-import {ndlaQuestions} from './ndla-questions.js?v=20261031-1';
-// Originale øvingsoppgaver basert på lærerens fem presentasjoner.
+import {structureQuestions} from './structure-questions.js?v=20261031-2';
+import {documentQuestions} from './document-questions.js?v=20261031-2';
+import {ndlaQuestions} from './ndla-questions.js?v=20261031-2';
+// Originale øvingsoppgaver basert på fem presentasjoner.
 // Åpne svar vurderes av eleven med modellsvaret og sjekklisten.
 export const questions = [
   {
@@ -312,7 +312,7 @@ export const questions = [
     prompt: 'Ordne denne forenklede hovedveien for fett med lange fettsyrer. Trinnene viser sammenhengen selv om prosessene kan overlappe i tarmen.',
     items: ['Gallesalter finfordeler fettet i tynntarmen', 'Lipase spalter fett til mindre molekyler', 'Fettprodukter tas opp i tarmcellene', 'Tarmcellene bygger opp triglyserider og pakker dem i transportpartikler', 'Transportpartiklene går via lymfen til blodet'],
     hint: 'Fett må både spaltes, tas opp og pakkes før det fraktes videre.',
-    explanation: 'Lange fettsyrer og monoglyserider tas opp i tarmcellene. Der bygges triglyserider opp igjen og pakkes i kylomikroner som går til lymfen. Korte fettsyrer kan følge andre transportveier.'
+    explanation: 'Lange fettsyrer og monoglyserider tas opp i tarmcellene. Der bygges triglyserider opp igjen og pakkes i fettpartikler som går til lymfen. Korte fettsyrer kan følge andre transportveier.'
   },
   {
     id: 'fat-building-numbers', topic: 'fat', type: 'fill', level: 1,
@@ -523,7 +523,7 @@ export const questions = [
 ];
 
 export const sources = [
-  { title: 'Lærerens presentasjoner', description: '01 Karbohydrater, 02 Proteiner, 03 Fett, 2] Fordøyelsen og Vitaminer, mineraler og vann. Oppgavene er skrevet for denne modulen, med faglige presiseringer av forenklinger i lysbildene.' },
+  { title: 'Presentasjoner', description: '01 Karbohydrater, 02 Proteiner, 03 Fett, 2] Fordøyelsen og Vitaminer, mineraler og vann. Oppgavene er skrevet for denne modulen, med faglige presiseringer av forenklinger i lysbildene.' },
   { title: 'NDLA: Fordøyelsessystemet', url: 'https://ndla.no/nb/r/naturfag-fd/fordoyelsessystemet/c1f4800953', description: 'Inspirasjon til figurarbeid og forklaring av prosesser.' },
   { title: 'NDLA: Oppsummeringsoppgaver om næringsstoffer', url: 'https://ndla.no/en/r/naturfag-el/oppsummeringsoppgaver-om-naringsstoffer/c846680a39', description: 'Inspirasjon til sortering, utfylling, kobling og åpne forklaringer.' },
   { title: 'NDLA: Næringsstoffer', url: 'https://ndla.no/r/ravare-produksjon-salg-og-service-rm-kos-vg2/naringsstoffer/272df498dd', description: 'Kontroll av vitamininndeling, B12 som lagringsunntak og næringsstoffenes funksjoner.' },
@@ -586,6 +586,6 @@ questions.push(...structureQuestions,...documentQuestions,...ndlaQuestions,
 // Group shared visual models and close variants for the recent-family cooldown.
 for(const q of questions){if(!q.family)q.family=q.figure||q.id;}
 sources.push(
- {title:'Lærerens fem vedlegg: begrepsliste, kontrollspørsmål, prøveark, prøve fra 2016 og repetisjonsoppgaver',description:'Alle fem er gjennomgått. Historiske prøvedatoer og anbefalinger er ikke brukt som gjeldende regler.'},
+ {title:'Begrepsliste og øvingsmateriale: kontrollspørsmål, prøveark, prøve fra 2016 og repetisjonsoppgaver',description:'Alle fem er gjennomgått. Historiske prøvedatoer og anbefalinger er ikke brukt som gjeldende regler.'},
  {title:'NDLA: Næringsstoffene – hovedartikler, forsøk og oppgaver',url:'https://ndla.no/r/naturfag-sf/karbohydrater/27d0d79021',description:'22 sider er gjennomgått. Innebygde filmer og enkelte H5P-/eldre simuleringer er ikke kontrollert fullt ut. Oppgavene og SVG-figurene i modulen er originale.'}
 );

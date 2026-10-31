@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {questions} from '../prototyper/ernaering/questions.js';
+import {questions, sources} from '../prototyper/ernaering/questions.js';
 import {organs} from '../prototyper/ernaering/diagram.js';
 import {figure} from '../prototyper/ernaering/figures.js';
 import {evaluate, accepts, resultRecord, needsReview, mixedOrder, pickNext, rememberQuestion, topics, types} from '../prototyper/ernaering/engine.js';
@@ -85,4 +85,17 @@ test('changing filters preserves rotation for other topics and does not re-offer
  rememberQuestion(rotation,pool[1]);
  const q=pickNext(pool,rotation,{},()=>0);assert.ok(pool.some(x=>x.id===q.id));
  assert.ok(rotation.seen.includes('outside'),'cycling filtered pool must retain unrelated history');
+});
+
+test('nutrition stays within the taught scope and uses plain visible terminology',()=>{
+ const banned=/Fehling|biuret|jodtest|jodfarge|fettekstraksjon|Fischer|metylend|[αβ]|lærerens/i;
+ for(const q of questions){
+  const {id,figure:key,family,source,...visible}=q;
+  assert.doesNotMatch(JSON.stringify(visible),banned,id);
+  if(key)assert.doesNotMatch(figure(key),banned,id+': figure');
+ }
+ assert.doesNotMatch(JSON.stringify(sources),/lærerens/i);
+ for(const id of ['ndla-fehling-inference','ndla-fehling-controls','ndla-iodine-reversible','ndla-biuret-observation','ndla-saliva-maltose','ndla-saliva-compare'])assert.ok(!questions.some(q=>q.id===id));
+ const drawing=figure('polysaccharides');
+ for(const name of ['Stivelse','Glykogen','Cellulose'])assert.ok(drawing.includes(name),name+' is named in the model');
 });

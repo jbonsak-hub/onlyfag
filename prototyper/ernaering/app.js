@@ -1,7 +1,7 @@
-import {questions, sources} from './questions.js?v=20261031-1';
-import {organs, digestiveSVG} from './diagram.js?v=20261031-1';
-import {figure} from './figures.js?v=20261031-1';
-import {STORE_KEY, topics, types, shuffle, mixedOrder, evaluate, needsReview, resultRecord, pickNext, rememberQuestion} from './engine.js?v=20261031-1';
+import {questions, sources} from './questions.js?v=20261031-2';
+import {organs, digestiveSVG} from './diagram.js?v=20261031-2';
+import {figure} from './figures.js?v=20261031-2';
+import {STORE_KEY, topics, types, shuffle, mixedOrder, evaluate, needsReview, resultRecord, pickNext, rememberQuestion} from './engine.js?v=20261031-2';
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -35,7 +35,7 @@ function renderProgress(){
   storageMessage();
 }
 function renderNav(){
-  $('#topics').innerHTML=[['all','Blandet øving'],['figures','Figuroppgaver'],...Object.entries(topics)].map(([id,label],i)=>`<button class="topic-button ${state.topic===id?'active':''}" data-topic="${id}" aria-pressed="${state.topic===id}"><span class="topic-symbol" aria-hidden="true">${id==='all'?'↔':id==='figures'?'◇':String(i-1).padStart(2,'0')}</span><span>${esc(label)}</span><span class="topic-count">${id==='all'?questions.length:id==='figures'?questions.filter(q=>q.figure||q.type==='anatomy'||q.type==='process').length:questions.filter(q=>q.topic===id).length}</span></button>`).join('');
+  $('#topics').innerHTML=[['figures','Figuroppgaver'],...Object.entries(topics),['all','Blandet øving']].map(([id,label],i)=>`<button class="topic-button ${state.topic===id?'active':''}" data-topic="${id}" aria-pressed="${state.topic===id}"><span class="topic-symbol" aria-hidden="true">${id==='all'?'↔':id==='figures'?'◇':String(i).padStart(2,'0')}</span><span>${esc(label)}</span><span class="topic-count">${id==='all'?questions.length:id==='figures'?questions.filter(q=>q.figure||q.type==='anatomy'||q.type==='process').length:questions.filter(q=>q.topic===id).length}</span></button>`).join('');
   $('#review-button').classList.toggle('active',state.topic==='review');
   $('#review-button').setAttribute('aria-pressed',state.topic==='review');
   renderProgress();

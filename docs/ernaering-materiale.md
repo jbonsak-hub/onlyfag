@@ -36,3 +36,7 @@ Tre oppgaver er i tillegg direkte tilpasset lærerens skjermbilder: sukkerinndel
 ## Kompakt format og evaluering
 
 Høyst seks rader i de nye sorterings-/koblingsoppgavene; de fleste har to til fire. Felles oppgavefamilie kan brukes av repetisjonsmotoren på nært beslektede spørsmål. Ingen elevsvar sendes ut av nettleseren. Innholdet er originale, bearbeidede oppgaver, ikke en ordrett nyutgivelse av prøvene.
+
+## Senere avgrensning av oppgaveutvalget
+
+Påvisningsreaksjoner (Fehling, jod/stivelse og biuret), oppgaver som bygger på disse, og fettekstraksjon er tatt ut etter beskjed om at dette ikke er gjennomgått. Kildeloggen ovenfor beskriver materialet som ble lest, ikke krav om at alle sidetemaene skal inngå i øvingen. Unødvendig spesialnavnsetting er erstattet med kjente begreper og navn på modellene.

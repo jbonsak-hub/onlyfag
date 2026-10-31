@@ -46,7 +46,7 @@ const server=http.createServer((req,res)=>{
   for(const [width,height] of [[1366,768],[1280,720],[1024,768],[390,844]]){
    const viewport={width,height},{page,context}=await createPage(viewport);
    const questions=await page.evaluate(async()=>{
-    const {questions}=await import('./ernaering/questions.js?v=20261031-1');
+    const {questions}=await import('./ernaering/questions.js?v=20261031-2');
     return questions.map(({id,type,figure})=>({id,type,figure}));
    });
    let maxHeight=0,maxActionsBottom=0;

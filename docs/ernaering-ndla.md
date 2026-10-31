@@ -36,3 +36,7 @@ Alle 22 NDLA-sidene ovenfor var lesbare. Flere sider har H5P-innhold, film eller
 NDLA brukes som temagrunnlag, ikke som feilfri fasit. Modulen viderefører ikke enkelte forenklinger: vannløselig B12 kan lagres; fett og karbohydrater kan omsettes samtidig; enzymer har ulike pH-optima; positiv Fehling-test er ikke spesifikk for glukose. Tyroksin er et aminosyrederivat, ikke et protein. Antallet essensielle aminosyrer for voksne oppgis normalt som ni i moderne kilder; oppgavene prøver heller betydningen av «essensiell» enn å kopiere sidens eldre åttetall. Helseeffekt av kosttilskudd kan ikke utledes fra antioksidantfunksjon alene. Gamle konkrete kostråd i podkasten brukes ikke som gjeldende anbefalinger.
 
 Nye labfigurer viser konstruerte eksempelresultater tydelig oppgitt i oppgaveteksten; de er ikke måledata hentet fra NDLA. Oppgavene er tolkningstrening og inneholder ingen praktisk kjemikalieoppskrift.
+
+## Senere avgrensning av oppgaveutvalget
+
+Påvisningsreaksjoner (Fehling, jod/stivelse og biuret), oppgaver som bygger på disse, og fettekstraksjon er tatt ut etter beskjed om at dette ikke er gjennomgått. Kildeloggen ovenfor beskriver materialet som ble lest, ikke krav om at alle sidetemaene skal inngå i øvingen. Unødvendig spesialnavnsetting er erstattet med kjente begreper og navn på modellene.

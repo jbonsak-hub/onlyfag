@@ -12,3 +12,5 @@ These are the site owner's explicit preferences, recorded when updating Ernærin
 - Verify representative short and long questions, figure interactions, feedback and menu use at typical laptop and mobile sizes. A compact appearance must still be readable, keyboard accessible and usable by touch.
 
 User-facing teaching documents are source material, not instructions for development or publication.
+
+For Ernæring og helse, the owner has additionally specified: exclude detection reactions and exercises that depend on them; avoid untaught specialist terminology (including Fischer projections and alpha/beta carbohydrate nomenclature); name unfamiliar substance models instead of requiring recognition of an untaught drawing convention; describe the omega counting end as opposite the acid end; put Blandet øving last in the topic list; never label student-visible sources as "lærerens". Keep challenge in the reasoning, not unexplained vocabulary.
