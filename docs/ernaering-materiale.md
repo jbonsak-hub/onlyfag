@@ -40,3 +40,16 @@ Høyst seks rader i de nye sorterings-/koblingsoppgavene; de fleste har to til f
 ## Senere avgrensning av oppgaveutvalget
 
 Påvisningsreaksjoner (Fehling, jod/stivelse og biuret), oppgaver som bygger på disse, og fettekstraksjon er tatt ut etter beskjed om at dette ikke er gjennomgått. Kildeloggen ovenfor beskriver materialet som ble lest, ikke krav om at alle sidetemaene skal inngå i øvingen. Unødvendig spesialnavnsetting er erstattet med kjente begreper og navn på modellene.
+
+
+## Ny pensum- og lekkasjekontroll 31. oktober 2026
+
+De fem PowerPointene er faktisk lest på nytt via det opprinnelige kildegrunnlaget. Den kjente referansen ble hentet med Git fra `d92f59d811ee8676d93a0ea135f5c204568cf45b`; uttrekket ligger i `docs/ernaering-grunnlag/pptx-fulltext.md` på den referansen, sammen med `pptx-extracted.json`. Det dekker 105 lysbilder og foredragsnotater fra Karbohydrater, Proteiner, Fett, Fordøyelsen og Vitaminer/mineraler/vann. Dette er dokumentkontroll, ikke en påstand om at hvert navn på et lysbilde skal testes.
+
+Den nyeste uttrykkelige avgrensningen overstyrer historiske lysbildetekster: navn som lysin skal ikke kreves selv om det finnes i en aminosyretabell. Mikrovilli og lipase er erstattet med gjennomgåtte eller vanlige ord. Spalting av næringsstoffer beskrives uten hydrolyse-/ester-/glykosidnavnsetting. Peristaltiske bevegelser er betegnelsen elevene møter. Eksakte navngitte aminosyrer, reaksjonsmellomprodukter, glykolyse/cytosol/pyruvat/NAD⁺, detaljer om nitrogenavfall, fosfolipider, hydratisering og kalsiumavhengig nervesignalering er ikke forkunnskapskrav i oppgavene.
+
+Ni av tjue aminosyrer, amylase, pepsin, tarmtotter, bukspyttets basiske virkning, næringsopptak, transport via blod/lymfe, aerob/anaerob celleånding og ATP/ADP er eksplisitt støtte i presentasjonene og oppgavearkene. Detaljer som ikke er nødvendige for resonnementet, er ikke lagt til i fasiten bare fordi de er biologisk riktige. Utdatert eller forenklet fysiologi er heller ikke gjort til feilaktig fasit.
+
+Alle tre ikke-strukturelle delbanker er kontrollert gjennom spørsmål, svaralternativer, feltetiketter, hint og modell-/fasittekster. Prosessoppgavene skriver ikke navnet på riktig organ i oppgaveteksten. Data som en formel eller energi per gram kan oppgis når oppgaven tester tolkning eller beregning; det skilles fra å oppgi selve svaret. Hint er hjelp eleven selv velger, og vurdering/modellsvar vises etter svar eller fasitvalg.
+
+Karbohydratsorteringen finnes nå én gang, med glukose, fruktose, galaktose, maltose, laktose, sukrose, cellulose, kostfiber, stivelse og glykogen. «Kostfiber» brukes på det innøvde nivået for lange karbohydratkjeder; fasiten presiserer at dette er en samlebetegnelse, ikke ett bestemt stoff. To enklere duplikater er fjernet.

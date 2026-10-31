@@ -1,49 +1,658 @@
-// Original structure-reading tasks. Figure labels identify positions, not answers.
-const base=(id,topic,figure,title,prompt,hint,explanation)=>({id:`structure-${id}`,topic,figure,title,prompt,hint,explanation,level:2});
-const choice=(id,topic,figure,title,prompt,options,answer,hint,explanation)=>({...base(id,topic,figure,title,prompt,hint,explanation),type:'choice',options,answer});
-const multi=(id,topic,figure,title,prompt,options,answer,hint,explanation)=>({...base(id,topic,figure,title,prompt,hint,explanation),type:'multi',options,answer});
-const fill=(id,topic,figure,title,prompt,blanks,hint,explanation)=>({...base(id,topic,figure,title,prompt,hint,explanation),type:'fill',blanks});
-const match=(id,topic,figure,title,prompt,pairs,hint,explanation)=>({...base(id,topic,figure,title,prompt,hint,explanation),type:'match',pairs});
-const open=(id,topic,figure,title,prompt,model,checklist,hint,explanation)=>({...base(id,topic,figure,title,prompt,hint,explanation),type:'open',model,checklist});
-export const structureQuestions=[
- choice('glucose','carbs','fischer','Tre enkle sukkerarter','Glukose, fruktose og galaktose er vist med navn. Hvilken gruppe tilhører alle tre?', ['Monosakkarider','Disakkarider','Polysakkarider','Aminosyrer'],'Monosakkarider','Hvert av disse molekylene er én enkelt sukkerenhet.','Alle tre er monosakkarider. Disakkarider består av to sammenbundne monosakkarider, mens polysakkarider består av mange.'),
- choice('fructose','carbs','fischer','Finn C=O i kjeden','Hvilket av de navngitte molekylene har C=O inne i karbonkjeden, i stedet for ved enden?', ['Glukose','Fruktose','Galaktose'],'Fruktose','Se etter de to strekene mellom C og O.','Fruktose har C=O ved det andre karbonet. Glukose og galaktose har C=O i CHO-gruppen ved enden. De er likevel alle monosakkarider.'),
- choice('galactose','carbs','fischer','Sammenlign to sukkerarter','Hva viser figurene når du sammenligner glukose og galaktose?', ['De har samme antall atomer, men én OH-gruppe er plassert annerledes.','Galaktose har dobbelt så mange karbonatomer som glukose.','Glukose inneholder nitrogen, mens galaktose ikke gjør det.','De har helt lik struktur i figuren.'],'De har samme antall atomer, men én OH-gruppe er plassert annerledes.','Sammenlign OH-gruppene fra toppen og nedover.','Glukose og galaktose har begge sumformelen C₆H₁₂O₆. Figuren viser at én OH-gruppe peker i ulik retning. Lik sumformel betyr derfor ikke at molekylene er helt like.'),
- multi('hexose','carbs','fischer','Samme sumformel','Hvilke utsagn støttes av strukturene?', ['Alle tre har seks karbonatomer.','Alle tre har sumformelen C₆H₁₂O₆.','B har færre oksygenatomer enn A.','A og C har ulik plassering av én OH-gruppe.'],['Alle tre har seks karbonatomer.','Alle tre har sumformelen C₆H₁₂O₆.','A og C har ulik plassering av én OH-gruppe.'],'Tell alle karbon i hovedkjeden, også endene. Et oksygen i C=O teller like mye som i OH.','Alle tre har sumformelen C₆H₁₂O₆, men atomene er plassert ulikt. Samme sumformel betyr derfor ikke at stoffene er helt like eller har nøyaktig samme egenskaper.'),
- fill('carbon-count','carbs','fischer','Tell atomer i en åpen kjede','Hvor mange karbonatomer og oksygenatomer har molekyl B? Ikke tell bokstavene i CH₂OH som separate karbon.',[{label:'Karbonatomer',answers:['6']},{label:'Oksygenatomer',answers:['6']}],'Ta med både CH₂OH-endene og karbonet i C=O.','Fruktose inneholder seks karbonatomer, fem oksygenatomer i OH-grupper og ett i C=O. Sumformelen er C₆H₁₂O₆.'),
- match('fischer-food','carbs','fischer','Byggesteiner i disakkarider','A er glukose, B fruktose og C galaktose. Koble kombinasjonen til disakkaridet.',[{left:'A + A',right:'Maltose'},{left:'A + B',right:'Sukrose'},{left:'A + C',right:'Laktose'}],'Maltose dannes fra stivelse. Melkesukker inneholder galaktose.','Maltose består av to glukoseenheter, sukrose av glukose og fruktose, og laktose av glukose og galaktose. I hvert tilfelle er enhetene kjemisk bundet sammen.'),
- choice('ring-claim','carbs','carb-rings','Hva kan modellen vise?','En elev sier at A må være glukose fordi det bare er én ring. Hvilken vurdering er mest presis?', ['Én ring viser én enhet her, men identifiserer ikke alene hvilken sukkerart det er.','Alle molekyler med én ring er glukose.','Glukose kan aldri ha ringform.','Ringer finnes bare i polysakkarider.'],'Én ring viser én enhet her, men identifiserer ikke alene hvilken sukkerart det er.','Skiller modellen mellom hvordan OH-gruppene er plassert?','Antall sukkerenheter er vist, men detaljene som skiller bestemte monosakkarider er utelatt. Enkle symbolmodeller gir ikke alle strukturdetaljer.'),
- choice('disaccharide','carbs','carb-rings','Velg riktig molekylgruppe','Hvilken modell kan representere sukrose uten at alle atomene er tegnet?', ['A','B','C'],'B','Sukrose består av to bundne monosakkarider.','B har to sammenbundne sukkerenheter og kan representere et disakkarid. En fullstendig sukrosestruktur må også vise at enhetene er glukose og fruktose og hvordan de er bundet.'),
- choice('glycosidic-name','carbs','glycosidic','Bindingen mellom sukkerenhetene','Hva kalles bindingstypen ved X i denne karbohydratmodellen?', ['Glykosidbinding','Peptidbinding','Esterbinding','Hydrogenbinding mellom vannmolekyler'],'Glykosidbinding','Sammenlign bindinger i karbohydrater, proteiner og triglyserider.','Monosakkarider bindes sammen med glykosidbindinger. Peptidbindinger forbinder aminosyrer, mens esterbindinger finnes mellom glyserol og fettsyrer i triglyserider.'),
- choice('glycosidic-water','carbs','glycosidic','Hvorfor trengs vann?','Reaksjonen går fra venstre mot høyre. Hvilken beskrivelse er riktig?', ['En binding spaltes ved at vann bidrar med H og OH.','To sukkerenheter bindes sammen og vann dannes.','Vann omdannes til en ny sukkerenhet.','Sukkerenhetene blir til aminosyrer.'],'En binding spaltes ved at vann bidrar med H og OH.','Se om enhetene blir koblet sammen eller skilt fra hverandre.','Reaksjonen er hydrolyse. En binding brytes, og H og OH fra vann inngår i produktene. Ved den motsatte kondensasjonsreaksjonen dannes vann.'),
- fill('condensation-formula','carbs','glycosidic','Sumformel etter sammenbinding','To molekyler C₆H₁₂O₆ bindes sammen, og ett H₂O spaltes av. Hvor mange C-, H- og O-atomer får disakkaridet?', [{label:'C',answers:['12']},{label:'H',answers:['22']},{label:'O',answers:['11']}],'Legg sammen atomene i to enheter og trekk fra ett vannmolekyl.','2 × C₆H₁₂O₆ − H₂O gir C₁₂H₂₂O₁₁. Dette er sumformelen til blant annet maltose, laktose og sukrose, men bindingene er ulike.'),
- match('poly-identity','carbs','polysaccharides','Knytt stoff til funksjon','Modellene har navn. Koble hvert stoff til riktig funksjon.',[{left:'A: Stivelse',right:'Lagrer glukose i planter'},{left:'B: Glykogen',right:'Lagrer glukose i lever og muskler'},{left:'C: Cellulose',right:'Gir støtte i plantecellevegger'}],'Skill mellom energilagre i planter og dyr, og byggemateriale i planteceller.','Stivelse er plantenes glukoselager. Glykogen lagres i lever og muskler. Cellulose er byggemateriale i plantecellevegger og fungerer som kostfiber i maten vår. Stivelse kan ha både rette og forgrenede kjeder; A viser en forgrenet kjede.'),
- choice('cellulose-enzyme','carbs','polysaccharides','Samme byggestein, ulik fordøyelse','Alle modellene er bygd av glukose. Hvorfor fordøyer mennesker ikke cellulose (C) slik vi fordøyer stivelse (A)?', ['Vi mangler fordøyelsesenzymer som kan spalte bindingene i cellulose.','Cellulose inneholder ikke kjemiske bindinger.','Glukose i cellulose har ingen karbonatomer.','Cellulose tas opp som hele kjeder i blodet.'],'Vi mangler fordøyelsesenzymer som kan spalte bindingene i cellulose.','Det er ikke nok at byggesteinen er den samme; enzymet må også passe til bindingene.','Menneskets fordøyelsesenzymer kan spalte bindingene i stivelse, men ikke bindingene i cellulose. Cellulose er kostfiber. Noe kostfiber kan omsettes av bakterier i tykktarmen.'),
- multi('poly-storage','carbs','polysaccharides','Lagring og støtte','Hvilke koblinger er riktige?', ['Stivelse – lagring i planter.','Glykogen – lagring i lever og muskler.','Cellulose – viktig del av plantecellevegger.','Glykogen – hovedstoffet i blodet.'],['Stivelse – lagring i planter.','Glykogen – lagring i lever og muskler.','Cellulose – viktig del av plantecellevegger.'],'Skill mellom lagringsformene og glukosen som transporteres i blodet.','Stivelse lagrer glukose i planter. Glykogen lagres særlig i lever og muskler. Cellulose har en strukturell rolle i planter; blodet transporterer glukose, ikke store mengder glykogen.'),
- open('poly-explain','carbs','polysaccharides','Forklar struktur og funksjon','Stivelse, glykogen og cellulose er alle bygd av glukose. Forklar hvorfor de likevel har ulike funksjoner og ikke fordøyes likt.', 'Glukoseenhetene er bundet sammen på ulike måter. Stivelse lagrer glukose i planter, og glykogen lagrer glukose i lever og muskler. Cellulose danner sterke kjeder i plantecellevegger. Fordøyelsesenzymer må passe til bindingene. Våre enzymer spalter stivelse, men ikke cellulose, som fungerer som kostfiber.',['Jeg skiller glukoselagre fra byggemateriale i planter.','Jeg forklarer at glukoseenhetene er bundet sammen på ulike måter.','Jeg knytter fordøyelsen til hvilke bindinger enzymene kan spalte.'],'Tenk på både hvordan enhetene er bundet sammen og hvilke enzymer kroppen har.','Samme byggestein kan settes sammen på ulike måter og gi stoffer med ulike egenskaper.'),
- match('amino-groups','protein','amino','Grupper i en aminosyre','Koble bokstavene til riktig del av molekylet.',[{left:'A',right:'Aminogruppe'},{left:'B',right:'Syregruppe (COOH)'},{left:'C',right:'Variabel sidegruppe'}],'Se etter nitrogen, COOH og den delen som bare er merket R.','En aminosyre har aminogruppe og syregruppe på samme sentrale karbon. R-gruppen varierer mellom aminosyrene. Tegningen viser nøytral form; i kroppen finnes ofte ladede former.'),
- choice('amino-nitrogen','protein','amino','Hvilket grunnstoff skiller gruppen?','Hvilket grunnstoff i gruppe A er et tydelig kjennetegn ved aminosyren sammenlignet med vanlige sukkerarter?', ['Nitrogen','Oksygen','Hydrogen','Karbon'],'Nitrogen','Gruppe A er H₂N. Hvilken bokstav står for et annet grunnstoff enn C, H og O?','Aminogruppen inneholder nitrogen. Vanlige karbohydrater består av karbon, hydrogen og oksygen. Noen aminosyrer inneholder også svovel i R-gruppen.'),
- choice('amino-r','protein','amino','Hva varierer mellom aminosyrer?','Hva betyr det at R er en variabel sidegruppe?', ['R kan ha ulik struktur og gi aminosyrene ulike egenskaper.','R er alltid et jernatom.','Alle aminosyrer har identisk R-gruppe.','R er en ekstra aminosyre som alltid bindes utenpå.'],'R kan ha ulik struktur og gi aminosyrene ulike egenskaper.','Sidegruppen kan være liten, stor, ladet, polar eller upolar.','Ulike R-grupper påvirker blant annet ladning og vannløselighet. Samspillet mellom sidegruppene er viktig for hvordan proteiner folder seg.'),
- choice('amino-central','protein','amino','Finn det sentrale karbonet','Hvilke fire grupper er bundet til det sentrale karbonet merket CH?', ['NH₂, COOH, H og R','NH₂, COOH og to OH-grupper','Tre fettsyrer og ett glukosemolekyl','Fire identiske R-grupper'],'NH₂, COOH, H og R','H i CH er det fjerde atomet/gruppen selv om det ikke har en egen strek.','Det sentrale karbonet i en aminosyre er bundet til aminogruppen, syregruppen, et hydrogen og R. I én av aminosyrene er R også hydrogen.'),
- choice('peptide-bond','protein','dipeptide','Bindingen i et peptid','Hvilken bindingstype er markert X?', ['Peptidbinding','Glykosidbinding','Esterbinding i et triglyserid','Binding mellom to glukoseringer'],'Peptidbinding','Se på atomene rundt X: C(=O)–NH.','Peptidbindingen er C–N-bindingen i gruppen –CO–NH–. Den dannes mellom syregruppen i én aminosyre og aminogruppen i en annen.'),
- fill('peptide-count','protein','dipeptide','Tell aminosyreenheter','Hvor mange aminosyreenheter og peptidbindinger er vist i denne kjeden?', [{label:'Aminosyreenheter',answers:['2']},{label:'Peptidbindinger',answers:['1']}],'Finn gjentakelsen av sentralt karbon og se hvor to enheter er koblet.','Molekylet består av to aminosyrer som er bundet sammen med én peptidbinding. En lineær kjede med n aminosyrer har n − 1 peptidbindinger.'),
- choice('peptide-hydrolysis','protein','dipeptide','Hydrolyse av et dipeptid','Hva blir sluttproduktene når binding X spaltes fullstendig med vann?', ['To aminosyrer','To fettsyrer','Ett monosakkarid og glyserol','Ett protein med flere aminosyrer enn før'],'To aminosyrer','H og OH fra vann gjenoppretter endene som ble koblet ved dannelsen.','Hydrolyse bryter peptidbindingen og gir to aminosyrer. I den viste modellen er de to aminosyrene like. Nedbryting av et helt protein skjer via kortere peptider før opptak.'),
- choice('denaturation-bond','protein','protein','Hva viser A?','Hvilket utsagn beskriver endringen fra Start til A best?', ['Foldingen endres, men antallet peptidbindinger i kjeden er bevart.','Alle peptidbindingene er spaltet til frie aminosyrer.','A har fått nye sukkerenheter.','A er omdannet til et triglyserid.'],'Foldingen endres, men antallet peptidbindinger i kjeden er bevart.','Følg hele kjeden og tell forbindelsene mellom sirklene.','A viser en forenklet denaturering: formen endres uten at kjeden klippes i denne modellen. B viser brudd i kjeden. Endret folding kan ødelegge enzymfunksjonen.'),
- multi('protein-change','protein','protein','Denaturering og spalting','Hvilke utsagn er riktige om modellene?', ['Varme eller lav pH kan bidra til endring A.','Endring A kan redusere enzymaktivitet uten å frigjøre aminosyrer.','Endring B innebærer at bindinger i kjeden er brutt.','A og B viser alltid nøyaktig samme kjemiske prosess.'],['Varme eller lav pH kan bidra til endring A.','Endring A kan redusere enzymaktivitet uten å frigjøre aminosyrer.','Endring B innebærer at bindinger i kjeden er brutt.'],'Skill proteinets tredimensjonale form fra selve rekkefølgen av bundne aminosyrer.','Denaturering endrer proteinets romstruktur. Hydrolyse bryter peptidbindinger. Magesyre kan denaturere proteiner og gjøre dem mer tilgjengelige for pepsin, som spalter bindinger.'),
- match('glycerol-acid','fat','glycerol-acid','Les to strukturformler','Koble A og B til stofftype.', [{left:'A',right:'Glyserol: alkohol med tre OH-grupper'},{left:'B',right:'Fettsyre: lang karbonkjede med COOH'}],'Tell OH-gruppene i A og finn syregruppen i B.','Glyserol har tre karbonatomer og tre OH-grupper. Fettsyren B har en lang hydrokarbonkjede og en syregruppe. Glyserol og fettsyrer er utgangsstoffer for triglyserider.'),
- choice('acid-saturation','fat','glycerol-acid','Tell riktig type dobbeltbinding','B har C=O i syregruppen. Er fettsyren likevel mettet?', ['Ja, hydrokarbonkjeden har ingen C=C-bindinger.','Nei, enhver C=O gjør fettsyren umettet.','Nei, alle lange fettsyrer er flerumettede.','Det avgjøres bare av antall oksygenatomer.'],'Ja, hydrokarbonkjeden har ingen C=C-bindinger.','Mettet og umettet fett bestemmes av bindinger mellom karbon i selve hydrokarbonkjeden.','B er stearinsyre, CH₃(CH₂)₁₆COOH, en mettet fettsyre. C=O finnes også i mettede fettsyrers syregruppe og regnes ikke som C=C-umettethet.'),
- fill('acid-carbon-count','fat','glycerol-acid','Hvor lang er fettsyren?','Hvor mange karbonatomer har B totalt? Ta med karbonatomet i COOH-gruppen.',[{label:'Karbonatomer',answers:['18']}],'CH₃ gir ett, (CH₂)₁₆ gir seksten og COOH gir ett.','Fettsyren har 1 + 16 + 1 = 18 karbonatomer. Parentesen (CH₂)₁₆ viser seksten karbonatomer, ikke ett.'),
- choice('glycerol-ester','fat','triglyceride','Bindinger i et triglyserid','Hva kalles bindingstypen ved X og de to tilsvarende forbindelsene?', ['Esterbinding','Peptidbinding','Glykosidbinding','En binding mellom to aminosyrer'],'Esterbinding','Se etter –O–C(=O)–. Hvilke grupper reagerte for å danne denne forbindelsen?','En OH-gruppe i glyserol reagerer med syregruppen i en fettsyre og danner en esterbinding. Ett triglyserid har tre slike forbindelser.'),
- fill('tri-hydrolysis','fat','triglyceride','Fullstendig spalting av triglyserid','Ved fullstendig kjemisk hydrolyse spaltes alle tre esterbindingene. Hvor mange glyserolmolekyler, fettsyremolekyler og vannmolekyler inngår per triglyserid?', [{label:'Glyserolmolekyler som dannes',answers:['1']},{label:'Fettsyremolekyler som dannes',answers:['3']},{label:'Vannmolekyler som brukes',answers:['3']}],'Hver brutt esterbinding bruker ett vannmolekyl. Den venstre ryggraden er ett sammenhengende molekyl.','Fullstendig hydrolyse gir ett glyserol og tre fettsyrer og bruker tre vannmolekyler. I tarmen er viktige produkter derimot monoglyserider og frie fettsyrer, ikke bare fullstendig spaltede molekyler.'),
- choice('tri-variable','fat','triglyceride','Hva kan variere i samme fettmolekyl?','Hvilket utsagn om R₁, R₂ og R₃ er riktig?', ['Kjedene kan ha ulik lengde og ulikt antall C=C-bindinger.','De må alltid ha nøyaktig samme struktur.','R-gruppene må alltid være aminosyrer.','Triglyseridet inneholder bare én fettsyrerest.'],'Kjedene kan ha ulik lengde og ulikt antall C=C-bindinger.','Et triglyserid har tre fettsyrerester; de trenger ikke være identiske.','Kjedelengde og dobbeltbindinger kan variere både mellom fettmolekyler og mellom de tre fettsyrerestene i ett molekyl. Dette påvirker blant annet smelteegenskapene.'),
- choice('mono-unsaturated','fat','fat-chains','Sammenlign bindingene i kjeden','Hvilken beskrivelse passer til B?', ['Enumettet fettsyre','Mettet fettsyre','Flerumettet fettsyre med tre C=C-bindinger','Et protein'],'Enumettet fettsyre','Tell dobbeltbindingene mellom karbonatomer; COOH-gruppen teller ikke her.','B har én C=C-binding i hydrokarbonkjeden og er enumettet. A har ingen C=C og er mettet. To eller flere C=C gjør en fettsyre flerumettet.'),
- choice('chain-melting','fat','fat-chains','Struktur og smelting','Sammenlign mettet A med en cis-umettet fettsyre med samme kjedelengde som A. Hva er vanligvis riktig?', ['Cis-knekken gjør tett pakking vanskeligere og senker ofte smeltepunktet.','Cis-knekken gjør at alle fettsyrene danner peptidbindinger.','Én C=C gjør fettsyren fullstendig vannløselig.','Mettede fettsyrer har alltid lavest smeltepunkt uansett struktur.'],'Cis-knekken gjør tett pakking vanskeligere og senker ofte smeltepunktet.','Tenk på hvordan rette og bøyde kjeder kan ligge inntil hverandre.','Cis-dobbeltbindinger gir knekk i kjeden og svekker vanligvis tett pakking. Sammenligningen forutsetter omtrent lik kjedelengde; temperatur og resten av blandingen spiller også inn.'),
- choice('cis-identify','fat','cis-trans','Cis eller trans?','Hvilken modell viser cis rundt den tegnede C=C-bindingen?', ['A','B','Begge','Ingen'],'A','Se bare på hvilken side av dobbeltbindingen de to R-gruppene står på.','I A står R-gruppene på samme side: cis. I B står de på hver sin side: trans. Hver karbon i dobbeltbindingen er også bundet til ett hydrogen.'),
- multi('trans-not-saturated','fat','cis-trans','Vurder struktur og betegnelse','Hvilke utsagn om B er riktige?', ['B viser trans.','B er fortsatt umettet fordi det finnes en C=C-binding.','B er mettet bare fordi R-gruppene står på hver sin side.','Trans og cis beskriver grupperingen rundt en dobbeltbinding.'],['B viser trans.','B er fortsatt umettet fordi det finnes en C=C-binding.','Trans og cis beskriver grupperingen rundt en dobbeltbinding.'],'Mettethet teller C=C-bindinger. Cis/trans beskriver plasseringen av grupper ved en slik binding.','En transfettsyre er umettet. Transbindinger gir vanligvis rettere kjeder enn tilsvarende cis-bindinger og kan derfor gi mer tett pakking, men de blir ikke mettet fett av den grunn.'),
- choice('hydrogenation','fat','cis-trans','Hva skjer ved full herding?','Hvis den viste C=C-bindingen tilføres ett H₂ og blir C–C, hva har skjedd?', ['Fettsyren har fått to flere H og én færre C=C-binding.','Fettsyren har fått to flere C og blitt lengre.','En esterbinding er blitt til en peptidbinding.','Antallet karbonatomer er halvert.'],'Fettsyren har fått to flere H og én færre C=C-binding.','H₂ består av to hydrogenatomer; hvert dobbeltbundet karbon får ett nytt H.','Ved herding tilføres hydrogen til dobbeltbindinger uten at antallet karbonatomer endres. Delvis herding kan også endre cis til trans; full metting av denne bindingen fjerner forskjellen mellom cis og trans der.'),
- choice('omega-family','fat','omega','Bestem omega-familien','Tallene teller fra CH₃-enden, motsatt syregruppen (COOH). Hvilken omega-familie hører fettsyren til?', ['Omega-3','Omega-6','Omega-9','Det bestemmes av COOH-gruppens oksygenatomer.'],'Omega-3','Finn den første C=C-bindingen når du starter ved CH₃.','Den første dobbeltbindingen ligger mellom karbon 3 og 4 fra enden motsatt syregruppen (COOH). Fettsyren tilhører derfor omega-3-familien. Omega-tallet sier ikke alene hvor mange dobbeltbindinger det finnes totalt.'),
- choice('omega-end','fat','omega','Velg riktig ende å telle fra','En elev begynner ved COOH for å finne omega-tallet. Hva må endres?', ['Tell fra CH₃-enden til den første dobbeltbindingen.','Tell bare oksygenatomene.','Begynn ved et hvilket som helst karbon.','Bruk alltid antall karbon i hele molekylet som omega-tall.'],'Tell fra CH₃-enden til den første dobbeltbindingen.','Start på den andre siden av molekylet enn syregruppen (COOH).','Omega-tallet telles fra enden motsatt syregruppen (COOH), motsatt syregruppen. Her skal du altså ikke begynne å telle ved COOH.'),
- multi('omega-inference','fat','omega','Hva sier omega-tallet?','Hvilke utsagn er riktige?', ['Omega-tallet angir plasseringen av den første C=C fra enden motsatt syregruppen (COOH).','Alle omega-3-fettsyrer har nødvendigvis bare tre karbonatomer.','To omega-3-fettsyrer kan ha ulik kjedelengde.','Omega-3 betyr alltid tre C=C-bindinger.'],['Omega-tallet angir plasseringen av den første C=C fra enden motsatt syregruppen (COOH).','To omega-3-fettsyrer kan ha ulik kjedelengde.'],'Skiller du mellom plasseringen av første dobbeltbinding og totalt antall karbon eller dobbeltbindinger?','Omega-3 betyr første dobbeltbinding ved karbon 3 fra enden motsatt syregruppen (COOH). Familien omfatter flere fettsyrer med ulik lengde og ulikt antall dobbeltbindinger, både i planter og i fisk.'),
- fill('hydrolysis-water','protein','hydrolysis-count','Vann ved spalting av en kjede','Modellen er en kjede av fem aminosyrer. Hvor mange peptidbindinger må spaltes, og hvor mange vannmolekyler brukes ved fullstendig hydrolyse?', [{label:'Peptidbindinger',answers:['4']},{label:'Vannmolekyler',answers:['4']}],'En kjede med fem ledd har fire forbindelser. Hver hydrolyse bruker ett H₂O.','Fire peptidbindinger forbinder fem aminosyrer i en kjede uten forgreninger. Fullstendig hydrolyse bruker fire vannmolekyler. Ved kondensasjon i motsatt retning dannes fire vannmolekyler.'),
- open('structure-compare','fat','triglyceride','Forklar forskjellen på to bindingstyper','En elev kaller X en peptidbinding fordi molekylet har flere byggesteiner. Forklar feilen med utgangspunkt i atomgruppene ved X.', 'X er en esterbinding i –O–C(=O)–. Den forbinder glyserol med en fettsyrerest. En peptidbinding finnes i –C(=O)–NH– og binder aminosyrer sammen. Det er atomgruppene og forbindelsen, ikke bare antallet byggesteiner, som avgjør bindingstypen.',['Jeg identifiserer –O–C(=O)– som esterforbindelse.','Jeg knytter figuren til glyserol og fettsyrer.','Jeg sammenligner med nitrogen i en peptidbinding.'],'Se etter om forbindelsen går via O eller N.','Triglyserider og proteiner er bygd på ulike måter. Peptidbindingens nitrogen er et nyttig kjennetegn når du sammenligner disse strukturene.')
+// Original visual tasks using the taught ring structures and nutrition vocabulary.
+export const structureQuestions = [
+  {
+    "id": "structure-glucose",
+    "topic": "carbs",
+    "figure": "sugar-rings",
+    "title": "Tre ringformede sukkerarter",
+    "prompt": "Glukose, fruktose og galaktose er vist med navn. Hvilken gruppe tilhører alle tre?",
+    "hint": "Hvert molekyl er én sukkerenhet.",
+    "explanation": "Alle tre er monosakkarider. Disakkarider består av to sammenbundne monosakkarider; polysakkarider består av mange.",
+    "level": 2,
+    "type": "choice",
+    "options": [
+      "Monosakkarider",
+      "Disakkarider",
+      "Polysakkarider",
+      "Aminosyrer"
+    ],
+    "answer": "Monosakkarider",
+    "family": "sugar-rings"
+  },
+  {
+    "id": "structure-galactose",
+    "topic": "carbs",
+    "figure": "pair-glucose-galactose",
+    "title": "Sammenlign to sukkerarter",
+    "prompt": "Hva viser ringstrukturene når du sammenligner glukose og galaktose?",
+    "hint": "Sammenlign OH-gruppene ved den venstre delen av hver ring.",
+    "explanation": "Glukose og galaktose har begge sumformelen C₆H₁₂O₆. Én OH-gruppe peker ulikt i de viste ringstrukturene. Samme sumformel betyr derfor ikke at molekylene er helt like.",
+    "level": 2,
+    "type": "choice",
+    "options": [
+      "De har samme antall atomer, men én OH-gruppe er plassert annerledes.",
+      "Galaktose har dobbelt så mange karbonatomer som glukose.",
+      "Glukose inneholder nitrogen, mens galaktose ikke gjør det.",
+      "De har helt lik struktur i figuren."
+    ],
+    "answer": "De har samme antall atomer, men én OH-gruppe er plassert annerledes.",
+    "family": "sugar-rings"
+  },
+  {
+    "id": "structure-hexose",
+    "topic": "carbs",
+    "figure": "sugar-rings",
+    "title": "Samme sumformel",
+    "prompt": "Glukose, fruktose og galaktose har alle sumformelen C₆H₁₂O₆. Hvilke utsagn følger av denne opplysningen?",
+    "hint": "Skill mellom hva en sumformel viser og hva en strukturformel viser.",
+    "explanation": "Sumformelen oppgir antallet atomer av hvert grunnstoff. Stoffene kan likevel ha ulik plassering av atomene og dermed ulike egenskaper.",
+    "level": 2,
+    "type": "multi",
+    "options": [
+      "De har like mange atomer av hvert grunnstoff.",
+      "De må ha helt lik struktur.",
+      "Formelen alene viser ikke hvordan atomene er plassert.",
+      "Fruktose har flere karbonatomer enn glukose."
+    ],
+    "answer": [
+      "De har like mange atomer av hvert grunnstoff.",
+      "Formelen alene viser ikke hvordan atomene er plassert."
+    ],
+    "family": "sugar-rings"
+  },
+  {
+    "id": "structure-carbon-count",
+    "topic": "carbs",
+    "figure": "single-fructose-ring",
+    "title": "Tell atomer i ringform",
+    "prompt": "Hvor mange karbonatomer og oksygenatomer inneholder fruktosemolekylet (B)?",
+    "hint": "Tell C og O både i ringen og i gruppene utenfor ringen.",
+    "explanation": "Fruktose har fire C-atomer og ett O-atom i ringen. To CH₂OH-grupper gir to C-atomer til. De fem OH-gruppene og ringens O gir seks O-atomer i alt.",
+    "level": 2,
+    "type": "fill",
+    "blanks": [
+      {
+        "label": "Karbonatomer",
+        "answers": [
+          "6"
+        ]
+      },
+      {
+        "label": "Oksygenatomer",
+        "answers": [
+          "6"
+        ]
+      }
+    ],
+    "family": "sugar-rings"
+  },
+  {
+    "id": "structure-fischer-food",
+    "topic": "carbs",
+    "figure": "sugar-rings",
+    "title": "Byggesteiner i disakkarider",
+    "prompt": "A er glukose, B fruktose og C galaktose. Koble kombinasjonen til disakkaridet.",
+    "hint": "Maltose dannes fra stivelse. Melkesukker inneholder galaktose.",
+    "explanation": "Maltose består av to glukoseenheter, sukrose av glukose og fruktose, og laktose av glukose og galaktose. I hvert tilfelle er enhetene kjemisk bundet sammen.",
+    "level": 2,
+    "type": "match",
+    "pairs": [
+      {
+        "left": "A + A",
+        "right": "Maltose"
+      },
+      {
+        "left": "A + B",
+        "right": "Sukrose"
+      },
+      {
+        "left": "A + C",
+        "right": "Laktose"
+      }
+    ],
+    "family": "sugar-rings"
+  },
+  {
+    "id": "structure-ring-claim",
+    "topic": "carbs",
+    "figure": "carb-rings",
+    "title": "Hva kan modellen vise?",
+    "prompt": "En elev sier at A må være glukose fordi det bare er én ring. Hvilken vurdering er mest presis?",
+    "hint": "Skiller modellen mellom hvordan OH-gruppene er plassert?",
+    "explanation": "Antall sukkerenheter er vist, men detaljene som skiller bestemte monosakkarider er utelatt. Enkle symbolmodeller gir ikke alle strukturdetaljer.",
+    "level": 2,
+    "type": "choice",
+    "options": [
+      "Én ring viser én enhet her, men identifiserer ikke alene hvilken sukkerart det er.",
+      "Alle molekyler med én ring er glukose.",
+      "Glukose kan aldri ha ringform.",
+      "Ringer finnes bare i polysakkarider."
+    ],
+    "answer": "Én ring viser én enhet her, men identifiserer ikke alene hvilken sukkerart det er."
+  },
+  {
+    "id": "structure-disaccharide",
+    "topic": "carbs",
+    "figure": "carb-rings",
+    "title": "Velg riktig molekylgruppe",
+    "prompt": "Hvilken modell kan representere sukrose uten at alle atomene er tegnet?",
+    "hint": "Sukrose består av to bundne monosakkarider.",
+    "explanation": "B har to sammenbundne sukkerenheter og kan representere et disakkarid. En fullstendig sukrosestruktur må også vise at enhetene er glukose og fruktose og hvordan de er bundet.",
+    "level": 2,
+    "type": "choice",
+    "options": [
+      "A",
+      "B",
+      "C"
+    ],
+    "answer": "B"
+  },
+  {
+    "id": "structure-glycosidic-water",
+    "topic": "carbs",
+    "figure": "glycosidic",
+    "title": "Spalting av et sukkerstoff",
+    "prompt": "Hvilken beskrivelse passer til endringen fra venstre mot høyre?",
+    "hint": "Se på om ringene er bundet sammen før og etter.",
+    "explanation": "Bindingen mellom sukkerenhetene spaltes. Vann inngår i spaltingen. Fordøyelsen bryter større næringsstoffer ned til mindre deler som kan tas opp.",
+    "level": 2,
+    "type": "choice",
+    "options": [
+      "To sammenbundne sukkerenheter blir skilt fra hverandre.",
+      "To aminosyrer blir til et protein.",
+      "Én sukkerenhet blir til en fettsyre.",
+      "To frie sukkerenheter blir bundet sammen."
+    ],
+    "answer": "To sammenbundne sukkerenheter blir skilt fra hverandre."
+  },
+  {
+    "id": "structure-poly-identity",
+    "topic": "carbs",
+    "figure": "polysaccharides",
+    "title": "Knytt stoff til funksjon",
+    "prompt": "Modellene har navn. Koble hvert stoff til riktig funksjon.",
+    "hint": "Skill mellom energilagre i planter og dyr, og byggemateriale i planteceller.",
+    "explanation": "Stivelse er plantenes glukoselager. Glykogen lagres i lever og muskler. Cellulose er byggemateriale i plantecellevegger og fungerer som kostfiber i maten vår. Stivelse kan ha både rette og forgrenede kjeder; A viser en forgrenet kjede.",
+    "level": 2,
+    "type": "match",
+    "pairs": [
+      {
+        "left": "A: Stivelse",
+        "right": "Lagrer glukose i planter"
+      },
+      {
+        "left": "B: Glykogen",
+        "right": "Lagrer glukose i lever og muskler"
+      },
+      {
+        "left": "C: Cellulose",
+        "right": "Gir støtte i plantecellevegger"
+      }
+    ]
+  },
+  {
+    "id": "structure-cellulose-enzyme",
+    "topic": "carbs",
+    "figure": "polysaccharides",
+    "title": "Samme byggestein, ulik fordøyelse",
+    "prompt": "Alle modellene er bygd av glukose. Hvorfor fordøyer mennesker ikke cellulose (C) slik vi fordøyer stivelse (A)?",
+    "hint": "Det er ikke nok at byggesteinen er den samme; enzymet må også passe til bindingene.",
+    "explanation": "Menneskets fordøyelsesenzymer kan spalte bindingene i stivelse, men ikke bindingene i cellulose. Cellulose er kostfiber. Noe kostfiber kan omsettes av bakterier i tykktarmen.",
+    "level": 2,
+    "type": "choice",
+    "options": [
+      "Vi mangler fordøyelsesenzymer som kan spalte bindingene i cellulose.",
+      "Cellulose inneholder ikke kjemiske bindinger.",
+      "Glukose i cellulose har ingen karbonatomer.",
+      "Cellulose tas opp som hele kjeder i blodet."
+    ],
+    "answer": "Vi mangler fordøyelsesenzymer som kan spalte bindingene i cellulose."
+  },
+  {
+    "id": "structure-poly-storage",
+    "topic": "carbs",
+    "figure": "polysaccharides",
+    "title": "Lagring og støtte",
+    "prompt": "Hvilke koblinger er riktige?",
+    "hint": "Skill mellom lagringsformene og glukosen som transporteres i blodet.",
+    "explanation": "Stivelse lagrer glukose i planter. Glykogen lagres særlig i lever og muskler. Cellulose har en strukturell rolle i planter; blodet transporterer glukose, ikke store mengder glykogen.",
+    "level": 2,
+    "type": "multi",
+    "options": [
+      "Stivelse – lagring i planter.",
+      "Glykogen – lagring i lever og muskler.",
+      "Cellulose – viktig del av plantecellevegger.",
+      "Glykogen – hovedstoffet i blodet."
+    ],
+    "answer": [
+      "Stivelse – lagring i planter.",
+      "Glykogen – lagring i lever og muskler.",
+      "Cellulose – viktig del av plantecellevegger."
+    ]
+  },
+  {
+    "id": "structure-poly-explain",
+    "topic": "carbs",
+    "figure": "polysaccharides",
+    "title": "Forklar struktur og funksjon",
+    "prompt": "Stivelse, glykogen og cellulose er alle bygd av glukose. Forklar hvorfor de likevel har ulike funksjoner og ikke fordøyes likt.",
+    "hint": "Tenk på både hvordan enhetene er bundet sammen og hvilke enzymer kroppen har.",
+    "explanation": "Samme byggestein kan settes sammen på ulike måter og gi stoffer med ulike egenskaper.",
+    "level": 2,
+    "type": "open",
+    "model": "Glukoseenhetene er bundet sammen på ulike måter. Stivelse lagrer glukose i planter, og glykogen lagrer glukose i lever og muskler. Cellulose danner sterke kjeder i plantecellevegger. Fordøyelsesenzymer må passe til bindingene. Våre enzymer spalter stivelse, men ikke cellulose, som fungerer som kostfiber.",
+    "checklist": [
+      "Jeg skiller glukoselagre fra byggemateriale i planter.",
+      "Jeg forklarer at glukoseenhetene er bundet sammen på ulike måter.",
+      "Jeg knytter fordøyelsen til hvilke bindinger enzymene kan spalte."
+    ]
+  },
+  {
+    "id": "structure-amino-groups",
+    "topic": "protein",
+    "figure": "amino",
+    "title": "Grupper i en aminosyre",
+    "prompt": "Koble bokstavene til riktig del av molekylet.",
+    "hint": "Se etter nitrogen, COOH og den delen som bare er merket R.",
+    "explanation": "En aminosyre har aminogruppe og syregruppe på samme sentrale karbon. R-gruppen varierer mellom aminosyrene. Tegningen viser nøytral form; i kroppen finnes ofte ladede former.",
+    "level": 2,
+    "type": "match",
+    "pairs": [
+      {
+        "left": "A",
+        "right": "Aminogruppe"
+      },
+      {
+        "left": "B",
+        "right": "Syregruppe (COOH)"
+      },
+      {
+        "left": "C",
+        "right": "Variabel sidegruppe"
+      }
+    ]
+  },
+  {
+    "id": "structure-amino-nitrogen",
+    "topic": "protein",
+    "figure": "amino",
+    "title": "Hvilket grunnstoff skiller gruppen?",
+    "prompt": "Hvilket grunnstoff i gruppe A er et tydelig kjennetegn ved aminosyren sammenlignet med vanlige sukkerarter?",
+    "hint": "Gruppe A er H₂N. Hvilken bokstav står for et annet grunnstoff enn C, H og O?",
+    "explanation": "Aminogruppen inneholder nitrogen. Vanlige karbohydrater består av karbon, hydrogen og oksygen. Noen aminosyrer inneholder også svovel i R-gruppen.",
+    "level": 2,
+    "type": "choice",
+    "options": [
+      "Nitrogen",
+      "Oksygen",
+      "Hydrogen",
+      "Karbon"
+    ],
+    "answer": "Nitrogen"
+  },
+  {
+    "id": "structure-amino-r",
+    "topic": "protein",
+    "figure": "amino",
+    "title": "Hva varierer mellom aminosyrer?",
+    "prompt": "To aminosyrer har like aminogrupper og syregrupper, men ulike R-grupper. Hva kan derfor være forskjellig?",
+    "hint": "Sammenlign den felles oppbygningen med delen som er merket R.",
+    "explanation": "Ulike aminosyrer har ulike sidegrupper. Det påvirker egenskapene deres og hvordan proteiner folder seg.",
+    "level": 2,
+    "type": "choice",
+    "options": [
+      "Aminosyrene kan få ulike egenskaper fordi R-gruppene er forskjellige.",
+      "R er alltid et jernatom.",
+      "Alle aminosyrer har identisk R-gruppe.",
+      "R er en ekstra aminosyre som alltid bindes utenpå."
+    ],
+    "answer": "Aminosyrene kan få ulike egenskaper fordi R-gruppene er forskjellige."
+  },
+  {
+    "id": "structure-amino-central",
+    "topic": "protein",
+    "figure": "amino",
+    "title": "Finn det sentrale karbonet",
+    "prompt": "Hvilke fire grupper er bundet til det sentrale karbonet merket CH?",
+    "hint": "H i CH er det fjerde atomet/gruppen selv om det ikke har en egen strek.",
+    "explanation": "Det sentrale karbonet i en aminosyre er bundet til aminogruppen, syregruppen, et hydrogen og R. I én av aminosyrene er R også hydrogen.",
+    "level": 2,
+    "type": "choice",
+    "options": [
+      "NH₂, COOH, H og R",
+      "NH₂, COOH og to OH-grupper",
+      "Tre fettsyrer og ett glukosemolekyl",
+      "Fire identiske R-grupper"
+    ],
+    "answer": "NH₂, COOH, H og R"
+  },
+  {
+    "id": "structure-peptide-bond",
+    "topic": "protein",
+    "figure": "dipeptide",
+    "title": "Bindingen i et peptid",
+    "prompt": "Hvilken bindingstype er markert X?",
+    "hint": "Hvilken type byggesteiner er satt sammen i kjeden?",
+    "explanation": "Peptidbindinger binder aminosyrer sammen. I figuren går binding X mellom et C-atom i syregruppen fra én aminosyre og et N-atom fra den andre.",
+    "level": 2,
+    "type": "choice",
+    "options": [
+      "Peptidbinding",
+      "En binding mellom to sukkerarter",
+      "En binding mellom glyserol og en fettsyre",
+      "En binding mellom to fettsyrer"
+    ],
+    "answer": "Peptidbinding"
+  },
+  {
+    "id": "structure-peptide-count",
+    "topic": "protein",
+    "figure": "dipeptide",
+    "title": "Tell aminosyreenheter",
+    "prompt": "Hvor mange aminosyreenheter og peptidbindinger er vist i denne kjeden?",
+    "hint": "Finn gjentakelsen av sentralt karbon og se hvor to enheter er koblet.",
+    "explanation": "Molekylet består av to aminosyrer som er bundet sammen med én peptidbinding. En lineær kjede med n aminosyrer har n − 1 peptidbindinger.",
+    "level": 2,
+    "type": "fill",
+    "blanks": [
+      {
+        "label": "Aminosyreenheter",
+        "answers": [
+          "2"
+        ]
+      },
+      {
+        "label": "Peptidbindinger",
+        "answers": [
+          "1"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "structure-peptide-hydrolysis",
+    "topic": "protein",
+    "figure": "dipeptide",
+    "title": "Spalting av to aminosyrer",
+    "prompt": "Hva blir sluttproduktene når kjeden spaltes ved X?",
+    "hint": "Se hvilke byggesteiner som er bundet sammen.",
+    "explanation": "Når peptidbindingen spaltes, frigjøres to aminosyrer. Proteiner brytes ned til mindre kjeder og videre til aminosyrer.",
+    "level": 2,
+    "type": "choice",
+    "options": [
+      "To aminosyrer",
+      "To fettsyrer",
+      "Ett monosakkarid og glyserol",
+      "Ett protein med flere aminosyrer enn før"
+    ],
+    "answer": "To aminosyrer"
+  },
+  {
+    "id": "structure-denaturation-bond",
+    "topic": "protein",
+    "figure": "protein",
+    "title": "Hva viser A?",
+    "prompt": "Hvilket utsagn beskriver endringen fra Start til A best?",
+    "hint": "Følg hele kjeden og tell forbindelsene mellom sirklene.",
+    "explanation": "A viser en forenklet denaturering: formen endres uten at kjeden klippes i denne modellen. B viser brudd i kjeden. Endret folding kan ødelegge enzymfunksjonen.",
+    "level": 2,
+    "type": "choice",
+    "options": [
+      "Foldingen endres, men antallet peptidbindinger i kjeden er bevart.",
+      "Alle peptidbindingene er spaltet til frie aminosyrer.",
+      "A har fått nye sukkerenheter.",
+      "A er omdannet til et triglyserid."
+    ],
+    "answer": "Foldingen endres, men antallet peptidbindinger i kjeden er bevart."
+  },
+  {
+    "id": "structure-protein-change",
+    "topic": "protein",
+    "figure": "protein",
+    "title": "Denaturering og spalting",
+    "prompt": "Hvilke utsagn er riktige om modellene?",
+    "hint": "Skill proteinets tredimensjonale form fra selve rekkefølgen av bundne aminosyrer.",
+    "explanation": "Denaturering endrer proteinets form. Spalting bryter bindingene mellom aminosyrene. Magesyre kan endre formen, mens pepsin spalter bindinger i proteinet.",
+    "level": 2,
+    "type": "multi",
+    "options": [
+      "Varme eller lav pH kan bidra til endring A.",
+      "Endring A kan redusere enzymaktivitet uten å frigjøre aminosyrer.",
+      "Endring B innebærer at bindinger i kjeden er brutt.",
+      "A og B viser alltid nøyaktig samme kjemiske prosess."
+    ],
+    "answer": [
+      "Varme eller lav pH kan bidra til endring A.",
+      "Endring A kan redusere enzymaktivitet uten å frigjøre aminosyrer.",
+      "Endring B innebærer at bindinger i kjeden er brutt."
+    ]
+  },
+  {
+    "id": "structure-glycerol-acid",
+    "topic": "fat",
+    "figure": "glycerol-acid",
+    "title": "Les to strukturformler",
+    "prompt": "Koble A og B til stofftype.",
+    "hint": "Sammenlign antall karbonatomer og OH-grupper i A med den lengre kjeden i B.",
+    "explanation": "A er glyserol: tre karbonatomer og tre OH-grupper. B er en fettsyre med sju karbonatomer og en syregruppe. Glyserol og fettsyrer er byggesteiner i triglyserider.",
+    "level": 2,
+    "type": "match",
+    "pairs": [
+      {
+        "left": "A",
+        "right": "Glyserol: alkohol med tre OH-grupper"
+      },
+      {
+        "left": "B",
+        "right": "Fettsyre: lang karbonkjede med COOH"
+      }
+    ],
+    "family": "fat-saturation"
+  },
+  {
+    "id": "structure-acid-saturation",
+    "topic": "fat",
+    "figure": "glycerol-acid",
+    "title": "Beskriv en fettsyre",
+    "prompt": "Hvordan vil du beskrive fettsyren B?",
+    "hint": "Se etter bindingene mellom karbonatomene i kjeden.",
+    "explanation": "B er mettet: alle bindingene mellom karbonatomene er enkeltbindinger. C=O i syregruppen gjør ikke fettsyren umettet. Det er C=C i karbonkjeden som avgjør dette.",
+    "level": 2,
+    "type": "choice",
+    "options": [
+      "Mettet",
+      "Enumettet",
+      "Flerumettet",
+      "Umulig å avgjøre ut fra strukturen"
+    ],
+    "answer": "Mettet",
+    "family": "fat-saturation"
+  },
+  {
+    "id": "structure-acid-carbon-count",
+    "topic": "fat",
+    "figure": "glycerol-acid",
+    "title": "Hvor lang er fettsyren?",
+    "prompt": "Hvor mange karbonatomer inneholder fettsyren B totalt?",
+    "hint": "Tell alle C-atomer, også det som er bundet til to O-atomer ved syreenden.",
+    "explanation": "Fettsyren som er tegnet, inneholder sju C-atomer. Karbonet i syregruppen er også en del av fettsyren.",
+    "level": 2,
+    "type": "fill",
+    "blanks": [
+      {
+        "label": "Karbonatomer",
+        "answers": [
+          "7"
+        ]
+      }
+    ],
+    "family": "fat-saturation"
+  },
+  {
+    "id": "structure-tri-hydrolysis",
+    "topic": "fat",
+    "figure": "triglyceride",
+    "title": "Byggesteinene i fett",
+    "prompt": "Når dette triglyseridet spaltes helt til byggesteinene, hvor mange glyserolmolekyler og fettsyremolekyler dannes?",
+    "hint": "Se etter én felles del til venstre og kjedene som er koblet til den.",
+    "explanation": "Et triglyserid er satt sammen av ett glyserolmolekyl og tre fettsyrer. Figuren viser én felles del til venstre som er knyttet til tre fettsyrekjeder.",
+    "level": 2,
+    "type": "fill",
+    "blanks": [
+      {
+        "label": "Glyserolmolekyler",
+        "answers": [
+          "1"
+        ]
+      },
+      {
+        "label": "Fettsyremolekyler",
+        "answers": [
+          "3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "structure-mono-unsaturated",
+    "topic": "fat",
+    "figure": "fat-chains",
+    "title": "Sammenlign bindingene i kjeden",
+    "prompt": "Hvordan vil du beskrive fettsyren B?",
+    "hint": "Se på bindingene mellom C-atomene i B.",
+    "explanation": "B har én dobbeltbinding mellom to C-atomer i kjeden og er enumettet. Mettede fettsyrer har ingen slike bindinger; flerumettede har flere.",
+    "level": 2,
+    "type": "choice",
+    "options": [
+      "Mettet",
+      "Enumettet",
+      "Flerumettet",
+      "Umulig å avgjøre ut fra strukturen"
+    ],
+    "answer": "Enumettet",
+    "family": "fat-saturation"
+  },
+  {
+    "id": "structure-chain-melting",
+    "topic": "fat",
+    "figure": "fat-chains",
+    "title": "Struktur og smelting",
+    "prompt": "Sammenlign de to fettsyrene med samme kjedelengde. Hva kan en cis-form i en umettet kjede vanligvis føre til?",
+    "hint": "Tenk på hvordan rette og bøyde kjeder kan ligge inntil hverandre.",
+    "explanation": "Cis-form gir ofte en knekk som gjør tett pakking vanskeligere. Det senker vanligvis smeltepunktet når kjedelengden ellers er omtrent lik.",
+    "level": 2,
+    "type": "choice",
+    "options": [
+      "Kjedene pakkes mindre tett, og fettet får ofte lavere smeltepunkt.",
+      "Kjedene blir aminosyrer som bygger proteiner.",
+      "Fettsyren blir fullstendig vannløselig.",
+      "Umettede fettsyrer får alltid høyere smeltepunkt enn mettede."
+    ],
+    "answer": "Kjedene pakkes mindre tett, og fettet får ofte lavere smeltepunkt.",
+    "family": "fat-saturation"
+  },
+  {
+    "id": "structure-cis-identify",
+    "topic": "fat",
+    "figure": "cis-trans",
+    "title": "Cis eller trans?",
+    "prompt": "Hvilken av de to fettsyrene er vist i cis-form?",
+    "hint": "Se hvordan de to delene av karbonkjeden ligger ved C=C.",
+    "explanation": "I A ligger kjededelene på samme side av C=C: cis. I B ligger kjededelene på hver sin side: trans.",
+    "level": 2,
+    "type": "choice",
+    "options": [
+      "A",
+      "B",
+      "Begge",
+      "Ingen"
+    ],
+    "answer": "A"
+  },
+  {
+    "id": "structure-trans-not-saturated",
+    "topic": "fat",
+    "figure": "cis-trans",
+    "title": "Vurder struktur og betegnelse",
+    "prompt": "Hvilke utsagn om B er riktige?",
+    "hint": "Skill mellom antallet dobbeltbindinger og hvordan kjeden er plassert ved en slik binding.",
+    "explanation": "B er en umettet fettsyre i trans-form. At kjeden er rettere, gjør den ikke mettet; det finnes fortsatt en C=C-binding.",
+    "level": 2,
+    "type": "multi",
+    "options": [
+      "B er vist i trans-form.",
+      "B er umettet.",
+      "B er mettet fordi kjeden er rettere.",
+      "Cis og trans sier noe om plasseringen av kjededelene ved C=C."
+    ],
+    "answer": [
+      "B er vist i trans-form.",
+      "B er umettet.",
+      "Cis og trans sier noe om plasseringen av kjededelene ved C=C."
+    ]
+  },
+  {
+    "id": "structure-omega-family",
+    "topic": "fat",
+    "figure": "omega",
+    "title": "Finn omegafettsyren",
+    "prompt": "Hvilken omegafettsyre er vist i figuren?",
+    "hint": "Begynn på motsatt side av molekylet fra syregruppen.",
+    "explanation": "Dette er en omega-3-fettsyre: tell C-atomene fra enden motsatt syregruppen. Den første dobbeltbindingen er mellom det tredje og fjerde C-atomet.",
+    "level": 2,
+    "type": "choice",
+    "options": [
+      "Omega-3-fettsyre",
+      "Omega-6-fettsyre",
+      "Omega-9-fettsyre",
+      "Omega-2-fettsyre"
+    ],
+    "answer": "Omega-3-fettsyre"
+  },
+  {
+    "id": "structure-hydrolysis-water",
+    "topic": "protein",
+    "figure": "hydrolysis-count",
+    "title": "Fra kjede til aminosyrer",
+    "prompt": "Hvor mange aminosyrer frigjøres når hele kjeden deles opp, og hvor mange peptidbindinger må brytes?",
+    "hint": "Tell sirklene og forbindelsene mellom dem.",
+    "explanation": "Fem aminosyrer er bundet sammen med fire peptidbindinger. Når alle fire bindingene spaltes, er de fem aminosyrene skilt fra hverandre.",
+    "level": 2,
+    "type": "fill",
+    "blanks": [
+      {
+        "label": "Aminosyrer",
+        "answers": [
+          "5"
+        ]
+      },
+      {
+        "label": "Peptidbindinger",
+        "answers": [
+          "4"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "structure-acid-deciding-bond",
+    "topic": "fat",
+    "type": "choice",
+    "level": 2,
+    "figure": "fat-bonds",
+    "family": "fat-saturation",
+    "title": "Hvilken binding teller?",
+    "prompt": "Hvilken av de markerte bindingene gjør fettsyren umettet?",
+    "options": [
+      "X",
+      "Y",
+      "Begge",
+      "Ingen av dem"
+    ],
+    "answer": "X",
+    "hint": "Se etter hva slags atomer bindingene forbinder.",
+    "explanation": "X er en dobbeltbinding mellom to karbonatomer (C=C). Den gjør fettsyren umettet. Y er C=O i syregruppen; denne finnes også i mettede fettsyrer."
+  }
 ];
+
+structureQuestions.find(q=>q.id==='structure-omega-family').explainOnReveal=true;

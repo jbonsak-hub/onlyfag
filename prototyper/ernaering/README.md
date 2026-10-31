@@ -2,9 +2,13 @@
 
 Minimalistisk øvingsmodul i eksisterende OnlyFag, publisert på `/prototyper/ernaering.html`.
 
-165 oppgaver, hvorav 53 med figur eller organmodell. Seks fagtemaer og egen inngang til figuroppgaver. 40 nye strukturoppgaver, 38 fra de fem vedleggene, 19 med inspirasjon fra NDLA og ett begrepskart utfyller de opprinnelige 67 oppgavene. Ingen installasjon eller byggesteg for nettsiden.
+145 oppgaver, hvorav 44 med figur eller organmodell. Seks fagtemaer; figuroppgaver ligger under fagtemaet de hører til. Blandet øving står sist. Ingen installasjon eller byggesteg for nettsiden.
 
-Kjemimodulen i `naturfag.html` er referanse: kort toppfelt, kompakt venstremeny, direkte oppgavestart, filtre bak sekundær kontroll. Ingen presentasjonsoverskrift eller dekorativ ramme. Figur og svar vises ved siden av hverandre når bredden tillater det. Modellbesvarelse deler plass med elevsvaret. Brukerens varige modulpreferanser står i rotens `AGENTS.md`.
+Pensum er de fem opprinnelige PowerPoint-presentasjonene (105 lysbilder) og de fem oppgitte arkene. Arkivets PowerPoint-tekst er hentet og kontrollert fra checkpoint `d92f59d811ee8676d93a0ea135f5c204568cf45b`, `docs/ernaering-grunnlag/`. Se fagloggene i `docs/ernaering-materiale.md` og `docs/ernaering-ndla.md`. NDLA gir oppgaveinspirasjon, men innfører ikke nye nødvendige forkunnskaper.
+
+Kjemimodulen i `naturfag.html` er layoutreferanse: kort toppfelt, kompakt venstremeny, direkte oppgavestart, filtre bak sekundær kontroll. Ingen presentasjonsoverskrift eller dekorativ ramme. Viktige figurer står store til høyre; valg, svarknapper og tilbakemelding står samlet til venstre. På smale skjermer legges figuren over svarene. Modellbesvarelse deler plass med elevsvaret. Varige modulpreferanser står i rotens `AGENTS.md`.
+
+Sukkerstrukturer vises som ringer. Fettsyrer er fullt tegnet med C og H, uten forkortede gjentakelsesgrupper. Omegaoppgaven viser verken nummererte karbonatomer eller tellemetode før svaret; metoden dukker opp i fasiten. Begrepskartet har ti tomme felt og fire faste holdepunkter. Én samlet karbohydratsortering erstatter de enklere duplikatene.
 
 Oppgavene roteres uten gjentakelser til hele utvalget er vist. De ti siste ID-ene unngås der utvalget tillater det, og samme figurfamilie unngås blant de tre siste når andre usette oppgaver finnes. Både besvarte og hoppede oppgaver teller som vist. Historikken overlever temabytte, filtrering og omlasting. Små utvalg slakker først på den eldste sperren. Eksplisitt åpning fra banken og «Prøv på nytt» er tilsiktede unntak. Svaralternativer og koblingssvar stokkes uavhengig.
 
@@ -36,9 +40,11 @@ BROWSER_EXECUTABLE=/usr/bin/chromium node tests/ernaering-layout.cjs
 DOM-testen krever `jsdom` (testet med v26; bundling med esbuild). Den kan kjøres med `NODE_PATH` til en isolert installasjon. Ingen pakkefiler eller avhengigheter trengs for selve nettsiden.
 
 - Ren Node-test: skjema og fasiter for alle oppgaver, feil/ekstra valg, svarnormalisering, hjelpetilstand og repetisjon, stokking.
-- DOM-test: alle 165 oppgaver fullføres via grensesnittets kontroller; delvis riktige svar, fasit, egenvurdering, filter, persistens, mobilmeny, utilgjengelig lagring og avgrenset nullstilling.
+- DOM-test: alle 145 oppgaver fullføres via grensesnittets kontroller; delvis riktige svar, fasit, egenvurdering, filter, persistens, mobilmeny, utilgjengelig lagring og avgrenset nullstilling.
 - Browserkontroll: alle oppgaver før svar og etter fasit ved 1366 × 768, 1280 × 720, 1024 × 768 og 390 × 844. Kontrollerer oppgave/figur/svar/knapper samlet, ingen horisontal overflyt og ingen nødvendig siderulling ved disse størrelsene med filtre og ekstralister lukket. Utvidet «Hvorfor?», tekstalternativ og oppgavebank kan rulle etter elevens eget valg. Manuell bildeinspeksjon av blant annet sukkerstrukturer, cis/trans, glyserol/fettsyre og organplassering.
 
 Felles `assets/analytics.js` lastes én gang på siden. Elevsvar sendes ikke til noen tjeneste av øvingsmotoren.
 
 Avgrensning etter oppdateringen: ingen oppgaver om påvisningsreaksjoner eller fettekstraksjon. Strukturfigurene bruker kjente stoffnavn og forklaringer uten Fischer-/alfa-/beta-navnsetting. Omega beskrives ved å telle fra enden motsatt syregruppen. Blandet øving står sist i temalisten.
+
+Revisjon etter konkret pensumkontroll: Oppgavene bruker ikke esterbinding, hydrolyse, glykosidbinding, lipase, mikrovilli eller lysin som elevbegreper. Peristaltiske bevegelser er betegnelsen som brukes. Avanserte bindings-/herdingsoppgaver og spørsmål med nye fysiologiske forkunnskapskrav er fjernet. Tester kontrollerer også fravær av uønsket vokabular og typiske fasitlekkasjer før svar.

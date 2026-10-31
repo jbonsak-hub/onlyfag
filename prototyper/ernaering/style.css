@@ -13,3 +13,73 @@ dialog{width:min(680px,calc(100vw - 24px));max-height:88dvh;border:1px solid var
 @media print{.sidebar,.topbar,.filter-bar,.task-actions{display:none}.workspace{margin:0}main{padding:0}.exercise{break-inside:avoid}}
 
 .type-choice .option-letter{border-radius:50%}.type-multi .option-letter{border-radius:3px}
+
+/* Keep the visual evidence large; answer controls and actions share the left pane. */
+.has-figure .exercise-content,.has-figure:has(.with-model) .exercise-content{display:block}
+.visual-workspace{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.2fr);gap:24px;align-items:center}
+.visual-response{min-width:0}
+.visual-workspace>.mini-figure{width:100%;max-width:none;align-self:center;justify-self:center}
+.visual-workspace>.mini-figure svg{max-height:min(460px,calc(100dvh - 230px))!important}
+.visual-workspace .answer-options{grid-template-columns:1fr}
+.visual-workspace .task-actions{gap:13px}
+.visual-workspace .skip-task{font-size:11px}
+.visual-workspace .open-response.with-model{grid-template-columns:1fr;gap:9px}
+.visual-workspace .with-model .open-input{min-height:60px;max-height:80px}
+.visual-workspace .open-model{font-size:12px}
+.diagram-workspace{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr)}
+.diagram-workspace .anatomy-map{width:min(100%,calc((100dvh - 230px)*640/690),480px);max-width:none;align-self:start;justify-self:center}
+.diagram-workspace .map-target{width:32px;height:32px;font-size:12px}
+.map-rows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:12px}
+.map-rows .task-row{grid-template-columns:14px minmax(0,1fr);gap:4px;min-width:0}
+.map-rows .task-row select{font-size:12px;padding:7px 3px}
+.map-rows .row-mark{font-size:9px}
+.map-rows .task-row.correct label,.map-rows .task-row.wrong label{display:block}
+.map-rows .row-mark{display:block;white-space:normal}
+.many-rows{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:22px;max-width:none}
+.many-rows .task-row{grid-template-columns:minmax(0,.9fr) minmax(140px,1fr)}
+@media(max-width:960px){
+ .visual-workspace{grid-template-columns:1fr;gap:12px}
+ .visual-workspace>.mini-figure{grid-row:1;max-width:760px}
+ .visual-workspace .visual-response{grid-row:2}
+ .visual-workspace>.mini-figure svg{max-height:250px!important}
+ .visual-workspace .answer-options{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .diagram-workspace{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+ .diagram-workspace .visual-response{grid-row:1}
+ .diagram-workspace .anatomy-map{grid-column:2;grid-row:1;width:min(100%,calc((100dvh - 230px)*640/690),440px)}
+ .diagram-workspace .process-list{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+ .visual-workspace{gap:10px}
+ .visual-workspace>.mini-figure svg{max-height:260px!important}
+ .visual-workspace .answer-options{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .many-rows{grid-template-columns:1fr;gap:0}
+ .many-rows .task-row{grid-template-columns:minmax(0,1fr) minmax(145px,1fr)}
+ .map-rows{column-gap:10px}
+ .visual-workspace .task-actions{gap:13px}
+}
+@media(max-width:480px){
+ .visual-workspace .answer-options{grid-template-columns:1fr}
+ .diagram-workspace{display:flex;flex-direction:column;gap:8px}
+ .diagram-workspace .anatomy-map{order:0;width:225px}
+ .diagram-workspace .visual-response{order:1;width:100%}
+ .diagram-workspace .process-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .diagram-workspace .process-list button{font-size:11px;min-height:33px}
+ .diagram-workspace .map-target{width:28px;height:28px;font-size:11px}
+ .map-rows .task-row select{min-height:34px}
+ .map-rows .task-row{padding:3px 0}
+}
+
+.direct-explanation{margin-top:6px!important}.diagram-workspace .anatomy-map{background:transparent}
+@media(max-width:480px){.diagram-workspace .anatomy-map{align-self:center}}
+
+/* Adapt the concept map to its actual space, keeping the fixed clues readable. */
+.nutrient-map-figure{container-type:inline-size}
+.mini-figure svg.map-narrow{display:none}
+@container(max-width:500px){
+ .mini-figure svg.map-wide{display:none}
+ .mini-figure svg.map-narrow{display:block}
+}
+@media(max-width:480px){
+ .mini-figure svg.map-wide{display:none}
+ .mini-figure svg.map-narrow{display:block}
+}

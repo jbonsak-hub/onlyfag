@@ -23,6 +23,7 @@ function boot({mobile=false,stored,blocked=false}={}){
 const t=boot(),{w,$,click,set,open}=t;
 const questions=w.__qa.questions,organs=w.__qa.organs;
 assert.equal([...w.document.querySelectorAll('#topics [data-topic]')].at(-1).dataset.topic,'all','Mixed practice is last in the topic list');
+assert.equal(w.document.querySelector('[data-topic=figures]'),null,'Figure exercises belong to their subject topics');
 function fillCorrect(q){
  if(q.type==='anatomy'){for(const o of organs){click(`[data-label="${o.id}"]`);click(`[data-target="${o.id}"]`);}}
  if(q.type==='choice'||q.type==='multi'){const answers=q.type==='choice'?[q.answer]:q.answer;for(const answer of answers){const buttons=[...w.document.querySelectorAll('[data-option]')];buttons.find(b=>b.textContent.slice(1)===answer||b.querySelector('span:last-child').textContent===answer).click();}}
@@ -39,7 +40,7 @@ function fillCorrect(q){
  }
  if(q.type==='open'){set('#open-answer','Min forklaring med sammenheng mellom oppbygning, funksjon og prosess.','input');click('#show-model');q.checklist.forEach((_,i)=>{const el=$(`[data-self-check="${i}"]`);el.checked=true;el.dispatchEvent(new w.Event('change',{bubbles:true}));});click('#self-confident');}else click('#check-answer');
 }
-for(const q of questions){open(q.id);fillCorrect(q);const status=JSON.parse(w.localStorage.getItem('onlyfag.nutrition.v1')).records[q.id].status;assert.equal(status,q.type==='open'?'self':'independent',q.id+': '+$('#feedback').textContent);}
+for(const q of questions){open(q.id);assert.equal($('.open-model'),null,q.id+': model answer stays hidden before answering');assert.equal($('.feedback'),null,q.id+': no feedback before an attempt');assert.equal(w.document.querySelectorAll('.exercise .correct').length,0,q.id+': correct markings are not prefilled');fillCorrect(q);const status=JSON.parse(w.localStorage.getItem('onlyfag.nutrition.v1')).records[q.id].status;assert.equal(status,q.type==='open'?'self':'independent',q.id+': '+$('#feedback').textContent);}
 console.log(`${questions.length}/${questions.length} question flows completed through DOM controls.`);
 // Partial fill preserves the right answer and prevents a retry being counted as unaided.
 open('digestion-stomach-contents');set('#row-0','Saltsyre','input');set('#row-1','amylase','input');click('#check-answer');assert.ok($('#row-0').disabled);assert.ok(!$('#row-1').disabled);set('#row-1','pepsin','input');click('#check-answer');assert.match($('#feedback-title').textContent,/etter øving/);

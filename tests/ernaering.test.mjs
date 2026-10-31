@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import {test} from 'node:test';
 import {questions, sources} from '../prototyper/ernaering/questions.js';
 import {organs} from '../prototyper/ernaering/diagram.js';
@@ -7,7 +8,7 @@ import {evaluate, accepts, resultRecord, needsReview, mixedOrder, pickNext, reme
 const ids=organs.map(o=>o.id), processIds=ids.filter(id=>id!=='duodenum');
 function answer(q){switch(q.type){case 'anatomy':return ids;case 'choice':return [q.answer];case 'multi':case 'process':return q.answer;case 'sort':return q.items.map(x=>x.group);case 'match':return q.pairs.map(x=>x.right);case 'fill':return q.blanks.map(x=>x.answers[0]);case 'order':return q.items;}}
 test('all questions have coherent schemas and every automatic key is accepted',()=>{
- assert.ok(questions.length>100, 'expanded bank should cover the attached materials and structures');assert.equal(new Set(questions.map(q=>q.id)).size,questions.length);
+ assert.ok(questions.length>0, 'the scoped bank contains exercises');assert.equal(new Set(questions.map(q=>q.id)).size,questions.length);
  for(const q of questions){for(const key of ['id','title','topic','type','prompt','hint','explanation'])assert.ok(q[key],q.id+': '+key);
   assert.ok(topics[q.topic],q.id+': known topic');assert.ok(types[q.type],q.id+': known type');
   if(q.figure)assert.match(figure(q.figure),/<svg\b/,q.id+': figure must render');
@@ -88,14 +89,82 @@ test('changing filters preserves rotation for other topics and does not re-offer
 });
 
 test('nutrition stays within the taught scope and uses plain visible terminology',()=>{
- const banned=/Fehling|biuret|jodtest|jodfarge|fettekstraksjon|Fischer|metylend|[αβ]|lærerens/i;
+ const banned=/Fehling|biuret|jodtest|jodfarge|fettekstraksjon|Fischer|metylend|esterbinding|esterforbindelse|glykosid|hydrolys|mikrovilli|lipase|lysin|peristaltikk|[αβ]|lærerens/i;
  for(const q of questions){
   const {id,figure:key,family,source,...visible}=q;
   assert.doesNotMatch(JSON.stringify(visible),banned,id);
   if(key)assert.doesNotMatch(figure(key),banned,id+': figure');
  }
  assert.doesNotMatch(JSON.stringify(sources),/lærerens/i);
- for(const id of ['ndla-fehling-inference','ndla-fehling-controls','ndla-iodine-reversible','ndla-biuret-observation','ndla-saliva-maltose','ndla-saliva-compare'])assert.ok(!questions.some(q=>q.id===id));
+ for(const id of ['ndla-fehling-inference','ndla-fehling-controls','ndla-iodine-reversible','ndla-biuret-observation','ndla-saliva-maltose','ndla-saliva-compare','structure-hydrogenation','structure-structure-compare','structure-glycosidic-name','structure-condensation-formula','structure-omega-end','structure-omega-inference'])assert.ok(!questions.some(q=>q.id===id));
  const drawing=figure('polysaccharides');
  for(const name of ['Stivelse','Glykogen','Cellulose'])assert.ok(drawing.includes(name),name+' is named in the model');
+});
+
+
+test('visual questions retain the reasoning for feedback rather than pre-answer copy',()=>{
+ for(const q of questions.filter(q=>q.type==='process')){
+  for(const id of q.answer){
+   const organ=organs.find(o=>o.id===id);assert.ok(organ,q.id);
+   assert.ok(!q.prompt.toLocaleLowerCase('nb').includes(organ.label.toLocaleLowerCase('nb')),q.id+': target organ must not be named in the question');
+  }
+ }
+ const saturated=questions.find(q=>q.id==='structure-acid-saturation');
+ if(saturated)assert.doesNotMatch(saturated.prompt,/C=C|C=O|dobbeltbinding/i,'saturation question should ask for classification without explaining the key');
+ const omega=questions.filter(q=>q.figure==='omega');
+ assert.ok(omega.length,'omega structure reasoning remains available');
+ for(const q of omega){
+  assert.match(q.prompt,/omegafettsyre|omega.?syre/i,'ask for the fatty acid type, not a counting convention');
+  assert.ok(q.type==='choice'&&q.options.length>=3,'plausible omega alternatives');
+ }
+ const omegaCaption=figure('omega').match(/<figcaption>([\s\S]*?)<\/figcaption>/)?.[1]||'';
+ assert.doesNotMatch(omegaCaption,/tell|motsatt|første|omega.?[369]/i,'omega method belongs to feedback');
+});
+
+test('recognition figures use rings and fully drawn fatty acids',()=>{
+ const sugar=figure('sugar-rings');assert.match(sugar,/<svg\b/,'ring sugar figure is present');
+ assert.doesNotMatch(sugar,/åpen kjede|åpne kjeder|Fischer/i);
+ for(const name of ['Glukose','Fruktose','Galaktose'])assert.ok(sugar.includes(name),name+' ring is named');
+ for(const key of ['glycerol-acid','fat-chains','omega','cis-trans','triglyceride']){
+  const drawing=figure(key);assert.match(drawing,/<svg\b/,key);
+  assert.doesNotMatch(drawing,/\(CH[₂2]\)|\(CH<[^>]*>2|hydrogen[^<]{0,25}utelatt|skjelettform/i,key+': carbon/hydrogen chain must be expanded');
+ }
+});
+
+
+test('the nutrient map retains only the four requested fixed clues',()=>{
+ const drawing=figure('nutrient-map');
+ for(const fixed of ['Monosakkarider','Umettet','Vitaminer','Aminosyrer'])assert.ok(drawing.includes(fixed),fixed+' remains visible');
+ const text=[...drawing.matchAll(/<text\b[^>]*>([\s\S]*?)<\/text>/g)].map(m=>m[1].replace(/<[^>]+>/g,'').trim());
+ for(const missing of ['Gir energi','Karbohydrater','Disakkarider','Polysakkarider','Proteiner','Fett','Mettet','Gir ikke energi','Mineraler','Vann'])assert.ok(!text.includes(missing),missing+' is a blank rather than an answer printed on the map');
+ const task=questions.find(q=>q.id==='nutrient-concept-map');assert.ok(task&&task.pairs.length===10,'the ten blank nodes all have answer controls');
+});
+
+
+test('carbohydrate sorting is consolidated into one complete task',()=>{
+ const sorting=questions.filter(q=>q.topic==='carbs'&&q.type==='sort'&&q.items.some(x=>/glukose/i.test(x.label)));
+ assert.equal(sorting.length,1,'do not retain simpler duplicates of the same sugar sorting');
+ const labels=sorting[0].items.map(x=>x.label).join(' ');
+ for(const name of ['Glukose','Fruktose','Galaktose','Maltose','Laktose','Sukrose','Cellulose','Kostfiber','Stivelse','Glykogen'])assert.match(labels,new RegExp(name,'i'),name+' is included');
+});
+
+test('expanded fatty-acid drawings obey ordinary C/H/O valences',()=>{
+ for(const key of ['glycerol-acid','fat-chains','omega','cis-trans','triglyceride','fat-bonds']){
+  const drawing=figure(key);
+  // Atom labels are centered on the chemical position, with a normal baseline
+  // shift of .3em. Each drawn line represents one bond (two for C=O/C=C).
+  const atoms=[...drawing.matchAll(/<rect\b[^>]*\/><text x="([^"]+)" y="([^"]+)" font-size="([^"]+)"[^>]*>(C|H|O)<\/text>/g)].map(m=>({x:Number(m[1]),y:Number(m[2])-Number(m[3])*.3,symbol:m[4]}));
+  const lines=[...drawing.matchAll(/<line x1="([^"]+)" y1="([^"]+)" x2="([^"]+)" y2="([^"]+)"[^>]*\/>/g)].map(m=>m.slice(1,5).map(Number));
+  assert.ok(atoms.length>10,key+': expanded atom model is present');
+  for(const atom of atoms){
+   const bonds=lines.filter(([x1,y1,x2,y2])=>Math.hypot(x1-atom.x,y1-atom.y)<=12||Math.hypot(x2-atom.x,y2-atom.y)<=12).length;
+   assert.equal(bonds,{C:4,H:1,O:2}[atom.symbol],key+': '+atom.symbol+' at '+atom.x+','+atom.y+' has its normal bond count');
+  }
+ }
+});
+
+
+test('help and page copy obey the same taught-vocabulary limits as questions',()=>{
+ const html=readFileSync(new URL('../prototyper/ernaering.html',import.meta.url),'utf8');
+ assert.doesNotMatch(html,/esterbinding|esterforbindelse|glykosid|hydrolys|mikrovilli|lipase|lysin|peristaltikk|Fischer|metylend|[αβ]|lærerens/i);
 });

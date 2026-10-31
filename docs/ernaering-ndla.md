@@ -40,3 +40,10 @@ Nye labfigurer viser konstruerte eksempelresultater tydelig oppgitt i oppgavetek
 ## Senere avgrensning av oppgaveutvalget
 
 Påvisningsreaksjoner (Fehling, jod/stivelse og biuret), oppgaver som bygger på disse, og fettekstraksjon er tatt ut etter beskjed om at dette ikke er gjennomgått. Kildeloggen ovenfor beskriver materialet som ble lest, ikke krav om at alle sidetemaene skal inngå i øvingen. Unødvendig spesialnavnsetting er erstattet med kjente begreper og navn på modellene.
+
+
+## Pensumavgrensning etter ny kontroll
+
+NDLA brukes til oppgaveideer, ikke som en utvidelse av pensum. Det nye utvalget er kontrollert mot de fem undervisningspresentasjonene ved kildecheckpoint `d92f59d811ee8676d93a0ea135f5c204568cf45b` (`docs/ernaering-grunnlag/pptx-fulltext.md`), de fem vedleggene og de seneste uttrykkelige beskjedene om ord elevene ikke skal måtte kunne.
+
+Oppgaver om urea/nitrogenavfall, fosfolipider, kalsiumioners nervesignalering og vannmolekylenes orientering rundt ioner er fjernet. Stivelsessvelling er også tatt ut siden dette krever et nytt fenomen som ikke framgår av materialet. Enkle duplikater er redusert. Gjenstående NDLA-situasjoner bygger på kjente prinsipper (enzymer, næringsstoffer, temperatur, energi, væske, dokumentasjon) eller oppgir den informasjonen som trengs for å resonnere. Nye vitenskapelige navn er ikke et skjult rettingskrav.

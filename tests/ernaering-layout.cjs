@@ -32,7 +32,7 @@ const server=http.createServer((req,res)=>{
    await page.waitForFunction(id=>document.querySelector('[data-question]')?.dataset.question===id,id);
   }
   async function geometry(page){return page.evaluate(()=>{
-   const selectors=['.prompt','.mini-figure','.anatomy-map','.answer-panel','.task-actions','.open-response','.feedback'];
+   const selectors=['.prompt','.mini-figure','.anatomy-map','.answer-panel','.visual-response','.task-actions','.open-response','.feedback'];
    const bounds=Object.fromEntries(selectors.map(s=>{
     const el=document.querySelector(s),r=el?.getBoundingClientRect();
     return [s,r&&r.width>0&&r.height>0?{left:r.left,top:r.top,right:r.right,bottom:r.bottom}:null];
@@ -46,18 +46,48 @@ const server=http.createServer((req,res)=>{
   for(const [width,height] of [[1366,768],[1280,720],[1024,768],[390,844]]){
    const viewport={width,height},{page,context}=await createPage(viewport);
    const questions=await page.evaluate(async()=>{
-    const {questions}=await import('./ernaering/questions.js?v=20261031-2');
-    return questions.map(({id,type,figure})=>({id,type,figure}));
+    const {questions}=await import('./ernaering/questions.js?v=20261031-3');
+    return questions.map(({id,type,figure,topic})=>({id,type,figure,topic}));
    });
    let maxHeight=0,maxActionsBottom=0;
    for(const q of questions){
     await open(page,q.id);const before=await geometry(page);recordOverflow(q,viewport,'before',before);
+    if(q.id==='digestion-anatomy'&&width===1366){
+     const map=before.bounds['.anatomy-map'],controls=before.bounds['.visual-response'];
+     assert.ok(map&&controls,'anatomy has a combined controls/actions column and a figure');
+     assert.ok(map.left>=controls.right-1,'the important anatomy figure is to the right of controls');
+     assert.ok(map.bottom-map.top>330,'the anatomy figure uses vertical space instead of a tiny model');
+     assert.ok(before.bounds['.task-actions'].right<=map.left+1,'answer actions stay with the controls to the left');
+    }
     await page.locator('#reveal-answer').click();
     const after=await geometry(page);recordOverflow(q,viewport,'revealed',after);
     maxHeight=Math.max(maxHeight,before.scrollHeight,after.scrollHeight);
     maxActionsBottom=Math.max(maxActionsBottom,before.bounds['.task-actions'].bottom,after.bounds['.task-actions'].bottom);
    }
    metrics.push({width,height,questions:questions.length,states:questions.length*2,maxHeight,maxActionsBottom:Math.round(maxActionsBottom)});
+   if(width===390){
+    // Fitting the viewport is insufficient if the important letters shrink
+    // below a readable size. Measure the final SVG-to-screen transform.
+    async function visibleTextSizes(){return page.locator('.mini-figure').evaluate(el=>[...el.querySelectorAll('svg text')].filter(t=>t.closest('svg').getBoundingClientRect().width>0).map(t=>({text:t.textContent.trim(),pixels:parseFloat(getComputedStyle(t).fontSize)*Math.abs(t.getScreenCTM().a)})));}
+    await open(page,'nutrient-concept-map');
+    const mapText=await visibleTextSizes();
+    for(const clue of ['Monosakkarider','Aminosyrer','Umettet','Vitaminer']){
+     const labels=mapText.filter(t=>t.text===clue);assert.equal(labels.length,1,clue+': one visible responsive map label');
+     assert.ok(labels[0].pixels>=12,clue+': at least12px rendered text on a narrow screen');
+    }
+    await open(page,'structure-carbon-count');
+    const oneRing=await visibleTextSizes();
+    assert.ok(oneRing.some(t=>t.text==='B · Fruktose'),'counting task focuses on the fructose ring');
+    assert.ok(!oneRing.some(t=>/Glukose|Galaktose/.test(t.text)),'other sugar rings do not crowd the counting task');
+    const atomLetters=oneRing.filter(t=>/^[CHO]$/.test(t.text));assert.ok(atomLetters.length>0);
+    for(const atom of atomLetters)assert.ok(atom.pixels>=12,'single-ring atom letters are readable: '+atom.pixels);
+    await open(page,'structure-galactose');
+    const twoRings=await visibleTextSizes();
+    assert.ok(twoRings.some(t=>t.text==='A · Glukose')&&twoRings.some(t=>t.text==='B · Galaktose'),'comparison focuses on the two relevant rings');
+    assert.ok(!twoRings.some(t=>/Fruktose/.test(t.text)),'third sugar ring is excluded from the comparison');
+    for(const atom of twoRings.filter(t=>/^[CHO]$/.test(t.text)))assert.ok(atom.pixels>=12,'paired-ring atom letters are readable: '+atom.pixels);
+   }
+
    await context.close();
   }
   // Menu breakpoint must match JS: keyboard/touch navigation works at 700px.
@@ -81,12 +111,15 @@ const server=http.createServer((req,res)=>{
   await page.locator('#menu-button').click();await page.locator('[data-topic="protein"]').click();
   assert.equal(await page.locator('#menu-button').getAttribute('aria-expanded'),'false');
   assert.equal(await page.locator('.workspace').evaluate(el=>el.inert),false);
-  await page.locator('#menu-button').click();await page.locator('[data-topic="figures"]').click();
-  assert.equal(await page.locator('#active-topic').innerText(),'Figuroppgaver');
-  for(let i=0;i<12;i++){
-   assert.equal(await page.locator('.mini-figure,.anatomy-map').count(),1,'figure category must always present a visible figure');
-   await page.locator('#next-question').click();
-  }
+  assert.equal(await page.locator('[data-topic="figures"]').count(),0,'figures are part of the subject themes');
+  await page.locator('#menu-button').click();await page.locator('#bank-tab').click();
+  const topicBank=await page.locator('.bank-row').count();assert.ok(topicBank>0);
+  const expectedProteinFigures=await page.evaluate(async()=>{
+   const {questions}=await import('./ernaering/questions.js?v=20261031-3');
+   return questions.filter(q=>q.topic==='protein'&&q.figure).map(q=>q.id);
+  });
+  for(const id of expectedProteinFigures)assert.equal(await page.locator(`[data-open="${id}"]`).count(),1,id+': figure exercise stays in its subject bank');
+  await page.locator('#menu-button').click();await page.locator('#practice-tab').click();
   // Actual keyboard placement, rather than synthetic answer injection.
   await open(page,'digestion-anatomy');
   await page.locator('[data-label="mouth"]').focus();await page.keyboard.press('Enter');

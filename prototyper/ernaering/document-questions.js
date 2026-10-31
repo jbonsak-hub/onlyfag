@@ -1,4 +1,4 @@
-// Oppgaver fra begrepslister, repetisjonsoppgaver og prøvegrunnlag.
+// Oppgaver avgrenset til undervisningsmaterialet; nye situasjoner bygger på oppgitt informasjon.
 export const documentQuestions = [
   {
     "id": "doc-boiled-enzyme",
@@ -13,52 +13,11 @@ export const documentQuestions = [
     "options": [
       "Kokingen har endret amylasens form slik at enzymaktiviteten er redusert.",
       "Det avkjølte spyttet mangler alle grunnstoffer.",
-      "Kokingen har gjort amylase om til mer aktiv lipase.",
+      "Kokingen har gjort amylase om til mer aktiv enzymer som spalter fett.",
       "Stivelse kan bare spaltes når den selv er levende."
     ],
     "answer": "Kokingen har endret amylasens form slik at enzymaktiviteten er redusert.",
     "family": "foodtests"
-  },
-  {
-    "id": "doc-nutrient-groups",
-    "topic": "energy",
-    "type": "sort",
-    "level": 1,
-    "title": "Næringsstoffer og energi",
-    "prompt": "Sorter stoffene etter om de kan gi kroppen energi.",
-    "hint": "Skill mellom stoffer som kan brukes som brensel, og stoffer som trengs for at prosessene skal fungere.",
-    "explanation": "Karbohydrater, fett og proteiner er de viktigste energigivende næringsstoffene. Vitaminer, mineralstoffer og vann er nødvendige, men gir ikke energi.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
-    "groups": [
-      "Gir energi",
-      "Gir ikke energi"
-    ],
-    "items": [
-      {
-        "label": "Karbohydrater",
-        "group": "Gir energi"
-      },
-      {
-        "label": "Fett",
-        "group": "Gir energi"
-      },
-      {
-        "label": "Proteiner",
-        "group": "Gir energi"
-      },
-      {
-        "label": "Vitaminer",
-        "group": "Gir ikke energi"
-      },
-      {
-        "label": "Mineralstoffer",
-        "group": "Gir ikke energi"
-      },
-      {
-        "label": "Vann",
-        "group": "Gir ikke energi"
-      }
-    ]
   },
   {
     "id": "doc-food-carbs",
@@ -112,16 +71,16 @@ export const documentQuestions = [
     "topic": "carbs",
     "type": "open",
     "level": 2,
-    "title": "Vann i karbohydratspalting",
-    "prompt": "Hvorfor er vann en reaktant når et disakkarid spaltes ved hydrolyse, og ikke bare et løsemiddel?",
-    "hint": "Sammenlign atomene på hver side av reaksjonen: hvor kommer de nye H- og OH-delene på sukkerenhetene fra?",
+    "title": "Vann under fordøyelsen",
+    "prompt": "En elev sier: «Vann bare løser opp maten. Det deltar ikke når store næringsstoffer deles opp.» Forklar hva som mangler i påstanden.",
+    "hint": "I presentasjonen har vann oppgaver både ved spalting, transport og temperaturregulering.",
     "explanation": "Sammenlign begrunnelsen din med modellsvaret. Andre presise formuleringer er like gode.",
     "source": "Repetisjonsoppgaver og prøvegrunnlag",
-    "model": "Når bindingen mellom sukkerenhetene brytes ved hydrolyse, brukes et vannmolekyl. H og OH fra vannet inngår i produktene, slik at det dannes to monosakkarider. Enzymet letter reaksjonen, men erstatter ikke vannets kjemiske rolle.",
+    "model": "Vann er et løsemiddel og bidrar til transport, men trengs også når store næringsstoffer spaltes til mindre deler. Vann inngår i selve reaksjonene. Enzymer får disse reaksjonene til å gå raskere. Derfor er det ikke nok å beskrive vann som noe maten bare ligger i.",
     "checklist": [
-      "Jeg sier at vann forbrukes i reaksjonen.",
-      "Jeg knytter H og OH fra vann til produktene.",
-      "Jeg skiller hydrolyse fra at et stoff bare løses opp."
+      "Jeg nevner at vann har flere oppgaver.",
+      "Jeg får fram at vann trengs når store næringsstoffer spaltes.",
+      "Jeg skiller vannets rolle fra enzymenes rolle."
     ]
   },
   {
@@ -168,7 +127,7 @@ export const documentQuestions = [
     "title": "Grunnstoffer i proteiner",
     "prompt": "Hvilke påstander er riktige? Velg alle riktige.",
     "hint": "Se for deg en aminosyre: hvilke grunnstoffer finnes i aminogruppen, og hvilke kan finnes i sidegruppen?",
-    "explanation": "Aminosyrenes aminogrupper inneholder nitrogen. Cystein og metionin inneholder også svovel. Dette skiller proteiners grunnstoffsammensetning fra den vanlige oversikten over karbohydrater og triglyserider.",
+    "explanation": "Aminosyrer inneholder nitrogen i aminogruppen. Noen aminosyrer inneholder også svovel. Proteiner skiller seg derfor fra den vanlige oversikten over karbohydrater og fett, som består av karbon, hydrogen og oksygen.",
     "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Proteiner inneholder nitrogen i tillegg til karbon, hydrogen og oksygen.",
@@ -229,17 +188,17 @@ export const documentQuestions = [
     "type": "choice",
     "level": 2,
     "title": "Herding av fett",
-    "prompt": "Hva skjer ved hydrogenering av umettede fettsyrer?",
-    "hint": "Hydrogenering betyr at hydrogen tilføres.",
-    "explanation": "Ved hydrogenering kan dobbeltbindinger bli enkeltbindinger. Delvis hydrogenering kan også gi transfettsyrer. Fullstendig hydrogenering fjerner dobbeltbindingene.",
+    "prompt": "Hva kan skje med fettet når planteolje herdes?",
+    "hint": "Sammenlign egenskapene til mettet og umettet fett.",
+    "explanation": "Ved herding kan fett med umettede fettsyrer bli fastere. Delvis herding kan også danne transfett. Det er denne sammenhengen mellom struktur og egenskaper som er viktig her.",
     "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
-      "Hydrogen adderes til C=C-bindinger, slik at graden av umettethet kan avta.",
-      "Det fjernes nitrogen fra aminogrupper.",
+      "Noe umettet fett blir mer mettet, og fettet kan bli fastere.",
+      "Alt fett blir til aminosyrer.",
       "Glyserol blir til glukose.",
       "Alle enkeltbindinger blir til dobbeltbindinger."
     ],
-    "answer": "Hydrogen adderes til C=C-bindinger, slik at graden av umettethet kan avta."
+    "answer": "Noe umettet fett blir mer mettet, og fettet kan bli fastere."
   },
   {
     "id": "doc-cholesterol-role",
@@ -249,7 +208,7 @@ export const documentQuestions = [
     "title": "Kolesterol",
     "prompt": "Hvilket utsagn om kolesterol er mest presist?",
     "hint": "Skill mellom molekylets normale funksjoner og risiko knyttet til mengden i blodet.",
-    "explanation": "Kolesterol er et nødvendig lipid som kroppen også lager selv. Mengden og fordelingen i blodets lipoproteiner er relevant for helse; stoffet er ikke i seg selv bare «gift».",
+    "explanation": "Kolesterol er et nødvendig fettstoff som kroppen også lager selv. Mengden og fordelingen i blodets transportpartikler er relevant for helse; stoffet er ikke i seg selv bare «gift».",
     "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Det inngår i cellemembraner og er utgangspunkt for blant annet steroidhormoner og gallesyrer.",
@@ -267,15 +226,15 @@ export const documentQuestions = [
     "title": "Fettkvalitet",
     "prompt": "Hvorfor kan det være gunstig å erstatte noe mettet fett med umettet fett?",
     "hint": "Skill mellom energiinnhold og virkningen av fettkvalitet.",
-    "explanation": "Det er viktig hva mettet fett erstattes med. Å bytte noe mettet fett mot umettet fett kan bedre blodets lipidprofil. Begge gir omtrent like mye energi per gram.",
+    "explanation": "Det er viktig hva mettet fett erstattes med. Å bytte noe mettet fett mot umettet fett kan bedre blodets innhold av fettstoffer. Begge gir omtrent like mye energi per gram.",
     "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
-      "Det kan redusere LDL-kolesterol og risiko for hjerte- og karsykdom.",
+      "Det kan gi et gunstigere kolesterolnivå i blodet og redusere risikoen for hjerte- og karsykdom.",
       "Umettet fett har ingen energi.",
       "Alt umettet fett spaltes uten enzymer.",
       "Mettet fett inneholder alltid transfettsyrer."
     ],
-    "answer": "Det kan redusere LDL-kolesterol og risiko for hjerte- og karsykdom."
+    "answer": "Det kan gi et gunstigere kolesterolnivå i blodet og redusere risikoen for hjerte- og karsykdom."
   },
   {
     "id": "doc-essential-fat-sources",
@@ -343,16 +302,16 @@ export const documentQuestions = [
     "title": "Kilder til vitamin D",
     "prompt": "Hvilke kan bidra til vitamin D hos mennesker? Velg alle riktige.",
     "hint": "Vitaminet kan både tilføres utenfra og dannes i kroppen under bestemte forhold. Vurder hvert alternativ separat.",
-    "explanation": "Vitamin D kan dannes i huden ved UVB-stråling og tilføres gjennom blant annet fet fisk og berikede matvarer. Hudproduksjonen varierer med årstid, breddegrad og andre forhold; oppgaven er ikke en anbefaling om soling.",
+    "explanation": "Vitamin D kan dannes i huden ved sollys og tilføres gjennom blant annet fet fisk og berikede matvarer. Hudproduksjonen varierer med årstid, breddegrad og andre forhold; oppgaven er ikke en anbefaling om soling.",
     "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
-      "Dannelse i huden når den utsettes for tilstrekkelig UVB-stråling.",
+      "Dannelse i huden når den utsettes for tilstrekkelig sollys.",
       "Fet fisk.",
       "Matvarer tilsatt vitamin D.",
       "At kroppen omdanner vitamin C til vitamin D."
     ],
     "answer": [
-      "Dannelse i huden når den utsettes for tilstrekkelig UVB-stråling.",
+      "Dannelse i huden når den utsettes for tilstrekkelig sollys.",
       "Fet fisk.",
       "Matvarer tilsatt vitamin D."
     ]
@@ -410,9 +369,9 @@ export const documentQuestions = [
     "type": "choice",
     "level": 2,
     "title": "Jernmangel",
-    "prompt": "Hvordan kan jernmangel som fører til anemi gi redusert utholdenhet?",
+    "prompt": "Hvordan kan jernmangel som fører til blodmangel gi redusert utholdenhet?",
     "hint": "Følg oksygenet fra lungene til en arbeidende muskel. Hvilket jernholdig protein frakter det?",
-    "explanation": "Jern inngår i hemoglobin. Ved jernmangelanemi kan redusert hemoglobin gi lavere oksygentransport. Tretthet alene kan ha mange årsaker og er ikke nok til å fastslå jernmangel.",
+    "explanation": "Jern inngår i hemoglobin. Jernmangel kan gi mindre hemoglobin, slik at blodet frakter mindre oksygen. Tretthet alene kan ha mange årsaker og er ikke nok til å fastslå jernmangel.",
     "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Mindre hemoglobin kan redusere blodets kapasitet til å transportere oksygen.",
@@ -588,7 +547,7 @@ export const documentQuestions = [
     "title": "ATP og ADP",
     "prompt": "Hvilket utsagn forklarer sammenligningen mellom ATP og et oppladbart batteri?",
     "hint": "Følg både energitilførselen og fosfatgruppen.",
-    "explanation": "ATP er et kortvarig system for energioverføring. Ved kobling av ATP-hydrolyse til andre reaksjoner kan cellen drive arbeid. Glykogen og fett er mer langsiktige energilagre.",
+    "explanation": "ATP er et kortvarig system for energioverføring. Når ATP spaltes til ADP og fosfat, kan energi overføres til arbeid i cellen. Glykogen og fett er mer langsiktige energilagre.",
     "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Energi fra celleånding kan brukes til å danne ATP fra ADP og fosfat; ATP kan så drive energikrevende prosesser.",
@@ -624,15 +583,15 @@ export const documentQuestions = [
     "title": "Type 1 og type 2",
     "prompt": "Koble beskrivelsene til riktig tilstand.",
     "hint": "Skill mangel på produksjon fra nedsatt virkning i målcellene.",
-    "explanation": "Ved type 1-diabetes ødelegges celler som lager insulin vanligvis av immunforsvaret. Ved type 2-diabetes er insulinresistens og etter hvert utilstrekkelig insulinutskillelse sentralt. Begge kan gi for høyt blodsukker; type 2 kan også kreve insulinbehandling.",
+    "explanation": "Ved type 1-diabetes lager kroppen for lite insulin. Ved type 2-diabetes reagerer cellene dårligere på insulinet, og etter hvert kan produksjonen også bli for liten. Begge kan gi for høyt blodsukker.",
     "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "pairs": [
       {
-        "left": "Immunforsvaret ødelegger celler som lager insulin",
+        "left": "Kroppen lager for lite insulin",
         "right": "Typisk type 1"
       },
       {
-        "left": "Nedsatt insulinfølsomhet er sentralt",
+        "left": "Cellene reagerer dårligere på insulin",
         "right": "Typisk type 2"
       }
     ]
@@ -642,18 +601,18 @@ export const documentQuestions = [
     "topic": "energy",
     "type": "choice",
     "level": 2,
-    "title": "Laktat ved muskelarbeid",
-    "prompt": "Hvorfor dannes laktat når glykolysen går raskt i muskelceller?",
-    "hint": "Tenk på hva glykolysen trenger for å kunne fortsette.",
-    "explanation": "Ved høy glykolysefart kan pyruvat omdannes til laktat. Dette regenererer NAD⁺. Ved kroppens pH brukes betegnelsen laktat; stoffet kan senere brukes som brensel eller til glukosedanning. Laktatdannelse betyr ikke at hele kroppen er uten oksygen.",
+    "title": "Melkesyre ved muskelarbeid",
+    "prompt": "Hvilken prosess forbindes med dannelse av melkesyre i musklene under hardt arbeid?",
+    "hint": "Tenk på forskjellen mellom aerob og anaerob celleånding.",
+    "explanation": "I undervisningen knyttes melkesyre til anaerob celleånding i musklene. Denne prosessen kan bidra til rask energiforsyning, men gir langt mindre ATP per glukosemolekyl enn aerob celleånding. Det betyr ikke at hele kroppen må være uten oksygen.",
     "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
-      "Omdanningen bidrar til å regenerere NAD⁺ slik at glykolysen kan fortsette.",
-      "Laktat gjør at glykogen ikke inneholder glukose.",
-      "Laktat er et giftstoff som aldri kan brukes videre.",
-      "Laktat beviser at det ikke finnes oksygen noe sted i kroppen."
+      "Anaerob nedbryting av glukose som gir lite ATP per glukosemolekyl.",
+      "Fotosyntese som gjør karbondioksid til stivelse.",
+      "Fordøyelse av protein i magesekken.",
+      "Omdanning av mineralstoffer til fett."
     ],
-    "answer": "Omdanningen bidrar til å regenerere NAD⁺ slik at glykolysen kan fortsette."
+    "answer": "Anaerob nedbryting av glukose som gir lite ATP per glukosemolekyl."
   },
   {
     "id": "doc-portal-route",
@@ -661,17 +620,17 @@ export const documentQuestions = [
     "type": "choice",
     "level": 2,
     "title": "Transport fra tarmen",
-    "prompt": "Hva beskriver vanlig transport av absorberte monosakkarider og aminosyrer fra tynntarmen?",
-    "hint": "Skill transport av monosakkarider fra transport av det meste av langkjedet fett.",
-    "explanation": "Vannløselige nedbrytingsprodukter som monosakkarider og aminosyrer går via portåreblodet til leveren. Langkjedede fettsyrer pakkes hovedsakelig i fettpartikler og går først via lymfen.",
+    "prompt": "Hva beskriver vanlig transport av monosakkarider og aminosyrer etter opptak fra tynntarmen?",
+    "hint": "Tenk på leverens rolle etter at næringsstoffene er tatt opp.",
+    "explanation": "Monosakkarider og aminosyrer tas opp i blodet og fraktes til leveren. Mye av fettet går først via lymfen og deretter til blodet. Næringsstoffene kan så transporteres til cellene som bruker dem.",
     "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
-      "Via blodet i portåren til leveren før videre fordeling.",
+      "Med blodet til leveren før videre fordeling.",
       "Som hele matbiter direkte til hjernen.",
-      "Hovedsakelig via lymfen i store fettpartikler.",
+      "Gjennom spiserøret til musklene.",
       "Gjennom gallegangen inn i galleblæren."
     ],
-    "answer": "Via blodet i portåren til leveren før videre fordeling."
+    "answer": "Med blodet til leveren før videre fordeling."
   },
   {
     "id": "doc-liver-functions",
@@ -703,7 +662,7 @@ export const documentQuestions = [
     "title": "Tykktarmen",
     "prompt": "Hva er en viktig oppgave for tykktarmen?",
     "hint": "Hva er igjen etter at mesteparten av nærings- og vannopptaket i tynntarmen er ferdig?",
-    "explanation": "Det meste av vannopptaket skjer i tynntarmen, men tykktarmen tar opp mer vann og salter. Bakterier kan også fermentere noen typer fiber; mennesket produserer ikke cellulase.",
+    "explanation": "Det meste av vannopptaket skjer i tynntarmen, men tykktarmen tar opp mer vann og salter. Dette bidrar til at avføringen får en fastere form. Tarmbakterier kan bryte ned noen typer fiber.",
     "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Ta opp resterende vann og salter og bidra til å forme avføringen.",
@@ -719,121 +678,15 @@ export const documentQuestions = [
     "type": "open",
     "level": 2,
     "title": "Tolvfingertarmen",
-    "prompt": "Surt mageinnhold med fett kommer til tolvfingertarmen. Forklar tre ulike roller for hydrogenkarbonat, galle og lipase.",
+    "prompt": "Surt mageinnhold med fett kommer til tolvfingertarmen. Forklar rollene til det basiske stoffet i bukspyttet, galle og fordøyelsesenzymer.",
     "hint": "Ta én rolle om gangen: pH, størrelsen på fettdråper og bindingene inne i fettmolekylene.",
     "explanation": "Sammenlign begrunnelsen din med modellsvaret. Andre presise formuleringer er like gode.",
     "source": "Repetisjonsoppgaver og prøvegrunnlag",
-    "model": "Hydrogenkarbonat i bukspyttet bidrar til å nøytralisere syren, slik at miljøet passer bedre for tarmens enzymer. Galle finfordeler fett og øker grenseflaten mot vann. Lipase katalyserer spalting av bindinger i fettmolekylene. Galle er ikke et fettspaltende enzym.",
+    "model": "Det basiske stoffet i bukspyttet bidrar til å nøytralisere syren, slik at miljøet passer bedre for enzymene. Galle fordeler store fettdråper i mindre dråper og gir større samlet overflate. Enzymer spalter fettmolekylene til mindre deler. Galle er ikke selv et fettspaltende enzym.",
     "checklist": [
-      "Jeg knytter hydrogenkarbonat til pH.",
-      "Jeg knytter galle til finfordeling og overflate.",
-      "Jeg skiller lipasens kjemiske spalting fra gallens virkning."
+      "Jeg forklarer hvorfor syren nøytraliseres.",
+      "Jeg knytter galle til finfordeling og større samlet overflate.",
+      "Jeg skiller enzymenes spalting fra gallens virkning."
     ]
-  },
-  {
-    "id": "doc-carbs-screenshot-a",
-    "topic": "carbs",
-    "type": "sort",
-    "level": 1,
-    "title": "Sorter karbohydratene",
-    "prompt": "Plasser hvert karbohydrat i riktig gruppe.",
-    "hint": "Tell én, to eller mange sukkerenheter.",
-    "explanation": "Glukose, fruktose og galaktose er monosakkarider. Maltose, laktose og sukrose er disakkarider, som hver består av to monosakkaridenheter.",
-    "source": "Skjermbilde: Sorter karbohydratene",
-    "groups": [
-      "Monosakkarider",
-      "Disakkarider",
-      "Polysakkarider"
-    ],
-    "items": [
-      {
-        "label": "Glukose",
-        "group": "Monosakkarider"
-      },
-      {
-        "label": "Fruktose",
-        "group": "Monosakkarider"
-      },
-      {
-        "label": "Galaktose",
-        "group": "Monosakkarider"
-      },
-      {
-        "label": "Maltose",
-        "group": "Disakkarider"
-      },
-      {
-        "label": "Laktose",
-        "group": "Disakkarider"
-      },
-      {
-        "label": "Sukrose",
-        "group": "Disakkarider"
-      }
-    ],
-    "family": "carb-classification"
-  },
-  {
-    "id": "doc-carbs-screenshot-b",
-    "topic": "carbs",
-    "type": "sort",
-    "level": 1,
-    "title": "Polysakkarider",
-    "prompt": "Plasser hvert karbohydrat i riktig gruppe.",
-    "hint": "Lagringsstoffene og cellulose består av mange sukkerenheter.",
-    "explanation": "Glykogen, stivelse og cellulose er polysakkarider. Cellulose er et eksempel på kostfiber. Ikke alt kostfiber er cellulose, og kostfiber er en samlebetegnelse snarere enn ett bestemt molekyl.",
-    "source": "Skjermbilde: Sorter karbohydratene",
-    "groups": [
-      "Monosakkarider",
-      "Disakkarider",
-      "Polysakkarider"
-    ],
-    "items": [
-      {
-        "label": "Glykogen",
-        "group": "Polysakkarider"
-      },
-      {
-        "label": "Stivelse",
-        "group": "Polysakkarider"
-      },
-      {
-        "label": "Cellulose (kostfiber)",
-        "group": "Polysakkarider"
-      },
-      {
-        "label": "Glukose",
-        "group": "Monosakkarider"
-      },
-      {
-        "label": "Sukrose",
-        "group": "Disakkarider"
-      }
-    ],
-    "family": "carb-classification"
-  },
-  {
-    "id": "doc-vitamin-screenshot",
-    "topic": "micro",
-    "type": "multi",
-    "level": 1,
-    "title": "Vannløselige vitaminer",
-    "prompt": "Hvilke av disse vitaminene er vannløselige? Velg alle riktige.",
-    "hint": "De fettløselige vitaminene huskes ofte som A, D, E og K.",
-    "explanation": "B-vitaminene og vitamin C er vannløselige. A, D, E og K er fettløselige. Vannløselighet betyr ikke at ingen lagring forekommer; særlig B12 kan lagres lenge.",
-    "source": "Skjermbilde: Hvilke vitaminer er vannløselige?",
-    "options": [
-      "A",
-      "B-vitaminene",
-      "C",
-      "D",
-      "E",
-      "K"
-    ],
-    "answer": [
-      "B-vitaminene",
-      "C"
-    ],
-    "family": "vitamin-solubility"
   }
 ];
