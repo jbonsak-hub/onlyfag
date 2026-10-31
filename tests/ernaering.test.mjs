@@ -163,6 +163,128 @@ test('expanded fatty-acid drawings obey ordinary C/H/O valences',()=>{
  }
 });
 
+// Read the actual atom groups and bond endpoints, rather than assuming that a
+// figure's key or description proves its chemistry. OH and CH₂OH are familiar
+// groups with one external bond; their internal atoms still count in formulas.
+function recognitionGraph(key){
+ const drawing=figure(key);
+ const atoms=[...drawing.matchAll(/<rect\b[^>]*\/><text\b([^>]*)>([^<]+)<\/text>/g)].map(match=>{
+  const attrs=Object.fromEntries([...match[1].matchAll(/([\w-]+)="([^"]*)"/g)].map(m=>[m[1],m[2]]));
+  return {x:Number(attrs.x),y:Number(attrs.y)-Number(attrs['font-size'])*.3,symbol:match[2]};
+ });
+ assert.ok(atoms.length,key+': atom groups are present');
+ const edges=new Map();
+ for(const line of drawing.matchAll(/<line x1="([^"]+)" y1="([^"]+)" x2="([^"]+)" y2="([^"]+)"[^>]*\/>/g)){
+  const endpoints=[[Number(line[1]),Number(line[2])],[Number(line[3]),Number(line[4])]].map(([x,y])=>{
+   const nearby=atoms.map((atom,index)=>({index,distance:Math.hypot(x-atom.x,y-atom.y)})).filter(atom=>atom.distance<=12).sort((a,b)=>a.distance-b.distance);
+   assert.ok(nearby.length,key+': each bond endpoint joins an atom group');
+   return nearby[0].index;
+  }).sort((a,b)=>a-b);
+  assert.notEqual(endpoints[0],endpoints[1],key+': a bond connects two different atoms');
+  const id=endpoints.join(':');
+  const edge=edges.get(id)||{a:endpoints[0],b:endpoints[1],order:0};
+  edge.order++;edges.set(id,edge);
+ }
+ const bonds=[...edges.values()];
+ const neighbors=index=>bonds.flatMap(edge=>edge.a===index?[edge.b]:edge.b===index?[edge.a]:[]);
+ const groups={C:{C:1},H:{H:1},O:{O:1},N:{N:1},OH:{O:1,H:1},'CH₂OH':{C:1,H:3,O:1}};
+ const valences={C:4,H:1,O:2,N:3,OH:1,'CH₂OH':1};
+ const formula={};
+ atoms.forEach((atom,index)=>{
+  assert.ok(groups[atom.symbol],key+': known atom group '+atom.symbol);
+  for(const [element,count] of Object.entries(groups[atom.symbol]))formula[element]=(formula[element]||0)+count;
+  const order=bonds.filter(edge=>edge.a===index||edge.b===index).reduce((sum,edge)=>sum+edge.order,0);
+  assert.equal(order,valences[atom.symbol],key+': '+atom.symbol+' at '+atom.x+','+atom.y+' has its ordinary external bond count');
+ });
+ // Removing a ring bond leaves an alternate path around that same ring. The
+ // two rings of sucrose are joined by a bridge and are recovered separately.
+ const cycles=new Map();
+ for(const removed of bonds){
+  const queue=[[removed.a]],seen=new Set([removed.a]);
+  while(queue.length){
+   const current=queue.shift(),last=current.at(-1);
+   if(last===removed.b){const nodes=[...current].sort((a,b)=>a-b);cycles.set(nodes.join(':'),nodes);break;}
+   for(const next of neighbors(last)){
+    if((last===removed.a&&next===removed.b)||(last===removed.b&&next===removed.a)||seen.has(next))continue;
+    seen.add(next);queue.push([...current,next]);
+   }
+  }
+ }
+ return {atoms,bonds,neighbors,formula,cycles:[...cycles.values()]};
+}
+
+test('new naming tasks cover the requested molecules without printing their names on the figures',()=>{
+ const naming=questions.filter(q=>q.id.startsWith('recognition-'));
+ assert.equal(naming.length,8,'six focused naming tasks and two mixed matching tasks');
+ const focused=naming.filter(q=>q.type==='choice');
+ assert.deepEqual(focused.map(q=>q.answer).sort(),['Glyserol','Fettsyre','Aminosyre','Glukose','Stivelse','Sukrose'].sort());
+ const mixed=naming.filter(q=>q.type==='match');assert.equal(mixed.length,2);
+ for(const q of naming){
+  assert.ok(q.figure?.startsWith('recognition-'),q.id+': original structure figure');
+  const before=q.title+' '+q.prompt+' '+figure(q.figure);
+  assert.doesNotMatch(before,/glyserol|fettsyre|aminosyre|glukose|fruktose|sukrose|maltose|stivelse|glykogen|cellulose/i,q.id+': no answer name in heading, prompt, SVG description or caption');
+ }
+ const starch=focused.find(q=>q.answer==='Stivelse');
+ assert.match(starch.prompt,/plant|potet/i,'a chain sketch needs plant-storage context to distinguish starch from glycogen');
+ assert.match(starch.prompt,/energilager|lagr/i);
+ assert.ok(mixed.some(q=>q.pairs.some(pair=>/proteiner/.test(pair.right))));
+ assert.ok(mixed.some(q=>q.pairs.some(pair=>/fett/.test(pair.right))));
+});
+
+test('new molecular drawings have correct formulas, valences and sugar rings',()=>{
+ for(const [key,formula,ringSizes] of [
+  ['recognition-glycerol',{C:3,H:8,O:3},[]],
+  ['recognition-fatty-acid',{C:8,H:16,O:2},[]],
+  ['recognition-amino-acid',{C:2,H:5,N:1,O:2},[]],
+  ['recognition-glucose',{C:6,H:12,O:6},[6]],
+  ['recognition-sucrose',{C:12,H:22,O:11},[5,6]]
+ ]){
+  const graph=recognitionGraph(key);
+  assert.deepEqual(graph.formula,formula,key+': formula includes atoms inside OH/CH₂OH groups');
+  assert.deepEqual(graph.cycles.map(cycle=>cycle.length).sort(),ringSizes,key+': sugars use the taught ring structures');
+  for(const cycle of graph.cycles)assert.equal(cycle.filter(index=>graph.atoms[index].symbol==='O').length,1,key+': each sugar ring contains one oxygen');
+ }
+ // C2/C4 OH point to the same side; C3 points the other way. Inverting C4
+ // would silently turn the depicted glucose into the galactose model.
+ const glucose=recognitionGraph('recognition-glucose');
+ const ring=glucose.cycles[0],oxygen=ring.find(index=>glucose.atoms[index].symbol==='O');
+ const c5=glucose.neighbors(oxygen).find(index=>glucose.neighbors(index).some(next=>glucose.atoms[next].symbol==='CH₂OH'));
+ const carbons=[glucose.neighbors(oxygen).find(index=>index!==c5)];
+ while(carbons.length<5)carbons.push(glucose.neighbors(carbons.at(-1)).find(index=>ring.includes(index)&&index!==oxygen&&!carbons.includes(index)));
+ const sides=carbons.slice(1,4).map(index=>{
+  const oh=glucose.neighbors(index).find(next=>glucose.atoms[next].symbol==='OH');
+  assert.notEqual(oh,undefined,'C2, C3 and C4 each carry an OH group');
+  return Math.sign(glucose.atoms[oh].y-glucose.atoms[index].y);
+ });
+ assert.equal(sides[0],sides[2],'the glucose C2 and C4 OH groups face the same side');
+ assert.equal(sides[1],-sides[0],'the glucose C3 OH group faces the opposite side');
+ const sucrose=recognitionGraph('recognition-sucrose');
+ const bridge=sucrose.atoms.map((atom,index)=>({atom,index})).filter(({atom,index})=>atom.symbol==='O'&&!sucrose.cycles.some(cycle=>cycle.includes(index)));
+ assert.equal(bridge.length,1,'one oxygen joins the two sucrose rings');
+ const attachments=sucrose.neighbors(bridge[0].index);
+ assert.equal(new Set(attachments.map(index=>sucrose.cycles.findIndex(cycle=>cycle.includes(index)))).size,2,'the bridge connects different rings');
+ for(const index of attachments){
+  assert.equal(sucrose.atoms[index].symbol,'C');
+  assert.ok(sucrose.neighbors(index).some(next=>sucrose.atoms[next].symbol==='O'&&sucrose.cycles.some(cycle=>cycle.includes(next))),'each linking C is adjacent to its ring oxygen');
+  assert.ok(!sucrose.neighbors(index).some(next=>sucrose.atoms[next].symbol==='OH'),'the linking positions have no extra free OH');
+ }
+ // The two mixed boards reuse equally valid molecular structures.
+ for(const key of ['recognition-mixed-sugar-amino','recognition-mixed-sugar-fat'])assert.deepEqual(recognitionGraph(key).cycles.map(cycle=>cycle.length),[6],key);
+});
+
+test('five additional applied figures span five subject themes and keep conclusions for feedback',()=>{
+ const applied=questions.filter(q=>q.id.startsWith('applied-'));
+ assert.equal(applied.length,5);
+ assert.deepEqual(applied.map(q=>q.topic).sort(),['protein','fat','micro','digestion','energy'].sort());
+ for(const q of applied){assert.ok(q.figure?.startsWith('applied-'));assert.match(figure(q.figure),/<svg\b/);}
+ const fat=figure('applied-fat-processes');
+ assert.doesNotMatch(fat,/galle|enzym|glyserol|fettsyr/i,'the fat diagram shows changes without naming their causes or products');
+ assert.doesNotMatch(figure('applied-vitamin-distribution'),/vitamin\s*[CDEK]\b/i,'vitamin solubility data must not identify X');
+ assert.doesNotMatch(figure('applied-glucose-regulation'),/insulin|glukagon/i,'the glucose curve must not identify the regulatory hormone');
+ const protein=applied.find(q=>q.topic==='protein');
+ assert.match(protein.prompt,/tre/i,'the simplified model is explicitly limited to its three amino acids');
+});
+
 
 test('help and page copy obey the same taught-vocabulary limits as questions',()=>{
  const html=readFileSync(new URL('../prototyper/ernaering.html',import.meta.url),'utf8');

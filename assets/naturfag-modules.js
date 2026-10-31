@@ -21,7 +21,7 @@
  const subtitle=sidebar.querySelector('.nf-sidebar-sub');if(subtitle)subtitle.remove();
  const info=$('#infoPop');if(info)info.innerHTML='<p>Oppgavetrening i kjemi, næringsstoffer og fordøyelse for naturfag. Prosentene viser riktig på de siste 20 besvarte oppgavene per tema. Fremgangen lagres i nettleseren.</p>';
  const subjectsPage=document.createElement('section');subjectsPage.id='page-subjects';subjectsPage.className='page';subjectsPage.setAttribute('aria-label','Velg hovedtema');
- subjectsPage.innerHTML='<h1 class="nf-subjects-heading">Velg tema i naturfag</h1><div class="nf-subject-cards"><a class="nf-subject-card" data-subject="chemistry" href="#chemistry/home"><img src="assets/naturfag-chemistry.svg?v=20261031-5" alt="" width="640" height="360"><span class="nf-subject-card-label"><strong>Kjemi</strong><span aria-hidden="true">→</span></span></a><a class="nf-subject-card" data-subject="nutrition" href="#nutrition/all"><img src="assets/naturfag-nutrition.svg?v=20261031-5" alt="" width="640" height="360"><span class="nf-subject-card-label"><strong>Næringsstoffer og fordøyelsen</strong><span aria-hidden="true">→</span></span></a></div>';
+ subjectsPage.innerHTML='<h1 class="nf-subjects-heading">Velg tema i naturfag</h1><div class="nf-subject-cards"><a class="nf-subject-card" data-subject="chemistry" href="#chemistry/home"><img src="assets/naturfag-chemistry.svg?v=20261031-6" alt="" width="640" height="360"><span class="nf-subject-card-label"><strong>Kjemi</strong><span aria-hidden="true">→</span></span></a><a class="nf-subject-card" data-subject="nutrition" href="#nutrition/all"><img src="assets/naturfag-nutrition.svg?v=20261031-6" alt="" width="640" height="360"><span class="nf-subject-card-label"><strong>Næringsstoffer og fordøyelsen</strong><span aria-hidden="true">→</span></span></a></div>';
  content.prepend(subjectsPage);
  const page=document.createElement('section');page.id='page-nutrition';page.className='page';page.setAttribute('aria-label','Næringsstoffer og fordøyelsen');
  const frame=document.createElement('iframe');frame.id='nutrition-module-frame';frame.title='Næringsstoffer og fordøyelsen – oppgavetrening';frame.allow='fullscreen';page.append(frame);content.append(page);
@@ -38,7 +38,7 @@
  function ensureFrame(){
   if(frameStarted){sendDesired();return;}
   frameStarted=true;
-  frame.src='prototyper/ernaering.html?embedded=1&topic='+encodeURIComponent(desired.topic)+'&view='+encodeURIComponent(desired.view)+'&v=20261031-5';
+  frame.src='prototyper/ernaering.html?embedded=1&topic='+encodeURIComponent(desired.topic)+'&view='+encodeURIComponent(desired.view)+'&v=20261031-6';
  }
  frame.addEventListener('load',()=>{if(!frameStarted)return;frameReady=true;sendTheme();sendHostLayout();sendDesired();});
  function closeMenu({focus=false}={}){

@@ -1,7 +1,7 @@
-import {questions, sources} from './questions.js?v=20261031-5';
-import {organs, digestiveSVG} from './diagram.js?v=20261031-5';
-import {figure} from './figures.js?v=20261031-5';
-import {STORE_KEY, topics, types, shuffle, mixedOrder, evaluate, needsReview, resultRecord, pickNext, rememberQuestion, recentSummary, recordRecentResult} from './engine.js?v=20261031-5';
+import {questions, sources} from './questions.js?v=20261031-6';
+import {organs, digestiveSVG} from './diagram.js?v=20261031-6';
+import {figure} from './figures.js?v=20261031-6';
+import {STORE_KEY, topics, types, shuffle, mixedOrder, evaluate, needsReview, resultRecord, pickNext, rememberQuestion, recentSummary, recordRecentResult} from './engine.js?v=20261031-6';
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

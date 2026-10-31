@@ -1,7 +1,9 @@
-import {nutrientMapSlots} from './figures.js?v=20261031-5';
-import {structureQuestions} from './structure-questions.js?v=20261031-5';
-import {documentQuestions} from './document-questions.js?v=20261031-5';
-import {ndlaQuestions} from './ndla-questions.js?v=20261031-5';
+import {nutrientMapSlots} from './figures.js?v=20261031-6';
+import {structureQuestions} from './structure-questions.js?v=20261031-6';
+import {documentQuestions} from './document-questions.js?v=20261031-6';
+import {ndlaQuestions} from './ndla-questions.js?v=20261031-6';
+import {recognitionQuestions} from './recognition-questions.js?v=20261031-6';
+import {appliedFigureQuestions} from './applied-figure-questions.js?v=20261031-6';
 
 // Oppgaver avgrenset til undervisningsmaterialet og oppgitt begrepsliste.
 const coreQuestions = [
@@ -1498,7 +1500,7 @@ const coreQuestions = [
   }
 ];
 
-export const questions = [...coreQuestions, ...structureQuestions, ...documentQuestions, ...ndlaQuestions, {
+export const questions = [...coreQuestions, ...structureQuestions, ...documentQuestions, ...ndlaQuestions, ...recognitionQuestions, ...appliedFigureQuestions, {
   "id": "nutrient-concept-map",
   "topic": "energy",
   "type": "match",

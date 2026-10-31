@@ -2,7 +2,7 @@
 
 Minimalistisk øvingsmodul i eksisterende OnlyFag, tilgjengelig som modulen «Næringsstoffer og fordøyelsen» på `/naturfag.html#nutrition/all`. Den selvstendige adressen `/prototyper/ernaering.html` støttes fortsatt.
 
-145 oppgaver, hvorav 44 med figur eller organmodell. Seks fagtemaer; figuroppgaver ligger under fagtemaet de hører til. Blandet øving står sist. Ingen installasjon eller byggesteg for nettsiden.
+158 oppgaver, hvorav 57 med figur eller organmodell. Seks fagtemaer; figuroppgaver ligger under fagtemaet de hører til. Blandet øving står sist. Ingen installasjon eller byggesteg for nettsiden.
 
 Pensum er de fem opprinnelige PowerPoint-presentasjonene (105 lysbilder) og de fem oppgitte arkene. Arkivets PowerPoint-tekst er hentet og kontrollert fra checkpoint `d92f59d811ee8676d93a0ea135f5c204568cf45b`, `docs/ernaering-grunnlag/`. Se fagloggene i `docs/ernaering-materiale.md` og `docs/ernaering-ndla.md`. NDLA gir oppgaveinspirasjon, men innfører ikke nye nødvendige forkunnskaper.
 
@@ -35,13 +35,15 @@ Fra repo-roten:
 node --test tests/ernaering.test.mjs
 NODE_PATH=/workspace/work/nutrition-test-deps/node_modules:/workspace/shared/onlyfag-tools/node_modules node tests/ernaering-dom.cjs
 BROWSER_EXECUTABLE=/usr/bin/chromium node tests/ernaering-layout.cjs
+BROWSER_EXECUTABLE=/usr/bin/chromium node tests/naturfag-modules.cjs
+BROWSER_EXECUTABLE=/usr/bin/chromium node tests/nutrition-new-figures.cjs
 ```
 
 DOM-testen krever `jsdom` (testet med v26; bundling med esbuild). Den kan kjøres med `NODE_PATH` til en isolert installasjon. Ingen pakkefiler eller avhengigheter trengs for selve nettsiden.
 
 - Ren Node-test: skjema og fasiter for alle oppgaver, feil/ekstra valg, svarnormalisering, hjelpetilstand og repetisjon, stokking.
-- DOM-test: alle 145 oppgaver fullføres via grensesnittets kontroller; delvis riktige svar, fasit, egenvurdering, filter, persistens, mobilmeny, utilgjengelig lagring og avgrenset nullstilling.
-- Browserkontroll: alle oppgaver før svar og etter fasit ved 1366 × 768, 1280 × 720, 1024 × 768 og 390 × 844. Kontrollerer oppgave/figur/svar/knapper samlet, ingen horisontal overflyt og ingen nødvendig siderulling ved disse størrelsene med filtre og ekstralister lukket. Utvidet «Hvorfor?», tekstalternativ og oppgavebank kan rulle etter elevens eget valg. Manuell bildeinspeksjon av blant annet sukkerstrukturer, cis/trans, glyserol/fettsyre og organplassering.
+- DOM-test: alle 158 oppgaver fullføres via grensesnittets kontroller; delvis riktige svar, fasit, egenvurdering, fravær av filter, persistens, mobilmeny, utilgjengelig lagring og avgrenset nullstilling.
+- Browserkontroll: alle oppgaver før svar og etter fasit ved 1366 × 768, 1280 × 720, 1024 × 768 og 390 × 844. Kontrollerer oppgave/figur/svar/knapper samlet, ingen horisontal overflyt og ingen nødvendig siderulling ved disse størrelsene med valgfrie ekstralister lukket. Utvidet «Hvorfor?», tekstalternativ og oppgavebank kan rulle etter elevens eget valg. Manuell bildeinspeksjon av blant annet sukkerstrukturer, cis/trans, glyserol/fettsyre og organplassering.
 
 Felles `assets/analytics.js` lastes én gang på siden. Elevsvar sendes ikke til noen tjeneste av øvingsmotoren.
 
@@ -60,3 +62,11 @@ Kildepanelet viser korte eksterne fagreferanser; det har ingen avhengighet av en
 Integrasjonen kontrolleres med `node tests/naturfag-modules.cjs` i tillegg til modulens eksisterende tester. Browserkontroller trenger samme lokale nettverkstilgang som de andre Playwright-testene.
 
 Naturfag starter nå på en emnevelger med to illustrerte kort. Modullenkene beholdes som direkte innganger, og Start i den felles menyen tar eleven tilbake til emnevalget. Undermenyene deler samme fete skriftstørrelse. Filterkontrollen og tilhørende tilstand/hendelser er fjernet fra ernæringsmodulen; bankens søk og temaenes oppgaveutvalg er beholdt.
+
+## Nye navne- og figuroppgaver
+
+`recognition-questions.js` og `recognition-figures.js` gir åtte navneoppgaver: glyserol, fettsyre, aminosyre, glukose, sukrose og stivelse, samt to koblingsoppgaver med strukturer fra ulike næringsstoffgrupper. Sukrose har en seksleddet og en femleddet ring forbundet via O. Stivelsesoppgaven oppgir at stoffet er plantens energilager; en generell ringkjede skiller ikke alene mellom ulike polysakkarider. Ingen stoffnavn i figuren eller den tilgjengelige bildebeskrivelsen gir fasiten før svar.
+
+`applied-figure-questions.js` og `applied-figures.js` gir fem videre figuroppgaver fordelt på proteiner, fett, vitaminer/mineraler/vann, fordøyelsen og energi/blodsukker. De bruker en tabell over aminosyrer, modeller av dråper og molekyler, fordeling mellom vann og olje, overflatemodeller og en blodsukkerkurve. Tall og modellforutsetninger gis i oppgaven. Alle tretten bruker automatisk retting og deltar i den eksisterende rotasjonen og prosentberegningen.
+
+`tests/nutrition-new-figures.cjs` kontrollerer alle tretten i den felles Naturfag-visningen ved 1366 × 768, 1280 × 720, 1024 × 720 og 390 × 844. Den prøver faktisk besvarelse og fasit, måler overflyt, figurtekst på minst 12 px og at etiketter ikke klippes.
