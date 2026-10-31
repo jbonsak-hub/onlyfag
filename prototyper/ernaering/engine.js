@@ -49,3 +49,36 @@ export function resultRecord(previous={}, outcome, now=Date.now()) {
     attempts:(previous.attempts||0)+1,streak,due:now+(status==='review'?600000:days*86400000),
     assistedUntil:assisted?Math.max(Number(previous.assistedUntil)||0,now+600000):0};
 }
+
+// Presentation history is separate from assessment: skipping still counts as seeing.
+// Retain a shuffled cycle across theme/filter switches and page reloads.
+export function pickNext(pool, rotation={seen:[],recent:[]}, records={}, rng=Math.random) {
+  if(!pool.length)return null;
+  const seen=new Set(rotation.seen||[]);
+  let eligible=pool.filter(q=>!seen.has(q.id));
+  if(!eligible.length){
+    const ids=new Set(pool.map(q=>q.id));
+    rotation.seen=(rotation.seen||[]).filter(id=>!ids.has(id));
+    eligible=[...pool];
+  }
+  const recent=(rotation.recent||[]).slice(-10);
+  // Relax oldest cooldown entries only when a small pool leaves no candidate.
+  let protectedPool=[];
+  for(let n=0;n<=recent.length;n++){
+    const blocked=new Set(recent.slice(n).map(x=>x.id));
+    protectedPool=eligible.filter(q=>!blocked.has(q.id));
+    if(protectedPool.length)break;
+  }
+  const families=new Set(recent.slice(-3).map(x=>x.family).filter(Boolean));
+  const varied=protectedPool.filter(q=>!families.has(q.family||q.figure||q.id));
+  let candidates=varied.length?varied:protectedPool;
+  // Due work is mixed with new items, never allowed to override rotation.
+  const due=candidates.filter(q=>needsReview(records[q.id]));
+  if(due.length && rng()<.35)candidates=due;
+  return candidates[Math.min(candidates.length-1,Math.floor(rng()*candidates.length))];
+}
+export function rememberQuestion(rotation,q) {
+  rotation.seen=[...new Set([...(rotation.seen||[]),q.id])];
+  rotation.recent=[...(rotation.recent||[]),{id:q.id,family:q.family||q.figure||q.id}].slice(-10);
+  return rotation;
+}

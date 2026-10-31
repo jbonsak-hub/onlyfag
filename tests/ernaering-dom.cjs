@@ -1,17 +1,19 @@
-/* Run with jsdom available: NODE_PATH=/path/to/node_modules node tests/ernaering-dom.cjs */
+/* Run with jsdom + esbuild available through NODE_PATH; no app dependencies are required. */
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const {JSDOM,VirtualConsole}=require('jsdom');
 const root=path.resolve(__dirname,'..');
-const files=['questions.js','diagram.js','engine.js','figures.js','app.js'];
-const source=files.map(f=>fs.readFileSync(path.join(root,'prototyper/ernaering',f),'utf8').replace(/^import .*;\n/gm,'').replace(/export /g,'')).join('\n');
+const {buildSync}=require('esbuild');
+// Bundle real ESM imports instead of stripping them: independent question banks
+// and figure helpers must retain their own module scopes.
+const source=buildSync({stdin:{contents:`import './prototyper/ernaering/app.js';import {questions} from './prototyper/ernaering/questions.js';import {organs} from './prototyper/ernaering/diagram.js';window.__qa={questions,organs};`,resolveDir:root},bundle:true,write:false,format:'iife',platform:'browser'}).outputFiles[0].text;
 function boot({mobile=false,stored,blocked=false}={}){
  const errors=[];const console=new VirtualConsole();console.on('jsdomError',e=>errors.push(e));
  const dom=new JSDOM(fs.readFileSync(path.join(root,'prototyper/ernaering.html'),'utf8'),{url:'https://onlyfag.no/prototyper/ernaering.html',runScripts:'outside-only',virtualConsole:console});const w=dom.window;
- w.HTMLElement.prototype.scrollIntoView=function(){};w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;};
+ w.scrollTo=function(){};w.HTMLElement.prototype.scrollIntoView=function(){};w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;};
  w.matchMedia=()=>({matches:mobile,addEventListener(){}});
  if(stored)w.localStorage.setItem('onlyfag.nutrition.v1',stored);
  if(blocked)Object.defineProperty(w,'localStorage',{get(){throw Error('storage unavailable');}});
- w.eval(source+'\nwindow.__qa={questions,organs};');
+ w.eval(source);
  const $=s=>w.document.querySelector(s);
  function click(s){const el=$(s);assert.ok(el,`Missing ${s}`);assert.ok(!el.disabled,`Disabled ${s}`);el.click();assert.equal(errors.length,0,errors.map(e=>e.stack).join('\n'));}
  function set(s,value,event='change'){const el=$(s);assert.ok(el,s);el.value=value;el.dispatchEvent(new w.Event(event,{bubbles:true}));assert.equal(errors.length,0,errors.map(e=>e.stack).join('\n'));}
@@ -37,7 +39,7 @@ function fillCorrect(q){
  if(q.type==='open'){set('#open-answer','Min forklaring med sammenheng mellom oppbygning, funksjon og prosess.','input');click('#show-model');q.checklist.forEach((_,i)=>{const el=$(`[data-self-check="${i}"]`);el.checked=true;el.dispatchEvent(new w.Event('change',{bubbles:true}));});click('#self-confident');}else click('#check-answer');
 }
 for(const q of questions){open(q.id);fillCorrect(q);const status=JSON.parse(w.localStorage.getItem('onlyfag.nutrition.v1')).records[q.id].status;assert.equal(status,q.type==='open'?'self':'independent',q.id+': '+$('#feedback').textContent);}
-console.log('67/67 question flows: all nine types completed through DOM controls.');
+console.log(`${questions.length}/${questions.length} question flows completed through DOM controls.`);
 // Partial fill preserves the right answer and prevents a retry being counted as unaided.
 open('digestion-stomach-contents');set('#row-0','Saltsyre','input');set('#row-1','amylase','input');click('#check-answer');assert.ok($('#row-0').disabled);assert.ok(!$('#row-1').disabled);set('#row-1','pepsin','input');click('#check-answer');assert.match($('#feedback-title').textContent,/etter øving/);
 // Hint and reveal do not create mastery, including immediately retrying a revealed answer.
@@ -54,6 +56,20 @@ const wrong=[...w.document.querySelectorAll('[data-option]')].find(b=>b.textCont
 open('protein-quality');click('#show-model');assert.equal($('.open-model'),null);set('#open-answer','Et helt fritt formulert svar.','input');click('#show-model');click('#self-confident');assert.match($('#feedback-title').textContent,/kjennetegn/);click('#self-review');assert.match($('#feedback-title').textContent,/repetisjon/);
 // Filtering and empty state.
 click('#bank-tab');set('#type-filter','anatomy');assert.equal(w.document.querySelectorAll('.bank-row').length,1);set('#bank-search','ingen_slike_ord','input');assert.equal(w.document.querySelectorAll('.bank-row').length,0);set('#bank-search','', 'input');set('#type-filter','all');
+// Presented/skipped questions count in rotation, and reload does not restart the pool.
+const rotationFlow=boot();const shown=[];
+for(let i=0;i<15;i++){
+ const id=rotationFlow.$('[data-question]').dataset.question;
+ assert.ok(!shown.includes(id),'skipped question repeated before completing the pool');shown.push(id);
+ rotationFlow.click('#next-question');
+}
+assert.equal(rotationFlow.$('#filter-bar').hidden,true,'filters should be secondary by default');
+rotationFlow.click('#filter-toggle');assert.equal(rotationFlow.$('#filter-bar').hidden,false);
+rotationFlow.click('#filter-toggle');assert.equal(rotationFlow.$('#filter-bar').hidden,true);
+const rotationStored=rotationFlow.w.localStorage.getItem('onlyfag.nutrition.v1');
+const reloadedRotation=boot({stored:rotationStored});
+assert.ok(!shown.includes(reloadedRotation.$('[data-question]').dataset.question),'reload should preserve recent history and continue to an unseen question');
+rotationFlow.dom.window.close();reloadedRotation.dom.window.close();
 const stored=w.localStorage.getItem('onlyfag.nutrition.v1');const reload=boot({stored});assert.ok(Number(reload.$('#review-count').textContent)>0);reload.dom.window.close();
 // Mobile menu, keyboard close, and storage failure fallback.
 const mobile=boot({mobile:true});assert.equal(mobile.$('#sidebar').inert,true);mobile.click('#menu-button');assert.equal(mobile.$('.workspace').inert,true);mobile.w.document.dispatchEvent(new mobile.w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));assert.equal(mobile.$('.workspace').inert,false);assert.equal(mobile.$('#sidebar').inert,true);mobile.dom.window.close();

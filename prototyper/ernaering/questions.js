@@ -1,3 +1,6 @@
+import {structureQuestions} from './structure-questions.js?v=20261031-1';
+import {documentQuestions} from './document-questions.js?v=20261031-1';
+import {ndlaQuestions} from './ndla-questions.js?v=20261031-1';
 // Originale øvingsoppgaver basert på lærerens fem presentasjoner.
 // Åpne svar vurderes av eleven med modellsvaret og sjekklisten.
 export const questions = [
@@ -571,4 +574,18 @@ questions.push(
   blanks:[{label:'Total energi',answers:['140'],unit:'kcal'},{label:'Energi fra fett',answers:['51','51 %','51%'],unit:'%'}],
   hint:'Finn først energien fra hvert næringsstoff. Fettets energiandel er energi fra fett delt på total energi, ganger 100.',
   explanation:'Karbohydrat gir 48 kcal, fett 72 kcal og protein 20 kcal: totalt 140 kcal. Fett gir 72/140 × 100 ≈ 51 % av energien, selv om fett bare er 8/25 = 32 % av massen til disse tre næringsstoffene.'}
+);
+
+questions.push(...structureQuestions,...documentQuestions,...ndlaQuestions,
+ {id:'nutrient-concept-map',topic:'energy',type:'match',level:1,figure:'nutrient-map',family:'nutrient-classification',title:'Næringsstoffenes inndeling',
+ prompt:'Koble hvert tomme felt i begrepskartet til riktig begrep.',
+ pairs:[{left:'A',right:'Karbohydrater'},{left:'B',right:'Proteiner'},{left:'C',right:'Fett'},{left:'D',right:'Gir ikke energi'},{left:'E',right:'Mineraler'}],
+ hint:'De tre hovedgruppene til venstre gir energi. Til høyre mangler en felles overskrift og gruppen som blant annet omfatter kalsium.',
+ explanation:'Karbohydrater, proteiner og fett kan gi energi. Vitaminer, mineraler og vann gir ikke energi, men er nødvendige for kroppens funksjoner. Kartet viser de vanlige hovedgruppene og forenkler blant annet inndelingen av fett.'}
+);
+// Group shared visual models and close variants for the recent-family cooldown.
+for(const q of questions){if(!q.family)q.family=q.figure||q.id;}
+sources.push(
+ {title:'Lærerens fem vedlegg: begrepsliste, kontrollspørsmål, prøveark, prøve fra 2016 og repetisjonsoppgaver',description:'Alle fem er gjennomgått. Historiske prøvedatoer og anbefalinger er ikke brukt som gjeldende regler.'},
+ {title:'NDLA: Næringsstoffene – hovedartikler, forsøk og oppgaver',url:'https://ndla.no/r/naturfag-sf/karbohydrater/27d0d79021',description:'22 sider er gjennomgått. Innebygde filmer og enkelte H5P-/eldre simuleringer er ikke kontrollert fullt ut. Oppgavene og SVG-figurene i modulen er originale.'}
 );
