@@ -1,6 +1,6 @@
 # Ernæring og helse
 
-Minimalistisk øvingsmodul i eksisterende OnlyFag, publisert på `/prototyper/ernaering.html`.
+Minimalistisk øvingsmodul i eksisterende OnlyFag, tilgjengelig som modulen «Næringsstoffer og fordøyelsen» på `/naturfag.html#nutrition/all`. Den selvstendige adressen `/prototyper/ernaering.html` støttes fortsatt.
 
 145 oppgaver, hvorav 44 med figur eller organmodell. Seks fagtemaer; figuroppgaver ligger under fagtemaet de hører til. Blandet øving står sist. Ingen installasjon eller byggesteg for nettsiden.
 
@@ -48,3 +48,13 @@ Felles `assets/analytics.js` lastes én gang på siden. Elevsvar sendes ikke til
 Avgrensning etter oppdateringen: ingen oppgaver om påvisningsreaksjoner eller fettekstraksjon. Strukturfigurene bruker kjente stoffnavn og forklaringer uten Fischer-/alfa-/beta-navnsetting. Omega beskrives ved å telle fra enden motsatt syregruppen. Blandet øving står sist i temalisten.
 
 Revisjon etter konkret pensumkontroll: Oppgavene bruker ikke esterbinding, hydrolyse, glykosidbinding, lipase, mikrovilli eller lysin som elevbegreper. Peristaltiske bevegelser er betegnelsen som brukes. Avanserte bindings-/herdingsoppgaver og spørsmål med nye fysiologiske forkunnskapskrav er fjernet. Tester kontrollerer også fravær av uønsket vokabular og typiske fasitlekkasjer før svar.
+
+## Naturfag og siste 20 svar
+
+`assets/naturfag-modules.js` samler kjemi og næringsstoffer i én sidemeny. Ernæringsmodulen støtter `?embedded=1&topic=<tema>&view=practice|bank`; egen sidemeny og menyknapp skjules i denne visningen. Korte, validerte meldinger synkroniserer valgt tema, visning, prosenttall og fargetema. Alle meldinger sjekker både avsenderens origin og vindu.
+
+Rekkefølge: karbohydrater, proteiner, fett, vitaminer/mineraler/vann, fordøyelsen, energi/blodsukker og blandet øving. Rullerende prosent lagres separat som `recentResults` i den eksisterende lokale historikken. Hvert fagtema og samlet øving har et vindu på inntil 20 førstesvar. Feil førstesvar beholdes som feil etter retting; et støttet svar eller fasit teller ikke som riktig. Ufullstendige svar og hopp teller ikke, og skriveoppgaver inngår aldri. Tidligere mestringsregistreringer bevares, uten å brukes som oppdiktet svarrekkefølge. Nullstilling berører bare ernæringsmodulen.
+
+Kildepanelet viser korte eksterne fagreferanser; det har ingen avhengighet av en bestemt lærer, klasse eller prøve. Interne faglogger over undervisningsgrunnlaget er beholdt som vedlikeholdsdokumentasjon.
+
+Integrasjonen kontrolleres med `node tests/naturfag-modules.cjs` i tillegg til modulens eksisterende tester. Browserkontroller trenger samme lokale nettverkstilgang som de andre Playwright-testene.

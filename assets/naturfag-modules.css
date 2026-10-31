@@ -1,0 +1,42 @@
+/* The two subject groups share the original Naturfag sidebar. */
+.nf-module-group{border:0;margin:0;padding:0}
+.nf-module-heading{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:9px 16px;font-size:14px;font-weight:750;line-height:1.3;color:var(--text);border-bottom:1px solid var(--line);min-height:38px}
+.nf-module-heading::-webkit-details-marker{display:none}
+.nf-module-heading::before{content:'›';width:10px;flex:none;color:var(--muted);transform:rotate(0deg);font-size:17px;line-height:1}
+.nf-module-group[open]>.nf-module-heading::before{transform:rotate(90deg)}
+.nf-module-heading:hover,.nf-module-heading[data-active="true"]{color:var(--accent2);background:var(--panel2)}
+.nf-module-submenu{padding:4px 0 8px}
+.nf-module-submenu .nav-btn{padding:6px 18px 6px 30px!important;font-size:12px!important;line-height:1.25!important;min-height:31px}
+.nf-module-submenu .nav-icon{font-size:12px!important}
+.nf-module-submenu .nf-menu-divider{margin:7px 18px 6px 30px}
+.nf-nutrition-topic{width:100%;display:flex;align-items:center;gap:8px;padding:7px 14px 7px 30px;min-height:34px;text-align:left;border:0;background:transparent;color:var(--text);font:inherit;font-size:12px;line-height:1.3;cursor:pointer}
+.nf-nutrition-topic>span:first-child{min-width:0}
+.nf-nutrition-topic:hover,.nf-nutrition-topic.active,.nf-nutrition-action:hover,.nf-nutrition-action.active{background:var(--soft);color:var(--accent2)}
+.nf-nutrition-topic.active{font-weight:700}
+.nf-topic-score{margin-left:auto;flex:none;min-width:34px;font-size:10px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.nf-module-secondary{display:flex;flex-wrap:wrap;gap:0 12px;border-top:1px solid var(--line);margin:7px 14px 0 30px;padding-top:6px}
+.nf-nutrition-action{border:0;background:transparent;color:var(--muted);font:inherit;font-size:11px;cursor:pointer;padding:5px 0;border-radius:3px}
+.nf-module-heading:focus-visible,.nf-nutrition-topic:focus-visible,.nf-nutrition-action:focus-visible,#nfModulesMenu:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+body.nf-nutrition-active{height:100dvh;overflow:hidden}
+body.nf-nutrition-active>.main{height:100dvh;overflow:hidden;min-width:0}
+body.nf-nutrition-active>.main>.topbar{display:none!important}
+body.nf-nutrition-active>.main>.content{margin:0!important;padding:0!important;max-width:none!important;width:100%;height:100dvh;overflow:hidden}
+#page-nutrition{height:100dvh;width:100%;overflow:hidden}
+#nutrition-module-frame{width:100%;height:100%;display:block;border:0;background:var(--bg)}
+#nfModulesMenu,#nfModulesBackdrop{display:none}
+@media(max-width:860px){
+ #nfModulesMenu{display:flex;align-items:center;justify-content:center;position:fixed;z-index:4500;top:4px;left:8px;width:36px;height:36px;padding:0;border:0;border-radius:4px;background:var(--panel);color:var(--accent2);font-size:20px;cursor:pointer;box-shadow:none}
+ body:not(.nf-nutrition-active)>.main>.topbar{padding-left:52px!important}
+ #nfModulesBackdrop:not([hidden]){display:block;position:fixed;inset:0;z-index:4300;border:0;background:#182e2670}
+ body.mobile-open #nfModulesMenu{left:min(calc(88vw - 48px),262px);background:var(--panel2)}
+ .sidebar{overflow:auto!important}
+ body.mobile-open .sidebar{z-index:4400!important}
+ .nf-module-heading{padding-right:24px}
+ .nf-module-submenu .nav-btn,.nf-nutrition-topic{min-height:36px}
+ .nf-nutrition-action{min-height:34px}
+}
+@media print{#nfModulesMenu,#nfModulesBackdrop{display:none!important}body.nf-nutrition-active{height:auto;overflow:visible}body.nf-nutrition-active>.main,body.nf-nutrition-active>.main>.content,#page-nutrition{height:auto;overflow:visible}#nutrition-module-frame{min-height:95vh}}
+
+/* The established desktop collapse hides the sidebar completely. Hidden menus
+   should not expose overflowing labels or keyboard stops. */
+@media(min-width:861px){body.side-collapsed .sidebar .nf-module-group{display:none!important}}

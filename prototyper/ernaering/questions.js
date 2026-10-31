@@ -1,7 +1,7 @@
-import {nutrientMapSlots} from './figures.js?v=20261031-3';
-import {structureQuestions} from './structure-questions.js?v=20261031-3';
-import {documentQuestions} from './document-questions.js?v=20261031-3';
-import {ndlaQuestions} from './ndla-questions.js?v=20261031-3';
+import {nutrientMapSlots} from './figures.js?v=20261031-4';
+import {structureQuestions} from './structure-questions.js?v=20261031-4';
+import {documentQuestions} from './document-questions.js?v=20261031-4';
+import {ndlaQuestions} from './ndla-questions.js?v=20261031-4';
 
 // Oppgaver avgrenset til undervisningsmaterialet og oppgitt begrepsliste.
 const coreQuestions = [
@@ -1515,46 +1515,19 @@ for(const q of questions){if(!q.family)q.family=q.figure||q.id;}
 
 export const sources = [
   {
-    "title": "Presentasjoner",
-    "description": "01 Karbohydrater, 02 Proteiner, 03 Fett, 2] Fordøyelsen og Vitaminer, mineraler og vann. Oppgavene er skrevet for denne modulen, med faglige presiseringer av forenklinger i lysbildene."
-  },
-  {
-    "title": "NDLA: Fordøyelsessystemet",
-    "url": "https://ndla.no/nb/r/naturfag-fd/fordoyelsessystemet/c1f4800953",
-    "description": "Inspirasjon til figurarbeid og forklaring av prosesser."
-  },
-  {
-    "title": "NDLA: Oppsummeringsoppgaver om næringsstoffer",
-    "url": "https://ndla.no/en/r/naturfag-el/oppsummeringsoppgaver-om-naringsstoffer/c846680a39",
-    "description": "Inspirasjon til sortering, utfylling, kobling og åpne forklaringer."
-  },
-  {
     "title": "NDLA: Næringsstoffer",
-    "url": "https://ndla.no/r/ravare-produksjon-salg-og-service-rm-kos-vg2/naringsstoffer/272df498dd",
-    "description": "Kontroll av vitamininndeling, B12 som lagringsunntak og næringsstoffenes funksjoner."
+    "url": "https://ndla.no/r/naturfag-sf/karbohydrater/27d0d79021"
   },
   {
-    "title": "OpenStax: Chemical Digestion and Absorption",
-    "url": "https://openstax.org/books/anatomy-and-physiology-2e/pages/23-7-chemical-digestion-and-absorption-a-closer-look",
-    "description": "Kontroll av nedbrytingsprodukter, fetttransport og vannopptak."
+    "title": "NDLA: Fordøyelsen",
+    "url": "https://ndla.no/r/naturfag-sf/fordoyelsen/28986e1269"
   },
   {
-    "title": "OpenStax: Digestive System Processes",
-    "url": "https://openstax.org/books/biology-2e/pages/34-3-digestive-system-processes",
-    "description": "Kontroll av galle, enzymer og hovedsted for fettnedbryting."
+    "title": "OpenStax: Fordøyelse og næringsopptak",
+    "url": "https://openstax.org/books/anatomy-and-physiology-2e/pages/23-7-chemical-digestion-and-absorption-a-closer-look"
   },
   {
-    "title": "OpenStax: Regulation of Body Processes",
-    "url": "https://openstax.org/books/biology-2e/pages/37-3-regulation-of-body-processes",
-    "description": "Kontroll av insulin, glukagon og regulering av blodsukker."
-  },
-  {
-    "title": "Begrepsliste og øvingsmateriale: kontrollspørsmål, prøveark, prøve fra 2016 og repetisjonsoppgaver",
-    "description": "Alle fem er gjennomgått. Historiske prøvedatoer og anbefalinger er ikke brukt som gjeldende regler."
-  },
-  {
-    "title": "NDLA: Næringsstoffene – hovedartikler, forsøk og oppgaver",
-    "url": "https://ndla.no/r/naturfag-sf/karbohydrater/27d0d79021",
-    "description": "22 sider er gjennomgått. Innebygde filmer og enkelte H5P-/eldre simuleringer er ikke kontrollert fullt ut. Oppgavene og SVG-figurene i modulen er originale."
+    "title": "OpenStax: Blodsukker og hormonregulering",
+    "url": "https://openstax.org/books/biology-2e/pages/37-3-regulation-of-body-processes"
   }
 ];

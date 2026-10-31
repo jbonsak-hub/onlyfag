@@ -9,7 +9,6 @@ export const documentQuestions = [
     "prompt": "Like stivelsesprøver får enten ferskt spytt eller spytt som først er kokt og deretter avkjølt. Bare ferskt spytt spalter stivelsen raskt. Hva forklarer forskjellen?",
     "hint": "Begge prøvene er avkjølt før sammenligningen. Hva kan forkokingen ha gjort med enzymets tredimensjonale struktur?",
     "explanation": "Sterk varme kan denaturere enzymproteinet. Avkjøling gjenoppretter ikke nødvendigvis den opprinnelige formen og aktiviteten. Samme temperatur under sammenligningen isolerer effekten av forkokingen.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Kokingen har endret amylasens form slik at enzymaktiviteten er redusert.",
       "Det avkjølte spyttet mangler alle grunnstoffer.",
@@ -28,7 +27,6 @@ export const documentQuestions = [
     "prompt": "Koble matvaren til et karakteristisk karbohydrat.",
     "hint": "Tenk på plantens energilager, melkesukker, vanlig sukker og materialet som gir planteceller støtte.",
     "explanation": "Matvarer inneholder ofte flere karbohydrater. Poteter er rike på stivelse; melk inneholder laktose; vanlig bordsukker er sukrose; cellulose er en del av plantecellevegger.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "pairs": [
       {
         "left": "Potet",
@@ -57,7 +55,6 @@ export const documentQuestions = [
     "prompt": "Hva kan skje når tilførselen av energi fra karbohydrater over tid overstiger energiforbruket?",
     "hint": "Kroppen har både et begrenset karbohydratlager og et større energilager. Skill dette fra konsentrasjonen i blodet.",
     "explanation": "Lever og muskler har begrenset plass til glykogen. Ved vedvarende energioverskudd kan fettlagrene øke; dette avhenger av den samlede energibalansen, ikke bare ett næringsstoff.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Glykogenlagre kan fylles, og energioverskudd kan bidra til økt fettlagring.",
       "Alt overskudd blir liggende som glukose i blodet uten regulering.",
@@ -73,9 +70,8 @@ export const documentQuestions = [
     "level": 2,
     "title": "Vann under fordøyelsen",
     "prompt": "En elev sier: «Vann bare løser opp maten. Det deltar ikke når store næringsstoffer deles opp.» Forklar hva som mangler i påstanden.",
-    "hint": "I presentasjonen har vann oppgaver både ved spalting, transport og temperaturregulering.",
+    "hint": "Tenk på vannets oppgaver ved spalting, transport og temperaturregulering.",
     "explanation": "Sammenlign begrunnelsen din med modellsvaret. Andre presise formuleringer er like gode.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "model": "Vann er et løsemiddel og bidrar til transport, men trengs også når store næringsstoffer spaltes til mindre deler. Vann inngår i selve reaksjonene. Enzymer får disse reaksjonene til å gå raskere. Derfor er det ikke nok å beskrive vann som noe maten bare ligger i.",
     "checklist": [
       "Jeg nevner at vann har flere oppgaver.",
@@ -92,7 +88,6 @@ export const documentQuestions = [
     "prompt": "En oppgaveliste bruker uttrykket «essensielle proteiner». Hvilket utsagn presiserer begrepet riktig?",
     "hint": "Skill mellom hele proteiner og byggesteinene deres.",
     "explanation": "Kroppen bygger sine egne proteiner fra aminosyrer. Ni aminosyrer regnes som essensielle for voksne fordi kroppen ikke lager tilstrekkelig av dem selv. Et variert kosthold kan dekke behovet.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Det er bestemte aminosyrer som er essensielle og må tilføres i kosten.",
       "Alle proteiner må komme ferdige fra animalsk mat.",
@@ -110,7 +105,6 @@ export const documentQuestions = [
     "prompt": "En eldre begrepsliste sier at enzymer får reaksjoner til å gå raskere «ved 37 °C». Hva er mest presist?",
     "hint": "Sammenlign et menneskelig fordøyelsesenzym med enzymer i organismer som lever i kaldt eller svært varmt miljø.",
     "explanation": "Enzymer har ulike optimale betingelser. Reaksjonsfarten endres med temperatur, og sterk varme kan denaturere proteinet. 37 °C er ingen universell grense for enzymer.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Enzymer virker innenfor ulike temperatur- og pH-områder; mange menneskelige enzymer fungerer godt nær kroppstemperaturen.",
       "Alle enzymer virker bare ved nøyaktig 37 °C.",
@@ -128,7 +122,6 @@ export const documentQuestions = [
     "prompt": "Hvilke påstander er riktige? Velg alle riktige.",
     "hint": "Se for deg en aminosyre: hvilke grunnstoffer finnes i aminogruppen, og hvilke kan finnes i sidegruppen?",
     "explanation": "Aminosyrer inneholder nitrogen i aminogruppen. Noen aminosyrer inneholder også svovel. Proteiner skiller seg derfor fra den vanlige oversikten over karbohydrater og fett, som består av karbon, hydrogen og oksygen.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Proteiner inneholder nitrogen i tillegg til karbon, hydrogen og oksygen.",
       "Noen aminosyrer inneholder også svovel.",
@@ -150,7 +143,6 @@ export const documentQuestions = [
     "prompt": "En matolje får etter lagring en ubehagelig lukt. Hvilken forklaring på oksidativ harskning er riktig?",
     "hint": "Tenk på oksygen, dobbeltbindinger og nye stoffer.",
     "explanation": "Ved oksidativ harskning dannes produkter som kan gi vond lukt og smak. Umettede fettsyrer er særlig utsatt; varme, lys og oksygen kan fremme prosessen.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Oksygen reagerer med fettstoffer og danner blant annet luktende nedbrytingsprodukter.",
       "Alle fettsyrene blir til aminosyrer.",
@@ -168,7 +160,6 @@ export const documentQuestions = [
     "prompt": "Hvilke tiltak kan bremse oksidativ harskning? Velg alle riktige.",
     "hint": "Hvilke omgivelser gir kjemiske reaksjoner mer fart eller gir fettet bedre tilgang til oksygen?",
     "explanation": "Lys, varme og tilgang på oksygen kan fremme oksidasjon. Kjølig og mørk lagring i lukket beholder kan derfor forlenge holdbarheten.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Oppbevare oljen mørkt.",
       "Begrense kontakten med luft.",
@@ -191,7 +182,6 @@ export const documentQuestions = [
     "prompt": "Hva kan skje med fettet når planteolje herdes?",
     "hint": "Sammenlign egenskapene til mettet og umettet fett.",
     "explanation": "Ved herding kan fett med umettede fettsyrer bli fastere. Delvis herding kan også danne transfett. Det er denne sammenhengen mellom struktur og egenskaper som er viktig her.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Noe umettet fett blir mer mettet, og fettet kan bli fastere.",
       "Alt fett blir til aminosyrer.",
@@ -209,7 +199,6 @@ export const documentQuestions = [
     "prompt": "Hvilket utsagn om kolesterol er mest presist?",
     "hint": "Skill mellom molekylets normale funksjoner og risiko knyttet til mengden i blodet.",
     "explanation": "Kolesterol er et nødvendig fettstoff som kroppen også lager selv. Mengden og fordelingen i blodets transportpartikler er relevant for helse; stoffet er ikke i seg selv bare «gift».",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Det inngår i cellemembraner og er utgangspunkt for blant annet steroidhormoner og gallesyrer.",
       "Det er bare et avfallsstoff som kroppen aldri trenger.",
@@ -227,7 +216,6 @@ export const documentQuestions = [
     "prompt": "Hvorfor kan det være gunstig å erstatte noe mettet fett med umettet fett?",
     "hint": "Skill mellom energiinnhold og virkningen av fettkvalitet.",
     "explanation": "Det er viktig hva mettet fett erstattes med. Å bytte noe mettet fett mot umettet fett kan bedre blodets innhold av fettstoffer. Begge gir omtrent like mye energi per gram.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Det kan gi et gunstigere kolesterolnivå i blodet og redusere risikoen for hjerte- og karsykdom.",
       "Umettet fett har ingen energi.",
@@ -245,7 +233,6 @@ export const documentQuestions = [
     "prompt": "Koble hver beskrivelse til en passende matvare.",
     "hint": "Se etter forskjellen mellom plantekilder, fisk og smør.",
     "explanation": "Valnøtter og fet fisk kan bidra med omega-3-fettsyrer. Rapsolje har mye umettet fett, mens smør har en høyere andel mettet fett. Matvarene inneholder flere typer fett; beskrivelsene peker på viktige forskjeller.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "pairs": [
       {
         "left": "Plantebasert kilde til omega-3",
@@ -274,7 +261,6 @@ export const documentQuestions = [
     "prompt": "Hvilket vitamin er askorbinsyre, og hvilken løselighetsgruppe tilhører det?",
     "hint": "Tenk på vitaminet som forbindes med skjørbuk og sitrusfrukter, og hvilken væske det løser seg i.",
     "explanation": "Askorbinsyre er vitamin C og er vannløselig. Vitaminet trengs blant annet i dannelsen av normalt bindevev.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "blanks": [
       {
         "label": "Vitamin",
@@ -303,7 +289,6 @@ export const documentQuestions = [
     "prompt": "Hvilke kan bidra til vitamin D hos mennesker? Velg alle riktige.",
     "hint": "Vitaminet kan både tilføres utenfra og dannes i kroppen under bestemte forhold. Vurder hvert alternativ separat.",
     "explanation": "Vitamin D kan dannes i huden ved sollys og tilføres gjennom blant annet fet fisk og berikede matvarer. Hudproduksjonen varierer med årstid, breddegrad og andre forhold; oppgaven er ikke en anbefaling om soling.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Dannelse i huden når den utsettes for tilstrekkelig sollys.",
       "Fet fisk.",
@@ -325,7 +310,6 @@ export const documentQuestions = [
     "prompt": "Hva skiller sporstoffer fra mineralstoffer som kalsium i denne inndelingen?",
     "hint": "Ordet «spor» handler om hvor mye som trengs, ikke om hvor viktig stoffet er.",
     "explanation": "Mineralstoffer omfatter uorganiske grunnstoffer kroppen trenger. Sporstoffer er betegnelsen på dem som trengs i små mengder, som jern, jod og selen. En bestemt mengdegrense er en lærebokkonvensjon, ikke en universell biologisk terskel.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Sporstoffer trengs vanligvis i mindre mengder, men kan være like nødvendige.",
       "Sporstoffer er alltid organiske vitaminer.",
@@ -343,7 +327,6 @@ export const documentQuestions = [
     "prompt": "Koble næringsstoffet til en relevant funksjon og matkilde.",
     "hint": "Tenk på hemoglobin, skjoldbruskkjertel, knokler og bindevev. Hvilket stoff passer til hver funksjon?",
     "explanation": "Jern er nødvendig i hemoglobin; jod inngår i stoffskiftehormoner; kalsium er viktig i skjelettet; vitamin C er nødvendig for normalt bindevev. Matvarene er eksempler, ikke de eneste kildene.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "pairs": [
       {
         "left": "Jern",
@@ -372,7 +355,6 @@ export const documentQuestions = [
     "prompt": "Hvordan kan jernmangel som fører til blodmangel gi redusert utholdenhet?",
     "hint": "Følg oksygenet fra lungene til en arbeidende muskel. Hvilket jernholdig protein frakter det?",
     "explanation": "Jern inngår i hemoglobin. Jernmangel kan gi mindre hemoglobin, slik at blodet frakter mindre oksygen. Tretthet alene kan ha mange årsaker og er ikke nok til å fastslå jernmangel.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Mindre hemoglobin kan redusere blodets kapasitet til å transportere oksygen.",
       "Alle muskelceller mister straks mitokondriene.",
@@ -390,7 +372,6 @@ export const documentQuestions = [
     "prompt": "En elev tar flere høydosetilskudd med samme mineral. Hvilket utsagn er riktig?",
     "hint": "Skill mellom å dekke behovet og å overskride tålegrensen.",
     "explanation": "Kroppen har både behov og tålegrenser. Mat og ulike tilskudd kan bidra til samme stoff. «Naturlig» og «nødvendig» betyr ikke at større dose alltid er bedre.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Et nødvendig stoff kan være skadelig når samlet dose blir for høy.",
       "Et nødvendig stoff er alltid ufarlig uansett dose.",
@@ -408,7 +389,6 @@ export const documentQuestions = [
     "prompt": "Hvilken beskrivelse av en antioksidant er mest presis?",
     "hint": "Del ordet i «anti» og «oksidant». Vurder en kjemisk funksjon uten å anta at en høy dose alltid gir helsegevinst.",
     "explanation": "Antioksidanter kan inngå i kroppens vern mot oksidativ skade. Det betyr ikke at høye doser antioksidanttilskudd gir bedre helse eller beskytter mot alle sykdommer.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Et stoff som kan motvirke oksidasjon, blant annet ved å reagere med reaktive forbindelser.",
       "Et stoff som gjør at cellene ikke lenger trenger oksygen.",
@@ -426,7 +406,6 @@ export const documentQuestions = [
     "prompt": "Hvor er vann vanligvis hovedbestanddelen? Velg alle riktige.",
     "hint": "Ikke glem at også et materiale som virker fast, kan inneholde mest vann.",
     "explanation": "Alle fem består vanligvis hovedsakelig av vann. Også normal avføring inneholder mye vann, ofte rundt tre firedeler av massen. Andelen varierer, blant annet med tarmfunksjon og væskebalanse.",
-    "source": "Skjermbilde: Vann er hovedkomponenten i …",
     "options": [
       "Avføring",
       "Svette",
@@ -451,7 +430,6 @@ export const documentQuestions = [
     "prompt": "To elever trener like lenge, men den ene svetter mye mer. Hvorfor er ett fast antall liter drikke ikke nødvendigvis riktig for begge?",
     "hint": "Sammenlign vann som kommer inn gjennom både mat og drikke, med vann som forlater kroppen.",
     "explanation": "Sammenlign begrunnelsen din med modellsvaret. Andre presise formuleringer er like gode.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "model": "Behovet påvirkes av svettetap, temperatur, aktivitetsnivå, kroppsstørrelse og vann fra maten. Den som taper mer vann ved svette trenger vanligvis mer væske. Væskeinntak må ses sammen med tap; svært stort inntak uten tilsvarende behov er heller ikke gunstig.",
     "checklist": [
       "Jeg knytter økt behov til væsketap.",
@@ -468,7 +446,6 @@ export const documentQuestions = [
     "prompt": "En matvare inneholder 20 g fett, 20 g karbohydrat og 5 g protein per 100 g. Bruk 37 kJ/g for fett og 17 kJ/g for karbohydrat og protein. Regn ut energi per 100 g.",
     "hint": "Beregn energien fra hvert næringsstoff og legg sammen.",
     "explanation": "20 × 37 + 20 × 17 + 5 × 17 = 740 + 340 + 85 = 1165 kJ. Dette er en beregning med de oppgitte, avrundede energifaktorene.",
-    "source": "Oppgaver til prøven ernæring og helse.docx",
     "blanks": [
       {
         "label": "Energi per 100 g",
@@ -488,7 +465,6 @@ export const documentQuestions = [
     "prompt": "En matvare gir 1165 kJ per 100 g. Hvor mye energi gir en porsjon på 40 g?",
     "hint": "Finn hvor stor del 40 g er av 100 g.",
     "explanation": "40 g er 0,40 av 100 g. 1165 kJ × 0,40 = 466 kJ.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "blanks": [
       {
         "label": "Energi i 40 g",
@@ -509,7 +485,6 @@ export const documentQuestions = [
     "prompt": "En etikett oppgir 250 kcal. Bruk 1 kcal = 4,184 kJ. Hvor mange kJ tilsvarer dette?",
     "hint": "Multipliser antall kcal med 4,184.",
     "explanation": "250 × 4,184 = 1046 kJ. I omtale av mat brukes «kalorier» ofte om kilokalorier (kcal), ikke enkeltkalorier (cal).",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "blanks": [
       {
         "label": "Energi",
@@ -530,7 +505,6 @@ export const documentQuestions = [
     "prompt": "Hva betyr uttrykket «tomme kalorier» vanligvis?",
     "hint": "Sammenlign mengden energi med hvor mye vitaminer, mineraler og andre nødvendige næringsstoffer maten gir.",
     "explanation": "Uttrykket beskriver lav næringstetthet, ikke at energien er ubrukelig. Et variert kosthold må både dekke energibehovet og gi nok essensielle næringsstoffer.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Mat eller drikke som gir mye energi i forhold til innholdet av nødvendige næringsstoffer.",
       "Energi som ikke kan brukes av kroppen.",
@@ -548,7 +522,6 @@ export const documentQuestions = [
     "prompt": "Hvilket utsagn forklarer sammenligningen mellom ATP og et oppladbart batteri?",
     "hint": "Følg både energitilførselen og fosfatgruppen.",
     "explanation": "ATP er et kortvarig system for energioverføring. Når ATP spaltes til ADP og fosfat, kan energi overføres til arbeid i cellen. Glykogen og fett er mer langsiktige energilagre.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Energi fra celleånding kan brukes til å danne ATP fra ADP og fosfat; ATP kan så drive energikrevende prosesser.",
       "ATP lagres for hele livet og kan bare brukes én gang.",
@@ -566,7 +539,6 @@ export const documentQuestions = [
     "prompt": "Hva er en viktig forskjell mellom glykogen i lever og i muskler?",
     "hint": "Tenk på hvem lageret først og fremst forsyner: hele kroppen via blodet, eller den arbeidende muskelen.",
     "explanation": "Begge lagrer glukoseenheter som glykogen. Leveren kan frigjøre glukose til blodet, mens muskler hovedsakelig bruker sitt glykogen til eget energibehov.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Leveren kan bidra til å holde blodsukkeret oppe; muskelglykogen brukes hovedsakelig i muskelen selv.",
       "Bare musklene kan lagre glykogen.",
@@ -584,7 +556,6 @@ export const documentQuestions = [
     "prompt": "Koble beskrivelsene til riktig tilstand.",
     "hint": "Skill mangel på produksjon fra nedsatt virkning i målcellene.",
     "explanation": "Ved type 1-diabetes lager kroppen for lite insulin. Ved type 2-diabetes reagerer cellene dårligere på insulinet, og etter hvert kan produksjonen også bli for liten. Begge kan gi for høyt blodsukker.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "pairs": [
       {
         "left": "Kroppen lager for lite insulin",
@@ -605,7 +576,6 @@ export const documentQuestions = [
     "prompt": "Hvilken prosess forbindes med dannelse av melkesyre i musklene under hardt arbeid?",
     "hint": "Tenk på forskjellen mellom aerob og anaerob celleånding.",
     "explanation": "I undervisningen knyttes melkesyre til anaerob celleånding i musklene. Denne prosessen kan bidra til rask energiforsyning, men gir langt mindre ATP per glukosemolekyl enn aerob celleånding. Det betyr ikke at hele kroppen må være uten oksygen.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Anaerob nedbryting av glukose som gir lite ATP per glukosemolekyl.",
       "Fotosyntese som gjør karbondioksid til stivelse.",
@@ -623,7 +593,6 @@ export const documentQuestions = [
     "prompt": "Hva beskriver vanlig transport av monosakkarider og aminosyrer etter opptak fra tynntarmen?",
     "hint": "Tenk på leverens rolle etter at næringsstoffene er tatt opp.",
     "explanation": "Monosakkarider og aminosyrer tas opp i blodet og fraktes til leveren. Mye av fettet går først via lymfen og deretter til blodet. Næringsstoffene kan så transporteres til cellene som bruker dem.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Med blodet til leveren før videre fordeling.",
       "Som hele matbiter direkte til hjernen.",
@@ -641,7 +610,6 @@ export const documentQuestions = [
     "prompt": "Hvilke oppgaver har leveren? Velg alle riktige.",
     "hint": "Skill mellom lever, galleblære og bukspyttkjertel, og mellom hormoner og fordøyelsesenzymer.",
     "explanation": "Leveren produserer galle, lagrer glykogen og har mange oppgaver i stoffskiftet. Insulin er et hormon fra bukspyttkjertelen, ikke et fordøyelsesenzym fra leveren.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Produserer galle.",
       "Lagrer glukoseenheter som glykogen.",
@@ -663,7 +631,6 @@ export const documentQuestions = [
     "prompt": "Hva er en viktig oppgave for tykktarmen?",
     "hint": "Hva er igjen etter at mesteparten av nærings- og vannopptaket i tynntarmen er ferdig?",
     "explanation": "Det meste av vannopptaket skjer i tynntarmen, men tykktarmen tar opp mer vann og salter. Dette bidrar til at avføringen får en fastere form. Tarmbakterier kan bryte ned noen typer fiber.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "options": [
       "Ta opp resterende vann og salter og bidra til å forme avføringen.",
       "Ta opp alt vann kroppen får i seg.",
@@ -681,7 +648,6 @@ export const documentQuestions = [
     "prompt": "Surt mageinnhold med fett kommer til tolvfingertarmen. Forklar rollene til det basiske stoffet i bukspyttet, galle og fordøyelsesenzymer.",
     "hint": "Ta én rolle om gangen: pH, størrelsen på fettdråper og bindingene inne i fettmolekylene.",
     "explanation": "Sammenlign begrunnelsen din med modellsvaret. Andre presise formuleringer er like gode.",
-    "source": "Repetisjonsoppgaver og prøvegrunnlag",
     "model": "Det basiske stoffet i bukspyttet bidrar til å nøytralisere syren, slik at miljøet passer bedre for enzymene. Galle fordeler store fettdråper i mindre dråper og gir større samlet overflate. Enzymer spalter fettmolekylene til mindre deler. Galle er ikke selv et fettspaltende enzym.",
     "checklist": [
       "Jeg forklarer hvorfor syren nøytraliseres.",

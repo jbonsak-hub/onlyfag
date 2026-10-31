@@ -4,7 +4,7 @@ import {test} from 'node:test';
 import {questions, sources} from '../prototyper/ernaering/questions.js';
 import {organs} from '../prototyper/ernaering/diagram.js';
 import {figure} from '../prototyper/ernaering/figures.js';
-import {evaluate, accepts, resultRecord, needsReview, mixedOrder, pickNext, rememberQuestion, topics, types} from '../prototyper/ernaering/engine.js';
+import {evaluate, accepts, resultRecord, needsReview, mixedOrder, pickNext, rememberQuestion, topics, types, recordRecentResult, recentSummary} from '../prototyper/ernaering/engine.js';
 const ids=organs.map(o=>o.id), processIds=ids.filter(id=>id!=='duodenum');
 function answer(q){switch(q.type){case 'anatomy':return ids;case 'choice':return [q.answer];case 'multi':case 'process':return q.answer;case 'sort':return q.items.map(x=>x.group);case 'match':return q.pairs.map(x=>x.right);case 'fill':return q.blanks.map(x=>x.answers[0]);case 'order':return q.items;}}
 test('all questions have coherent schemas and every automatic key is accepted',()=>{
@@ -167,4 +167,50 @@ test('expanded fatty-acid drawings obey ordinary C/H/O valences',()=>{
 test('help and page copy obey the same taught-vocabulary limits as questions',()=>{
  const html=readFileSync(new URL('../prototyper/ernaering.html',import.meta.url),'utf8');
  assert.doesNotMatch(html,/esterbinding|esterforbindelse|glykosid|hydrolys|mikrovilli|lipase|lysin|peristaltikk|Fischer|metylend|[αβ]|lærerens/i);
+});
+
+
+test('nutrition topics follow the requested subject order',()=>{
+ assert.deepEqual(Object.keys(topics),['carbs','protein','fat','micro','digestion','energy']);
+});
+
+test('recent-answer percentages use each topic and the combined window independently',()=>{
+ assert.deepEqual(recentSummary({},'carbs'),{percent:null,count:0,correct:0});
+ let history={};
+ history=recordRecentResult(history,'carbs',true,100);
+ history=recordRecentResult(history,'protein',false,200);
+ history=recordRecentResult(history,'carbs',false,300);
+ assert.deepEqual(recentSummary(history,'carbs'),{percent:50,count:2,correct:1});
+ assert.deepEqual(recentSummary(history,'protein'),{percent:0,count:1,correct:0});
+ assert.deepEqual(recentSummary(history,'all'),{percent:33,count:3,correct:1});
+ assert.deepEqual(recentSummary(history,'energy'),{percent:null,count:0,correct:0});
+});
+
+test('recent-answer windows retain only the latest twenty and preserve prior history',()=>{
+ const original=Object.freeze({carbs:Object.freeze([{ok:true,t:1}]),all:Object.freeze([{ok:true,t:1}])});
+ const changed=recordRecentResult(original,'protein',false,2);
+ assert.deepEqual(original,{carbs:[{ok:true,t:1}],all:[{ok:true,t:1}]},'recording does not mutate prior state');
+ assert.notEqual(changed,original);
+ assert.deepEqual(recentSummary(changed,'protein'),{percent:0,count:1,correct:0});
+ let history={};
+ for(let i=0;i<27;i++)history=recordRecentResult(history,'carbs',i%4!==0,1000+i);
+ assert.equal(history.carbs.length,20);assert.equal(history.all.length,20);
+ assert.equal(history.carbs[0].t,1007);assert.equal(history.carbs.at(-1).t,1026);
+ assert.deepEqual(recentSummary(history,'carbs'),{percent:75,count:20,correct:15});
+ const extended=recordRecentResult(history,'fat',false,3000);
+ assert.equal(extended.carbs.length,20);assert.equal(extended.fat.length,1);assert.equal(extended.all.length,20);
+ assert.equal(extended.all[0].t,1008);assert.equal(extended.all.at(-1).t,3000);
+ assert.deepEqual(recentSummary(extended,'carbs'),{percent:75,count:20,correct:15});
+ assert.deepEqual(recentSummary(extended,'all'),{percent:70,count:20,correct:14});
+});
+
+
+test('sources and help are professional and independent of a particular class',()=>{
+ const classReferences=/presentasj|powerpoint|vedlag|vedlegg|lærer|\b2016\b|prøven|prøveark|i timen|mine timer|min undervisning/i;
+ assert.doesNotMatch(JSON.stringify(sources),classReferences,'source list must not refer to private classroom material');
+ const html=readFileSync(new URL('../prototyper/ernaering.html',import.meta.url),'utf8');
+ const help=html.match(/<dialog id="about-dialog"[\s\S]*?<\/dialog>/)?.[0];
+ assert.ok(help,'the help/source dialog exists');
+ assert.doesNotMatch(help,classReferences,'static source fallback and help must work for any learner');
+ for(const source of sources){assert.ok(source.title&&source.url,'each short reference has a title and an external link');assert.match(source.url,/^https:\/\//);}
 });

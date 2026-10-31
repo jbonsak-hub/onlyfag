@@ -83,3 +83,36 @@ dialog{width:min(680px,calc(100vw - 24px));max-height:88dvh;border:1px solid var
  .mini-figure svg.map-wide{display:none}
  .mini-figure svg.map-narrow{display:block}
 }
+
+/* Shared Naturfag shell supplies navigation when this module is embedded. */
+.nutrition-embedded .sidebar,.nutrition-embedded #menu-button,.nutrition-embedded #menu-backdrop{display:none!important}
+.nutrition-embedded .workspace{margin-left:0!important}
+.nutrition-embedded .about-button{display:block}
+.nutrition-embedded .breadcrumb{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nutrition-embedded #progress-copy{white-space:nowrap}
+.topic-count{font-weight:650;white-space:nowrap;min-width:34px;text-align:right}
+body.dark{--paper:#101614;--white:#17201d;--ink:#edf4f1;--muted:#a8b8b0;--green:#58c6aa;--green-dark:#79d5bd;--mint:#19362f;--line:#2b3a34;--good:#6fd59b;--good-bg:#173527;--bad:#ef8c8c;--bad-bg:#3a2020}
+.dark .primary{background:#17664f;border-color:#17664f;color:#fff}
+.dark .organ-chip,.dark .process-list button,.dark .task-row select,.dark .task-row input,.dark .open-input,.dark .sequence li,.dark .secondary{background:var(--white);color:var(--ink)}
+.dark .mini-figure{background:#fff;border-radius:4px}
+.dark .mini-figure figcaption{color:#445a4f}
+.dark .map-target{color:#233d35}
+.dark .map-target.filled,.dark .map-target.correct{color:#fff;background:#17664f}
+@media(max-width:860px){
+ .nutrition-embedded .topbar{padding-left:58px;gap:10px}
+ .nutrition-embedded .breadcrumb{flex:1}
+ .nutrition-embedded #progress-copy{margin-left:0;font-size:10px;max-width:none}
+}
+
+/* Keep map feedback compact while retaining full status for screen readers. */
+.map-rows .task-row{grid-template-columns:28px minmax(0,1fr)}
+.map-rows .task-row.correct label,.map-rows .task-row.wrong label{display:flex;flex-wrap:nowrap;gap:2px}
+.map-rows .row-mark{display:inline;white-space:nowrap}
+@media(max-width:960px){.map-rows .task-row{padding:3px 0}}
+.nutrition-embedded.nutrition-host-collapsed .topbar{padding-left:58px}
+@media(min-width:761px) and (max-width:960px){
+ .visual-workspace:has(>.nutrient-map-figure){grid-template-columns:minmax(0,.9fr) minmax(0,1.2fr)}
+ .visual-workspace:has(>.nutrient-map-figure)>.visual-response{grid-column:1;grid-row:1}
+ .visual-workspace>.nutrient-map-figure{grid-column:2;grid-row:1}
+ .visual-workspace>.nutrient-map-figure svg{max-height:min(460px,calc(100dvh - 230px))!important}
+}

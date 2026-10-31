@@ -5,15 +5,15 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="Øv på næringsstoffer, fordøyelse og energi i naturfag. En variert oppgavebank med organplassering, sortering, figurer og forklaringsoppgaver.">
   <meta name="theme-color" content="#fafbf8">
-  <title>Ernæring og helse · OnlyFag</title>
-  <link rel="stylesheet" href="ernaering/style.css?v=20261031-3">
+  <title>Næringsstoffer og fordøyelsen · OnlyFag</title>
+  <link rel="stylesheet" href="ernaering/style.css?v=20261031-4">
   <script src="../assets/analytics.js" defer></script>
-  <script type="module" src="ernaering/app.js?v=20261031-3"></script>
+  <script type="module" src="ernaering/app.js?v=20261031-4"></script>
 </head>
 <body>
   <a class="skip" href="#main">Hopp til oppgaven</a>
   <aside class="sidebar" id="sidebar">
-    <a class="brand" href="../naturfag.html" aria-label="Til kjemi og naturfag">← <span>Ernæring og helse</span></a>
+    <a class="brand" href="../naturfag.html" aria-label="Til naturfag">← <span>Næringsstoffer</span></a>
     <nav id="topics" aria-label="Velg tema"></nav>
     <div class="side-bottom">
       <button class="review-button" id="review-button"><span>↻</span> Øv på nytt <span id="review-count">0</span></button>
@@ -32,18 +32,16 @@
       <button class="text-button about-button" id="about-button">Hjelp</button>
     </header>
     <main id="main">
-      <h1 class="sr-only">Ernæring og helse</h1>
+      <h1 class="sr-only">Næringsstoffer og fordøyelsen</h1>
       <div id="filter-bar" class="filter-bar" hidden></div>
       <section id="content" aria-label="Oppgaver"></section>
     </main>
   </div>
-  <dialog id="about-dialog" aria-labelledby="about-title"><div class="dialog-head"><h2 id="about-title">Om øvingsmodulen</h2><button class="icon-button" id="close-dialog" aria-label="Lukk">×</button></div>
-    <p>Oppgavene dekker næringsstoffer, molekylstrukturer, fordøyelse, energi og helse. De bygger på undervisningsmaterialet, begrepslistene, kontrollspørsmålene, den vedlagte prøven og NDLA.</p>
-    <p>Velg tema i menyen, eller start med blandet øving. Oppgaver trekkes uten gjentakelser til utvalget er gjennomgått. De ti siste oppgavene unngås når utvalget er stort nok, også etter temabytte og omlasting. Lignende figuroppgaver spres. Åpne svar vurderer du selv mot et veiledende svar. Hint og fasit gir repetisjon.</p>
-    <h3>Faglige avgrensninger</h3><p>Figurene er skjematiske og viser ikke riktige størrelsesforhold. Tolvfingertarmen er den første delen av tynntarmen. I oppgaver som gjelder hele tynntarmen, velger du «Tynntarm» én gang.</p>
-    <p>Oppgavene bruker begrepene fra presentasjonene og begrepslisten. Nye opplysninger kan være gitt i selve oppgaven for at du skal kunne resonnere deg fram til svaret. Forklaringer og framgangsmåter vises i fasiten.</p>
-    <h3>Kilder og oppgaveinspirasjon</h3><ul><li>De fem presentasjonene fra undervisningen, 105 lysbilder.</li><li><a href="https://ndla.no/en/r/naturfag-el/oppsummeringsoppgaver-om-naringsstoffer/c846680a39" target="_blank" rel="noopener">NDLA: Oppsummeringsoppgaver om næringsstoffer</a></li><li><a href="https://ndla.no/nb/r/naturfag-fd/fordoyelsessystemet/c1f4800953" target="_blank" rel="noopener">NDLA: Fordøyelsessystemet</a></li><li><a href="https://openstax.org/books/anatomy-and-physiology-2e/pages/23-7-chemical-digestion-and-absorption-a-closer-look" target="_blank" rel="noopener">OpenStax: Kjemisk fordøyelse og næringsopptak</a></li><li><a href="https://openstax.org/books/anatomy-and-physiology-2e/pages/23-5-the-small-and-large-intestines" target="_blank" rel="noopener">OpenStax: Tynntarm og tykktarm</a></li></ul>
-    <p class="muted">Oppgavene og tegningene er laget for denne modulen. Fremgangen lagres lokalt. Ingen innlogging er nødvendig.</p>
+  <dialog id="about-dialog" aria-labelledby="about-title"><div class="dialog-head"><h2 id="about-title">Om modulen</h2><button class="icon-button" id="close-dialog" aria-label="Lukk">×</button></div>
+    <p>Øv på næringsstoffer, molekylstrukturer, fordøyelse og energi. Velg et tema eller bland oppgavene. Hint og fasit gir støtte og legger oppgaven til repetisjon.</p>
+    <p>Åpne svar vurderer du selv mot et veiledende svar. Figurene er skjematiske. Fremgangen lagres i denne nettleseren.</p>
+    <h3>Fagkilder</h3><ul><li><a href="https://ndla.no/r/naturfag-sf/karbohydrater/27d0d79021" target="_blank" rel="noopener">NDLA: Næringsstoffer</a></li><li><a href="https://ndla.no/r/naturfag-sf/fordoyelsen/28986e1269" target="_blank" rel="noopener">NDLA: Fordøyelsen</a></li><li><a href="https://openstax.org/books/anatomy-and-physiology-2e/pages/23-7-chemical-digestion-and-absorption-a-closer-look" target="_blank" rel="noopener">OpenStax: Fordøyelse og næringsopptak</a></li><li><a href="https://openstax.org/books/biology-2e/pages/37-3-regulation-of-body-processes" target="_blank" rel="noopener">OpenStax: Blodsukker og hormonregulering</a></li></ul>
+    <p>Prosenten viser riktige førsteforsøk uten hint eller fasit blant de siste 20 besvarte oppgavene i hvert tema. Skriveoppgaver teller ikke med.</p>
     <button class="text-button reset-button" id="reset-progress">Nullstill min øvingshistorikk</button><div id="reset-confirm" hidden><p>Vil du fjerne øvingshistorikken for denne modulen i denne nettleseren?</p><button class="secondary" id="confirm-reset">Ja, nullstill</button> <button class="text-button" id="cancel-reset">Avbryt</button></div>
   </dialog>
   <div class="sr-only" id="announcer" aria-live="polite"></div>

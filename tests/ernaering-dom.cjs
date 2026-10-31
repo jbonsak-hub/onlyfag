@@ -24,7 +24,9 @@ const t=boot(),{w,$,click,set,open}=t;
 const questions=w.__qa.questions,organs=w.__qa.organs;
 assert.equal([...w.document.querySelectorAll('#topics [data-topic]')].at(-1).dataset.topic,'all','Mixed practice is last in the topic list');
 assert.equal(w.document.querySelector('[data-topic=figures]'),null,'Figure exercises belong to their subject topics');
-function fillCorrect(q){
+assert.deepEqual([...w.document.querySelectorAll('#topics [data-topic]')].map(el=>el.dataset.topic),['carbs','protein','fat','micro','digestion','energy','all'],'Digestion is before energy; mixed practice is last');
+function fillCorrect(q,context=t){
+ const {w,$,click,set}=context;
  if(q.type==='anatomy'){for(const o of organs){click(`[data-label="${o.id}"]`);click(`[data-target="${o.id}"]`);}}
  if(q.type==='choice'||q.type==='multi'){const answers=q.type==='choice'?[q.answer]:q.answer;for(const answer of answers){const buttons=[...w.document.querySelectorAll('[data-option]')];buttons.find(b=>b.textContent.slice(1)===answer||b.querySelector('span:last-child').textContent===answer).click();}}
  if(q.type==='process')for(const id of q.answer)click(`#process-${id}`);
@@ -78,4 +80,62 @@ const mobile=boot({mobile:true});assert.equal(mobile.$('#sidebar').inert,true);m
 const bad=boot({stored:'{broken',blocked:true});assert.match(bad.$('.side-bottom p').textContent,/utilgjengelig/);assert.ok(bad.$('[data-question]'));bad.dom.window.close();
 // Reset only this module's history, and cancel keeps progress.
 w.localStorage.setItem('other-module','keep');click('#about-button');click('#reset-progress');click('#cancel-reset');assert.ok(Object.keys(JSON.parse(w.localStorage.getItem('onlyfag.nutrition.v1')).records).length);click('#reset-progress');click('#confirm-reset');assert.equal(Object.keys(JSON.parse(w.localStorage.getItem('onlyfag.nutrition.v1')).records).length,0);assert.equal(w.localStorage.getItem('other-module'),'keep');
-assert.equal(t.errors.length,0);w.close();console.log('Partial answers, review, reveal, filters, persistence, mobile navigation and isolated reset: passed.');
+// Percentages count only the first valid automatic answer in each presentation.
+// Use fresh contexts rather than the full-bank completion run above.
+const scores=boot();
+const scoreData=()=>JSON.parse(scores.w.localStorage.getItem('onlyfag.nutrition.v1')).recentResults;
+const snapshot=()=>JSON.stringify(scoreData());
+const auto=questions.find(q=>q.type==='choice'&&q.topic==='carbs');
+assert.ok(auto,'a carbohydrate choice exercise exists');
+function chooseOption(flow,value){
+ const button=[...flow.w.document.querySelectorAll('[data-option]')].find(el=>el.querySelector('span:last-child').textContent===value);
+ assert.ok(button,'option exists: '+value);button.click();
+}
+scores.open(auto.id);
+const beforeIncomplete=snapshot();scores.click('#check-answer');
+assert.equal(snapshot(),beforeIncomplete,'checking an empty answer does not count');
+scores.click('#next-question');assert.equal(snapshot(),beforeIncomplete,'skipping does not count');
+scores.open(auto.id);
+chooseOption(scores,auto.options.find(value=>value!==auto.answer));scores.click('#check-answer');
+assert.equal(scoreData().carbs.length,1);assert.equal(scoreData().carbs[0].ok,false);
+chooseOption(scores,auto.answer);scores.click('#check-answer');
+assert.equal(scoreData().carbs.length,1,'fixing the same question does not inflate the denominator');
+assert.equal(scoreData().carbs[0].ok,false,'fixing the same question does not replace the first wrong answer');
+assert.match(scores.$('[data-topic="carbs"] .topic-count').textContent,/0\s*%/,'the topic badge shows the percentage');
+scores.click('#retry-question');chooseOption(scores,auto.answer);scores.click('#check-answer');
+assert.equal(scoreData().carbs.length,2,'explicit fresh retry is another presentation');
+assert.equal(scoreData().carbs.at(-1).ok,false,'a retry immediately after help is assisted');
+const proteinAuto=questions.find(q=>q.type==='choice'&&q.topic==='protein');
+scores.open(proteinAuto.id);scores.click('#show-hint');chooseOption(scores,proteinAuto.answer);scores.click('#check-answer');
+assert.equal(scoreData().protein.length,1);assert.equal(scoreData().protein[0].ok,false,'hint-assisted correct answer does not count as independent correctness');
+const fatAuto=questions.find(q=>q.type==='choice'&&q.topic==='fat');
+scores.open(fatAuto.id);scores.click('#reveal-answer');
+assert.equal(scoreData().fat.length,1);assert.equal(scoreData().fat[0].ok,false,'reveal before answering counts once as assisted');
+const afterReveal=snapshot();scores.click('#bank-tab');scores.click('#practice-tab');
+assert.equal(snapshot(),afterReveal,'rendering tabs does not record another result');
+const openTask=questions.find(q=>q.type==='open');
+scores.open(openTask.id);const beforeOpen=snapshot();fillCorrect(openTask,scores);
+assert.equal(snapshot(),beforeOpen,'written responses and self-assessment are excluded');
+scores.open(openTask.id);scores.click('#reveal-answer');assert.equal(snapshot(),beforeOpen,'revealing a written model is also excluded');
+const scoreSaved=scores.w.localStorage.getItem('onlyfag.nutrition.v1');
+const scoreReload=boot({stored:scoreSaved});
+assert.deepEqual(JSON.parse(scoreReload.w.localStorage.getItem('onlyfag.nutrition.v1')).recentResults,scoreData(),'per-topic answer history survives reload');
+assert.match(scoreReload.$('[data-topic="protein"] .topic-count').textContent,/0\s*%/);
+scoreReload.dom.window.close();
+// Historical completion records cannot reconstruct the previous twenty answers.
+const migrated=boot({stored:JSON.stringify({version:1,records:{[auto.id]:{status:'independent',completed:true,attempts:30,last:100}},lastId:auto.id})});
+assert.equal(Object.values(JSON.parse(migrated.w.localStorage.getItem('onlyfag.nutrition.v1')).recentResults).flat().length,0,'migration does not invent past answer sequences');
+assert.match(migrated.$('[data-topic="carbs"] .topic-count').textContent,/—/,'empty recent-answer window has no percentage');
+migrated.dom.window.close();
+// A complete correct answer creates a 100% window only in the applicable topic.
+const independent=boot();independent.open(auto.id);fillCorrect(auto,independent);
+const firstResults=JSON.parse(independent.w.localStorage.getItem('onlyfag.nutrition.v1')).recentResults;
+assert.equal(firstResults.carbs.length,1);assert.equal(firstResults.carbs[0].ok,true);assert.equal(firstResults.all.length,1);
+assert.match(independent.$('[data-topic="carbs"] .topic-count').textContent,/100\s*%/);
+assert.match(independent.$('[data-topic="protein"] .topic-count').textContent,/—/);
+independent.w.localStorage.setItem('chemistryProgressV18','keep-chemistry');
+independent.click('#about-button');independent.click('#reset-progress');independent.click('#confirm-reset');
+assert.equal(Object.values(JSON.parse(independent.w.localStorage.getItem('onlyfag.nutrition.v1')).recentResults).flat().length,0,'reset clears recent-answer windows');
+assert.equal(independent.w.localStorage.getItem('chemistryProgressV18'),'keep-chemistry','nutrition reset leaves chemistry history untouched');
+independent.dom.window.close();scores.dom.window.close();
+assert.equal(t.errors.length,0);w.close();console.log('Partial answers, review, reveal, filters, persistence, mobile navigation, isolated reset and last-twenty percentages: passed.');

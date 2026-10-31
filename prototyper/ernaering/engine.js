@@ -1,6 +1,6 @@
 // Pure assessment and repetition rules; no DOM or network dependencies.
 export const STORE_KEY = 'onlyfag.nutrition.v1';
-export const topics = {digestion:'Fordøyelsen',carbs:'Karbohydrater',protein:'Proteiner',fat:'Fett',micro:'Vitaminer, mineraler og vann',energy:'Energi og blodsukker'};
+export const topics = {carbs:'Karbohydrater',protein:'Proteiner',fat:'Fett',micro:'Vitaminer, mineraler og vann',digestion:'Fordøyelsen',energy:'Energi og blodsukker'};
 export const types = {anatomy:'Plasser organer',process:'Velg i figur',choice:'Velg ett',multi:'Velg flere',sort:'Sorter',match:'Koble sammen',order:'Rekkefølge',fill:'Fyll inn',open:'Forklar selv'};
 export function shuffle(items, rng = Math.random) {
   const a = [...items];
@@ -81,4 +81,22 @@ export function rememberQuestion(rotation,q) {
   rotation.seen=[...new Set([...(rotation.seen||[]),q.id])];
   rotation.recent=[...(rotation.recent||[]),{id:q.id,family:q.family||q.figure||q.id}].slice(-10);
   return rotation;
+}
+
+// Rolling assessment results are independent of spaced review and self-assessment.
+// An automatic question contributes only its first submitted result per presentation.
+export function recentSummary(history={},topic='all') {
+  const results=(Array.isArray(history?.[topic])?history[topic]:[])
+    .filter(result=>typeof result?.ok==='boolean').slice(-20);
+  const correct=results.filter(result=>result.ok).length;
+  return {percent:results.length?Math.round(100*correct/results.length):null,count:results.length,correct};
+}
+export function recordRecentResult(history={},topic,correct,now=Date.now()) {
+  if(!Object.hasOwn(topics,topic))return history;
+  const next={...history};
+  for(const key of [topic,'all']){
+    const results=(Array.isArray(history?.[key])?history[key]:[]).filter(result=>typeof result?.ok==='boolean');
+    next[key]=[...results,{ok:!!correct,t:now}].slice(-20);
+  }
+  return next;
 }

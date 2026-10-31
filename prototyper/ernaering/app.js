@@ -1,7 +1,7 @@
-import {questions, sources} from './questions.js?v=20261031-3';
-import {organs, digestiveSVG} from './diagram.js?v=20261031-3';
-import {figure} from './figures.js?v=20261031-3';
-import {STORE_KEY, topics, types, shuffle, mixedOrder, evaluate, needsReview, resultRecord, pickNext, rememberQuestion} from './engine.js?v=20261031-3';
+import {questions, sources} from './questions.js?v=20261031-4';
+import {organs, digestiveSVG} from './diagram.js?v=20261031-4';
+import {figure} from './figures.js?v=20261031-4';
+import {STORE_KEY, topics, types, shuffle, mixedOrder, evaluate, needsReview, resultRecord, pickNext, rememberQuestion, recentSummary, recordRecentResult} from './engine.js?v=20261031-4';
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -10,8 +10,14 @@ const processOrgans=organs.filter(o=>o.id!=='duodenum');
 let data={version:1,records:{},lastId:questions[0].id};
 let storageOK=true;
 try {const parsed=JSON.parse(localStorage.getItem(STORE_KEY));if(parsed?.version===1 && parsed.records && typeof parsed.records==='object' && !Array.isArray(parsed.records))data=parsed;} catch {storageOK=false;}
-const state={topic:'all',type:'all',level:'all',status:'all',view:'practice',search:'',queue:[],id:null};
+const params=new URLSearchParams(location.search);
+const embedded=params.get('embedded')==='1'&&window.parent!==window;
+if(embedded)document.documentElement.classList.add('nutrition-embedded');
+const initialTopic=params.get('topic');
+const validTopic=topic=>topic==='all'||topic==='review'||Object.hasOwn(topics,topic);
+const state={topic:validTopic(initialTopic)?initialTopic:'all',type:'all',level:'all',status:'all',view:'practice',search:'',queue:[],id:null};
 if(!data.rotation || !Array.isArray(data.rotation.seen) || !Array.isArray(data.rotation.recent))data.rotation={seen:[],recent:[]};
+if(!data.recentResults||typeof data.recentResults!=='object'||Array.isArray(data.recentResults))data.recentResults={};
 const sessions=new Map();
 
 function announce(s){$('#announcer').textContent=s;}
@@ -19,7 +25,7 @@ function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(data));storage
 function storageMessage(){ $('.side-bottom p').textContent=storageOK?'Fremgangen lagres i denne nettleseren.':'Lagring er utilgjengelig. Øvingen virker, men fremgangen kan forsvinne når siden lukkes.'; }
 function current(){return questions.find(q=>q.id===state.id);}
 function session(q=current()){
-  if(!sessions.has(q.id)) sessions.set(q.id,{values:q.type==='order'?mixedOrder(q.items):[],options:shuffle(q.options||[]),right:shuffle(q.pairs?.map(p=>p.right)||[]),labels:shuffle(organs),locked:new Set(),marks:[],assisted:Number(data.records[q.id]?.assistedUntil)>Date.now(),done:false,revealed:false,model:false,checks:[],feedback:null,text:'',hint:false,selected:null});
+  if(!sessions.has(q.id)) sessions.set(q.id,{values:q.type==='order'?mixedOrder(q.items):[],options:shuffle(q.options||[]),right:shuffle(q.pairs?.map(p=>p.right)||[]),labels:shuffle(organs),locked:new Set(),marks:[],assisted:Number(data.records[q.id]?.assistedUntil)>Date.now(),done:false,revealed:false,model:false,checks:[],feedback:null,text:'',hint:false,selected:null,scored:false});
   return sessions.get(q.id);
 }
 function filtered(){return questions.filter(q=>(state.topic==='all'||state.topic==='review'&&needsReview(data.records[q.id])||q.topic===state.topic) && (state.type==='all'||q.type===state.type) && (state.level==='all'||q.level===Number(state.level)) && (state.status==='all'||state.status==='new'&&!data.records[q.id]||state.status==='review'&&needsReview(data.records[q.id])||data.records[q.id]?.status===state.status));}
@@ -28,14 +34,30 @@ function rebuildQueue(){state.queue=filtered().map(q=>q.id);}
 function chooseQuestion(){return pickNext(filtered(),data.rotation,data.records)?.id||null;}
 function saveResult(outcome){const q=current();data.records[q.id]=resultRecord(data.records[q.id],outcome);save();renderProgress();}
 function markAssisted(){const s=session();s.assisted=true;saveResult({assisted:true,correct:false,completed:s.done,self:current().type==='open'});}
+function statsSnapshot(){return Object.fromEntries([...Object.keys(topics),'all'].map(topic=>[topic,recentSummary(data.recentResults,topic)]));}
+function publishState(){
+  if(embedded)window.parent.postMessage({type:'onlyfag:nutrition:state',topic:state.topic,view:state.view,stats:statsSnapshot()},location.origin);
+}
+function countFirstAnswer(correct){
+  const q=current(),s=session();
+  if(q.type==='open'||s.scored)return;
+  data.recentResults=recordRecentResult(data.recentResults,q.topic,correct&&!s.assisted);
+  s.scored=true;
+}
 function renderProgress(){
-  const counts=questions.reduce((a,q)=>{const r=data.records[q.id];if(r?.status==='independent')a.auto++;if(r?.status==='self')a.self++;return a;},{auto:0,self:0});
-  $('#progress-copy').textContent=`${counts.auto}/${questions.length} uten hjelp${counts.self?` · ${counts.self} egenvurdert`:''}`;
+  const summary=recentSummary(data.recentResults,state.topic==='review'?'all':state.topic);
+  $('#progress-copy').textContent=summary.percent===null?'— · siste 20':`${summary.percent} % · ${summary.count}/20`;
+  $('#progress-copy').title='Riktig på første forsøk uten hjelp, blant de siste 20 besvarte oppgavene. Skriveoppgaver teller ikke.';
+  for(const badge of document.querySelectorAll('[data-topic-score]')){
+    const stat=recentSummary(data.recentResults,badge.dataset.topicScore);
+    badge.textContent=stat.percent===null?'—':`${stat.percent} %`;
+    badge.title=`Siste ${stat.count} besvarte oppgaver. Skriveoppgaver teller ikke.`;
+  }
   $('#review-count').textContent=questions.filter(q=>needsReview(data.records[q.id])).length;
-  storageMessage();
+  storageMessage();publishState();
 }
 function renderNav(){
-  $('#topics').innerHTML=[...Object.entries(topics),['all','Blandet øving']].map(([id,label],i)=>`<button class="topic-button ${state.topic===id?'active':''}" data-topic="${id}" aria-pressed="${state.topic===id}"><span class="topic-symbol" aria-hidden="true">${id==='all'?'↔':String(i+1).padStart(2,'0')}</span><span>${esc(label)}</span><span class="topic-count">${id==='all'?questions.length:questions.filter(q=>q.topic===id).length}</span></button>`).join('');
+  $('#topics').innerHTML=[...Object.entries(topics),['all','Blandet øving']].map(([id,label],i)=>`<button class="topic-button ${state.topic===id?'active':''}" data-topic="${id}" aria-pressed="${state.topic===id}"><span class="topic-symbol" aria-hidden="true">${id==='all'?'↔':String(i+1).padStart(2,'0')}</span><span>${esc(label)}</span><span class="topic-count" data-topic-score="${id}"></span></button>`).join('');
   $('#review-button').classList.toggle('active',state.topic==='review');
   $('#review-button').setAttribute('aria-pressed',state.topic==='review');
   renderProgress();
@@ -81,12 +103,17 @@ function diagramTask(q,s,parts=false){
   const alternative=anatomy?`<details class="text-alternative"><summary>Tekstliste / alternativ til plassering</summary><p>Numrene beskrives slik de er plassert i figuren.</p><div class="rows">${organs.map((o,i)=>`<div class="task-row ${mark(i)}"><label for="row-${i}">${o.number}. ${locations[i]} <span class="row-mark">${markText(i)}</span></label><select id="row-${i}" data-row="${i}" ${locked(i)?'disabled':''}>${rowOptions(s.labels.map(x=>x.label),organs.find(x=>x.id===s.values[i])?.label)}</select></div>`).join('')}</div></details>`:'';
   return parts?{map,controls,alternative}:`<div class="figure-layout">${controls}${map}</div>${alternative}`;
 }
+function rowStatus(q,i){
+  if(q.figure!=='nutrient-map')return markText(i);
+  const status=mark(i);
+  return status==='correct'?'✓<span class="sr-only"> Riktig</span>':status==='wrong'?'×<span class="sr-only"> Prøv igjen</span>':'';
+}
 function answerUI(q,s){
   if(q.type==='anatomy'||q.type==='process')return diagramTask(q,s);
   if(q.type==='choice'||q.type==='multi')return `<p class="type-instruction">${q.type==='choice'?'Velg ett svar.':'Velg alle riktige svar.'}</p><div class="answer-options">${s.options.map((v,i)=>{const chosen=s.values.includes(v);const result=s.marks.length&&chosen?(q.type==='choice'?v===q.answer:q.answer.includes(v))? 'correct':'wrong':'';return `<button id="option-${i}" class="option-button ${chosen?'selected':''} ${result}" data-option="${i}" aria-pressed="${chosen}" ${s.done||s.locked.has(v)?'disabled':''}><span class="option-letter" aria-hidden="true">${result==='correct'?'✓':result==='wrong'?'×':chosen?(q.type==='multi'?'✓':'●'):''}</span><span>${esc(v)}${result?`<span class="sr-only"> · ${result==='correct'?'Riktig':'Prøv igjen'}</span>`:''}</span></button>`;}).join('')}</div>`;
   if(['sort','match','fill'].includes(q.type)){
     const rows=q.type==='sort'?q.items:q.type==='match'?q.pairs:q.blanks;
-    return `<div class="rows ${q.figure==='nutrient-map'?'map-rows':rows.length>6?'many-rows':''}">${rows.map((row,i)=>`<div class="task-row ${mark(i)}"><label for="row-${i}">${esc(row.label||row.left)} <span class="row-mark">${markText(i)}</span></label><div>${q.type==='fill'?`<div class="unit-input"><input id="row-${i}" data-row="${i}" type="text" autocomplete="off" spellcheck="false" ${row.answers.some(a=>/^\d+$/.test(a))?'inputmode="decimal"':''} value="${esc(s.values[i]||'')}" ${locked(i)?'disabled':''}>${row.unit?`<span class="unit">${row.unit}</span>`:''}</div>`:`<select id="row-${i}" data-row="${i}" ${locked(i)?'disabled':''}>${rowOptions(q.type==='sort'?q.groups:s.right,s.values[i])}</select>`}</div></div>`).join('')}</div>`;
+    return `<div class="rows ${q.figure==='nutrient-map'?'map-rows':rows.length>6?'many-rows':''}">${rows.map((row,i)=>`<div class="task-row ${mark(i)}"><label for="row-${i}">${esc(row.label||row.left)} <span class="row-mark">${rowStatus(q,i)}</span></label><div>${q.type==='fill'?`<div class="unit-input"><input id="row-${i}" data-row="${i}" type="text" autocomplete="off" spellcheck="false" ${row.answers.some(a=>/^\d+$/.test(a))?'inputmode="decimal"':''} value="${esc(s.values[i]||'')}" ${locked(i)?'disabled':''}>${row.unit?`<span class="unit">${row.unit}</span>`:''}</div>`:`<select id="row-${i}" data-row="${i}" ${locked(i)?'disabled':''}>${rowOptions(q.type==='sort'?q.groups:s.right,s.values[i])}</select>`}</div></div>`).join('')}</div>`;
   }
   if(q.type==='order')return `<p class="type-instruction">Flytt leddene med pilene. Riktige plasser låses når du sjekker.</p><ol class="sequence">${s.values.map((v,i)=>`<li class="${mark(i)}"><span>${esc(v)}${s.marks.length?` <small class="row-mark">${markText(i)}</small>`:''}</span><div class="move-controls"><button id="up-${i}" data-move="${i}" data-step="-1" aria-label="Flytt ${esc(v)} opp" ${locked(i)||!s.values.some((_,j)=>j<i&&!s.locked.has(j))?'disabled':''}>↑</button><button id="down-${i}" data-move="${i}" data-step="1" aria-label="Flytt ${esc(v)} ned" ${locked(i)||!s.values.some((_,j)=>j>i&&!s.locked.has(j))?'disabled':''}>↓</button></div></li>`).join('')}</ol>`;
   if(q.type==='open')return `<div class="open-response ${s.model?'with-model':''}"><div><label class="sr-only" for="open-answer">Din forklaring</label><textarea id="open-answer" class="open-input" placeholder="Skriv forklaringen din her…" ${s.done?'readonly':''}>${esc(s.text)}</textarea></div>${s.model?`<div class="model-panel"><section class="open-model"><h3>Veiledende svar</h3><p>${esc(q.model)}</p></section><p class="type-instruction">Vurder innholdet, ikke om du har brukt akkurat de samme ordene. Åpne svar rettes ikke automatisk.</p><div class="self-checklist">${q.checklist.map((c,i)=>`<label><input type="checkbox" data-self-check="${i}" ${s.checks[i]?'checked':''} ${s.done?'disabled':''}>${esc(c)}</label>`).join('')}</div>${!s.done?'<div class="self-actions"><button class="secondary" id="self-confident">Dette fikk jeg med</button><button class="text-button" id="self-review">Jeg trenger mer øving</button></div>':''}</div>`:''}</div>`;
@@ -117,7 +144,7 @@ function feedback(title,text='',kind='neutral'){session().feedback={title,text,k
 function check(){const q=current(),s=session();if(s.done)return;
   const count=q.type==='anatomy'?10:q.type==='fill'?q.blanks.length:q.type==='sort'?q.items.length:q.type==='match'?q.pairs.length:0;
   if(count && Array.from({length:count},(_,i)=>s.values[i]).some(v=>!String(v??'').trim()) || ['choice','multi','process'].includes(q.type)&&!s.values.length){feedback('Svar på hele oppgaven først.','Du kan bruke hint eller vise fasit hvis du står fast.');return;}
-  const result=evaluate(q,s.values,q.type==='anatomy'?ids:processOrgans.map(o=>o.id));s.marks=result.marks;
+  const result=evaluate(q,s.values,q.type==='anatomy'?ids:processOrgans.map(o=>o.id));s.marks=result.marks;countFirstAnswer(result.correct);
   if(['sort','match','fill','order','anatomy'].includes(q.type))result.marks.forEach((right,i)=>{if(right)s.locked.add(i);});
   if(q.type==='multi'||q.type==='process')s.values.forEach(v=>{if(q.answer.includes(v))s.locked.add(v);});
   if(!result.correct)s.assisted=true;
@@ -127,7 +154,7 @@ function check(){const q=current(),s=session();if(s.done)return;
   keepFocus(renderQuestion);announce(s.feedback.title+'. '+s.feedback.text);
   if(s.done){$('#feedback').focus({preventScroll:true});}
 }
-function reveal(){const q=current(),s=session();if(s.done)return;s.assisted=true;s.revealed=true;s.done=true;s.marks=[];
+function reveal(){const q=current(),s=session();if(s.done)return;countFirstAnswer(false);s.assisted=true;s.revealed=true;s.done=true;s.marks=[];
   if(q.type==='anatomy'){s.values=[...ids];s.locked=new Set(ids.map((_,i)=>i));}
   if(q.type==='process'||q.type==='multi')s.values=[...q.answer];
   if(q.type==='choice')s.values=[q.answer];
@@ -185,18 +212,45 @@ function showAbout(){dialog.showModal();$('#reset-confirm').hidden=true;}
 $('#about-button').onclick=showAbout;$('#sources-button').onclick=showAbout;$('#close-dialog').onclick=()=>dialog.close();
 $('#reset-progress').onclick=()=>{$('#reset-confirm').hidden=false;$('#cancel-reset').focus();};
 $('#cancel-reset').onclick=()=>{$('#reset-confirm').hidden=true;$('#reset-progress').focus();};
-$('#confirm-reset').onclick=()=>{data={version:1,records:{},lastId:questions[0].id,rotation:{seen:[],recent:[]}};sessions.clear();save();dialog.close();Object.assign(state,{topic:'all',type:'all',level:'all',status:'all',view:'practice'});resetSelection();announce('Øvingshistorikken for ernæring og helse er nullstilt.');};
+$('#confirm-reset').onclick=()=>{data={version:1,records:{},lastId:questions[0].id,rotation:{seen:[],recent:[]},recentResults:{}};sessions.clear();save();dialog.close();Object.assign(state,{topic:'all',type:'all',level:'all',status:'all',view:'practice'});resetSelection();announce('Øvingshistorikken for ernæring og helse er nullstilt.');};
 // Make the full, already-reviewed source list available only inside the dialog.
 const sourceList=dialog.querySelector('ul');sourceList.innerHTML=sources.map(s=>`<li>${s.url?`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>`:esc(s.title)}${s.description?` — ${esc(s.description)}`:''}</li>`).join('');
 const mobile=matchMedia('(max-width:760px)');
 $('#sidebar').insertAdjacentHTML('afterbegin','<button id="close-menu" class="mobile-close" aria-label="Lukk temamenyen">×</button>');
 document.body.insertAdjacentHTML('beforeend','<button id="menu-backdrop" class="menu-backdrop" aria-label="Lukk temamenyen" hidden tabindex="-1"></button>');
-function closeMenu(){const wasOpen=$('#sidebar').classList.contains('open');$('#sidebar').classList.remove('open');$('#menu-button').setAttribute('aria-expanded','false');$('.workspace').inert=false;$('#sidebar').inert=mobile.matches;$('#menu-backdrop').hidden=true;if(wasOpen&&mobile.matches)$('#menu-button').focus();}
-$('#menu-button').onclick=()=>{if(!mobile.matches)return;$('#sidebar').classList.add('open');$('#sidebar').inert=false;$('.workspace').inert=true;$('#menu-button').setAttribute('aria-expanded','true');$('#menu-backdrop').hidden=false;$('#close-menu').focus();};
+function closeMenu(){const wasOpen=$('#sidebar').classList.contains('open');$('#sidebar').classList.remove('open');$('#menu-button').setAttribute('aria-expanded','false');$('.workspace').inert=false;$('#sidebar').inert=embedded||mobile.matches;$('#menu-backdrop').hidden=true;if(wasOpen&&mobile.matches)$('#menu-button').focus();}
+$('#menu-button').onclick=()=>{if(embedded||!mobile.matches)return;$('#sidebar').classList.add('open');$('#sidebar').inert=false;$('.workspace').inert=true;$('#menu-button').setAttribute('aria-expanded','true');$('#menu-backdrop').hidden=false;$('#close-menu').focus();};
 $('#close-menu').onclick=closeMenu;$('#menu-backdrop').onclick=closeMenu;mobile.addEventListener('change',closeMenu);
 document.addEventListener('keydown',e=>{if(!$('#sidebar').classList.contains('open'))return;if(e.key==='Escape'){closeMenu();return;}if(e.key==='Tab'){const controls=[...$('#sidebar').querySelectorAll('button,a')].filter(x=>!x.disabled);const first=controls[0],last=controls.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
 window.addEventListener('hashchange',()=>{const id=location.hash.slice(1);if(questions.some(q=>q.id===id))openQuestion(id);});
+
+// The shared Naturfag sidebar is the only navigation in embedded mode.
+window.addEventListener('message',event=>{
+  if(!embedded||event.source!==window.parent||event.origin!==location.origin)return;
+  const message=event.data;
+  if(message?.type==='onlyfag:nutrition:topic'&&validTopic(message.topic)){
+    const view=message.view==='bank'?'bank':'practice';
+    if(message.topic===state.topic&&view===state.view&&state.type==='all'&&state.level==='all'&&state.status==='all'){publishState();return;}
+    state.topic=message.topic;state.type='all';state.level='all';state.status='all';
+    state.view=message.view==='bank'?'bank':'practice';
+    resetSelection();
+  }
+  if(message?.type==='onlyfag:nutrition:host-layout'&&typeof message.sidebarCollapsed==='boolean'){
+    document.documentElement.classList.toggle('nutrition-host-collapsed',message.sidebarCollapsed);
+  }
+  if(message?.type==='onlyfag:nutrition:theme'&&typeof message.dark==='boolean'){
+    document.body.classList.toggle('dark',message.dark);
+  }
+  if(message?.type==='onlyfag:nutrition:request-state')publishState();
+});
+window.addEventListener('storage',event=>{
+  if(event.key===STORE_KEY){
+    try{const fresh=JSON.parse(event.newValue);if(fresh?.recentResults){data.recentResults=fresh.recentResults;renderProgress();}}catch{}
+  }
+});
+
 rebuildQueue();closeMenu();
 const requested=location.hash.slice(1);
 const reloading=performance.getEntriesByType?.('navigation')?.[0]?.type==='reload';
-openQuestion(!reloading&&questions.some(q=>q.id===requested)?requested:chooseQuestion(),{focus:false});
+if(embedded&&params.get('view')==='bank'){state.view='bank';renderShell();}
+else openQuestion(!reloading&&questions.some(q=>q.id===requested)?requested:chooseQuestion(),{focus:false});
