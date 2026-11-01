@@ -1,0 +1,71 @@
+{
+  "id": "1c4969d7752847fe9f4f35fb58877032",
+  "owner": "Geonorge",
+  "ownerId": "785c526c8299441a51ee723b838fd39e",
+  "orgId": "B5WI0qAXhZmNRPHC",
+  "created": 1582510166000,
+  "modified": 1743164027000,
+  "guid": null,
+  "name": null,
+  "title": "Norges geologiske undersøkelse: Marin grense WMS",
+  "type": "WMS",
+  "typeKeywords": [
+    "Data",
+    "OGC",
+    "Service",
+    "Web Map Service"
+  ],
+  "description": "Karttjenesten består av individuelle kartlag som viser Marin grense (MG) og Mulighet for marin leire (MML). Marin grense angir det høyeste nivå som havet nådde etter siste istid. Data for MG består av punktregistreringer, linjer samt polygoner. Linjer og polygoner er modellert fra punktene og en 10 m terrengmodell. Terrengmodellen som er benyttet i MG analysen har oppløsning (rutenettstørrelse) på 10x10 meter, og er hentet fra hoydedata.no. Terrengmodellen er generert ut fra de detaljerte laserdata som var tilgjengelig høsten 2020, supplert med høydedata fra 2013-utgaven av DTM10 for områder uten dekning. Skraverte områder ligger over MG. \n\nTjenesten inneholder også datasettet Mulighet for marin leire som er avledet fra marin grense og løsmassekart, og viser hvor det potensielt kan finnes marin leire - enten oppe i dagen eller under andre løsmassetyper. \n\nMML leveres kun for områder der løsmasser er kartlagt i målestokk 1:50 000 eller mer detaljert. Det er ikke dekning for MML der løsmasser er kartlagt i grovere målestokk, men marine avsetninger kan likevel forekomme for arealer under marin grense. MML for nye kvartærgeologiske detaljkart i skala 1:10.000 er ennå ikke inkludert i tjenesten. I datasettet MML er de kartlagte løsmassetypene under MG klassifisert etter muligheten for å finne marin leire. MML inndeles i svært stor, stor, middels, svært stor men usammenhengende/tynt, liten eller stort sett fraværende. MML-klassifikasjon gjelder ikke for vanndekte områder under MG/ i sjøen, selv om marin leire her er vanlig. Løsmassepolygoner på land er av tekniske årsaker trukket over strandlinjen og ut i sjøen, og dette gjenspeiles i MML-polygonene. Det oppfordres til å legge vannpolygoner over MML. Arealer for mulig marin leire bør alltid sees sammen med arealer for marin grense. Les mer om MG og MML inklusive bruk og usikkerheter på ngu.no under fagområder/kvartærgeologi/marin grense.<br /><br /><a href='https://kartkatalog.geonorge.no/metadata/org/title/c7268952-52ea-45fd-8dce-16e7b4e29d8d' target='_blank' rel='nofollow ugc noopener noreferrer'>Link til kartkatalogen</a>",
+  "tags": [
+    "Norges",
+    "geologiske",
+    "undersøkelse",
+    "Marin",
+    "grense",
+    "WMS",
+    "uuid-c7268952-52ea-45fd-8dce-16e7b4e29d8d"
+  ],
+  "snippet": null,
+  "thumbnail": "thumbnail/ago_downloaded.png",
+  "documentation": null,
+  "extent": [
+    [
+      -2.56007,
+      57.0881
+    ],
+    [
+      33.0201,
+      71.8912
+    ]
+  ],
+  "categories": [],
+  "spatialReference": null,
+  "accessInformation": "Norges geologiske undersøkelse",
+  "classification": null,
+  "licenseInfo": null,
+  "culture": "english (united states)",
+  "properties": null,
+  "advancedSettings": null,
+  "url": "https://geo.ngu.no/mapserver/MarinGrenseWMS4?REQUEST=GetCapabilities&SERVICE=WMS",
+  "proxyFilter": null,
+  "access": "public",
+  "size": 2145,
+  "subInfo": 0,
+  "appCategories": [],
+  "industries": [],
+  "languages": [],
+  "largeThumbnail": null,
+  "banner": null,
+  "screenshots": [],
+  "listed": false,
+  "commentsEnabled": false,
+  "numComments": 0,
+  "numRatings": 0,
+  "avgRating": 0,
+  "numViews": 11803,
+  "scoreCompleteness": 66,
+  "groupDesignations": null,
+  "apiToken1ExpirationDate": -1,
+  "apiToken2ExpirationDate": -1,
+  "lastViewed": 1793440800000
+}

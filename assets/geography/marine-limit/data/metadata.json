@@ -1,0 +1,29 @@
+{
+  "title": "Areal under marin grense",
+  "source": "NGU",
+  "sourceDate": "2024-01-23",
+  "fetchedOn": "2026-11-01",
+  "featureCount": 2867,
+  "sourceFeatureCount": 2868,
+  "bbox": [
+    4.10884,
+    57.86337,
+    31.93921,
+    71.3649
+  ],
+  "simplificationMeters": 50,
+  "coordinateSystem": "EPSG:4326",
+  "license": "NLOD-2.0",
+  "licenseUrl": "https://data.norge.no/nlod/en/2.0/",
+  "attribution": "NGU · visningsgeometri forenklet av OnlyFag",
+  "mirror": "Geodata AS / ArcGIS Online",
+  "mirrorUrl": "https://services.arcgis.com/2JyTvMWQSnM2Vi8q/arcgis/rest/services/MarinGrenseFlate_under/FeatureServer/20",
+  "datasetId": "cf8ccec7-9505-4d84-94a9-eac9c69971d3",
+  "sourceItemUrl": "https://www.arcgis.com/home/item.html?id=c14552c7456249fcb06b1b1ea1c2bf3d",
+  "originalUrl": "https://geo.ngu.no/api/features/maringrense/collections?f=json",
+  "meaning": "Modellert areal under marin grense. Viser ikke fordelingen av marin leire eller kvikkleire.",
+  "coverage": "Norge, landsdekkende uttrekk av areal under marin grense i det oppgitte kildespeilet.",
+  "processing": "Topologibevarende forenkling på 50 meter i EPSG:25833, deretter WGS84. Ett degenerert kildeobjekt uten areal er utelatt. Ingen høyder eller grenselinjer er beregnet fra flatekantene.",
+  "dataFile": "under-marine-limit.geojson",
+  "sha256": "9d4f7024be6996c78675fe323e945b579258d91ce2cb62c02fb7287d0c03abc5"
+}

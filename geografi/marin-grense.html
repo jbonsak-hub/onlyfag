@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Utforsk kartlagte områder under marin grense i Norge. Lokalt lagrede NGU-data viser tidligere havbunn etter istiden.">
+  <title>Marin grense | OnlyFag</title>
+  <link rel="stylesheet" href="../assets/geography/marine-limit/map.css?v=20261101-1">
+  <script src="../assets/analytics.js" defer></script>
+  <script type="module" src="../assets/geography/marine-limit/map.js?v=20261101-1"></script>
+</head>
+<body>
+  <header class="toolbar">
+    <a class="back" href="../geografi.html#ytre-marin-grense" aria-label="Til geografi">← Geografi</a>
+    <h1>Marin grense</h1>
+    <form id="place-form" role="search"><label class="sr-only" for="place">Finn kommune</label><input id="place" list="places" autocomplete="off" placeholder="Finn kommune …"><datalist id="places"></datalist><button type="submit">Vis</button></form>
+    <button id="about" type="button">Om kartet</button>
+    <button id="theme" type="button" aria-label="Bytt lys eller mørk visning">◐</button>
+  </header>
+  <p class="intro">Blå flater viser kartlagte områder under marin grense – tidligere havbunn etter istiden.</p>
+  <main id="map-wrap" aria-label="Kart over marin grense i Norge">
+    <canvas id="map" tabindex="0" aria-label="Kart. Dra for å flytte, bruk pluss og minus for å zoome og piltastene for å flytte utsnittet."></canvas>
+    <div class="zoom" role="group" aria-label="Kartutsnitt"><button id="zoom-in" aria-label="Zoom inn">+</button><button id="zoom-out" aria-label="Zoom ut">−</button><button id="home" aria-label="Vis hele Norge">⌂</button></div>
+    <div class="layers"><label><input id="marine-layer" type="checkbox" checked><span class="swatch"></span>Areal under marin grense</label><label><input id="terrain-layer" type="checkbox" checked>Terreng</label></div>
+    <div id="status" role="status">Laster kart …</div>
+    <section id="info" class="info" hidden aria-live="polite"><button id="close-info" aria-label="Lukk kartopplysning">×</button><h2 id="info-title"></h2><p id="info-text"></p></section>
+    <span class="scale" id="scale"></span>
+    <div class="credit">NGU · Kart: <a href="https://commons.wikimedia.org/wiki/File:Vestland_in_Norway_2024.svg" target="_blank" rel="noopener">NordNordWest</a> · <a href="https://creativecommons.org/licenses/by-sa/3.0/de/" target="_blank" rel="noopener">CC BY-SA 3.0 DE</a>, bearbeidet · <button id="sources" type="button">Kilder</button></div>
+  </main>
+  <dialog id="about-dialog" aria-labelledby="about-title">
+    <div class="dialog-heading"><h2 id="about-title">Om marin grense</h2><button id="close-about" aria-label="Lukk">×</button></div>
+    <p>Marin grense er det høyeste nivået havet nådde lokalt etter siste istid. Landet har siden hevet seg. Grensen varierer fra sted til sted.</p>
+    <p>Kartlaget viser <strong>areal under marin grense</strong>, ikke målepunkter eller en nøyaktig høydekurve. Blått betyr tidligere havbunn, ikke påvist marin leire.</p>
+    <p>De blå flatene er NGU-data lagret på OnlyFag. Kartet kontakter ingen NGU-tjeneste mens du bruker det. Temalaget vises over land i den forenklede kartbakgrunnen. Flater og bakgrunn er tilpasset undervisning; manglende blåfarge er ikke alene en avklaring av marin grense på et sted.</p>
+    <h3>Kilder og kartgrunnlag</h3><p id="source-description">Laster kildeopplysninger …</p>
+    <ul><li><a href="https://geo.ngu.no/api/features/maringrense/collections" target="_blank" rel="noopener">NGU: Marin grense</a> · <a href="https://data.norge.no/nlod/en/2.0/" target="_blank" rel="noopener">NLOD 2.0</a></li><li>Bakgrunn: Kartverket (CC BY 4.0), Natural Earth (public domain) og fylkesgeometri av NordNordWest (CC BY-SA 3.0 DE).</li><li>Kommunesøk viser kommunens administrasjonssenter, basert på Kartverket SSR og Wikidata.</li></ul>
+    <p>Panorer ved å dra. Zoom med hjul, knappene eller to fingre. Med tastatur: piltaster, +/− og Home. Trykk i kartet for å undersøke en flate.</p>
+  </dialog>
+  <noscript>Du må aktivere JavaScript for å bruke kartet.</noscript>
+</body>
+</html>

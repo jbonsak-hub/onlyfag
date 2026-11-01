@@ -1,0 +1,69 @@
+{
+  "id": "c14552c7456249fcb06b1b1ea1c2bf3d",
+  "owner": "johanne.karbo@geodata.no_geodata",
+  "ownerId": "f7ff5c9f3ad04b98a41fcc78297625c2",
+  "orgId": "2JyTvMWQSnM2Vi8q",
+  "created": 1772445372000,
+  "modified": 1775024882000,
+  "guid": null,
+  "name": "MarinGrenseFlate_under",
+  "title": "MarinGrenseFlate_under",
+  "type": "Feature Service",
+  "typeKeywords": [
+    "ArcGIS Server",
+    "Data",
+    "Feature Access",
+    "Feature Service",
+    "Metadata",
+    "Service",
+    "Singlelayer",
+    "Hosted Service"
+  ],
+  "description": "",
+  "tags": [
+    ""
+  ],
+  "snippet": "Områder under marin grense. Kilde: NGU",
+  "thumbnail": "thumbnail/thumbnail.png",
+  "documentation": null,
+  "extent": [
+    [
+      -1.276682138827313,
+      57.65574747162694
+    ],
+    [
+      32.40882468107598,
+      71.6532846019148
+    ]
+  ],
+  "categories": [],
+  "spatialReference": "25833",
+  "accessInformation": "",
+  "classification": null,
+  "licenseInfo": "",
+  "culture": "nb-no",
+  "properties": null,
+  "advancedSettings": null,
+  "url": "https://services.arcgis.com/2JyTvMWQSnM2Vi8q/arcgis/rest/services/MarinGrenseFlate_under/FeatureServer",
+  "proxyFilter": null,
+  "access": "public",
+  "size": 349560832,
+  "subInfo": 0,
+  "appCategories": [],
+  "industries": [],
+  "languages": [],
+  "largeThumbnail": null,
+  "banner": null,
+  "screenshots": [],
+  "listed": false,
+  "commentsEnabled": true,
+  "numComments": 0,
+  "numRatings": 0,
+  "avgRating": 0,
+  "numViews": 208,
+  "scoreCompleteness": 43,
+  "groupDesignations": null,
+  "apiToken1ExpirationDate": -1,
+  "apiToken2ExpirationDate": -1,
+  "lastViewed": 1793476800000
+}

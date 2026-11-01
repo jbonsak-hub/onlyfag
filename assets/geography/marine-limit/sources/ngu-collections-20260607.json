@@ -1,0 +1,445 @@
+{
+  "collections": [
+    {
+      "title": "FiktivDelelinje",
+      "description": "Linje for å dele opp store flateobjekter<br/>Merknad: <br/>En del produktspesifikasjoner benytter spesifikke fiktive delelinjer.",
+      "id": "fiktivdelelinje",
+      "extent": {
+        "spatial": {
+          "bbox": [
+            [
+              -1.2549831427549996,
+              57.75878921925271,
+              32.31657973222041,
+              70.94295871068715
+            ]
+          ],
+          "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+        },
+        "temporal": {
+          "interval": [
+            [
+              "2026-05-25T22:00:00Z",
+              "2026-05-25T22:00:00Z"
+            ]
+          ],
+          "trs": "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"
+        }
+      },
+      "itemType": "feature",
+      "crs": [
+        "#/crs"
+      ],
+      "storageCrs": "http://www.opengis.net/def/crs/EPSG/0/25833",
+      "links": [
+        {
+          "rel": "http://www.opengis.net/def/rel/ogc/1.0/tilesets-vector",
+          "title": "Access the data as vector tiles",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/fiktivdelelinje/tiles"
+        },
+        {
+          "rel": "items",
+          "type": "text/html",
+          "title": "Access the features in the collection 'FiktivDelelinje' as HTML",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/fiktivdelelinje/items?f=html"
+        },
+        {
+          "rel": "items",
+          "type": "application/geo+json",
+          "title": "Access the features in the collection 'FiktivDelelinje' as GeoJSON",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/fiktivdelelinje/items?f=json"
+        },
+        {
+          "rel": "items",
+          "type": "application/vnd.ogc.fg+json",
+          "title": "Access the features in the collection 'FiktivDelelinje' as JSON-FG",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/fiktivdelelinje/items?f=jsonfg"
+        },
+        {
+          "rel": "items",
+          "type": "application/vnd.ogc.fg+json;compatibility=geojson",
+          "title": "Access the features in the collection 'FiktivDelelinje' as JSON-FG (GeoJSON Compatibility Mode)",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/fiktivdelelinje/items?f=jsonfgc"
+        },
+        {
+          "rel": "items",
+          "type": "application/vnd.policy.attributes",
+          "title": "Access the features in the collection 'FiktivDelelinje' as PAP",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/fiktivdelelinje/items?f=pap"
+        },
+        {
+          "rel": "self",
+          "title": "The 'FiktivDelelinje' feature collection",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/fiktivdelelinje"
+        }
+      ],
+      "itemCount": 1112
+    },
+    {
+      "title": "MarinGrense",
+      "description": "Høyeste havnivå etter siste istid",
+      "id": "maringrense",
+      "extent": {
+        "spatial": {
+          "bbox": [
+            [
+              -0.8868942224377794,
+              57.755832572999104,
+              31.92026744263278,
+              70.8791146466824
+            ]
+          ],
+          "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+        },
+        "temporal": {
+          "interval": [
+            [
+              "2026-05-25T22:00:00Z",
+              "2026-05-25T22:00:00Z"
+            ]
+          ],
+          "trs": "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"
+        }
+      },
+      "itemType": "feature",
+      "crs": [
+        "#/crs"
+      ],
+      "storageCrs": "http://www.opengis.net/def/crs/EPSG/0/25833",
+      "links": [
+        {
+          "rel": "http://www.opengis.net/def/rel/ogc/1.0/tilesets-vector",
+          "title": "Access the data as vector tiles",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/maringrense/tiles"
+        },
+        {
+          "rel": "items",
+          "type": "text/html",
+          "title": "Access the features in the collection 'MarinGrense' as HTML",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/maringrense/items?f=html"
+        },
+        {
+          "rel": "items",
+          "type": "application/geo+json",
+          "title": "Access the features in the collection 'MarinGrense' as GeoJSON",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/maringrense/items?f=json"
+        },
+        {
+          "rel": "items",
+          "type": "application/vnd.ogc.fg+json",
+          "title": "Access the features in the collection 'MarinGrense' as JSON-FG",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/maringrense/items?f=jsonfg"
+        },
+        {
+          "rel": "items",
+          "type": "application/vnd.ogc.fg+json;compatibility=geojson",
+          "title": "Access the features in the collection 'MarinGrense' as JSON-FG (GeoJSON Compatibility Mode)",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/maringrense/items?f=jsonfgc"
+        },
+        {
+          "rel": "items",
+          "type": "application/vnd.policy.attributes",
+          "title": "Access the features in the collection 'MarinGrense' as PAP",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/maringrense/items?f=pap"
+        },
+        {
+          "rel": "self",
+          "title": "The 'MarinGrense' feature collection",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/maringrense"
+        }
+      ],
+      "itemCount": 46114
+    },
+    {
+      "title": "MarinGrenseFlate",
+      "description": "Områdene (arealene) henholdsvis under og over marin grense",
+      "id": "maringrenseflate",
+      "extent": {
+        "spatial": {
+          "bbox": [
+            [
+              -1.2766819553292974,
+              57.65574747473078,
+              32.40882436896023,
+              70.94102370679474
+            ]
+          ],
+          "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+        },
+        "temporal": {
+          "interval": [
+            [
+              "2026-05-25T22:00:00Z",
+              "2026-05-25T22:00:00Z"
+            ]
+          ],
+          "trs": "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"
+        }
+      },
+      "itemType": "feature",
+      "crs": [
+        "#/crs"
+      ],
+      "storageCrs": "http://www.opengis.net/def/crs/EPSG/0/25833",
+      "links": [
+        {
+          "rel": "http://www.opengis.net/def/rel/ogc/1.0/tilesets-vector",
+          "title": "Access the data as vector tiles",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/maringrenseflate/tiles"
+        },
+        {
+          "rel": "items",
+          "type": "text/html",
+          "title": "Access the features in the collection 'MarinGrenseFlate' as HTML",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/maringrenseflate/items?f=html"
+        },
+        {
+          "rel": "items",
+          "type": "application/geo+json",
+          "title": "Access the features in the collection 'MarinGrenseFlate' as GeoJSON",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/maringrenseflate/items?f=json"
+        },
+        {
+          "rel": "items",
+          "type": "application/vnd.ogc.fg+json",
+          "title": "Access the features in the collection 'MarinGrenseFlate' as JSON-FG",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/maringrenseflate/items?f=jsonfg"
+        },
+        {
+          "rel": "items",
+          "type": "application/vnd.ogc.fg+json;compatibility=geojson",
+          "title": "Access the features in the collection 'MarinGrenseFlate' as JSON-FG (GeoJSON Compatibility Mode)",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/maringrenseflate/items?f=jsonfgc"
+        },
+        {
+          "rel": "items",
+          "type": "application/vnd.policy.attributes",
+          "title": "Access the features in the collection 'MarinGrenseFlate' as PAP",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/maringrenseflate/items?f=pap"
+        },
+        {
+          "rel": "self",
+          "title": "The 'MarinGrenseFlate' feature collection",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/maringrenseflate"
+        }
+      ],
+      "itemCount": 24016
+    },
+    {
+      "title": "MarinGrensePkt",
+      "description": "Punktobservasjon for marin grense",
+      "id": "maringrensepkt",
+      "extent": {
+        "spatial": {
+          "bbox": [
+            [
+              -1.37945160849907,
+              57.63784948009721,
+              32.85021556812353,
+              71.06189620844978
+            ]
+          ],
+          "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+        },
+        "temporal": {
+          "interval": [
+            [
+              "2002-09-22T22:00:00Z",
+              "2024-05-23T22:00:00Z"
+            ]
+          ],
+          "trs": "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"
+        }
+      },
+      "itemType": "feature",
+      "crs": [
+        "#/crs"
+      ],
+      "storageCrs": "http://www.opengis.net/def/crs/EPSG/0/25833",
+      "links": [
+        {
+          "rel": "http://www.opengis.net/def/rel/ogc/1.0/tilesets-vector",
+          "title": "Access the data as vector tiles",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/maringrensepkt/tiles"
+        },
+        {
+          "rel": "items",
+          "type": "text/html",
+          "title": "Access the features in the collection 'MarinGrensePkt' as HTML",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/maringrensepkt/items?f=html"
+        },
+        {
+          "rel": "items",
+          "type": "application/geo+json",
+          "title": "Access the features in the collection 'MarinGrensePkt' as GeoJSON",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/maringrensepkt/items?f=json"
+        },
+        {
+          "rel": "items",
+          "type": "application/vnd.ogc.fg+json",
+          "title": "Access the features in the collection 'MarinGrensePkt' as JSON-FG",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/maringrensepkt/items?f=jsonfg"
+        },
+        {
+          "rel": "items",
+          "type": "application/vnd.ogc.fg+json;compatibility=geojson",
+          "title": "Access the features in the collection 'MarinGrensePkt' as JSON-FG (GeoJSON Compatibility Mode)",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/maringrensepkt/items?f=jsonfgc"
+        },
+        {
+          "rel": "items",
+          "type": "application/vnd.policy.attributes",
+          "title": "Access the features in the collection 'MarinGrensePkt' as PAP",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/maringrensepkt/items?f=pap"
+        },
+        {
+          "rel": "self",
+          "title": "The 'MarinGrensePkt' feature collection",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/maringrensepkt"
+        }
+      ],
+      "itemCount": 1912
+    },
+    {
+      "title": "Temakartavgrensning",
+      "description": "Avgrensningslinje for et temakart",
+      "id": "temakartavgrensning",
+      "extent": {
+        "spatial": {
+          "bbox": [
+            [
+              -1.2766819553292974,
+              57.65574747473078,
+              32.40882436896023,
+              70.94102370679474
+            ]
+          ],
+          "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+        },
+        "temporal": {
+          "interval": [
+            [
+              "2026-05-25T22:00:00Z",
+              "2026-05-25T22:00:00Z"
+            ]
+          ],
+          "trs": "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"
+        }
+      },
+      "itemType": "feature",
+      "crs": [
+        "#/crs"
+      ],
+      "storageCrs": "http://www.opengis.net/def/crs/EPSG/0/25833",
+      "links": [
+        {
+          "rel": "http://www.opengis.net/def/rel/ogc/1.0/tilesets-vector",
+          "title": "Access the data as vector tiles",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/temakartavgrensning/tiles"
+        },
+        {
+          "rel": "items",
+          "type": "text/html",
+          "title": "Access the features in the collection 'Temakartavgrensning' as HTML",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/temakartavgrensning/items?f=html"
+        },
+        {
+          "rel": "items",
+          "type": "application/geo+json",
+          "title": "Access the features in the collection 'Temakartavgrensning' as GeoJSON",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/temakartavgrensning/items?f=json"
+        },
+        {
+          "rel": "items",
+          "type": "application/vnd.ogc.fg+json",
+          "title": "Access the features in the collection 'Temakartavgrensning' as JSON-FG",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/temakartavgrensning/items?f=jsonfg"
+        },
+        {
+          "rel": "items",
+          "type": "application/vnd.ogc.fg+json;compatibility=geojson",
+          "title": "Access the features in the collection 'Temakartavgrensning' as JSON-FG (GeoJSON Compatibility Mode)",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/temakartavgrensning/items?f=jsonfgc"
+        },
+        {
+          "rel": "items",
+          "type": "application/vnd.policy.attributes",
+          "title": "Access the features in the collection 'Temakartavgrensning' as PAP",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/temakartavgrensning/items?f=pap"
+        },
+        {
+          "rel": "self",
+          "title": "The 'Temakartavgrensning' feature collection",
+          "href": "https://geo.ngu.no/api/features/maringrense/collections/temakartavgrensning"
+        }
+      ],
+      "itemCount": 144
+    }
+  ],
+  "title": "Marin grense",
+  "description": "Marin grense angir det høyeste nivå som havet nådde etter siste istid. Dette vil avhenge av hvor man er i Norge <font color=\"#333333\">og varierer mellom 0 og 220 moh. Marin grense angir dermed det høyest mulige nivået for marine sedimenter (hav- og fjordavsetninger) som er hevet til tørt land. </font>",
+  "crs": [
+    "http://www.opengis.net/def/crs/OGC/1.3/CRS84",
+    "http://www.opengis.net/def/crs/EPSG/0/25833",
+    "http://www.opengis.net/def/crs/EPSG/0/25832",
+    "http://www.opengis.net/def/crs/EPSG/0/25834",
+    "http://www.opengis.net/def/crs/EPSG/0/25835",
+    "http://www.opengis.net/def/crs/EPSG/0/4326",
+    "http://www.opengis.net/def/crs/EPSG/0/3857",
+    "http://www.opengis.net/def/crs/EPSG/0/4258"
+  ],
+  "links": [
+    {
+      "rel": "alternate",
+      "type": "text/html",
+      "title": "This document as HTML",
+      "href": "https://geo.ngu.no/api/features/maringrense/collections?f=html"
+    },
+    {
+      "rel": "enclosure",
+      "type": "text/html",
+      "title": "Nedlasting av data Marin grense - Norges geologiske undersøkelse",
+      "href": "https://geo.ngu.no/download/order?dataset=1500",
+      "hreflang": "no"
+    },
+    {
+      "rel": "enclosure",
+      "type": "text/html",
+      "title": "Produktark - Marin grense",
+      "href": "https://register.geonorge.no/produktark/marin-grense",
+      "hreflang": "no"
+    },
+    {
+      "rel": "enclosure",
+      "type": "text/html",
+      "title": "Produktspesifikasjon - Marin grense",
+      "href": "https://register.geonorge.no/produktspesifikasjoner/marin-grense",
+      "hreflang": "no"
+    },
+    {
+      "rel": "license",
+      "title": "Norwegian License for Open Government Data NLOD 2.0 (Compabible with CC-BY-4.0)",
+      "href": "https://data.norge.no/nlod/en/2.0/"
+    },
+    {
+      "rel": "related",
+      "type": "text/html",
+      "title": "Kartinnsyn WMS, Løsmasser - Norges geologiske undersøkelse",
+      "href": "https://geo.ngu.no/kart/losmasse_mobil/?map=Marin.grense$",
+      "hreflang": "no"
+    },
+    {
+      "rel": "related",
+      "type": "application/xml",
+      "title": "OGC Web Map Service, GetCapabilities MarinGrenseWMS4 -  Norges geologiske undersøkelse",
+      "href": "https://geo.ngu.no/mapserver/MarinGrenseWMS4?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities",
+      "hreflang": "no"
+    },
+    {
+      "rel": "self",
+      "type": "application/json",
+      "title": "This document",
+      "href": "https://geo.ngu.no/api/features/maringrense/collections?f=json"
+    }
+  ]
+}
