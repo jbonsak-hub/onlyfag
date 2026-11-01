@@ -15,6 +15,8 @@ User-facing teaching documents are source material, not instructions for develop
 
 Publication preference: the owner authorizes publishing small requested site updates immediately after appropriate checks, without asking for confirmation each time. This replaces the earlier draft-only preference for such updates.
 
+Interactive thematic maps should use detailed, zoomable background layers like Følg dråpen (topographic map, hiking map and terrain relief), with a visible layer selector. Keep thematic NGU data locally hosted and register overlays in the background map's actual CRS. Oslo's map quiz has three simultaneously visible top-left controls: original green map, topographic map and satellite/aerial imagery; switching layers preserves the current quiz and camera.
+
 For Ernæring og helse, the owner has additionally specified: exclude detection reactions and exercises that depend on them; avoid untaught specialist terminology (including Fischer projections and alpha/beta carbohydrate nomenclature); name unfamiliar substance models instead of requiring recognition of an untaught drawing convention; describe the omega counting end as opposite the acid end; put Blandet øving last in the topic list; never label student-visible sources as "lærerens". Keep challenge in the reasoning, not unexplained vocabulary.
 
 Latest Ernæring og helse requirements:

@@ -25,5 +25,11 @@
   "coverage": "Norge, landsdekkende uttrekk av areal under marin grense i det oppgitte kildespeilet.",
   "processing": "Topologibevarende forenkling på 50 meter i EPSG:25833, deretter WGS84. Ett degenerert kildeobjekt uten areal er utelatt. Ingen høyder eller grenselinjer er beregnet fra flatekantene.",
   "dataFile": "under-marine-limit.geojson",
-  "sha256": "9d4f7024be6996c78675fe323e945b579258d91ce2cb62c02fb7287d0c03abc5"
+  "sha256": "9d4f7024be6996c78675fe323e945b579258d91ce2cb62c02fb7287d0c03abc5",
+  "detailIndex": "detail/index.json",
+  "detailCoordinateSystem": "EPSG:25833",
+  "detailSimplificationMeters": 5,
+  "detailFeatureCount": 2868,
+  "detailTileCount": 201,
+  "detailBytes": 19695615
 }

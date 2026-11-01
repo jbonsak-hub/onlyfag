@@ -101,11 +101,12 @@ async function checkEveryFocus(page,label){
   await clearOutline(page);
 }
 async function checkBasemap(page,label){
-  const images=await page.locator('.map-basemap-layer:not([hidden]) img').evaluateAll(els=>els.map(el=>({ready:el.complete&&el.naturalWidth>0&&el.naturalHeight>0,width:el.naturalWidth,height:el.naturalHeight,pointerEvents:getComputedStyle(el).pointerEvents,area:el.dataset.area})));
+  const oslo=await page.locator('.oslo-live-basemap:not([hidden])').count();
+  const images=await page.locator(oslo?'.oslo-live-basemap:not([hidden]) img':'.map-basemap-layer:not([hidden]) img').evaluateAll(els=>els.map(el=>({ready:el.complete&&el.naturalWidth>0&&el.naturalHeight>0,width:el.naturalWidth,height:el.naturalHeight,pointerEvents:getComputedStyle(el).pointerEvents,area:el.dataset.area})));
   assert(images.length&&images.every(image=>image.ready),label+' terrain images decode successfully');
   assert(images.every(image=>image.pointerEvents==='none'),label+' terrain imagery never steals answers');
   const camera=await page.evaluate(()=>{
-    const svg=document.querySelector('#map'),world=document.querySelector('.map-basemap-world'),viewport=document.querySelector('#mapViewport');
+    const svg=document.querySelector('#map'),world=document.querySelector(document.body.dataset.quiz==='bydeler'?'.oslo-live-basemap-world':'.map-basemap-world'),viewport=document.querySelector('#mapViewport');
     const m=svg.getScreenCTM(),w=new DOMMatrix(getComputedStyle(world).transform),r=viewport.getBoundingClientRect();
     // HTML world coordinates start at the viewport content box; SVG CTM uses
     // client coordinates. Their six values must otherwise be identical.
@@ -153,6 +154,7 @@ async function checkOslo(page){
       await context.route('**/*',route=>{
         const url=route.request().url();
         if(url.startsWith('https://onlyfag-geography-scores.jack-bonsak.workers.dev/'))return route.fulfill({status:503,contentType:'application/json',headers:{'Access-Control-Allow-Origin':'*'},body:'{"error":"unavailable"}'});
+        if(url.startsWith('https://cache.kartverket.no/'))return route.fulfill({status:200,contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="#d9e5d3"/></svg>'});
         return url.startsWith(base)||/^(data|blob):/.test(url)?route.continue():route.abort();
       });
       const page=await context.newPage();page.setDefaultTimeout(10000);
@@ -165,7 +167,7 @@ async function checkOslo(page){
         if(test.counties)assert.deepEqual((await page.locator('#states path.state').evaluateAll(els=>els.map(el=>el.dataset.state))).sort(),countyNames,label+' preserves all 15 county geometries');
         await page.locator('#statle-basemap:enabled').click();
         await page.waitForFunction(()=>document.body.dataset.statleBasemap==='physical');
-        await page.locator('.map-basemap-layer:not([hidden])').waitFor();await frames(page);
+        await page.locator(test.name==='oslo'?'.oslo-live-basemap:not([hidden])':'.map-basemap-layer:not([hidden])').waitFor();if(test.name==='oslo')await page.waitForFunction(()=>OsloMapLayers.get(document.getElementById('map')).snapshot().pending===0);await frames(page);
         await checkBasemap(page,label);if(test.name==='oslo')await checkOslo(page);
         if(test.counties)await checkCountyRaster(page,label);
         await checkEveryFocus(page,label);
@@ -181,7 +183,7 @@ async function checkOslo(page){
           await capture(page,label.replace(/ /g,'-')+'-zoomed');
         }
         await clearOutline(page);
-        await page.locator('#statle-basemap').click();
+        await page.locator(test.name==='oslo'?'button[data-oslo-basemap=original]':'#statle-basemap').click();
         await page.waitForFunction(()=>document.body.dataset.statleBasemap==='original');
         assert.equal(await page.locator('.map-basemap-layer:not([hidden])').count(),0,label+' can return to the original map');
         await page.locator('#states path.state').first().focus();

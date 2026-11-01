@@ -5,3 +5,18 @@
 
 .credit{max-width:100%;line-height:1.4}.credit a{color:var(--ink)}
 @media(max-width:700px){.scale{bottom:40px}}
+
+/* The tile-map layer control shares the compact layout of the map. */
+.layers{display:block;min-width:210px;max-width:calc(100% - 72px);padding:0}
+.layers summary{cursor:pointer;font-weight:700;padding:10px 12px;min-height:38px}
+.layer-controls{display:grid;gap:7px;padding:0 12px 12px}
+.layer-controls>label{display:block;min-height:0}
+.layer-controls select{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:7px 5px;min-height:36px;width:100%}
+.layer-controls .marine-toggle{display:flex;align-items:center;min-height:30px}
+.layer-controls .opacity-label{display:flex;justify-content:space-between;gap:16px}
+#marine-opacity{width:100%;accent-color:var(--accent);min-height:26px;margin:0;cursor:pointer}
+#marine-opacity-value{font-variant-numeric:tabular-nums}
+.map-messages{position:absolute;bottom:44px;left:50%;transform:translateX(-50%);width:max-content;max-width:min(90%,440px);pointer-events:none}
+.map-messages #status,.map-messages #map-status,.map-messages #detail-status{position:static;transform:none;max-width:none;margin-top:5px;font-size:12px;line-height:1.4;background:var(--paper);border:1px solid var(--line);border-radius:5px;padding:8px 10px;text-align:center}
+body:not([data-map-layer="local"]) .local-credit{display:none}
+@media(max-width:700px){.layers{min-width:200px;max-width:calc(100% - 70px)}.layer-controls{padding:0 9px 8px;gap:4px}.layers summary{padding:8px 9px}.layer-controls select{min-height:34px}.map-messages{bottom:40px;max-width:94%}}

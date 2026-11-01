@@ -44,8 +44,9 @@ SHA-256 for hver av de tre råresponsene, antall og lokal behandling.
 `data/under-marine-limit.geojson` er WGS84 (EPSG:4326). Geometrien er forenklet
 med topologibevarende Douglas–Peucker på **50 meter i EPSG:25833** før
 omprojisering. Koordinater avrundes til fem desimaler; ugyldig kildegeometri
-repareres topologisk og rene degenererte geometrier uten areal utelates, med
-objekt-ID dokumentert i manifestet. Forenklingen lager ingen nye høyder eller
+repareres topologisk og rene degenererte geometrier uten areal i dette
+servergeneraliserte uttrekket utelates, med objekt-ID dokumentert i manifestet.
+Objekt 1846 er gyldig i det senere native-uttrekket og inngår i detaljlaget. Forenklingen lager ingen nye høyder eller
 antatte forbindelser mellom registreringer.
 
 Flatekanter kan inkludere kystlinje og administrative/tekniske avgrensninger;
@@ -77,32 +78,67 @@ PYTHONPATH=/workspace/shared/municipality-python-deps \
 
 Kartet åpnes fra **Geografi → Ytre krefter og landformer → Marin grense**,
 `geografi.html#ytre-marin-grense`. `geografi/marin-grense.html` er den
-selvstendige siden. Alle temadata, terrengbilder, stedsnavn og skript lastes fra
-OnlyFag; det gjøres ingen NGU-, ArcGIS- eller eksterne fliskall i nettleseren.
+selvstendige siden.
 
-Temaflatene vises over landmasken i nettstedets eksisterende, forenklede
-fylkeskart. Dette er kun en visningsmaske: nedlastet NGU-geometri er ikke klippet
-eller omskrevet for å passe kystlinjen. Kyst og fylkesgrenser er et
-oversiktsgrunnlag, ikke eiendomsgrenser. Georefereringen følger den samme
-registrerte Lambert-projeksjonen som `norway-county-relief.json`; dokumentasjon
-og kontrollpunkter finnes i `sources/norway-county-registration.json`.
+Marin-grense-flatene, stedsnavn og skript lastes fra OnlyFag. Det gjøres ingen
+NGU- eller ArcGIS-kall for temadata mens kartet brukes. Kartbakgrunnen bruker
+samme offentlige tjenester og flisrutenett som «Følg dråpen»:
 
-Bakgrunnen gjenbruker Kartverkets lokalt lagrede terrengbilder (CC BY 4.0),
-Natural Earth-geometri (public domain) og NordNordWests bearbeidede fylkesformer
-(CC BY-SA 3.0 DE). Kartet krediterer geometri og lisens med lenker i kartflaten.
+- **Topografisk kart**: Kartverket WMTS `topo`.
+- **Turkart**: Kartverket WMTS `toporaster`.
+- **Terrengrelieff**: Kartverkets WMS `DTM:multiskyggerelieff` hos Geonorge.
+- **Enkelt reservekart**: lokal, generalisert bakgrunn for bruk uten kartfliser.
+
+Kartverkets WMTS i UTM33 har origo `[-2500000,9045984]`, 256-pikselfliser og
+oppløsning `21664 / 2^nivå` meter per piksel. Nivå 00–18 hentes fra
+`https://cache.kartverket.no/v1/wmts/1.0.0/{lag}/default/utm33n/{nivå}/{rad}/{kolonne}.png`.
+Terrengrelieff hentes fra `https://wms.geonorge.no/skwms1/wms.hoyde-dtm`
+med samme EPSG:25833-rutenett. Bakgrunnskartene trenger nettforbindelse til
+Kartverket/Geonorge, mens NGUs ustabile tjenester er utenfor kjørebanen.
+Feil på bakgrunnsfliser meldes synlig og påvirker ikke kommunesøk eller temadata.
+
+Kamera, kartfliser og temaflater bruker nå ekte **ETRS89 / UTM sone 33N
+(EPSG:25833)**. `projection.js` bruker GRS80 og en sjetteordens Krüger-utvikling,
+kontrollert mot uavhengige pyproj-referanser. NGU-data klippes ikke lenger mot
+den grove fylkesmasken. Lagbytte og justering av temalagets synlighet beholder
+utsnittet. NGU-flatene tegnes i en mellomflate og blandes med bakgrunnen én gang.
+
 Kommunesøket bruker eksisterende `municipality-centres.json`, basert på
 Kartverket SSR og Wikidata; det flytter kartet til kommunens administrasjonssenter.
+Reservekartet bruker Natural Earth (public domain) og NordNordWests
+bearbeidede fylkesformer (CC BY-SA 3.0 DE). Det er uttrykkelig et enkelt
+reservekart, og brukes ikke som dokumentasjon av detaljnivået i Kartverkets fliser.
 
-`scripts/build-marine-background.py` lager lokalt bakgrunnsuttrekk fra de
-allerede lagrede kildene. Den vikler ut Russlands antimeridiankryssing før
-plan klipping, slik at østre Russland ikke lager falske flater over Norskehavet.
+## Detaljert lokalt NGU-lag
+
+Ved nærmere zoom erstattes oversiktsflatene gradvis av lokale detaljfliser.
+Native geometrier er hentet uten serverparameteren `maxAllowableOffset`,
+forenklet med 5 meter toleranse før klipping og delt i projiserte ruter.
+Dette er visningsforenkling, ikke en påstand om at NGUs kilde er oppmålt med
+5 meters nøyaktighet. Koordinatene i detaljflisene er **EPSG:25833 i meter**,
+ikke RFC 7946-lengde-/breddegrader. Opphav, kildedato og flisindeks er dokumentert
+i `data/detail/index.json` og tilhørende detaljmanifest. Ingen høydekurver er
+konstruert fra flatekantene. Originalresponsene beholdes utenfor nettstedets Git.
+
+Detaljlaget har 201 lokalt lagrede ruter, omtrent 19,7 MB totalt, og bevarer
+alle 2 868 kilde-ID-er. Den største ruten er under 0,7 MB. Native-uttrekkets
+10 962 084 koordinatpunkter er forenklet til 909 601 før ruteinndeling.
+Objekt 1846, som falt bort som degenerert etter speilets 25 meters
+servergeneralisering i oversiktsuttrekket, er beholdt i detaljene. Kildedatoen
+er fortsatt 23. januar 2024, uavhengig av datoen dataene ble lastet ned.
 
 ## Kontroller
 
-- `node tests/marine-limit-map.cjs`: ekte lokale temaflater, referansepunkt i Oslo,
+- `node tests/marine-limit-map.cjs`: lokale temaflater, uavhengige UTM-referanser, georefererte fliskontroller,
   kommunesøk/alias, zoom, forflytning, tofingerzoom, tastatur, lag, tema og ingen
   ekstern NGU-avhengighet ved 1366×768, 1024×768 og 390×844.
 - `node tests/marine-limit-integration.cjs`: meny, lenker, lazy iframe,
   tema/avsendervalidering, full kartflate og mobilmeny med tastatur/fokus.
 - `node scripts/build-geography-quiz-assets.cjs --check`: bekrefter at de
   eksisterende quizressursene ikke trenger nygenerering.
+
+Utviklingsmiljøets nettfilter blokkerte direkte kall til cache.kartverket.no og
+wms.geonorge.no ved denne oppdateringen. Kartverksflisenes pikselregistrering,
+lagbytte og feilhåndtering testes derfor deterministisk med georefererte
+kontrollfliser. Dette er ikke fremstilt som en ny, direkte tilgjengelighetstest
+av fjernserverne; URL-kontrakten gjenbrukes fra Dråpen.

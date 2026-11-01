@@ -16,7 +16,7 @@
   const advancedInput=()=>$(municipalities?'municipality-centres':statle?'statle-advanced':'region-capitals');
   const namesInput=()=>$(localMap?'local-show-names':statle?'statle-show-names':'region-show-names');
   let largestCities=null, stateCapitals=null;
-  let cityData = null, citiesMode = false, basemap=null, regionalCapitals=null, municipalityCentres=null, cityMarkerScale='';
+  let cityData = null, citiesMode = false, basemap=null, osloLayers=null, regionalCapitals=null, municipalityCentres=null, cityMarkerScale='';
   const cityPoints = new Map(), stateTransforms = new Map();
   const showNames = () => enhanced() && !!namesInput()?.checked;
   const answerName = name => citiesMode ? displayCityName(states.find(state=>state.n===name)) + ' · ' + (window.QuizLanguage?.translate(name)||name) : name;
@@ -363,6 +363,7 @@
   function prepareBasemap(url,transforms,region) {
     document.querySelector('.statle-basemap-tools')?.remove();
     if(!basemap)basemap=MapBasemap.create({svg:$('map'),viewport:$('mapViewport')});
+    if(boroughs){prepareOsloBasemaps();return;}
     const tools=document.createElement('div');tools.className='statle-basemap-tools';
     const button=document.createElement('button');button.type='button';button.id='statle-basemap';
     const initialLabel=window.QuizLanguage?.translate('Vis fysisk kart')||'Vis fysisk kart';button.title=initialLabel;button.setAttribute('aria-label',initialLabel);button.setAttribute('aria-pressed','false');
@@ -384,6 +385,22 @@
       }catch(_){if(token===mapGeneration)setFeedback('Kartet kunne ikke lastes','error');}
       finally{button.disabled=false;button.removeAttribute('aria-busy');}
     });
+  }
+  function updateOsloBasemapButtons(){
+    const english=window.QuizLanguage?.language==='en',names={original:english?'Green map':'Grønt kart',physical:english?'Topographic map':'Topografisk kart',satellite:english?'Satellite imagery':'Satellittfoto'};
+    for(const button of document.querySelectorAll('button[data-oslo-basemap]')){const mode=button.dataset.osloBasemap;button.title=names[mode];button.setAttribute('aria-label',names[mode]);button.setAttribute('aria-pressed',String((document.body.dataset.osloBasemap||'original')===mode));}
+  }
+  function prepareOsloBasemaps(){
+    osloLayers?.destroy();osloLayers=OsloMapLayers.create({svg:$('map'),viewport:$('mapViewport'),map:regionData});
+    document.body.dataset.osloBasemap='original';document.body.dataset.statleBasemap='original';basemap.show(false);
+    const tools=document.createElement('div');tools.className='statle-basemap-tools oslo-basemap-tools';tools.setAttribute('role','group');tools.setAttribute('aria-label','Kartvisning');
+    const icons={original:'<path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2V5Zm6-2v16m6-14v16"/>',physical:'<path d="m2 20 7-14 4 7 3-5 6 12H2Zm4-8 3 2 3-2M13 13l3 2 2-1"/>',satellite:'<path d="m8 8 8 8m-5-11 8 8-5 5-8-8 5-5Zm-5 6-4 4 4 4 4-4m5-10 3-3 4 4-3 3M3 3l3 3"/>'};
+    for(const mode of ['original','physical','satellite']){
+      const button=document.createElement('button');button.type='button';button.dataset.osloBasemap=mode;if(mode==='physical')button.id='statle-basemap';
+      button.innerHTML='<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">'+icons[mode]+'</g></svg>';
+      button.addEventListener('click',()=>{document.body.dataset.osloBasemap=mode;document.body.dataset.statleBasemap=mode==='original'?'original':'physical';osloLayers.set(mode);updateOsloBasemapButtons();});tools.append(button);
+    }
+    $('mapViewport').append(tools);updateOsloBasemapButtons();
   }
   function showHint() {
     if(physical){const el=elements.get(target().n);el.classList.add('hinted');later(()=>el.classList.remove('hinted'),1800);return;}
@@ -640,7 +657,7 @@
     clearTimeout(localPreviewTimer);
     if(phase==='ready'&&showNames())localPreviewTimer=setTimeout(drawStudyNames,125);
   });
-  addEventListener('quiz-language-change',()=>{if(enhanced()){drawStudyNames();if(phase==='ready')setFeedback('');const button=$('statle-basemap');if(button){const label=window.QuizLanguage.translate(document.body.dataset.statleBasemap==='physical'?'Vis originalkart':'Vis fysisk kart');button.title=label;button.setAttribute('aria-label',label);}}});
+  addEventListener('quiz-language-change',()=>{if(boroughs)updateOsloBasemapButtons();if(enhanced()){drawStudyNames();if(phase==='ready')setFeedback('');const button=$('statle-basemap');if(button&&!boroughs){const label=window.QuizLanguage.translate(document.body.dataset.statleBasemap==='physical'?'Vis originalkart':'Vis fysisk kart');button.title=label;button.setAttribute('aria-label',label);}}});
   const menu = $('geoMenu'), menuButton = $('geoMenuButton');
   let menuOpener=menuButton;
   function openMenu(button){menuOpener=button;menu.showModal();button.setAttribute('aria-expanded','true');}
@@ -665,7 +682,7 @@
   });
   function resetMap() {
     clearTimeout(localPreviewTimer);
-    basemap?.clear();document.body.dataset.statleBasemap='original';document.querySelector('.statle-basemap-tools')?.remove();
+    basemap?.clear();osloLayers?.clear();document.body.dataset.osloBasemap='original';document.body.dataset.statleBasemap='original';document.querySelector('.statle-basemap-tools')?.remove();
     $('statle-city-points')?.remove();$('statle-study-names')?.remove();cityPoints.clear();stateTransforms.clear();studyLayouts.clear();
     citiesMode=false;cityData=null;cityMarkerScale='';delete document.body.dataset.kartVariant;delete document.body.dataset.riverVariant;delete document.body.dataset.municipalityQuestionMode;
     mastered.clear();retrying=false;continentPractice=false;repeatOffer.hidden=true;delete document.body.dataset.retry;
