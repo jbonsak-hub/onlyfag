@@ -1,8 +1,8 @@
-import {practicalFigure} from './practical-figures.js?v=20261101-2';
-import {recognitionFigure} from './recognition-figures.js?v=20261101-2';
-import {appliedFigure} from './applied-figures.js?v=20261101-2';
-import {foodFigure} from './food-figures.js?v=20261101-2';
-import {supportFigure} from './support-figures.js?v=20261101-2';
+import {practicalFigure} from './practical-figures.js?v=20261101-3';
+import {recognitionFigure} from './recognition-figures.js?v=20261101-3';
+import {appliedFigure} from './applied-figures.js?v=20261101-3';
+import {foodFigure} from './food-figures.js?v=20261101-3';
+import {supportFigure} from './support-figures.js?v=20261101-3';
 
 // Original didactic SVG models. Labels and descriptions do not reveal the answers.
 const svg=(description,body)=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 205" role="img" aria-label="${description}"><g font-family="system-ui,sans-serif" font-size="16" fill="#284c3b">${body}</g></svg>`;

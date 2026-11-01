@@ -1,9 +1,9 @@
-import {questions, sources} from './questions.js?v=20261101-2';
-import {organs, digestiveSVG} from './diagram.js?v=20261101-2';
-import {figure} from './figures.js?v=20261101-2';
-import {placementUI,placeMatch,placeSort} from './placement-ui.js?v=20261101-2';
-import {foodArtworkSVG} from './food-figures.js?v=20261101-2';
-import {STORE_KEY, topics, types, shuffle, mixedOrder, evaluate, needsReview, resultRecord, pickNext, rememberQuestion, recentSummary, recordRecentResult} from './engine.js?v=20261101-2';
+import {questions, sources} from './questions.js?v=20261101-3';
+import {organs, digestiveSVG} from './diagram.js?v=20261101-3';
+import {figure} from './figures.js?v=20261101-3';
+import {placementUI,placeMatch,placeSort} from './placement-ui.js?v=20261101-3';
+import {foodArtworkSVG} from './food-figures.js?v=20261101-3';
+import {STORE_KEY, topics, types, shuffle, mixedOrder, evaluate, needsReview, resultRecord, pickNext, rememberQuestion, recentSummary, recordRecentResult} from './engine.js?v=20261101-3';
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

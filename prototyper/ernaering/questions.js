@@ -1,17 +1,17 @@
-import {nutrientMapSlots} from './figures.js?v=20261101-2';
-import {structureQuestions} from './structure-questions.js?v=20261101-2';
-import {documentQuestions} from './document-questions.js?v=20261101-2';
-import {ndlaQuestions} from './ndla-questions.js?v=20261101-2';
-import {recognitionQuestions} from './recognition-questions.js?v=20261101-2';
-import {appliedFigureQuestions} from './applied-figure-questions.js?v=20261101-2';
-import {respirationQuestions} from './respiration-questions.js?v=20261101-2';
-import {foodQuestions} from './food-questions.js?v=20261101-2';
-import {foodTableQuestion} from './foodtable-question.js?v=20261101-2';
-import {supportFigures} from './support-figures.js?v=20261101-2';
-import {foodComparisonQuestions} from './food-comparison-questions.js?v=20261101-2';
+import {nutrientMapSlots} from './figures.js?v=20261101-3';
+import {structureQuestions} from './structure-questions.js?v=20261101-3';
+import {documentQuestions} from './document-questions.js?v=20261101-3';
+import {ndlaQuestions} from './ndla-questions.js?v=20261101-3';
+import {recognitionQuestions} from './recognition-questions.js?v=20261101-3';
+import {appliedFigureQuestions} from './applied-figure-questions.js?v=20261101-3';
+import {respirationQuestions} from './respiration-questions.js?v=20261101-3';
+import {foodQuestions} from './food-questions.js?v=20261101-3';
+import {foodTableQuestion} from './foodtable-question.js?v=20261101-3';
+import {supportFigures} from './support-figures.js?v=20261101-3';
+import {foodComparisonQuestions} from './food-comparison-questions.js?v=20261101-3';
 
-import {formulaQuestions} from './formula-questions.js?v=20261101-2';
-import {practicalQuestions} from './practical-questions.js?v=20261101-2';
+import {formulaQuestions} from './formula-questions.js?v=20261101-3';
+import {practicalQuestions} from './practical-questions.js?v=20261101-3';
 
 // Oppgaver avgrenset til undervisningsmaterialet og oppgitt begrepsliste.
 const coreQuestions = [

@@ -1,4 +1,4 @@
-import {foodIllustrations,foodArtwork,foodConceptArtwork,foodOatsArtwork} from './food-illustrations.js?v=20261101-2';
+import {foodIllustrations,foodArtwork,foodConceptArtwork,foodOatsArtwork} from './food-illustrations.js?v=20261101-3';
 
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const galleries={
