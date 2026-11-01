@@ -104,6 +104,28 @@ Fasitene er kontrollert mot Matvaretabellen 1. november 2026. Mandler: 31,4 g en
 
 Den detaljerte oppramsingen av oppgavetyper er fjernet fra introduksjonen til hurtigfaktorisering i både `matematikk.html` og `matematikk_phi.html`; den korte instruksen om sum og produkt består.
 
+## Begreper og flashcards
+
+«Begreper flashcards» ligger rett under Blandet øving. `flashcards.js` inneholder
+63 korte forklaringer: 54 fra «Begrepsliste - Ernæring og helse.pdf», lastet
+opp 1. november 2026, og ni senere godkjente tillegg. PDF-ens doble Lever er
+samlet til ett kort; Cis- og transfett er delt i Cisfett og Transfett etter
+brukerens ønske. Tilleggene er fruktose, sukrose, laktose, galle, galleblære,
+tarmtotter, peristaltiske bevegelser, laktase og laktoseintoleranse.
+
+Trykk på kortet eller bruk mellomrom for å snu det; venstre/høyre piltast bytter
+kort. Hele utvalget vises før gjentakelser, med separat lokal rotasjon og de ti
+sist viste kortene som sperre ved ny runde. Forrige/neste kan også gå tilbake og
+fram gjennom kortene som allerede er vist i økten. Kortene påvirker ikke
+oppgavenes prosentberegning eller repetisjonshistorikk.
+
+«Begreper» ved siden av Oppgavebank viser hele begrepslisten med de samme
+forklaringene. Felles innganger: `/naturfag.html#nutrition/flashcards` og
+`/naturfag.html#nutrition/all/concepts`. Selvstendige innganger:
+`/prototyper/ernaering.html#flashcards` og `/prototyper/ernaering.html#concepts`.
+
+Nettleserregresjon: `node tests/nutrition-flashcards.cjs` (Playwright og Chromium).
+
 
 ## Synlige brikker og anvendte oppgaver
 
@@ -112,3 +134,11 @@ Den detaljerte oppramsingen av oppgavetyper er fjernet fra introduksjonen til hu
 Glukoseoppgaven lar eleven telle fra ringstrukturen uten oppgitt molekylformel. `formula-questions.js` lar eleven plassere glukose og fruktose ved samme formel, samt sukrose og melkesyre ved sine formler. `practical-questions.js` gir to nyanserte transfettoppgaver, en om varmebehandling og proteinopptak fra egg og to om energi-/næringsinnhold i illustrerte måltider. Måltidenes masser og kcal er uttrykkelig oppgitte eksempeldata. Den originale illustrasjonen ligger i `illustrated-meals.png`; fagkilder og avgrensninger står i `docs/ernaering-practical.md`.
 
 `tests/nutrition-drag.cjs` kontrollerer alle 27 koblings-/sorteringsoppgaver i fire skjermstørrelser, ekte mus-/berøringsdrag, klikk/tastatur, feilretting og låste delsvar.
+
+## Plass og balanse i oppgavene
+
+Korte oppgaver sentreres i den tilgjengelige arbeidsflaten når de får plass.
+Tre tekstalternativer står under hverandre i en sentrert kolonne med større
+mellomrom. Lange oppgaver og figurer beholder plassen de trenger; sentreringen
+skaper ikke ekstra rulling. `tests/ernaering-layout.cjs` kontrollerer alle 184
+oppgaver før og etter fasit og har egne kontroller av `practical-fat-health`.

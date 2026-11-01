@@ -22,9 +22,9 @@ function boot({mobile=false,stored,blocked=false}={}){
 }
 const t=boot(),{w,$,click,set,open}=t;
 const questions=w.__qa.questions,organs=w.__qa.organs;
-assert.equal([...w.document.querySelectorAll('#topics [data-topic]')].at(-1).dataset.topic,'all','Mixed practice is last in the topic list');
+assert.equal([...w.document.querySelectorAll('#topics [data-topic]')].at(-1).dataset.topic,'flashcards','Flashcards follow mixed practice');
 assert.equal(w.document.querySelector('[data-topic=figures]'),null,'Figure exercises belong to their subject topics');
-assert.deepEqual([...w.document.querySelectorAll('#topics [data-topic]')].map(el=>el.dataset.topic),['carbs','protein','fat','micro','digestion','energy','all'],'Digestion is before energy; mixed practice is last');
+assert.deepEqual([...w.document.querySelectorAll('#topics [data-topic]')].map(el=>el.dataset.topic),['carbs','protein','fat','micro','digestion','energy','all','flashcards'],'Digestion is before energy; flashcards follow mixed practice');
 function fillCorrect(q,context=t){
  const {w,$,click,set}=context;
  if(q.type==='anatomy'){for(const o of organs){click(`[data-label="${o.id}"]`);click(`[data-target="${o.id}"]`);}}

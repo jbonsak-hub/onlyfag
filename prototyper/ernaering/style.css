@@ -138,6 +138,30 @@ body.dark{--paper:#101614;--white:#17201d;--ink:#edf4f1;--muted:#a8b8b0;--green:
 .visual-workspace:has(>.food-illustration){grid-template-columns:minmax(0,1fr) 200px;max-width:800px}
 .support-figure .support-anatomy{height:360px;width:100%}
 .support-anatomy.has-highlight .organ{opacity:.18;filter:grayscale(.8)}
+
+/* Quick concept practice: one term, one concise explanation, no scoring. */
+.flashcard-exercise{max-width:720px;margin:0 auto}
+.flashcard{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;width:100%;min-height:270px;padding:28px 32px;border:1px solid var(--line);border-radius:8px;background:var(--white);text-align:center}
+.flashcard:hover{border-color:var(--green)}
+.flashcard-term{font-size:28px;font-weight:700;line-height:1.25;overflow-wrap:anywhere}
+.flashcard.is-revealed .flashcard-term{font-size:16px;color:var(--muted)}
+.flashcard-definition{font-size:21px;line-height:1.5;max-width:56ch}
+.flashcard-flip{font-size:12px;color:var(--green-dark)}
+.flashcard-actions{justify-content:space-between;gap:12px;margin-top:12px}
+.flashcard-actions button{min-height:44px;padding:9px 18px}
+.flashcard-shortcuts{margin:10px 0 0;font-size:12px;color:var(--muted);text-align:center}
+.view-tabs{flex-wrap:wrap}
+.view-tabs button{font-size:11px;padding:7px 5px}
+.concepts{max-width:980px;margin:0 auto}
+.workspace:has(.concepts) .topbar{position:sticky;top:0;z-index:10}
+.concepts h2{font-size:20px;margin:0 0 4px}
+.concept-count{font-size:12px;color:var(--muted);margin:0 0 14px}
+.concept-list{margin:0}
+.concept-list>div{display:grid;grid-template-columns:minmax(140px,1fr) minmax(0,3fr);gap:16px;padding:10px 0;border-top:1px solid var(--line);font-size:14px;line-height:1.5}
+.concept-list dt{font-weight:700;overflow-wrap:anywhere}
+.concept-list dd{margin:0}
+@media(max-width:600px){.concept-list>div{grid-template-columns:1fr;gap:3px}}
+@media(max-width:760px){.flashcard{min-height:250px;padding:24px 18px;gap:16px}.flashcard-term{font-size:25px}.flashcard-definition{font-size:19px}.flashcard-exercise .question-meta{gap:6px;align-items:start}}
 .support-anatomy.has-highlight .organ.highlighted{opacity:1;filter:drop-shadow(0 0 6px #d5ab5960)}
 .support-anatomy.has-highlight .secretory-ducts{opacity:.2}
 .support-figure figcaption{font-size:13px;color:var(--ink);font-weight:600}
@@ -191,6 +215,19 @@ body.dark{--paper:#101614;--white:#17201d;--ink:#edf4f1;--muted:#a8b8b0;--green:
 }
 /* Hide only empty left gutters where neighbouring sprite cells leave a faint edge. */
 .food-art[data-food="banana"],.food-art[data-food="kiwi"]{clip-path:inset(0 0 0 3%)}
+
+/* Balance the exercise in the space it actually needs. Auto margins yield to
+   longer questions and feedback rather than pushing controls below the fold. */
+main:has(>#content>.exercise){min-height:calc(100dvh - 44px);display:flex;flex-direction:column}
+#content:has(>.exercise){width:100%;margin-block:auto}
+.exercise:is(.type-choice,.type-multi):not(.has-figure):not(:has(.food-options)){max-width:840px;margin-inline:auto}
+.exercise:not(.has-figure) .answer-options:not(.food-options):has(>.option-button:nth-child(3)):not(:has(>.option-button:nth-child(4))){grid-template-columns:1fr;gap:10px}
+.exercise:not(.has-figure):has(.answer-options>.option-button:nth-child(3)):not(:has(.answer-options>.option-button:nth-child(4))) .option-button{min-height:48px;padding:12px 14px}
+.exercise:not(.has-figure):has(.answer-options>.option-button:nth-child(3)):not(:has(.answer-options>.option-button:nth-child(4))) .task-actions{margin-top:20px}
+@media(max-width:480px){
+ .exercise:not(.has-figure):has(.answer-options>.option-button:nth-child(3)):not(:has(.answer-options>.option-button:nth-child(4))) .option-button{padding:10px 12px}
+}
+
 .meal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:center}
 .meal-set{margin:0;min-width:0;text-align:center}
 .meal-set>svg{width:100%;height:auto;max-height:210px!important;overflow:hidden}

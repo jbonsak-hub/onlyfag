@@ -13,7 +13,7 @@ const server=http.createServer((req,res)=>{
  }catch{res.writeHead(404).end();}
 });
 const store='onlyfag.nutrition.v1';
-const topicOrder=['carbs','protein','fat','micro','digestion','energy','all'];
+const topicOrder=['carbs','protein','fat','micro','digestion','energy','all','flashcards'];
 (async()=>{
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
  const base='http://127.0.0.1:'+server.address().port;

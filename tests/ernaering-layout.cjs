@@ -2,6 +2,8 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const root=path.resolve(__dirname,'..');
+const screenshots=process.env.NUTRITION_LAYOUT_QA_DIR;
+if(screenshots)fs.mkdirSync(screenshots,{recursive:true});
 const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.json':'application/json'};
 const server=http.createServer((req,res)=>{
  try{
@@ -32,7 +34,7 @@ const server=http.createServer((req,res)=>{
    await page.waitForFunction(id=>document.querySelector('[data-question]')?.dataset.question===id,id);
   }
   async function geometry(page){return page.evaluate(()=>{
-   const selectors=['.prompt','.mini-figure','.anatomy-map','.answer-panel','.visual-response','.task-actions','.open-response','.feedback'];
+   const selectors=['.exercise','.prompt','.mini-figure','.anatomy-map','.answer-panel','.visual-response','.task-actions','.open-response','.feedback'];
    const bounds=Object.fromEntries(selectors.map(s=>{
     const el=document.querySelector(s),r=el?.getBoundingClientRect();
     return [s,r&&r.width>0&&r.height>0?{left:r.left,top:r.top,right:r.right,bottom:r.bottom}:null];
@@ -52,6 +54,19 @@ const server=http.createServer((req,res)=>{
    let maxHeight=0,maxActionsBottom=0;
    for(const q of questions){
     await open(page,q.id);const before=await geometry(page);recordOverflow(q,viewport,'before',before);
+    if(q.id==='practical-fat-health'){
+     const options=await page.locator('.answer-options>.option-button').evaluateAll(els=>els.map(el=>{const r=el.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom};}));
+     assert.equal(options.length,3,'the example has three alternatives');
+     for(let i=1;i<options.length;i++){
+      assert.ok(options[i].top>=options[i-1].bottom+8,'three text alternatives form a spaced vertical list');
+      assert.ok(Math.abs(options[i].left-options[0].left)<1&&Math.abs(options[i].right-options[0].right)<1,'all three alternatives share the same width');
+     }
+     const exercise=before.bounds['.exercise'];
+     assert.ok(Math.abs((exercise.top+exercise.bottom)/2-(height+44)/2)<8,'a short question is centered in the available height');
+     assert.ok(exercise.top>90,'short questions get breathing room above the exercise');
+     assert.ok(exercise.right-exercise.left<=841,'plain text questions do not stretch across the whole display');
+     if(screenshots)await page.screenshot({path:path.join(screenshots,width+'-three-options.png')});
+    }
     if(q.id==='digestion-anatomy'&&width===1366){
      const map=before.bounds['.anatomy-map'],controls=before.bounds['.visual-response'];
      assert.ok(map&&controls,'anatomy has a combined controls/actions column and a figure');
@@ -61,6 +76,7 @@ const server=http.createServer((req,res)=>{
     }
     await page.locator('#reveal-answer').click();
     const after=await geometry(page);recordOverflow(q,viewport,'revealed',after);
+    if(screenshots&&width===1366&&['digestion-anatomy','protein-quality','carb-sort','practical-meal-energy-density'].includes(q.id))await page.screenshot({path:path.join(screenshots,width+'-'+q.id+'.png')});
     maxHeight=Math.max(maxHeight,before.scrollHeight,after.scrollHeight);
     maxActionsBottom=Math.max(maxActionsBottom,before.bounds['.task-actions'].bottom,after.bounds['.task-actions'].bottom);
    }

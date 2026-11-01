@@ -165,7 +165,8 @@
         const wrap = document.querySelector('.country-map-wrap');
         if (wrap && !wrap.querySelector('.country-zoom-tip')) {
           const tip = document.createElement('span'); tip.className = 'country-zoom-tip';
-          tip.textContent = 'Scroll for å zoome · dra for å flytte'; wrap.append(tip);
+          tip.textContent = 'Dra for å flytte · zoom med +/−'; wrap.append(tip);
+          if(typeof updateCountryMapProjectionControls==='function')updateCountryMapProjectionControls();
         }
       }
       if (mode === 'geoguessr') {

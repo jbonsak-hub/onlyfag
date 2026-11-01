@@ -697,3 +697,13 @@ body[data-quiz] #verden-quiz .places-visual-setup .quiz-preview-options>span{fon
 }
 
 body[data-quiz] #verden-quiz .places-visual-setup :is(.streak-region-btn,.streak-direction-btn){background:var(--q-soft)!important;color:var(--q-ink)!important}
+
+/* Country quiz: switch projection without replacing the running quiz or input. */
+.country-map-view-controls{position:absolute;top:10px;right:10px;z-index:4;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:7px;max-width:calc(100% - 20px)}
+.country-map-projection-toggle,.country-map-camera-controls{display:flex;overflow:hidden;border:1px solid var(--q-line);border-radius:6px;background:var(--q-paper);box-shadow:0 1px 5px #152d3720}
+.country-map-view-controls button{display:flex;align-items:center;justify-content:center;min-height:40px;min-width:40px;border:0;border-right:1px solid var(--q-line);padding:8px 11px;font:700 12px/1.2 'Segoe UI',sans-serif;color:var(--q-ink);background:var(--q-paper);cursor:pointer;touch-action:manipulation}
+.country-map-view-controls button:last-child{border-right:0}
+.country-map-view-controls button[aria-pressed=true]{background:var(--q-green);color:white}
+.country-map-view-controls button:hover{filter:brightness(.96)}
+.country-map-view-controls button:focus-visible{outline:3px solid #b17a22;outline-offset:-3px}
+@media(max-width:700px){.country-map-view-controls{top:7px;right:7px;gap:5px;max-width:calc(100% - 14px)}.country-map-view-controls button{min-height:40px;padding:7px 9px;font-size:11px}.country-map-camera-controls button{min-width:36px}}

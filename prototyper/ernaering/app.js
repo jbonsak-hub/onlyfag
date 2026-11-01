@@ -1,9 +1,10 @@
-import {questions, sources} from './questions.js?v=20261101-3';
-import {organs, digestiveSVG} from './diagram.js?v=20261101-3';
-import {figure} from './figures.js?v=20261101-3';
-import {placementUI,placeMatch,placeSort} from './placement-ui.js?v=20261101-3';
-import {foodArtworkSVG} from './food-figures.js?v=20261101-3';
-import {STORE_KEY, topics, types, shuffle, mixedOrder, evaluate, needsReview, resultRecord, pickNext, rememberQuestion, recentSummary, recordRecentResult} from './engine.js?v=20261101-3';
+import {questions, sources} from './questions.js?v=20261101-4';
+import {organs, digestiveSVG} from './diagram.js?v=20261101-4';
+import {figure} from './figures.js?v=20261101-4';
+import {placementUI,placeMatch,placeSort} from './placement-ui.js?v=20261101-4';
+import {foodArtworkSVG} from './food-figures.js?v=20261101-4';
+import {STORE_KEY, topics, types, shuffle, mixedOrder, evaluate, needsReview, resultRecord, pickNext, rememberQuestion, recentSummary, recordRecentResult} from './engine.js?v=20261101-4';
+import {createFlashcardView, renderConcepts} from './flashcard-view.js?v=20261101-4';
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -15,12 +16,16 @@ try {const parsed=JSON.parse(localStorage.getItem(STORE_KEY));if(parsed?.version
 const params=new URLSearchParams(location.search);
 const embedded=params.get('embedded')==='1'&&window.parent!==window;
 if(embedded)document.documentElement.classList.add('nutrition-embedded');
-const initialTopic=params.get('topic');
-const validTopic=topic=>topic==='all'||topic==='review'||Object.hasOwn(topics,topic);
-const state={topic:validTopic(initialTopic)?initialTopic:'all',view:'practice',search:'',queue:[],id:null};
+const initialTopic=params.get('topic')||(location.hash==='#flashcards'?'flashcards':null);
+const validTopic=topic=>topic==='all'||topic==='review'||topic==='flashcards'||Object.hasOwn(topics,topic);
+const state={topic:validTopic(initialTopic)?initialTopic:'all',view:params.get('view')==='concepts'||location.hash==='#concepts'?'concepts':'practice',search:'',queue:[],id:null};
 if(!data.rotation || !Array.isArray(data.rotation.seen) || !Array.isArray(data.rotation.recent))data.rotation={seen:[],recent:[]};
 if(!data.recentResults||typeof data.recentResults!=='object'||Array.isArray(data.recentResults))data.recentResults={};
 const sessions=new Map();
+const flashcardView=createFlashcardView({root:$('#content'),getRotation(){
+  if(!data.flashcardRotation||!Array.isArray(data.flashcardRotation.seen)||!Array.isArray(data.flashcardRotation.recent))data.flashcardRotation={seen:[],recent:[]};
+  return data.flashcardRotation;
+},save,announce});
 
 function announce(s){$('#announcer').textContent=s;}
 function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(data));storageOK=true;}catch{storageOK=false;}storageMessage();}
@@ -58,10 +63,17 @@ function renderProgress(){
   storageMessage();publishState();
 }
 function renderNav(){
-  $('#topics').innerHTML=[...Object.entries(topics),['all','Blandet øving']].map(([id,label],i)=>`<button class="topic-button ${state.topic===id?'active':''}" data-topic="${id}" aria-pressed="${state.topic===id}"><span class="topic-symbol" aria-hidden="true">${id==='all'?'↔':String(i+1).padStart(2,'0')}</span><span>${esc(label)}</span><span class="topic-count" data-topic-score="${id}"></span></button>`).join('');
+  $('#topics').innerHTML=[...Object.entries(topics),['all','Blandet øving'],['flashcards','Begreper flashcards']].map(([id,label],i)=>`<button class="topic-button ${state.topic===id?'active':''}" data-topic="${id}" aria-pressed="${state.topic===id}"><span class="topic-symbol" aria-hidden="true">${id==='all'?'↔':id==='flashcards'?'↶':String(i+1).padStart(2,'0')}</span><span>${esc(label)}</span>${id==='flashcards'?'':`<span class="topic-count" data-topic-score="${id}"></span>`}</button>`).join('');
   renderProgress();
 }
-function renderShell(){cancelPlacementDrag();renderNav();$('#active-topic').textContent=topics[state.topic]||(state.topic==='review'?'Repetisjon':'Blandet øving');for(const v of ['practice','bank']){$('#'+v+'-tab').classList.toggle('active',state.view===v);$('#'+v+'-tab').setAttribute('aria-pressed',state.view===v);}if(state.view==='bank')renderBank();else renderQuestion();}
+function renderShell(){
+  cancelPlacementDrag();
+  const concepts=state.view==='concepts',cards=state.topic==='flashcards'&&!concepts;if(cards)state.view='practice';
+  renderNav();$('#active-topic').textContent=concepts?'Begreper':topics[state.topic]||(cards?'Begreper flashcards':state.topic==='review'?'Repetisjon':'Blandet øving');
+  $('#progress-copy').hidden=cards||concepts;$('#content').setAttribute('aria-label',concepts?'Begrepsliste':cards?'Begreper flashcards':'Oppgaver');
+  for(const v of ['practice','bank','concepts']){$('#'+v+'-tab').classList.toggle('active',state.view===v);$('#'+v+'-tab').setAttribute('aria-pressed',state.view===v);}
+  if(concepts)renderConcepts($('#content'));else if(cards)flashcardView.render();else if(state.view==='bank')renderBank();else renderQuestion();
+}
 function openQuestion(id,{focus=true,fresh=false}={}){
   if(!questions.some(q=>q.id===id))return;
   const changed=state.id!==id;state.id=id;state.view='practice';data.lastId=id;if(changed)rememberQuestion(data.rotation,current());if(fresh||sessions.get(id)?.done)sessions.delete(id);
@@ -69,7 +81,7 @@ function openQuestion(id,{focus=true,fresh=false}={}){
   history.replaceState(null,'','#'+id);save();renderShell();
   if(focus){$('.task-heading')?.focus();window.scrollTo({top:0,behavior:'instant'});}
 }
-function resetSelection(){rebuildQueue();if(state.view==='practice'){const id=chooseQuestion();if(id){openQuestion(id,{focus:false});return;}state.id=null;}renderShell();}
+function resetSelection(){if(state.view==='concepts'){history.replaceState(null,'','#concepts');renderShell();return;}if(state.topic==='flashcards'){state.view='practice';history.replaceState(null,'','#flashcards');renderShell();return;}rebuildQueue();if(state.view==='practice'){const id=chooseQuestion();if(id){openQuestion(id,{focus:false});return;}state.id=null;}renderShell();}
 function renderBank(){
   $('#content').innerHTML='<label class="sr-only" for="bank-search">Søk etter oppgave eller fagbegrep</label><input id="bank-search" class="bank-search" type="search" placeholder="Søk etter oppgave eller fagbegrep…"><p class="bank-summary" id="bank-summary" aria-live="polite"></p><div class="bank-list" id="bank-list"></div>';
   $('#bank-search').value=state.search;renderBankRows();
@@ -179,6 +191,7 @@ $('#content').addEventListener('change',e=>{if(e.target.matches('[data-self-chec
 $('#content').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('input[data-row]')){e.preventDefault();check();}});
 $('#content').addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b||b.disabled)return;
+  if(state.topic==='flashcards'||state.view==='concepts')return;
   if(b.dataset.open){openQuestion(b.dataset.open);return;}
   if(b.id==='show-all-topics'){state.topic='all';resetSelection();return;}
   if(b.id==='new-round'){sessions.clear();rebuildQueue();if(state.queue.length)openQuestion(chooseQuestion(),{fresh:true});else{state.id=null;renderShell();}return;}
@@ -254,14 +267,14 @@ function endTouch(e,cancelled=false){
 $('#content').addEventListener('lostpointercapture',()=>cancelPlacementDrag());
 $('#content').addEventListener('pointerup',e=>endTouch(e));$('#content').addEventListener('pointercancel',e=>endTouch(e,true));
 $('#content').addEventListener('click',e=>{if(suppressPlacementClick){e.preventDefault();e.stopImmediatePropagation();}},true);
-$('#topics').addEventListener('click',e=>{const b=e.target.closest('[data-topic]');if(b){state.topic=b.dataset.topic;resetSelection();closeMenu();}});
-for(const v of ['practice','bank'])$('#'+v+'-tab').onclick=()=>{state.view=v;renderShell();closeMenu();};
+$('#topics').addEventListener('click',e=>{const b=e.target.closest('[data-topic]');if(b){state.topic=b.dataset.topic;if(state.topic==='flashcards'||state.view==='concepts')state.view='practice';resetSelection();closeMenu();if(state.topic==='flashcards')flashcardView.focus();}});
+for(const v of ['practice','bank','concepts'])$('#'+v+'-tab').onclick=()=>{const fromConcepts=state.view==='concepts';if(v==='concepts'||state.topic==='flashcards'&&v==='bank'){state.topic='all';rebuildQueue();}state.view=v;if(v==='concepts'||fromConcepts||v==='practice'&&!current())resetSelection();else renderShell();closeMenu();};
 const dialog=$('#about-dialog');
 function showAbout(){dialog.showModal();$('#reset-confirm').hidden=true;}
 $('#about-button').onclick=showAbout;$('#sources-button').onclick=showAbout;$('#close-dialog').onclick=()=>dialog.close();
 $('#reset-progress').onclick=()=>{$('#reset-confirm').hidden=false;$('#cancel-reset').focus();};
 $('#cancel-reset').onclick=()=>{$('#reset-confirm').hidden=true;$('#reset-progress').focus();};
-$('#confirm-reset').onclick=()=>{data={version:1,records:{},lastId:questions[0].id,rotation:{seen:[],recent:[]},recentResults:{}};sessions.clear();save();dialog.close();Object.assign(state,{topic:'all',view:'practice'});resetSelection();announce('Øvingshistorikken for ernæring og helse er nullstilt.');};
+$('#confirm-reset').onclick=()=>{data={version:1,records:{},lastId:questions[0].id,rotation:{seen:[],recent:[]},recentResults:{}};sessions.clear();flashcardView.reset();save();dialog.close();Object.assign(state,{topic:'all',view:'practice'});resetSelection();announce('Øvingshistorikken for ernæring og helse er nullstilt.');};
 // Make the full, already-reviewed source list available only inside the dialog.
 const sourceList=dialog.querySelector('ul');sourceList.innerHTML=sources.map(s=>`<li>${s.url?`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>`:esc(s.title)}${s.description?` — ${esc(s.description)}`:''}</li>`).join('');
 const mobile=matchMedia('(max-width:760px)');
@@ -271,18 +284,19 @@ function closeMenu(){const wasOpen=$('#sidebar').classList.contains('open');$('#
 $('#menu-button').onclick=()=>{if(embedded||!mobile.matches)return;$('#sidebar').classList.add('open');$('#sidebar').inert=false;$('.workspace').inert=true;$('#menu-button').setAttribute('aria-expanded','true');$('#menu-backdrop').hidden=false;$('#close-menu').focus();};
 $('#close-menu').onclick=closeMenu;$('#menu-backdrop').onclick=closeMenu;mobile.addEventListener('change',closeMenu);
 document.addEventListener('keydown',e=>{if(!$('#sidebar').classList.contains('open'))return;if(e.key==='Escape'){closeMenu();return;}if(e.key==='Tab'){const controls=[...$('#sidebar').querySelectorAll('button,a')].filter(x=>!x.disabled);const first=controls[0],last=controls.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
-window.addEventListener('hashchange',()=>{const id=location.hash.slice(1);if(questions.some(q=>q.id===id))openQuestion(id);});
+window.addEventListener('hashchange',()=>{const id=location.hash.slice(1);if(id==='concepts'){state.view='concepts';resetSelection();return;}if(id==='flashcards'){state.topic='flashcards';state.view='practice';resetSelection();return;}if(questions.some(q=>q.id===id)){if(state.topic==='flashcards')state.topic=questions.find(q=>q.id===id).topic;openQuestion(id);}});
 
 // The shared Naturfag sidebar is the only navigation in embedded mode.
 window.addEventListener('message',event=>{
   if(!embedded||event.source!==window.parent||event.origin!==location.origin)return;
   const message=event.data;
   if(message?.type==='onlyfag:nutrition:topic'&&validTopic(message.topic)){
-    const view=message.view==='bank'?'bank':'practice';
-    if(message.topic===state.topic&&view===state.view){publishState();return;}
+    const view=message.view==='concepts'?'concepts':message.view==='bank'&&message.topic!=='flashcards'?'bank':'practice';
+    if(message.topic===state.topic&&view===state.view){if(message.focus&&state.topic==='flashcards'&&view==='practice')flashcardView.focus();publishState();return;}
     state.topic=message.topic;
-    state.view=message.view==='bank'?'bank':'practice';
+    state.view=view;
     resetSelection();
+    if(message.focus&&state.topic==='flashcards')flashcardView.focus();
   }
   if(message?.type==='onlyfag:nutrition:host-layout'&&typeof message.sidebarCollapsed==='boolean'){
     document.documentElement.classList.toggle('nutrition-host-collapsed',message.sidebarCollapsed);
@@ -301,5 +315,6 @@ window.addEventListener('storage',event=>{
 rebuildQueue();closeMenu();
 const requested=location.hash.slice(1);
 const reloading=performance.getEntriesByType?.('navigation')?.[0]?.type==='reload';
-if(embedded&&params.get('view')==='bank'){state.view='bank';renderShell();}
+if(state.topic==='flashcards'||state.view==='concepts')resetSelection();
+else if(embedded&&params.get('view')==='bank'){state.view='bank';renderShell();}
 else openQuestion(!reloading&&questions.some(q=>q.id===requested)?requested:chooseQuestion(),{focus:false});
