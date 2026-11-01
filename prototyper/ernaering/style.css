@@ -143,6 +143,7 @@ body.dark{--paper:#101614;--white:#17201d;--ink:#edf4f1;--muted:#a8b8b0;--green:
 .flashcard-exercise{max-width:720px;margin:0 auto}
 .flashcard{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;width:100%;min-height:270px;padding:28px 32px;border:1px solid var(--line);border-radius:8px;background:var(--white);text-align:center}
 .flashcard:hover{border-color:var(--green)}
+.flashcard{touch-action:pan-y pinch-zoom;user-select:none;-webkit-user-select:none}
 .flashcard-term{font-size:28px;font-weight:700;line-height:1.25;overflow-wrap:anywhere}
 .flashcard.is-revealed .flashcard-term{font-size:16px;color:var(--muted)}
 .flashcard-definition{font-size:21px;line-height:1.5;max-width:56ch}

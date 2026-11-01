@@ -114,13 +114,14 @@ brukerens ønske. Tilleggene er fruktose, sukrose, laktose, galle, galleblære,
 tarmtotter, peristaltiske bevegelser, laktase og laktoseintoleranse.
 
 Trykk på kortet eller bruk mellomrom for å snu det; venstre/høyre piltast bytter
-kort. Hele utvalget vises før gjentakelser, med separat lokal rotasjon og de ti
+kort. På mobil går sveip til venstre til neste kort og sveip til høyre til
+forrige; et trykk snur kortet. Hele utvalget vises før gjentakelser, med separat lokal rotasjon og de ti
 sist viste kortene som sperre ved ny runde. Forrige/neste kan også gå tilbake og
 fram gjennom kortene som allerede er vist i økten. Kortene påvirker ikke
 oppgavenes prosentberegning eller repetisjonshistorikk.
 
 «Begreper» ved siden av Oppgavebank viser hele begrepslisten med de samme
-forklaringene. Felles innganger: `/naturfag.html#nutrition/flashcards` og
+forklaringene, sortert etter norsk alfabet. Felles innganger: `/naturfag.html#nutrition/flashcards` og
 `/naturfag.html#nutrition/all/concepts`. Selvstendige innganger:
 `/prototyper/ernaering.html#flashcards` og `/prototyper/ernaering.html#concepts`.
 

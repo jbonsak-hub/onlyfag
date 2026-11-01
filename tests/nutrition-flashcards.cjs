@@ -22,7 +22,7 @@ if(artifactDir)fs.mkdirSync(artifactDir,{recursive:true});
     const base='http://127.0.0.1:'+server.address().port;
     browser=await chromium.launch({headless:true,executablePath:process.env.BROWSER_EXECUTABLE||'/usr/bin/chromium'});
     async function open(viewport,url,{stored=seed}={}){
-      const context=await browser.newContext({viewport,reducedMotion:'reduce'});
+      const context=await browser.newContext({viewport,hasTouch:viewport.width<700,reducedMotion:'reduce'});
       await context.route('**/*',route=>{
         const request=route.request(),url=request.url();
         return ['GET','HEAD'].includes(request.method())&&(url.startsWith(base+'/')||/^(data|blob):/.test(url))?route.continue():route.abort();
@@ -121,6 +121,34 @@ if(artifactDir)fs.mkdirSync(artifactDir,{recursive:true});
       }
       counts.push({viewport,cards:cards.length});await context.close();
     }
+    // Real touchscreen swipes navigate once, while taps still flip the card.
+    {
+      const {page,frame,context}=await open({width:390,height:844},'/naturfag.html#nutrition/flashcards');
+      const touch=await context.newCDPSession(page);
+      async function swipe(dx,dy=0){
+        const r=await frame.locator('#flip-flashcard').boundingBox();
+        const x=r.x+r.width/2,y=r.y+r.height/2;
+        await touch.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});
+        for(let step=1;step<=5;step++)await touch.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+dx*step/5,y:y+dy*step/5}]});
+        await touch.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+      }
+      const first=await id(frame);
+      await swipe(100);assert.equal(await id(frame),first,'right swipe on the first card stays put');
+      assert.equal(await frame.locator('#flashcard-definition').isVisible(),false,'swiping never flips a card');
+      await swipe(-100);const second=await id(frame);assert.notEqual(second,first,'left swipe advances');
+      assert.equal(await frame.locator('#flashcard-definition').isVisible(),false,'new card stays face down after touch release');
+      await swipe(100);assert.equal(await id(frame),first,'right swipe returns to previous');
+      await frame.locator('#flip-flashcard').tap();
+      assert.equal(await frame.locator('#flashcard-definition').isVisible(),true,'tap after swipe still flips');
+      await swipe(-100);assert.equal(await id(frame),second,'revealed card supports swiping');
+      assert.equal(await frame.locator('#flashcard-definition').isVisible(),false);
+      await swipe(8,90);assert.equal(await id(frame),second,'vertical movement does not navigate');
+      assert.equal(await frame.locator('#flashcard-definition').isVisible(),false,'vertical movement does not flip');
+      await swipe(-20);assert.equal(await id(frame),second,'short drag does not navigate');
+      assert.equal(await frame.locator('#flashcard-definition').isVisible(),false,'short drag does not flip');
+      await frame.locator('#flip-flashcard').tap();assert.equal(await frame.locator('#flashcard-definition').isVisible(),true);
+      await context.close();
+    }
     // Standalone routes work as direct links and keep the same quick controls.
     for(const route of ['/prototyper/ernaering.html?topic=flashcards','/prototyper/ernaering.html#flashcards']){
       const {page,frame,context}=await open({width:390,height:844},route);
@@ -144,8 +172,8 @@ if(artifactDir)fs.mkdirSync(artifactDir,{recursive:true});
         const {flashcards}=await import(new URL('ernaering/flashcards.js?v=20261101-4',location.href));
         return {cards:flashcards,terms:[...document.querySelectorAll('.concept-list dt')].map(el=>el.textContent),definitions:[...document.querySelectorAll('.concept-list dd')].map(el=>el.textContent)};
       });
-      assert.deepEqual(glossary.terms,glossary.cards.map(card=>card.term),'glossary includes every term, in list order');
-      assert.deepEqual(glossary.definitions,glossary.cards.map(card=>card.definition),'glossary includes every concise definition');
+      assert.deepEqual(glossary.terms,[...glossary.cards].sort((a,b)=>a.term.localeCompare(b.term,'nb')).map(card=>card.term),'glossary uses Norwegian alphabetical order');
+      assert.deepEqual(glossary.definitions,[...glossary.cards].sort((a,b)=>a.term.localeCompare(b.term,'nb')).map(card=>card.definition),'alphabetical terms keep their matching definitions');
       assert.equal(await page.locator('[data-nutrition-view="bank"]').evaluate(el=>el.nextElementSibling?.dataset.nutritionView),'concepts','Begreper is adjacent to Oppgavebank');
       assert.equal(await page.locator('[data-nutrition-view="concepts"]').innerText(),'Begreper');
       assert.equal(await page.locator('[data-nutrition-view="concepts"]').getAttribute('aria-pressed'),'true');

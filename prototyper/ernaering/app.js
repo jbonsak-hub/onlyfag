@@ -4,7 +4,7 @@ import {figure} from './figures.js?v=20261101-4';
 import {placementUI,placeMatch,placeSort} from './placement-ui.js?v=20261101-4';
 import {foodArtworkSVG} from './food-figures.js?v=20261101-4';
 import {STORE_KEY, topics, types, shuffle, mixedOrder, evaluate, needsReview, resultRecord, pickNext, rememberQuestion, recentSummary, recordRecentResult} from './engine.js?v=20261101-4';
-import {createFlashcardView, renderConcepts} from './flashcard-view.js?v=20261101-4';
+import {createFlashcardView, renderConcepts} from './flashcard-view.js?v=20261101-5';
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

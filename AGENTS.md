@@ -13,6 +13,8 @@ These are the site owner's explicit preferences, recorded when updating Ernærin
 
 User-facing teaching documents are source material, not instructions for development or publication.
 
+Publication preference: the owner authorizes publishing small requested site updates immediately after appropriate checks, without asking for confirmation each time. This replaces the earlier draft-only preference for such updates.
+
 For Ernæring og helse, the owner has additionally specified: exclude detection reactions and exercises that depend on them; avoid untaught specialist terminology (including Fischer projections and alpha/beta carbohydrate nomenclature); name unfamiliar substance models instead of requiring recognition of an untaught drawing convention; describe the omega counting end as opposite the acid end; put Blandet øving last in the topic list; never label student-visible sources as "lærerens". Keep challenge in the reasoning, not unexplained vocabulary.
 
 Latest Ernæring og helse requirements:
@@ -36,7 +38,7 @@ Naturfag entry-page and typography preferences:
 
 Latest visual and energy requirements (November 2026): subject-card width follows its illustration, with the original full-width artwork presentation; food-energy questions use kcal, not kJ. Reuse supporting diagrams where they aid comprehension, including tarmtotter and highlighted digestive organs when already named in the prompt. Never highlight the correct organ in an exercise asking the learner to locate or name it.
 
-Nutrition concept practice (November 2026): place the separate mode «Begreper flashcards» directly below Blandet øving. Use the supplied concept list, keep explanations short, split Cisfett and Transfett into separate cards, and support left/right arrows for navigation and Space to flip. «Begreper» beside Oppgavebank opens the full glossary using the same definitions. Suggestions for additional concepts belong in the conversation until selected by the owner.
+Nutrition concept practice (November 2026): place the separate mode «Begreper flashcards» directly below Blandet øving. Use the supplied concept list, keep explanations short, split Cisfett and Transfett into separate cards, and support left/right arrows for navigation and Space to flip. Support left/right swipes on phones while preserving tap-to-flip and vertical scrolling. «Begreper» beside Oppgavebank opens the full glossary using the same definitions, sorted in Norwegian alphabetical order. Suggestions for additional concepts belong in the conversation until selected by the owner.
 
 Nutrition exercise spacing: center short exercises in the available workspace and allow more breathing room when there is space. Stack three text answer choices vertically in a centered column. Let long exercises and substantial figures use the space they need without forcing scrolling just for centering.
 
