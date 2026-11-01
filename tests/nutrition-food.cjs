@@ -1,4 +1,4 @@
-/* Real food photographs, nutrient choices and the external lookup, in the shared host. */
+/* Original food illustrations, nutrient choices and the external lookup, in the shared host. */
 const assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
@@ -65,8 +65,10 @@ const option=(frame,value)=>frame.getByRole('button',{name:new RegExp('^'+escape
     const {questions}=await import(new URL('ernaering/questions.js',location.href).href);return questions;
    });
    const foods=bank.filter(q=>q.id.startsWith('food-nutrients-'));
-   assert.equal(foods.length,10,'ten food photographs have nutrient-selection exercises');
-   const questions=[...foods,...galleryIds.map(id=>bank.find(q=>q.id===id)),bank.find(q=>q.id===lookupId)];
+   assert.equal(foods.length,10,'ten food illustrations have nutrient-selection exercises');
+   const comparisons=bank.filter(q=>q.optionFoods);
+   assert.equal(comparisons.length,5,'five four-picture comparison exercises');
+   const questions=[...foods,...comparisons,...galleryIds.map(id=>bank.find(q=>q.id===id)),bank.find(q=>q.id===lookupId)];
    assert.ok(questions.every(Boolean),'the existing food exercises and lookup are available');
    let photoCount=0,maxScrollHeight=0;
    for(const q of questions){
@@ -74,23 +76,28 @@ const option=(frame,value)=>frame.getByRole('button',{name:new RegExp('^'+escape
     await frame.waitForFunction(id=>document.querySelector('[data-question]')?.dataset.question===id,q.id);
     assert.equal(await frame.locator('.feedback,.open-model,.exercise .correct').count(),0,q.id+': no solution is shown before answering');
     if(q.id!==lookupId){
-     const photos=frame.locator('.exercise img');
-     assert.ok(await photos.count()>0,q.id+': actual photographs accompany the task');
+     const illustrations=frame.locator('.food-art');
+     assert.ok(await illustrations.count()>0,q.id+': food illustrations accompany the task');
      const singleFood=q.id.startsWith('food-nutrients-');
-     if(singleFood)assert.equal(await photos.count(),1,q.id+': the named food is shown clearly on its own');
-     for(const photo of await photos.all()){
-      const data=await photo.evaluate(async img=>{
-       await img.decode();
-       const r=img.getBoundingClientRect(),caption=img.closest('.food-card')?.querySelector('.food-label')||img.closest('figure')?.querySelector('figcaption .food-label')||img.closest('figure')?.querySelector('figcaption');
+     if(singleFood)assert.equal(await illustrations.count(),1,q.id+': one named food illustration');
+     if(q.optionFoods)assert.equal(await illustrations.count(),4,q.id+': four illustrated answer choices');
+     for(const art of await illustrations.all()){
+      const data=await art.evaluate(async svg=>{
+       const element=svg.querySelector('image'),src=element.getAttribute('href'),img=new Image();img.src=src;await img.decode();
+       const r=svg.getBoundingClientRect(),caption=svg.closest('button')?.querySelector('.food-option-label')||svg.closest('.food-card')?.querySelector('.food-label')||svg.closest('figure')?.querySelector('figcaption');
        const c=caption?.getBoundingClientRect();
-       return {src:img.currentSrc,alt:img.alt,complete:img.complete,naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,width:r.width,height:r.height,bottom:r.bottom,caption:caption?.textContent.trim(),captionTop:c?.top,captionSize:caption?parseFloat(getComputedStyle(caption).fontSize):0};
+       return {src:img.src,alt:svg.getAttribute('aria-label'),complete:img.complete,naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,declaredWidth:Number(element.getAttribute('width')),declaredHeight:Number(element.getAttribute('height')),width:r.width,height:r.height,bottom:r.bottom,caption:caption?.textContent.trim(),captionTop:c?.top,captionSize:caption?parseFloat(getComputedStyle(caption).fontSize):0};
       });
-      assert.equal(new URL(data.src).origin,base,q.id+': photos are stored locally');
-      assert.ok(data.complete&&Math.max(data.naturalWidth,data.naturalHeight)>=300&&Math.min(data.naturalWidth,data.naturalHeight)>=100&&data.naturalWidth*data.naturalHeight>=40000,q.id+': genuine image bytes decode at useful resolution for their aspect ratio');
-      assert.ok(data.alt&&data.caption,q.id+': the food has alternative text and a visible name');
-      assert.ok(data.captionTop>=data.bottom-1,q.id+': its name appears below the photograph');
-      assert.ok(data.captionSize>=12,q.id+': the food name is readable');
-      assert.ok(data.width>=(singleFood?140:70)&&data.height>=(singleFood?100:60),q.id+': the photograph is large enough to recognize');
+      assert.equal(new URL(data.src).origin,base,q.id+': illustrations load locally');
+      assert.ok(data.complete&&data.naturalWidth===data.declaredWidth&&data.naturalHeight===data.declaredHeight&&data.naturalWidth>=300&&data.naturalHeight>=300,q.id+': the original illustration sheet decodes');
+      assert.ok(data.alt&&data.caption,q.id+': alternative text and visible name');
+      assert.ok(data.captionTop>=data.bottom-1,q.id+': name below the illustration');
+      assert.ok(data.captionSize>=12,q.id+': the name remains readable');
+      if(singleFood){
+       const expected=width<=390?95:width===1024?105:185;
+       assert.ok(Math.abs(data.width-expected)<.2&&Math.abs(data.height-expected)<.2,q.id+': half-size food illustration');
+      }
+      assert.ok(data.width>=(singleFood?94:39)&&data.height>=(singleFood?94:39),q.id+': recognizable thumbnail');
       photoCount++;
      }
     }else{
@@ -132,6 +139,6 @@ const option=(frame,value)=>frame.getByRole('button',{name:new RegExp('^'+escape
   console.log(JSON.stringify({metrics,overflows:overflows.map(({id,viewport,stage,scrollWidth,scrollHeight})=>({id,viewport,stage,scrollWidth,scrollHeight})),errors},null,2));
   assert.deepEqual(errors,[],'no browser exceptions');
   assert.equal(overflows.length,0,'photos, nutrient controls, lookup and feedback fit together');
-  console.log('Food photographs, multiple nutrient choices, photo galleries and the Matvaretabellen lookup passed.');
+  console.log('Food illustrations, multiple nutrient choices, illustration galleries and the Matvaretabellen lookup passed.');
  }finally{if(browser)await browser.close();await new Promise(resolve=>server.close(resolve));}
 })().catch(error=>{console.error(error);process.exitCode=1;});

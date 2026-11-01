@@ -1,7 +1,8 @@
-import {questions, sources} from './questions.js?v=20261031-8';
-import {organs, digestiveSVG} from './diagram.js?v=20261031-8';
-import {figure} from './figures.js?v=20261031-8';
-import {STORE_KEY, topics, types, shuffle, mixedOrder, evaluate, needsReview, resultRecord, pickNext, rememberQuestion, recentSummary, recordRecentResult} from './engine.js?v=20261031-8';
+import {questions, sources} from './questions.js?v=20261101-1';
+import {organs, digestiveSVG} from './diagram.js?v=20261101-1';
+import {figure} from './figures.js?v=20261101-1';
+import {foodArtworkSVG} from './food-figures.js?v=20261101-1';
+import {STORE_KEY, topics, types, shuffle, mixedOrder, evaluate, needsReview, resultRecord, pickNext, rememberQuestion, recentSummary, recordRecentResult} from './engine.js?v=20261101-1';
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -107,7 +108,16 @@ function rowStatus(q,i){
 }
 function answerUI(q,s){
   if(q.type==='anatomy'||q.type==='process')return diagramTask(q,s);
-  if(q.type==='choice'||q.type==='multi')return `<p class="type-instruction">${q.type==='choice'?'Velg ett svar.':'Velg alle riktige svar.'}</p><div class="answer-options">${s.options.map((v,i)=>{const chosen=s.values.includes(v);const result=s.marks.length&&chosen?(q.type==='choice'?v===q.answer:q.answer.includes(v))? 'correct':'wrong':'';return `<button id="option-${i}" class="option-button ${chosen?'selected':''} ${result}" data-option="${i}" aria-pressed="${chosen}" ${s.done||s.locked.has(v)?'disabled':''}><span class="option-letter" aria-hidden="true">${result==='correct'?'✓':result==='wrong'?'×':chosen?(q.type==='multi'?'✓':'●'):''}</span><span>${esc(v)}${result?`<span class="sr-only"> · ${result==='correct'?'Riktig':'Prøv igjen'}</span>`:''}</span></button>`;}).join('')}</div>`;
+  if(q.type==='choice'||q.type==='multi'){
+    const illustrated=Boolean(q.optionFoods);
+    return `<p class="type-instruction">${q.type==='choice'?'Velg ett svar.':'Velg alle riktige svar.'}</p><div class="answer-options ${illustrated?'food-options':''}">${s.options.map((v,i)=>{
+      const chosen=s.values.includes(v);
+      const result=s.marks.length&&chosen?(q.type==='choice'?v===q.answer:q.answer.includes(v))?'correct':'wrong':'';
+      const marker=result==='correct'?'✓':result==='wrong'?'×':chosen?(q.type==='multi'?'✓':'●'):'';
+      const label=`<span class="${illustrated?'food-option-label':''}">${esc(v)}${result?`<span class="sr-only"> · ${result==='correct'?'Riktig':'Prøv igjen'}</span>`:''}</span>`;
+      return `<button id="option-${i}" class="option-button ${chosen?'selected':''} ${result}" data-option="${i}" aria-pressed="${chosen}" ${illustrated?`aria-label="${esc(v)}"`:''} ${s.done||s.locked.has(v)?'disabled':''}><span class="option-letter" aria-hidden="true">${marker}</span>${illustrated?foodArtworkSVG(q.optionFoods[v]):''}${label}</button>`;
+    }).join('')}</div>`;
+  }
   if(['sort','match','fill'].includes(q.type)){
     const rows=q.type==='sort'?q.items:q.type==='match'?q.pairs:q.blanks;
     return `<div class="rows ${q.figure==='nutrient-map'?'map-rows':rows.length>6?'many-rows':''}">${rows.map((row,i)=>`<div class="task-row ${mark(i)}"><label for="row-${i}">${esc(row.label||row.left)} <span class="row-mark">${rowStatus(q,i)}</span></label><div>${q.type==='fill'?`<div class="unit-input"><input id="row-${i}" data-row="${i}" type="text" autocomplete="off" spellcheck="false" ${row.answers.some(a=>/^\d+$/.test(a))?'inputmode="decimal"':''} value="${esc(s.values[i]||'')}" ${locked(i)?'disabled':''}>${row.unit?`<span class="unit">${row.unit}</span>`:''}</div>`:`<select id="row-${i}" data-row="${i}" ${locked(i)?'disabled':''}>${rowOptions(q.type==='sort'?q.groups:s.right,s.values[i])}</select>`}</div></div>`).join('')}</div>`;

@@ -4,6 +4,8 @@ import {test} from 'node:test';
 import {questions, sources} from '../prototyper/ernaering/questions.js';
 import {organs} from '../prototyper/ernaering/diagram.js';
 import {figure} from '../prototyper/ernaering/figures.js';
+import {foodIllustrations,foodArtwork} from '../prototyper/ernaering/food-illustrations.js';
+import {supportFigures} from '../prototyper/ernaering/support-figures.js';
 import {evaluate, accepts, resultRecord, needsReview, mixedOrder, pickNext, rememberQuestion, topics, types, recordRecentResult, recentSummary} from '../prototyper/ernaering/engine.js';
 const ids=organs.map(o=>o.id), processIds=ids.filter(id=>id!=='duodenum');
 function answer(q){switch(q.type){case 'anatomy':return ids;case 'choice':return [q.answer];case 'multi':case 'process':return q.answer;case 'sort':return q.items.map(x=>x.group);case 'match':return q.pairs.map(x=>x.right);case 'fill':return q.blanks.map(x=>x.answers[0]);case 'order':return q.items;}}
@@ -285,38 +287,29 @@ test('five additional applied figures span five subject themes and keep conclusi
  assert.match(protein.prompt,/tre/i,'the simplified model is explicitly limited to its three amino acids');
 });
 
-test('food nutrient tasks use actual local photographs and require multiple selections',()=>{
+test('food tasks use ten distinct named illustrations from the local artwork',()=>{
  const foods=questions.filter(q=>q.id.startsWith('food-nutrients-'));
- assert.equal(foods.length,10,'ten photographed foods are available');
- const credits=readFileSync(new URL('../docs/ernaering-matbilder.md',import.meta.url),'utf8');
- const imageFiles=new Set();
+ assert.equal(foods.length,10);
+ const bytes=readFileSync(new URL('..'+new URL(foodArtwork.src,'https://onlyfag.test/prototyper/ernaering.html').pathname,import.meta.url));
+ assert.ok(bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])),'the shared artwork has real PNG bytes');
+ assert.equal(bytes.readUInt32BE(16),foodArtwork.width);assert.equal(bytes.readUInt32BE(20),foodArtwork.height);
+ const cells=new Set();
  for(const q of foods){
-  assert.equal(q.type,'multi',q.id+': pupils can check several nutrients');
-  assert.ok(q.answer.length>=2&&q.answer.length<q.options.length,q.id+': more than one nutrient and plausible incorrect alternatives');
-  assert.ok(!evaluate(q,[q.answer[0]]).correct,q.id+': one right nutrient is an incomplete answer');
-  const drawing=figure(q.figure),images=[...drawing.matchAll(/<img\b[^>]*\bsrc="([^"]+)"[^>]*>/g)];
-  assert.equal(images.length,1,q.id+': one named food is shown');
-  const caption=drawing.match(/<figcaption\b[^>]*>([\s\S]*?)<\/figcaption>/i)?.[1].replace(/<[^>]+>/g,'').trim();
-  assert.ok(caption,q.id+': its name is printed below the photo');
-  const url=new URL(images[0][1],'https://onlyfag.test/prototyper/ernaering.html');
-  assert.equal(url.origin,'https://onlyfag.test',q.id+': the photo is not a third-party hotlink');
-  assert.match(url.pathname,/^\/assets\/nutrition\/food\//,q.id+': the photograph is a stored site asset');
-  const bytes=readFileSync(new URL('..'+url.pathname,import.meta.url));
-  const photographicFile=bytes[0]===0xff&&bytes[1]===0xd8||bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10]))||bytes.toString('ascii',0,4)==='RIFF'&&bytes.toString('ascii',8,12)==='WEBP';
-  assert.ok(photographicFile&&bytes.length>1000,q.id+': real JPEG, PNG or WebP bytes exist');
-  const basename=url.pathname.split('/').at(-1);
-  assert.ok(credits.includes(basename),q.id+': photo provenance is recorded');
-  imageFiles.add(url.pathname);
+  assert.equal(q.type,'multi');assert.ok(q.answer.length>=2&&q.answer.length<q.options.length);
+  assert.ok(!evaluate(q,[q.answer[0]]).correct);
+  const id=q.figure.slice(5),food=foodIllustrations[id],drawing=figure(q.figure);assert.ok(food);
+  assert.match(drawing,/<svg[^>]*class="food-art"/);assert.ok(drawing.includes(food.name));
+  assert.doesNotMatch(drawing,/Fotografi|Bildekilde|photo-credits/,'the old photographs are replaced');
+  assert.ok(food.column>=0&&food.column<foodArtwork.columns&&food.row>=0&&food.row<foodArtwork.rows);
+  cells.add(food.column+':'+food.row);
  }
- assert.equal(imageFiles.size,10,'the food exercises use ten distinct photographs');
- assert.match(credits,/https:\/\//,'photo sources can be inspected');
- assert.match(credits,/CC0|CC BY|public domain|offentlig eie|Unsplash|Pexels|Pixabay/i,'reuse terms are recorded');
+ assert.equal(cells.size,10,'every food has its own illustration');
 });
 
-test('existing food questions use named photo galleries',()=>{
+test('existing food questions use named illustration galleries',()=>{
  for(const id of ['protein-sources','doc-food-carbs','doc-essential-fat-sources']){
   const q=questions.find(q=>q.id===id);assert.ok(q?.figure,id+': the existing food task has a visual');
-  const images=[...figure(q.figure).matchAll(/<img\b/g)];
+  const images=[...figure(q.figure).matchAll(/<svg\b/g)];
   assert.ok(images.length>=3,id+': several foods can be compared visually');
  }
 });
@@ -330,6 +323,37 @@ test('the Matvaretabellen exercise requires a real lookup and portion comparison
  assert.match(lookup.explanation,/63\s*mg/);assert.match(lookup.explanation,/54\s*mg/);
 });
 
+
+test('food energy uses kcal with consistent calculations',()=>{
+ for(const q of questions)assert.doesNotMatch(JSON.stringify(q),/(?<!\p{L})kJ(?!\p{L})|kilojoule/iu,q.id);
+ const get=id=>questions.find(q=>q.id===id);
+ assert.equal(get('doc-energy-100g').blanks[0].unit,'kcal');assert.ok(evaluate(get('doc-energy-100g'),['280']).correct);
+ assert.equal(get('doc-energy-portion').blanks[0].unit,'kcal');assert.ok(evaluate(get('doc-energy-portion'),['112']).correct);
+ assert.equal(get('doc-energy-units').blanks[0].unit,'g');assert.ok(evaluate(get('doc-energy-units'),['60']).correct);
+});
+
+test('support illustrations repeat relevant anatomy without identifying location answers',()=>{
+ for(const id of ['digestion-stomach-contents','doc-liver-functions','digestion-peristalsis','digestion-surface']){
+  const q=questions.find(q=>q.id===id);assert.ok(q.figure===supportFigures[id]);assert.match(figure(q.figure),/<svg/);
+ }
+ assert.match(figure('support-organ-liver'),/organ-liver highlighted/);
+ assert.match(figure('support-organ-stomach'),/organ-stomach highlighted/);
+ assert.match(figure('support-villi'),/tarmtotter/i);
+ for(const q of questions.filter(q=>['anatomy','process'].includes(q.type)))assert.ok(!q.figure?.startsWith('support-organ-'),q.id+': location questions must not highlight their answer');
+});
+
+test('comparison questions offer four named pictures with coherent answers',()=>{
+ const comparisons=questions.filter(q=>q.optionFoods);assert.equal(comparisons.length,5);
+ for(const q of comparisons){
+  assert.equal(q.type,'choice');assert.equal(q.options.length,4);
+  assert.equal(new Set(Object.values(q.optionFoods)).size,4);
+  for(const option of q.options)assert.ok(foodIllustrations[q.optionFoods[option]],q.id+': illustrated choice exists');
+  if(q.id!=='food-compare-polysaccharides')assert.match(q.prompt,/100 g spiselig del/);
+ }
+ const poly=comparisons.find(q=>q.id==='food-compare-polysaccharides');
+ assert.equal(poly.answer,'Hvitt sukker');assert.ok(poly.options.includes('Tre')&&poly.options.includes('Potet, rå')&&poly.options.includes('Havregryn'));
+ assert.match(poly.explanation,/cellulose/);assert.match(poly.explanation,/disakkarid/);assert.match(poly.explanation,/kostfiber/);
+});
 
 test('help and page copy obey the same taught-vocabulary limits as questions',()=>{
  const html=readFileSync(new URL('../prototyper/ernaering.html',import.meta.url),'utf8');

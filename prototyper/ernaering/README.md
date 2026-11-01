@@ -2,7 +2,7 @@
 
 Minimalistisk øvingsmodul i eksisterende OnlyFag, tilgjengelig som modulen «Næringsstoffer og fordøyelsen» på `/naturfag.html#nutrition/all`. Den selvstendige adressen `/prototyper/ernaering.html` støttes fortsatt.
 
-173 oppgaver, hvorav 70 med figur eller organmodell. Seks fagtemaer; figuroppgaver ligger under fagtemaet de hører til. Blandet øving står sist. Ingen installasjon eller byggesteg for nettsiden.
+178 oppgaver, hvorav 89 med figur, illustrerte svaralternativer eller organmodell. Seks fagtemaer; figuroppgaver ligger under fagtemaet de hører til. Blandet øving står sist. Ingen installasjon eller byggesteg for nettsiden.
 
 Pensum er de fem opprinnelige PowerPoint-presentasjonene (105 lysbilder) og de fem oppgitte arkene. Arkivets PowerPoint-tekst er hentet og kontrollert fra checkpoint `d92f59d811ee8676d93a0ea135f5c204568cf45b`, `docs/ernaering-grunnlag/`. Se fagloggene i `docs/ernaering-materiale.md` og `docs/ernaering-ndla.md`. NDLA gir oppgaveinspirasjon, men innfører ikke nye nødvendige forkunnskaper.
 
@@ -43,7 +43,7 @@ BROWSER_EXECUTABLE=/usr/bin/chromium node tests/nutrition-food.cjs
 DOM-testen krever `jsdom` (testet med v26; bundling med esbuild). Den kan kjøres med `NODE_PATH` til en isolert installasjon. Ingen pakkefiler eller avhengigheter trengs for selve nettsiden.
 
 - Ren Node-test: skjema og fasiter for alle oppgaver, feil/ekstra valg, svarnormalisering, hjelpetilstand og repetisjon, stokking.
-- DOM-test: alle 173 oppgaver fullføres via grensesnittets kontroller; delvis riktige svar, fasit, egenvurdering, fravær av filter, persistens, mobilmeny, utilgjengelig lagring og avgrenset nullstilling.
+- DOM-test: alle 178 oppgaver fullføres via grensesnittets kontroller; delvis riktige svar, fasit, egenvurdering, fravær av filter, persistens, mobilmeny, utilgjengelig lagring og avgrenset nullstilling.
 - Browserkontroll: alle oppgaver før svar og etter fasit ved 1366 × 768, 1280 × 720, 1024 × 768 og 390 × 844. Kontrollerer oppgave/figur/svar/knapper samlet, ingen horisontal overflyt og ingen nødvendig siderulling ved disse størrelsene med valgfrie ekstralister lukket. Utvidet «Hvorfor?», tekstalternativ og oppgavebank kan rulle etter elevens eget valg. Manuell bildeinspeksjon av blant annet sukkerstrukturer, cis/trans, glyserol/fettsyre og organplassering.
 
 Felles `assets/analytics.js` lastes én gang på siden. Elevsvar sendes ikke til noen tjeneste av øvingsmotoren.
@@ -85,3 +85,21 @@ Tre eksisterende oppgaver om matvarer bruker nå navngitte bildegallerier: plant
 `foodtable-question.js` ber eleven sammenligne vitamin C i 50 g rå rød paprika og 100 g rå appelsin. En tydelig lenke åpner Matvaretabellens søk i ny fane. Verdiene står bare i fasiten. Kontrollert 31.10.2026: henholdsvis 126 og 54 mg per 100 g spiselig del, som gir 63 mot 54 mg i de to porsjonene. Oppgaven trener både presist oppslag og omregning av porsjon.
 
 `tests/nutrition-food.cjs` prøver de ti nye bildeoppgavene, de tre omarbeidede oppgavene og oppslagsoppgaven på mobil og laptop. Den kontrollerer bildelasting, navn, flervalg, delvis retting, fasit, oppslagslenke og kompakt visning.
+
+## Visuell revisjon 1. november 2026
+
+Temakortene bruker igjen kant-til-kant-illustrasjoner, nå med kortbredde tilpasset bildene. Det separate Start-valget er fjernet fra både fellesmenyen og kjemiundermenyen. Klikk Naturfag-tittelen for å gå til temavalget. Direkte modullinker og standardinngangen til temavalget består.
+
+De tidligere matfotografiene er erstattet av ti egne illustrasjoner i `illustrated-foods.png`. `food-illustrations.js` og `food-figures.js` viser separate, navngitte utsnitt av det felles arket. Enkeltillustrasjoner bruker 185 px på vanlig skrivebord og 95 px på mobil, som tilsvarer halvparten av den tidligere bildehøyden; gallerienes illustrasjoner er også halvert. Historiske foto-/lisensfiler beholdes for eldre cachede versjoner.
+
+Fjorten eksisterende oppgaver har fått støttefigurer via `support-figures.js`: den gjenbrukte fordøyelsesmodellen med kjente organer fremhevet, et forstørret utsnitt med tarmtotter og modeller av fettdråper. Organlokalisering og navngivningsoppgaver får ikke fasiten fremhevet. Lange oppgaver får bare figurer der figur og svarkontroller fortsatt kan vises samlet; åpne modellbesvarelser beholder bildet som en mindre oversiktsfigur.
+
+Alle matenergioppgaver bruker kcal. Oppgavene om 20 g fett, 20 g karbohydrat og 5 g protein bruker 9/4/4 kcal per gram og gir 280 kcal per 100 g, eller 112 kcal for 40 g. Den tidligere enhetsomregningen er omarbeidet til å finne porsjonsmassen fra oppgitt energi: 150 kcal ved 250 kcal/100 g gir 60 g.
+
+## Bildealternativer og hurtigfaktorisering
+
+Fem nye oppgaver i `food-comparison-questions.js` bruker fire klikkbare bildealternativer: mest umettet fett, vitamin C, protein og stivelse per 100 g spiselig del, samt hvilket av tre, rå potet, hvitt sukker og havregryn som ikke har polysakkarider. Nytt illustrasjonsark `illustrated-food-concepts.png` viser tre, rå potet og hvitt sukker i samme stil som de øvrige matvarene. En matchende illustrasjon i `illustrated-oats.png` viser havregryn som det fjerde alternativet i polysakkaridoppgaven. Bildene stokkes sammen med navn og svarverdi. Det er vanlig hvitt sukker som er uten polysakkarider; frukt og bær brukes ikke som et feilaktig fiberfritt alternativ.
+
+Fasitene er kontrollert mot Matvaretabellen 1. november 2026. Mandler: 31,4 g enumettede + 11,4 g flerumettede fettsyrer/100 g. Protein per 100 g: goudaost 25,3 g, mandler 21,2 g, rå oppdrettslaks 19,9 g, egg stekt i fett 13,9 g. Vitamin C: rød paprika 126 mg, kiwi 91 mg, appelsin 54 mg, banan 11 mg. Stivelse: kokt basmatiris 24,9 g, rå lagringspotet 15,4 g og vanlig rå banan 4,3 g. Alle oppslag finnes under tilsvarende matvarenavn på matvaretabellen.no. Tallene vises i fasiten, ikke i bildealterna­tivene.
+
+Den detaljerte oppramsingen av oppgavetyper er fjernet fra introduksjonen til hurtigfaktorisering i både `matematikk.html` og `matematikk_phi.html`; den korte instruksen om sum og produkt består.

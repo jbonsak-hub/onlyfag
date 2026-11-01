@@ -1,12 +1,14 @@
-import {nutrientMapSlots} from './figures.js?v=20261031-8';
-import {structureQuestions} from './structure-questions.js?v=20261031-8';
-import {documentQuestions} from './document-questions.js?v=20261031-8';
-import {ndlaQuestions} from './ndla-questions.js?v=20261031-8';
-import {recognitionQuestions} from './recognition-questions.js?v=20261031-8';
-import {appliedFigureQuestions} from './applied-figure-questions.js?v=20261031-8';
-import {respirationQuestions} from './respiration-questions.js?v=20261031-8';
-import {foodQuestions} from './food-questions.js?v=20261031-8';
-import {foodTableQuestion} from './foodtable-question.js?v=20261031-8';
+import {nutrientMapSlots} from './figures.js?v=20261101-1';
+import {structureQuestions} from './structure-questions.js?v=20261101-1';
+import {documentQuestions} from './document-questions.js?v=20261101-1';
+import {ndlaQuestions} from './ndla-questions.js?v=20261101-1';
+import {recognitionQuestions} from './recognition-questions.js?v=20261101-1';
+import {appliedFigureQuestions} from './applied-figure-questions.js?v=20261101-1';
+import {respirationQuestions} from './respiration-questions.js?v=20261101-1';
+import {foodQuestions} from './food-questions.js?v=20261101-1';
+import {foodTableQuestion} from './foodtable-question.js?v=20261101-1';
+import {supportFigures} from './support-figures.js?v=20261101-1';
+import {foodComparisonQuestions} from './food-comparison-questions.js?v=20261101-1';
 
 // Oppgaver avgrenset til undervisningsmaterialet og oppgitt begrepsliste.
 const coreQuestions = [
@@ -1481,7 +1483,7 @@ const coreQuestions = [
   }
 ];
 
-export const questions = [...coreQuestions, ...structureQuestions, ...documentQuestions, ...ndlaQuestions, ...recognitionQuestions, ...appliedFigureQuestions, ...respirationQuestions, ...foodQuestions, foodTableQuestion, {
+export const questions = [...coreQuestions, ...structureQuestions, ...documentQuestions, ...ndlaQuestions, ...recognitionQuestions, ...appliedFigureQuestions, ...respirationQuestions, ...foodQuestions, ...foodComparisonQuestions, foodTableQuestion, {
   "id": "nutrient-concept-map",
   "topic": "energy",
   "type": "match",
@@ -1494,7 +1496,11 @@ export const questions = [...coreQuestions, ...structureQuestions, ...documentQu
   "hint": "Bruk de fire ferdig utfylte feltene til å finne hovedgrupper og undergrupper. Se hvilke bokser som er koblet sammen.",
   "explanation": "Karbohydrater, proteiner og fett kan gi energi. Vitaminer, mineraler og vann gir ikke energi, men er nødvendige for kroppens funksjoner. Kartet viser de vanlige hovedgruppene og forenkler blant annet inndelingen av fett."
 }];
-for(const q of questions){if(!q.family)q.family=q.figure||q.id;}
+for(const q of questions){
+  if(!q.figure&&supportFigures[q.id])q.figure=supportFigures[q.id];
+  if(['applied-fat-processes','support-fat-droplets'].includes(q.figure))q.family='fat-digestion-model';
+  if(!q.family)q.family=q.figure||q.id;
+}
 
 export const sources = [
   {

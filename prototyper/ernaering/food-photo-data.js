@@ -1,4 +1,4 @@
-// Actual camera photographs with local assets and explicit reuse credits.
+// Historical photo metadata for earlier releases. The current module uses food-illustrations.js.
 export const foodPhotos = {
   "egg": {
     "src": "../assets/nutrition/food/egg.webp",

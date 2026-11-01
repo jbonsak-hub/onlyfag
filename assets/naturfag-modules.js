@@ -13,15 +13,16 @@
  while(scroll.firstChild)chemistryGroup.lastElementChild.appendChild(scroll.firstChild);
  const nutritionGroup=document.createElement('details');nutritionGroup.id='nf-nutrition-group';nutritionGroup.className='nf-module-group';
  nutritionGroup.innerHTML='<summary class="nf-module-heading">Næringsstoffer og fordøyelsen</summary><div class="nf-module-submenu">'+topicEntries.map(([topic,label])=>'<button class="nf-nutrition-topic" type="button" data-nutrition-topic="'+topic+'" aria-pressed="false"><span>'+label+'</span><span class="nf-topic-score" data-topic-score="'+topic+'" aria-label="Ingen besvarte oppgaver ennå">—</span></button>').join('')+'<div class="nf-module-secondary"><button class="nf-nutrition-action" type="button" data-nutrition-view="bank">Oppgavebank</button><button class="nf-nutrition-action" type="button" data-nutrition-topic="review">Øv på nytt</button></div></div>';
- const subjectsHome=document.createElement('button');subjectsHome.id='nfSubjectsHome';subjectsHome.type='button';subjectsHome.className='nf-subjects-home';subjectsHome.innerHTML='<span aria-hidden="true">⌂</span><span>Start</span>';subjectsHome.setAttribute('aria-label','Velg hovedtema i naturfag');
- scroll.append(subjectsHome,chemistryGroup,nutritionGroup);
+ scroll.append(chemistryGroup,nutritionGroup);
+ const subjectsHome=document.createElement('a');subjectsHome.id='nfSubjectsHome';subjectsHome.href='#subjects';subjectsHome.textContent='Naturfag';subjectsHome.setAttribute('aria-label','Velg hovedtema i naturfag');
+ sidebar.querySelector('.nf-sidebar-title-row h1')?.replaceChildren(subjectsHome);
  sidebar.setAttribute('aria-label','Temaer i naturfag');
  for(const summary of [chemistryGroup.querySelector('summary'),nutritionGroup.querySelector('summary')]){summary.title=summary.textContent;summary.setAttribute('aria-label',summary.textContent);}
  nutritionGroup.querySelectorAll('.nf-nutrition-topic,.nf-nutrition-action').forEach(button=>{const label=button.querySelector('span')?.textContent||button.textContent;button.title=label;button.setAttribute('aria-label',label);});
  const subtitle=sidebar.querySelector('.nf-sidebar-sub');if(subtitle)subtitle.remove();
  const info=$('#infoPop');if(info)info.innerHTML='<p>Oppgavetrening i kjemi, næringsstoffer og fordøyelse for naturfag. Prosentene viser riktig på de siste 20 besvarte oppgavene per tema. Fremgangen lagres i nettleseren.</p>';
  const subjectsPage=document.createElement('section');subjectsPage.id='page-subjects';subjectsPage.className='page';subjectsPage.setAttribute('aria-label','Velg hovedtema');
- subjectsPage.innerHTML='<h1 class="nf-subjects-heading">Velg tema i naturfag</h1><div class="nf-subject-cards"><a class="nf-subject-card" data-subject="chemistry" href="#chemistry/home"><img src="assets/naturfag-chemistry.svg?v=20261031-8" alt="" width="640" height="360"><span class="nf-subject-card-label"><strong>Kjemi</strong><span aria-hidden="true">→</span></span></a><a class="nf-subject-card" data-subject="nutrition" href="#nutrition/all"><img src="assets/naturfag-nutrition.svg?v=20261031-8" alt="" width="640" height="360"><span class="nf-subject-card-label"><strong>Næringsstoffer og fordøyelsen</strong><span aria-hidden="true">→</span></span></a></div>';
+ subjectsPage.innerHTML='<h1 class="nf-subjects-heading">Velg tema i naturfag</h1><div class="nf-subject-cards"><a class="nf-subject-card" data-subject="chemistry" href="#chemistry/home"><img src="assets/naturfag-chemistry.svg?v=20261101-1" alt="" width="640" height="360"><span class="nf-subject-card-label"><strong>Kjemi</strong><span aria-hidden="true">→</span></span></a><a class="nf-subject-card" data-subject="nutrition" href="#nutrition/all"><img src="assets/naturfag-nutrition.svg?v=20261101-1" alt="" width="640" height="360"><span class="nf-subject-card-label"><strong>Næringsstoffer og fordøyelsen</strong><span aria-hidden="true">→</span></span></a></div>';
  content.prepend(subjectsPage);
  const page=document.createElement('section');page.id='page-nutrition';page.className='page';page.setAttribute('aria-label','Næringsstoffer og fordøyelsen');
  const frame=document.createElement('iframe');frame.id='nutrition-module-frame';frame.title='Næringsstoffer og fordøyelsen – oppgavetrening';frame.allow='fullscreen';page.append(frame);content.append(page);
@@ -30,7 +31,7 @@
  const mobile=matchMedia('(max-width:860px)');
  let desired={topic:'all',view:'practice'},frameReady=false,frameStarted=false,reported=null,lastChemistry=$('.page.active')?.id.slice(5)||'home',routing=false;
  function setGroup(group){chemistryGroup.open=group==='chemistry';nutritionGroup.open=group==='nutrition';}
- function updateGroupState(){const nutrition=document.body.classList.contains('nf-nutrition-active'),subjects=document.body.classList.contains('nf-subjects-active');chemistryGroup.querySelector('summary').dataset.active=String(!subjects&&!nutrition);nutritionGroup.querySelector('summary').dataset.active=String(!subjects&&nutrition);subjectsHome.classList.toggle('active',subjects);subjectsHome.setAttribute('aria-pressed',String(subjects));}
+ function updateGroupState(){const nutrition=document.body.classList.contains('nf-nutrition-active'),subjects=document.body.classList.contains('nf-subjects-active');chemistryGroup.querySelector('summary').dataset.active=String(!subjects&&!nutrition);nutritionGroup.querySelector('summary').dataset.active=String(!subjects&&nutrition);subjectsHome.setAttribute('aria-current',subjects?'page':'false');}
  function syncSidebarAccessibility(){const hidden=mobile.matches?!document.body.classList.contains('mobile-open'):document.body.classList.contains('side-collapsed');sidebar.inert=hidden;if(hidden)sidebar.setAttribute('aria-hidden','true');else sidebar.removeAttribute('aria-hidden');}
  function sendHostLayout(){if(frameReady)frame.contentWindow.postMessage({type:'onlyfag:nutrition:host-layout',sidebarCollapsed:!mobile.matches&&document.body.classList.contains('side-collapsed')},location.origin);}
  function sendTheme(){if(frameReady)frame.contentWindow.postMessage({type:'onlyfag:nutrition:theme',dark:document.body.classList.contains('dark')},location.origin);}
@@ -38,7 +39,7 @@
  function ensureFrame(){
   if(frameStarted){sendDesired();return;}
   frameStarted=true;
-  frame.src='prototyper/ernaering.html?embedded=1&topic='+encodeURIComponent(desired.topic)+'&view='+encodeURIComponent(desired.view)+'&v=20261031-8';
+  frame.src='prototyper/ernaering.html?embedded=1&topic='+encodeURIComponent(desired.topic)+'&view='+encodeURIComponent(desired.view)+'&v=20261101-1';
  }
  frame.addEventListener('load',()=>{if(!frameStarted)return;frameReady=true;sendTheme();sendHostLayout();sendDesired();});
  function closeMenu({focus=false}={}){
@@ -69,7 +70,7 @@
   $('#floatingPt')?.classList.remove('show');$('#floatingPtBtn')?.classList.remove('active');$('#infoPop')?.classList.remove('show');$('#infoBtn')?.setAttribute('aria-expanded','false');
   updateGroupState();closeMenu();if(route)writeRoute('#subjects',replace);window.scrollTo({top:0,behavior:'instant'});
  }
- subjectsHome.addEventListener('click',()=>showSubjects());
+ subjectsHome.addEventListener('click',event=>{event.preventDefault();showSubjects();});
  function showNutrition(topic='all',view='practice',{route=true,replace=false}={}){
   document.body.classList.remove('nf-subjects-active');
   desired={topic:validTopics.has(topic)?topic:'all',view:view==='bank'?'bank':'practice'};

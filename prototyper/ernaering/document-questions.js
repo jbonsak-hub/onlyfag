@@ -429,16 +429,16 @@ export const documentQuestions = [
     "type": "fill",
     "level": 2,
     "title": "Energi per 100 gram",
-    "prompt": "En matvare inneholder 20 g fett, 20 g karbohydrat og 5 g protein per 100 g. Bruk 37 kJ/g for fett og 17 kJ/g for karbohydrat og protein. Regn ut energi per 100 g.",
+    "prompt": "En matvare inneholder 20 g fett, 20 g karbohydrat og 5 g protein per 100 g. Bruk 9 kcal/g for fett og 4 kcal/g for karbohydrat og protein. Regn ut energi per 100 g.",
     "hint": "Beregn energien fra hvert næringsstoff og legg sammen.",
-    "explanation": "20 × 37 + 20 × 17 + 5 × 17 = 740 + 340 + 85 = 1165 kJ. Dette er en beregning med de oppgitte, avrundede energifaktorene.",
+    "explanation": "20 × 9 + 20 × 4 + 5 × 4 = 180 + 80 + 20 = 280 kcal. Dette er en beregning med de oppgitte, avrundede energifaktorene.",
     "blanks": [
       {
         "label": "Energi per 100 g",
         "answers": [
-          "1165"
+          "280"
         ],
-        "unit": "kJ"
+        "unit": "kcal"
       }
     ]
   },
@@ -448,16 +448,16 @@ export const documentQuestions = [
     "type": "fill",
     "level": 2,
     "title": "Energi i porsjonen",
-    "prompt": "En matvare gir 1165 kJ per 100 g. Hvor mye energi gir en porsjon på 40 g?",
+    "prompt": "En matvare gir 280 kcal per 100 g. Hvor mye energi gir en porsjon på 40 g?",
     "hint": "Finn hvor stor del 40 g er av 100 g.",
-    "explanation": "40 g er 0,40 av 100 g. 1165 kJ × 0,40 = 466 kJ.",
+    "explanation": "40 g er 0,40 av 100 g. 280 kcal × 0,40 = 112 kcal.",
     "blanks": [
       {
         "label": "Energi i 40 g",
         "answers": [
-          "466"
+          "112"
         ],
-        "unit": "kJ"
+        "unit": "kcal"
       }
     ],
     "family": "energy-calculation"
@@ -467,17 +467,17 @@ export const documentQuestions = [
     "topic": "energy",
     "type": "fill",
     "level": 2,
-    "title": "Kilokalorier og kilojoule",
-    "prompt": "En etikett oppgir 250 kcal. Bruk 1 kcal = 4,184 kJ. Hvor mange kJ tilsvarer dette?",
-    "hint": "Multipliser antall kcal med 4,184.",
-    "explanation": "250 × 4,184 = 1046 kJ. I omtale av mat brukes «kalorier» ofte om kilokalorier (kcal), ikke enkeltkalorier (cal).",
+    "title": "Finn porsjonsstørrelsen",
+    "prompt": "En matvare gir 250 kcal per 100 g. Hvor mange gram gir 150 kcal?",
+    "hint": "Finn først hvor mange kcal ett gram gir.",
+    "explanation": "250 kcal / 100 g = 2,5 kcal per gram. 150 kcal / 2,5 kcal per gram = 60 g.",
     "blanks": [
       {
-        "label": "Energi",
+        "label": "Porsjonens masse",
         "answers": [
-          "1046"
+          "60"
         ],
-        "unit": "kJ"
+        "unit": "g"
       }
     ],
     "family": "energy-calculation"

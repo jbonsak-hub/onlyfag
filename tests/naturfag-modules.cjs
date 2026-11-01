@@ -83,6 +83,7 @@ const topicOrder=['carbs','protein','fat','micro','digestion','energy','all'];
    const viewport={width,height},{page,context}=await newPage(viewport,{route:''});
    assert.equal(await page.locator('#page-subjects.active').count(),1,'canonical arrival shows the subject chooser');
    assert.equal(await page.locator('.nf-subject-card').count(),2,'only the two main subject cards are shown');
+   assert.equal(await page.locator('.nf-subjects-home,.nav-btn[data-page=home]').count(),0,'Start is not a separate menu choice');
    assert.equal(await page.locator('#nf-chemistry-group').evaluate(el=>el.open),false);
    assert.equal(await page.locator('#nf-nutrition-group').evaluate(el=>el.open),false);
    for(const subject of ['chemistry','nutrition']){
@@ -91,6 +92,8 @@ const topicOrder=['carbs','protein','fat','micro','digestion','energy','all'];
     const image=card.locator('img');assert.equal(await image.count(),1,subject+' has one illustration');
     await image.evaluate(image=>image.decode());
     assert.ok(await image.evaluate(image=>image.complete&&image.naturalWidth>0&&image.getBoundingClientRect().height>70),subject+' illustration is loaded and substantial');
+    const widths=await card.evaluate(card=>({card:card.getBoundingClientRect().width,image:card.querySelector('img').getBoundingClientRect().width}));
+    assert.ok(Math.abs(widths.card-widths.image)<=3,subject+' card fits its full-width illustration');
    }
    const homeGeometry=await page.evaluate(()=>({innerWidth,innerHeight,scrollWidth:document.documentElement.scrollWidth,scrollHeight:document.documentElement.scrollHeight,bounds:Object.fromEntries([...document.querySelectorAll('.nf-subject-card')].map(el=>{const r=el.getBoundingClientRect();return [el.dataset.subject,{left:r.left,top:r.top,right:r.right,bottom:r.bottom}];}))}));
    checkBounds('illustrated default landing',viewport,homeGeometry);
@@ -207,7 +210,7 @@ const topicOrder=['carbs','protein','fat','micro','digestion','energy','all'];
   await pickTopic(page,'fat');
   assert.equal((await state(page)).recentResults.carbs.length,1,'chemistry does not reset nutrition history');
   await context.close();
-  const representatives=['structure-glucose','structure-carbon-count','digestion-anatomy','carbs-classification','nutrient-concept-map','protein-quality'];
+  const representatives=['structure-glucose','structure-carbon-count','digestion-anatomy','carbs-classification','nutrient-concept-map','protein-quality','digestion-surface','digestion-stomach-contents','digestion-peristalsis','digestion-pancreatic-juice','digestion-food-route','digestion-lactose','doc-liver-functions','doc-colon','doc-duodenum-cooperation','doc-muscle-liver-glycogen','doc-portal-route','ndla-digestion-lymph','ndla-model-glands','digestion-absorption-explain','fat-bile-lipase','fat-droplets-explain'];
   for(const [width,height] of [[1366,768],[1280,720],[1024,768],[1024,720],[390,844]]){
    const viewport={width,height},{page,context}=await newPage(viewport);
    let checked=0;
@@ -217,7 +220,7 @@ const topicOrder=['carbs','protein','fat','micro','digestion','energy','all'];
     const outer=await page.evaluate(()=>({innerWidth,innerHeight,scrollWidth:document.documentElement.scrollWidth,scrollHeight:document.documentElement.scrollHeight,bounds:{frame:(()=>{const r=document.getElementById('nutrition-module-frame').getBoundingClientRect();return {left:r.left,top:r.top,right:r.right,bottom:r.bottom};})()}}));
     checkBounds(id+': host',viewport,outer);
     checkBounds(id+': before',viewport,await geometry(frame));
-    if([1366,390].includes(width)&&['digestion-anatomy','nutrient-concept-map','structure-glucose'].includes(id))await shot(page,width+'-'+id+'-before');
+    if([1366,390].includes(width)&&['digestion-anatomy','nutrient-concept-map','structure-glucose','digestion-surface','doc-liver-functions','digestion-stomach-contents'].includes(id))await shot(page,width+'-'+id+'-before');
     await frame.locator('#reveal-answer').click();checkBounds(id+': revealed',viewport,await geometry(frame));checked++;
    }
    if(width===390){

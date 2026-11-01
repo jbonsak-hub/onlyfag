@@ -1,4 +1,10 @@
-# Matbilder i ernæringsmodulen
+# Matillustrasjoner og tidligere fotografier i ernæringsmodulen
+
+Fra 1. november 2026 bruker oppgavene **egne illustrasjoner** i stedet for fotografiene nedenfor. Den nye bildefilen er `assets/nutrition/food/illustrated-foods.png`, laget med OpenAI Image Generation for OnlyFag. Ti separate utsnitt viser de samme matvarene, med navn under og halvparten av den tidligere visningsstørrelsen. Matvarene og næringsstoff-fasitene er uendret. Hele illustrasjonsarket lagres én gang; nettstedet viser riktig utsnitt uten eksterne bildekilder.
+
+Et ekstra illustrasjonsark, `illustrated-food-concepts.png`, viser tre, rå potet og vanlig hvitt sukker til spørsmål med fire bildealternativer. Begge arkene er egne genererte illustrasjoner, uten kildefotografier i den aktive visningen. Matvareverdier til sammenligningsoppgavene er kontrollert i Matvaretabellen; se modulens README for oppslagsnavn og tall.
+
+Resten av dette dokumentet dokumenterer **de tidligere fotografiene**, som beholdes for eldre cachede sideversjoner og kildehistorikk, med opprinnelige lisensnotiser. De vises ikke i den oppdaterte modulen.
 
 Ti fotografier er lagret lokalt i `assets/nutrition/food/`. Ingen av bildene er KI-generert. Originalenes bakgrunn er allerede behandlet av datasettforfatterne; OnlyFag har bare konvertert filene til WebP, uten ny beskjæring, oppskalering eller endring av matvarene. Navn, alternativtekst og kreditering finnes også i `prototyper/ernaering/food-photo-data.js`.
 
@@ -30,3 +36,5 @@ Food For Machine Learning (FFML) beskriver at forfatterne tok bildene selv fra f
 Alle filer er faktiske WebP-bilder med korrekte dimensjoner i metadata. Bildene skal vises med `object-fit: contain` slik at gjenkjennelige deler ikke klippes. Noen originaler er mindre enn 640 piksler; disse er bevart i original oppløsning fremfor å blåses opp kunstig. Svaralternativene gjelder næringsstoffene, så navn under bildene er tilsiktet.
 
 Wikimedia Commons-kandidater ble undersøkt, men ble ikke brukt i sluttversjonen fordi dette arbeidsmiljøet ikke kunne laste ned mediefilene fra disse domenene. Det er derfor ingen eksterne bildelenker eller avhengighet av tredjeparts bilder i oppgavevisningen.
+
+`illustrated-oats.png` er en egen, matchende illustrasjon av vanlige tørre havregryn. Havregryn er det fjerde alternativet til tre, rå potet og hvitt sukker i polysakkaridoppgaven.
