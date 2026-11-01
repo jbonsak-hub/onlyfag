@@ -1,0 +1,156 @@
+import {geographicToUTM} from '../marine-limit/projection.js?v=20261101-2';
+import {createTileLayer,TILE_RESOLUTION,MAX_LEVEL} from '../marine-limit/tiles.js?v=20261101-3';
+import {createGeologyOverlay} from './overlay.js?v=20261101-1';
+
+const $=selector=>document.querySelector(selector),canvas=$('#map'),wrap=$('#map-wrap'),ctx=canvas.getContext('2d');
+const embedded=new URLSearchParams(location.search).get('embedded')==='1'&&parent!==window;
+document.body.classList.toggle('embedded',embedded);
+let dark=false;
+try{dark=localStorage.getItem('onlyfag.geology.dark')==='true';}catch{}
+let w=0,h=0,fit=1,ready=false,frame=0,marker=null;
+let counties=[],background=[],places=[],geologyOverlay,hostVisible=true;
+const backgroundScene=document.createElement('canvas');
+const national={bounds:[-110000,-8050000,1120000,-6380000],x:505000,y:-7215000};
+const view={x:national.x,y:national.y,z:1};
+const major=new Set(['Oslo','Bergen','Trondheim','Stavanger','Kristiansand','Tromsø','Bodø','Ålesund','Alta','Kirkenes','Hammerfest','Lillehammer','Hamar','Drammen','Fredrikstad']);
+const status=text=>{const element=$('#status');element.textContent=text;element.hidden=!text;};
+const mapStatus=text=>{const element=$('#map-status');if(element){element.textContent=text;element.hidden=!text||!hostVisible||Number($('#background-opacity').value)===0;}};
+const detailStatus=text=>{const element=$('#detail-status');if(element){element.textContent=text;element.hidden=!text;}};
+const tiles=createTileLayer({repaint:schedule,status:mapStatus});
+function theme(value){dark=value;document.body.classList.toggle('dark',dark);$('#theme').setAttribute('aria-pressed',String(dark));schedule();}
+$('#theme').hidden=embedded;
+$('#theme').onclick=()=>{theme(!dark);try{localStorage.setItem('onlyfag.geology.dark',String(dark));}catch{}};
+window.addEventListener('message',event=>{
+ if(!embedded||event.source!==parent||event.origin!==location.origin||event.data?.type!=='geology-map-host')return;
+ if(typeof event.data.dark==='boolean')theme(event.data.dark);
+ if(typeof event.data.visible==='boolean'){hostVisible=event.data.visible;tiles.setVisible(hostVisible&&Number($('#background-opacity').value)>0);geologyOverlay?.setVisible(hostVisible);}
+});
+function project(lon,lat){const [easting,northing]=geographicToUTM(lon,lat);return [easting,-northing];}
+function geometryPath(geometry){
+ const path=new Path2D(),bounds=[Infinity,Infinity,-Infinity,-Infinity];
+ const polygons=geometry.type==='Polygon'?[geometry.coordinates]:geometry.type==='MultiPolygon'?geometry.coordinates:[];
+ for(const polygon of polygons)for(const ring of polygon){
+  ring.forEach(([lon,lat],i)=>{const [x,y]=project(lon,lat);bounds[0]=Math.min(bounds[0],x);bounds[1]=Math.min(bounds[1],y);bounds[2]=Math.max(bounds[2],x);bounds[3]=Math.max(bounds[3],y);if(i)path.lineTo(x,y);else path.moveTo(x,y);});
+  path.closePath();
+ }
+ return {path,bounds};
+}
+// The old local overview is an optional offline reserve. Its coordinates are
+// converted to UTM rather than ever stretching a Lambert image onto a tile grid.
+function countyPath(svg,registration){
+ const m=registration.matrix,n=registration.coneConstant,det=m[0][0]*m[1][1]-m[1][0]*m[0][1],path=new Path2D();
+ const matches=svg.matchAll(/([ML])\s*([-+\d.eE]+)[ ,]+([-+\d.eE]+)|([Zz])/g);
+ for(const match of matches){
+  if(match[4]){path.closePath();continue;}
+  const dx=Number(match[2])-m[2][0],dy=Number(match[3])-m[2][1];
+  const px=(dx*m[1][1]-dy*m[1][0])/det,py=(dy*m[0][0]-dx*m[0][1])/det,rho=Math.hypot(px,py)/1000;
+  const lon=registration.centralMeridian+Math.atan2(px,-py)/n*180/Math.PI,lat=(2*Math.atan(rho**(-1/n))-Math.PI/2)*180/Math.PI;
+  const p=project(lon,lat);if(match[1]==='M')path.moveTo(...p);else path.lineTo(...p);
+ }
+ return path;
+}
+function scale(){return fit*view.z;}
+function world(x,y){const s=scale();return [view.x+(x-w/2)/s,view.y+(y-h/2)/s];}
+function screen(x,y){const s=scale();return [(x-view.x)*s+w/2,(y-view.y)*s+h/2];}
+function schedule(){if(!frame)frame=requestAnimationFrame(()=>{frame=0;draw();});}
+function resize(){
+ const rect=wrap.getBoundingClientRect();w=rect.width;h=rect.height;
+ if(w<720&&$('#legend').open){$('#info').hidden=true;marker=null;}
+ fit=Math.min((w-34)/(national.bounds[2]-national.bounds[0]),(h-24)/(national.bounds[3]-national.bounds[1]));
+ const dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);schedule();
+}
+function drawLocal(ctx,color,dpr){
+ const s=scale();ctx.setTransform(dpr*s,0,0,dpr*s,dpr*(w/2-view.x*s),dpr*(h/2-view.y*s));
+ ctx.fillStyle=color('--neighbour');ctx.strokeStyle=color('--border');ctx.lineWidth=.6/s;
+ for(const item of background){ctx.fill(item.path,'evenodd');ctx.stroke(item.path);}
+ ctx.fillStyle=color('--land');for(const path of counties)ctx.fill(path,'evenodd');
+ ctx.strokeStyle=color('--border');for(const path of counties)ctx.stroke(path);
+ ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+function draw(){
+ if(!w||!h||fit<=0)return;
+ const dpr=canvas.width/w,css=getComputedStyle(document.body),color=name=>css.getPropertyValue(name).trim();
+ ctx.setTransform(dpr,0,0,dpr,0,0);ctx.globalAlpha=1;ctx.fillStyle=color('--water');ctx.fillRect(0,0,w,h);if(!ready)return;
+ const layer=$('#map-layer').value;
+ ctx.fillStyle=color('--paper');ctx.fillRect(0,0,w,h);
+ if(backgroundScene.width!==canvas.width||backgroundScene.height!==canvas.height){backgroundScene.width=canvas.width;backgroundScene.height=canvas.height;}
+ const bg=backgroundScene.getContext('2d');bg.setTransform(dpr,0,0,dpr,0,0);bg.globalAlpha=1;bg.fillStyle=color('--water');bg.fillRect(0,0,w,h);drawLocal(bg,color,dpr);
+ const backgroundOpacity=Number($('#background-opacity').value)/100;
+ if(backgroundOpacity>0)tiles.draw(bg,{width:w,height:h,scale:scale(),world,screen,mapLayer:layer});
+ ctx.save();ctx.globalAlpha=backgroundOpacity;ctx.drawImage(backgroundScene,0,0,w,h);ctx.restore();
+ const tileState=tiles.snapshot();$('#relief-credit').hidden=backgroundOpacity===0||(layer!=='relief'&&!tileState.fallback);$('#basemap-source').hidden=backgroundOpacity===0||layer==='relief';
+ const controls=Object.fromEntries(['bedrock','superficial'].map(key=>[key,{show:$('#'+key+'-layer').checked,opacity:Number($('#'+key+'-opacity').value)/100}]));
+ geologyOverlay.draw(ctx,{width:w,height:h,dpr,scale:scale(),world,screen,controls});
+ if(marker){const [x,y]=screen(...marker);ctx.beginPath();ctx.arc(x,y,7,0,2*Math.PI);ctx.strokeStyle=dark?'#ffcf70':'#a94916';ctx.lineWidth=3;ctx.stroke();}
+ const metres=100/scale();$('#scale').textContent=metres>=1000?`${new Intl.NumberFormat('nb-NO',{maximumFractionDigits:1}).format(metres/1000)} km`:`${Math.round(metres)} m`;$('#scale').style.width='100px';
+}
+function setZoom(next,x=w/2,y=h/2){
+ if(!ready)return;const anchor=world(x,y),maximum=2**MAX_LEVEL/TILE_RESOLUTION/fit;
+ view.z=Math.max(.4,Math.min(maximum,next));view.x=anchor[0]-(x-w/2)/scale();view.y=anchor[1]-(y-h/2)/scale();schedule();
+}
+function zoom(factor,x=w/2,y=h/2){setZoom(view.z*factor,x,y);}
+function home(){if(!ready)return;status('');$('#place').value='';Object.assign(view,{x:national.x,y:national.y,z:1});marker=null;$('#info').hidden=true;schedule();}
+function inspect(x,y){
+ if(!ready)return;const point=world(x,y);ctx.save();ctx.setTransform(1,0,0,1,0,0);const found=geologyOverlay.hit(point,ctx);ctx.restore();marker=point;
+ if(w<720)$('#legend').open=false;
+ $('#info-title').textContent=found.length?'Geologi ved punktet':'Ingen synlig geologisk flate her';
+ const info=$('#info-text');info.replaceChildren();
+ if(found.length)for(const item of found){const row=document.createElement('span');row.style.display='block';row.textContent=`${item.title}: ${item.label||'Uklassifisert enhet'}${item.sourceScale?' ('+item.sourceScale+')':''}. ${item.description&&item.description!==item.label?item.description:''}`;info.append(row);}
+ else info.textContent='Slå på et geologisk lag, eller prøv et punkt innenfor kartdekningen.';
+ $('#info').hidden=false;schedule();
+}
+$('#zoom-in').onclick=()=>zoom(1.5);$('#zoom-out').onclick=()=>zoom(1/1.5);$('#home').onclick=home;
+$('#close-info').onclick=()=>{$('#info').hidden=true;marker=null;schedule();};
+$('#legend').addEventListener('toggle',()=>{if(w<720&&$('#legend').open){$('#info').hidden=true;marker=null;schedule();}});
+for(const key of ['bedrock','superficial'])$('#'+key+'-layer').onchange=()=>{geologyOverlay?.retry(key);syncLegend();schedule();};
+ for(const key of ['bedrock','superficial','background'])$('#'+key+'-opacity').addEventListener('input',()=>{const value=$('#'+key+'-opacity-value');value.textContent=$('#'+key+'-opacity').value+' %';if(key==='background'){tiles.setVisible(hostVisible&&Number($('#background-opacity').value)>0);mapStatus($('#map-status').textContent);}schedule();});
+$('#map-layer').onchange=()=>{const layer=$('#map-layer').value;document.body.dataset.mapLayer=layer;const credit=$('#basemap-credit');if(credit)credit.hidden=layer==='local';tiles.change(layer);};
+$('#retry-map')?.addEventListener('click',()=>{tiles.change($('#map-layer').value);for(const key of ['bedrock','superficial'])geologyOverlay?.retry(key);});
+canvas.addEventListener('wheel',event=>{event.preventDefault();const rect=canvas.getBoundingClientRect();zoom(event.deltaY<0?1.2:1/1.2,event.clientX-rect.left,event.clientY-rect.top);},{passive:false});
+canvas.addEventListener('keydown',event=>{
+ const delta=70/scale();if(['+','=','-','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home'].includes(event.key))event.preventDefault();
+ if(event.key==='+'||event.key==='=')zoom(1.5);if(event.key==='-')zoom(1/1.5);if(event.key==='Home')home();
+ if(event.key==='ArrowLeft')view.x-=delta;if(event.key==='ArrowRight')view.x+=delta;if(event.key==='ArrowUp')view.y-=delta;if(event.key==='ArrowDown')view.y+=delta;schedule();
+});
+const pointers=new Map();let previousPinch=null,drag=null,moved=false;
+function point(event){const rect=canvas.getBoundingClientRect();return [event.clientX-rect.left,event.clientY-rect.top];}
+function pinch(){const [a,b]=[...pointers.values()];return {mid:[(a[0]+b[0])/2,(a[1]+b[1])/2],distance:Math.hypot(a[0]-b[0],a[1]-b[1])};}
+canvas.addEventListener('pointerdown',event=>{if(event.button!==0)return;canvas.setPointerCapture(event.pointerId);const p=point(event);pointers.set(event.pointerId,p);if(pointers.size===1){drag={start:p,x:view.x,y:view.y};moved=false;}else{previousPinch=pinch();drag=null;moved=true;}canvas.classList.add('dragging');});
+canvas.addEventListener('pointermove',event=>{
+ if(!pointers.has(event.pointerId))return;const p=point(event);pointers.set(event.pointerId,p);
+ if(pointers.size>=2){const next=pinch();if(previousPinch&&previousPinch.distance>0){const anchor=world(...previousPinch.mid);setZoom(view.z*next.distance/previousPinch.distance,...previousPinch.mid);view.x=anchor[0]-(next.mid[0]-w/2)/scale();view.y=anchor[1]-(next.mid[1]-h/2)/scale();}previousPinch=next;schedule();return;}
+ if(drag){const dx=p[0]-drag.start[0],dy=p[1]-drag.start[1];if(Math.hypot(dx,dy)>6)moved=true;view.x=drag.x-dx/scale();view.y=drag.y-dy/scale();schedule();}
+});
+function endPointer(event,cancelled=false){if(!pointers.has(event.pointerId))return;const wasPinch=!!previousPinch;pointers.delete(event.pointerId);if(!cancelled&&!moved&&!wasPinch)inspect(...point(event));drag=null;previousPinch=null;if(pointers.size){const p=[...pointers.values()][0];drag={start:p,x:view.x,y:view.y};moved=true;}else canvas.classList.remove('dragging');}
+canvas.addEventListener('pointerup',event=>endPointer(event));canvas.addEventListener('pointercancel',event=>endPointer(event,true));canvas.addEventListener('lostpointercapture',event=>endPointer(event,true));
+function normalize(s){return s.trim().normalize('NFKC').toLocaleLowerCase('nb');}
+$('#place-form').onsubmit=event=>{
+ event.preventDefault();const query=normalize($('#place').value);const p=places.find(p=>normalize(p.name)===query)||places.find(p=>normalize(p.centreName)===query);
+ if(!p){status('Velg en kommune fra listen.');return;}status('');view.x=p.point[0];view.y=p.point[1];view.z=(1/8)/fit;marker=p.point;$('#info').hidden=true;schedule();canvas.focus({preventScroll:true});
+};
+const dialog=$('#about-dialog');for(const id of ['about','sources'])$('#'+id).onclick=()=>dialog.showModal();$('#close-about').onclick=()=>dialog.close();
+new ResizeObserver(resize).observe(wrap);theme(dark);
+async function json(url){const response=await fetch(url);if(!response.ok)throw Error('Kartdata kunne ikke lastes.');return response.json();}
+function legend(manifest){
+ const container=$('#legend-content');container.replaceChildren();
+ for(const [key,layer] of Object.entries(manifest.layers)){
+  const section=document.createElement('section');section.dataset.legendLayer=key;container.append(section);
+  const heading=document.createElement('h3');heading.textContent=layer.title;section.append(heading);
+  const scale=document.createElement('p');scale.textContent=layer.coverageNote||layer.sourceScale||'';section.append(scale);
+  const list=document.createElement('ul');for(const item of layer.legend||[]){const li=document.createElement('li'),swatch=document.createElement('span');swatch.className='legend-swatch';swatch.style.backgroundColor=item.fillOpacity===0?'transparent':item.color;if(item.pattern)swatch.style.backgroundImage=`repeating-linear-gradient(135deg,${item.strokeColor||'#6e6e6e'} 0,${item.strokeColor||'#6e6e6e'} 1px,transparent 1px,transparent 6px)`;li.append(swatch,document.createTextNode(item.label+(item.fillOpacity===0?' – gjennomsiktig':'')));list.append(li);}section.append(list);
+ }
+ const empty=document.createElement('p');empty.id='legend-empty';empty.textContent='Slå på et faglag for å se tegnforklaringen.';container.append(empty);syncLegend();
+}
+function syncLegend(){let active=false;for(const section of document.querySelectorAll('[data-legend-layer]')){const show=$('#'+section.dataset.legendLayer+'-layer').checked;section.hidden=!show;active=active||show;}const empty=$('#legend-empty');if(empty)empty.hidden=active;}
+try{
+ const base='../assets/geography/';
+ const [registration,countyData,bg,manifest]=await Promise.all([json(base+'sources/norway-county-registration.json'),json(base+'norway-counties.json'),json(base+'marine-limit/background.json?v=20261101-1'),json(base+'geology/data/manifest.json?v=20261101-1')]);
+ counties=countyData.map(feature=>countyPath(feature.d,registration));background=bg.features.map(feature=>geometryPath(feature.geometry));
+ places=bg.places.map(p=>({...p,point:project(p.lon,p.lat)})).sort((a,b)=>a.name.localeCompare(b.name,'nb'));
+ for(const place of places){const option=document.createElement('option');option.value=place.name;$('#places').append(option);}
+ const layers={};for(const [key,layer] of Object.entries(manifest.layers))layers[key]={...layer,overview:new URL(layer.overview,location.href),detailIndex:layer.detailIndex?new URL(layer.detailIndex,location.href):null};
+ geologyOverlay=createGeologyOverlay({layers,repaint:schedule,status:detailStatus});geologyOverlay.setVisible(hostVisible);
+ legend(manifest);$('#source-description').textContent=manifest.description;
+ ready=true;status('');resize();
+ window.geologyMap={project:(lon,lat)=>screen(...project(lon,lat)),utm:geographicToUTM,getView:()=>({...view}),getTileState:()=>tiles.snapshot(),getOverlayState:()=>geologyOverlay.snapshot(),featureCounts:Object.fromEntries(Object.entries(manifest.layers).map(([key,l])=>[key,l.overviewFeatures]))};
+}catch(error){status('Kartet kunne ikke lastes. Last siden på nytt.');console.error(error);}

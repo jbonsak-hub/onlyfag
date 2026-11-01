@@ -1,0 +1,13 @@
+{
+  "url": "https://services-eu1.arcgis.com/Omqj1DhF7kfdN8lE/arcgis/rest/services/Losmasse_KunRiksveg_Dissolve/FeatureServer/0/query?f=geojson&where=1%3D1&outFields=OBJECTID%2Closmassetype%2CFIRST_losmassetype_navn&returnGeometry=true&outSR=25833&maxAllowableOffset=20&geometryPrecision=1",
+  "fetchedOn": "2026-11-01T17:13:21.084581+00:00",
+  "parameters": {
+    "f": "geojson",
+    "where": "1=1",
+    "outFields": "OBJECTID,losmassetype,FIRST_losmassetype_navn",
+    "returnGeometry": "true",
+    "outSR": 25833,
+    "maxAllowableOffset": 20,
+    "geometryPrecision": 1
+  }
+}

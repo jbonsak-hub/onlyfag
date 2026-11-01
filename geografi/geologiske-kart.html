@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Utforsk Norges berggrunn og løsmasser. Sammenlign geologiske kartlag med landskapet og juster synligheten på hvert lag.">
+  <title>Berggrunn og løsmasser | OnlyFag</title>
+  <link rel="stylesheet" href="../assets/geography/marine-limit/map.css?v=20261101-3">
+  <link rel="stylesheet" href="../assets/geography/geology/map.css?v=20261101-1">
+  <script src="../assets/analytics.js" defer></script>
+  <script type="module" src="../assets/geography/geology/map.js?v=20261101-1"></script>
+</head>
+<body data-map-layer="topo">
+  <header class="toolbar">
+    <a class="back" href="../geografi.html#indre-geologiske-kart" aria-label="Til geografi">← Geografi</a>
+    <h1>Berggrunn og løsmasser</h1>
+    <form id="place-form" role="search"><label class="sr-only" for="place">Finn kommune</label><input id="place" list="places" autocomplete="off" placeholder="Finn kommune …"><datalist id="places"></datalist><button type="submit">Vis</button></form>
+    <button id="about" type="button">Om kartet</button>
+    <button id="theme" type="button" aria-label="Bytt lys eller mørk visning">◐</button>
+  </header>
+  <main id="map-wrap" aria-label="Geologisk kart over Norge">
+    <canvas id="map" tabindex="0" aria-label="Kart. Dra for å flytte, bruk pluss og minus for å zoome og piltastene for å flytte utsnittet."></canvas>
+    <div class="zoom" role="group" aria-label="Kartutsnitt"><button id="zoom-in" aria-label="Zoom inn">+</button><button id="zoom-out" aria-label="Zoom ut">−</button><button id="home" aria-label="Vis hele Norge">⌂</button></div>
+    <details class="layers" open>
+      <summary>Kartlag og synlighet</summary>
+      <div class="layer-controls">
+        <div class="layer-group">
+          <label class="geology-toggle" for="bedrock-layer"><input id="bedrock-layer" type="checkbox" checked>Berggrunn</label>
+          <label class="opacity-label" for="bedrock-opacity"><span>Synlighet</span><output id="bedrock-opacity-value" for="bedrock-opacity">75 %</output></label>
+          <input id="bedrock-opacity" type="range" min="0" max="100" value="75" step="1" aria-label="Synlighet for berggrunn">
+        </div>
+        <div class="layer-group">
+          <label class="geology-toggle" for="superficial-layer"><input id="superficial-layer" type="checkbox">Løsmasser</label>
+          <label class="opacity-label" for="superficial-opacity"><span>Synlighet</span><output id="superficial-opacity-value" for="superficial-opacity">75 %</output></label>
+          <input id="superficial-opacity" type="range" min="0" max="100" value="75" step="1" aria-label="Synlighet for løsmasser">
+        </div>
+        <div class="layer-group background-controls">
+          <label for="map-layer">Bakgrunnskart</label>
+          <select id="map-layer"><option value="topo">Topografisk kart</option><option value="toporaster">Turkart</option><option value="relief">Terrengrelieff</option><option value="local">Enkelt reservekart</option></select>
+          <label class="opacity-label" for="background-opacity"><span>Synlighet</span><output id="background-opacity-value" for="background-opacity">100 %</output></label>
+          <input id="background-opacity" type="range" min="0" max="100" value="100" step="1" aria-label="Synlighet for bakgrunnskart">
+        </div>
+      </div>
+    </details>
+    <details id="legend" class="legend"><summary>Tegnforklaring</summary><div id="legend-content"><p>Laster tegnforklaring …</p></div></details>
+    <div class="map-messages"><div id="status" role="status">Laster kart …</div><div id="map-status" role="status" hidden></div><div id="detail-status" role="status" hidden></div></div>
+    <section id="info" class="info" hidden aria-live="polite"><button id="close-info" aria-label="Lukk kartopplysning">×</button><h2 id="info-title"></h2><p id="info-text"></p></section>
+    <span class="scale" id="scale"></span>
+    <div class="credit">Geologi: NGU · <span id="basemap-credit"><a id="basemap-source" href="https://www.kartverket.no/api-og-data/vilkar-for-bruk" target="_blank" rel="noopener">© Kartverket</a><span id="relief-credit" hidden><a href="https://www.arcgis.com/home/item.html?id=abb42430fb5e4841b0d92eec3882946a" target="_blank" rel="noopener">Terreng © Esri m.fl.</a></span> · </span><span class="local-credit">Kart: <a href="https://commons.wikimedia.org/wiki/File:Vestland_in_Norway_2024.svg" target="_blank" rel="noopener">NordNordWest</a> · <a href="https://creativecommons.org/licenses/by-sa/3.0/de/" target="_blank" rel="noopener">CC BY-SA 3.0 DE</a>, bearbeidet · </span><button id="sources" type="button">Kilder</button></div>
+  </main>
+  <dialog id="about-dialog" aria-labelledby="about-title">
+    <div class="dialog-heading"><h2 id="about-title">Om kartet</h2><button id="close-about" aria-label="Lukk">×</button></div>
+    <p><strong>Berggrunn</strong> viser bergartene under løsmassene. <strong>Løsmasser</strong> viser materialet over berggrunnen, som morene, sand og leire.</p>
+    <p>Huk av for ett eller begge geologiske lag. Når begge vises, ligger løsmassene øverst. Juster synligheten på hvert lag og på bakgrunnskartet for å sammenligne geologien med landskapet.</p>
+    <p>Berggrunn har landsoversikt og detaljer i 1:250 000 og, der det er kartlagt, 1:50 000. Løsmasser har landsoversikt i 1:1 000 000 og et begrenset detaljuttrekk via Statens vegvesen. Grensene er forenklet, og detaljdekningen varierer.</p>
+    <h3>Kilder og kartgrunnlag</h3><p id="source-description">Laster kildeopplysninger …</p>
+    <p>Inneholder data under Norsk lisens for offentlige data (NLOD) tilgjengeliggjort av Norges geologiske undersøkelse (NGU). Fagdataene er lagret på OnlyFag.</p>
+    <ul><li>Geologiske kartdata: <a href="https://www.ngu.no/geologiske-kart" target="_blank" rel="noopener">Norges geologiske undersøkelse (NGU)</a>. Oversikter via Geodata og berggrunnsdetaljer via Placepoint. <a href="https://www.arcgis.com/home/item.html?id=6772578bd7ed493fb0b70e57f73b35d6" target="_blank" rel="noopener">Løsmasser – begrenset detaljuttrekk (Statens vegvesen)</a>.</li><li>Topografisk kart og turkart: Kartverket WMTS. Terrengrelieff: <a href="https://www.arcgis.com/home/item.html?id=abb42430fb5e4841b0d92eec3882946a" target="_blank" rel="noopener">Esri World Hillshade WGS84</a>. Reservekartet bruker Natural Earth og bearbeidet fylkesgeometri fra NordNordWest.</li><li>Kommunesøk viser kommunens administrasjonssenter, basert på Kartverket SSR og Wikidata.</li></ul>
+    <p>Panorer ved å dra. Zoom med hjul, knappene eller to fingre. Med tastatur: piltaster, +/− og Home. Trykk i kartet for å undersøke et område.</p>
+  </dialog>
+  <noscript>Du må aktivere JavaScript for å bruke kartet.</noscript>
+</body>
+</html>

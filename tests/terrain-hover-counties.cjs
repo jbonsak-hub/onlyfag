@@ -106,7 +106,7 @@ async function checkBasemap(page,label){
   assert(images.length&&images.every(image=>image.ready),label+' terrain images decode successfully');
   assert(images.every(image=>image.pointerEvents==='none'),label+' terrain imagery never steals answers');
   const camera=await page.evaluate(()=>{
-    const svg=document.querySelector('#map'),world=document.querySelector(document.body.dataset.quiz==='bydeler'?'.oslo-live-basemap-world':'.map-basemap-world'),viewport=document.querySelector('#mapViewport');
+    const svg=document.querySelector('#map'),world=document.querySelector('.map-basemap-world'),viewport=document.querySelector('#mapViewport');
     const m=svg.getScreenCTM(),w=new DOMMatrix(getComputedStyle(world).transform),r=viewport.getBoundingClientRect();
     // HTML world coordinates start at the viewport content box; SVG CTM uses
     // client coordinates. Their six values must otherwise be identical.
@@ -167,7 +167,7 @@ async function checkOslo(page){
         if(test.counties)assert.deepEqual((await page.locator('#states path.state').evaluateAll(els=>els.map(el=>el.dataset.state))).sort(),countyNames,label+' preserves all 15 county geometries');
         await page.locator('#statle-basemap:enabled').click();
         await page.waitForFunction(()=>document.body.dataset.statleBasemap==='physical');
-        await page.locator(test.name==='oslo'?'.oslo-live-basemap:not([hidden])':'.map-basemap-layer:not([hidden])').waitFor();if(test.name==='oslo')await page.waitForFunction(()=>OsloMapLayers.get(document.getElementById('map')).snapshot().pending===0);await frames(page);
+        await page.locator('.map-basemap-layer:not([hidden])').waitFor();await frames(page);
         await checkBasemap(page,label);if(test.name==='oslo')await checkOslo(page);
         if(test.counties)await checkCountyRaster(page,label);
         await checkEveryFocus(page,label);

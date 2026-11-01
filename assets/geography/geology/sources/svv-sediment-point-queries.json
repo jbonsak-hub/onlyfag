@@ -1,0 +1,218 @@
+{
+  "Oslo": {
+    "point": [
+      262210.8893177103,
+      6649335.409472278
+    ],
+    "url": "https://services-eu1.arcgis.com/Omqj1DhF7kfdN8lE/arcgis/rest/services/Losmasse_KunRiksveg_Dissolve/FeatureServer/0/query?f=json&geometry=262210.8893177103%2C6649335.409472278&geometryType=esriGeometryPoint&inSR=25833&spatialRel=esriSpatialRelIntersects&where=1%3D1&outFields=OBJECTID%2Closmassetype%2CFIRST_losmassetype_navn&returnGeometry=false",
+    "objectIdFieldName": "OBJECTID",
+    "uniqueIdField": {
+      "name": "OBJECTID",
+      "isSystemMaintained": true
+    },
+    "globalIdFieldName": "",
+    "geometryType": "esriGeometryPolygon",
+    "spatialReference": {
+      "wkid": 25833,
+      "latestWkid": 25833
+    },
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID",
+        "sqlType": "sqlTypeOther",
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "losmassetype",
+        "type": "esriFieldTypeDouble",
+        "alias": "losmassetype",
+        "sqlType": "sqlTypeOther",
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "FIRST_losmassetype_navn",
+        "type": "esriFieldTypeString",
+        "alias": "FIRST_losmassetype_navn",
+        "sqlType": "sqlTypeOther",
+        "length": 100,
+        "domain": null,
+        "defaultValue": null
+      }
+    ],
+    "features": [
+      {
+        "attributes": {
+          "OBJECTID": 34,
+          "losmassetype": 120,
+          "FIRST_losmassetype_navn": "Fyllmasse (antropogent materiale)"
+        }
+      }
+    ]
+  },
+  "Bergen": {
+    "point": [
+      -31875.45436920924,
+      6734370.224750538
+    ],
+    "url": "https://services-eu1.arcgis.com/Omqj1DhF7kfdN8lE/arcgis/rest/services/Losmasse_KunRiksveg_Dissolve/FeatureServer/0/query?f=json&geometry=-31875.45436920924%2C6734370.224750538&geometryType=esriGeometryPoint&inSR=25833&spatialRel=esriSpatialRelIntersects&where=1%3D1&outFields=OBJECTID%2Closmassetype%2CFIRST_losmassetype_navn&returnGeometry=false",
+    "objectIdFieldName": "OBJECTID",
+    "uniqueIdField": {
+      "name": "OBJECTID",
+      "isSystemMaintained": true
+    },
+    "globalIdFieldName": "",
+    "geometryType": "esriGeometryPolygon",
+    "spatialReference": {
+      "wkid": 25833,
+      "latestWkid": 25833
+    },
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID",
+        "sqlType": "sqlTypeOther",
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "losmassetype",
+        "type": "esriFieldTypeDouble",
+        "alias": "losmassetype",
+        "sqlType": "sqlTypeOther",
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "FIRST_losmassetype_navn",
+        "type": "esriFieldTypeString",
+        "alias": "FIRST_losmassetype_navn",
+        "sqlType": "sqlTypeOther",
+        "length": 100,
+        "domain": null,
+        "defaultValue": null
+      }
+    ],
+    "features": [
+      {
+        "attributes": {
+          "OBJECTID": 34,
+          "losmassetype": 120,
+          "FIRST_losmassetype_navn": "Fyllmasse (antropogent materiale)"
+        }
+      }
+    ]
+  },
+  "Trondheim": {
+    "point": [
+      270337.87028114265,
+      7041814.199059743
+    ],
+    "url": "https://services-eu1.arcgis.com/Omqj1DhF7kfdN8lE/arcgis/rest/services/Losmasse_KunRiksveg_Dissolve/FeatureServer/0/query?f=json&geometry=270337.87028114265%2C7041814.199059743&geometryType=esriGeometryPoint&inSR=25833&spatialRel=esriSpatialRelIntersects&where=1%3D1&outFields=OBJECTID%2Closmassetype%2CFIRST_losmassetype_navn&returnGeometry=false",
+    "objectIdFieldName": "OBJECTID",
+    "uniqueIdField": {
+      "name": "OBJECTID",
+      "isSystemMaintained": true
+    },
+    "globalIdFieldName": "",
+    "geometryType": "esriGeometryPolygon",
+    "spatialReference": {
+      "wkid": 25833,
+      "latestWkid": 25833
+    },
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID",
+        "sqlType": "sqlTypeOther",
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "losmassetype",
+        "type": "esriFieldTypeDouble",
+        "alias": "losmassetype",
+        "sqlType": "sqlTypeOther",
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "FIRST_losmassetype_navn",
+        "type": "esriFieldTypeString",
+        "alias": "FIRST_losmassetype_navn",
+        "sqlType": "sqlTypeOther",
+        "length": 100,
+        "domain": null,
+        "defaultValue": null
+      }
+    ],
+    "features": [
+      {
+        "attributes": {
+          "OBJECTID": 34,
+          "losmassetype": 120,
+          "FIRST_losmassetype_navn": "Fyllmasse (antropogent materiale)"
+        }
+      }
+    ]
+  },
+  "Tromsø": {
+    "point": [
+      653706.3816724909,
+      7732337.613037544
+    ],
+    "url": "https://services-eu1.arcgis.com/Omqj1DhF7kfdN8lE/arcgis/rest/services/Losmasse_KunRiksveg_Dissolve/FeatureServer/0/query?f=json&geometry=653706.3816724909%2C7732337.613037544&geometryType=esriGeometryPoint&inSR=25833&spatialRel=esriSpatialRelIntersects&where=1%3D1&outFields=OBJECTID%2Closmassetype%2CFIRST_losmassetype_navn&returnGeometry=false",
+    "objectIdFieldName": "OBJECTID",
+    "uniqueIdField": {
+      "name": "OBJECTID",
+      "isSystemMaintained": true
+    },
+    "globalIdFieldName": "",
+    "geometryType": "esriGeometryPolygon",
+    "spatialReference": {
+      "wkid": 25833,
+      "latestWkid": 25833
+    },
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID",
+        "sqlType": "sqlTypeOther",
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "losmassetype",
+        "type": "esriFieldTypeDouble",
+        "alias": "losmassetype",
+        "sqlType": "sqlTypeOther",
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "FIRST_losmassetype_navn",
+        "type": "esriFieldTypeString",
+        "alias": "FIRST_losmassetype_navn",
+        "sqlType": "sqlTypeOther",
+        "length": 100,
+        "domain": null,
+        "defaultValue": null
+      }
+    ],
+    "features": [
+      {
+        "attributes": {
+          "OBJECTID": 34,
+          "losmassetype": 120,
+          "FIRST_losmassetype_navn": "Fyllmasse (antropogent materiale)"
+        }
+      }
+    ]
+  }
+}

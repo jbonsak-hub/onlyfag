@@ -1,5 +1,5 @@
 import {geographicToUTM} from './projection.js?v=20261101-2';
-import {createTileLayer,TILE_RESOLUTION,MAX_LEVEL} from './tiles.js?v=20261101-2';
+import {createTileLayer,TILE_RESOLUTION,MAX_LEVEL} from './tiles.js?v=20261101-3';
 import {createMarineOverlay} from './overlay.js?v=20261101-2';
 
 const $=selector=>document.querySelector(selector),canvas=$('#map'),wrap=$('#map-wrap'),ctx=canvas.getContext('2d');
@@ -71,6 +71,9 @@ function draw(){
  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.globalAlpha=1;ctx.fillStyle=color('--water');ctx.fillRect(0,0,w,h);if(!ready)return;
  const layer=$('#map-layer').value;drawLocal(color,dpr);
  tiles.draw(ctx,{width:w,height:h,scale:scale(),world,screen,mapLayer:layer});
+ const tileState=tiles.snapshot(),reliefCredit=$('#relief-credit'),kartverketCredit=$('#basemap-source');
+ if(reliefCredit)reliefCredit.hidden=layer!=='relief'&&!tileState.fallback;
+ if(kartverketCredit)kartverketCredit.hidden=layer==='relief';
  const opacity=Number($('#marine-opacity').value)/100;
  marineOverlay.draw(ctx,{width:w,height:h,dpr,scale:scale(),world,screen,color:color('--marine'),opacity,show:$('#marine-layer').checked});
  // Tile maps supply their own detailed labels. Reserve labels are useful only
@@ -140,7 +143,7 @@ try{
  if(!marine.features?.length)throw Error('Kartlaget mangler flater.');overview=marine.features.map(feature=>geometryPath(feature.geometry));
  marineOverlay=createMarineOverlay({overview,repaint:schedule,status:detailStatus,indexURL:new URL('./data/detail/index.json?v=20261101-2',import.meta.url)});
  const date=value=>new Intl.DateTimeFormat('nb-NO',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(value+'T00:00:00Z'));
- $('#source-description').textContent=`NGU: Areal under marin grense. Datauttrekk ${date(metadata.sourceDate)}, hentet via ${metadata.mirror} ${date(metadata.fetchedOn)}. Oversikt er forenklet med ${metadata.simplificationMeters} meter toleranse; lokalt detaljlag lastes når du zoomer inn. Kartverket leverer detaljert bakgrunnskart, turkart og terrengrelieff.`;
+ $('#source-description').textContent=`NGU: Areal under marin grense. Datauttrekk ${date(metadata.sourceDate)}, hentet via ${metadata.mirror} ${date(metadata.fetchedOn)}. Oversikt er forenklet med ${metadata.simplificationMeters} meter toleranse; lokalt detaljlag lastes når du zoomer inn. Kartverket leverer topografisk kart og turkart; Esri leverer terrengrelieff.`;
  const opacityValue=$('#marine-opacity-value');if(opacityValue)opacityValue.textContent=$('#marine-opacity').value+' %';
  ready=true;status('');resize();
  window.marineLimitMap={project:(lon,lat)=>screen(...project(lon,lat)),utm:geographicToUTM,getView:()=>({...view}),getTileState:()=>tiles.snapshot(),getDetailState:()=>marineOverlay.snapshot(),featureCount:overview.length};

@@ -1,6 +1,7 @@
-/* Deterministic projected map integration. Remote fixture images contain fixed
-   pyproj landmarks: they verify placement, not live map-service availability. */
+/* Deterministic fixtures verify registration, separately from actual providers.
+   MARINE_LIVE=1 also paints current, TLS-verified Esri hillshade JPEG responses. */
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
+const {execFile}=require('node:child_process'),{promisify}=require('node:util'),curl=promisify(execFile);
 const {chromium}=require('playwright'),root=path.resolve(__dirname,'..');
 const landmarks=JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/marine-basemap-landmarks.json'))).points;
 const references=[
@@ -16,20 +17,21 @@ const server=http.createServer((req,res)=>{try{const file=path.resolve(root,'.'+
 function requestedTile(url){
  const u=new URL(url);
  if(u.hostname==='cache.kartverket.no'){
-  const match=u.pathname.match(/^\/v1\/wmts\/1\.0\.0\/(topo|toporaster)\/default\/utm33n\/(\d{2})\/(\d+)\/(\d+)\.png$/);assert.ok(match,'official UTM33 WMTS URL');
+  const match=u.pathname.match(/^\/v1\/wmts\/1\.0\.0\/(topo|toporaster)\/default\/utm33n\/(\d+)\/(\d+)\/(\d+)\.png$/);assert.ok(match,'official UTM33 WMTS URL');
   const [,layer,matrix,rowText,colText]=match,z=Number(matrix),row=Number(rowText),col=Number(colText),span=baseSpan/2**z;
+  assert.equal(matrix,String(z),'official WMTS matrix IDs have no zero padding');
   assert.ok(z>=0&&z<=18&&row>=0&&col>=0&&row<2**z&&col<2**z,'valid UTM33 tile indices');
   return {layer,z,row,col,span,left:origin[0]+col*span,top:origin[1]-row*span};
  }
- assert.equal(u.origin+u.pathname,'https://wms.geonorge.no/skwms1/wms.hoyde-dtm');
- const p=u.searchParams;for(const [k,v] of Object.entries({service:'WMS',version:'1.3.0',request:'GetMap',layers:'DTM:multiskyggerelieff',styles:'',crs:'EPSG:25833',width:'256',height:'256',format:'image/png',transparent:'true'}))assert.equal(p.get(k),v,'relief WMS '+k);
- const [left,bottom,right,top]=p.get('bbox').split(',').map(Number),span=right-left,z=Math.log2(baseSpan/span),row=(origin[1]-top)/span,col=(left-origin[0])/span;
- assert.ok(Math.abs(top-bottom-span)<1e-5,'square metric WMS bounds');for(const value of [z,row,col])assert.ok(Math.abs(value-Math.round(value))<1e-5,'WMS imagery is aligned to the WMTS UTM33 grid');
- return {layer:'relief',z:Math.round(z),row:Math.round(row),col:Math.round(col),span,left,top};
+ assert.ok(['whi.maptiles.arcgis.com','wi.maptiles.arcgis.com'].includes(u.hostname),'official Esri WGS84 provider');
+ const match=u.pathname.match(/^\/arcgis\/rest\/services\/(World_Hillshade|World_Imagery)\/MapServer\/tile\/(\d+)\/(\d+)\/(\d+)$/);assert.ok(match,'official WGS84 raster tile endpoint');
+ const [,service,zText,rowText,colText]=match,z=Number(zText),row=Number(rowText),col=Number(colText),span=180/2**z;
+ assert.ok(z>=0&&z<=22&&row>=0&&row<2**z&&col>=0&&col<2**(z+1),'valid two-to-one EPSG4326 tile grid');
+ return {layer:'relief',service,z,row,col,span,left:-180+col*span,top:90-row*span,geographic:true};
 }
 function fixture(tile){
  const [background,marker]=colors[tile.layer];
- const marks=landmarks.map(p=>{const x=(p.easting-tile.left)/tile.span*256,y=(tile.top-p.northing)/tile.span*256;return x>=-6&&x<=262&&y>=-6&&y<=262?`<circle cx="${x}" cy="${y}" r="5" fill="${marker}"/>`:'';}).join('');
+ const marks=landmarks.map(p=>{const x=((tile.geographic?p.lon:p.easting)-tile.left)/tile.span*256,y=(tile.top-(tile.geographic?p.lat:p.northing))/tile.span*256;return x>=-6&&x<=262&&y>=-6&&y<=262?`<circle cx="${x}" cy="${y}" r="5" fill="${marker}"/>`:'';}).join('');
  return `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="${background}"/><path d="M0 30L256 170M45 0L120 256" stroke="#75857c" fill="none"/><text x="8" y="18" font-size="9">TESTFLIS · ${tile.layer}</text>${marks}</svg>`;
 }
 async function settled(page){await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));await page.waitForFunction(()=>{const t=window.marineLimitMap?.getTileState();return t&&(t.layer==='local'||t.visible.length>0)&&t.loading===0&&t.queued===0&&t.failed===0;});await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));}
@@ -40,10 +42,11 @@ async function checkRegistration(page,layer){
 }
 (async()=>{let browser;try{await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;browser=await chromium.launch({headless:true,executablePath:process.env.BROWSER_EXECUTABLE||'/usr/bin/chromium'});const errors=[],reports=[];
 for(const viewport of [{width:1366,height:768},{width:1024,height:768},{width:390,height:844}]){
- const context=await browser.newContext({viewport,hasTouch:viewport.width<700,deviceScaleFactor:viewport.width<700?2:1}),requests=[],tileRequests=[],network={fail:new Set(),hold:false,pending:[],failDetail:false};
- await context.route('**/*',async route=>{const u=route.request().url();requests.push(u);if(u.startsWith(base+'/')){if(network.failDetail&&u.includes('/marine-limit/data/detail/tiles/'))return route.fulfill({status:503,body:'fixture detail unavailable'});return route.continue();}if(!/^https:\/\/(cache\.kartverket\.no|wms\.geonorge\.no)\//.test(u))return route.abort();try{const tile=requestedTile(u);tileRequests.push(tile);if(network.hold)await new Promise(resolve=>network.pending.push(resolve));if(network.fail.has(tile.layer))return route.fulfill({status:503,body:'fixture service unavailable',headers:{'access-control-allow-origin':'*'}});return route.fulfill({status:200,contentType:'image/svg+xml',headers:{'access-control-allow-origin':'*'},body:fixture(tile)});}catch(e){errors.push(e.message);return route.abort();}});
+ const context=await browser.newContext({viewport,hasTouch:viewport.width<700,deviceScaleFactor:viewport.width<700?2:1}),requests=[],tileRequests=[],network={fail:new Set(),noCors:new Set(),hold:false,pending:[],failDetail:false};
+ await context.route('**/*',async route=>{const u=route.request().url();requests.push(u);if(u.startsWith(base+'/')){if(network.failDetail&&u.includes('/marine-limit/data/detail/tiles/'))return route.fulfill({status:503,body:'fixture detail unavailable'});return route.continue();}if(!/^https:\/\/(cache\.kartverket\.no|whi\.maptiles\.arcgis\.com|wi\.maptiles\.arcgis\.com)\//.test(u))return route.abort();try{const tile=requestedTile(u);tile.cors=!!route.request().headers().origin;tileRequests.push(tile);if(network.hold)await new Promise(resolve=>network.pending.push(resolve));if(network.fail.has(tile.layer))return route.fulfill({status:503,body:'fixture service unavailable',headers:{'access-control-allow-origin':'*'}});return route.fulfill({status:200,contentType:'image/svg+xml',headers:{'access-control-allow-origin':network.noCors.has(tile.layer)?'https://other-origin.invalid':'*'},body:fixture(tile)});}catch(e){errors.push(e.message);return route.abort();}});
  const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));await page.goto(base+'/geografi/marin-grense.html');await page.waitForFunction(()=>window.marineLimitMap?.featureCount>=2800);await settled(page);
  assert.equal(await page.locator('#map-layer').inputValue(),'topo','detailed topographic map is the default');assert.ok(tileRequests.some(t=>t.layer==='topo'),'default actually requests detailed tiles');assert.ok(await page.locator('#places option').count()>350);
+ if(viewport.width===1366){const urls=await page.evaluate(async()=>{const {tileURL}=await import('/assets/geography/marine-limit/tiles.js?v=20261101-3');return Array.from({length:10},(_,z)=>tileURL({layer:'topo',z,row:0,col:0}));});urls.forEach((url,z)=>assert.equal(new URL(url).pathname.split('/').slice(-3).join('/'),z+'/0/0.png','matrix '+z+' uses the documented numeric identifier'));}
  const projection=await page.evaluate(ref=>ref.map(([lon,lat])=>marineLimitMap.utm(lon,lat)),references);projection.forEach((p,i)=>{assert.ok(Math.hypot(p[0]-references[i][2],p[1]-references[i][3])<.1,'UTM33 projection agrees with pyproj to 10 cm');});
  const home=await page.evaluate(()=>marineLimitMap.getView());await page.locator('#zoom-in').click();await settled(page);assert.ok(await page.evaluate(z=>marineLimitMap.getView().z>z,home.z));await page.locator('#home').click();await settled(page);assert.deepEqual(await page.evaluate(()=>marineLimitMap.getView()),home);
  await page.locator('#place').fill('Oslo');await page.locator('#place-form button').click();await settled(page);const osloView=await page.evaluate(()=>marineLimitMap.getView());assert.notDeepEqual(osloView,home);
@@ -70,7 +73,7 @@ for(const viewport of [{width:1366,height:768},{width:1024,height:768},{width:39
  if(viewport.width===1366){
   // Basemap failure is visible and recoverable without moving the map.
   network.fail.add('relief');await page.locator('#map-layer').selectOption('relief');await page.locator('#place').fill('Bergen');await page.locator('#place-form button').click();
-  await page.waitForFunction(()=>marineLimitMap.getTileState().failed>0);const failedCamera=await page.evaluate(()=>marineLimitMap.getView());
+  await page.waitForFunction(()=>{const t=marineLimitMap.getTileState();return t.failed>0&&t.loading===0&&t.queued===0&&document.querySelector('#map-status').textContent.includes('kunne ikke lastes');});const failedCamera=await page.evaluate(()=>marineLimitMap.getView());
   assert.match(await page.locator('#map-status').innerText(),/kunne ikke lastes/);network.fail.clear();await page.locator('#map-layer').selectOption('local');await settled(page);await page.locator('#map-layer').selectOption('relief');await settled(page);
   assert.deepEqual(await page.evaluate(()=>marineLimitMap.getView()),failedCamera,'recovering the tile service preserves the camera');
   // NGU detail failures keep the overview available; explicit retry fetches the real local chunk.
@@ -83,6 +86,21 @@ for(const viewport of [{width:1366,height:768},{width:1024,height:768},{width:39
   network.hold=true;await page.locator('#map-layer').selectOption('toporaster');
   await page.waitForFunction(()=>marineLimitMap.getTileState().loading>0);await c.focus();await page.keyboard.press('ArrowRight');const moved=await page.evaluate(()=>marineLimitMap.getView());
   network.hold=false;for(const release of network.pending.splice(0))release();await settled(page);assert.deepEqual(await page.evaluate(()=>marineLimitMap.getView()),moved,'late tile responses do not restore an older camera');
+  // A genuine provider failure shows a clearly identified, registered relief reserve.
+  network.fail.add('topo');await page.locator('#map-layer').selectOption('topo');await page.locator('#place').fill('Tromsø');await page.locator('#place-form button').click();
+  await page.waitForFunction(()=>{const t=marineLimitMap.getTileState();return t.layer==='topo'&&t.failed>0&&t.loading===0&&t.queued===0&&t.fallback&&document.querySelector('#map-status').textContent.includes('Viser terrengrelieff');});
+  assert.match(await page.locator('#map-status').innerText(),/Kartverket-kartet er utilgjengelig\. Viser terrengrelieff/,'reserve is identified honestly');
+  assert.equal(await page.locator('#map-layer').inputValue(),'topo','reserve does not silently change the chosen layer');
+  const fallbackCamera=await page.evaluate(()=>marineLimitMap.getView());network.fail.clear();await page.locator('#map-layer').selectOption('local');await settled(page);await page.locator('#map-layer').selectOption('topo');await settled(page);
+  assert.deepEqual(await page.evaluate(()=>marineLimitMap.getView()),fallbackCamera,'returning from reserve preserves the camera');
+  // If both providers fail, loading ends with an actionable error and a usable local map.
+  network.fail.add('topo');network.fail.add('relief');await page.locator('#place').fill('Kristiansand');await page.locator('#place-form button').click();
+  await page.waitForFunction(()=>{const t=marineLimitMap.getTileState();return t.failed>0&&t.loading===0&&t.queued===0&&document.querySelector('#map-status').textContent.includes('Kartbakgrunnene kunne ikke lastes');});
+  assert.match(await page.locator('#map-status').innerText(),/prøve igjen.*enkelt reservekart/);const doubleFailureCamera=await page.evaluate(()=>marineLimitMap.getView());await page.locator('#map-layer').selectOption('local');await settled(page);
+  assert.deepEqual(await page.evaluate(()=>marineLimitMap.getView()),doubleFailureCamera);assert.equal(await page.locator('#map-status').isVisible(),false,'local reserve clears the failed remote-provider message');const localRequestCount=tileRequests.length;await c.focus();await page.keyboard.press('ArrowRight');await settled(page);assert.equal(tileRequests.length,localRequestCount,'local navigation after two remote failures needs no network');network.fail.clear();await page.locator('#map-layer').selectOption('topo');await settled(page);
+  // If anonymous CORS is denied, ordinary image loading gets one explicit retry.
+  const corsStart=tileRequests.length;network.noCors.add('toporaster');await page.locator('#place').fill('Stavanger');await page.locator('#place-form button').click();await settled(page);await page.locator('#map-layer').selectOption('toporaster');await settled(page);
+  const corsRequests=tileRequests.slice(corsStart).filter(t=>t.layer==='toporaster');assert.ok(corsRequests.some(t=>t.cors)&&corsRequests.some(t=>!t.cors),'WMTS retries without crossOrigin after a CORS refusal: '+JSON.stringify(corsRequests));network.noCors.clear();
  }
  assert.equal(requests.some(u=>/geo\.ngu\.no/.test(u)),false,'the map never calls NGU servers');reports.push({viewport,registrations,requests:tileRequests.length});await context.close();
 }
@@ -94,4 +112,20 @@ for(const viewport of [{width:1366,height:768},{width:1024,height:768},{width:39
  assert.equal(await page.locator('#status').isVisible(),true);failOverview=false;await page.reload();await page.waitForFunction(()=>window.marineLimitMap?.featureCount===2867);await page.locator('#map-layer').selectOption('local');await settled(page);assert.equal(await page.locator('#status').isVisible(),false);await context.close();
 }
 assert.deepEqual(errors,[]);console.log('PASS detailed marine map:',JSON.stringify(reports),'; UTM33 projection, independent tile-landmark registration, layers/camera, street-scale zoom, touch/keyboard and local reserve.');
+if(process.env.MARINE_LIVE==='1'){
+ // Browser routing transports exact, current provider responses. It never proxies
+ // blocked Kartverket/Geonorge hosts and never substitutes fixtures for real JPEGs.
+ const context=await browser.newContext({viewport:{width:1366,height:768}}),real=[],liveErrors=[],pending=new Map(),temp=fs.mkdtempSync(path.join(require('node:os').tmpdir(),'marine-live-'));
+ async function actualTile(url){
+  if(pending.has(url))return pending.get(url);
+  const job=(async()=>{const n=pending.size,headerFile=path.join(temp,n+'.headers'),bodyFile=path.join(temp,n+'.jpg');const {stdout}=await curl('curl',['--fail','--silent','--show-error','--max-time','25','--dump-header',headerFile,'--output',bodyFile,'--write-out','%{http_code} %{content_type}',url],{encoding:'utf8'});assert.equal(stdout.trim(),'200 image/jpeg','live Esri responds with an actual JPEG');const blocks=fs.readFileSync(headerFile,'utf8').split(/\r?\n\r?\n/).filter(s=>/^HTTP\//.test(s)),headers=blocks.at(-1);assert.match(headers,/access-control-allow-origin:\s*\*/i,'provider actually grants anonymous CORS');const body=fs.readFileSync(bodyFile);assert.equal(body[0],255);assert.equal(body[1],216);real.push({url,status:200,contentType:'image/jpeg',cors:'*',bytes:body.length});return body;})();pending.set(url,job);return job;
+ }
+ try{
+  await context.route('**/*',async route=>{const url=route.request().url();if(url.startsWith(base+'/'))return route.continue();if(!url.startsWith('https://whi.maptiles.arcgis.com/arcgis/rest/services/World_Hillshade/MapServer/tile/'))return route.abort();try{requestedTile(url);const body=await actualTile(url);return route.fulfill({status:200,contentType:'image/jpeg',headers:{'access-control-allow-origin':'*'},body});}catch(e){liveErrors.push(e.message);return route.abort();}});
+  const page=await context.newPage();page.on('pageerror',e=>liveErrors.push(e.message));await page.goto(base+'/geografi/marin-grense.html');await page.waitForFunction(()=>window.marineLimitMap?.featureCount===2867);await page.locator('#map-layer').selectOption('local');await settled(page);await page.locator('#place').fill('Oslo');await page.locator('#place-form button').click();await settled(page);await page.locator('#marine-layer').uncheck();await page.locator('#map-layer').selectOption('relief');await settled(page);
+  const state=await page.evaluate(()=>marineLimitMap.getTileState());assert.equal(state.provider,'esri-hillshade');assert.ok(state.ready>0&&state.failed===0,'current provider JPEGs become ready in the actual renderer');
+  const variation=await page.evaluate(()=>{const c=document.getElementById('map'),ctx=c.getContext('2d'),data=ctx.getImageData(0,0,c.width,c.height).data,colors=new Set();for(let i=0;i<data.length;i+=64)colors.add(data[i]+','+data[i+1]+','+data[i+2]);return colors.size;});assert.ok(variation>100,'real hillshade paints varied terrain, rather than a solid placeholder');assert.equal(await page.locator('#map-status').isVisible(),false,'successful live source removes loading/error status');
+  fs.mkdirSync('/workspace/artifacts/marine-detail-qa',{recursive:true});await page.screenshot({path:'/workspace/artifacts/marine-detail-qa/live-whi-oslo.png'});fs.writeFileSync('/workspace/artifacts/marine-detail-qa/live-whi-responses.json',JSON.stringify({state,variation,responses:real},null,2));assert.deepEqual(liveErrors,[]);console.log('PASS real provider hillshade:',JSON.stringify({tiles:real.length,bytes:real.reduce((n,r)=>n+r.bytes,0),variation}));
+ }finally{await context.close();fs.rmSync(temp,{recursive:true,force:true});}
+}
 }finally{await browser?.close();server.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

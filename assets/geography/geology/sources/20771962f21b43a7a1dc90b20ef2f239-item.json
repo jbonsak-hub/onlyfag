@@ -1,0 +1,69 @@
+{
+  "id": "20771962f21b43a7a1dc90b20ef2f239",
+  "owner": "geodata_levende_atlas",
+  "ownerId": "c0a74224ec104a9e8a55222a2a81522d",
+  "orgId": "2JyTvMWQSnM2Vi8q",
+  "created": 1768899639000,
+  "modified": 1771587900000,
+  "guid": null,
+  "name": null,
+  "title": "Løsmasser i Norge",
+  "type": "Feature Service",
+  "typeKeywords": [
+    "ArcGIS Server",
+    "Data",
+    "Feature Access",
+    "Feature Service",
+    "Multilayer",
+    "Service",
+    "Hosted Service"
+  ],
+  "description": null,
+  "tags": [],
+  "snippet": null,
+  "thumbnail": "thumbnail/ago_downloaded.png",
+  "documentation": null,
+  "extent": [
+    [
+      -0.9204703253794723,
+      57.7710854434621
+    ],
+    [
+      31.92766052389584,
+      71.56349777303384
+    ]
+  ],
+  "categories": [
+    "/Categories/Geologi",
+    "/Categories/Arealdekke"
+  ],
+  "spatialReference": "102100",
+  "accessInformation": null,
+  "classification": null,
+  "licenseInfo": null,
+  "culture": "nb",
+  "properties": null,
+  "advancedSettings": null,
+  "url": "https://services.arcgis.com/2JyTvMWQSnM2Vi8q/arcgis/rest/services/Løsmasser_Norge/FeatureServer",
+  "proxyFilter": null,
+  "access": "public",
+  "size": 95412224,
+  "subInfo": 0,
+  "appCategories": [],
+  "industries": [],
+  "languages": [],
+  "largeThumbnail": null,
+  "banner": null,
+  "screenshots": [],
+  "listed": false,
+  "commentsEnabled": true,
+  "numComments": 0,
+  "numRatings": 0,
+  "avgRating": 0,
+  "numViews": 1866,
+  "scoreCompleteness": 33,
+  "groupDesignations": null,
+  "apiToken1ExpirationDate": -1,
+  "apiToken2ExpirationDate": -1,
+  "lastViewed": 1793538000000
+}

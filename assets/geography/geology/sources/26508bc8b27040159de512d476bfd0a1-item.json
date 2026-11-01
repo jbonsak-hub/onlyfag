@@ -1,0 +1,67 @@
+{
+  "id": "26508bc8b27040159de512d476bfd0a1",
+  "owner": "geodata_levende_atlas",
+  "ownerId": "c0a74224ec104a9e8a55222a2a81522d",
+  "orgId": "2JyTvMWQSnM2Vi8q",
+  "created": 1768901055000,
+  "modified": 1778509230000,
+  "guid": null,
+  "name": null,
+  "title": "Løsmasser i Norge",
+  "type": "Web Map",
+  "typeKeywords": [
+    "ArcGIS API for JavaScript",
+    "ArcGIS Online",
+    "Explorer Web Map",
+    "Map",
+    "Online Map",
+    "Web Map"
+  ],
+  "description": "<p><span style='background-color:rgb(255,255,255); color:rgb(36,41,47); font-family:&quot;Open Sans&quot;, sans-serif; font-size:15px;'><span style='display:inline !important; float:none; font-style:normal; font-variant-caps:normal; font-variant-ligatures:normal; font-weight:400; letter-spacing:normal; text-align:left; text-decoration-color:initial; text-decoration-style:initial; text-indent:0px; text-transform:none; word-spacing:0px;'>Dataene viser hvilken løsmassetype som dominerer i terrengoverflaten, og avspeiler landskapets oppbygning og utvikling. Det er viktig å være klar over at andre løsmassetyper kan opptre i dypet. Dataene viser også arealer med fjell uten løsmassedekke.</span></span></p>",
+  "tags": [
+    ""
+  ],
+  "snippet": "Løsmasser landdekkende over Norge.  ",
+  "thumbnail": "thumbnail/ago_downloaded.png",
+  "documentation": null,
+  "extent": [
+    [
+      -4.224271202660304,
+      57.64706516774029
+    ],
+    [
+      28.909458117804007,
+      70.17424700093028
+    ]
+  ],
+  "categories": [],
+  "spatialReference": "",
+  "accessInformation": "",
+  "classification": null,
+  "licenseInfo": "<div style='background-color:rgb(255, 255, 255); box-sizing:border-box; color:rgb(47, 57, 64); font-family:&quot;Open Sans&quot;, sans-serif; font-size:15px; font-style:normal; font-variant-caps:normal; font-variant-ligatures:normal; font-weight:400; letter-spacing:normal; text-align:left; text-decoration-color:initial; text-decoration-style:initial; text-indent:0px; text-transform:none; word-spacing:0px;'><strong>Bruksbegrensninger: </strong>Løsmassedata i målestokkområdet 1:250.000 er beregnet for å gi en regional oversikt. I kommunal planlegging er det behov for mer detaljerte løsmassedata (N50 og større). Data kartlagt i 1:50.000 eller bedre kan da benyttes.</div><div style='background-color:rgb(255, 255, 255); box-sizing:border-box; color:rgb(47, 57, 64); font-family:&quot;Open Sans&quot;, sans-serif; font-size:15px; font-style:normal; font-variant-caps:normal; font-variant-ligatures:normal; font-weight:400; letter-spacing:normal; text-align:left; text-decoration-color:initial; text-decoration-style:initial; text-indent:0px; text-transform:none; word-spacing:0px;'><strong>Tilgangsrestriksjoner: </strong>Åpne data</div><div style='background-color:rgb(255, 255, 255); box-sizing:border-box; color:rgb(47, 57, 64); font-family:&quot;Open Sans&quot;, sans-serif; font-size:15px; font-style:normal; font-variant-caps:normal; font-variant-ligatures:normal; font-weight:400; letter-spacing:normal; text-align:left; text-decoration-color:initial; text-decoration-style:initial; text-indent:0px; text-transform:none; word-spacing:0px;'><strong>Brukerrestriksjoner: </strong>Lisens</div><div style='background-color:rgb(255, 255, 255); box-sizing:border-box; color:rgb(47, 57, 64); font-family:&quot;Open Sans&quot;, sans-serif; font-size:15px; font-style:normal; font-variant-caps:normal; font-variant-ligatures:normal; font-weight:400; letter-spacing:normal; text-align:left; text-decoration-color:initial; text-decoration-style:initial; text-indent:0px; text-transform:none; word-spacing:0px;'><strong>Lisens: </strong>https://data.norge.no/nlod/no/1.0</div>",
+  "culture": "nb",
+  "properties": null,
+  "advancedSettings": null,
+  "url": "",
+  "proxyFilter": null,
+  "access": "public",
+  "size": 17455,
+  "subInfo": 0,
+  "appCategories": [],
+  "industries": [],
+  "languages": [],
+  "largeThumbnail": null,
+  "banner": null,
+  "screenshots": [],
+  "listed": false,
+  "commentsEnabled": true,
+  "numComments": 0,
+  "numRatings": 0,
+  "avgRating": 0,
+  "numViews": 397,
+  "scoreCompleteness": 70,
+  "groupDesignations": null,
+  "apiToken1ExpirationDate": -1,
+  "apiToken2ExpirationDate": -1,
+  "lastViewed": 1793376000000
+}

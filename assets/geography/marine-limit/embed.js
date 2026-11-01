@@ -19,7 +19,7 @@
         menuButton.textContent=open?'×':'☰';
         menuButton.title=open?'Lukk geografimenyen':'Åpne geografimenyen';
         menuButton.setAttribute('aria-label',menuButton.title);menuButton.setAttribute('aria-expanded',String(open));
-      }else if(mobileMenuActive&&!document.querySelector('#indre-tsunami.active')){
+      }else if(mobileMenuActive&&!document.querySelector('#indre-tsunami.active,#indre-geologiske-kart.active')){
         const collapsed=document.body.classList.contains('sidebar-collapsed');
         menuButton.textContent=collapsed?'☰':'‹';menuButton.title=collapsed?'Vis venstremeny':'Minimer venstremeny';
         menuButton.setAttribute('aria-label',menuButton.title);menuButton.removeAttribute('aria-expanded');

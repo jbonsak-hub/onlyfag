@@ -1,31 +1,43 @@
-// Kartverket's public UTM33 WMTS and terrain WMS, as used by Følg dråpen.
+import '../wgs84-raster.js?v=20261101-1';
+import {geographicToUTM} from './projection.js?v=20261101-2';
+
+// Kartverket WMTS uses numeric matrix IDs. Relief uses verified Esri WGS84 tiles.
 export const TILE_ORIGIN=[-2500000,9045984],TILE_RESOLUTION=21664,MAX_LEVEL=18;
 export function tileURL({layer,z,row,col}){
- if(layer==='relief'){
-  const span=256*TILE_RESOLUTION/2**z,x=TILE_ORIGIN[0]+col*span,y=TILE_ORIGIN[1]-row*span;
-  return 'https://wms.geonorge.no/skwms1/wms.hoyde-dtm?'+new URLSearchParams({service:'WMS',version:'1.3.0',request:'GetMap',layers:'DTM:multiskyggerelieff',styles:'',crs:'EPSG:25833',bbox:[x,y-span,x+span,y].join(','),width:'256',height:'256',format:'image/png',transparent:'true'});
- }
- return 'https://cache.kartverket.no/v1/wmts/1.0.0/'+layer+'/default/utm33n/'+String(z).padStart(2,'0')+'/'+row+'/'+col+'.png';
+ if(!['topo','toporaster'].includes(layer))throw Error('Unsupported WMTS layer');
+ return 'https://cache.kartverket.no/v1/wmts/1.0.0/'+layer+'/default/utm33n/'+String(z)+'/'+row+'/'+col+'.png';
 }
 export function createTileLayer({repaint,status}){
- const tiles=new Map();let active=0,visible=new Set(),layer='topo',level=0,enabled=true;
+ const tiles=new Map();let active=0,visible=new Set(),layer='topo',level=0,enabled=true,fallback=false,reliefEnabled=false,reliefMessage='';
+ const relief=globalThis.WGS84Raster.create({sourceURL:'https://whi.maptiles.arcgis.com/arcgis/rest/services/World_Hillshade/MapServer',project(lon,lat){const [east,north]=geographicToUTM(lon,lat);return [east,-north];},repaint,status:message=>{reliefMessage=message;report();}});
+ relief.setVisible(false);
+ function syncRelief(){const show=enabled&&(layer==='relief'||fallback&&layer!=='local');if(show!==reliefEnabled){reliefEnabled=show;relief.setVisible(show);}}
+ function reliefSnapshot(){const snapshot=relief.snapshot();return {layer,provider:'esri-hillshade',level:snapshot.level,visible:snapshot.tiles.map(tile=>({...tile,layer:'relief'})),queued:snapshot.pending,loading:0,failed:snapshot.failed,ready:snapshot.ready};}
+ function drawRelief(ctx,options){const a=options.world(0,0),b=options.world(options.width,options.height);relief.draw(ctx,{width:options.width,height:options.height,utmBounds:[a[0],-b[1],b[0],-a[1]],pixelsPerMetre:options.scale,screen:options.screen});}
+
  function report(){
+  if(layer==='relief'){status(reliefMessage);return;}
   const current=[...visible].map(key=>tiles.get(key)).filter(Boolean),failed=current.some(t=>t.status==='error'),pending=current.some(t=>['queued','loading'].includes(t.status));
-  status(layer==='local'?'':failed?'Kartbakgrunnen kunne ikke lastes. Velg et annet kartlag eller prøv igjen.':pending?'Laster detaljert kartbakgrunn …':'');
+  const reserve=relief.snapshot();
+  status(layer==='local'?'':failed&&reserve.failed&&!reserve.pending?'Kartbakgrunnene kunne ikke lastes. Velg et kartlag på nytt for å prøve igjen, eller bruk enkelt reservekart.':failed&&reserve.ready?'Kartverket-kartet er utilgjengelig. Viser terrengrelieff. Velg kartlaget på nytt for å prøve igjen.':failed?'Kartverket-kartet kunne ikke lastes. Laster terrengrelieff som reserve …':pending?'Laster detaljert kartbakgrunn …':'');
  }
  function load(){
-  if(!enabled)return;
+  if(!enabled||layer==='relief'||layer==='local')return;
   const limit=layer==='relief'?4:8;
   for(const key of visible){
    if(active>=limit)break;const tile=tiles.get(key);if(tile.status!=='queued')continue;
-   active++;tile.status='loading';tile.attempts++;const image=new Image();tile.image=image;image.crossOrigin='anonymous';let settled=false;
-   const finish=state=>{if(settled)return;settled=true;clearTimeout(timer);active--;tile.status=state==='error'&&tile.attempts<2?'queued':state;report();repaint();load();};
-   const timer=setTimeout(()=>{finish('error');image.src='';},layer==='relief'?45000:20000);
+   active++;tile.status='loading';tile.attempts++;const image=new Image();tile.image=image;
+   // Retry ordinary image loading if a provider does not grant anonymous CORS.
+   if(tile.attempts===1)image.crossOrigin='anonymous';let settled=false;
+   const finish=state=>{if(settled)return;settled=true;clearTimeout(timer);active--;if(state==='error'&&layer===tile.layer&&layer!=='local'){fallback=true;syncRelief();}tile.status=state==='error'&&tile.attempts<2?'queued':state;report();repaint();load();};
+   const timer=setTimeout(()=>{finish('error');image.src='';},8000);
    image.onload=()=>finish('ready');image.onerror=()=>finish('error');image.src=tileURL(tile);
   }
  }
  function draw(ctx,{width,height,scale,world,screen,mapLayer}){
-  layer=mapLayer;
+  layer=mapLayer;syncRelief();
+  if(layer==='relief'){visible.clear();drawRelief(ctx,{width,height,scale,world,screen});report();return;}
+  if(fallback&&layer!=='local')drawRelief(ctx,{width,height,scale,world,screen});
   if(layer==='local'){visible.clear();report();return;}
   level=Math.max(0,Math.min(MAX_LEVEL,Math.round(Math.log2(TILE_RESOLUTION*scale))));
   const a=world(0,0),b=world(width,height),span=256*TILE_RESOLUTION/2**level,count=2**level;
@@ -46,5 +58,5 @@ export function createTileLayer({repaint,status}){
   if(tiles.size>192)for(const [key,tile] of [...tiles].sort((a,b)=>(a[1].used||0)-(b[1].used||0))){if(tiles.size<=192)break;if(!visible.has(key)&&tile.status!=='loading')tiles.delete(key);}
   load();report();
  }
- return {draw,change(mapLayer){layer=mapLayer;visible.clear();for(const tile of tiles.values())if(tile.layer===layer&&tile.status==='error'){tile.status='queued';tile.attempts=0;}report();repaint();},setVisible(value){enabled=value;if(enabled)load();},snapshot(){const list=[...visible].map(key=>tiles.get(key)).filter(Boolean);return {layer,level,visible:list.map(({layer,z,row,col,status})=>({layer,z,row,col,status})),queued:list.filter(t=>t.status==='queued').length,loading:list.filter(t=>t.status==='loading').length,failed:list.filter(t=>t.status==='error').length,ready:list.filter(t=>t.status==='ready').length};}};
+ return {draw,change(mapLayer){layer=mapLayer;fallback=false;syncRelief();relief.retry();visible.clear();for(const tile of tiles.values())if(tile.layer===layer&&tile.status==='error'){tile.status='queued';tile.attempts=0;}report();repaint();},setVisible(value){enabled=value;syncRelief();if(enabled)load();},snapshot(){if(layer==='relief')return reliefSnapshot();const list=[...visible].map(key=>tiles.get(key)).filter(Boolean);return {layer,level,fallback:!!(fallback&&relief.snapshot().ready),visible:list.map(({layer,z,row,col,status})=>({layer,z,row,col,status})),queued:list.filter(t=>t.status==='queued').length,loading:list.filter(t=>t.status==='loading').length,failed:list.filter(t=>t.status==='error').length,ready:list.filter(t=>t.status==='ready').length};}};
 }

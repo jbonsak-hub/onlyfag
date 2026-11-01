@@ -82,20 +82,25 @@ selvstendige siden.
 
 Marin-grense-flatene, stedsnavn og skript lastes fra OnlyFag. Det gjøres ingen
 NGU- eller ArcGIS-kall for temadata mens kartet brukes. Kartbakgrunnen bruker
-samme offentlige tjenester og flisrutenett som «Følg dråpen»:
+offentlige flistjenester med geografisk registrering i UTM33:
 
 - **Topografisk kart**: Kartverket WMTS `topo`.
 - **Turkart**: Kartverket WMTS `toporaster`.
-- **Terrengrelieff**: Kartverkets WMS `DTM:multiskyggerelieff` hos Geonorge.
+- **Terrengrelieff**: [Esri World Hillshade WGS84](https://www.arcgis.com/home/item.html?id=abb42430fb5e4841b0d92eec3882946a).
 - **Enkelt reservekart**: lokal, generalisert bakgrunn for bruk uten kartfliser.
 
 Kartverkets WMTS i UTM33 har origo `[-2500000,9045984]`, 256-pikselfliser og
-oppløsning `21664 / 2^nivå` meter per piksel. Nivå 00–18 hentes fra
+oppløsning `21664 / 2^nivå` meter per piksel. Nivå 0–18 hentes med numeriske matrise-ID-er uten nullutfylling fra
 `https://cache.kartverket.no/v1/wmts/1.0.0/{lag}/default/utm33n/{nivå}/{rad}/{kolonne}.png`.
-Terrengrelieff hentes fra `https://wms.geonorge.no/skwms1/wms.hoyde-dtm`
-med samme EPSG:25833-rutenett. Bakgrunnskartene trenger nettforbindelse til
-Kartverket/Geonorge, mens NGUs ustabile tjenester er utenfor kjørebanen.
-Feil på bakgrunnsfliser meldes synlig og påvirker ikke kommunesøk eller temadata.
+Terrengrelieff hentes fra
+`https://whi.maptiles.arcgis.com/arcgis/rest/services/World_Hillshade/MapServer`.
+Dette er et WGS84-flisrutenett (EPSG:4326), med origo `[-180,90]`, 256 piksler,
+oppløsning `0.703125 / 2^nivå` grader og `2^(nivå+1)` kolonner. Den delte
+`wgs84-raster.js` omprojiserer hvert bilde med et 8×8 teksturnett til UTM33.
+Ved feil på Kartverket vises dette relieffet automatisk med en uttrykkelig
+statusmelding. Lagvelgeren beholder ønsket Kartverket-lag; nytt valg prøver igjen.
+Ingen vilkårlig flis erstatter en mislykket flis fra et annet område.
+Bakgrunnsfeil påvirker ikke kommunesøk eller de lokale NGU-temadataene.
 
 Kamera, kartfliser og temaflater bruker nå ekte **ETRS89 / UTM sone 33N
 (EPSG:25833)**. `projection.js` bruker GRS80 og en sjetteordens Krüger-utvikling,
@@ -137,8 +142,13 @@ er fortsatt 23. januar 2024, uavhengig av datoen dataene ble lastet ned.
 - `node scripts/build-geography-quiz-assets.cjs --check`: bekrefter at de
   eksisterende quizressursene ikke trenger nygenerering.
 
-Utviklingsmiljøets nettfilter blokkerte direkte kall til cache.kartverket.no og
-wms.geonorge.no ved denne oppdateringen. Kartverksflisenes pikselregistrering,
-lagbytte og feilhåndtering testes derfor deterministisk med georefererte
-kontrollfliser. Dette er ikke fremstilt som en ny, direkte tilgjengelighetstest
-av fjernserverne; URL-kontrakten gjenbrukes fra Dråpen.
+Utviklingsmiljøets nettfilter blokkerte direkte kall til cache.kartverket.no.
+WMTS-kontrakten er kontrollert mot Kartverkets egen nibas-frontend: nivået
+bruker `z.toString()`, ikke `padStart(2)`. Georefererte kontrollfliser verifiserer
+registrering, nivå 0–9, feiltilstand og bytte til reserve. Dette er ikke en
+påstand om direkte verifisert tilgjengelighet hos Kartverket.
+
+Esris faktiske World Hillshade-tjeneste er testet med HTTP 200, JPEG-bildedata og
+`Access-Control-Allow-Origin: *`. `MARINE_LIVE=1 node tests/marine-limit-map.cjs`
+henter ekte fliser og kontrollerer at de tegnes i nettleseren. Lokal kartvisning
+og geologiske temadata avhenger ikke av NGUs servere.

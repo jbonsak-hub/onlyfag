@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="Utforsk kartlagte områder under marin grense i Norge. Lokalt lagrede NGU-data viser tidligere havbunn etter istiden.">
   <title>Marin grense | OnlyFag</title>
-  <link rel="stylesheet" href="../assets/geography/marine-limit/map.css?v=20261101-2">
+  <link rel="stylesheet" href="../assets/geography/marine-limit/map.css?v=20261101-3">
   <script src="../assets/analytics.js" defer></script>
-  <script type="module" src="../assets/geography/marine-limit/map.js?v=20261101-2"></script>
+  <script type="module" src="../assets/geography/marine-limit/map.js?v=20261101-3"></script>
 </head>
 <body data-map-layer="topo">
   <header class="toolbar">
@@ -34,15 +34,15 @@
     <div class="map-messages"><div id="status" role="status">Laster kart …</div><div id="map-status" role="status" hidden></div><div id="detail-status" role="status" hidden></div></div>
     <section id="info" class="info" hidden aria-live="polite"><button id="close-info" aria-label="Lukk kartopplysning">×</button><h2 id="info-title"></h2><p id="info-text"></p></section>
     <span class="scale" id="scale"></span>
-    <div class="credit">NGU · <span id="basemap-credit"><a href="https://www.kartverket.no/api-og-data/vilkar-for-bruk" target="_blank" rel="noopener">© Kartverket</a> · </span><span class="local-credit">Kart: <a href="https://commons.wikimedia.org/wiki/File:Vestland_in_Norway_2024.svg" target="_blank" rel="noopener">NordNordWest</a> · <a href="https://creativecommons.org/licenses/by-sa/3.0/de/" target="_blank" rel="noopener">CC BY-SA 3.0 DE</a>, bearbeidet · </span><button id="sources" type="button">Kilder</button></div>
+    <div class="credit">NGU · <span id="basemap-credit"><a id="basemap-source" href="https://www.kartverket.no/api-og-data/vilkar-for-bruk" target="_blank" rel="noopener">© Kartverket</a><span id="relief-credit" hidden><a href="https://www.arcgis.com/home/item.html?id=abb42430fb5e4841b0d92eec3882946a" target="_blank" rel="noopener">Terreng © Esri m.fl.</a></span> · </span><span class="local-credit">Kart: <a href="https://commons.wikimedia.org/wiki/File:Vestland_in_Norway_2024.svg" target="_blank" rel="noopener">NordNordWest</a> · <a href="https://creativecommons.org/licenses/by-sa/3.0/de/" target="_blank" rel="noopener">CC BY-SA 3.0 DE</a>, bearbeidet · </span><button id="sources" type="button">Kilder</button></div>
   </main>
   <dialog id="about-dialog" aria-labelledby="about-title">
     <div class="dialog-heading"><h2 id="about-title">Om marin grense</h2><button id="close-about" aria-label="Lukk">×</button></div>
     <p>Marin grense er det høyeste nivået havet nådde lokalt etter siste istid. Landet har siden hevet seg. Grensen varierer fra sted til sted.</p>
     <p>Kartlaget viser <strong>areal under marin grense</strong>, ikke målepunkter eller en nøyaktig høydekurve. Blått betyr tidligere havbunn, ikke påvist marin leire.</p>
-    <p>De blå flatene er NGU-data lagret på OnlyFag. Kartet kontakter ingen NGU-tjeneste mens du bruker det. Kartbakgrunnen hentes fra Kartverket og får flere detaljer når du zoomer inn. Marin-grense-laget kan slås av og på, og synligheten kan justeres; manglende blåfarge er ikke alene en avklaring av marin grense på et sted.</p>
+    <p>De blå flatene er NGU-data lagret på OnlyFag. Kartet kontakter ingen NGU-tjeneste mens du bruker det. Topografisk kart og turkart hentes fra Kartverket; terrengrelieff hentes fra Esri. Bakgrunnen får flere detaljer når du zoomer inn. Marin-grense-laget kan slås av og på, og synligheten kan justeres; manglende blåfarge er ikke alene en avklaring av marin grense på et sted.</p>
     <h3>Kilder og kartgrunnlag</h3><p id="source-description">Laster kildeopplysninger …</p>
-    <ul><li><a href="https://geo.ngu.no/api/features/maringrense/collections" target="_blank" rel="noopener">NGU: Marin grense</a> · <a href="https://data.norge.no/nlod/en/2.0/" target="_blank" rel="noopener">NLOD 2.0</a></li><li>Topografisk kart og turkart: Kartverket WMTS. Terrengrelieff: Kartverkets høydedata via Geonorge. Det enkle reservekartet bruker Natural Earth (public domain) og bearbeidet fylkesgeometri fra NordNordWest (CC BY-SA 3.0 DE).</li><li>Kommunesøk viser kommunens administrasjonssenter, basert på Kartverket SSR og Wikidata.</li></ul>
+    <ul><li><a href="https://geo.ngu.no/api/features/maringrense/collections" target="_blank" rel="noopener">NGU: Marin grense</a> · <a href="https://data.norge.no/nlod/en/2.0/" target="_blank" rel="noopener">NLOD 2.0</a></li><li>Topografisk kart og turkart: Kartverket WMTS. Terrengrelieff: <a href="https://www.arcgis.com/home/item.html?id=abb42430fb5e4841b0d92eec3882946a" target="_blank" rel="noopener">Esri World Hillshade WGS84</a>. Det enkle reservekartet bruker Natural Earth (public domain) og bearbeidet fylkesgeometri fra NordNordWest (CC BY-SA 3.0 DE).</li><li>Kommunesøk viser kommunens administrasjonssenter, basert på Kartverket SSR og Wikidata.</li></ul>
     <p>Panorer ved å dra. Zoom med hjul, knappene eller to fingre. Med tastatur: piltaster, +/− og Home. Trykk i kartet for å undersøke en flate.</p>
   </dialog>
   <noscript>Du må aktivere JavaScript for å bruke kartet.</noscript>

@@ -1,0 +1,4311 @@
+{
+  "currentVersion": 11.5,
+  "cimVersion": "3.5.0",
+  "id": 408,
+  "name": "GEOLOGI_LosmasseFlate",
+  "type": "Feature Layer",
+  "description": "",
+  "geometryType": "esriGeometryPolygon",
+  "sourceSpatialReference": {
+    "wkid": 25833,
+    "latestWkid": 25833,
+    "xyTolerance": 0.001,
+    "zTolerance": 0.001,
+    "mTolerance": 0.001,
+    "falseX": -5120900,
+    "falseY": -9998100,
+    "xyUnits": 10000,
+    "falseZ": -100000,
+    "zUnits": 10000,
+    "falseM": -100000,
+    "mUnits": 10000
+  },
+  "spatialReference": {
+    "wkid": 25833,
+    "latestWkid": 25833,
+    "xyTolerance": 0.001,
+    "zTolerance": 0.001,
+    "mTolerance": 0.001,
+    "falseX": -5120900,
+    "falseY": -9998100,
+    "xyUnits": 10000,
+    "falseZ": -100000,
+    "zUnits": 10000,
+    "falseM": -100000,
+    "mUnits": 10000
+  },
+  "copyrightText": "",
+  "parentLayer": {
+    "id": 407,
+    "name": "Løsmasser"
+  },
+  "subLayers": [],
+  "minScale": 81000,
+  "maxScale": 0,
+  "referenceScale": 0.0,
+  "drawingInfo": {
+    "renderer": {
+      "type": "uniqueValue",
+      "field1": "losmassetype",
+      "defaultSymbol": {
+        "type": "esriSFS",
+        "style": "esriSFSSolid",
+        "color": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "outline": {
+          "type": "esriSLS",
+          "style": "esriSLSSolid",
+          "color": [
+            110,
+            110,
+            110,
+            255
+          ],
+          "width": 0.4
+        }
+      },
+      "defaultLabel": "Løsmassetype ikke spesifisert",
+      "uniqueValueGroups": [
+        {
+          "heading": "Løsmassetype",
+          "classes": [
+            {
+              "label": "10 - Morenemateriale uspes",
+              "description": "10 - Morenemateriale uspes",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  171,
+                  235,
+                  0,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "10"
+                ]
+              ]
+            },
+            {
+              "label": "11 - Morenemat. sammenh., dels stor mektighet",
+              "description": "11 - Morenemat. sammenh., dels stor mektighet",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  135,
+                  255,
+                  97,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "11"
+                ]
+              ]
+            },
+            {
+              "label": "12 - Morenemat., usammenh/tynt",
+              "description": "12 - Morenemat., usammenh/tynt",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  191,
+                  255,
+                  135,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "12"
+                ]
+              ]
+            },
+            {
+              "label": "13 - Moreneleire",
+              "description": "13 - Moreneleire",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  87,
+                  194,
+                  0,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "13"
+                ]
+              ]
+            },
+            {
+              "label": "14 - Ablasjonsmorene",
+              "description": "14 - Ablasjonsmorene",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  107,
+                  199,
+                  130,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "14"
+                ]
+              ]
+            },
+            {
+              "label": "15 - Randmorene",
+              "description": "15 - Randmorene",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  0,
+                  255,
+                  51,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "15"
+                ]
+              ]
+            },
+            {
+              "label": "16 - Drumlin",
+              "description": "16 - Drumlin",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  71,
+                  179,
+                  0,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "16"
+                ]
+              ]
+            },
+            {
+              "label": "17 - Rogenmorene",
+              "description": "17 - Rogenmorene",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  115,
+                  255,
+                  0,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "17"
+                ]
+              ]
+            },
+            {
+              "label": "20 - Breelvavsetning",
+              "description": "20 - Breelvavsetning",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  255,
+                  171,
+                  0,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "20"
+                ]
+              ]
+            },
+            {
+              "label": "21 - Breelv- og elveavsetning",
+              "description": "21 - Breelv- og elveavsetning",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  253,
+                  216,
+                  119,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "21"
+                ]
+              ]
+            },
+            {
+              "label": "22 - Esker",
+              "description": "22 - Esker",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  255,
+                  189,
+                  0,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "22"
+                ]
+              ]
+            },
+            {
+              "label": "23 - Kame",
+              "description": "23 - Kame",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  255,
+                  148,
+                  33,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "23"
+                ]
+              ]
+            },
+            {
+              "label": "30 - Bresjø(-kammer)avsetning",
+              "description": "30 - Bresjø(-kammer)avsetning",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  255,
+                  209,
+                  135,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "30"
+                ]
+              ]
+            },
+            {
+              "label": "31 - Breelv evt også bresjøavs.",
+              "description": "31 - Breelv evt også bresjøavs.",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  255,
+                  235,
+                  116,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "31"
+                ]
+              ]
+            },
+            {
+              "label": "35 - Innsjøavsetning",
+              "description": "35 - Innsjøavsetning",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  255,
+                  255,
+                  190,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "35"
+                ]
+              ]
+            },
+            {
+              "label": "36 - Bresjø evt også innsjøavs.",
+              "description": "36 - Bresjø evt også innsjøavs.",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  255,
+                  247,
+                  135,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "36"
+                ]
+              ]
+            },
+            {
+              "label": "37 - Strandavs. innsjø/bresjø",
+              "description": "37 - Strandavs. innsjø/bresjø",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  255,
+                  255,
+                  0,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "37"
+                ]
+              ]
+            },
+            {
+              "label": "40 - Hav- og fjordavsetning",
+              "description": "40 - Hav- og fjordavsetning",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  110,
+                  212,
+                  255,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "40"
+                ]
+              ]
+            },
+            {
+              "label": "41 - Hav-/fjordavs., sammenh.",
+              "description": "41 - Hav-/fjordavs., sammenh.",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  64,
+                  191,
+                  255,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "41"
+                ]
+              ]
+            },
+            {
+              "label": "42 - Marin strandavs., sammenh.",
+              "description": "42 - Marin strandavs., sammenh.",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  64,
+                  153,
+                  255,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "42"
+                ]
+              ]
+            },
+            {
+              "label": "43 - Hav/fjord/strandavs., usammenh.",
+              "description": "43 - Hav/fjord/strandavs., usammenh.",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  158,
+                  235,
+                  255,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "43"
+                ]
+              ]
+            },
+            {
+              "label": "44 - Skjellsand",
+              "description": "44 - Skjellsand",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  181,
+                  227,
+                  227,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "44"
+                ]
+              ]
+            },
+            {
+              "label": "45 - Marin gyttje",
+              "description": "45 - Marin gyttje",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  158,
+                  187,
+                  191,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "45"
+                ]
+              ]
+            },
+            {
+              "label": "50 - Elve- og bekkeavsetning",
+              "description": "50 - Elve- og bekkeavsetning",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  255,
+                  237,
+                  97,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "50"
+                ]
+              ]
+            },
+            {
+              "label": "51 - Elveavs., sammenh. dekke",
+              "description": "51 - Elveavs., sammenh. dekke",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  253,
+                  251,
+                  127,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "51"
+                ]
+              ]
+            },
+            {
+              "label": "52 - Elveavs., usammenh. dekke",
+              "description": "52 - Elveavs., usammenh. dekke",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSBackwardDiagonal",
+                "color": [
+                  255,
+                  255,
+                  255,
+                  127
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "52"
+                ]
+              ]
+            },
+            {
+              "label": "53 - Flomavs. bresjøtapping",
+              "description": "53 - Flomavs. bresjøtapping",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  253,
+                  201,
+                  0,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "53"
+                ]
+              ]
+            },
+            {
+              "label": "54 - Flomavs. bresjøtapping sammenh.",
+              "description": "54 - Flomavs. bresjøtapping sammenh.",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  254,
+                  215,
+                  40,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "54"
+                ]
+              ]
+            },
+            {
+              "label": "55 - Flomavs. bresjøtapping usammenh.",
+              "description": "55 - Flomavs. bresjøtapping usammenh.",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSBackwardDiagonal",
+                "color": [
+                  255,
+                  255,
+                  255,
+                  127
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "55"
+                ]
+              ]
+            },
+            {
+              "label": "56 - Flomavsetning, sammenh.",
+              "description": "56 - Flomavsetning, sammenh.",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  255,
+                  200,
+                  0,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "56"
+                ]
+              ]
+            },
+            {
+              "label": "57 - Flomavsetning, usammenh",
+              "description": "57 - Flomavsetning, usammenh",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSBackwardDiagonal",
+                "color": [
+                  255,
+                  255,
+                  255,
+                  127
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "57"
+                ]
+              ]
+            },
+            {
+              "label": "60 - Vindavsetning",
+              "description": "60 - Vindavsetning",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  212,
+                  217,
+                  66,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "60"
+                ]
+              ]
+            },
+            {
+              "label": "70 - Forvitringsmateriale gen.",
+              "description": "70 - Forvitringsmateriale gen.",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  232,
+                  194,
+                  255,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "70"
+                ]
+              ]
+            },
+            {
+              "label": "71 - Forvitringsmateriale sammenh. dekke",
+              "description": "71 - Forvitringsmateriale sammenh. dekke",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  224,
+                  181,
+                  255,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "71"
+                ]
+              ]
+            },
+            {
+              "label": "72 - Forvitringsmateriale usammenh. dekke",
+              "description": "72 - Forvitringsmateriale usammenh. dekke",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSBackwardDiagonal",
+                "color": [
+                  255,
+                  255,
+                  255,
+                  127
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "72"
+                ]
+              ]
+            },
+            {
+              "label": "73 - Forvitringsmateriale stein/blokkrik",
+              "description": "73 - Forvitringsmateriale stein/blokkrik",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  212,
+                  159,
+                  212,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "73"
+                ]
+              ]
+            },
+            {
+              "label": "80 - Skredmateriale gen.",
+              "description": "80 - Skredmateriale gen.",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  255,
+                  135,
+                  135,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "80"
+                ]
+              ]
+            },
+            {
+              "label": "81 - Skredmateriale  sammenhengende",
+              "description": "81 - Skredmateriale  sammenhengende",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  255,
+                  97,
+                  97,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "81"
+                ]
+              ]
+            },
+            {
+              "label": "82 - Skredmateriale usammenhengende",
+              "description": "82 - Skredmateriale usammenhengende",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSBackwardDiagonal",
+                "color": [
+                  255,
+                  255,
+                  255,
+                  127
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "82"
+                ]
+              ]
+            },
+            {
+              "label": "88 - Steinbreavsetning",
+              "description": "88 - Steinbreavsetning",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  161,
+                  153,
+                  59,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "88"
+                ]
+              ]
+            },
+            {
+              "label": "90 - Torv og mye",
+              "description": "90 - Torv og mye",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  196,
+                  148,
+                  126,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "90"
+                ]
+              ]
+            },
+            {
+              "label": "100 - Humusdekke eller tynt torvdekke",
+              "description": "100 - Humusdekke eller tynt torvdekke",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  232,
+                  219,
+                  196,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "100"
+                ]
+              ]
+            },
+            {
+              "label": "101 - Usammenh-/tynt løsmassedekke",
+              "description": "101 - Usammenh-/tynt løsmassedekke",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  217,
+                  204,
+                  189,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "101"
+                ]
+              ]
+            },
+            {
+              "label": "102 - Sammehengende dekke, flere jordarter",
+              "description": "102 - Sammehengende dekke, flere jordarter",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  186,
+                  169,
+                  136,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "102"
+                ]
+              ]
+            },
+            {
+              "label": "110 - Fjell, bart eller m tynt torvdekke",
+              "description": "110 - Fjell, bart eller m tynt torvdekke",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  242,
+                  228,
+                  208,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "110"
+                ]
+              ]
+            },
+            {
+              "label": "120 - Fyllmasse/antropogene masser",
+              "description": "120 - Fyllmasse/antropogene masser",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  174,
+                  174,
+                  174,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "120"
+                ]
+              ]
+            },
+            {
+              "label": "121 - Steintipp",
+              "description": "121 - Steintipp",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  204,
+                  204,
+                  204,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "121"
+                ]
+              ]
+            },
+            {
+              "label": "122- Uspes. menneskepåv. materiale",
+              "description": "122- Uspes. menneskepåv. materiale",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSBackwardDiagonal",
+                "color": [
+                  255,
+                  255,
+                  255,
+                  127
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "122"
+                ]
+              ]
+            },
+            {
+              "label": "130 - Bart fjell",
+              "description": "130 - Bart fjell",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  255,
+                  240,
+                  240,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "130"
+                ]
+              ]
+            },
+            {
+              "label": "140 - Fjell, bart eller m tynne løsm.",
+              "description": "140 - Fjell, bart eller m tynne løsm.",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  232,
+                  194,
+                  194,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "140"
+                ]
+              ]
+            },
+            {
+              "label": "301 - Jordskredavs., sammenhengende",
+              "description": "301 - Jordskredavs., sammenhengende",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  255,
+                  77,
+                  77,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "301"
+                ]
+              ]
+            },
+            {
+              "label": "302  - Jordskredavs., usammenhengende",
+              "description": "302  - Jordskredavs., usammenhengende",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSBackwardDiagonal",
+                "color": [
+                  255,
+                  255,
+                  255,
+                  127
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "302"
+                ]
+              ]
+            },
+            {
+              "label": "303 - Leirskredavs., sammenhengende",
+              "description": "303 - Leirskredavs., sammenhengende",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  145,
+                  143,
+                  212,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "303"
+                ]
+              ]
+            },
+            {
+              "label": "304 - Leirskredavs., usammenhengende",
+              "description": "304 - Leirskredavs., usammenhengende",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSBackwardDiagonal",
+                "color": [
+                  255,
+                  255,
+                  255,
+                  127
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "304"
+                ]
+              ]
+            },
+            {
+              "label": "305 - Fjellskredavs., sammenhengende",
+              "description": "305 - Fjellskredavs., sammenhengende",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  255,
+                  181,
+                  181,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "305"
+                ]
+              ]
+            },
+            {
+              "label": "306 - Fjellskredavs., usammenhengende",
+              "description": "306 - Fjellskredavs., usammenhengende",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSBackwardDiagonal",
+                "color": [
+                  255,
+                  255,
+                  255,
+                  127
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "306"
+                ]
+              ]
+            },
+            {
+              "label": "307 - Steinsprangavs., sammenh.",
+              "description": "307 - Steinsprangavs., sammenh.",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  255,
+                  153,
+                  153,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "307"
+                ]
+              ]
+            },
+            {
+              "label": "308 - Steinsprangavs. ,usammenh.",
+              "description": "308 - Steinsprangavs. ,usammenh.",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSBackwardDiagonal",
+                "color": [
+                  255,
+                  255,
+                  255,
+                  127
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "308"
+                ]
+              ]
+            },
+            {
+              "label": "309 - Snøskredavs., sammenhengende",
+              "description": "309 - Snøskredavs., sammenhengende",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  255,
+                  115,
+                  115,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "309"
+                ]
+              ]
+            },
+            {
+              "label": "310 - Snøskredavs., usammenhengende",
+              "description": "310 - Snøskredavs., usammenhengende",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSBackwardDiagonal",
+                "color": [
+                  255,
+                  255,
+                  255,
+                  127
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "310"
+                ]
+              ]
+            },
+            {
+              "label": "311 - Fjellskred/steinsprangavs., sammenh.",
+              "description": "311 - Fjellskred/steinsprangavs., sammenh.",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  255,
+                  204,
+                  204,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "311"
+                ]
+              ]
+            },
+            {
+              "label": "312 - Fjellskred/steinsprangavs., usammenh.",
+              "description": "312 - Fjellskred/steinsprangavs., usammenh.",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSBackwardDiagonal",
+                "color": [
+                  255,
+                  255,
+                  255,
+                  127
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "312"
+                ]
+              ]
+            },
+            {
+              "label": "313 - Snø- og jordskredavs., sammenh.",
+              "description": "313 - Snø- og jordskredavs., sammenh.",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  255,
+                  189,
+                  189,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "313"
+                ]
+              ]
+            },
+            {
+              "label": "314  - Snø- og jordskredavs., usammenh.",
+              "description": "314  - Snø- og jordskredavs., usammenh.",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSBackwardDiagonal",
+                "color": [
+                  255,
+                  255,
+                  255,
+                  127
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "314"
+                ]
+              ]
+            },
+            {
+              "label": "315 - Jordskred-/steinsprangavs., sammenh.",
+              "description": "315 - Jordskred-/steinsprangavs., sammenh.",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  224,
+                  158,
+                  176,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "315"
+                ]
+              ]
+            },
+            {
+              "label": "316 - Jordskred-/steinsprangavs., usammenh.",
+              "description": "316 - Jordskred-/steinsprangavs., usammenh.",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSBackwardDiagonal",
+                "color": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "316"
+                ]
+              ]
+            },
+            {
+              "label": "317 - Snø-/steinsprangavs., sammenh.",
+              "description": "317 - Snø-/steinsprangavs., sammenh.",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  224,
+                  171,
+                  186,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "317"
+                ]
+              ]
+            },
+            {
+              "label": "318 - Snø-/steinsprangavs., usammenh.",
+              "description": "318 - Snø-/steinsprangavs., usammenh.",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSBackwardDiagonal",
+                "color": [
+                  255,
+                  255,
+                  255,
+                  127
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "318"
+                ]
+              ]
+            },
+            {
+              "label": "320 - Finkornig organiskh. sigejord",
+              "description": "320 - Finkornig organiskh. sigejord",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  235,
+                  183,
+                  87,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "320"
+                ]
+              ]
+            },
+            {
+              "label": "321 - Steinrikt stigende skråningsmat.",
+              "description": "321 - Steinrikt stigende skråningsmat.",
+              "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [
+                  219,
+                  189,
+                  120,
+                  153
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "style": "esriSLSSolid",
+                  "color": [
+                    110,
+                    110,
+                    110,
+                    255
+                  ],
+                  "width": 0.4
+                }
+              },
+              "values": [
+                [
+                  "321"
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "uniqueValueInfos": [
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              171,
+              235,
+              0,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "10",
+          "label": "10 - Morenemateriale uspes"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              135,
+              255,
+              97,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "11",
+          "label": "11 - Morenemat. sammenh., dels stor mektighet"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              191,
+              255,
+              135,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "12",
+          "label": "12 - Morenemat., usammenh/tynt"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              87,
+              194,
+              0,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "13",
+          "label": "13 - Moreneleire"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              107,
+              199,
+              130,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "14",
+          "label": "14 - Ablasjonsmorene"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              0,
+              255,
+              51,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "15",
+          "label": "15 - Randmorene"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              71,
+              179,
+              0,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "16",
+          "label": "16 - Drumlin"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              115,
+              255,
+              0,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "17",
+          "label": "17 - Rogenmorene"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              255,
+              171,
+              0,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "20",
+          "label": "20 - Breelvavsetning"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              253,
+              216,
+              119,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "21",
+          "label": "21 - Breelv- og elveavsetning"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              255,
+              189,
+              0,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "22",
+          "label": "22 - Esker"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              255,
+              148,
+              33,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "23",
+          "label": "23 - Kame"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              255,
+              209,
+              135,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "30",
+          "label": "30 - Bresjø(-kammer)avsetning"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              255,
+              235,
+              116,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "31",
+          "label": "31 - Breelv evt også bresjøavs."
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              255,
+              255,
+              190,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "35",
+          "label": "35 - Innsjøavsetning"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              255,
+              247,
+              135,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "36",
+          "label": "36 - Bresjø evt også innsjøavs."
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              255,
+              255,
+              0,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "37",
+          "label": "37 - Strandavs. innsjø/bresjø"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              110,
+              212,
+              255,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "40",
+          "label": "40 - Hav- og fjordavsetning"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              64,
+              191,
+              255,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "41",
+          "label": "41 - Hav-/fjordavs., sammenh."
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              64,
+              153,
+              255,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "42",
+          "label": "42 - Marin strandavs., sammenh."
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              158,
+              235,
+              255,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "43",
+          "label": "43 - Hav/fjord/strandavs., usammenh."
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              181,
+              227,
+              227,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "44",
+          "label": "44 - Skjellsand"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              158,
+              187,
+              191,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "45",
+          "label": "45 - Marin gyttje"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              255,
+              237,
+              97,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "50",
+          "label": "50 - Elve- og bekkeavsetning"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              253,
+              251,
+              127,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "51",
+          "label": "51 - Elveavs., sammenh. dekke"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSBackwardDiagonal",
+            "color": [
+              255,
+              255,
+              255,
+              127
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "52",
+          "label": "52 - Elveavs., usammenh. dekke"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              253,
+              201,
+              0,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "53",
+          "label": "53 - Flomavs. bresjøtapping"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              254,
+              215,
+              40,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "54",
+          "label": "54 - Flomavs. bresjøtapping sammenh."
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSBackwardDiagonal",
+            "color": [
+              255,
+              255,
+              255,
+              127
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "55",
+          "label": "55 - Flomavs. bresjøtapping usammenh."
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              255,
+              200,
+              0,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "56",
+          "label": "56 - Flomavsetning, sammenh."
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSBackwardDiagonal",
+            "color": [
+              255,
+              255,
+              255,
+              127
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "57",
+          "label": "57 - Flomavsetning, usammenh"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              212,
+              217,
+              66,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "60",
+          "label": "60 - Vindavsetning"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              232,
+              194,
+              255,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "70",
+          "label": "70 - Forvitringsmateriale gen."
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              224,
+              181,
+              255,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "71",
+          "label": "71 - Forvitringsmateriale sammenh. dekke"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSBackwardDiagonal",
+            "color": [
+              255,
+              255,
+              255,
+              127
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "72",
+          "label": "72 - Forvitringsmateriale usammenh. dekke"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              212,
+              159,
+              212,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "73",
+          "label": "73 - Forvitringsmateriale stein/blokkrik"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              255,
+              135,
+              135,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "80",
+          "label": "80 - Skredmateriale gen."
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              255,
+              97,
+              97,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "81",
+          "label": "81 - Skredmateriale  sammenhengende"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSBackwardDiagonal",
+            "color": [
+              255,
+              255,
+              255,
+              127
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "82",
+          "label": "82 - Skredmateriale usammenhengende"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              161,
+              153,
+              59,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "88",
+          "label": "88 - Steinbreavsetning"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              196,
+              148,
+              126,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "90",
+          "label": "90 - Torv og mye"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              232,
+              219,
+              196,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "100",
+          "label": "100 - Humusdekke eller tynt torvdekke"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              217,
+              204,
+              189,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "101",
+          "label": "101 - Usammenh-/tynt løsmassedekke"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              186,
+              169,
+              136,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "102",
+          "label": "102 - Sammehengende dekke, flere jordarter"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              242,
+              228,
+              208,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "110",
+          "label": "110 - Fjell, bart eller m tynt torvdekke"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              174,
+              174,
+              174,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "120",
+          "label": "120 - Fyllmasse/antropogene masser"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              204,
+              204,
+              204,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "121",
+          "label": "121 - Steintipp"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSBackwardDiagonal",
+            "color": [
+              255,
+              255,
+              255,
+              127
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "122",
+          "label": "122- Uspes. menneskepåv. materiale"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              255,
+              240,
+              240,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "130",
+          "label": "130 - Bart fjell"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              232,
+              194,
+              194,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "140",
+          "label": "140 - Fjell, bart eller m tynne løsm."
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              255,
+              77,
+              77,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "301",
+          "label": "301 - Jordskredavs., sammenhengende"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSBackwardDiagonal",
+            "color": [
+              255,
+              255,
+              255,
+              127
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "302",
+          "label": "302  - Jordskredavs., usammenhengende"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              145,
+              143,
+              212,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "303",
+          "label": "303 - Leirskredavs., sammenhengende"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSBackwardDiagonal",
+            "color": [
+              255,
+              255,
+              255,
+              127
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "304",
+          "label": "304 - Leirskredavs., usammenhengende"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              255,
+              181,
+              181,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "305",
+          "label": "305 - Fjellskredavs., sammenhengende"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSBackwardDiagonal",
+            "color": [
+              255,
+              255,
+              255,
+              127
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "306",
+          "label": "306 - Fjellskredavs., usammenhengende"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              255,
+              153,
+              153,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "307",
+          "label": "307 - Steinsprangavs., sammenh."
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSBackwardDiagonal",
+            "color": [
+              255,
+              255,
+              255,
+              127
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "308",
+          "label": "308 - Steinsprangavs. ,usammenh."
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              255,
+              115,
+              115,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "309",
+          "label": "309 - Snøskredavs., sammenhengende"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSBackwardDiagonal",
+            "color": [
+              255,
+              255,
+              255,
+              127
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "310",
+          "label": "310 - Snøskredavs., usammenhengende"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              255,
+              204,
+              204,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "311",
+          "label": "311 - Fjellskred/steinsprangavs., sammenh."
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSBackwardDiagonal",
+            "color": [
+              255,
+              255,
+              255,
+              127
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "312",
+          "label": "312 - Fjellskred/steinsprangavs., usammenh."
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              255,
+              189,
+              189,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "313",
+          "label": "313 - Snø- og jordskredavs., sammenh."
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSBackwardDiagonal",
+            "color": [
+              255,
+              255,
+              255,
+              127
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "314",
+          "label": "314  - Snø- og jordskredavs., usammenh."
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              224,
+              158,
+              176,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "315",
+          "label": "315 - Jordskred-/steinsprangavs., sammenh."
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSBackwardDiagonal",
+            "color": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "316",
+          "label": "316 - Jordskred-/steinsprangavs., usammenh."
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              224,
+              171,
+              186,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "317",
+          "label": "317 - Snø-/steinsprangavs., sammenh."
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSBackwardDiagonal",
+            "color": [
+              255,
+              255,
+              255,
+              127
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "318",
+          "label": "318 - Snø-/steinsprangavs., usammenh."
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              235,
+              183,
+              87,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "320",
+          "label": "320 - Finkornig organiskh. sigejord"
+        },
+        {
+          "symbol": {
+            "type": "esriSFS",
+            "style": "esriSFSSolid",
+            "color": [
+              219,
+              189,
+              120,
+              153
+            ],
+            "outline": {
+              "type": "esriSLS",
+              "style": "esriSLSSolid",
+              "color": [
+                110,
+                110,
+                110,
+                255
+              ],
+              "width": 0.4
+            }
+          },
+          "value": "321",
+          "label": "321 - Steinrikt stigende skråningsmat."
+        }
+      ],
+      "fieldDelimiter": ",",
+      "authoringInfo": {
+        "colorRamp": {
+          "type": "algorithmic",
+          "algorithm": "esriCIELabAlgorithm",
+          "fromColor": [
+            247,
+            208,
+            32,
+            255
+          ],
+          "toColor": [
+            85,
+            20,
+            250,
+            255
+          ]
+        }
+      }
+    },
+    "scaleSymbols": true,
+    "transparency": 0,
+    "labelingInfo": null
+  },
+  "defaultVisibility": true,
+  "extent": {
+    "xmin": -81114.76530000009,
+    "ymin": 6447267.865800001,
+    "xmax": 1115098.37,
+    "ymax": 7946209.467,
+    "spatialReference": {
+      "wkid": 25833,
+      "latestWkid": 25833,
+      "xyTolerance": 0.001,
+      "zTolerance": 0.001,
+      "mTolerance": 0.001,
+      "falseX": -5120900,
+      "falseY": -9998100,
+      "xyUnits": 10000,
+      "falseZ": -100000,
+      "zUnits": 10000,
+      "falseM": -100000,
+      "mUnits": 10000
+    }
+  },
+  "hasAttachments": false,
+  "htmlPopupType": "esriServerHTMLPopupTypeAsHTMLText",
+  "displayField": "objekttype",
+  "typeIdField": null,
+  "subtypeFieldName": null,
+  "subtypeField": null,
+  "defaultSubtypeCode": null,
+  "fields": [
+    {
+      "name": "objectid",
+      "type": "esriFieldTypeOID",
+      "alias": "objectid",
+      "domain": null
+    },
+    {
+      "name": "datauttaksdato",
+      "type": "esriFieldTypeDate",
+      "alias": "datauttaksdato",
+      "length": 8,
+      "domain": null
+    },
+    {
+      "name": "egnetmalestokk",
+      "type": "esriFieldTypeInteger",
+      "alias": "egnetmalestokk",
+      "domain": null
+    },
+    {
+      "name": "forstedigitaliseringsdato",
+      "type": "esriFieldTypeDate",
+      "alias": "forstedigitaliseringsdato",
+      "length": 8,
+      "domain": null
+    },
+    {
+      "name": "grunnvannpotensiale",
+      "type": "esriFieldTypeInteger",
+      "alias": "grunnvannpotensiale",
+      "domain": null
+    },
+    {
+      "name": "grunnvannpotensialbesk",
+      "type": "esriFieldTypeString",
+      "alias": "grunnvannpotensialbesk",
+      "length": 500,
+      "domain": null
+    },
+    {
+      "name": "grunnvannpotensialenavn",
+      "type": "esriFieldTypeString",
+      "alias": "grunnvannpotensialenavn",
+      "length": 100,
+      "domain": null
+    },
+    {
+      "name": "infiltrasjonevne",
+      "type": "esriFieldTypeInteger",
+      "alias": "infiltrasjonevne",
+      "domain": null
+    },
+    {
+      "name": "infiltrasjonpotensialbesk",
+      "type": "esriFieldTypeString",
+      "alias": "infiltrasjonpotensialbesk",
+      "length": 500,
+      "domain": null
+    },
+    {
+      "name": "infiltrasjonevnenavn",
+      "type": "esriFieldTypeString",
+      "alias": "infiltrasjonevnenavn",
+      "length": 100,
+      "domain": null
+    },
+    {
+      "name": "lokalid",
+      "type": "esriFieldTypeString",
+      "alias": "lokalid",
+      "length": 40,
+      "domain": null
+    },
+    {
+      "name": "losmasseavvikkartdata",
+      "type": "esriFieldTypeString",
+      "alias": "losmasseavvikkartdata",
+      "length": 254,
+      "domain": null
+    },
+    {
+      "name": "losmasseavvikkartdatabesk",
+      "type": "esriFieldTypeString",
+      "alias": "losmasseavvikkartdatabesk",
+      "length": 400,
+      "domain": null
+    },
+    {
+      "name": "losmasseavvikkartdatanavn",
+      "type": "esriFieldTypeString",
+      "alias": "losmasseavvikkartdatanavn",
+      "length": 254,
+      "domain": null
+    },
+    {
+      "name": "losmassetype",
+      "type": "esriFieldTypeInteger",
+      "alias": "losmassetype",
+      "domain": null
+    },
+    {
+      "name": "losmassetypebesk",
+      "type": "esriFieldTypeString",
+      "alias": "losmassetypebesk",
+      "length": 600,
+      "domain": null
+    },
+    {
+      "name": "losmassetypenavn",
+      "type": "esriFieldTypeString",
+      "alias": "losmassetypenavn",
+      "length": 100,
+      "domain": null
+    },
+    {
+      "name": "navnerom",
+      "type": "esriFieldTypeString",
+      "alias": "navnerom",
+      "length": 60,
+      "domain": null
+    },
+    {
+      "name": "objekttype",
+      "type": "esriFieldTypeString",
+      "alias": "objekttype",
+      "length": 32,
+      "domain": null
+    },
+    {
+      "name": "oppdateringsdato",
+      "type": "esriFieldTypeDate",
+      "alias": "oppdateringsdato",
+      "length": 8,
+      "domain": null
+    },
+    {
+      "name": "opphav",
+      "type": "esriFieldTypeString",
+      "alias": "opphav",
+      "length": 270,
+      "domain": null
+    },
+    {
+      "name": "fylke",
+      "type": "esriFieldTypeInteger",
+      "alias": "fylke",
+      "domain": null
+    },
+    {
+      "name": "fylkesnavn",
+      "type": "esriFieldTypeString",
+      "alias": "fylkesnavn",
+      "length": 50,
+      "domain": null
+    },
+    {
+      "name": "kommunenavn",
+      "type": "esriFieldTypeString",
+      "alias": "kommunenavn",
+      "length": 50,
+      "domain": null
+    },
+    {
+      "name": "omradeid",
+      "type": "esriFieldTypeInteger",
+      "alias": "omradeid",
+      "domain": null
+    },
+    {
+      "name": "crc",
+      "type": "esriFieldTypeString",
+      "alias": "crc",
+      "length": 40,
+      "domain": null
+    },
+    {
+      "name": "kilde_nivaa",
+      "type": "esriFieldTypeString",
+      "alias": "Kilde_nivaa",
+      "length": 20,
+      "domain": null
+    },
+    {
+      "name": "shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "shape",
+      "domain": null
+    },
+    {
+      "name": "st_area(shape)",
+      "type": "esriFieldTypeDouble",
+      "alias": "st_area(shape)",
+      "domain": null
+    },
+    {
+      "name": "st_perimeter(shape)",
+      "type": "esriFieldTypeDouble",
+      "alias": "st_perimeter(shape)",
+      "domain": null
+    }
+  ],
+  "geometryField": {
+    "name": "shape",
+    "type": "esriFieldTypeGeometry",
+    "alias": "shape"
+  },
+  "indexes": [
+    {
+      "name": "incrc",
+      "fields": "crc",
+      "isAscending": true,
+      "isUnique": false,
+      "description": ""
+    },
+    {
+      "name": "indlosmasstype",
+      "fields": "losmassetype",
+      "isAscending": true,
+      "isUnique": false,
+      "description": ""
+    },
+    {
+      "name": "indobjtype_1",
+      "fields": "objekttype",
+      "isAscending": true,
+      "isUnique": false,
+      "description": ""
+    },
+    {
+      "name": "indomradeid_2",
+      "fields": "omradeid",
+      "isAscending": true,
+      "isUnique": false,
+      "description": ""
+    },
+    {
+      "name": "r1153_sde_rowid_uk",
+      "fields": "objectid",
+      "isAscending": true,
+      "isUnique": true,
+      "description": ""
+    },
+    {
+      "name": "a958_ix1",
+      "fields": "shape",
+      "isAscending": true,
+      "isUnique": true,
+      "description": ""
+    }
+  ],
+  "subtypes": [],
+  "relationships": [],
+  "canModifyLayer": true,
+  "canScaleSymbols": false,
+  "hasLabels": false,
+  "capabilities": "Data,Map,Query",
+  "maxRecordCount": 5000,
+  "maxSelectionCount": 2000,
+  "supportsStatistics": true,
+  "supportsExceedsLimitStatistics": true,
+  "supportsAdvancedQueries": true,
+  "supportedQueryFormats": "JSON, geoJSON, PBF",
+  "isDataVersioned": false,
+  "ownershipBasedAccessControlForFeatures": {
+    "allowOthersToQuery": true
+  },
+  "useStandardizedQueries": true,
+  "supportedSpatialRelationships": [
+    "esriSpatialRelIntersects",
+    "esriSpatialRelContains",
+    "esriSpatialRelCrosses",
+    "esriSpatialRelEnvelopeIntersects",
+    "esriSpatialRelIndexIntersects",
+    "esriSpatialRelOverlaps",
+    "esriSpatialRelTouches",
+    "esriSpatialRelWithin",
+    "esriSpatialRelRelation"
+  ],
+  "advancedQueryCapabilities": {
+    "useStandardizedQueries": true,
+    "supportsStatistics": true,
+    "supportsPercentileStatistics": true,
+    "supportsHavingClause": true,
+    "supportsOrderBy": true,
+    "supportsDistinct": true,
+    "supportsCountDistinct": true,
+    "supportsAdvancedQueryRelated": true,
+    "supportsQueryRelatedPagination": true,
+    "supportsPagination": true,
+    "supportsLod": false,
+    "supportsQueryWithLodSR": false,
+    "supportsTrueCurve": true,
+    "supportsQueryWithDatumTransformation": true,
+    "supportsReturningQueryExtent": true,
+    "supportsQueryWithDistance": true,
+    "supportsSqlExpression": true,
+    "supportsTimeRelation": true,
+    "supportsSqlFormat": false,
+    "supportsQueryAnalytic": true,
+    "supportsCurrentUserQueries": true
+  },
+  "supportsDatumTransformation": true,
+  "advancedQueryAnalyticCapabilities": {
+    "supportsLinearRegression": true,
+    "supportsAsync": false,
+    "supportsPercentileAnalytic": false
+  },
+  "dateFieldsTimeReference": null,
+  "preferredTimeReference": null,
+  "datesInUnknownTimezone": false,
+  "hasGeometryProperties": true,
+  "geometryProperties": {
+    "shapeAreaFieldName": "st_area(shape)",
+    "shapeLengthFieldName": "st_perimeter(shape)",
+    "units": "esriMeters",
+    "mapUnits": {
+      "uwkid": 9001
+    }
+  },
+  "hasMetadata": true,
+  "isDataArchived": false,
+  "archivingInfo": {
+    "supportsQueryWithHistoricMoment": false,
+    "startArchivingMoment": -1
+  },
+  "supportsCoordinatesQuantization": true,
+  "supportsDynamicLegends": true
+}

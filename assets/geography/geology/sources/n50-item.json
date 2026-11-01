@@ -1,0 +1,69 @@
+{
+  "id": "0b69c1518fe3497eb7d792ea1f69c42f",
+  "owner": "placepoint",
+  "ownerId": "08347e9e2f2d4cf384b4786a440fc21a",
+  "created": 1641546009000,
+  "modified": 1670532220000,
+  "guid": null,
+  "name": "Berggrunn_N50",
+  "title": "Berggrunn N50",
+  "type": "Feature Service",
+  "typeKeywords": [
+    "ArcGIS Server",
+    "Data",
+    "Feature Access",
+    "Feature Service",
+    "Metadata",
+    "Multilayer",
+    "Service",
+    "Hosted Service"
+  ],
+  "description": "",
+  "tags": [
+    "Geologi",
+    "Production"
+  ],
+  "snippet": "Alle tilgjengelige berggrunn N50 kart.",
+  "thumbnail": "thumbnail/thumbnail.png",
+  "documentation": null,
+  "extent": [
+    [
+      -0.9571944707169748,
+      57.782956807407395
+    ],
+    [
+      31.951571509564083,
+      71.56946844122194
+    ]
+  ],
+  "categories": [],
+  "spatialReference": "25833",
+  "accessInformation": "",
+  "classification": null,
+  "licenseInfo": "",
+  "culture": "nb-no",
+  "properties": null,
+  "advancedSettings": null,
+  "url": "https://services5.arcgis.com/G7Y9uUZA3azviLFK/arcgis/rest/services/Berggrunn_N50/FeatureServer",
+  "proxyFilter": null,
+  "access": "public",
+  "size": 676741120,
+  "subInfo": 0,
+  "appCategories": [],
+  "industries": [],
+  "languages": [],
+  "largeThumbnail": null,
+  "banner": null,
+  "screenshots": [],
+  "listed": false,
+  "commentsEnabled": false,
+  "numComments": 0,
+  "numRatings": 0,
+  "avgRating": 0,
+  "numViews": 86,
+  "scoreCompleteness": 50,
+  "groupDesignations": null,
+  "apiToken1ExpirationDate": -1,
+  "apiToken2ExpirationDate": -1,
+  "lastViewed": 1793545200000
+}

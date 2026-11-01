@@ -1,0 +1,24 @@
+/* Keep the geology controls compact so the map retains the workspace. */
+.layers{width:220px}
+.layer-controls{gap:8px}
+.layer-group{display:grid;gap:2px}
+.layer-group+.layer-group{border-top:1px solid var(--line);padding-top:7px}
+.layer-controls .geology-toggle{display:flex;align-items:center;gap:7px;min-height:26px;font-weight:700}
+.geology-toggle input{width:16px;height:16px;flex:0 0 auto}
+.layer-group>label{cursor:pointer}
+.layer-group .opacity-label{display:flex;justify-content:space-between;font-size:11px;min-height:18px;gap:10px}
+.layer-group output{font-variant-numeric:tabular-nums}
+.layer-group input[type="range"]{width:100%;min-height:23px;margin:0;cursor:pointer;accent-color:var(--accent)}
+.background-controls>label:first-child{font-weight:700;min-height:20px}
+.background-controls select{margin-bottom:3px}
+.legend{position:absolute;right:12px;bottom:38px;max-width:min(330px,calc(100% - 24px));max-height:55%;overflow:auto;background:var(--paper);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 5px #0001;font-size:12px}
+.legend>summary{padding:9px 12px;min-height:36px;cursor:pointer;font-weight:700}
+#legend-content{padding:0 12px 10px;line-height:1.45}
+#legend-content h3{font-size:12px;margin:8px 0 5px}
+#legend-content p{margin:0}
+#legend-content ul{list-style:none;padding:0;margin:0}
+#legend-content li,.legend-item{display:flex;align-items:center;gap:7px;margin:4px 0}
+#legend-content img{max-width:100%;height:auto}
+.legend-swatch{display:inline-block;width:18px;height:13px;flex:0 0 auto;border:1px solid #0004}
+.info{bottom:40px}
+@media(max-width:700px){.toolbar h1{font-size:15px}.layers{width:200px}.layer-controls{gap:5px}.layer-group+.layer-group{padding-top:5px}.layer-group input[type="range"]{min-height:21px}.legend{right:10px;bottom:39px;max-height:45%}.legend>summary{padding:7px 9px}.map-messages{bottom:82px}}

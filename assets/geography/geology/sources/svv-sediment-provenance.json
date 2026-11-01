@@ -1,0 +1,78 @@
+{
+  "source": "NGU data in a public Statens vegvesen extract",
+  "sourceItem": "6772578bd7ed493fb0b70e57f73b35d6",
+  "organisationEvidence": "https://www.arcgis.com/sharing/rest/portals/Omqj1DhF7kfdN8lE?f=json",
+  "sourceNominalScale": null,
+  "sourceDataDate": null,
+  "mirrorItemLicense": null,
+  "coverageCriterion": "Not established: title mentions riksveg; snippet mentions within 250 m of registered quick clay. No selection criterion inferred.",
+  "geometryResponse": {
+    "artifact": "/workspace/artifacts/geology/superficial-road-detail-geojson-20m.json",
+    "sha256": "a2167c561f35c226598f10aba35a32077e9633e16a61831682085739f7b87115"
+  },
+  "files": [
+    {
+      "file": "svv-sediment-item.json",
+      "sha256": "7af5fcfe7fd53963c30161f780f197f2b28dab1b883c46ef6ba3fcf7bcc15e2c",
+      "bytes": 1514
+    },
+    {
+      "file": "svv-sediment-layer.json",
+      "sha256": "486960c844c8e7aafecc631319dcbbeb1f083f17d0de6a103d082e73d23bdd68",
+      "bytes": 26695
+    },
+    {
+      "file": "svv-sediment-source-ids.json",
+      "sha256": "4d178115453cdbd2ed8307d1e7a7399d978193539c701132fe8e4b1a8ed995ac",
+      "bytes": 174
+    },
+    {
+      "file": "svv-sediment-source-request.json",
+      "sha256": "30196e2741d198107da05fb193c979a60b5410c0eae4ffc252edde6024182e10",
+      "bytes": 578
+    },
+    {
+      "file": "geodata-sediment-style-supplement.json",
+      "sha256": "a00afd2ca94118cc6f04e861efaa90b3d32c6025073ac5817d0e012772eaa1a5",
+      "bytes": 108513
+    }
+  ],
+  "sourceItemReportedDate": "2021-12-07",
+  "sourceItemDateNote": "The item snippet says NGU 07.12.2021; the date role is unverified.",
+  "geometryValidationEvidence": {
+    "note": "Native source point queries agree with repaired local tiles at all four independent UTM reference cities. Invalid raw server GeoJSON has nested-shell area inflation; topological repair restores source metadata areas to within the documented generalisation effects.",
+    "sourcePointQueries": "svv-sediment-point-queries.json",
+    "areaComparisonsSquareKilometres": [
+      {
+        "sourceID": 1,
+        "sourceArea": 4674.775430494263,
+        "rawGeoJSONArea": 4886.181106050004,
+        "repairedArea": 4674.070774650003
+      },
+      {
+        "sourceID": 2,
+        "sourceArea": 19777.124104103066,
+        "rawGeoJSONArea": 26895.00562182504,
+        "repairedArea": 19777.476306705103
+      },
+      {
+        "sourceID": 3,
+        "sourceArea": 18327.93459444633,
+        "rawGeoJSONArea": 25197.158399005024,
+        "repairedArea": 18326.031972595138
+      },
+      {
+        "sourceID": 34,
+        "sourceArea": 281.07873800016785,
+        "rawGeoJSONArea": 292.05987040499855,
+        "repairedArea": 282.0693985650001
+      },
+      {
+        "sourceID": 37,
+        "sourceArea": 52181.40908129915,
+        "rawGeoJSONArea": 71304.30637048504,
+        "repairedArea": 52185.035070515296
+      }
+    ]
+  }
+}

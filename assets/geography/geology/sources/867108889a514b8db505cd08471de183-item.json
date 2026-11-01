@@ -1,0 +1,67 @@
+{
+  "id": "867108889a514b8db505cd08471de183",
+  "owner": "geodata_levende_atlas",
+  "ownerId": "c0a74224ec104a9e8a55222a2a81522d",
+  "orgId": "2JyTvMWQSnM2Vi8q",
+  "created": 1768828460000,
+  "modified": 1771853117000,
+  "guid": null,
+  "name": null,
+  "title": "Bergarter og bergstrukturer i Norge",
+  "type": "Web Map",
+  "typeKeywords": [
+    "ArcGIS API for JavaScript",
+    "ArcGIS Online",
+    "Explorer Web Map",
+    "Map",
+    "Online Map",
+    "Web Map"
+  ],
+  "description": "<p>Norges Geologiske Undersøkelse (NGUs) berggrunnsdata viser utbredelsen av bergarterog bergartsstrukturer på jordens overflate.&nbsp;</p><p><br />Kartdataene i Berggrunn N1350 er basert på en tematisk og geometrisk forenkling av den landsdekkende, harmoniserte kartserien i målestokk 1:250.000.&nbsp;</p><p><br />Datasettet gir opplysninger om bergartenes og strukturenes geologiske egenskaper (blant annet hovedbergart, dannelsesalder og tektonisk hovedinndeling for bergartsflater og strukturnavn og kinematisk type for strukturer).<br />&nbsp;</p>",
+  "tags": [
+    ""
+  ],
+  "snippet": "Utbredelsen av bergarter og bergartsstrukturer i Norge.",
+  "thumbnail": "thumbnail/ago_downloaded.png",
+  "documentation": null,
+  "extent": [
+    [
+      -7.902309142034525,
+      54.879262130434775
+    ],
+    [
+      21.856504125725678,
+      65.39748881177802
+    ]
+  ],
+  "categories": [],
+  "spatialReference": "",
+  "accessInformation": "",
+  "classification": null,
+  "licenseInfo": "<p>Informasjon tilgjengeliggjøres under Norsk lisens for&nbsp;offentlige data (NLOD).&nbsp;Ved bruk av informasjon fra Norges geologiske&nbsp;undersøkelse (NGU), skal følgende tekst alltid&nbsp;oppgis:<br />&nbsp;</p><p>«Inneholder data under Norsk lisens for offentlige&nbsp;data (NLOD) tilgjengeliggjort av Norges geologiske&nbsp;undersøkelse (NGU)».</p><p><br />Ved bruk av kartutklipp som figur i rapporter eller&nbsp;vitenskapelige artikler skal i tillegg følgende tekst&nbsp;brukes:&nbsp;</p><p><br />«Norges geologiske undersøkelse, 2021.&nbsp;Berggrunnskart over Norge 1:1 350 000. DAG.&nbsp;MÅNED ÅR. URL -<br />https://geo.ngu.no/kart/berggrunn_mobil/»</p>",
+  "culture": "nb",
+  "properties": null,
+  "advancedSettings": null,
+  "url": "",
+  "proxyFilter": null,
+  "access": "public",
+  "size": 46493,
+  "subInfo": 0,
+  "appCategories": [],
+  "industries": [],
+  "languages": [],
+  "largeThumbnail": null,
+  "banner": null,
+  "screenshots": [],
+  "listed": false,
+  "commentsEnabled": true,
+  "numComments": 0,
+  "numRatings": 0,
+  "avgRating": 0,
+  "numViews": 149,
+  "scoreCompleteness": 75,
+  "groupDesignations": null,
+  "apiToken1ExpirationDate": -1,
+  "apiToken2ExpirationDate": -1,
+  "lastViewed": 1793365200000
+}

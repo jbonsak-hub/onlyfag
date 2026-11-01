@@ -1,0 +1,5739 @@
+{
+  "currentVersion": 12,
+  "id": 5,
+  "name": "BergartFlate_N250",
+  "type": "Feature Layer",
+  "serviceItemId": "9eac4627188b48a4ad065268fe9b3269",
+  "cacheMaxAge": 30,
+  "displayField": "objekttype",
+  "description": "",
+  "copyrightText": "",
+  "defaultVisibility": true,
+  "editingInfo": {
+    "lastEditDate": 1642973405203,
+    "schemaLastEditDate": 1642973405203,
+    "dataLastEditDate": 1642973405203
+  },
+  "relationships": [],
+  "isDataVersioned": false,
+  "hasContingentValuesDefinition": false,
+  "supportsAppend": true,
+  "supportsCalculate": true,
+  "supportsASyncCalculate": true,
+  "supportsTruncate": true,
+  "supportsAttachmentsByUploadId": true,
+  "supportsAttachmentsResizing": true,
+  "supportsRollbackOnFailureParameter": true,
+  "supportsStatistics": true,
+  "supportsExceedsLimitStatistics": true,
+  "supportsAdvancedQueries": true,
+  "supportsValidateSql": true,
+  "supportsCoordinatesQuantization": true,
+  "supportsLayerOverrides": true,
+  "supportsTilesAndBasicQueriesMode": true,
+  "supportsFieldDescriptionProperty": true,
+  "supportsQuantizationEditMode": true,
+  "supportsColumnStoreIndex": true,
+  "supportsApplyEditsWithGlobalIds": false,
+  "supportsMultiScaleGeometry": true,
+  "supportsReturningQueryGeometry": true,
+  "enableNullGeometry": false,
+  "hasGeometryProperties": true,
+  "geometryProperties": {
+    "shapeAreaFieldName": "Shape__Area",
+    "shapeLengthFieldName": "Shape__Length",
+    "units": "esriMeters"
+  },
+  "advancedQueryCapabilities": {
+    "supportsPagination": true,
+    "supportsPaginationOnAggregatedQueries": true,
+    "supportsQueryRelatedPagination": true,
+    "supportsQueryWithDistance": true,
+    "supportsOutDistance": true,
+    "supportsReturningQueryExtent": true,
+    "supportsStatistics": true,
+    "supportsOrderBy": true,
+    "supportsDistinct": true,
+    "supportsQueryWithResultType": true,
+    "supportsSqlExpression": true,
+    "supportsTimeRelation": true,
+    "supportsAdvancedQueryRelated": true,
+    "supportsCountDistinct": true,
+    "supportsPercentileStatistics": true,
+    "supportsApproxPercentileStatistics": true,
+    "supportsSpatialAggregationStatistics": true,
+    "supportsTrueCurve": true,
+    "supportedSpatialAggregationStatistics": [
+      "EnvelopeAggregate",
+      "CentroidAggregate",
+      "ConvexHullAggregate"
+    ],
+    "supportsLod": true,
+    "supportsQueryWithLodSR": false,
+    "supportedLodTypes": [
+      "geohash"
+    ],
+    "supportsReturningGeometryCentroid": true,
+    "supportsReturningGeometryEnvelope": true,
+    "supportsReturningGeometryProperties": true,
+    "supportsQueryWithDatumTransformation": true,
+    "supportsCurrentUserQueries": true,
+    "supportsHavingClause": true,
+    "supportsOutFieldSQLExpression": true,
+    "supportsMaxRecordCountFactor": true,
+    "supportsTopFeaturesQuery": true,
+    "supportsDisjointSpatialRel": true,
+    "supportsQueryWithCacheHint": true,
+    "supportedOperationsWithCacheHint": [
+      "query",
+      "queryTopFilter",
+      "queryAnalytics",
+      "queryAttachments",
+      "queryRelated",
+      "queryBins",
+      "queryPivot"
+    ],
+    "supportsQueryAnalytic": true,
+    "supportsQueryPivot": true,
+    "supportsQueryBins": true,
+    "supportsDefaultSR": true,
+    "supportsTranslations": false,
+    "supportsAggIds": true,
+    "supportsQueryWithCollation": true,
+    "supportsISODOW": true,
+    "supportsISOWeek": true,
+    "supportsFullTextSearch": true,
+    "fullTextSearchCapabilities": {
+      "supportsAccentSensitivity": true,
+      "supportsStopWords": true,
+      "supportsSearchOperator": true,
+      "supportsOperator": true
+    }
+  },
+  "advancedQueryAnalyticCapabilities": {
+    "supportsLinearRegression": true,
+    "supportsTrendlineRegression": true,
+    "supportsAsync": true,
+    "supportsPercentileAnalytic": true
+  },
+  "queryBinsCapabilities": {
+    "supportsAsync": true,
+    "supportsAutoIntervalBin": true,
+    "supportsFixedIntervalBin": true,
+    "supportsFixedBoundariesBin": true,
+    "supportsDateBin": true,
+    "supportsClassificationBin": true,
+    "supportsStackBy": true,
+    "supportsSplitBy": true,
+    "supportsFirstDayOfWeek": true,
+    "supportsSnapToData": true,
+    "supportsReturnFullIntervalBin": true,
+    "supportsReturnStackValueRange": true,
+    "supportsNormalization": true,
+    "supportedStatisticTypes": [
+      "COUNT",
+      "SUM",
+      "AVG",
+      "VAR",
+      "STDDEV",
+      "MIN",
+      "MAX",
+      "PERCENTILE_CONT",
+      "PERCENTILE_DISC",
+      "APPROX_PERCENTILE_CONT",
+      "APPROX_PERCENTILE_DISC",
+      "CentroidAggregate",
+      "EnvelopeAggregate",
+      "ConvexHullAggregate"
+    ],
+    "supportedNormalizationTypes": [
+      "boxCox",
+      "field",
+      "inverse",
+      "log",
+      "naturalLog",
+      "percentOfTotal",
+      "squareRoot"
+    ]
+  },
+  "supportedOperationsWithCollation": "query,addField,updateField",
+  "advancedEditingCapabilities": {
+    "supportedSqlFormatsInCalculate": [
+      "standard"
+    ],
+    "supportsAsyncApplyEdits": true,
+    "supportsReturnEditResults": true,
+    "supportsApplyEditsbyUploadID": true,
+    "supportedApplyEditsUploadIDFormats": "JSON,PBF",
+    "supportsTranslation": false,
+    "supportsMaxTranslations": 10
+  },
+  "infoInEstimates": [
+    "extent",
+    "count"
+  ],
+  "useStandardizedQueries": true,
+  "geometryType": "esriGeometryPolygon",
+  "minScale": 160000,
+  "maxScale": 0,
+  "extent": {
+    "xmin": -166960.21320000011,
+    "ymin": 6361624.1632,
+    "xmax": 1118520.2927,
+    "ymax": 7949200.5306,
+    "spatialReference": {
+      "wkid": 25833,
+      "latestWkid": 25833
+    }
+  },
+  "spatialReference": {
+    "wkid": 25833,
+    "latestWkid": 25833
+  },
+  "drawingInfo": {
+    "renderer": {
+      "authoringInfo": {
+        "colorRamp": {
+          "type": "multipart",
+          "colorRamps": [
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                145,
+                67,
+                102,
+                255
+              ],
+              "toColor": [
+                145,
+                67,
+                102,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                138,
+                103,
+                40,
+                255
+              ],
+              "toColor": [
+                138,
+                103,
+                40,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                54,
+                66,
+                133,
+                255
+              ],
+              "toColor": [
+                54,
+                66,
+                133,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                51,
+                128,
+                77,
+                255
+              ],
+              "toColor": [
+                51,
+                128,
+                77,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                161,
+                61,
+                39,
+                255
+              ],
+              "toColor": [
+                161,
+                61,
+                39,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                59,
+                114,
+                150,
+                255
+              ],
+              "toColor": [
+                59,
+                114,
+                150,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                176,
+                174,
+                70,
+                255
+              ],
+              "toColor": [
+                176,
+                174,
+                70,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                49,
+                34,
+                161,
+                255
+              ],
+              "toColor": [
+                49,
+                34,
+                161,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                135,
+                35,
+                132,
+                255
+              ],
+              "toColor": [
+                135,
+                35,
+                132,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                78,
+                163,
+                158,
+                255
+              ],
+              "toColor": [
+                78,
+                163,
+                158,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                35,
+                166,
+                41,
+                255
+              ],
+              "toColor": [
+                35,
+                166,
+                41,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                98,
+                138,
+                29,
+                255
+              ],
+              "toColor": [
+                98,
+                138,
+                29,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                168,
+                52,
+                66,
+                255
+              ],
+              "toColor": [
+                168,
+                52,
+                66,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                128,
+                87,
+                64,
+                255
+              ],
+              "toColor": [
+                128,
+                87,
+                64,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                113,
+                128,
+                61,
+                255
+              ],
+              "toColor": [
+                113,
+                128,
+                61,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                84,
+                47,
+                130,
+                255
+              ],
+              "toColor": [
+                84,
+                47,
+                130,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                176,
+                148,
+                86,
+                255
+              ],
+              "toColor": [
+                176,
+                148,
+                86,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                173,
+                55,
+                120,
+                255
+              ],
+              "toColor": [
+                173,
+                55,
+                120,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                128,
+                64,
+                119,
+                255
+              ],
+              "toColor": [
+                128,
+                64,
+                119,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                143,
+                51,
+                176,
+                255
+              ],
+              "toColor": [
+                143,
+                51,
+                176,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                80,
+                69,
+                173,
+                255
+              ],
+              "toColor": [
+                80,
+                69,
+                173,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                38,
+                173,
+                115,
+                255
+              ],
+              "toColor": [
+                38,
+                173,
+                115,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                73,
+                150,
+                173,
+                255
+              ],
+              "toColor": [
+                73,
+                150,
+                173,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                176,
+                100,
+                70,
+                255
+              ],
+              "toColor": [
+                176,
+                100,
+                70,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                133,
+                83,
+                173,
+                255
+              ],
+              "toColor": [
+                133,
+                83,
+                173,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                78,
+                163,
+                128,
+                255
+              ],
+              "toColor": [
+                78,
+                163,
+                128,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                35,
+                130,
+                51,
+                255
+              ],
+              "toColor": [
+                35,
+                130,
+                51,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                176,
+                46,
+                165,
+                255
+              ],
+              "toColor": [
+                176,
+                46,
+                165,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                39,
+                171,
+                81,
+                255
+              ],
+              "toColor": [
+                39,
+                171,
+                81,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                86,
+                158,
+                60,
+                255
+              ],
+              "toColor": [
+                86,
+                158,
+                60,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                64,
+                111,
+                173,
+                255
+              ],
+              "toColor": [
+                64,
+                111,
+                173,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                173,
+                76,
+                154,
+                255
+              ],
+              "toColor": [
+                173,
+                76,
+                154,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                138,
+                58,
+                59,
+                255
+              ],
+              "toColor": [
+                138,
+                58,
+                59,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                106,
+                56,
+                176,
+                255
+              ],
+              "toColor": [
+                106,
+                56,
+                176,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                52,
+                120,
+                128,
+                255
+              ],
+              "toColor": [
+                52,
+                120,
+                128,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                173,
+                126,
+                38,
+                255
+              ],
+              "toColor": [
+                173,
+                126,
+                38,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                59,
+                86,
+                135,
+                255
+              ],
+              "toColor": [
+                59,
+                86,
+                135,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                126,
+                153,
+                69,
+                255
+              ],
+              "toColor": [
+                126,
+                153,
+                69,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                47,
+                128,
+                113,
+                255
+              ],
+              "toColor": [
+                47,
+                128,
+                113,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                148,
+                130,
+                40,
+                255
+              ],
+              "toColor": [
+                148,
+                130,
+                40,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                130,
+                34,
+                98,
+                255
+              ],
+              "toColor": [
+                130,
+                34,
+                98,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                150,
+                80,
+                39,
+                255
+              ],
+              "toColor": [
+                150,
+                80,
+                39,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                73,
+                85,
+                171,
+                255
+              ],
+              "toColor": [
+                73,
+                85,
+                171,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                173,
+                59,
+                99,
+                255
+              ],
+              "toColor": [
+                173,
+                59,
+                99,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                104,
+                27,
+                128,
+                255
+              ],
+              "toColor": [
+                104,
+                27,
+                128,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                128,
+                36,
+                59,
+                255
+              ],
+              "toColor": [
+                128,
+                36,
+                59,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                54,
+                42,
+                135,
+                255
+              ],
+              "toColor": [
+                54,
+                42,
+                135,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                130,
+                114,
+                52,
+                255
+              ],
+              "toColor": [
+                130,
+                114,
+                52,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                145,
+                64,
+                49,
+                255
+              ],
+              "toColor": [
+                145,
+                64,
+                49,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                166,
+                81,
+                101,
+                255
+              ],
+              "toColor": [
+                166,
+                81,
+                101,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                153,
+                46,
+                48,
+                255
+              ],
+              "toColor": [
+                153,
+                46,
+                48,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                82,
+                168,
+                92,
+                255
+              ],
+              "toColor": [
+                82,
+                168,
+                92,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                50,
+                173,
+                151,
+                255
+              ],
+              "toColor": [
+                50,
+                173,
+                151,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                168,
+                84,
+                135,
+                255
+              ],
+              "toColor": [
+                168,
+                84,
+                135,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                109,
+                173,
+                52,
+                255
+              ],
+              "toColor": [
+                109,
+                173,
+                52,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                129,
+                63,
+                143,
+                255
+              ],
+              "toColor": [
+                129,
+                63,
+                143,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                147,
+                148,
+                65,
+                255
+              ],
+              "toColor": [
+                147,
+                148,
+                65,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                153,
+                120,
+                77,
+                255
+              ],
+              "toColor": [
+                153,
+                120,
+                77,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                89,
+                128,
+                55,
+                255
+              ],
+              "toColor": [
+                89,
+                128,
+                55,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                128,
+                89,
+                47,
+                255
+              ],
+              "toColor": [
+                128,
+                89,
+                47,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                95,
+                72,
+                153,
+                255
+              ],
+              "toColor": [
+                95,
+                72,
+                153,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                140,
+                163,
+                55,
+                255
+              ],
+              "toColor": [
+                140,
+                163,
+                55,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                176,
+                41,
+                39,
+                255
+              ],
+              "toColor": [
+                176,
+                41,
+                39,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                43,
+                153,
+                52,
+                255
+              ],
+              "toColor": [
+                43,
+                153,
+                52,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                41,
+                88,
+                153,
+                255
+              ],
+              "toColor": [
+                41,
+                88,
+                153,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                30,
+                130,
+                93,
+                255
+              ],
+              "toColor": [
+                30,
+                130,
+                93,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                115,
+                163,
+                80,
+                255
+              ],
+              "toColor": [
+                115,
+                163,
+                80,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                84,
+                176,
+                39,
+                255
+              ],
+              "toColor": [
+                84,
+                176,
+                39,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                148,
+                86,
+                65,
+                255
+              ],
+              "toColor": [
+                148,
+                86,
+                65,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                65,
+                133,
+                28,
+                255
+              ],
+              "toColor": [
+                65,
+                133,
+                28,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                176,
+                115,
+                55,
+                255
+              ],
+              "toColor": [
+                176,
+                115,
+                55,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                156,
+                51,
+                102,
+                255
+              ],
+              "toColor": [
+                156,
+                51,
+                102,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                148,
+                98,
+                47,
+                255
+              ],
+              "toColor": [
+                148,
+                98,
+                47,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                39,
+                28,
+                135,
+                255
+              ],
+              "toColor": [
+                39,
+                28,
+                135,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                84,
+                32,
+                140,
+                255
+              ],
+              "toColor": [
+                84,
+                32,
+                140,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                31,
+                125,
+                148,
+                255
+              ],
+              "toColor": [
+                31,
+                125,
+                148,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                153,
+                49,
+                75,
+                255
+              ],
+              "toColor": [
+                153,
+                49,
+                75,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                35,
+                38,
+                135,
+                255
+              ],
+              "toColor": [
+                35,
+                38,
+                135,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                176,
+                48,
+                146,
+                255
+              ],
+              "toColor": [
+                176,
+                48,
+                146,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                62,
+                51,
+                161,
+                255
+              ],
+              "toColor": [
+                62,
+                51,
+                161,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                153,
+                41,
+                123,
+                255
+              ],
+              "toColor": [
+                153,
+                41,
+                123,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                156,
+                102,
+                67,
+                255
+              ],
+              "toColor": [
+                156,
+                102,
+                67,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                97,
+                62,
+                130,
+                255
+              ],
+              "toColor": [
+                97,
+                62,
+                130,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                143,
+                55,
+                158,
+                255
+              ],
+              "toColor": [
+                143,
+                55,
+                158,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                173,
+                86,
+                81,
+                255
+              ],
+              "toColor": [
+                173,
+                86,
+                81,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                129,
+                171,
+                38,
+                255
+              ],
+              "toColor": [
+                129,
+                171,
+                38,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                66,
+                59,
+                138,
+                255
+              ],
+              "toColor": [
+                66,
+                59,
+                138,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                152,
+                161,
+                34,
+                255
+              ],
+              "toColor": [
+                152,
+                161,
+                34,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                74,
+                166,
+                176,
+                255
+              ],
+              "toColor": [
+                74,
+                166,
+                176,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                76,
+                145,
+                71,
+                255
+              ],
+              "toColor": [
+                76,
+                145,
+                71,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                133,
+                129,
+                28,
+                255
+              ],
+              "toColor": [
+                133,
+                129,
+                28,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                78,
+                92,
+                163,
+                255
+              ],
+              "toColor": [
+                78,
+                92,
+                163,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                104,
+                40,
+                173,
+                255
+              ],
+              "toColor": [
+                104,
+                40,
+                173,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                128,
+                54,
+                27,
+                255
+              ],
+              "toColor": [
+                128,
+                54,
+                27,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                31,
+                145,
+                86,
+                255
+              ],
+              "toColor": [
+                31,
+                145,
+                86,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                118,
+                57,
+                158,
+                255
+              ],
+              "toColor": [
+                118,
+                57,
+                158,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                135,
+                61,
+                79,
+                255
+              ],
+              "toColor": [
+                135,
+                61,
+                79,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                78,
+                127,
+                156,
+                255
+              ],
+              "toColor": [
+                78,
+                127,
+                156,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                130,
+                65,
+                105,
+                255
+              ],
+              "toColor": [
+                130,
+                65,
+                105,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                29,
+                101,
+                130,
+                255
+              ],
+              "toColor": [
+                29,
+                101,
+                130,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                150,
+                149,
+                45,
+                255
+              ],
+              "toColor": [
+                150,
+                149,
+                45,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                133,
+                77,
+                42,
+                255
+              ],
+              "toColor": [
+                133,
+                77,
+                42,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                114,
+                35,
+                150,
+                255
+              ],
+              "toColor": [
+                114,
+                35,
+                150,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                133,
+                39,
+                30,
+                255
+              ],
+              "toColor": [
+                133,
+                39,
+                30,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                112,
+                43,
+                128,
+                255
+              ],
+              "toColor": [
+                112,
+                43,
+                128,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                135,
+                47,
+                99,
+                255
+              ],
+              "toColor": [
+                135,
+                47,
+                99,
+                255
+              ]
+            },
+            {
+              "type": "algorithmic",
+              "algorithm": "esriCIELabAlgorithm",
+              "fromColor": [
+                37,
+                92,
+                138,
+                255
+              ],
+              "toColor": [
+                37,
+                92,
+                138,
+                255
+              ]
+            }
+          ]
+        }
+      },
+      "type": "uniqueValue",
+      "field1": "hovedbergart",
+      "fieldDelimiter": ",",
+      "defaultSymbol": {
+        "color": [
+          0,
+          0,
+          0,
+          255
+        ],
+        "outline": {
+          "color": [
+            0,
+            0,
+            0,
+            255
+          ],
+          "width": 0.3,
+          "type": "esriSLS",
+          "style": "esriSLSSolid"
+        },
+        "type": "esriPFS",
+        "url": "3f76575e-6bc1-41f9-9a36-27d9344f53f1",
+        "imageData": "iVBORw0KGgoAAAANSUhEUgAAAD0AAAA9CAYAAAAeYmHpAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAD10lEQVRogbWayxnUMAyEfXATtEAn9EArnOiREqAMOO1+XkfS/CMbnxI/JFkaPexkfvv+++/Xn1/Grx9/RqdFa9c+h/aJHA6NOcb4mJQtyjYSzV37FK1s3TqvUuL+Xm34NXdmjCtixBqVcBUyIlkq3kqWiO+kWt8JKAhn72TuTXeL6EwF7cxC2TOFX7WxbD15zmiucz7gTS1eNQo/GuiIoomM65wZMa4EIYEum+dCuwNzsv4RvZUgKji9+rqoqSzowjtb/4jeShDV7wYlx5on8F7nvTdNIe5CTtE8CVpdl5oZHGmOrRg4hcM+3glg1KUmsRoNalRx+zu1kBNgq/eZLSTw7sJ8f1cW2tHoFEPRe5qnMwZOKrtxgIh4OsVQ6dOKYafSqpDinM5o9abe3ymLRmgSNKr+HaIK0tnzCXpCn46Y7Iy6TG/AfKdDg+M+77FpZeX/WXy4tQGV8+HTO2E3KETj1K/3Z1IbECUqi6fFSSQwLS6cVEdig3t0VBZHgexGOiIxwbnQ2Oc7sqBAVhUKlbDRGEl7imYmZ7Q2crn0wJH10eppH6O0CM3ODc9H9KY+faKUtV9ZoVsjWPCmvtphRNMfhbgTW3aFpgeO7kbIBjv5umPhrPIL4a0EUBtR0bmCd0Yrk6HqJ4pNz9OVr1cMlHVVDlV8XOUgeCshOlqn0HYrwEzmSDEf8HY31IE3DU7OBh06e5tkstPvWqrrvycKQndkHaFWQZxDgqv4jH5lzPLe+7T4iNZksKyEdoqXSnnvU1Zng3RNZzwSmhYvkcyRxWc2mTS1ppMOHTkI5KM55c1Jp+yL5uy5ktJ0mgp0a3t8tVQLSaDJIHcapCrF0rQ4RvLVsmJM+tWYQ7fj2yqLXP9qScZO0lM1X1n4EciUL2eE1FhEt+PTRD7F59XC6O1AJ2Ka9TmWrfgqpalxCe9b/k4zATnduTKmFZlzru7U6zQTnAZM4iohvJ1zsMMsm6fWnkTqaB26AiaNWoJY1zk2qqAWvaOURQuE6JaikwWIa1Rjyh3C/8gqwm7ldXoPpjakUmKENPwXsCvMyiR63tdUMtDbFRoY8V/AqnUUdwPeTpNlKIEosW43XyvB1doqA13z6U4Udeg49BTNaz7t0nBRQhBGa3L7sw5pRCDX58laRfNRnJBUUD2rsUqg05sT1/LpHRnRsps+OoEvayTdZXQeH/Buaz0SglZjHeQQRD0u+08h7kTrbtaoNlT1P3zaYdqBcZU3b1SBGb/Sp09hvTbXuvsYDZaVwqu9yPN0J3JXfdWaaDO0GHHu3+R5uhO5lYB0XLXODc4YY/wD+SbuXGSXXpUAAAAASUVORK5CYII=",
+        "contentType": "image/png",
+        "width": 45.75,
+        "height": 45.75,
+        "xoffset": 0,
+        "yoffset": 0,
+        "xscale": 1,
+        "yscale": 1
+      },
+      "defaultLabel": "<all other values>",
+      "uniqueValueInfos": [
+        {
+          "symbol": {
+            "color": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "<Null>",
+          "label": "<Null>"
+        },
+        {
+          "symbol": {
+            "color": [
+              255,
+              51,
+              0,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "101",
+          "label": "Alkalifeltspatgranitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              255,
+              97,
+              135,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "102",
+          "label": "Granitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              247,
+              135,
+              135,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "103",
+          "label": "Granodioritt"
+        },
+        {
+          "symbol": {
+            "color": [
+              222,
+              110,
+              110,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "104",
+          "label": "Tonalitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              255,
+              102,
+              46,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "105",
+          "label": "Trondhjemitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              247,
+              97,
+              135,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "106",
+          "label": "Alkalifeltspatsyenitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              232,
+              102,
+              120,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "107",
+          "label": "Syenitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              255,
+              204,
+              204,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "108",
+          "label": "Monzonitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              224,
+              117,
+              140,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "109",
+          "label": "Monzodioritt"
+        },
+        {
+          "symbol": {
+            "color": [
+              237,
+              117,
+              219,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "110",
+          "label": "Larvikitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              235,
+              115,
+              168,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "111",
+          "label": "Kvartsdioritt"
+        },
+        {
+          "symbol": {
+            "color": [
+              224,
+              171,
+              204,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "112",
+          "label": "Dioritt"
+        },
+        {
+          "symbol": {
+            "color": [
+              176,
+              117,
+              110,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "113",
+          "label": "Gabbro"
+        },
+        {
+          "symbol": {
+            "color": [
+              204,
+              153,
+              153,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "114",
+          "label": "Noritt"
+        },
+        {
+          "symbol": {
+            "color": [
+              230,
+              204,
+              102,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "120",
+          "label": "Nefelinførende bergart"
+        },
+        {
+          "symbol": {
+            "color": [
+              133,
+              0,
+              168,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "130",
+          "label": "Peridotitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              133,
+              0,
+              168,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "131",
+          "label": "Dunitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              133,
+              0,
+              168,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "132",
+          "label": "Harzburgitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              153,
+              128,
+              255,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "136",
+          "label": "Pyroksenitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              156,
+              43,
+              102,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "137",
+          "label": "Hornblenditt"
+        },
+        {
+          "symbol": {
+            "color": [
+              247,
+              97,
+              94,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "140",
+          "label": "Charnockitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              255,
+              153,
+              204,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "141",
+          "label": "Mangeritt"
+        },
+        {
+          "symbol": {
+            "color": [
+              224,
+              173,
+              173,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "143",
+          "label": "Anortositt"
+        },
+        {
+          "symbol": {
+            "color": [
+              53,
+              77,
+              168,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "144",
+          "label": "Karbonatitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              135,
+              0,
+              0,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "150",
+          "label": "Diabas"
+        },
+        {
+          "symbol": {
+            "color": [
+              204,
+              46,
+              120,
+              255
+            ],
+            "outline": {
+              "color": [
+                0,
+                0,
+                0,
+                255
+              ],
+              "width": 0.01,
+              "type": "esriSLS",
+              "style": "esriSLSSolid"
+            },
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "151",
+          "label": "Lamprofyr"
+        },
+        {
+          "symbol": {
+            "color": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "160",
+          "label": "Pegmatitt/aplitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              255,
+              179,
+              230,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "201",
+          "label": "Felsisk vulkansk bergart"
+        },
+        {
+          "symbol": {
+            "color": [
+              255,
+              135,
+              145,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "202",
+          "label": "Ryolitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              247,
+              171,
+              255,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "203",
+          "label": "Ryodacitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              224,
+              140,
+              194,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "204",
+          "label": "Dacitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              209,
+              176,
+              194,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "210",
+          "label": "Intermediær vulkansk bergart"
+        },
+        {
+          "symbol": {
+            "color": [
+              252,
+              161,
+              184,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "211",
+          "label": "Trakytt"
+        },
+        {
+          "symbol": {
+            "color": [
+              204,
+              135,
+              255,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "212",
+          "label": "Rombeporfyr"
+        },
+        {
+          "symbol": {
+            "color": [
+              204,
+              120,
+              173,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "213",
+          "label": "Latitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              209,
+              176,
+              194,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "214",
+          "label": "Andesitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              230,
+              153,
+              25,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "220",
+          "label": "Mafisk vulkansk bergart"
+        },
+        {
+          "symbol": {
+            "color": [
+              196,
+              112,
+              0,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "221",
+          "label": "Basalt"
+        },
+        {
+          "symbol": {
+            "color": [
+              171,
+              87,
+              0,
+              255
+            ],
+            "outline": {
+              "color": [
+                0,
+                0,
+                0,
+                255
+              ],
+              "width": 0.01,
+              "type": "esriSLS",
+              "style": "esriSLSSolid"
+            },
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "222",
+          "label": "Komatiitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              204,
+              153,
+              46,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "230",
+          "label": "Nefelinførende lava"
+        },
+        {
+          "symbol": {
+            "color": [
+              217,
+              217,
+              191,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "240",
+          "label": "Pyroklastisk bergart"
+        },
+        {
+          "symbol": {
+            "color": [
+              217,
+              204,
+              179,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "241",
+          "label": "Vulkansk breksje"
+        },
+        {
+          "symbol": {
+            "color": [
+              230,
+              204,
+              102,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "243",
+          "label": "Tuff"
+        },
+        {
+          "symbol": {
+            "color": [
+              224,
+              255,
+              222,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "300",
+          "label": "Sedimentær bergart"
+        },
+        {
+          "symbol": {
+            "color": [
+              204,
+              255,
+              135,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "301",
+          "label": "Leirstein"
+        },
+        {
+          "symbol": {
+            "color": [
+              179,
+              230,
+              77,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "302",
+          "label": "Slamstein"
+        },
+        {
+          "symbol": {
+            "color": [
+              230,
+              255,
+              77,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "303",
+          "label": "Siltstein"
+        },
+        {
+          "symbol": {
+            "color": [
+              255,
+              255,
+              51,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "304",
+          "label": "Sandstein"
+        },
+        {
+          "symbol": {
+            "color": [
+              179,
+              204,
+              77,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "305",
+          "label": "Gråvakke"
+        },
+        {
+          "symbol": {
+            "color": [
+              255,
+              230,
+              0,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "306",
+          "label": "Arkose"
+        },
+        {
+          "symbol": {
+            "color": [
+              255,
+              255,
+              51,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "307",
+          "label": "Konglomerat"
+        },
+        {
+          "symbol": {
+            "color": [
+              230,
+              230,
+              25,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "308",
+          "label": "Kvartsarenitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              237,
+              255,
+              8,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "310",
+          "label": "Sedimentær breksje"
+        },
+        {
+          "symbol": {
+            "color": [
+              237,
+              255,
+              8,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "311",
+          "label": "Tillitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              237,
+              255,
+              8,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "312",
+          "label": "Diamiktitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              135,
+              255,
+              255,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "320",
+          "label": "Mergelstein"
+        },
+        {
+          "symbol": {
+            "color": [
+              77,
+              230,
+              230,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "321",
+          "label": "Kalkstein"
+        },
+        {
+          "symbol": {
+            "color": [
+              0,
+              230,
+              230,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "322",
+          "label": "Dolomittstein"
+        },
+        {
+          "symbol": {
+            "color": [
+              247,
+              246,
+              181,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "330",
+          "label": "Kiselstein"
+        },
+        {
+          "symbol": {
+            "color": [
+              222,
+              209,
+              173,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "340",
+          "label": "Tuffitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              255,
+              255,
+              179,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "350",
+          "label": "Båndet jernmalm"
+        },
+        {
+          "symbol": {
+            "color": [
+              201,
+              255,
+              51,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "401",
+          "label": "Leirskifer"
+        },
+        {
+          "symbol": {
+            "color": [
+              135,
+              255,
+              51,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "402",
+          "label": "Fyllitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              130,
+              227,
+              77,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "403",
+          "label": "Glimmerskifer"
+        },
+        {
+          "symbol": {
+            "color": [
+              204,
+              230,
+              204,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "404",
+          "label": "Granatglimmerskifer"
+        },
+        {
+          "symbol": {
+            "color": [
+              171,
+              255,
+              237,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "405",
+          "label": "Kalkfyllitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              161,
+              237,
+              176,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "406",
+          "label": "Kalkglimmerskifer"
+        },
+        {
+          "symbol": {
+            "color": [
+              217,
+              235,
+              204,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "408",
+          "label": "Aluminiumsilikatskifer"
+        },
+        {
+          "symbol": {
+            "color": [
+              212,
+              212,
+              150,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "410",
+          "label": "Amfibolskifer"
+        },
+        {
+          "symbol": {
+            "color": [
+              135,
+              201,
+              51,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "411",
+          "label": "Grafittskifer"
+        },
+        {
+          "symbol": {
+            "color": [
+              179,
+              255,
+              128,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "412",
+          "label": "Klorittskifer"
+        },
+        {
+          "symbol": {
+            "color": [
+              77,
+              230,
+              230,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "415",
+          "label": "Marmor"
+        },
+        {
+          "symbol": {
+            "color": [
+              135,
+              255,
+              255,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "416",
+          "label": "Dolomittmarmor"
+        },
+        {
+          "symbol": {
+            "color": [
+              230,
+              255,
+              77,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "420",
+          "label": "Metasandstein"
+        },
+        {
+          "symbol": {
+            "color": [
+              181,
+              219,
+              36,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "421",
+          "label": "Metagråvakke"
+        },
+        {
+          "symbol": {
+            "color": [
+              255,
+              227,
+              28,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "422",
+          "label": "Meta-arkose"
+        },
+        {
+          "symbol": {
+            "color": [
+              255,
+              255,
+              0,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "423",
+          "label": "Kvartsitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              217,
+              235,
+              94,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "424",
+          "label": "Kvartsskifer"
+        },
+        {
+          "symbol": {
+            "color": [
+              255,
+              255,
+              191,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "425",
+          "label": "Kiselstein"
+        },
+        {
+          "symbol": {
+            "color": [
+              191,
+              214,
+              194,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "426",
+          "label": "Glimmersgneis"
+        },
+        {
+          "symbol": {
+            "color": [
+              153,
+              196,
+              232,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "427",
+          "label": "Kalksilikarbergart"
+        },
+        {
+          "symbol": {
+            "color": [
+              219,
+              235,
+              204,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "428",
+          "label": "Aluminiumsilikatgneis"
+        },
+        {
+          "symbol": {
+            "color": [
+              204,
+              212,
+              166,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "429",
+          "label": "Hornblendegneis"
+        },
+        {
+          "symbol": {
+            "color": [
+              255,
+              237,
+              237,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "430",
+          "label": "Granittisk gneis"
+        },
+        {
+          "symbol": {
+            "color": [
+              255,
+              217,
+              217,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "431",
+          "label": "Granodiorittisk gneis"
+        },
+        {
+          "symbol": {
+            "color": [
+              255,
+              204,
+              204,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "432",
+          "label": "Tonalittisk gneis"
+        },
+        {
+          "symbol": {
+            "color": [
+              237,
+              166,
+              189,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "433",
+          "label": "Kvartsdiorittisk gneis"
+        },
+        {
+          "symbol": {
+            "color": [
+              224,
+              148,
+              161,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "434",
+          "label": "Monzonittisk gneis"
+        },
+        {
+          "symbol": {
+            "color": [
+              205,
+              102,
+              153,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "435",
+          "label": "Diorittisk gneis"
+        },
+        {
+          "symbol": {
+            "color": [
+              217,
+              115,
+              166,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "437",
+          "label": "Ortopyroksengneis"
+        },
+        {
+          "symbol": {
+            "color": [
+              250,
+              224,
+              255,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "440",
+          "label": "Migmatitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              255,
+              230,
+              230,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "441",
+          "label": "Øyegneis"
+        },
+        {
+          "symbol": {
+            "color": [
+              201,
+              219,
+              173,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "442",
+          "label": "Båndgneis"
+        },
+        {
+          "symbol": {
+            "color": [
+              224,
+              173,
+              173,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "450",
+          "label": "Grønnskifer"
+        },
+        {
+          "symbol": {
+            "color": [
+              204,
+              153,
+              46,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "451",
+          "label": "Grønnstein"
+        },
+        {
+          "symbol": {
+            "color": [
+              230,
+              179,
+              130,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "452",
+          "label": "Amfibolitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              237,
+              169,
+              3,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "453",
+          "label": "Granatamfibolitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              230,
+              179,
+              130,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "454",
+          "label": "Metagabbro"
+        },
+        {
+          "symbol": {
+            "color": [
+              186,
+              153,
+              171,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "455",
+          "label": "Eklogitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              128,
+              102,
+              255,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "456",
+          "label": "Serpentinitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              230,
+              204,
+              102,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "460",
+          "label": "Albititt"
+        },
+        {
+          "symbol": {
+            "color": [
+              242,
+              167,
+              127,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "461",
+          "label": "Hydrotermalkvarts"
+        },
+        {
+          "symbol": {
+            "color": [
+              128,
+              179,
+              102,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "470",
+          "label": "Mylonitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              128,
+              179,
+              102,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "471",
+          "label": "Kataklasitt"
+        },
+        {
+          "symbol": {
+            "color": [
+              255,
+              255,
+              204,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "472",
+          "label": "Tektonisk breksje"
+        },
+        {
+          "symbol": {
+            "color": [
+              255,
+              255,
+              204,
+              255
+            ],
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+          },
+          "value": "473",
+          "label": "Nedslagsbreksje"
+        }
+      ]
+    },
+    "transparency": 13
+  },
+  "allowGeometryUpdates": true,
+  "trueCurveSupportMode": "OGC",
+  "supportedCurveTypes": [
+    "esriGeometryCircularArc"
+  ],
+  "supportedTrueCurvePbfFeatureEncodings": [
+    "esriCompressedShapeBuffer",
+    "esriDefault"
+  ],
+  "allowTrueCurvesUpdates": true,
+  "onlyAllowTrueCurveUpdatesByTrueCurveClients": false,
+  "hasAttachments": false,
+  "htmlPopupType": "esriServerHTMLPopupTypeAsHTMLText",
+  "hasM": false,
+  "hasZ": false,
+  "objectIdField": "OBJECTID",
+  "uniqueIdField": {
+    "name": "OBJECTID",
+    "isSystemMaintained": true
+  },
+  "globalIdField": "",
+  "typeIdField": "hovedbergart",
+  "collation": {
+    "locale": "neutral",
+    "caseSensitive": false,
+    "accentSensitive": true
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "sqlType": "sqlTypeOther",
+      "nullable": false,
+      "editable": false,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "objekttype",
+      "type": "esriFieldTypeString",
+      "alias": "objekttype",
+      "sqlType": "sqlTypeOther",
+      "length": 32,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "tegnforklaring",
+      "type": "esriFieldTypeString",
+      "alias": "Tegnforklaring",
+      "sqlType": "sqlTypeOther",
+      "length": 254,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "kartbladindeks",
+      "type": "esriFieldTypeString",
+      "alias": "Kartbladindeks",
+      "sqlType": "sqlTypeOther",
+      "length": 35,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "hovedbergart_navn",
+      "type": "esriFieldTypeString",
+      "alias": "Hovedbergart",
+      "sqlType": "sqlTypeOther",
+      "length": 50,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "tilleggsbergart1_navn",
+      "type": "esriFieldTypeString",
+      "alias": "Tilleggsbergart (1)",
+      "sqlType": "sqlTypeOther",
+      "length": 50,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "tilleggsbergart2_navn",
+      "type": "esriFieldTypeString",
+      "alias": "Tilleggsbergart (2)",
+      "sqlType": "sqlTypeOther",
+      "length": 50,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "tilleggsbergart3_navn",
+      "type": "esriFieldTypeString",
+      "alias": "Tilleggsbergart (3)",
+      "sqlType": "sqlTypeOther",
+      "length": 50,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "dekkekompleks_navn",
+      "type": "esriFieldTypeString",
+      "alias": "Dekkekompleks",
+      "sqlType": "sqlTypeOther",
+      "length": 70,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "dekke_navn",
+      "type": "esriFieldTypeString",
+      "alias": "Dekke",
+      "sqlType": "sqlTypeOther",
+      "length": 60,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "overgruppe_navn",
+      "type": "esriFieldTypeString",
+      "alias": "Overgruppe",
+      "sqlType": "sqlTypeOther",
+      "length": 50,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "gruppe_navn",
+      "type": "esriFieldTypeString",
+      "alias": "Gruppe",
+      "sqlType": "sqlTypeOther",
+      "length": 50,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "formasjon_navn",
+      "type": "esriFieldTypeString",
+      "alias": "Formasjon",
+      "sqlType": "sqlTypeOther",
+      "length": 70,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "kompleks_navn",
+      "type": "esriFieldTypeString",
+      "alias": "Kompleks",
+      "sqlType": "sqlTypeOther",
+      "length": 50,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "suite_navn",
+      "type": "esriFieldTypeString",
+      "alias": "Suite",
+      "sqlType": "sqlTypeOther",
+      "length": 40,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "dannelsesalder_navn",
+      "type": "esriFieldTypeString",
+      "alias": "Dannelsesalder",
+      "sqlType": "sqlTypeOther",
+      "length": 70,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "dannelsesminalder_navn",
+      "type": "esriFieldTypeString",
+      "alias": "Dannelsesminalder",
+      "sqlType": "sqlTypeOther",
+      "length": 70,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "dannelsesmaksalder_navn",
+      "type": "esriFieldTypeString",
+      "alias": "Dannelsesmaksalder",
+      "sqlType": "sqlTypeOther",
+      "length": 70,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "metamorffacies_navn",
+      "type": "esriFieldTypeString",
+      "alias": "Metamorffacies",
+      "sqlType": "sqlTypeOther",
+      "length": 50,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "metamorfalder_navn",
+      "type": "esriFieldTypeString",
+      "alias": "Metamorfalder",
+      "sqlType": "sqlTypeOther",
+      "length": 50,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "metamorffacies2_navn",
+      "type": "esriFieldTypeString",
+      "alias": "Metamorffacies (2)",
+      "sqlType": "sqlTypeOther",
+      "length": 70,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "metamorfalder2_navn",
+      "type": "esriFieldTypeString",
+      "alias": "Metamorfalder (2)",
+      "sqlType": "sqlTypeOther",
+      "length": 70,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "opphav",
+      "type": "esriFieldTypeString",
+      "alias": "Opphav",
+      "sqlType": "sqlTypeOther",
+      "length": 254,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "tektoniskhovedinndeling_navn",
+      "type": "esriFieldTypeString",
+      "alias": "Tektoniskhovedinndeling",
+      "sqlType": "sqlTypeOther",
+      "length": 100,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "geologiskform_navn",
+      "type": "esriFieldTypeString",
+      "alias": "Geologiskform",
+      "sqlType": "sqlTypeOther",
+      "length": 50,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "tektoniskenhet_navn",
+      "type": "esriFieldTypeString",
+      "alias": "Tektoniskenhet",
+      "sqlType": "sqlTypeOther",
+      "length": 60,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "datauttaksdato",
+      "type": "esriFieldTypeDate",
+      "alias": "Uttaksdato",
+      "sqlType": "sqlTypeOther",
+      "length": 8,
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null,
+      "precision": 1
+    },
+    {
+      "name": "hovedbergart",
+      "type": "esriFieldTypeInteger",
+      "alias": "hovedbergart",
+      "sqlType": "sqlTypeOther",
+      "nullable": true,
+      "editable": true,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Area",
+      "sqlType": "sqlTypeDouble",
+      "nullable": true,
+      "editable": false,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Length",
+      "sqlType": "sqlTypeDouble",
+      "nullable": true,
+      "editable": false,
+      "domain": null,
+      "defaultValue": null
+    }
+  ],
+  "indexes": [
+    {
+      "name": "PK__BERGARTF__F4B70D850E903122",
+      "fields": "OBJECTID",
+      "isAscending": true,
+      "isUnique": true,
+      "description": "",
+      "indexType": "Attribute"
+    },
+    {
+      "name": "user_73781.BERGARTFLATE_N250_BERGARTFLATE_N250_Shape_sidx",
+      "fields": "SHAPE",
+      "isAscending": true,
+      "isUnique": false,
+      "description": "",
+      "indexType": "Spatial"
+    },
+    {
+      "name": "Shape__Area_Index",
+      "fields": "Shape__Area",
+      "isAscending": true,
+      "isUnique": false,
+      "description": "",
+      "indexType": "Attribute"
+    },
+    {
+      "name": "Shape__Length_Index",
+      "fields": "Shape__Length",
+      "isAscending": true,
+      "isUnique": false,
+      "description": "",
+      "indexType": "Attribute"
+    },
+    {
+      "name": "hovedbergart_Index",
+      "fields": "hovedbergart",
+      "isAscending": true,
+      "isUnique": false,
+      "description": "hovedbergart_Index",
+      "indexType": "Attribute"
+    }
+  ],
+  "dateFieldsTimeReference": {
+    "timeZone": "UTC",
+    "timeZoneIANA": "Etc/UTC",
+    "respectsDaylightSaving": false
+  },
+  "preferredTimeReference": null,
+  "types": [
+    {
+      "id": 101,
+      "name": "Alkalifeltspatgranitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Alkalifeltspatgranitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 101
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "name": "Granitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Granitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 102
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 103,
+      "name": "Granodioritt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Granodioritt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 103
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 104,
+      "name": "Tonalitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Tonalitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 104
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 105,
+      "name": "Trondhjemitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Trondhjemitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 105
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 106,
+      "name": "Alkalifeltspatsyenitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Alkalifeltspatsyenitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 106
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 107,
+      "name": "Syenitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Syenitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 107
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 108,
+      "name": "Monzonitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Monzonitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 108
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 109,
+      "name": "Monzodioritt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Monzodioritt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 109
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 110,
+      "name": "Larvikitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Larvikitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 110
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 111,
+      "name": "Kvartsdioritt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Kvartsdioritt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 111
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 112,
+      "name": "Dioritt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Dioritt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 112
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 113,
+      "name": "Gabbro",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Gabbro",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 113
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 114,
+      "name": "Noritt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Noritt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 114
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 120,
+      "name": "Nefelinførende bergart",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Nefelinførende bergart",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 120
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 130,
+      "name": "Peridotitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Peridotitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 130
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 131,
+      "name": "Dunitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Dunitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 131
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 132,
+      "name": "Harzburgitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Harzburgitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 132
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 136,
+      "name": "Pyroksenitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Pyroksenitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 136
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 137,
+      "name": "Hornblenditt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Hornblenditt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 137
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 140,
+      "name": "Charnockitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Charnockitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 140
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 141,
+      "name": "Mangeritt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Mangeritt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 141
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 143,
+      "name": "Anortositt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Anortositt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 143
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 144,
+      "name": "Karbonatitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Karbonatitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 144
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 150,
+      "name": "Diabas",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Diabas",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 150
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 151,
+      "name": "Lamprofyr",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Lamprofyr",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 151
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 160,
+      "name": "Pegmatitt/aplitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Pegmatitt/aplitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 160
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 201,
+      "name": "Felsisk vulkansk bergart",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Felsisk vulkansk bergart",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 201
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 202,
+      "name": "Ryolitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Ryolitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 202
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 203,
+      "name": "Ryodacitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Ryodacitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 203
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 204,
+      "name": "Dacitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Dacitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 204
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 210,
+      "name": "Intermediær vulkansk bergart",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Intermediær vulkansk bergart",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 210
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 211,
+      "name": "Trakytt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Trakytt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 211
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 212,
+      "name": "Rombeporfyr",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Rombeporfyr",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 212
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 213,
+      "name": "Latitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Latitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 213
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 214,
+      "name": "Andesitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Andesitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 214
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 220,
+      "name": "Mafisk vulkansk bergart",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Mafisk vulkansk bergart",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 220
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 221,
+      "name": "Basalt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Basalt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 221
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 222,
+      "name": "Komatiitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Komatiitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 222
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 230,
+      "name": "Nefelinførende lava",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Nefelinførende lava",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 230
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 240,
+      "name": "Pyroklastisk bergart",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Pyroklastisk bergart",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 240
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 241,
+      "name": "Vulkansk breksje",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Vulkansk breksje",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 241
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 243,
+      "name": "Tuff",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Tuff",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 243
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 300,
+      "name": "Sedimentær bergart",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Sedimentær bergart",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 300
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 301,
+      "name": "Leirstein",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Leirstein",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 301
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 302,
+      "name": "Slamstein",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Slamstein",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 302
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 303,
+      "name": "Siltstein",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Siltstein",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 303
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 304,
+      "name": "Sandstein",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Sandstein",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 304
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 305,
+      "name": "Gråvakke",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Gråvakke",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 305
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 306,
+      "name": "Arkose",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Arkose",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 306
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 307,
+      "name": "Konglomerat",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Konglomerat",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 307
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 308,
+      "name": "Kvartsarenitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Kvartsarenitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 308
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 310,
+      "name": "Sedimentær breksje",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Sedimentær breksje",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 310
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 311,
+      "name": "Tillitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Tillitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 311
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 312,
+      "name": "Diamiktitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Diamiktitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 312
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 320,
+      "name": "Mergelstein",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Mergelstein",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 320
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 321,
+      "name": "Kalkstein",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Kalkstein",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 321
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 322,
+      "name": "Dolomittstein",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Dolomittstein",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 322
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 330,
+      "name": "Kiselstein",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Kiselstein",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 330
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 340,
+      "name": "Tuffitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Tuffitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 340
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 350,
+      "name": "Båndet jernmalm",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Båndet jernmalm",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 350
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 401,
+      "name": "Leirskifer",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Leirskifer",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 401
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 402,
+      "name": "Fyllitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Fyllitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 402
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 403,
+      "name": "Glimmerskifer",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Glimmerskifer",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 403
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 404,
+      "name": "Granatglimmerskifer",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Granatglimmerskifer",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 404
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 405,
+      "name": "Kalkfyllitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Kalkfyllitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 405
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 406,
+      "name": "Kalkglimmerskifer",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Kalkglimmerskifer",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 406
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 408,
+      "name": "Aluminiumsilikatskifer",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Aluminiumsilikatskifer",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 408
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 410,
+      "name": "Amfibolskifer",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Amfibolskifer",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 410
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 411,
+      "name": "Grafittskifer",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Grafittskifer",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 411
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 412,
+      "name": "Klorittskifer",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Klorittskifer",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 412
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 415,
+      "name": "Marmor",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Marmor",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 415
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 416,
+      "name": "Dolomittmarmor",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Dolomittmarmor",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 416
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 420,
+      "name": "Metasandstein",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Metasandstein",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 420
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 421,
+      "name": "Metagråvakke",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Metagråvakke",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 421
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 422,
+      "name": "Meta-arkose",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Meta-arkose",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 422
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 423,
+      "name": "Kvartsitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Kvartsitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 423
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 424,
+      "name": "Kvartsskifer",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Kvartsskifer",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 424
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 425,
+      "name": "Kiselstein",
+      "domains": {},
+      "templates": [
+        {
+          "name": "425",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "datauttaksdato": null,
+              "hovedbergart": 425,
+              "objekttype": null,
+              "tegnforklaring": null,
+              "kartbladindeks": null,
+              "hovedbergart_navn": null,
+              "tilleggsbergart1_navn": null,
+              "tilleggsbergart2_navn": null,
+              "tilleggsbergart3_navn": null,
+              "dekkekompleks_navn": null,
+              "dekke_navn": null,
+              "overgruppe_navn": null,
+              "gruppe_navn": null,
+              "formasjon_navn": null,
+              "kompleks_navn": null,
+              "suite_navn": null,
+              "dannelsesalder_navn": null,
+              "dannelsesminalder_navn": null,
+              "dannelsesmaksalder_navn": null,
+              "metamorffacies_navn": null,
+              "metamorfalder_navn": null,
+              "metamorffacies2_navn": null,
+              "metamorfalder2_navn": null,
+              "opphav": null,
+              "tektoniskhovedinndeling_navn": null,
+              "geologiskform_navn": null,
+              "tektoniskenhet_navn": null
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 426,
+      "name": "Glimmersgneis",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Glimmersgneis",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 426
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 427,
+      "name": "Kalksilikarbergart",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Kalksilikarbergart",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 427
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 428,
+      "name": "Aluminiumsilikatgneis",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Aluminiumsilikatgneis",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 428
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 429,
+      "name": "Hornblendegneis",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Hornblendegneis",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 429
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 430,
+      "name": "Granittisk gneis",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Granittisk gneis",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 430
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 431,
+      "name": "Granodiorittisk gneis",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Granodiorittisk gneis",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 431
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 432,
+      "name": "Tonalittisk gneis",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Tonalittisk gneis",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 432
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 433,
+      "name": "Kvartsdiorittisk gneis",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Kvartsdiorittisk gneis",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 433
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 434,
+      "name": "Monzonittisk gneis",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Monzonittisk gneis",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 434
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 435,
+      "name": "Diorittisk gneis",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Diorittisk gneis",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 435
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 437,
+      "name": "Ortopyroksengneis",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Ortopyroksengneis",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 437
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 440,
+      "name": "Migmatitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Migmatitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 440
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 441,
+      "name": "Øyegneis",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Øyegneis",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 441
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 442,
+      "name": "Båndgneis",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Båndgneis",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 442
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 450,
+      "name": "Grønnskifer",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Grønnskifer",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 450
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 451,
+      "name": "Grønnstein",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Grønnstein",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 451
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 452,
+      "name": "Amfibolitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Amfibolitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 452
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 453,
+      "name": "Granatamfibolitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Granatamfibolitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 453
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 454,
+      "name": "Metagabbro",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Metagabbro",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 454
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 455,
+      "name": "Eklogitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Eklogitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 455
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 456,
+      "name": "Serpentinitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Serpentinitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 456
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 460,
+      "name": "Albititt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Albititt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 460
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 461,
+      "name": "Hydrotermalkvarts",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Hydrotermalkvarts",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 461
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 470,
+      "name": "Mylonitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Mylonitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 470
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 471,
+      "name": "Kataklasitt",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Kataklasitt",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 471
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 472,
+      "name": "Tektonisk breksje",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Tektonisk breksje",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 472
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 473,
+      "name": "Nedslagsbreksje",
+      "domains": {},
+      "templates": [
+        {
+          "name": "Nedslagsbreksje",
+          "description": "",
+          "drawingTool": "esriFeatureEditToolPolygon",
+          "prototype": {
+            "attributes": {
+              "hovedbergart": 473
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "templates": [],
+  "supportedQueryFormats": "JSON, geoJSON, PBF",
+  "supportedAppendFormats": "sqlite,geoPackage,shapefile,filegdb,featureCollection,geojson,csv,excel,jsonl,featureService,pbf",
+  "supportedAppendSourceFilterFormats": "sqlite,geoPackage,shapefile,filegdb,featureService",
+  "supportedExportFormats": "csv,shapefile,sqlite,geoPackage,filegdb,featureCollection,geojson,kml,excel,parquet",
+  "supportedConvertFileFormats": "JSON,PBF,Parquet",
+  "supportedConvertContentFormats": "LayerEditCollection,FeatureCollection",
+  "supportedSpatialRelationships": [
+    "esriSpatialRelIntersects",
+    "esriSpatialRelContains",
+    "esriSpatialRelCrosses",
+    "esriSpatialRelEnvelopeIntersects",
+    "esriSpatialRelIndexIntersects",
+    "esriSpatialRelOverlaps",
+    "esriSpatialRelTouches",
+    "esriSpatialRelWithin",
+    "esriSpatialRelDisjoint",
+    "esriSpatialRelRelation"
+  ],
+  "guidFormat": "",
+  "supportsContingentValues": true,
+  "supportsEditingContingentValues": true,
+  "supportedContingentValuesFormats": "JSON, PBF",
+  "supportsFieldGroups": true,
+  "supportedSyncDataOptions": 260,
+  "hasStaticData": false,
+  "maxRecordCount": 2000,
+  "standardMaxRecordCount": 2000,
+  "maxIdsCount": 1000000,
+  "standardMaxRecordCountNoGeometry": 32000,
+  "tileMaxRecordCount": 4000,
+  "maxRecordCountFactor": 1,
+  "capabilities": "Query"
+}

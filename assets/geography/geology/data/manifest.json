@@ -1,0 +1,820 @@
+{
+  "coordinateSystem": "EPSG:25833",
+  "fetchedOn": "2026-11-01",
+  "description": "NGUs berggrunn og løsmasser. Fagdataene er lagret på OnlyFag og kan brukes selv om NGUs karttjenester er utilgjengelige.",
+  "license": "NLOD",
+  "attribution": "Inneholder data under Norsk lisens for offentlige data (NLOD) tilgjengeliggjort av Norges geologiske undersøkelse (NGU).",
+  "layers": {
+    "bedrock": {
+      "title": "Berggrunn",
+      "overview": "../assets/geography/geology/data/bedrock-overview.json.gz",
+      "source": "https://services.arcgis.com/2JyTvMWQSnM2Vi8q/arcgis/rest/services/Geologi_0000_Norge_25833_BerggrunnN1350_SHAPE/FeatureServer/3",
+      "sourceItem": "d7f4b8f9470947429a8b6c6ff0380b5b",
+      "sourceScale": "1:1 350 000",
+      "sourceDate": "2026-01-12",
+      "overviewFeatures": 4637,
+      "overviewBytes": 1612793,
+      "overviewSHA256": "2cdd62df692ec3e55825f0ed2cdbeafa47c0dcc50e0af6555b76052758c9ab70",
+      "legend": [
+        {
+          "label": "Albititt/Skapolititt",
+          "color": "#e6cc66"
+        },
+        {
+          "label": "Alkalifeltspatgranitt",
+          "color": "#ff3300"
+        },
+        {
+          "label": "Alkalifeltspatsyenitt",
+          "color": "#f76187"
+        },
+        {
+          "label": "Aluminiumsilikatgneis",
+          "color": "#dbebcc"
+        },
+        {
+          "label": "Aluminiumsilikatskifer",
+          "color": "#d9ebcc"
+        },
+        {
+          "label": "Amfibolgneis",
+          "color": "#ccd4a6"
+        },
+        {
+          "label": "Amfibolitt",
+          "color": "#e6b382"
+        },
+        {
+          "label": "Amfibolskifer",
+          "color": "#d4d496"
+        },
+        {
+          "label": "Andesitt",
+          "color": "#d1b0c2"
+        },
+        {
+          "label": "Anortositt",
+          "color": "#e0adad"
+        },
+        {
+          "label": "Arkose",
+          "color": "#ffe600"
+        },
+        {
+          "label": "Basalt",
+          "color": "#c47000"
+        },
+        {
+          "label": "Båndet jernmalm",
+          "color": "#ffffb3"
+        },
+        {
+          "label": "Båndgneis",
+          "color": "#c9dbad"
+        },
+        {
+          "label": "Charnockitt",
+          "color": "#f7615e"
+        },
+        {
+          "label": "Dacitt",
+          "color": "#e08cc2"
+        },
+        {
+          "label": "Diamiktitt",
+          "color": "#edff08"
+        },
+        {
+          "label": "Dioritt",
+          "color": "#e0abcc"
+        },
+        {
+          "label": "Diorittisk gneis",
+          "color": "#cd6699"
+        },
+        {
+          "label": "Dolomittmarmor",
+          "color": "#87ffff"
+        },
+        {
+          "label": "Dolomittstein",
+          "color": "#00e6e6"
+        },
+        {
+          "label": "Dunitt",
+          "color": "#c500ff"
+        },
+        {
+          "label": "Eklogitt",
+          "color": "#ba99ab"
+        },
+        {
+          "label": "Enderbitt",
+          "color": "#ff73df"
+        },
+        {
+          "label": "Felsisk vulkansk bergart",
+          "color": "#ffb3e6"
+        },
+        {
+          "label": "Fyllitt",
+          "color": "#87ff33"
+        },
+        {
+          "label": "Gabbro",
+          "color": "#b0756e"
+        },
+        {
+          "label": "Glimmergneis",
+          "color": "#bfd6c2"
+        },
+        {
+          "label": "Glimmerskifer",
+          "color": "#82e34d"
+        },
+        {
+          "label": "Grafittskifer",
+          "color": "#87c933"
+        },
+        {
+          "label": "Granatamfibolitt",
+          "color": "#eda903"
+        },
+        {
+          "label": "Granatglimmerskifer",
+          "color": "#cce6cc"
+        },
+        {
+          "label": "Granitt",
+          "color": "#ff6187"
+        },
+        {
+          "label": "Granittisk gneis",
+          "color": "#ffeded"
+        },
+        {
+          "label": "Granodioritt",
+          "color": "#f78787"
+        },
+        {
+          "label": "Granodiorittisk gneis",
+          "color": "#ffd9d9"
+        },
+        {
+          "label": "Gråvakke",
+          "color": "#b3cc4d"
+        },
+        {
+          "label": "Grønnskifer",
+          "color": "#e0adad"
+        },
+        {
+          "label": "Grønnstein",
+          "color": "#cc992e"
+        },
+        {
+          "label": "Harzburgitt",
+          "color": "#c500d6"
+        },
+        {
+          "label": "Hornblenditt",
+          "color": "#9c2b66"
+        },
+        {
+          "label": "Hornfels",
+          "color": "#ffaa00"
+        },
+        {
+          "label": "Hydrotermalkvarts",
+          "color": "#f2a77f"
+        },
+        {
+          "label": "IKKE KODET - \"Breksje\"",
+          "color": "#728944"
+        },
+        {
+          "label": "IKKE KODET - \"Gneis\"",
+          "color": "#ffe3be"
+        },
+        {
+          "label": "IKKE KODET - \"Mafiske\"",
+          "color": "#cdaa66"
+        },
+        {
+          "label": "IKKE KODET - \"Paragneis\"",
+          "color": "#c7d79e"
+        },
+        {
+          "label": "IKKE KODET - \"Skifer\"",
+          "color": "#d7d79e"
+        },
+        {
+          "label": "Ikke klassifisert",
+          "color": "#e1e1e1"
+        },
+        {
+          "label": "Intermediær vulkansk bergart",
+          "color": "#d1b0c2"
+        },
+        {
+          "label": "Jotunitt",
+          "color": "#f5ca7a"
+        },
+        {
+          "label": "Kalkfyllitt",
+          "color": "#abffed"
+        },
+        {
+          "label": "Kalkglimmerskifer",
+          "color": "#a1edb0"
+        },
+        {
+          "label": "Kalksilikatbergart",
+          "color": "#99c4e8"
+        },
+        {
+          "label": "Kalkstein",
+          "color": "#4de6e6"
+        },
+        {
+          "label": "Karbonatitt",
+          "color": "#354da8"
+        },
+        {
+          "label": "Kataklasitt",
+          "color": "#80b366"
+        },
+        {
+          "label": "Kiselstein",
+          "color": "#f7f6b5"
+        },
+        {
+          "label": "Kleberstein",
+          "color": "#aa7fc4"
+        },
+        {
+          "label": "Klorittskifer",
+          "color": "#b3ff80"
+        },
+        {
+          "label": "Konglomerat",
+          "color": "#ffff33"
+        },
+        {
+          "label": "Kvartsarenitt",
+          "color": "#e6e619"
+        },
+        {
+          "label": "Kvartsdioritt",
+          "color": "#eb73a8"
+        },
+        {
+          "label": "Kvartsdiorittisk gneis",
+          "color": "#eda6bd"
+        },
+        {
+          "label": "Kvartsitt",
+          "color": "#ffff00"
+        },
+        {
+          "label": "Kvartsmonzonitt",
+          "color": "#ffa89e"
+        },
+        {
+          "label": "Kvartsskifer",
+          "color": "#d9eb5e"
+        },
+        {
+          "label": "Lamprofyr",
+          "color": "#cc2e78"
+        },
+        {
+          "label": "Lapillituff",
+          "color": "#c7d79e"
+        },
+        {
+          "label": "Larvikitt",
+          "color": "#ed75db"
+        },
+        {
+          "label": "Latitt",
+          "color": "#cc78ad"
+        },
+        {
+          "label": "Leirskifer",
+          "color": "#c9ff33"
+        },
+        {
+          "label": "Leirstein",
+          "color": "#ccff87"
+        },
+        {
+          "label": "Lherzolitt",
+          "color": "#c570ff"
+        },
+        {
+          "label": "Løsmasser",
+          "color": "#9c9c9c"
+        },
+        {
+          "label": "Mafisk gang (Diabas, Doleritt)",
+          "color": "#870000"
+        },
+        {
+          "label": "Mafisk vulkansk bergart",
+          "color": "#e69919"
+        },
+        {
+          "label": "Mangeritt",
+          "color": "#ff99cc"
+        },
+        {
+          "label": "Marmor",
+          "color": "#4de6e6"
+        },
+        {
+          "label": "Mergelstein",
+          "color": "#87ffff"
+        },
+        {
+          "label": "Meta-arkose",
+          "color": "#ffe31c"
+        },
+        {
+          "label": "Metagabbro",
+          "color": "#e6b382"
+        },
+        {
+          "label": "Metagråvakke",
+          "color": "#b5db24"
+        },
+        {
+          "label": "Metakiselstein",
+          "color": "#ffffbf"
+        },
+        {
+          "label": "Metamorf bergart",
+          "color": "#ffa77f"
+        },
+        {
+          "label": "Metasandstein",
+          "color": "#e6ff4d"
+        },
+        {
+          "label": "Mg-rik lava (Komatiitt, Boninitt)",
+          "color": "#ab5700"
+        },
+        {
+          "label": "Migmatitt",
+          "color": "#fae0ff"
+        },
+        {
+          "label": "Monzodioritt",
+          "color": "#e0758c"
+        },
+        {
+          "label": "Monzonitt",
+          "color": "#ffcccc"
+        },
+        {
+          "label": "Monzonittisk gneis",
+          "color": "#e094a1"
+        },
+        {
+          "label": "Mylonitt",
+          "color": "#80b366"
+        },
+        {
+          "label": "Nedslagsbreksje",
+          "color": "#ffffcc"
+        },
+        {
+          "label": "Nefelinførende bergart",
+          "color": "#e6cc66"
+        },
+        {
+          "label": "Nefelinførende lava",
+          "color": "#cc992e"
+        },
+        {
+          "label": "Noritt",
+          "color": "#cc9999"
+        },
+        {
+          "label": "Ortopyroksengneis",
+          "color": "#d973a6"
+        },
+        {
+          "label": "Pegmatitt/aplitt",
+          "color": "#ff0000"
+        },
+        {
+          "label": "Peridotitt",
+          "color": "#9400d4"
+        },
+        {
+          "label": "Plutonsk bergart",
+          "color": "#ff4f54"
+        },
+        {
+          "label": "Pyroklastisk bergart",
+          "color": "#d9d9bf"
+        },
+        {
+          "label": "Pyroksenitt",
+          "color": "#9980ff"
+        },
+        {
+          "label": "Rombeporfyr",
+          "color": "#cc87ff"
+        },
+        {
+          "label": "Ryodacitt",
+          "color": "#f7abff"
+        },
+        {
+          "label": "Ryolitt",
+          "color": "#ff8791"
+        },
+        {
+          "label": "Sandstein",
+          "color": "#ffff33"
+        },
+        {
+          "label": "Sedimentær bergart",
+          "color": "#e0ffde"
+        },
+        {
+          "label": "Sedimentær breksje",
+          "color": "#edff08"
+        },
+        {
+          "label": "Serpentinitt",
+          "color": "#8066ff"
+        },
+        {
+          "label": "Siltstein",
+          "color": "#e6ff4d"
+        },
+        {
+          "label": "Skarn",
+          "color": "#704489"
+        },
+        {
+          "label": "Slamstein",
+          "color": "#b3e64d"
+        },
+        {
+          "label": "Syenitt",
+          "color": "#e86678"
+        },
+        {
+          "label": "Tektonisk breksje",
+          "color": "#ffffcc"
+        },
+        {
+          "label": "Tillitt",
+          "color": "#edff08"
+        },
+        {
+          "label": "Tonalitt",
+          "color": "#de6e6e"
+        },
+        {
+          "label": "Tonalittisk gneis",
+          "color": "#ffcccc"
+        },
+        {
+          "label": "Trakytt",
+          "color": "#fca1b8"
+        },
+        {
+          "label": "Troktolitt",
+          "color": "#897078"
+        },
+        {
+          "label": "Trondhjemitt",
+          "color": "#ff662e"
+        },
+        {
+          "label": "Tuff",
+          "color": "#e6cc66"
+        },
+        {
+          "label": "Tuffitt",
+          "color": "#ded1ad"
+        },
+        {
+          "label": "Uklassifisert kode 417",
+          "color": "#e1e1e1"
+        },
+        {
+          "label": "Uklassifisert kode 436",
+          "color": "#e1e1e1"
+        },
+        {
+          "label": "Ultramafisk bergart",
+          "color": "#8400a8"
+        },
+        {
+          "label": "Vulkansk bergart",
+          "color": "#ffbebe"
+        },
+        {
+          "label": "Vulkansk breksje",
+          "color": "#d9ccb3"
+        },
+        {
+          "label": "Websteritt",
+          "color": "#c53bff"
+        },
+        {
+          "label": "Wehrlitt",
+          "color": "#cc00ff"
+        },
+        {
+          "label": "Øyegneis",
+          "color": "#ffe6e6"
+        }
+      ],
+      "coverageNote": "Landsdekkende oversikt i 1:1 350 000. Zoom inn for berggrunn i 1:250 000 og, der det er kartlagt, 1:50 000.",
+      "processing": {
+        "simplificationMetres": 100,
+        "coordinatePrecisionMetres": 0.1,
+        "topologyRepairs": 2,
+        "emptyFeatures": 0,
+        "sourceFeatures": 4637
+      },
+      "detailIndex": "../assets/geography/geology/data/bedrock-detail/index.json",
+      "overviewUncompressedBytes": 5438577,
+      "overviewUncompressedSHA256": "30e4ab02ae090519f8e6861851f0c4f4a5fb4d5faaf79db2cc4ce4f1df61d7ae"
+    },
+    "superficial": {
+      "title": "Løsmasser",
+      "overview": "../assets/geography/geology/data/superficial-overview.json.gz",
+      "source": "https://services.arcgis.com/2JyTvMWQSnM2Vi8q/arcgis/rest/services/L%C3%B8smasser_Norge/FeatureServer/2",
+      "sourceItem": "20771962f21b43a7a1dc90b20ef2f239",
+      "sourceScale": "1:1 000 000",
+      "sourceDate": "2026-01-20",
+      "overviewFeatures": 16507,
+      "overviewBytes": 2603162,
+      "overviewSHA256": "efcfb75950a8175e7a30c00080d9bf5dfe2c7f42e70bb27dea04e18b18edc3c8",
+      "legend": [
+        {
+          "label": "Avsmeltningsmorene",
+          "color": "#beffe8"
+        },
+        {
+          "label": "Avsmeltningsmorene (Ablasjonsmorene)",
+          "color": "#6bc782"
+        },
+        {
+          "label": "Bart fjell",
+          "color": "#fff0f0"
+        },
+        {
+          "label": "Bart fjell / tynt løsmassedekke",
+          "color": "#92ab3700",
+          "fillOpacity": 0
+        },
+        {
+          "label": "Breelv- og bresjøavsetning",
+          "color": "#ffd37f"
+        },
+        {
+          "label": "Breelvavsetning (Glasifluvial avsetning)",
+          "color": "#ffab00"
+        },
+        {
+          "label": "Bresjø- eller brekammeravsetning (Glasilakustrin avsetning)",
+          "color": "#ffd187"
+        },
+        {
+          "label": "Bresjø-/brekammer og innsjøavsetning (Glasilakustrin og lakustrin avsetning)",
+          "color": "#fff787"
+        },
+        {
+          "label": "Drumlin",
+          "color": "#47b300"
+        },
+        {
+          "label": "Elve- og bekkeavsetning",
+          "color": "#ffff00"
+        },
+        {
+          "label": "Elve- og bekkeavsetning (Fluvial avsetning)",
+          "color": "#ffed61"
+        },
+        {
+          "label": "Fjellskredavsetning, stedvis med stor mektighet",
+          "color": "#ffb5b5"
+        },
+        {
+          "label": "Flomavsetning",
+          "color": "#ffc800"
+        },
+        {
+          "label": "Flomavsetning bresjøtapning (uspesifisert)",
+          "color": "#fdc900"
+        },
+        {
+          "label": "Flomavsetning fra bresjøtapping, sammenhengende",
+          "color": "#fed728"
+        },
+        {
+          "label": "Flomavsetning fra bresjøtapping, usammenhengende eller tynt dekke over berggrunnen",
+          "color": "#ffffff",
+          "pattern": "backward-diagonal",
+          "strokeColor": "#6e6e6e"
+        },
+        {
+          "label": "Forvitringsmateriale",
+          "color": "#e0b5eb"
+        },
+        {
+          "label": "Forvitringsmateriale (blokkhav)",
+          "color": "#30b389"
+        },
+        {
+          "label": "Forvitringsmateriale, ikke inndelt etter mektighet",
+          "color": "#e8c2ff"
+        },
+        {
+          "label": "Forvitringsmateriale, stein- og blokkrikt (blokkhav)",
+          "color": "#d49fd4"
+        },
+        {
+          "label": "Forvitringsmateriale, usammenhengende eller tynt dekke over berggrunnen",
+          "color": "#efc5fa"
+        },
+        {
+          "label": "Fyllmasse (antropogent materiale)",
+          "color": "#aeaeae"
+        },
+        {
+          "label": "Hav- og fjordavsetning",
+          "color": "#73b2ff"
+        },
+        {
+          "label": "Hav- og fjordavsetning, sammenhengende dekke, stedvis med stor mektighet",
+          "color": "#40bfff"
+        },
+        {
+          "label": "Hav- og fjordavsetning, uspesifisert",
+          "color": "#6ed4ff"
+        },
+        {
+          "label": "Hav-, fjord- og strandavsetning, usammenhengende eller tynt dekke over berggrunnen",
+          "color": "#9eebfd"
+        },
+        {
+          "label": "Innsjøavsetning (Lakustrin avsetning)",
+          "color": "#ffffbe"
+        },
+        {
+          "label": "Jord- og flomskredavsetning",
+          "color": "#ff4d4d"
+        },
+        {
+          "label": "Jord- og flomskredavsetning, usammenhengende eller tynt dekke",
+          "color": "#ffffff",
+          "pattern": "backward-diagonal",
+          "strokeColor": "#6e6e6e"
+        },
+        {
+          "label": "Jordskred- og steinsprangavsetning, usammenhengende eller tynt dekke",
+          "color": "#ffffff",
+          "pattern": "backward-diagonal",
+          "strokeColor": "#6e6e6e"
+        },
+        {
+          "label": "Løsmasser/berggrunn under vann, uspesifisert",
+          "color": "#fcb3f8",
+          "fillOpacity": 0
+        },
+        {
+          "label": "Marin strandavsetning",
+          "color": "#004da8"
+        },
+        {
+          "label": "Marin strandavsetning, sammenhengende dekke",
+          "color": "#4099ff"
+        },
+        {
+          "label": "Menneskepåvirket materiale, ikke nærmere spesifisert",
+          "color": "#cccccc"
+        },
+        {
+          "label": "Moreneleire",
+          "color": "#57c200"
+        },
+        {
+          "label": "Morenemateriale, sammenhengende dekke, stedvis med stor mektighet",
+          "color": "#87fe61"
+        },
+        {
+          "label": "Morenemateriale, tykt dekke",
+          "color": "#38a800"
+        },
+        {
+          "label": "Morenemateriale, usammenhengende eller tynt dekke over berggrunnen",
+          "color": "#beff87"
+        },
+        {
+          "label": "Randmorene/randmorenesone",
+          "color": "#00ff33"
+        },
+        {
+          "label": "Ryggformet breelvavsetning (Esker)",
+          "color": "#ffbd00"
+        },
+        {
+          "label": "Skredmateriale",
+          "color": "#ff7f7f"
+        },
+        {
+          "label": "Skredmateriale, ikke inndelt etter mektighet",
+          "color": "#ff8787"
+        },
+        {
+          "label": "Skredmateriale, sammenhengende dekke",
+          "color": "#ff6161"
+        },
+        {
+          "label": "Skredmateriale, usammenhengende eller tynt dekke",
+          "color": "#ffffff",
+          "pattern": "backward-diagonal",
+          "strokeColor": "#6e6e6e"
+        },
+        {
+          "label": "Steinbreavsetning",
+          "color": "#a1993b"
+        },
+        {
+          "label": "Steinskredavsetning, stedvis med stor metighet",
+          "color": "#ffcccc"
+        },
+        {
+          "label": "Steinskredavsetning, usammenhengende eller tynt dekke",
+          "color": "#ffffff",
+          "pattern": "backward-diagonal",
+          "strokeColor": "#6e6e6e"
+        },
+        {
+          "label": "Steinsprangavsetning, stedvis med stor mektighet",
+          "color": "#ff9999"
+        },
+        {
+          "label": "Steinsprangavsetning, usammenhengende eller tynt dekke",
+          "color": "#ffffff",
+          "pattern": "backward-diagonal",
+          "strokeColor": "#6e6e6e"
+        },
+        {
+          "label": "Steintipp",
+          "color": "#cccccc"
+        },
+        {
+          "label": "Torv og myr",
+          "color": "#a87000"
+        },
+        {
+          "label": "Torv og myr",
+          "color": "#c4947e"
+        },
+        {
+          "label": "Tynt dekke av organisk materiale over berggrunn",
+          "color": "#e8dbc4"
+        },
+        {
+          "label": "Usammenhengende eller tynt løsmassedekke over berggrunnen, flere løsmassetyper, uspesifisert",
+          "color": "#d9ccbd"
+        },
+        {
+          "label": "Vindavsetning (Eolisk avsetning)",
+          "color": "#d4d942"
+        }
+      ],
+      "coverageNote": "Landsdekkende oversikt i 1:1 000 000. Ved innzooming vises også et begrenset detaljuttrekk fra Statens vegvesen (omtrent 112 500 km²). Uttrekket har ufullstendig dekning og mangler oppgitt målestokk og dato i flatene; oversikten vises der detaljer mangler.",
+      "processing": {
+        "simplificationMetres": 100,
+        "coordinatePrecisionMetres": 0.1,
+        "topologyRepairs": 49,
+        "emptyFeatures": 0,
+        "sourceFeatures": 16507
+      },
+      "overviewUncompressedBytes": 12063654,
+      "overviewUncompressedSHA256": "7a9610a9913ccf16ff622962b0b6ef11ff7cd89814df8c616f43ef0cfaa6f19b",
+      "detailIndex": "../assets/geography/geology/data/superficial-detail/index.json",
+      "detailScale": "Begrenset detaljuttrekk (SVV)",
+      "detailSource": {
+        "provider": "NGU; deluttrekk publisert av Statens vegvesen",
+        "source": "https://services-eu1.arcgis.com/Omqj1DhF7kfdN8lE/arcgis/rest/services/Losmasse_KunRiksveg_Dissolve/FeatureServer/0",
+        "sourceItem": "6772578bd7ed493fb0b70e57f73b35d6",
+        "sourceDate": null,
+        "nominalScale": null,
+        "mirrorLicenseStatement": null
+      }
+    }
+  }
+}
