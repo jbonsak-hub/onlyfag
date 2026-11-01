@@ -30,10 +30,20 @@ function fillCorrect(q,context=t){
  if(q.type==='anatomy'){for(const o of organs){click(`[data-label="${o.id}"]`);click(`[data-target="${o.id}"]`);}}
  if(q.type==='choice'||q.type==='multi'){const answers=q.type==='choice'?[q.answer]:q.answer;for(const answer of answers){const buttons=[...w.document.querySelectorAll('[data-option]')];buttons.find(b=>b.textContent.slice(1)===answer||b.querySelector('span:last-child').textContent===answer).click();}}
  if(q.type==='process')for(const id of q.answer)click(`#process-${id}`);
- if(q.type==='sort'||q.type==='match'||q.type==='fill'){
-  const rows=q.type==='sort'?q.items:q.type==='match'?q.pairs:q.blanks;
-  rows.forEach((r,i)=>set(`#row-${i}`,q.type==='sort'?r.group:q.type==='match'?r.right:r.answers[0],q.type==='fill'?'input':'change'));
+ if(q.type==='match'){
+  for(const [i,pair] of q.pairs.entries()){
+   const chip=[...w.document.querySelectorAll('[data-term]')].find(el=>el.dataset.value===pair.right);
+   assert.ok(chip,q.id+': visible matching term '+pair.right);chip.click();click(`[data-place="${i}"]`);
+  }
  }
+ if(q.type==='sort'){
+  for(const [i,item] of q.items.entries()){
+   click(`[data-sort-item="${i}"]`);
+   const group=[...w.document.querySelectorAll('[data-group]')].find(el=>el.dataset.group===item.group);
+   assert.ok(group,q.id+': visible sorting group '+item.group);group.click();
+  }
+ }
+ if(q.type==='fill')q.blanks.forEach((blank,i)=>set(`#row-${i}`,blank.answers[0],'input'));
  if(q.type==='order'){
   for(let i=0;i<q.items.length;i++){
    const current=()=>[...w.document.querySelectorAll('.sequence li>span')].map(e=>e.childNodes[0].textContent.trim());
@@ -49,10 +59,13 @@ open('digestion-stomach-contents');set('#row-0','Saltsyre','input');set('#row-1'
 // Hint and reveal do not create mastery, including immediately retrying a revealed answer.
 open('digestion-enzyme');click('#show-hint');fillCorrect(questions.find(q=>q.id==='digestion-enzyme'));assert.match($('#feedback-title').textContent,/etter øving/);
 open('fat-process-breakdown');assert.equal($('#target-duodenum'),null);assert.ok($('#process-small').textContent.includes('tolvfingertarm'));click('#reveal-answer');assert.match($('#feedback-title').textContent,/Fasit vist/);click('#retry-question');fillCorrect(questions.find(q=>q.id==='fat-process-breakdown'));assert.match($('#feedback-title').textContent,/etter øving/);
-// Anatomy unique assignments and locking. Change the final answer only.
-open('digestion-anatomy');organs.forEach((o,i)=>set(`#row-${i}`,organs[(i+1)%organs.length].label));set('#row-0','Munn');set('#row-9','Spiserør'); // ensure every slot is populated below
-for(let i=1;i<10;i++)set(`#row-${i}`,organs[i===9?1:i+1].label);
-click('#check-answer');assert.ok($('#row-0').disabled);assert.ok(!$('#row-1').disabled);
+// Anatomy assignments use the same visible click/keyboard controls as drag placement.
+open('digestion-anatomy');
+for(const o of organs){click(`[data-label="${o.id}"]`);click(`[data-target="${o.id}"]`);}
+// Exchange two names before checking; correct targets lock, exchanged targets stay editable.
+click('[data-label="esophagus"]');click('[data-target="stomach"]');
+click('[data-label="stomach"]');click('[data-target="esophagus"]');
+click('#check-answer');assert.ok($('#target-mouth').disabled);assert.ok(!$('#target-esophagus').disabled);
 // Multi: retain right selected items, allow the wrong one to be removed.
 open('energy-fuels');click([...w.document.querySelectorAll('[data-option]')].find(b=>b.textContent.includes('Karbohydrater')).id?'#'+[...w.document.querySelectorAll('[data-option]')].find(b=>b.textContent.includes('Karbohydrater')).id:'');
 const wrong=[...w.document.querySelectorAll('[data-option]')].find(b=>b.textContent.includes('Vann'));wrong.click();click('#check-answer');assert.ok([...w.document.querySelectorAll('[data-option]')].find(b=>b.textContent.includes('Karbohydrater')).disabled);assert.ok(![...w.document.querySelectorAll('[data-option]')].find(b=>b.textContent.includes('Vann')).disabled);
@@ -61,11 +74,13 @@ open('protein-quality');click('#show-model');assert.equal($('.open-model'),null)
 // The task bank retains search and academic topic navigation without filter UI.
 click('#bank-tab');set('#bank-search','ingen_slike_ord','input');
 assert.equal(w.document.querySelectorAll('.bank-row').length,0);
+set('#bank-search','transfett','input');
+for(const id of ['practical-fat-health','practical-trans-fat-foods'])assert.ok($(`[data-open="${id}"]`),'transfett search finds '+id);
 set('#bank-search','','input');click('[data-topic="digestion"]');
 assert.equal(w.document.querySelectorAll('.bank-row').length,questions.filter(q=>q.topic==='digestion').length);
 click('[data-topic="all"]');
 assert.equal(w.document.querySelectorAll('.bank-row').length,questions.length);
-for(const selector of ['#filter-toggle','#filter-bar','#type-filter','#level-filter','#status-filter','#shuffle-queue'])assert.equal($(selector),null,selector+' is removed');
+for(const selector of ['#filter-toggle','#filter-bar','#type-filter','#level-filter','#status-filter','#shuffle-queue','#review-button','[data-topic=review]'])assert.equal($(selector),null,selector+' is removed');
 // Presented/skipped questions count in rotation, and reload does not restart the pool.
 const rotationFlow=boot();const shown=[];
 for(let i=0;i<15;i++){
@@ -79,7 +94,7 @@ const rotationStored=rotationFlow.w.localStorage.getItem('onlyfag.nutrition.v1')
 const reloadedRotation=boot({stored:rotationStored});
 assert.ok(!shown.includes(reloadedRotation.$('[data-question]').dataset.question),'reload should preserve recent history and continue to an unseen question');
 rotationFlow.dom.window.close();reloadedRotation.dom.window.close();
-const stored=w.localStorage.getItem('onlyfag.nutrition.v1');const reload=boot({stored});assert.ok(Number(reload.$('#review-count').textContent)>0);reload.dom.window.close();
+const stored=w.localStorage.getItem('onlyfag.nutrition.v1');const reload=boot({stored});assert.equal(reload.$('#review-button'),null,'the separate review control is removed');assert.equal(reload.$('#review-count'),null);assert.ok(Object.keys(JSON.parse(reload.w.localStorage.getItem('onlyfag.nutrition.v1')).records).length>0,'review-control removal preserves stored practice history');reload.dom.window.close();
 // Mobile menu, keyboard close, and storage failure fallback.
 const mobile=boot({mobile:true});assert.equal(mobile.$('#sidebar').inert,true);mobile.click('#menu-button');assert.equal(mobile.$('.workspace').inert,true);mobile.w.document.dispatchEvent(new mobile.w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));assert.equal(mobile.$('.workspace').inert,false);assert.equal(mobile.$('#sidebar').inert,true);mobile.dom.window.close();
 const bad=boot({stored:'{broken',blocked:true});assert.match(bad.$('.side-bottom p').textContent,/utilgjengelig/);assert.ok(bad.$('[data-question]'));bad.dom.window.close();
@@ -143,4 +158,4 @@ independent.click('#about-button');independent.click('#reset-progress');independ
 assert.equal(Object.values(JSON.parse(independent.w.localStorage.getItem('onlyfag.nutrition.v1')).recentResults).flat().length,0,'reset clears recent-answer windows');
 assert.equal(independent.w.localStorage.getItem('chemistryProgressV18'),'keep-chemistry','nutrition reset leaves chemistry history untouched');
 independent.dom.window.close();scores.dom.window.close();
-assert.equal(t.errors.length,0);w.close();console.log('Partial answers, review, reveal, bank search, filter removal, persistence, mobile navigation, isolated reset and last-twenty percentages: passed.');
+assert.equal(t.errors.length,0);w.close();console.log('Partial answers, visible matching/sorting, reveal, bank search, removed filter/review controls, persistence, mobile navigation, isolated reset and last-twenty percentages: passed.');

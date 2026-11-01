@@ -144,7 +144,7 @@ test('the nutrient map retains only the four requested fixed clues',()=>{
 
 
 test('carbohydrate sorting is consolidated into one complete task',()=>{
- const sorting=questions.filter(q=>q.topic==='carbs'&&q.type==='sort'&&q.items.some(x=>/glukose/i.test(x.label)));
+ const sorting=questions.filter(q=>q.topic==='carbs'&&q.type==='sort'&&q.groups.includes('Monosakkarider')&&q.items.some(x=>/glukose/i.test(x.label)));
  assert.equal(sorting.length,1,'do not retain simpler duplicates of the same sugar sorting');
  const labels=sorting[0].items.map(x=>x.label).join(' ');
  for(const name of ['Glukose','Fruktose','Galaktose','Maltose','Laktose','Sukrose','Cellulose','Kostfiber','Stivelse','Glykogen'])assert.match(labels,new RegExp(name,'i'),name+' is included');
@@ -229,8 +229,8 @@ test('new naming tasks cover the requested molecules without printing their name
  const starch=focused.find(q=>q.answer==='Stivelse');
  assert.match(starch.prompt,/plant|potet/i,'a chain sketch needs plant-storage context to distinguish starch from glycogen');
  assert.match(starch.prompt,/energilager|lagr/i);
- assert.ok(mixed.some(q=>q.pairs.some(pair=>/proteiner/.test(pair.right))));
- assert.ok(mixed.some(q=>q.pairs.some(pair=>/fett/.test(pair.right))));
+ assert.ok(mixed.some(q=>q.pairs.some(pair=>pair.right==='Aminosyre')));
+ assert.ok(mixed.some(q=>q.pairs.some(pair=>pair.right==='Fettsyre')));
 });
 
 test('new molecular drawings have correct formulas, valences and sugar rings',()=>{
@@ -404,4 +404,33 @@ test('sources and help are professional and independent of a particular class',(
  assert.ok(help,'the help/source dialog exists');
  assert.doesNotMatch(help,classReferences,'static source fallback and help must work for any learner');
  for(const source of sources){assert.ok(source.title&&source.url,'each short reference has a title and an external link');assert.match(source.url,/^https:\/\//);}
+});
+
+
+test('structure counting and naming do not print the scientific key in the prompt',()=>{
+ const count=questions.find(q=>q.figure==='recognition-glucose'&&q.type==='fill');
+ assert.ok(count,'glucose atom counting uses the drawn structure');
+ assert.doesNotMatch(count.prompt,/C[₆6]H[₁1][₂2]O[₆6]/);
+ const names=questions.find(q=>q.id==='structure-glycerol-acid');
+ assert.deepEqual(names.pairs.map(pair=>pair.right),['Glyserol','Fettsyre']);
+});
+
+test('formula sorting accepts glucose and fructose in the same formula group',()=>{
+ const q=questions.find(q=>q.id==='molecule-formula-names');
+ assert.equal(q.type,'sort');
+ assert.deepEqual(q.items.map(item=>[item.label,item.group]),[['Glukose','C₆H₁₂O₆'],['Fruktose','C₆H₁₂O₆'],['Sukrose','C₁₂H₂₂O₁₁'],['Melkesyre','C₃H₆O₃']]);
+});
+
+test('applied food examples distinguish digestibility, fat categories and supplied energy data',()=>{
+ const get=id=>questions.find(q=>q.id===id);
+ assert.equal(get('practical-egg-protein').answer,'Kokt');
+ assert.match(get('practical-egg-protein').explanation,/ikke mer protein/);
+ const fat=get('practical-fat-health');
+ assert.equal(fat.answer,'Transfett');
+ assert.deepEqual(fat.options,['Transfett','Mettet fett','Vanlig umettet cis-fett']);
+ assert.match(get('practical-trans-fat-foods').explanation,/strengt begrenset i Norge/);
+ for(const id of ['practical-meal-energy-density','practical-meal-nutrients']){
+  assert.equal(get(id).figure,'practical-meals');
+  assert.match(figure(get(id).figure),/eksempeldata/);
+ }
 });

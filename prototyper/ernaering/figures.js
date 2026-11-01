@@ -1,7 +1,8 @@
-import {recognitionFigure} from './recognition-figures.js?v=20261101-1';
-import {appliedFigure} from './applied-figures.js?v=20261101-1';
-import {foodFigure} from './food-figures.js?v=20261101-1';
-import {supportFigure} from './support-figures.js?v=20261101-1';
+import {practicalFigure} from './practical-figures.js?v=20261101-2';
+import {recognitionFigure} from './recognition-figures.js?v=20261101-2';
+import {appliedFigure} from './applied-figures.js?v=20261101-2';
+import {foodFigure} from './food-figures.js?v=20261101-2';
+import {supportFigure} from './support-figures.js?v=20261101-2';
 
 // Original didactic SVG models. Labels and descriptions do not reveal the answers.
 const svg=(description,body)=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 205" role="img" aria-label="${description}"><g font-family="system-ui,sans-serif" font-size="16" fill="#284c3b">${body}</g></svg>`;
@@ -141,17 +142,17 @@ molecularFigures['nutrient-map']=()=>{
  s+=box(393,147,64,'H')+box(503,88,144,'Vitaminer')+box(503,147,144,'I')+box(503,206,144,'J');
  s+=join(69,162,96,64)+join(69,162,96,162)+join(69,162,96,260)+[25,64,103].map(y=>join(161,64,196,y)).join('')+join(161,162,196,162)+[240,279].map(y=>join(161,260,196,y)).join('')+[103,162,221].map(y=>join(457,162,503,y)).join('');
  const wide=structural('Begrepskart med tomme felt A til J. Bare Monosakkarider, Aminosyrer, Umettet og Vitaminer er fylt ut.',s,'',310).replace('structure-figure','structure-figure nutrient-map-figure').replace('<svg ','<svg class="map-wide" ');
- const nbox=(x,y,w,label)=>`<rect x="${x}" y="${y}" width="${w}" height="26" rx="4" fill="#f4f7f1" stroke="#8ca391"/>`+txt(x+w/2,y+18,label,13);
+ const nbox=(x,y,w,label)=>`<rect x="${x}" y="${y}" width="${w}" height="24" rx="4" fill="#f4f7f1" stroke="#8ca391"/>`+txt(x+w/2,y+17,label,13);
  let narrow='';
- // Keep the energy-giving branches together, with the non-energy group below.
- narrow+=join(51,116,65,48)+join(51,116,65,116)+join(51,116,65,184);
- narrow+=[17,48,79].map(y=>join(109,48,124,y)).join('')+join(109,116,124,116)+[169,200].map(y=>join(109,184,124,y)).join('');
- narrow+=join(51,228,287,228)+[120,210,287].map(x=>join(x,228,x,238)).join('');
- narrow+=nbox(8,103,43,'A')+nbox(65,35,44,'B')+nbox(65,103,44,'E')+nbox(65,171,44,'F');
- narrow+=nbox(124,4,117,'Monosakkarider')+nbox(124,35,117,'C')+nbox(124,66,117,'D')+nbox(124,103,117,'Aminosyrer')+nbox(124,156,117,'G')+nbox(124,187,117,'Umettet');
- narrow+=nbox(8,215,43,'H')+nbox(77,238,86,'Vitaminer')+nbox(180,238,60,'I')+nbox(257,238,60,'J');
- const mobile=`<svg class="map-narrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 270" role="img" aria-label="Samme begrepskart, tilpasset smal skjerm. Tomme felt A til J; bare Monosakkarider, Aminosyrer, Umettet og Vitaminer er fylt ut."><g font-family="system-ui,sans-serif">${narrow}</g></svg>`;
+ // Two parallel branches use width instead of shrinking the fixed text.
+ narrow+=join(39,99,53,38)+join(39,99,53,99)+join(39,99,53,160);
+ narrow+=[12,38,64].map(y=>join(88,38,104,y)).join('')+join(88,99,104,99)+[147,173].map(y=>join(88,160,104,y)).join('');
+ narrow+=join(310.5,24,310.5,36)+join(310.5,36,250,36)+join(250,36,250,163)+[67,115,163].map(y=>join(250,y,260,y)).join('');
+ narrow+=nbox(4,87,35,'A')+nbox(53,26,35,'B')+nbox(53,87,35,'E')+nbox(53,148,35,'F');
+ narrow+=nbox(104,0,132,'Monosakkarider')+nbox(104,26,132,'C')+nbox(104,52,132,'D')+nbox(104,87,132,'Aminosyrer')+nbox(104,135,132,'G')+nbox(104,161,132,'Umettet');
+ narrow+=nbox(293,0,35,'H')+nbox(260,55,94,'Vitaminer')+nbox(260,103,60,'I')+nbox(260,151,60,'J');
+ const mobile=`<svg class="map-narrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 194" role="img" aria-label="Samme begrepskart, tilpasset smal skjerm. Tomme felt A til J; bare Monosakkarider, Aminosyrer, Umettet og Vitaminer er fylt ut."><g font-family="system-ui,sans-serif">${narrow}</g></svg>`;
  return wide.replace('</figure>',mobile+'</figure>');
 };
 molecularFigures['ndla-pepsin']=()=>structural('Søylediagram. Prøve A har pH 2 og enzymaktivitet 8 relative enheter. Prøve B har pH 7 og aktivitet 1 relativ enhet.',line(90,185,610,185)+line(90,185,90,32)+txt(90,22,'Aktivitet',16)+[0,2,4,6,8].map(n=>line(85,185-n*17,90,185-n*17)+txt(65,191-n*17,String(n),15)).join('')+`<rect x="180" y="49" width="100" height="136" fill="#7da795"/><rect x="420" y="168" width="100" height="17" fill="#7da795"/>`+txt(230,42,'8',17)+txt(470,161,'1',17)+txt(230,211,'A: pH 2',17)+txt(470,211,'B: pH 7',17),'',240);
-export function figure(key){return supportFigure(key)||foodFigure(key)||recognitionFigure(key)||appliedFigure(key)||(molecularFigures[key]?molecularFigures[key]():legacyFigure(key));}
+export function figure(key){return practicalFigure(key)||supportFigure(key)||foodFigure(key)||recognitionFigure(key)||appliedFigure(key)||(molecularFigures[key]?molecularFigures[key]():legacyFigure(key));}

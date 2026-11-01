@@ -1,4 +1,4 @@
-import {digestiveSVG, organs} from './diagram.js?v=20261101-1';
+import {digestiveSVG, organs} from './diagram.js?v=20261101-2';
 
 // Reuse the anatomy model so location, proportions and colours stay familiar.
 // These are support illustrations, separate from questions testing organ location.

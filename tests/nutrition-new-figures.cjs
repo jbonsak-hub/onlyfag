@@ -35,12 +35,18 @@ if(screenshots)fs.mkdirSync(screenshots,{recursive:true});
   async function answer(frame,q){
    if(q.type==='choice'||q.type==='multi'){
     for(const value of q.type==='choice'?[q.answer]:q.answer)await frame.getByRole('button',{name:value,exact:true}).click();
-   }else if(['match','sort','fill'].includes(q.type)){
-    const values=q.type==='match'?q.pairs.map(p=>p.right):q.type==='sort'?q.items.map(item=>item.group):q.blanks.map(blank=>blank.answers[0]);
-    for(const [i,value] of values.entries()){
-     const control=frame.locator('#row-'+i);
-     if(q.type==='fill')await control.fill(value);else await control.selectOption(value);
+   }else if(q.type==='match'){
+    for(const [i,pair] of q.pairs.entries()){
+     await frame.locator('[data-term]').filter({hasText:new RegExp('^'+pair.right.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'$')}).click();
+     await frame.locator('[data-place="'+i+'"]').click();
     }
+   }else if(q.type==='sort'){
+    for(const [i,item] of q.items.entries()){
+     await frame.locator('[data-sort-item="'+i+'"]').click();
+     await frame.getByRole('button',{name:item.group,exact:true}).click();
+    }
+   }else if(q.type==='fill'){
+    for(const [i,blank] of q.blanks.entries())await frame.locator('#row-'+i).fill(blank.answers[0]);
    }else throw new Error(q.id+': this figure should use an automatic answer control');
    await frame.locator('#check-answer').click();
    assert.match(await frame.locator('#feedback-title').innerText(),/Riktig uten hjelp/,q.id+': the visible answer controls accept the scientific key');

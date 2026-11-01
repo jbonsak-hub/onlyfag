@@ -1,14 +1,17 @@
-import {nutrientMapSlots} from './figures.js?v=20261101-1';
-import {structureQuestions} from './structure-questions.js?v=20261101-1';
-import {documentQuestions} from './document-questions.js?v=20261101-1';
-import {ndlaQuestions} from './ndla-questions.js?v=20261101-1';
-import {recognitionQuestions} from './recognition-questions.js?v=20261101-1';
-import {appliedFigureQuestions} from './applied-figure-questions.js?v=20261101-1';
-import {respirationQuestions} from './respiration-questions.js?v=20261101-1';
-import {foodQuestions} from './food-questions.js?v=20261101-1';
-import {foodTableQuestion} from './foodtable-question.js?v=20261101-1';
-import {supportFigures} from './support-figures.js?v=20261101-1';
-import {foodComparisonQuestions} from './food-comparison-questions.js?v=20261101-1';
+import {nutrientMapSlots} from './figures.js?v=20261101-2';
+import {structureQuestions} from './structure-questions.js?v=20261101-2';
+import {documentQuestions} from './document-questions.js?v=20261101-2';
+import {ndlaQuestions} from './ndla-questions.js?v=20261101-2';
+import {recognitionQuestions} from './recognition-questions.js?v=20261101-2';
+import {appliedFigureQuestions} from './applied-figure-questions.js?v=20261101-2';
+import {respirationQuestions} from './respiration-questions.js?v=20261101-2';
+import {foodQuestions} from './food-questions.js?v=20261101-2';
+import {foodTableQuestion} from './foodtable-question.js?v=20261101-2';
+import {supportFigures} from './support-figures.js?v=20261101-2';
+import {foodComparisonQuestions} from './food-comparison-questions.js?v=20261101-2';
+
+import {formulaQuestions} from './formula-questions.js?v=20261101-2';
+import {practicalQuestions} from './practical-questions.js?v=20261101-2';
 
 // Oppgaver avgrenset til undervisningsmaterialet og oppgitt begrepsliste.
 const coreQuestions = [
@@ -419,7 +422,8 @@ const coreQuestions = [
     "type": "fill",
     "level": 1,
     "title": "Les formelen til glukose",
-    "prompt": "Glukose har molekylformelen C₆H₁₂O₆. Hvor mange atomer av hvert grunnstoff finnes i ett glukosemolekyl?",
+    "figure": "recognition-glucose",
+    "prompt": "Tell atomene i glukosestrukturen. Hvor mange C-, H- og O-atomer finnes i molekylet?",
     "blanks": [
       {
         "label": "Karbonatomer",
@@ -1483,7 +1487,7 @@ const coreQuestions = [
   }
 ];
 
-export const questions = [...coreQuestions, ...structureQuestions, ...documentQuestions, ...ndlaQuestions, ...recognitionQuestions, ...appliedFigureQuestions, ...respirationQuestions, ...foodQuestions, ...foodComparisonQuestions, foodTableQuestion, {
+export const questions = [...coreQuestions, ...structureQuestions, ...documentQuestions, ...ndlaQuestions, ...recognitionQuestions, ...appliedFigureQuestions, ...respirationQuestions, ...foodQuestions, ...foodComparisonQuestions, ...formulaQuestions, ...practicalQuestions, foodTableQuestion, {
   "id": "nutrient-concept-map",
   "topic": "energy",
   "type": "match",
@@ -1503,6 +1507,8 @@ for(const q of questions){
 }
 
 export const sources = [
+  {title: 'WHO: Transfett', url: 'https://www.who.int/news-room/fact-sheets/detail/trans-fat'},
+  {title: 'Eggprotein og fordøyelse', url: 'https://pubmed.ncbi.nlm.nih.gov/9772141/'},
   {
     "title": "Matvaretabellen",
     "url": "https://www.matvaretabellen.no/"

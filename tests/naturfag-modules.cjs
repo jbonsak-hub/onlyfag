@@ -161,10 +161,9 @@ const topicOrder=['carbs','protein','fat','micro','digestion','energy','all'];
   await fatFrame.locator('#bank-list').waitFor();
   assert.ok(await fatFrame.locator('.bank-row').count()>0,'the shared navigation keeps the task bank accessible');
   await pickTopic(page,'fat');
-  await page.locator('.nf-nutrition-action[data-nutrition-topic="review"]').click();
-  await page.waitForFunction(()=>location.hash==='#nutrition/review');
-  await fatFrame.waitForFunction(()=>document.getElementById('active-topic')?.textContent==='Øv på nytt');
-  assert.equal((await state(page)).recentResults.carbs.length,1,'opening review does not create a scored answer');
+  assert.equal(await page.locator('.nf-nutrition-action[data-nutrition-topic="review"]').count(),0,'the removed review action stays out of the host menu');
+  assert.equal(await fatFrame.locator('#review-button').count(),0,'the removed review button stays out of the module');
+  assert.equal((await state(page)).recentResults.carbs.length,1,'bank navigation does not create a scored answer');
   await pickTopic(page,'protein');
   await pickTopic(page,'digestion');
   await page.goBack();await page.waitForFunction(()=>location.hash==='#nutrition/protein');
@@ -210,7 +209,7 @@ const topicOrder=['carbs','protein','fat','micro','digestion','energy','all'];
   await pickTopic(page,'fat');
   assert.equal((await state(page)).recentResults.carbs.length,1,'chemistry does not reset nutrition history');
   await context.close();
-  const representatives=['structure-glucose','structure-carbon-count','digestion-anatomy','carbs-classification','nutrient-concept-map','protein-quality','digestion-surface','digestion-stomach-contents','digestion-peristalsis','digestion-pancreatic-juice','digestion-food-route','digestion-lactose','doc-liver-functions','doc-colon','doc-duodenum-cooperation','doc-muscle-liver-glycogen','doc-portal-route','ndla-digestion-lymph','ndla-model-glands','digestion-absorption-explain','fat-bile-lipase','fat-droplets-explain'];
+  const representatives=['practical-fat-health','practical-trans-fat-foods','practical-egg-protein','practical-meal-energy-density','practical-meal-nutrients','molecule-formula-names','structure-glucose','structure-carbon-count','digestion-anatomy','carbs-classification','nutrient-concept-map','protein-quality','digestion-surface','digestion-stomach-contents','digestion-peristalsis','digestion-pancreatic-juice','digestion-food-route','digestion-lactose','doc-liver-functions','doc-colon','doc-duodenum-cooperation','doc-muscle-liver-glycogen','doc-portal-route','ndla-digestion-lymph','ndla-model-glands','digestion-absorption-explain','fat-bile-lipase','fat-droplets-explain'];
   for(const [width,height] of [[1366,768],[1280,720],[1024,768],[1024,720],[390,844]]){
    const viewport={width,height},{page,context}=await newPage(viewport);
    let checked=0;
@@ -220,7 +219,7 @@ const topicOrder=['carbs','protein','fat','micro','digestion','energy','all'];
     const outer=await page.evaluate(()=>({innerWidth,innerHeight,scrollWidth:document.documentElement.scrollWidth,scrollHeight:document.documentElement.scrollHeight,bounds:{frame:(()=>{const r=document.getElementById('nutrition-module-frame').getBoundingClientRect();return {left:r.left,top:r.top,right:r.right,bottom:r.bottom};})()}}));
     checkBounds(id+': host',viewport,outer);
     checkBounds(id+': before',viewport,await geometry(frame));
-    if([1366,390].includes(width)&&['digestion-anatomy','nutrient-concept-map','structure-glucose','digestion-surface','doc-liver-functions','digestion-stomach-contents'].includes(id))await shot(page,width+'-'+id+'-before');
+    if([1366,390].includes(width)&&['digestion-anatomy','nutrient-concept-map','structure-glucose','digestion-surface','doc-liver-functions','digestion-stomach-contents','practical-meal-energy-density','practical-meal-nutrients','molecule-formula-names'].includes(id))await shot(page,width+'-'+id+'-before');
     await frame.locator('#reveal-answer').click();checkBounds(id+': revealed',viewport,await geometry(frame));checked++;
    }
    if(width===390){

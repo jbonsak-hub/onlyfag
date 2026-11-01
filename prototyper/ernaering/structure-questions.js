@@ -264,7 +264,7 @@ export const structureQuestions = [
       },
       {
         "left": "B",
-        "right": "Syregruppe (COOH)"
+        "right": "Syregruppe"
       },
       {
         "left": "C",
@@ -440,11 +440,11 @@ export const structureQuestions = [
     "pairs": [
       {
         "left": "A",
-        "right": "Glyserol: alkohol med tre OH-grupper"
+        "right": "Glyserol"
       },
       {
         "left": "B",
-        "right": "Fettsyre: lang karbonkjede med COOH"
+        "right": "Fettsyre"
       }
     ],
     "family": "fat-saturation"

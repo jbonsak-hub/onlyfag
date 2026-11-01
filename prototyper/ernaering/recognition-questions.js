@@ -64,10 +64,10 @@ export const recognitionQuestions = [
     id: 'recognition-mixed-sugar-amino', topic: 'protein', type: 'match', level: 2,
     family: 'recognition-mixed', figure: 'recognition-mixed-sugar-amino',
     title: 'To strukturer fra ulike næringsstoffer',
-    prompt: 'Koble hver bokstav til riktig navn og riktig rolle.',
+    prompt: 'Koble hver bokstav til riktig navn.',
     pairs: [
-      {left: 'A', right: 'Glukose – et monosakkarid'},
-      {left: 'B', right: 'Aminosyre – byggestein i proteiner'}
+      {left: 'A', right: 'Glukose'},
+      {left: 'B', right: 'Aminosyre'}
     ],
     hint: 'Sammenlign ringstrukturen med modellen som inneholder N. Begge har C, H og O.',
     explanation: 'A er glukose, et monosakkarid med én ring i denne modellen. B er en aminosyre med både NH₂ og COOH. Aminosyrer kan bindes sammen til proteiner. At begge molekylene inneholder C, H og O, er ikke nok til å plassere dem i samme gruppe.'
@@ -76,10 +76,10 @@ export const recognitionQuestions = [
     id: 'recognition-mixed-sugar-fat', topic: 'fat', type: 'match', level: 2,
     family: 'recognition-mixed', figure: 'recognition-mixed-sugar-fat',
     title: 'Ring og kjede',
-    prompt: 'Koble hver bokstav til riktig navn og riktig rolle.',
+    prompt: 'Koble hver bokstav til riktig navn.',
     pairs: [
-      {left: 'A', right: 'Glukose – et monosakkarid'},
-      {left: 'B', right: 'Fettsyre – byggestein i fett'}
+      {left: 'A', right: 'Glukose'},
+      {left: 'B', right: 'Fettsyre'}
     ],
     hint: 'Sammenlign hvordan O-atomene er fordelt i de to modellene.',
     explanation: 'A er glukose. Det har flere OH-grupper fordelt rundt en ring. B er en fettsyre: en karbonkjede med en COOH-gruppe i enden. Fettsyrer kan bindes sammen med glyserol og danne fett. Glukose og fettsyrer er derfor ulike stoffer selv om begge inneholder C, H og O.'

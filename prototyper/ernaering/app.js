@@ -1,8 +1,9 @@
-import {questions, sources} from './questions.js?v=20261101-1';
-import {organs, digestiveSVG} from './diagram.js?v=20261101-1';
-import {figure} from './figures.js?v=20261101-1';
-import {foodArtworkSVG} from './food-figures.js?v=20261101-1';
-import {STORE_KEY, topics, types, shuffle, mixedOrder, evaluate, needsReview, resultRecord, pickNext, rememberQuestion, recentSummary, recordRecentResult} from './engine.js?v=20261101-1';
+import {questions, sources} from './questions.js?v=20261101-2';
+import {organs, digestiveSVG} from './diagram.js?v=20261101-2';
+import {figure} from './figures.js?v=20261101-2';
+import {placementUI,placeMatch,placeSort} from './placement-ui.js?v=20261101-2';
+import {foodArtworkSVG} from './food-figures.js?v=20261101-2';
+import {STORE_KEY, topics, types, shuffle, mixedOrder, evaluate, needsReview, resultRecord, pickNext, rememberQuestion, recentSummary, recordRecentResult} from './engine.js?v=20261101-2';
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -26,11 +27,11 @@ function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(data));storage
 function storageMessage(){ $('.side-bottom p').textContent=storageOK?'Fremgangen lagres i denne nettleseren.':'Lagring er utilgjengelig. Øvingen virker, men fremgangen kan forsvinne når siden lukkes.'; }
 function current(){return questions.find(q=>q.id===state.id);}
 function session(q=current()){
-  if(!sessions.has(q.id)) sessions.set(q.id,{values:q.type==='order'?mixedOrder(q.items):[],options:shuffle(q.options||[]),right:shuffle(q.pairs?.map(p=>p.right)||[]),labels:shuffle(organs),locked:new Set(),marks:[],assisted:Number(data.records[q.id]?.assistedUntil)>Date.now(),done:false,revealed:false,model:false,checks:[],feedback:null,text:'',hint:false,selected:null,scored:false});
+  if(!sessions.has(q.id)) sessions.set(q.id,{values:q.type==='order'?mixedOrder(q.items):[],options:shuffle(q.options||[]),right:shuffle(q.pairs?.map(p=>p.right)||[]),labels:shuffle(organs),locked:new Set(),marks:[],assisted:Number(data.records[q.id]?.assistedUntil)>Date.now(),done:false,revealed:false,model:false,checks:[],feedback:null,text:'',hint:false,selected:null,selectedTerm:null,selectedItem:null,scored:false});
   return sessions.get(q.id);
 }
 function topicQuestions(){return questions.filter(q=>state.topic==='all'||state.topic==='review'&&needsReview(data.records[q.id])||q.topic===state.topic);}
-function statusLabel(q){const r=data.records[q.id];if(!r)return 'Ikke prøvd';if(needsReview(r))return r.status==='review'?'Øv på nytt':'Tid for repetisjon';return r.status==='self'?'Egenvurdert':'Riktig uten hjelp';}
+function statusLabel(q){const r=data.records[q.id];if(!r)return 'Ikke prøvd';if(needsReview(r))return r.status==='review'?'Med hjelp':'Tid for repetisjon';return r.status==='self'?'Egenvurdert':'Riktig uten hjelp';}
 function rebuildQueue(){state.queue=topicQuestions().map(q=>q.id);}
 function chooseQuestion(){return pickNext(topicQuestions(),data.rotation,data.records)?.id||null;}
 function saveResult(outcome){const q=current();data.records[q.id]=resultRecord(data.records[q.id],outcome);save();renderProgress();}
@@ -54,17 +55,13 @@ function renderProgress(){
     badge.textContent=stat.percent===null?'—':`${stat.percent} %`;
     badge.title=`Siste ${stat.count} besvarte oppgaver. Skriveoppgaver teller ikke.`;
   }
-  $('#review-count').textContent=questions.filter(q=>needsReview(data.records[q.id])).length;
   storageMessage();publishState();
 }
 function renderNav(){
   $('#topics').innerHTML=[...Object.entries(topics),['all','Blandet øving']].map(([id,label],i)=>`<button class="topic-button ${state.topic===id?'active':''}" data-topic="${id}" aria-pressed="${state.topic===id}"><span class="topic-symbol" aria-hidden="true">${id==='all'?'↔':String(i+1).padStart(2,'0')}</span><span>${esc(label)}</span><span class="topic-count" data-topic-score="${id}"></span></button>`).join('');
-  $('#review-button').classList.toggle('active',state.topic==='review');
-  $('#review-button').setAttribute('aria-pressed',state.topic==='review');
   renderProgress();
 }
-function selectOptions(entries,value){return entries.map(([v,l])=>`<option value="${esc(v)}" ${String(value)===String(v)?'selected':''}>${esc(l)}</option>`).join('');}
-function renderShell(){renderNav();$('#active-topic').textContent=topics[state.topic]||(state.topic==='review'?'Øv på nytt':'Blandet øving');for(const v of ['practice','bank']){$('#'+v+'-tab').classList.toggle('active',state.view===v);$('#'+v+'-tab').setAttribute('aria-pressed',state.view===v);}if(state.view==='bank')renderBank();else renderQuestion();}
+function renderShell(){cancelPlacementDrag();renderNav();$('#active-topic').textContent=topics[state.topic]||(state.topic==='review'?'Repetisjon':'Blandet øving');for(const v of ['practice','bank']){$('#'+v+'-tab').classList.toggle('active',state.view===v);$('#'+v+'-tab').setAttribute('aria-pressed',state.view===v);}if(state.view==='bank')renderBank();else renderQuestion();}
 function openQuestion(id,{focus=true,fresh=false}={}){
   if(!questions.some(q=>q.id===id))return;
   const changed=state.id!==id;state.id=id;state.view='practice';data.lastId=id;if(changed)rememberQuestion(data.rotation,current());if(fresh||sessions.get(id)?.done)sessions.delete(id);
@@ -77,7 +74,7 @@ function renderBank(){
   $('#content').innerHTML='<label class="sr-only" for="bank-search">Søk etter oppgave eller fagbegrep</label><input id="bank-search" class="bank-search" type="search" placeholder="Søk etter oppgave eller fagbegrep…"><p class="bank-summary" id="bank-summary" aria-live="polite"></p><div class="bank-list" id="bank-list"></div>';
   $('#bank-search').value=state.search;renderBankRows();
 }
-function renderBankRows(){const query=state.search.toLocaleLowerCase('nb');const list=topicQuestions().filter(q=>[q.title,q.prompt,topics[q.topic],types[q.type]].join(' ').toLocaleLowerCase('nb').includes(query));
+function renderBankRows(){const query=state.search.toLocaleLowerCase('nb');const list=topicQuestions().filter(q=>[q.title,q.prompt,q.hint,q.explanation,...(q.options||[]),topics[q.topic],types[q.type]].join(' ').toLocaleLowerCase('nb').includes(query));
   $('#bank-summary').textContent=`${list.length} oppgaver`;
   $('#bank-list').innerHTML=list.length?list.map((q,i)=>`<button class="bank-row" data-open="${q.id}"><span class="bank-index">${String(i+1).padStart(2,'0')}</span><span><strong>${esc(q.title)}</strong><small>${esc(topics[q.topic])} · ${types[q.type]} · Nivå ${q.level}</small></span><span class="bank-state ${data.records[q.id]?.status==='independent'?'done':''}">${statusLabel(q)} →</span></button>`).join(''):'<p>Ingen treff. Prøv et annet søkeord.</p>';
 }
@@ -85,8 +82,7 @@ function keepFocus(render){const active=document.activeElement;const id=active?.
 function mark(i){const s=session();return s.marks[i]===true?'correct':s.marks[i]===false?'wrong':'';}
 function markText(i){return mark(i)==='correct'?'✓ Riktig':mark(i)==='wrong'?'× Prøv igjen':'';}
 function locked(i){return session().done||session().locked.has(i);}
-function rowOptions(options,value){return '<option value="">Velg…</option>'+selectOptions(options.map(x=>[x,x]),value);}
-const locations=['åpningen i hodet','det lange røret i brystet','den poseformede delen øverst til høyre i bildet','det store organet øverst til venstre i bildet','den lille grønne posen under organ 4','det avlange gule organet under organ 3','den første C-formede tarmbuen etter organ 3','de tynne tarmslyngene i midten','den tykkere tarmen rundt slyngene','det rette avsluttende tarmstykket'];
+const organLocations=['åpningen i hodet','det lange røret i brystet','den poseformede delen øverst til høyre i bildet','det store organet øverst til venstre i bildet','den lille grønne posen under organ 4','det avlange gule organet under organ 3','den første C-formede tarmbuen etter organ 3','de tynne tarmslyngene i midten','den tykkere tarmen rundt slyngene','det rette avsluttende tarmstykket'];
 function diagramTask(q,s,parts=false){
   const anatomy=q.type==='anatomy';
   const targets=anatomy?organs:processOrgans;
@@ -96,15 +92,10 @@ function diagramTask(q,s,parts=false){
   const isLocked=o=>s.done||(anatomy?s.locked.has(ids.indexOf(o.id)):s.locked.has(o.id));
   let drawing=digestiveSVG();
   if(!anatomy)drawing=drawing.replace('Fordøyelsessystemet med ti nummererte punkter','Fordøyelsessystemet med ni valg; tolvfingertarmen inngår i tynntarmen').replace('<path data-leader="duodenum"','<path style="display:none" data-leader="duodenum"');
-  const map=`<div class="anatomy-map">${drawing}${targets.map(o=>`<button id="target-${o.id}" class="map-target ${selected(o)?'filled':''} ${targetState(o)}" data-target="${o.id}" style="left:${o.x/640*100}%;top:${o.y/690*100}%" aria-label="${esc(anatomy?`Punkt ${o.number}: ${s.values[ids.indexOf(o.id)]?organs.find(x=>x.id===s.values[ids.indexOf(o.id)])?.label:'ikke plassert'}`:`${name(o)}`)}" ${!anatomy?`aria-pressed="${selected(o)}"`:''} ${isLocked(o)?'disabled':''}>${o.number}${targetState(o)==='correct'?'<span class="target-mark">✓</span>':targetState(o)==='wrong'?'<span class="target-mark">×</span>':''}</button>`).join('')}</div>`;
+  const map=`<div class="anatomy-map">${drawing}${targets.map(o=>`<button id="target-${o.id}" class="map-target ${selected(o)?'filled':''} ${targetState(o)}" data-target="${o.id}" style="left:${o.x/640*100}%;top:${o.y/690*100}%" aria-label="${esc(anatomy?`Punkt ${o.number}, ${organLocations[ids.indexOf(o.id)]}: ${s.values[ids.indexOf(o.id)]?organs.find(x=>x.id===s.values[ids.indexOf(o.id)])?.label:'ikke plassert'}`:`${name(o)}`)}" ${!anatomy?`aria-pressed="${selected(o)}"`:''} ${isLocked(o)?'disabled':''}>${o.number}${targetState(o)==='correct'?'<span class="target-mark">✓</span>':targetState(o)==='wrong'?'<span class="target-mark">×</span>':''}</button>`).join('')}</div>`;
   const controls=anatomy?`<div class="diagram-controls"><p class="tray-title">1. Velg navn · 2. Velg nummer</p><div class="label-tray">${s.labels.map(o=>{const index=s.values.indexOf(o.id);const assigned=index>=0;const fixed=assigned&&s.locked.has(index);return `<button id="chip-${o.id}" class="organ-chip ${s.selected===o.id?'selected':''} ${assigned?'assigned':''} ${fixed?'correct':''}" data-label="${o.id}" aria-pressed="${s.selected===o.id}" draggable="${!fixed&&!s.done}" ${fixed||s.done?'disabled':''}>${o.label}<span class="chip-number">${fixed?'✓ ':''}${assigned?organs[index].number:''}</span></button>`;}).join('')}</div><p class="selection-hint" id="selection-hint">${s.selected?`${esc(organs.find(o=>o.id===s.selected).label)} er valgt. Trykk på et nummer.`:'Du kan trykke, bruke tastaturet eller dra et navn. Riktige plasseringer låses etter sjekk.'}</p></div>`:`<div class="diagram-controls"><p class="tray-title">Velg ett eller flere steder</p><div class="process-list">${targets.map(o=>`<button id="process-${o.id}" class="${selected(o)?'selected':''} ${targetState(o)}" data-target="${o.id}" aria-pressed="${selected(o)}" ${isLocked(o)?'disabled':''}><span class="check-square" aria-hidden="true">${selected(o)?'✓':''}</span><span>${o.number}. ${name(o)}${targetState(o)==='wrong'?' · × Prøv igjen':targetState(o)==='correct'?' · ✓ Riktig':''}</span></button>`).join('')}</div><p class="selection-hint">Tolvfingertarmen inngår i valget «Tynntarm». Nummer 7 brukes bare i organplassering.</p></div>`;
-  const alternative=anatomy?`<details class="text-alternative"><summary>Tekstliste / alternativ til plassering</summary><p>Numrene beskrives slik de er plassert i figuren.</p><div class="rows">${organs.map((o,i)=>`<div class="task-row ${mark(i)}"><label for="row-${i}">${o.number}. ${locations[i]} <span class="row-mark">${markText(i)}</span></label><select id="row-${i}" data-row="${i}" ${locked(i)?'disabled':''}>${rowOptions(s.labels.map(x=>x.label),organs.find(x=>x.id===s.values[i])?.label)}</select></div>`).join('')}</div></details>`:'';
+  const alternative='';
   return parts?{map,controls,alternative}:`<div class="figure-layout">${controls}${map}</div>${alternative}`;
-}
-function rowStatus(q,i){
-  if(q.figure!=='nutrient-map')return markText(i);
-  const status=mark(i);
-  return status==='correct'?'✓<span class="sr-only"> Riktig</span>':status==='wrong'?'×<span class="sr-only"> Prøv igjen</span>':'';
 }
 function answerUI(q,s){
   if(q.type==='anatomy'||q.type==='process')return diagramTask(q,s);
@@ -118,15 +109,16 @@ function answerUI(q,s){
       return `<button id="option-${i}" class="option-button ${chosen?'selected':''} ${result}" data-option="${i}" aria-pressed="${chosen}" ${illustrated?`aria-label="${esc(v)}"`:''} ${s.done||s.locked.has(v)?'disabled':''}><span class="option-letter" aria-hidden="true">${marker}</span>${illustrated?foodArtworkSVG(q.optionFoods[v]):''}${label}</button>`;
     }).join('')}</div>`;
   }
-  if(['sort','match','fill'].includes(q.type)){
-    const rows=q.type==='sort'?q.items:q.type==='match'?q.pairs:q.blanks;
-    return `<div class="rows ${q.figure==='nutrient-map'?'map-rows':rows.length>6?'many-rows':''}">${rows.map((row,i)=>`<div class="task-row ${mark(i)}"><label for="row-${i}">${esc(row.label||row.left)} <span class="row-mark">${rowStatus(q,i)}</span></label><div>${q.type==='fill'?`<div class="unit-input"><input id="row-${i}" data-row="${i}" type="text" autocomplete="off" spellcheck="false" ${row.answers.some(a=>/^\d+$/.test(a))?'inputmode="decimal"':''} value="${esc(s.values[i]||'')}" ${locked(i)?'disabled':''}>${row.unit?`<span class="unit">${row.unit}</span>`:''}</div>`:`<select id="row-${i}" data-row="${i}" ${locked(i)?'disabled':''}>${rowOptions(q.type==='sort'?q.groups:s.right,s.values[i])}</select>`}</div></div>`).join('')}</div>`;
+  if(q.type==='match'||q.type==='sort')return placementUI(q,s);
+  if(q.type==='fill'){
+    return `<div class="rows ${q.blanks.length>6?'many-rows':''}">${q.blanks.map((row,i)=>`<div class="task-row ${mark(i)}"><label for="row-${i}">${esc(row.label)} <span class="row-mark">${markText(i)}</span></label><div class="unit-input"><input id="row-${i}" data-row="${i}" type="text" autocomplete="off" spellcheck="false" ${row.answers.some(a=>/^\d+$/.test(a))?'inputmode="decimal"':''} value="${esc(s.values[i]||'')}" ${locked(i)?'disabled':''}>${row.unit?`<span class="unit">${row.unit}</span>`:''}</div></div>`).join('')}</div>`;
   }
   if(q.type==='order')return `<p class="type-instruction">Flytt leddene med pilene. Riktige plasser låses når du sjekker.</p><ol class="sequence">${s.values.map((v,i)=>`<li class="${mark(i)}"><span>${esc(v)}${s.marks.length?` <small class="row-mark">${markText(i)}</small>`:''}</span><div class="move-controls"><button id="up-${i}" data-move="${i}" data-step="-1" aria-label="Flytt ${esc(v)} opp" ${locked(i)||!s.values.some((_,j)=>j<i&&!s.locked.has(j))?'disabled':''}>↑</button><button id="down-${i}" data-move="${i}" data-step="1" aria-label="Flytt ${esc(v)} ned" ${locked(i)||!s.values.some((_,j)=>j>i&&!s.locked.has(j))?'disabled':''}>↓</button></div></li>`).join('')}</ol>`;
   if(q.type==='open')return `<div class="open-response ${s.model?'with-model':''}"><div><label class="sr-only" for="open-answer">Din forklaring</label><textarea id="open-answer" class="open-input" placeholder="Skriv forklaringen din her…" ${s.done?'readonly':''}>${esc(s.text)}</textarea></div>${s.model?`<div class="model-panel"><section class="open-model"><h3>Veiledende svar</h3><p>${esc(q.model)}</p></section><p class="type-instruction">Vurder innholdet, ikke om du har brukt akkurat de samme ordene. Åpne svar rettes ikke automatisk.</p><div class="self-checklist">${q.checklist.map((c,i)=>`<label><input type="checkbox" data-self-check="${i}" ${s.checks[i]?'checked':''} ${s.done?'disabled':''}>${esc(c)}</label>`).join('')}</div>${!s.done?'<div class="self-actions"><button class="secondary" id="self-confident">Dette fikk jeg med</button><button class="text-button" id="self-review">Jeg trenger mer øving</button></div>':''}</div>`:''}</div>`;
   return '';
 }
 function renderQuestion(){
+  cancelPlacementDrag();
   const q=current();if(!q){$('#content').innerHTML=`<div class="empty-state"><h2>${state.topic==='review'?'Ingen oppgaver til repetisjon nå':'Ingen oppgaver i dette temaet'}</h2><p>${state.topic==='review'?'Oppgaver du fikk hjelp med, og oppgaver det er tid for å repetere, samles her.':'Velg et annet tema i menyen.'}</p><button id="show-all-topics" class="primary">Vis alle oppgaver</button></div>`;return;}
   const s=session(q);const i=state.queue.filter(id=>data.rotation.seen.includes(id)).length;
   const actions=`<div class="task-actions">${s.done?'<button id="next-question" class="primary">Neste oppgave →</button>':q.type==='open'?`<button id="show-model" class="primary" ${s.model?'disabled':''}>Sammenlign svaret</button>`:'<button id="check-answer" class="primary">Sjekk svaret</button>'}<button class="text-button" id="show-hint" aria-expanded="${s.hint}" ${s.done?'hidden':''}>Hint</button><button class="text-button" id="reveal-answer" ${s.done||s.model?'hidden':''}>Vis fasit</button>${!s.done?'<button id="next-question" class="text-button skip-task">Hopp over →</button>':'<button class="text-button" id="retry-question">Prøv på nytt</button>'}</div>`;
@@ -152,13 +144,13 @@ function feedback(title,text='',kind='neutral'){session().feedback={title,text,k
 function check(){const q=current(),s=session();if(s.done)return;
   const count=q.type==='anatomy'?10:q.type==='fill'?q.blanks.length:q.type==='sort'?q.items.length:q.type==='match'?q.pairs.length:0;
   if(count && Array.from({length:count},(_,i)=>s.values[i]).some(v=>!String(v??'').trim()) || ['choice','multi','process'].includes(q.type)&&!s.values.length){feedback('Svar på hele oppgaven først.','Du kan bruke hint eller vise fasit hvis du står fast.');return;}
-  const result=evaluate(q,s.values,q.type==='anatomy'?ids:processOrgans.map(o=>o.id));s.marks=result.marks;countFirstAnswer(result.correct);
+  const result=evaluate(q,s.values,q.type==='anatomy'?ids:processOrgans.map(o=>o.id));s.marks=result.marks;s.selectedTerm=null;s.selectedItem=null;countFirstAnswer(result.correct);
   if(['sort','match','fill','order','anatomy'].includes(q.type))result.marks.forEach((right,i)=>{if(right)s.locked.add(i);});
   if(q.type==='multi'||q.type==='process')s.values.forEach(v=>{if(q.answer.includes(v))s.locked.add(v);});
   if(!result.correct)s.assisted=true;
   s.done=result.correct;
   saveResult({correct:result.correct,completed:result.correct,assisted:s.assisted});
-  s.feedback=result.correct?{title:s.assisted?'Riktig etter øving ✓':'Riktig uten hjelp ✓',text:s.assisted?'Oppgaven ligger under «Øv på nytt». Prøv igjen senere uten hjelp.':'Oppgaven kommer tilbake til repetisjon senere.',kind:''}:{title:'Ikke helt ennå',text:count||q.type==='order'?`${result.count} av ${result.total} deler er riktige og beholdes. Rett delene merket «Prøv igjen».`:'Noen valg er feil eller mangler. Riktige valgte svar beholdes.',kind:'bad'};
+  s.feedback=result.correct?{title:s.assisted?'Riktig etter øving ✓':'Riktig uten hjelp ✓',text:s.assisted?'Prøv igjen senere uten hjelp.':'Oppgaven kommer tilbake til repetisjon senere.',kind:''}:{title:'Ikke helt ennå',text:count||q.type==='order'?`${result.count} av ${result.total} deler er riktige og beholdes. Rett delene merket «Prøv igjen».`:'Noen valg er feil eller mangler. Riktige valgte svar beholdes.',kind:'bad'};
   keepFocus(renderQuestion);announce(s.feedback.title+'. '+s.feedback.text);
   if(s.done){$('#feedback').focus({preventScroll:true});}
 }
@@ -178,12 +170,12 @@ function reveal(){const q=current(),s=session();if(s.done)return;countFirstAnswe
 }
 function assign(index,value){const s=session();if(locked(index))return;const oldIndex=s.values.indexOf(value);if(oldIndex>=0&&s.locked.has(oldIndex))return;
   if(oldIndex>=0&&oldIndex!==index){s.values[oldIndex]='';s.marks[oldIndex]=undefined;}s.values[index]=value;s.marks[index]=undefined;s.selected=null;}
-function target(id){const q=current(),s=session();if(s.done)return;if(q.type==='anatomy'){if(!s.selected){announce('Velg et organnavn først.');$('#selection-hint').textContent='Velg først navnet du vil plassere.';return;}assign(ids.indexOf(id),s.selected);}else{if(s.locked.has(id))return;s.values=s.values.includes(id)?s.values.filter(x=>x!==id):[...s.values,id];s.marks=[];}
+function targetOrgan(id){const q=current(),s=session();if(s.done)return;if(q.type==='anatomy'){if(!s.selected){announce('Velg et organnavn først.');$('#selection-hint').textContent='Velg først navnet du vil plassere.';return;}assign(ids.indexOf(id),s.selected);}else{if(s.locked.has(id))return;s.values=s.values.includes(id)?s.values.filter(x=>x!==id):[...s.values,id];s.marks=[];}
   keepFocus(renderQuestion);
 }
 function next(){const id=chooseQuestion();if(id)openQuestion(id,{fresh:true});else{state.id=null;renderShell();}}
 $('#content').addEventListener('input',e=>{if(e.target.id==='bank-search'){state.search=e.target.value;renderBankRows();return;}if(e.target.id==='open-answer')session().text=e.target.value;if(e.target.matches('input[data-row]')){const i=Number(e.target.dataset.row);session().values[i]=e.target.value;session().marks[i]=undefined;e.target.closest('.task-row').classList.remove('wrong');e.target.closest('.task-row').querySelector('.row-mark').textContent='';}});
-$('#content').addEventListener('change',e=>{if(e.target.matches('select[data-row]')){const i=Number(e.target.dataset.row);if(current().type==='anatomy'){const opened=$('.text-alternative').open;assign(i,organs.find(o=>o.label===e.target.value)?.id||'');keepFocus(renderQuestion);$('.text-alternative').open=opened;document.getElementById('row-'+i)?.focus({preventScroll:true});}else{session().values[i]=e.target.value;session().marks[i]=undefined;e.target.closest('.task-row').classList.remove('wrong');e.target.closest('.task-row').querySelector('.row-mark').textContent='';}}if(e.target.matches('[data-self-check]'))session().checks[Number(e.target.dataset.selfCheck)]=e.target.checked;});
+$('#content').addEventListener('change',e=>{if(e.target.matches('[data-self-check]'))session().checks[Number(e.target.dataset.selfCheck)]=e.target.checked;});
 $('#content').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('input[data-row]')){e.preventDefault();check();}});
 $('#content').addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b||b.disabled)return;
@@ -192,8 +184,13 @@ $('#content').addEventListener('click',e=>{
   if(b.id==='new-round'){sessions.clear();rebuildQueue();if(state.queue.length)openQuestion(chooseQuestion(),{fresh:true});else{state.id=null;renderShell();}return;}
   if(b.id==='go-bank'){state.view='bank';renderShell();return;}
   const q=current(),s=session();
+  if(b.dataset.term!==undefined){const value=s.right[Number(b.dataset.term)];s.selectedTerm=s.selectedTerm===value?null:value;keepFocus(renderQuestion);announce(s.selectedTerm?s.selectedTerm+' valgt. Velg felt.':'Brikke valgt bort.');return;}
+  if(b.dataset.place!==undefined){const i=Number(b.dataset.place);if(s.selectedTerm){placeMatch(q,s,i,s.selectedTerm);}else if(!locked(i)){s.values[i]='';s.marks[i]=undefined;}keepFocus(renderQuestion);return;}
+  if(b.dataset.sortItem!==undefined){const index=Number(b.dataset.sortItem);s.selectedItem=s.selectedItem===index?null:index;keepFocus(renderQuestion);announce(s.selectedItem!==null?q.items[s.selectedItem].label+' valgt. Velg gruppe.':'Brikke valgt bort.');return;}
+  if(b.dataset.group!==undefined){if(placeSort(q,s,s.selectedItem,b.dataset.group)){keepFocus(renderQuestion);announce('Brikken er plassert.');}else announce('Velg en brikke først.');return;}
+  if(b.hasAttribute('data-return-bank')){if(placeSort(q,s,s.selectedItem,''))keepFocus(renderQuestion);return;}
   if(b.dataset.label){s.selected=b.dataset.label;keepFocus(renderQuestion);announce(`${organs.find(o=>o.id===s.selected).label} valgt. Velg et nummer.`);}
-  if(b.dataset.target)target(b.dataset.target);
+  if(b.dataset.target)targetOrgan(b.dataset.target);
   if(b.dataset.option!==undefined){const v=s.options[Number(b.dataset.option)];if(!s.locked.has(v)){s.values=q.type==='choice'?[v]:s.values.includes(v)?s.values.filter(x=>x!==v):[...s.values,v];s.marks=[];keepFocus(renderQuestion);}}
   if(b.dataset.move!==undefined){const i=Number(b.dataset.move),step=Number(b.dataset.step);let j=i+step;while(s.locked.has(j))j+=step;if(j>=0&&j<s.values.length&&!locked(i)){[s.values[i],s.values[j]]=[s.values[j],s.values[i]];s.marks[i]=s.marks[j]=undefined;renderQuestion();document.getElementById((step<0?'up-':'down-')+j)?.focus({preventScroll:true});announce(`Flyttet til plass ${j+1}.`);}}
   if(b.id==='check-answer')check();
@@ -206,11 +203,58 @@ $('#content').addEventListener('click',e=>{
   if(b.id==='next-question')next();
   if(b.id==='retry-question')openQuestion(q.id,{fresh:true});
 });
-$('#content').addEventListener('dragstart',e=>{const b=e.target.closest('[data-label]');if(!b||b.disabled)return;e.dataTransfer.setData('text/plain',b.dataset.label);session().selected=b.dataset.label;});
-$('#content').addEventListener('dragover',e=>{if(current()?.type==='anatomy'&&e.target.closest('[data-target]:not(:disabled)'))e.preventDefault();});
-$('#content').addEventListener('drop',e=>{const b=e.target.closest('[data-target]');if(current()?.type!=='anatomy'||!b||b.disabled)return;e.preventDefault();const label=e.dataTransfer.getData('text/plain');if(ids.includes(label)){session().selected=label;target(b.dataset.target);}});
+function dragPayload(element){
+ const q=current(),s=session();
+ if(element?.hasAttribute('data-term'))return {id:q.id,kind:'match',value:s.right[Number(element.dataset.term)]};
+ if(element?.hasAttribute('data-sort-item'))return {id:q.id,kind:'sort',index:Number(element.dataset.sortItem)};
+ if(element?.hasAttribute('data-label'))return {id:q.id,kind:'anatomy',value:element.dataset.label};
+ return null;
+}
+function dropPlacement(payload,element){
+ const q=current(),s=session();if(!payload||payload.id!==q.id||payload.kind!==q.type||s.done)return;
+ const target=element?.closest('[data-place],[data-group],[data-drop-group],[data-sort-bank],[data-target]');if(!target)return;
+ let changed=false;
+ if(payload.kind==='match'&&target.hasAttribute('data-place'))changed=placeMatch(q,s,Number(target.dataset.place),payload.value);
+ if(payload.kind==='sort'){
+  const group=target.hasAttribute('data-sort-bank')?'':target.dataset.group??target.dataset.dropGroup;
+  if(group!==undefined)changed=placeSort(q,s,payload.index,group);
+ }
+ if(payload.kind==='anatomy'&&target.dataset.target&&ids.includes(payload.value)){s.selected=payload.value;targetOrgan(target.dataset.target);return;}
+ if(changed){keepFocus(renderQuestion);announce('Brikken er plassert.');}
+}
+$('#content').addEventListener('dragstart',e=>{
+ const chip=e.target.closest('[data-term],[data-sort-item],[data-label]');if(!chip||chip.disabled)return;
+ const payload=dragPayload(chip);e.dataTransfer.setData('application/x-onlyfag-placement',JSON.stringify(payload));e.dataTransfer.setData('text/plain',payload.value??String(payload.index));e.dataTransfer.effectAllowed='move';
+});
+$('#content').addEventListener('dragover',e=>{if(e.target.closest('[data-place]:not(:disabled),[data-group]:not(:disabled),[data-drop-group],[data-sort-bank],[data-target]:not(:disabled)'))e.preventDefault();});
+$('#content').addEventListener('drop',e=>{e.preventDefault();let payload;try{payload=JSON.parse(e.dataTransfer.getData('application/x-onlyfag-placement'));}catch{return;}dropPlacement(payload,e.target);});
+let touchDrag=null,suppressPlacementClick=false;
+function cancelPlacementDrag(){
+ if(!touchDrag)return;
+ const drag=touchDrag;touchDrag=null;drag.ghost?.remove();
+ if(drag.chip.hasPointerCapture(drag.pointer))drag.chip.releasePointerCapture(drag.pointer);
+}
+$('#content').addEventListener('pointerdown',e=>{
+ if(!['touch','pen'].includes(e.pointerType))return;
+ const chip=e.target.closest('[data-term],[data-sort-item]');if(!chip||chip.disabled)return;
+ touchDrag={chip,payload:dragPayload(chip),x:e.clientX,y:e.clientY,ghost:null,pointer:e.pointerId};chip.setPointerCapture(e.pointerId);
+});
+$('#content').addEventListener('pointermove',e=>{
+ if(!touchDrag||e.pointerId!==touchDrag.pointer)return;
+ if(!touchDrag.ghost&&Math.hypot(e.clientX-touchDrag.x,e.clientY-touchDrag.y)<7)return;
+ e.preventDefault();
+ if(!touchDrag.ghost){const ghost=touchDrag.chip.cloneNode(true);ghost.removeAttribute('id');ghost.classList.add('placement-ghost');ghost.style.width=Math.min(touchDrag.chip.offsetWidth,300)+'px';document.body.append(ghost);touchDrag.ghost=ghost;}
+ touchDrag.ghost.style.left=e.clientX+8+'px';touchDrag.ghost.style.top=e.clientY+8+'px';
+});
+function endTouch(e,cancelled=false){
+ if(!touchDrag||e.pointerId!==touchDrag.pointer)return;
+ const drag=touchDrag;touchDrag=null;drag.ghost?.remove();
+ if(drag.ghost){suppressPlacementClick=true;if(!cancelled)dropPlacement(drag.payload,document.elementFromPoint(e.clientX,e.clientY));setTimeout(()=>{suppressPlacementClick=false;},0);}
+}
+$('#content').addEventListener('lostpointercapture',()=>cancelPlacementDrag());
+$('#content').addEventListener('pointerup',e=>endTouch(e));$('#content').addEventListener('pointercancel',e=>endTouch(e,true));
+$('#content').addEventListener('click',e=>{if(suppressPlacementClick){e.preventDefault();e.stopImmediatePropagation();}},true);
 $('#topics').addEventListener('click',e=>{const b=e.target.closest('[data-topic]');if(b){state.topic=b.dataset.topic;resetSelection();closeMenu();}});
-$('#review-button').onclick=()=>{Object.assign(state,{topic:'review'});resetSelection();closeMenu();};
 for(const v of ['practice','bank'])$('#'+v+'-tab').onclick=()=>{state.view=v;renderShell();closeMenu();};
 const dialog=$('#about-dialog');
 function showAbout(){dialog.showModal();$('#reset-confirm').hidden=true;}

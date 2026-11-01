@@ -2,7 +2,7 @@
 
 Minimalistisk øvingsmodul i eksisterende OnlyFag, tilgjengelig som modulen «Næringsstoffer og fordøyelsen» på `/naturfag.html#nutrition/all`. Den selvstendige adressen `/prototyper/ernaering.html` støttes fortsatt.
 
-178 oppgaver, hvorav 89 med figur, illustrerte svaralternativer eller organmodell. Seks fagtemaer; figuroppgaver ligger under fagtemaet de hører til. Blandet øving står sist. Ingen installasjon eller byggesteg for nettsiden.
+184 oppgaver, hvorav 92 med figur, illustrerte svaralternativer eller organmodell. Seks fagtemaer; figuroppgaver ligger under fagtemaet de hører til. Blandet øving står sist. Ingen installasjon eller byggesteg for nettsiden.
 
 Pensum er de fem opprinnelige PowerPoint-presentasjonene (105 lysbilder) og de fem oppgitte arkene. Arkivets PowerPoint-tekst er hentet og kontrollert fra checkpoint `d92f59d811ee8676d93a0ea135f5c204568cf45b`, `docs/ernaering-grunnlag/`. Se fagloggene i `docs/ernaering-materiale.md` og `docs/ernaering-ndla.md`. NDLA gir oppgaveinspirasjon, men innfører ikke nye nødvendige forkunnskaper.
 
@@ -12,7 +12,7 @@ Sukkerstrukturer vises som ringer. Fettsyrer er fullt tegnet med C og H, uten fo
 
 Oppgavene roteres uten gjentakelser til hele utvalget er vist. De ti siste ID-ene unngås der utvalget tillater det, og samme figurfamilie unngås blant de tre siste når andre usette oppgaver finnes. Både besvarte og hoppede oppgaver teller som vist. Historikken overlever temabytte og omlasting. Små utvalg slakker først på den eldste sperren. Eksplisitt åpning fra banken og «Prøv på nytt» er tilsiktede unntak. Svaralternativer og koblingssvar stokkes uavhengig.
 
-Anatomifiguren har klikk/tastatur, valgfri dra/slipp og en tekstliste. Prosessoppgaver grupperer tolvfingertarm med tynntarm. Riktige delsvar låses ved retting; rekkefølgepiler flytter mellom ledige plasser.
+Koblings- og sorteringsoppgavene viser synlige brikker og plasseringer. Både disse og anatomifiguren støtter dra/slipp og klikk/tastatur. Prosessoppgaver grupperer tolvfingertarm med tynntarm. Riktige delsvar låses ved retting; rekkefølgepiler flytter mellom ledige plasser.
 
 Åpne svar har modellbesvarelse og egenvurdering; de rettes aldri med nøkkelordsøk. Korte begreps-/tallsvar normaliserer mellomrom, store/små bokstaver, senkede tall, desimalkomma og oppgitt enhet.
 
@@ -43,8 +43,8 @@ BROWSER_EXECUTABLE=/usr/bin/chromium node tests/nutrition-food.cjs
 DOM-testen krever `jsdom` (testet med v26; bundling med esbuild). Den kan kjøres med `NODE_PATH` til en isolert installasjon. Ingen pakkefiler eller avhengigheter trengs for selve nettsiden.
 
 - Ren Node-test: skjema og fasiter for alle oppgaver, feil/ekstra valg, svarnormalisering, hjelpetilstand og repetisjon, stokking.
-- DOM-test: alle 178 oppgaver fullføres via grensesnittets kontroller; delvis riktige svar, fasit, egenvurdering, fravær av filter, persistens, mobilmeny, utilgjengelig lagring og avgrenset nullstilling.
-- Browserkontroll: alle oppgaver før svar og etter fasit ved 1366 × 768, 1280 × 720, 1024 × 768 og 390 × 844. Kontrollerer oppgave/figur/svar/knapper samlet, ingen horisontal overflyt og ingen nødvendig siderulling ved disse størrelsene med valgfrie ekstralister lukket. Utvidet «Hvorfor?», tekstalternativ og oppgavebank kan rulle etter elevens eget valg. Manuell bildeinspeksjon av blant annet sukkerstrukturer, cis/trans, glyserol/fettsyre og organplassering.
+- DOM-test: alle 184 oppgaver fullføres via grensesnittets kontroller; delvis riktige svar, fasit, egenvurdering, fravær av filter, persistens, mobilmeny, utilgjengelig lagring og avgrenset nullstilling.
+- Browserkontroll: alle oppgaver før svar og etter fasit ved 1366 × 768, 1280 × 720, 1024 × 768 og 390 × 844. Kontrollerer oppgave/figur/svar/knapper samlet, ingen horisontal overflyt og ingen nødvendig siderulling ved disse størrelsene med valgfrie ekstralister lukket. Utvidet «Hvorfor?» og oppgavebank kan rulle etter elevens eget valg. Manuell bildeinspeksjon av blant annet sukkerstrukturer, cis/trans, glyserol/fettsyre og organplassering.
 
 Felles `assets/analytics.js` lastes én gang på siden. Elevsvar sendes ikke til noen tjeneste av øvingsmotoren.
 
@@ -62,7 +62,7 @@ Kildepanelet viser korte eksterne fagreferanser; det har ingen avhengighet av en
 
 Integrasjonen kontrolleres med `node tests/naturfag-modules.cjs` i tillegg til modulens eksisterende tester. Browserkontroller trenger samme lokale nettverkstilgang som de andre Playwright-testene.
 
-Naturfag starter nå på en emnevelger med to illustrerte kort. Modullenkene beholdes som direkte innganger, og Start i den felles menyen tar eleven tilbake til emnevalget. Undermenyene deler samme fete skriftstørrelse. Filterkontrollen og tilhørende tilstand/hendelser er fjernet fra ernæringsmodulen; bankens søk og temaenes oppgaveutvalg er beholdt.
+Naturfag starter nå på en emnevelger med to illustrerte kort. Modullenkene beholdes som direkte innganger, og Naturfag-tittelen i den felles menyen tar eleven tilbake til emnevalget. Undermenyene deler samme fete skriftstørrelse. Filterkontrollen og tilhørende tilstand/hendelser er fjernet fra ernæringsmodulen; bankens søk og temaenes oppgaveutvalg er beholdt.
 
 ## Nye navne- og figuroppgaver
 
@@ -103,3 +103,12 @@ Fem nye oppgaver i `food-comparison-questions.js` bruker fire klikkbare bildealt
 Fasitene er kontrollert mot Matvaretabellen 1. november 2026. Mandler: 31,4 g enumettede + 11,4 g flerumettede fettsyrer/100 g. Protein per 100 g: goudaost 25,3 g, mandler 21,2 g, rå oppdrettslaks 19,9 g, egg stekt i fett 13,9 g. Vitamin C: rød paprika 126 mg, kiwi 91 mg, appelsin 54 mg, banan 11 mg. Stivelse: kokt basmatiris 24,9 g, rå lagringspotet 15,4 g og vanlig rå banan 4,3 g. Alle oppslag finnes under tilsvarende matvarenavn på matvaretabellen.no. Tallene vises i fasiten, ikke i bildealterna­tivene.
 
 Den detaljerte oppramsingen av oppgavetyper er fjernet fra introduksjonen til hurtigfaktorisering i både `matematikk.html` og `matematikk_phi.html`; den korte instruksen om sum og produkt består.
+
+
+## Synlige brikker og anvendte oppgaver
+
+`placement-ui.js` og `placement.css` erstatter rullemenyene i alle koblings- og sorteringsoppgaver med synlige brikker. Dra, trykk brikke og plassering, eller bruk tastatur. Riktige delsvar låses; feilplasseringer kan flyttes, og sorteringsgrupper kan inneholde flere brikker. Strukturidentifikasjon bruker bare stoffnavn. «Øv på nytt»-knappen er fjernet fra begge menyer, mens den automatiske repetisjonen er beholdt. Bankens søk omfatter også svaralternativer og fagforklaringer.
+
+Glukoseoppgaven lar eleven telle fra ringstrukturen uten oppgitt molekylformel. `formula-questions.js` lar eleven plassere glukose og fruktose ved samme formel, samt sukrose og melkesyre ved sine formler. `practical-questions.js` gir to nyanserte transfettoppgaver, en om varmebehandling og proteinopptak fra egg og to om energi-/næringsinnhold i illustrerte måltider. Måltidenes masser og kcal er uttrykkelig oppgitte eksempeldata. Den originale illustrasjonen ligger i `illustrated-meals.png`; fagkilder og avgrensninger står i `docs/ernaering-practical.md`.
+
+`tests/nutrition-drag.cjs` kontrollerer alle 27 koblings-/sorteringsoppgaver i fire skjermstørrelser, ekte mus-/berøringsdrag, klikk/tastatur, feilretting og låste delsvar.
