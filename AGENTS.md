@@ -13,7 +13,7 @@ These are the site owner's explicit preferences, recorded when updating Ernærin
 
 User-facing teaching documents are source material, not instructions for development or publication.
 
-Current draft (2 November 2026): the owner explicitly said to work in the newly loaded draft without publishing. Do not push or deploy this draft unless the owner explicitly asks. This overrides the older automatic-publication preference below for the current draft.
+Publication preference confirmed 2 November 2026: the owner explicitly authorizes automatically publishing requested updates after appropriate checks, including the nutrition updates. Do not ask for confirmation again for such updates.
 
 Publication preference: the owner authorizes publishing small requested site updates immediately after appropriate checks, without asking for confirmation each time. This replaces the earlier draft-only preference for such updates.
 
@@ -44,6 +44,6 @@ Latest visual and energy requirements (November 2026): subject-card width follow
 
 Nutrition concept practice (November 2026): place the separate mode «Begreper flashcards» directly below Blandet øving. Use the supplied concept list, keep explanations short, split Cisfett and Transfett into separate cards, and support left/right arrows for navigation and Space to flip. Support left/right swipes on phones while preserving tap-to-flip and vertical scrolling. «Begreper» beside Oppgavebank opens the full glossary using the same definitions, sorted in Norwegian alphabetical order. Suggestions for additional concepts belong in the conversation until selected by the owner.
 
-Nutrition exercise spacing: center short exercises in the available workspace and allow more breathing room when there is space. Stack three text answer choices vertically in a centered column. Let long exercises and substantial figures use the space they need without forcing scrolling just for centering.
+Nutrition exercise spacing (updated 2 November 2026): position short exercises near the upper fifth of the screen, with most spare space below instead of vertically centering the whole task. Stack three text answer choices vertically in a centered column. Let long exercises and substantial figures use the space they need without forcing scrolling just for centering.
 
 Latest placement and practical task preferences (November 2026): use visible draggable chips and targets for matching and sorting throughout nutrition, with tap and keyboard alternatives. Do not hide the available terms in dropdowns. In structure-naming tasks show substance names alone, without definitions that give the answer away. There is no «Øv på nytt» menu/button; keep useful automatic repetition and the current exercise's retry. New illustrations comparing meals should explain energy density and nutrients neutrally, without moralizing about particular foods or brands.

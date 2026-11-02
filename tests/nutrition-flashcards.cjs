@@ -55,8 +55,8 @@ if(artifactDir)fs.mkdirSync(artifactDir,{recursive:true});
       assert.equal(await frame.locator('#sidebar').isVisible(),false,'embedded mode has one sidebar');
       assert.equal(await frame.locator('#progress-copy').isVisible(),false,'flashcards hide quiz percentages');
       const cards=await frame.evaluate(async()=>{const {flashcards}=await import(new URL('ernaering/flashcards.js?v=20261101-4',location.href));return flashcards;});
-      assert.equal(cards.length,63,'the supplied list plus nine selected additions is present');
-      for(const term of ['Fruktose','Sukrose','Laktose','Galle','Galleblære','Tarmtotter','Peristaltiske bevegelser','Laktase','Laktoseintoleranse','Cisfett','Transfett'])assert.ok(cards.some(card=>card.term===term),term+' is available as its own card');
+      assert.equal(cards.length,64,'the supplied list and selected additions include Harskning');
+      for(const term of ['Harskning','Fruktose','Sukrose','Laktose','Galle','Galleblære','Tarmtotter','Peristaltiske bevegelser','Laktase','Laktoseintoleranse','Cisfett','Transfett'])assert.ok(cards.some(card=>card.term===term),term+' is available as its own card');
       assert.equal(new Set(cards.map(card=>card.id)).size,cards.length,'unique stable ids');
       assert.equal(new Set(cards.map(card=>card.term.toLocaleLowerCase('nb'))).size,cards.length,'no duplicated terms');
       for(const card of cards){assert.ok(card.definition.trim());assert.ok(card.definition.split(/\s+/).length<=40,card.term+' has a short explanation');}
@@ -162,7 +162,7 @@ if(artifactDir)fs.mkdirSync(artifactDir,{recursive:true});
       await frame.locator('[data-question]').waitFor();
       assert.equal((await saved(page)).flashcardRotation,undefined,'reset clears the separate concept rotation');
       await frame.locator('[data-topic="flashcards"]').click();await frame.locator('[data-flashcard]').waitFor();
-      assert.match(await frame.locator('.task-number').innerText(),/^1\s*\/\s*63$/,'returning after reset starts a new concept cycle');
+      assert.match(await frame.locator('.task-number').innerText(),/^1\s*\/\s*64$/,'returning after reset starts a new concept cycle');
       await context.close();
     }
     // The complete glossary uses the exact same reviewed definitions as the deck.
@@ -195,7 +195,7 @@ if(artifactDir)fs.mkdirSync(artifactDir,{recursive:true});
     }
     for(const route of ['/prototyper/ernaering.html?view=concepts','/prototyper/ernaering.html#concepts']){
       const {page,frame,context}=await open({width:390,height:844},route);
-      assert.equal(await frame.locator('.concept-list dt').count(),63);
+      assert.equal(await frame.locator('.concept-list dt').count(),64);
       assert.equal(await frame.locator('#concepts-tab').getAttribute('aria-pressed'),'true');
       assert.equal(await frame.locator('#bank-tab').evaluate(el=>el.nextElementSibling.id),'concepts-tab');
       await context.close();

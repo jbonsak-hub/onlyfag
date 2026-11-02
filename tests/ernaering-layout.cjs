@@ -62,8 +62,7 @@ const server=http.createServer((req,res)=>{
       assert.ok(Math.abs(options[i].left-options[0].left)<1&&Math.abs(options[i].right-options[0].right)<1,'all three alternatives share the same width');
      }
      const exercise=before.bounds['.exercise'];
-     assert.ok(Math.abs((exercise.top+exercise.bottom)/2-(height+44)/2)<8,'a short question is centered in the available height');
-     assert.ok(exercise.top>90,'short questions get breathing room above the exercise');
+     assert.ok(exercise.top>=50&&exercise.top<=height*.25,'short questions start in the upper fifth of the screen, below the toolbar');
      assert.ok(exercise.right-exercise.left<=841,'plain text questions do not stretch across the whole display');
      if(screenshots)await page.screenshot({path:path.join(screenshots,width+'-three-options.png')});
     }

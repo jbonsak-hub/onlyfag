@@ -1,9 +1,9 @@
-import {nutrientMapSlots} from './figures.js?v=20261101-3';
+import {nutrientMapSlots} from './figures.js?v=20261102-3';
 import {structureQuestions} from './structure-questions.js?v=20261101-3';
-import {documentQuestions} from './document-questions.js?v=20261101-3';
+import {documentQuestions} from './document-questions.js?v=20261102-3';
 import {ndlaQuestions} from './ndla-questions.js?v=20261101-3';
 import {recognitionQuestions} from './recognition-questions.js?v=20261101-3';
-import {appliedFigureQuestions} from './applied-figure-questions.js?v=20261101-3';
+import {appliedFigureQuestions} from './applied-figure-questions.js?v=20261102-3';
 import {respirationQuestions} from './respiration-questions.js?v=20261101-3';
 import {foodQuestions} from './food-questions.js?v=20261101-3';
 import {foodTableQuestion} from './foodtable-question.js?v=20261101-3';
@@ -1444,11 +1444,11 @@ const coreQuestions = [
     "pairs": [
       {
         "left": "Endring A",
-        "right": "Denaturering: endret folding, sammenhengende kjede"
+        "right": "Denaturering"
       },
       {
         "left": "Endring B",
-        "right": "Spalting: bindinger i kjeden er brutt"
+        "right": "Spalting"
       }
     ],
     "hint": "Følg forbindelsene mellom sirklene. Er kjeden fortsatt hel?",

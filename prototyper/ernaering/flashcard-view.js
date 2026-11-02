@@ -1,4 +1,4 @@
-import {flashcards} from './flashcards.js?v=20261101-4';
+import {flashcards} from './flashcards.js?v=20261102-3';
 import {pickNext, rememberQuestion} from './engine.js?v=20261101-4';
 
 const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

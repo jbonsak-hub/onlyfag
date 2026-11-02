@@ -1,6 +1,20 @@
 // Applied visual reasoning within the nutrition curriculum. Quantities in models are provided.
 export const appliedFigureQuestions = [
   {
+    id: 'applied-protein-heating',
+    topic: 'protein',
+    type: 'choice',
+    level: 1,
+    family: 'protein-denaturation',
+    title: 'Et protein varmes opp',
+    prompt: 'Når et egg kokes, blir eggehviten fast. Figuren viser hvordan en proteinkjede kan folde seg ut ved oppvarming. Hva kalles denne endringen i proteinets form?',
+    figure: 'applied-protein-heating',
+    options: ['Denaturering', 'Harskning', 'Anaerob celleånding', 'Spalting'],
+    answer: 'Denaturering',
+    hint: 'Kjeden endrer form, men er fortsatt sammenhengende. Den deles ikke i mindre biter.',
+    explanation: 'Dette kalles denaturering. Ved oppvarming endres proteinets form. I eggehviten kan proteinene deretter feste seg til hverandre, slik at den blir fast. Spalting deler kjeden i mindre biter. Harskning gjelder fett som får vond lukt og smak, mens anaerob celleånding frigjør energi uten oksygen.'
+  },
+  {
     id: 'applied-protein-combination',
     topic: 'protein',
     type: 'choice',

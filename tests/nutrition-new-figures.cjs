@@ -68,7 +68,7 @@ if(screenshots)fs.mkdirSync(screenshots,{recursive:true});
     return questions.filter(q=>/^(recognition|applied)-/.test(q.id));
    });
    assert.equal(questions.filter(q=>q.id.startsWith('recognition-')).length,8,'eight molecule recognition questions are integrated');
-   assert.equal(questions.filter(q=>q.id.startsWith('applied-')).length,5,'exactly five further applied figure questions are integrated');
+   assert.equal(questions.filter(q=>q.id.startsWith('applied-')).length,6,'six applied figure questions including protein heating are integrated');
    let minimumText=Infinity,maxScrollHeight=0;
    for(const q of questions){
     await frame.evaluate(id=>{location.hash=id;},q.id);
@@ -113,6 +113,6 @@ if(screenshots)fs.mkdirSync(screenshots,{recursive:true});
   assert.deepEqual(unreadable,[],'all visible figure labels render at least 12px');
   assert.deepEqual(clipped,[],'figure labels remain inside the SVG viewport');
   assert.deepEqual(collisions,[],'distinct figure labels do not overlap');
-  console.log('All 13 new figure questions: answer controls, shared-host layouts, readable labels and reveal flows passed.');
+  console.log('All checked figure questions: answer controls, shared-host layouts, readable labels and reveal flows passed.');
  }finally{if(browser)await browser.close();await new Promise(resolve=>server.close(resolve));}
 })().catch(error=>{console.error(error);process.exitCode=1;});

@@ -1,11 +1,11 @@
 // Kilde: «Begrepsliste - Ernæring og helse.pdf», lastet opp 1. november 2026.
 // PDF-en har 54 oppføringer, hvor «Lever» forekommer to ganger: 53 unike begreper.
 // Brukeren ba om to separate kort for «Cis- og transfett»: 54 kort fra originalen.
-// Ni senere godkjente tillegg gir totalt 63 kort. Originalens oppslagsord er
+// Ti senere godkjente tillegg gir totalt 64 kort. Originalens oppslagsord er
 // avstemt mot PDF-en. Forklaringene er korte nyformuleringer,
 // kontrollert mot dokumentert faggrunnlag og nødvendige faglige presiseringer.
 // Tillegg: fruktose, sukrose, laktose, galle, galleblære, tarmtotter,
-// peristaltiske bevegelser, laktase og laktoseintoleranse.
+// peristaltiske bevegelser, laktase, laktoseintoleranse og harskning.
 export const flashcards = [
   {"id":"karbohydrater","term":"Karbohydrater","definition":"Sukkerarter, stivelse og kostfiber. De består av karbon, hydrogen og oksygen og er en viktig energikilde."},
   {"id":"monosakkarider","term":"Monosakkarider","definition":"De enkleste karbohydratene, som består av én sukkerenhet. Eksempler er glukose, fruktose og galaktose."},
@@ -24,6 +24,7 @@ export const flashcards = [
   {"id":"essensielle-fettsyrer","term":"Essensielle fettsyrer","definition":"Fettsyrer kroppen ikke kan lage selv og må få gjennom maten. De tilhører omega-3- og omega-6-familiene."},
   {"id":"mettet-fett","term":"Mettet fett","definition":"Fett med stor andel mettede fettsyrer, som bare har enkeltbindinger mellom karbonatomene. Finnes blant annet i smør og ost."},
   {"id":"umettet-fett","term":"Umettet fett","definition":"Fett med stor andel fettsyrer som har én eller flere dobbeltbindinger mellom karbonatomene. Finnes blant annet i planteoljer og fisk."},
+  {"id":"harskning","term":"Harskning","definition":"Når fett forandres og får ubehagelig lukt og smak, ofte fordi det reagerer med oksygen i lufta."},
   {"id":"kolesterol","term":"Kolesterol","definition":"Et fettstoff som inngår i cellemembraner og brukes til å lage blant annet hormoner, gallesyrer og vitamin D."},
   {"id":"cisfett","term":"Cisfett","definition":"Umettet fett der hydrogenatomene ved en dobbeltbinding sitter på samme side. Det gir en knekk i fettsyrekjeden."},
   {"id":"transfett","term":"Transfett","definition":"Umettet fett der hydrogenatomene ved en dobbeltbinding sitter på motsatt side. Høyt inntak øker risikoen for hjerte- og karsykdom."},

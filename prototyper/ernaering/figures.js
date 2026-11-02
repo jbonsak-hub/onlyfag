@@ -1,6 +1,6 @@
 import {practicalFigure} from './practical-figures.js?v=20261101-3';
 import {recognitionFigure} from './recognition-figures.js?v=20261101-3';
-import {appliedFigure} from './applied-figures.js?v=20261101-3';
+import {appliedFigure} from './applied-figures.js?v=20261102-3';
 import {foodFigure} from './food-figures.js?v=20261101-3';
 import {supportFigure} from './support-figures.js?v=20261101-3';
 

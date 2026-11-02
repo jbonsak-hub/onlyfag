@@ -217,10 +217,13 @@ body.dark{--paper:#101614;--white:#17201d;--ink:#edf4f1;--muted:#a8b8b0;--green:
 /* Hide only empty left gutters where neighbouring sprite cells leave a faint edge. */
 .food-art[data-food="banana"],.food-art[data-food="kiwi"]{clip-path:inset(0 0 0 3%)}
 
-/* Balance the exercise in the space it actually needs. Auto margins yield to
-   longer questions and feedback rather than pushing controls below the fold. */
+/* Keep short exercises in the upper part of the workspace. Longer exercises
+   use the space they need without extra gaps above their figures or controls. */
 main:has(>#content>.exercise){min-height:calc(100dvh - 44px);display:flex;flex-direction:column}
-#content:has(>.exercise){width:100%;margin-block:auto}
+main:has(>#content>.exercise)::before,main:has(>#content>.exercise)::after{content:"";flex-basis:0;min-height:0}
+main:has(>#content>.exercise)::before{flex-grow:1}
+main:has(>#content>.exercise)::after{flex-grow:4}
+#content:has(>.exercise){width:100%;margin-block:0;flex-shrink:0}
 .exercise:is(.type-choice,.type-multi):not(.has-figure):not(:has(.food-options)){max-width:840px;margin-inline:auto}
 .exercise:not(.has-figure) .answer-options:not(.food-options):has(>.option-button:nth-child(3)):not(:has(>.option-button:nth-child(4))){grid-template-columns:1fr;gap:10px}
 .exercise:not(.has-figure):has(.answer-options>.option-button:nth-child(3)):not(:has(.answer-options>.option-button:nth-child(4))) .option-button{min-height:48px;padding:12px 14px}

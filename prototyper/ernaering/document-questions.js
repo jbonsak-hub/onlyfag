@@ -133,9 +133,9 @@ export const documentQuestions = [
     "type": "choice",
     "level": 2,
     "title": "Harskning",
-    "prompt": "En matolje får etter lagring en ubehagelig lukt. Hvilken forklaring på oksidativ harskning er riktig?",
+    "prompt": "Når fett forandres slik at det får ubehagelig lukt og smak, kalles det harskning. En matolje lukter vondt etter lagring med tilgang på luft. Hva har skjedd?",
     "hint": "Tenk på oksygen, dobbeltbindinger og nye stoffer.",
-    "explanation": "Ved oksidativ harskning dannes produkter som kan gi vond lukt og smak. Umettede fettsyrer er særlig utsatt; varme, lys og oksygen kan fremme prosessen.",
+    "explanation": "Ved harskning kan oksygen reagere med fett og danne stoffer som gir vond lukt og smak. Umettede fettsyrer er særlig utsatt; varme, lys og oksygen kan fremme prosessen.",
     "options": [
       "Oksygen reagerer med fettstoffer og danner blant annet luktende nedbrytingsprodukter.",
       "Alle fettsyrene blir til aminosyrer.",
@@ -150,7 +150,7 @@ export const documentQuestions = [
     "type": "multi",
     "level": 2,
     "title": "Oppbevaring av olje",
-    "prompt": "Hvilke tiltak kan bremse oksidativ harskning? Velg alle riktige.",
+    "prompt": "Harskning betyr at fett forandres og får ubehagelig lukt og smak. Hvilke tiltak kan bremse harskning i en matolje? Velg alle riktige.",
     "hint": "Hvilke omgivelser gir kjemiske reaksjoner mer fart eller gir fettet bedre tilgang til oksygen?",
     "explanation": "Lys, varme og tilgang på oksygen kan fremme oksidasjon. Kjølig og mørk lagring i lukket beholder kan derfor forlenge holdbarheten.",
     "options": [

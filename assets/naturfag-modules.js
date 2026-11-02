@@ -39,7 +39,7 @@
  function ensureFrame(){
   if(frameStarted){sendDesired();return;}
   frameStarted=true;
-  frame.src='prototyper/ernaering.html?embedded=1&topic='+encodeURIComponent(desired.topic)+'&view='+encodeURIComponent(desired.view)+'&v=20261101-5';
+  frame.src='prototyper/ernaering.html?embedded=1&topic='+encodeURIComponent(desired.topic)+'&view='+encodeURIComponent(desired.view)+'&v=20261102-3';
  }
  frame.addEventListener('load',()=>{if(!frameStarted)return;frameReady=true;sendTheme();sendHostLayout();sendDesired();});
  function closeMenu({focus=false}={}){
@@ -120,7 +120,7 @@
   }finally{routing=false;}
  }
  window.addEventListener('popstate',readRoute);window.addEventListener('hashchange',readRoute);
- closeMenu();updateGroupState();readRoute();
+ closeMenu();updateGroupState();readRoute();delete document.documentElement.dataset.nfLoading;
  // A stable host hook is useful for direct links and keyboard/assistive navigation.
  window.onlyfagNaturfag={openSubjects:showSubjects,openNutrition:showNutrition,openChemistry:name=>openPage(name),getNutritionState:()=>reported};
 })();

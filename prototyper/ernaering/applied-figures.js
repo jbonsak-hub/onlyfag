@@ -9,6 +9,15 @@ const arrow = (x1, y, x2) => line(x1, y, x2, y) + `<path d="M${x2-8} ${y-6}l8 6-
 const fatSymbol = (x, y, scale = 1) => `<g transform="translate(${x} ${y}) scale(${scale})"><path d="M0-16V16" stroke="${orange}" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M3-13H28M3 0H28M3 13H28" stroke="${green}" stroke-width="4" fill="none" stroke-linecap="round"/></g>`;
 
 const figures = {
+  'applied-protein-heating': () => {
+    const before = [[174,70],[202,52],[234,62],[249,87],[228,105],[195,97],[192,75],[222,78],[242,114],[205,123],[168,107],[161,82]];
+    const after = before.map((_,i)=>[32+i*32.36,224+[0,6,-4][i%3]]);
+    const protein = points => `<polyline points="${points.map(p=>p.join(',')).join(' ')}" fill="none" stroke="${green}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`+points.map(([x,y],i)=>`<circle cx="${x}" cy="${y}" r="5" fill="${i%2?orange:green}" stroke="#fff" stroke-width="1"/>`).join('');
+    const body = label(22,28,'Før oppvarming',20)+protein(before)
+      +line(210,142,210,177)+`<path d="m204 169 6 8 6-8" fill="none" stroke="${ink}" stroke-width="2"/>`+label(234,164,'Varme',18)
+      +label(22,199,'Etter oppvarming',20)+protein(after);
+    return model('Forenklet modell av én proteinkjede før og etter oppvarming. Før er kjeden kveilet sammen. Etter er den strukket ut. De samme tolv aminosyrene er fortsatt bundet sammen i samme rekkefølge.',body,420,265);
+  },
   'applied-protein-combination': () => {
     const table = `<rect x="28" y="48" width="364" height="180" rx="5" fill="#f3f7f3" stroke="#9aafa0"/>
       <path d="M28 93H392M28 138H392M28 183H392M188 48V228M290 48V228" fill="none" stroke="#b0c1b5" stroke-width="1.5"/>

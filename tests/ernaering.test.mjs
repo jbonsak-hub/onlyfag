@@ -274,16 +274,16 @@ test('new molecular drawings have correct formulas, valences and sugar rings',()
  for(const key of ['recognition-mixed-sugar-amino','recognition-mixed-sugar-fat'])assert.deepEqual(recognitionGraph(key).cycles.map(cycle=>cycle.length),[6],key);
 });
 
-test('five additional applied figures span five subject themes and keep conclusions for feedback',()=>{
+test('applied figures span five subject themes and keep conclusions for feedback',()=>{
  const applied=questions.filter(q=>q.id.startsWith('applied-'));
- assert.equal(applied.length,5);
- assert.deepEqual(applied.map(q=>q.topic).sort(),['protein','fat','micro','digestion','energy'].sort());
+ assert.equal(applied.length,6);
+ assert.deepEqual([...new Set(applied.map(q=>q.topic))].sort(),['protein','fat','micro','digestion','energy'].sort());
  for(const q of applied){assert.ok(q.figure?.startsWith('applied-'));assert.match(figure(q.figure),/<svg\b/);}
  const fat=figure('applied-fat-processes');
  assert.doesNotMatch(fat,/galle|enzym|glyserol|fettsyr/i,'the fat diagram shows changes without naming their causes or products');
  assert.doesNotMatch(figure('applied-vitamin-distribution'),/vitamin\s*[CDEK]\b/i,'vitamin solubility data must not identify X');
  assert.doesNotMatch(figure('applied-glucose-regulation'),/insulin|glukagon/i,'the glucose curve must not identify the regulatory hormone');
- const protein=applied.find(q=>q.topic==='protein');
+ const protein=applied.find(q=>q.id==='applied-protein-combination');
  assert.match(protein.prompt,/tre/i,'the simplified model is explicitly limited to its three amino acids');
 });
 
