@@ -395,11 +395,13 @@ def build(require_sources=True):
                                                          if code.startswith("32") and code != "3201"]))]:
         geometry = polygonal(context.intersection(domain).difference(quiet_islands))
         context_regions.append({"n": name, "d": canvas.path(geometry)})
-    focus = (262543.3285145605, 6649176.670870367)
+    # Match the owner's compact Oslo reference, while retaining the full source
+    # geometry and keeping every answer point inside the responsive home view.
+    focus = (261506.8493150685, 6647888.576412671)
     data = {
         "title": "Oslo", "ruleset": "oslo-areas-v5", "viewBox": view_box,
-        "camera": {"center": canvas.point(*focus), "height": round(27000 * canvas.scale, 5),
-                   "minWidth": round(2 * max(focus[0] - focus_bounds[0], focus_bounds[2] - focus[0]) * canvas.scale, 5)},
+        "camera": {"center": canvas.point(*focus), "height": round((focus_bounds[3] - focus_bounds[1]) * canvas.scale, 5),
+                   "minWidth": round((focus_bounds[2] - focus_bounds[0]) * canvas.scale, 5)},
         "states": states, "water": [], "boundaries": canvas.path(boundaries),
         "context": canvas.path(context),
         "contextRegions": context_regions,

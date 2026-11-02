@@ -49,11 +49,12 @@ assert.deepEqual(map.water,[],'Unselected decorative water is omitted from the m
 const canvasScale = map.viewBox[2]/(map.contextCrop.bounds[2]-map.contextCrop.bounds[0]);
 const canvasPoint = ([x,y]) => [map.viewBox[0]+(x-map.contextCrop.bounds[0])*canvasScale,map.viewBox[1]+(map.contextCrop.bounds[3]-y)*canvasScale];
 const osloAnchor = canvasPoint([262543.3285,6649176.6709]);
+const cameraAnchor = canvasPoint([261506.8493150685,6647888.576412671]);
 const quietIsland = canvasPoint([257329.237126,6649416.725219]);
 const malmoykalven = canvasPoint([261777.349608,6644014.139025]);
-assert(Math.hypot(map.camera.center[0]-osloAnchor[0],map.camera.center[1]-osloAnchor[1])<.05,'The camera is anchored at Oslo S');
-assert(Math.abs(map.camera.height/canvasScale-27000)<2,'The desktop camera starts with 27 km of vertical context');
-assert(map.camera.minWidth/canvasScale>=34251,'The home camera fits the playable east and west extent');
+assert(Math.hypot(map.camera.center[0]-cameraAnchor[0],map.camera.center[1]-cameraAnchor[1])<.05,'The home camera matches the compact reference frame');
+assert(Math.abs(map.camera.height/canvasScale-22744.1875)<2,'The desktop camera keeps the reference frame’s 22.74 km height');
+assert(Math.abs(map.camera.minWidth/canvasScale-31058.69)<2,'The home camera keeps the compact reference width on narrow screens');
 const publishedPoint = name => {
   const state=publishedMap.states.find(state=>state.n===name);
   assert(state,'The published map includes reference geometry for '+name);
@@ -275,8 +276,8 @@ const server = http.createServer((request, response) => {
         const svg=document.querySelector('#map'),matrix=svg.getScreenCTM(),box=document.querySelector('#mapViewport').getBoundingClientRect(),v=svg.viewBox.baseVal;
         const p=new DOMPoint(...anchor).matrixTransform(matrix),start=new DOMPoint(v.x,v.y).matrixTransform(matrix),end=new DOMPoint(v.x+v.width,v.y+v.height).matrixTransform(matrix);
         return {centerError:[p.x-box.x-box.width/2,p.y-box.y-box.height/2],scaleX:Math.hypot(matrix.a,matrix.b),scaleY:Math.hypot(matrix.c,matrix.d),edges:[start.x-box.left,start.y-box.top,end.x-box.right,end.y-box.bottom],panelWidth:document.querySelector('.game-panel').getBoundingClientRect().width};
-      },osloAnchor);
-      assert(view.centerError.every(error=>Math.abs(error)<1),'Oslo S stays at the visible map centre: '+JSON.stringify(view.centerError));
+      },cameraAnchor);
+      assert(view.centerError.every(error=>Math.abs(error)<1),'The reference frame stays at the visible map centre: '+JSON.stringify(view.centerError));
       assert(Math.abs(view.scaleX/view.scaleY-1)<.001,'Map projection keeps the same scale on both axes');
       assert(view.edges.every(gap=>Math.abs(gap)<1),'Physical map fills the available width and height without letterboxing: '+JSON.stringify(view.edges));
       return view;

@@ -1,0 +1,112 @@
+{
+  "retrievedOn": "2026-11-02",
+  "officialIdentityURL": "https://www.oslo.kommune.no/visuell-identitet/",
+  "officialIdentityQuotes": [
+    "Oslo kommunes nye visuelle identitet ble vedtatt i bystyret 27. mars 2019. Kommunen fremstår nå med én felles visuell identitet i alle digitale og trykte flater.",
+    "Oslologoen skal benyttes som et felles avsendermerke i all kommunikasjon."
+  ],
+  "logo": {
+    "file": "symbols/oslo-logo-35f6407f562c.svg",
+    "sha256": "35f6407f562c1b424ab5c15caf8c4be5b9e24eef21b8537e56d8d6f15509da63",
+    "bytes": 4502,
+    "viewBox": [
+      0,
+      0,
+      300,
+      154
+    ],
+    "copyright": "Oslo kommune",
+    "source": "Exact unchanged inline SVG titled Oslologo from the official borough page headers. All fifteen source pages have byte-identical SVG.",
+    "displayAdaptation": "The original black SVG is retained unchanged. The question card may show it in white with a CSS image filter; the official visual identity page illustrates a white logo on dark blue.",
+    "claim": "Shared current Oslo municipal identity, not a distinct coat of arms invented for each borough."
+  },
+  "boroughPages": [
+    {
+      "name": "Gamle Oslo",
+      "url": "https://www.oslo.kommune.no/bydeler/bydel-gamle-oslo/",
+      "sharedLogoSHA256": "35f6407f562c1b424ab5c15caf8c4be5b9e24eef21b8537e56d8d6f15509da63"
+    },
+    {
+      "name": "Grünerløkka",
+      "url": "https://www.oslo.kommune.no/bydeler/bydel-grunerlokka/",
+      "sharedLogoSHA256": "35f6407f562c1b424ab5c15caf8c4be5b9e24eef21b8537e56d8d6f15509da63"
+    },
+    {
+      "name": "Sagene",
+      "url": "https://www.oslo.kommune.no/bydeler/bydel-sagene/",
+      "sharedLogoSHA256": "35f6407f562c1b424ab5c15caf8c4be5b9e24eef21b8537e56d8d6f15509da63"
+    },
+    {
+      "name": "St. Hanshaugen",
+      "url": "https://www.oslo.kommune.no/bydeler/bydel-st-hanshaugen/",
+      "sharedLogoSHA256": "35f6407f562c1b424ab5c15caf8c4be5b9e24eef21b8537e56d8d6f15509da63"
+    },
+    {
+      "name": "Frogner",
+      "url": "https://www.oslo.kommune.no/bydeler/bydel-frogner/",
+      "sharedLogoSHA256": "35f6407f562c1b424ab5c15caf8c4be5b9e24eef21b8537e56d8d6f15509da63"
+    },
+    {
+      "name": "Ullern",
+      "url": "https://www.oslo.kommune.no/bydeler/bydel-ullern/",
+      "sharedLogoSHA256": "35f6407f562c1b424ab5c15caf8c4be5b9e24eef21b8537e56d8d6f15509da63"
+    },
+    {
+      "name": "Vestre Aker",
+      "url": "https://www.oslo.kommune.no/bydeler/bydel-vestre-aker/",
+      "sharedLogoSHA256": "35f6407f562c1b424ab5c15caf8c4be5b9e24eef21b8537e56d8d6f15509da63"
+    },
+    {
+      "name": "Nordre Aker",
+      "url": "https://www.oslo.kommune.no/bydeler/bydel-nordre-aker/",
+      "sharedLogoSHA256": "35f6407f562c1b424ab5c15caf8c4be5b9e24eef21b8537e56d8d6f15509da63"
+    },
+    {
+      "name": "Bjerke",
+      "url": "https://www.oslo.kommune.no/bydeler/bydel-bjerke/",
+      "sharedLogoSHA256": "35f6407f562c1b424ab5c15caf8c4be5b9e24eef21b8537e56d8d6f15509da63"
+    },
+    {
+      "name": "Grorud",
+      "url": "https://www.oslo.kommune.no/bydeler/bydel-grorud/",
+      "sharedLogoSHA256": "35f6407f562c1b424ab5c15caf8c4be5b9e24eef21b8537e56d8d6f15509da63"
+    },
+    {
+      "name": "Stovner",
+      "url": "https://www.oslo.kommune.no/bydeler/bydel-stovner/",
+      "sharedLogoSHA256": "35f6407f562c1b424ab5c15caf8c4be5b9e24eef21b8537e56d8d6f15509da63"
+    },
+    {
+      "name": "Alna",
+      "url": "https://www.oslo.kommune.no/bydeler/bydel-alna/",
+      "sharedLogoSHA256": "35f6407f562c1b424ab5c15caf8c4be5b9e24eef21b8537e56d8d6f15509da63"
+    },
+    {
+      "name": "Østensjø",
+      "url": "https://www.oslo.kommune.no/bydeler/bydel-ostensjo/",
+      "sharedLogoSHA256": "35f6407f562c1b424ab5c15caf8c4be5b9e24eef21b8537e56d8d6f15509da63"
+    },
+    {
+      "name": "Nordstrand",
+      "url": "https://www.oslo.kommune.no/bydeler/bydel-nordstrand/",
+      "sharedLogoSHA256": "35f6407f562c1b424ab5c15caf8c4be5b9e24eef21b8537e56d8d6f15509da63"
+    },
+    {
+      "name": "Søndre Nordstrand",
+      "url": "https://www.oslo.kommune.no/bydeler/bydel-sondre-nordstrand/",
+      "sharedLogoSHA256": "35f6407f562c1b424ab5c15caf8c4be5b9e24eef21b8537e56d8d6f15509da63"
+    }
+  ],
+  "postalAreaArms": {
+    "names": [
+      "Eiksmarka",
+      "Jar",
+      "Lysaker"
+    ],
+    "municipality": "Bærum",
+    "municipalityCode": "3201",
+    "existingLocalAsset": "/assets/geography/map-symbols/municipalities/3201-7c9af27fdb6e.svg",
+    "claim": "Parent municipality arms; not separate coats of arms for the postal areas."
+  },
+  "omitted": "Forests, lakes and islands receive no invented emblem or single-municipality attribution."
+}

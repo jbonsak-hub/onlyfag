@@ -1,0 +1,97 @@
+{
+  "Gamle Oslo": {
+    "src": "/assets/geography/oslo-bydeler/symbols/oslo-logo-35f6407f562c.svg",
+    "alt": "Oslo kommunes felleslogo – Bydel Gamle Oslo",
+    "type": "logo"
+  },
+  "Grünerløkka": {
+    "src": "/assets/geography/oslo-bydeler/symbols/oslo-logo-35f6407f562c.svg",
+    "alt": "Oslo kommunes felleslogo – Bydel Grünerløkka",
+    "type": "logo"
+  },
+  "Sagene": {
+    "src": "/assets/geography/oslo-bydeler/symbols/oslo-logo-35f6407f562c.svg",
+    "alt": "Oslo kommunes felleslogo – Bydel Sagene",
+    "type": "logo"
+  },
+  "St. Hanshaugen": {
+    "src": "/assets/geography/oslo-bydeler/symbols/oslo-logo-35f6407f562c.svg",
+    "alt": "Oslo kommunes felleslogo – Bydel St. Hanshaugen",
+    "type": "logo"
+  },
+  "Frogner": {
+    "src": "/assets/geography/oslo-bydeler/symbols/oslo-logo-35f6407f562c.svg",
+    "alt": "Oslo kommunes felleslogo – Bydel Frogner",
+    "type": "logo"
+  },
+  "Ullern": {
+    "src": "/assets/geography/oslo-bydeler/symbols/oslo-logo-35f6407f562c.svg",
+    "alt": "Oslo kommunes felleslogo – Bydel Ullern",
+    "type": "logo"
+  },
+  "Vestre Aker": {
+    "src": "/assets/geography/oslo-bydeler/symbols/oslo-logo-35f6407f562c.svg",
+    "alt": "Oslo kommunes felleslogo – Bydel Vestre Aker",
+    "type": "logo"
+  },
+  "Nordre Aker": {
+    "src": "/assets/geography/oslo-bydeler/symbols/oslo-logo-35f6407f562c.svg",
+    "alt": "Oslo kommunes felleslogo – Bydel Nordre Aker",
+    "type": "logo"
+  },
+  "Bjerke": {
+    "src": "/assets/geography/oslo-bydeler/symbols/oslo-logo-35f6407f562c.svg",
+    "alt": "Oslo kommunes felleslogo – Bydel Bjerke",
+    "type": "logo"
+  },
+  "Grorud": {
+    "src": "/assets/geography/oslo-bydeler/symbols/oslo-logo-35f6407f562c.svg",
+    "alt": "Oslo kommunes felleslogo – Bydel Grorud",
+    "type": "logo"
+  },
+  "Stovner": {
+    "src": "/assets/geography/oslo-bydeler/symbols/oslo-logo-35f6407f562c.svg",
+    "alt": "Oslo kommunes felleslogo – Bydel Stovner",
+    "type": "logo"
+  },
+  "Alna": {
+    "src": "/assets/geography/oslo-bydeler/symbols/oslo-logo-35f6407f562c.svg",
+    "alt": "Oslo kommunes felleslogo – Bydel Alna",
+    "type": "logo"
+  },
+  "Østensjø": {
+    "src": "/assets/geography/oslo-bydeler/symbols/oslo-logo-35f6407f562c.svg",
+    "alt": "Oslo kommunes felleslogo – Bydel Østensjø",
+    "type": "logo"
+  },
+  "Nordstrand": {
+    "src": "/assets/geography/oslo-bydeler/symbols/oslo-logo-35f6407f562c.svg",
+    "alt": "Oslo kommunes felleslogo – Bydel Nordstrand",
+    "type": "logo"
+  },
+  "Søndre Nordstrand": {
+    "src": "/assets/geography/oslo-bydeler/symbols/oslo-logo-35f6407f562c.svg",
+    "alt": "Oslo kommunes felleslogo – Bydel Søndre Nordstrand",
+    "type": "logo"
+  },
+  "Sentrum": {
+    "src": "/assets/geography/oslo-bydeler/symbols/oslo-logo-35f6407f562c.svg",
+    "alt": "Oslo kommunes felleslogo – Sentrum",
+    "type": "logo"
+  },
+  "Eiksmarka": {
+    "src": "/assets/geography/map-symbols/municipalities/3201-7c9af27fdb6e.svg",
+    "alt": "Bærum kommunevåpen – Eiksmarka",
+    "type": "arms"
+  },
+  "Jar": {
+    "src": "/assets/geography/map-symbols/municipalities/3201-7c9af27fdb6e.svg",
+    "alt": "Bærum kommunevåpen – Jar",
+    "type": "arms"
+  },
+  "Lysaker": {
+    "src": "/assets/geography/map-symbols/municipalities/3201-7c9af27fdb6e.svg",
+    "alt": "Bærum kommunevåpen – Lysaker",
+    "type": "arms"
+  }
+}

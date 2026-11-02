@@ -4,6 +4,11 @@ const {execFile}=require('node:child_process'),{promisify}=require('node:util'),
 const {chromium}=require('playwright'),root=path.resolve(__dirname,'..');
 const physicalManifest=JSON.parse(fs.readFileSync(path.join(root,'assets/geography/norway-relief.json'),'utf8')).regions.oslo.areas.main;
 const map=JSON.parse(fs.readFileSync(path.join(root,'assets/geography/oslo-bydeler/oslo.json'),'utf8'));
+const osloSymbols=JSON.parse(fs.readFileSync(path.join(root,'assets/geography/oslo-bydeler/symbols.json'),'utf8'));
+const municipalSymbols=JSON.parse(fs.readFileSync(path.join(root,'assets/geography/map-symbols/manifest.json'),'utf8')).municipalities;
+for(const state of map.states.filter(s=>s.boundaryType==='borough'||s.n==='Sentrum'))assert.equal(osloSymbols[state.n]?.type,'logo',state.n+' uses the shared official Oslo identity');
+for(const name of ['Eiksmarka','Jar','Lysaker'])assert.equal(osloSymbols[name]?.src,municipalSymbols['3201'],name+' identifies its actual municipality, Bærum');
+for(const symbol of Object.values(osloSymbols))assert.ok(fs.existsSync(path.join(root,symbol.src)),symbol.src+' is locally hosted');
 const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json','.svg':'image/svg+xml','.webp':'image/webp'};
 const server=http.createServer((req,res)=>{try{const file=path.resolve(root,'.'+new URL(req.url,'http://localhost').pathname);if(!file.startsWith(root+'/'))return res.writeHead(403).end();res.setHeader('Content-Type',mime[path.extname(file)]||'application/octet-stream');res.end(fs.readFileSync(file));}catch{res.writeHead(404).end();}});
 const landmarks=JSON.parse(fs.readFileSync(path.join(root,'tests/fixtures/oslo-photo-landmarks.json'),'utf8')).points;
@@ -30,6 +35,13 @@ for(const point of landmarks){const utm=projection.WGS84Raster.geographicToUTM(.
   });
   const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
   await page.goto(base+'/geografi/oslo-bydeler.html');await page.locator('#start:enabled').waitFor();
+  assert.equal(await page.locator('.game-panel').evaluate(el=>el.getBoundingClientRect().left),0,'the quiz menu starts flush against the left edge');
+  if(viewport.width===1366){
+   await page.setViewportSize({width:1012,height:526});await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
+   const reference=await page.locator('#mapViewport').boundingBox();assert.equal(reference.width,752);assert.equal(reference.height,526);
+   if(process.env.OSLO_MAP_SCREENSHOTS){fs.mkdirSync(process.env.OSLO_MAP_SCREENSHOTS,{recursive:true});await page.locator('#mapViewport').screenshot({path:path.join(process.env.OSLO_MAP_SCREENSHOTS,'752x526-reference.png')});}
+   await page.setViewportSize(viewport);await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
+  }
   const buttons=page.locator('button[data-oslo-basemap]');assert.equal(await buttons.count(),3);
   assert.deepEqual(await buttons.evaluateAll(els=>els.map(el=>el.dataset.osloBasemap)),['original','physical','satellite']);
   const rect=await page.locator('#mapViewport').boundingBox();
@@ -69,9 +81,21 @@ for(const point of landmarks){const utm=projection.WGS84Raster.geographicToUTM(.
    assert.equal(coverage.low,0,mode+' projected tiles remain opaque between texture triangles: '+JSON.stringify(coverage));
 
   }
-  async function round(){return page.evaluate(()=>({phase:document.body.dataset.phase,target:document.getElementById('targetName').textContent,completed:document.getElementById('completed').textContent,mistakes:document.getElementById('mistakes').textContent,labels:[...document.querySelectorAll('#labelLayer text')].map(el=>el.textContent),found:[...document.querySelectorAll('#states .state[data-band]')].map(el=>[el.dataset.state,el.dataset.band])}));}
+  async function round(){return page.evaluate(()=>({phase:document.body.dataset.phase,target:document.getElementById('targetName').textContent,completed:document.getElementById('completed').textContent,mistakes:document.getElementById('mistakes').textContent,symbol:{hidden:document.getElementById('target-symbol').hidden,src:document.getElementById('target-symbol').getAttribute('src'),alt:document.getElementById('target-symbol').alt},labels:[...document.querySelectorAll('#labelLayer text')].map(el=>el.textContent),found:[...document.querySelectorAll('#states .state[data-band]')].map(el=>[el.dataset.state,el.dataset.band])}));}
+  async function questionArtwork(){
+   const name=await page.locator('#targetName').innerText(),state=map.states.find(s=>s.n===name);assert.ok(state,'the displayed question is an actual quiz area');
+   const expected=osloSymbols[name]||(/^\d{4}$/.test(state.a)&&municipalSymbols[state.a]?{src:municipalSymbols[state.a],type:'arms'}:null),symbol=page.locator('#target-symbol');
+   if(!expected){assert.equal(await symbol.isVisible(),false,name+' has no invented logo');assert.equal(await symbol.getAttribute('src'),null,'unavailable art removes the previous question image');return 'none';}
+   await page.waitForFunction(()=>{const image=document.getElementById('target-symbol');return !image.hidden&&image.complete&&image.naturalWidth>0;});
+   const art=await symbol.evaluate(el=>{const r=el.getBoundingClientRect(),card=el.closest('.target-block').getBoundingClientRect(),name=document.getElementById('targetName').getBoundingClientRect();return {src:new URL(el.currentSrc).pathname,type:el.dataset.type,width:r.width,height:r.height,centerError:(r.left+r.width/2)-(card.left+card.width/2),inside:r.left>=card.left&&r.right<=card.right&&r.top>=card.top&&r.bottom<=card.bottom,above:r.bottom<=name.top,filter:getComputedStyle(el).filter,alt:el.alt};});
+   assert.equal(art.src,expected.src,'actual local image matches '+name);assert.equal(art.type,expected.type);assert.ok(art.width>20&&art.height>20,'actual SVG was decoded at a readable size');assert.ok(Math.abs(art.centerError)<1&&art.inside&&art.above,'question art is centered inside the blue card, above the name: '+JSON.stringify(art));assert.ok(art.alt);
+   if(expected.type==='logo'){assert.equal(art.height,viewport.width<700?42:72,'Oslo logo is compact on mobile and legible on desktop');assert.match(art.filter,/brightness\(0\).*invert\(1\)/,'official dark logo is rendered white on the blue question card');}
+   return expected.type;
+  }
   await page.locator('#local-show-names').check();await page.locator('#start').click();await page.waitForFunction(()=>document.body.dataset.phase==='playing');
   await page.evaluate(()=>document.fonts.ready.then(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))));
+  assert.equal(await questionArtwork(),'logo','the first real question displays the shared Oslo logo');
+  if(process.env.OSLO_MAP_SCREENSHOTS)await page.screenshot({path:path.join(process.env.OSLO_MAP_SCREENSHOTS,viewport.width+'-question-logo.png')});
   const initial=await round(),initialCamera=await camera();
   for(const mode of ['physical','satellite','original']){
    await page.locator(`button[data-oslo-basemap="${mode}"]`).click();
@@ -104,6 +128,16 @@ for(const point of landmarks){const utm=projection.WGS84Raster.geographicToUTM(.
   assert.match(await page.locator('#oslo-basemap-status').innerText(),/kunne ikke lastes/,'photo failure is clearly reported');assert.deepEqual(await round(),outageRound);assert.equal(await camera(),outageCamera);
   await page.locator('button[data-oslo-basemap="original"]').click();assert.equal(await page.locator('#oslo-basemap-status').isVisible(),false,'the independent green map remains usable during a photo outage');
   network.fail.clear();await page.locator('button[data-oslo-basemap="satellite"]').click();await settled();assert.deepEqual(await round(),outageRound,'retry keeps the current round');assert.equal(await camera(),outageCamera);
+  await page.locator('button[data-oslo-basemap="original"]').click();await page.evaluate(()=>ClickMapZoom.reset());
+  const seen=new Set();
+  for(let i=0;i<map.states.length&&seen.size<3;i++){
+   const kind=await questionArtwork();seen.add(kind);
+   if(process.env.OSLO_MAP_SCREENSHOTS&&kind==='arms')await page.screenshot({path:path.join(process.env.OSLO_MAP_SCREENSHOTS,viewport.width+'-question-arms.png')});
+   if(seen.size===3)break;
+   const name=await page.locator('#targetName').innerText();await page.evaluate(name=>[...document.querySelectorAll('#states .state')].find(el=>el.dataset.state===name).dispatchEvent(new MouseEvent('click',{bubbles:true})),name);
+   await page.waitForFunction(name=>document.getElementById('targetName').textContent!==name,name);
+  }
+  assert.deepEqual([...seen].sort(),['arms','logo','none'],'question rotation shows real coats of arms and removes stale artwork for forests, lakes and islands');
   await context.close();
  }
  // Optional real-service smoke: use verified public JPEG bytes, no substitute images.

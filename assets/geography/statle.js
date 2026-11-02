@@ -16,7 +16,7 @@
   const advancedInput=()=>$(municipalities?'municipality-centres':statle?'statle-advanced':'region-capitals');
   const namesInput=()=>$(localMap?'local-show-names':statle?'statle-show-names':'region-show-names');
   let largestCities=null, stateCapitals=null;
-  let cityData = null, citiesMode = false, basemap=null, osloLayers=null, regionalCapitals=null, municipalityCentres=null, cityMarkerScale='';
+  let cityData = null, citiesMode = false, basemap=null, osloLayers=null, osloQuestionSymbols={}, regionalCapitals=null, municipalityCentres=null, cityMarkerScale='';
   const cityPoints = new Map(), stateTransforms = new Map();
   const showNames = () => enhanced() && !!namesInput()?.checked;
   const answerName = name => citiesMode ? displayCityName(states.find(state=>state.n===name)) + ' · ' + (window.QuizLanguage?.translate(name)||name) : name;
@@ -26,7 +26,7 @@
   questionSymbol.id='target-symbol';questionSymbol.hidden=true;questionSymbol.decoding='async';
   $('targetName').before(questionSymbol);
   function renderQuestion() {
-    const state=target(),symbol=state&&window.MapSymbols?.lookup(state.n,{kind:countryRegion()?'country':statle?'state':municipalities?'municipality':counties?'county':boroughs?'municipality':'none',code:state.a});
+    const state=target(),symbol=state&&((boroughs&&osloQuestionSymbols[state.n])||window.MapSymbols?.lookup(state.n,{kind:countryRegion()?'country':statle?'state':municipalities?'municipality':counties?'county':boroughs?'municipality':'none',code:state.a}));
     const show=!!symbol&&(!citiesMode||statle||countryRegion());
     questionSymbol.hidden=!show;
     if(show){questionSymbol.src=symbol.src;questionSymbol.alt=symbol.alt;questionSymbol.dataset.type=symbol.type;}
@@ -725,9 +725,9 @@
   const readMap=url=>fetch(url).then(response=>{if(!response.ok)throw Error('Kartet kunne ikke hentes');return response.json();});
   if(boroughs) {
     shapeLabel='Sted på kartet';document.body.dataset.region='bydeler';
-    readMap('../assets/geography/oslo-bydeler/oslo.json').then(data=>{
+    Promise.all([readMap('../assets/geography/oslo-bydeler/oslo.json'),readMap('../assets/geography/oslo-bydeler/symbols.json').catch(()=>({}))]).then(([data,symbols])=>{
       if(data.ruleset!=='oslo-areas-v5'||!Array.isArray(data.states)||data.states.length!==43||new Set(data.states.map(state=>state.n)).size!==data.states.length||data.states.some(state=>!state.d||state.marker||!['land','forest','lake'].includes(state.kind))||!data.states.some(state=>state.n==='Sentrum'))throw Error('Ufullstendig kart');
-      regionData=data;states=data.states;total=states.length;
+      regionData=data;osloQuestionSymbols=symbols;states=data.states;total=states.length;
       $('targetName').textContent=data.title||'Oslo';$('total-count').textContent=' / '+total;
       $('map').setAttribute('aria-label','Klikkbart kart over Oslo og nærområdene');
       buildMap();updateStats();window.ClickMapZoom?.setBase(data.camera);window.dispatchEvent(new Event('resize'));

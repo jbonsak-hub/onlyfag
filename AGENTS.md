@@ -13,6 +13,8 @@ These are the site owner's explicit preferences, recorded when updating Ernærin
 
 User-facing teaching documents are source material, not instructions for development or publication.
 
+Current draft (2 November 2026): the owner explicitly said to work in the newly loaded draft without publishing. Do not push or deploy this draft unless the owner explicitly asks. This overrides the older automatic-publication preference below for the current draft.
+
 Publication preference: the owner authorizes publishing small requested site updates immediately after appropriate checks, without asking for confirmation each time. This replaces the earlier draft-only preference for such updates.
 
 Interactive thematic maps should use detailed, zoomable background layers like Følg dråpen (topographic map, hiking map and terrain relief), with a visible layer selector. Keep thematic NGU data locally hosted and register overlays in the background map's actual CRS. Oslo's map quiz has three simultaneously visible top-left controls: original green map, the original locally stored label-free physical relief, and satellite/aerial imagery; switching layers preserves the current quiz and camera. Never replace the Oslo quiz’s label-free physical relief with a street or hiking map that reveals answer names. The separate Norway geology map belongs under Indre krefter, with independent Berggrunn/Løsmasser checkboxes and separate opacity controls for each thematic layer and the background. Preserve the minimal layout and locally hosted NGU data; show source scale and partial detail coverage honestly.

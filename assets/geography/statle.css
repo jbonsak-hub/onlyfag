@@ -256,11 +256,13 @@ body[data-quiz="kommuner"] #kart-game .panel-header .brand{font-size:16px}
 :root{--green:#76ed35;--yellow:#fff32b;--orange:#ffb347;--red:#ff1717}
 #target-symbol{display:block;align-self:center;width:auto;max-width:min(100%,116px);height:70px;object-fit:contain;margin:8px 0 14px;filter:drop-shadow(0 0 1px #ffffff80)}
 #target-symbol[data-type="arms"]{height:78px;max-width:80px}
+body[data-quiz="bydeler"] #target-symbol[data-type="logo"]{height:72px;max-width:140px;margin:4px 0 10px;filter:brightness(0) invert(1)}
 body[data-quiz] .game-panel #statle-top-ten{margin-top:10px;margin-bottom:0}
 body[data-quiz] .game-panel footer{margin-top:auto;padding-top:18px;flex-shrink:0}
 @media(max-width:700px){
  #target-symbol{height:43px;max-width:74px;margin:5px 0 8px}
  #target-symbol[data-type="arms"]{height:43px;max-width:46px}
+ body[data-quiz="bydeler"] #target-symbol[data-type="logo"]{height:42px;max-width:82px;margin:4px 0 6px}
  body[data-quiz] .game-panel footer{padding-top:4px}
 }
 

@@ -59,13 +59,15 @@ adding questions. Remaining mainland uses a uniform quiet appearance with
 optional hover labels `Øvrig Bærum` or `Øvrig Akershus`; unnamed islands have no
 area ownership or quiz label. No postal subdivision lines are drawn in context.
 
-The adaptive camera centres on **Oslo S**, at projected coordinates
-`(262543.3285145605, 6649176.670870367)`. Its minimum geographic height is
-**27 km** and minimum width is approximately **34.252 km**; the viewport's aspect
+The adaptive camera matches the compact reference frame, at projected coordinates
+`(261506.8493150685, 6647888.576412671)`. Its minimum geographic height is
+**22.744 km** and minimum width is approximately **31.059 km**; the viewport's aspect
 ratio determines which dimension needs to grow. The map stays north-up with
 uniform scaling in both directions, so it fills the available display without
 stretching shapes. Resizing the left menu updates the camera around the same
-Oslo centre. The broad source backdrop continues behind the resulting view.
+reference centre. All 43 answer points remain in the frame, and the broad source
+backdrop continues behind the resulting view. The left panel starts at the left
+window edge; resizing it retains the same map centre.
 
 The SVG viewBox excludes the generic canvas's 16-unit padding. Crop rectangle
 edges are removed from the bright administrative overlay: clipping does not
