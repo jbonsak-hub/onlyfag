@@ -1,0 +1,6 @@
+// Original, ikke-fasitgivende modell av posisjoner i en kort aminosyrekjede.
+export function selectedFigure(key){
+  if(key!=='selected-amino-sequences')return '';
+  const bead=(x,y,label,color)=>`<circle cx="${x}" cy="${y}" r="23" fill="${color}" stroke="#466553" stroke-width="2"/><text x="${x}" y="${y+6}" text-anchor="middle" fill="#243e33" font-size="18">${label}</text>`;
+  return `<figure class="mini-figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 255" role="img" aria-label="Tre ulike aminosyrer A, B og C. Under vises tre tomme plasser i en kjede med en markert start."><g font-family="system-ui,sans-serif" fill="#284c3b"><text x="240" y="30" text-anchor="middle" font-size="18">Tre ulike aminosyrer</text>${bead(145,78,'A','#a2c28d')}${bead(240,78,'B','#d5ad77')}${bead(335,78,'C','#a9d1d8')}<text x="60" y="175" font-size="16">Start</text><path d="M108 170H125m-7-5 7 5-7 5M165 170H220M260 170H315" fill="none" stroke="#466553" stroke-width="3"/>${[145,240,335].map(x=>`<circle cx="${x}" cy="170" r="23" fill="none" stroke="#466553" stroke-dasharray="5 4" stroke-width="2"/>`).join('')}<text x="240" y="232" text-anchor="middle" font-size="16">Én av hver – i hvilken rekkefølge?</text></g></svg></figure>`;
+}

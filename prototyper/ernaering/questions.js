@@ -1,9 +1,10 @@
-import {nutrientMapSlots} from './figures.js?v=20261102-3';
+import {selectedQuestions} from './selected-questions.js?v=20261102-4';
+import {nutrientMapSlots} from './figures.js?v=20261102-4';
 import {structureQuestions} from './structure-questions.js?v=20261101-3';
-import {documentQuestions} from './document-questions.js?v=20261102-3';
+import {documentQuestions} from './document-questions.js?v=20261102-4';
 import {ndlaQuestions} from './ndla-questions.js?v=20261101-3';
 import {recognitionQuestions} from './recognition-questions.js?v=20261101-3';
-import {appliedFigureQuestions} from './applied-figure-questions.js?v=20261102-3';
+import {appliedFigureQuestions} from './applied-figure-questions.js?v=20261102-4';
 import {respirationQuestions} from './respiration-questions.js?v=20261101-3';
 import {foodQuestions} from './food-questions.js?v=20261101-3';
 import {foodTableQuestion} from './foodtable-question.js?v=20261101-3';
@@ -1487,7 +1488,7 @@ const coreQuestions = [
   }
 ];
 
-export const questions = [...coreQuestions, ...structureQuestions, ...documentQuestions, ...ndlaQuestions, ...recognitionQuestions, ...appliedFigureQuestions, ...respirationQuestions, ...foodQuestions, ...foodComparisonQuestions, ...formulaQuestions, ...practicalQuestions, foodTableQuestion, {
+export const questions = [...selectedQuestions, ...coreQuestions, ...structureQuestions, ...documentQuestions, ...ndlaQuestions, ...recognitionQuestions, ...appliedFigureQuestions, ...respirationQuestions, ...foodQuestions, ...foodComparisonQuestions, ...formulaQuestions, ...practicalQuestions, foodTableQuestion, {
   "id": "nutrient-concept-map",
   "topic": "energy",
   "type": "match",

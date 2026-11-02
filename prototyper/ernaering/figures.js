@@ -1,3 +1,4 @@
+import {selectedFigure} from './selected-figures.js?v=20261102-4';
 import {practicalFigure} from './practical-figures.js?v=20261101-3';
 import {recognitionFigure} from './recognition-figures.js?v=20261101-3';
 import {appliedFigure} from './applied-figures.js?v=20261102-3';
@@ -155,4 +156,4 @@ molecularFigures['nutrient-map']=()=>{
  return wide.replace('</figure>',mobile+'</figure>');
 };
 molecularFigures['ndla-pepsin']=()=>structural('Søylediagram. Prøve A har pH 2 og enzymaktivitet 8 relative enheter. Prøve B har pH 7 og aktivitet 1 relativ enhet.',line(90,185,610,185)+line(90,185,90,32)+txt(90,22,'Aktivitet',16)+[0,2,4,6,8].map(n=>line(85,185-n*17,90,185-n*17)+txt(65,191-n*17,String(n),15)).join('')+`<rect x="180" y="49" width="100" height="136" fill="#7da795"/><rect x="420" y="168" width="100" height="17" fill="#7da795"/>`+txt(230,42,'8',17)+txt(470,161,'1',17)+txt(230,211,'A: pH 2',17)+txt(470,211,'B: pH 7',17),'',240);
-export function figure(key){return practicalFigure(key)||supportFigure(key)||foodFigure(key)||recognitionFigure(key)||appliedFigure(key)||(molecularFigures[key]?molecularFigures[key]():legacyFigure(key));}
+export function figure(key){return selectedFigure(key)||practicalFigure(key)||supportFigure(key)||foodFigure(key)||recognitionFigure(key)||appliedFigure(key)||(molecularFigures[key]?molecularFigures[key]():legacyFigure(key));}
