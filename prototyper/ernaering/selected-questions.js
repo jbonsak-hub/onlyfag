@@ -10,11 +10,11 @@ export const selectedQuestions = [
   },
   {
     id:'selected-amino-sequences',topic:'protein',type:'fill',level:3,
-    title:'Hvor mange rekkefølger?',figure:'selected-amino-sequences',
-    prompt:'En kort kjede skal inneholde A, B og C nøyaktig én gang hver. Kjedens start er markert, så ABC og CBA er ulike rekkefølger. Hvor mange rekkefølger er mulige? Hvor mange blir det med fire ulike aminosyrer, én av hver?',
+    title:'Hvorfor kan det finnes så mange ulike proteiner?',figure:'selected-amino-sequences',
+    prompt:'Hvordan kan bare 20 aminosyretyper gi en enorm variasjon av proteiner? Undersøk først en liten modell: Hvor mange rekkefølger får du med A, B og C, én av hver? Hvor mange med fire ulike aminosyrer, én av hver? Kjedens start er markert; ABC og CBA er ulike rekkefølger.',
     blanks:[{label:'Tre ulike aminosyrer',answers:['6','seks']},{label:'Fire ulike aminosyrer',answers:['24','tjuefire']}],
     hint:'Hvor mange valg har du til første plass? Hvor mange er igjen til neste plass?',
-    explanation:'Med tre ulike aminosyrer blir det 3 × 2 × 1 = 6 rekkefølger. Med fire blir det 4 × 3 × 2 × 1 = 24. Dette er korte modellkjeder, ikke fullstendige proteiner; modellen viser hvor raskt antallet mulige aminosyrerekkefølger øker.'
+    explanation:'Tre ulike aminosyrer gir 3 × 2 × 1 = 6 rekkefølger; fire gir 4 × 3 × 2 × 1 = 24. I proteiner kan hver av de 20 aminosyretypene brukes flere ganger. En kjede med 100 aminosyrer har derfor 20¹⁰⁰ mulige rekkefølger – et tall med 131 sifre! Rekkefølgen påvirker foldingen og dermed proteinets form og funksjon. Derfor kan de samme byggesteinene gi en enorm proteinvariasjon.'
   },
   {
     id:'selected-mineral-symbols',topic:'micro',type:'match',level:1,
