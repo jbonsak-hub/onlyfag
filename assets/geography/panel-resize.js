@@ -2,7 +2,7 @@
 (() => {
   window.OnlyfagPanelResize = ({document: doc = document, defaultWidth = 280, active = () => true} = {}) => {
     const win = doc.defaultView, body = doc.body;
-    const key = body.dataset.quiz === 'bydeler' ? 'onlyfag-oslo-panel-width' : body.dataset.quiz === 'kommuner' ? 'onlyfag-municipality-panel-width' : body.dataset.quiz === 'statle' ? 'onlyfag-statle-panel-width' : body.dataset.quiz === 'kart' ? 'onlyfag-country-panel-width' : 'onlyfag-geography-panel-width';
+    const key = body.dataset.quiz === 'countries' ? 'onlyfag-countries-panel-width' : body.dataset.quiz === 'bydeler' ? 'onlyfag-oslo-panel-width' : body.dataset.quiz === 'kommuner' ? 'onlyfag-municipality-panel-width' : body.dataset.quiz === 'statle' ? 'onlyfag-statle-panel-width' : body.dataset.quiz === 'kart' ? 'onlyfag-country-panel-width' : 'onlyfag-geography-panel-width';
     const existing = doc.querySelector('.quiz-panel-resizer');
     if (existing) return existing.resizeController;
     let preferred = defaultWidth, pending = 0;

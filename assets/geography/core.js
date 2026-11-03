@@ -959,7 +959,7 @@ function scheduleCountryMapDraw(){
   s.mapDrawRaf=requestAnimationFrame(function(){s.mapDrawRaf=0;drawCountryMap()});
 }
 function countryMapNames(regionId){ return regionId==='world' ? COUNTRY_MAP_ALL.slice() : (COUNTRY_MAP_REGION_COUNTRIES[regionId]||[]).slice(); }
-function startCountryMapQuiz(regionId,projection='flat'){
+function startCountryMapQuiz(regionId,projection='globe'){
   stopWorldTrainerTimer(); clearInactiveWorldApps('countries');
   const app=getWorldApp('countries'); if(!app) return;
   const names=countryMapNames(regionId), meta=COUNTRY_MAP_META[regionId]||COUNTRY_MAP_META.world;
@@ -985,8 +985,8 @@ function updateCountryMapProjectionControls(){
   app.querySelectorAll('[data-country-projection]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.countryProjection===s.mapProjection)));
   const wrap=app.querySelector('#country-map-wrap');if(wrap)wrap.dataset.projection=s.mapProjection;
   const canvas=app.querySelector('#country-map-canvas'),globe=s.mapProjection==='globe';
-  if(canvas){canvas.title=globe?'Dra for å rotere globusen · scroll eller bruk +/− for å zoome':'Dra for å flytte kartet · scroll eller bruk +/− for å zoome';canvas.setAttribute('aria-label',globe?'3D-globus med land du har funnet':'2D-kart med land du har funnet');}
-  const tip=app.querySelector('.country-zoom-tip');if(tip)tip.textContent=globe?'Dra for å rotere · zoom med +/−':'Dra for å flytte · zoom med +/−';
+  if(canvas){canvas.title=globe?'Dra for å rotere globusen · bruk musehjulet for å zoome':'Dra for å flytte kartet · bruk musehjulet for å zoome';canvas.setAttribute('aria-label',globe?'3D-globus med land du har funnet':'2D-kart med land du har funnet');}
+  const tip=app.querySelector('.country-zoom-tip');if(tip)tip.textContent=globe?'Dra for å rotere':'Dra for å flytte';
 }
 function zoomCountryMap(factor){
   const s=worldTrainerState;if(!s||s.mode!=='countries')return;
@@ -996,7 +996,22 @@ function zoomCountryMap(factor){
 }
 function resetCountryMapCamera(){
   const s=worldTrainerState;if(!s||s.mode!=='countries')return;
-  const projection=s.mapProjection;initCountryMapCamera(s,projection);s.mapZoom=1;s.mapPan=[0,0];scheduleCountryMapDraw();
+  const projection=s.mapProjection;initCountryMapCamera(s,projection);s.mapZoom=1;s.mapPan=[0,0];s.mapFocus=null;s.mapFocusCountry=null;scheduleCountryMapDraw();
+}
+function focusCountryMap(country){
+  const s=worldTrainerState;if(!s||s.mode!=='countries')return;
+  const point=window.CountryQuizGlobe?.center(COUNTRY_MAP_FEATURE[country])||COUNTRY_MAP_POINTS[country];
+  if(!point||!point.every(Number.isFinite))return;
+  s.mapFocus=point.slice();s.mapFocusCountry=country;s.mapPan=[0,0];
+  s.globeRotation=[-point[0],-point[1],0];
+}
+function countryMapCameraMeta(s,w,h){
+  const meta={...s.regionMeta,zoom:(s.regionMeta.zoom||1)*(s.mapZoom||1),pan:s.mapPan||[0,0]};
+  if(s.mapFocus){
+    const point=countryMapProject(...s.mapFocus,w,h,{...meta,pan:[0,0]});
+    meta.focusPan=[w/2-point[0],h/2-point[1]];
+  }
+  return meta;
 }
 function renderCountriesGame(){
   const s=worldTrainerState; if(!s) return; const app=getWorldApp('countries'); if(!app) return;
@@ -1008,7 +1023,7 @@ function renderCountriesGame(){
     app.innerHTML=`<div class="country-map-game country-map-region region-${s.regionId}"><div class="country-map-primary"><aside class="country-map-side"><div><div class="badge">${s.regionMeta.label}</div><h2>Finn alle landene</h2></div><p>Skriv et land og trykk Enter. Riktige land fargelegges på kartet.</p><input id="country-guess" class="country-map-input" autocomplete="off" placeholder="Skriv et land …"><div class="country-map-side-stats"><div id="country-map-count" class="country-map-stat">0 / ${s.regionNames.length}</div><div id="country-map-time" class="country-map-stat">0:00</div></div>${actionButtons}<div id="country-feedback" class="country-map-feedback"></div><button class="country-map-back" onclick="initWorldTrainer('countries')">Velg annet område</button></aside><div id="country-map-wrap" class="country-map-wrap"><canvas id="country-map-canvas"></canvas><div id="country-map-complete" class="country-map-complete" hidden></div></div></div><div class="country-found-section"><h4>Land du har funnet</h4><div id="country-found" class="country-found-list-map"></div></div></div>`;
   }
   const wrap=app.querySelector('#country-map-wrap');
-  wrap?.insertAdjacentHTML('beforeend',`<div class="country-map-view-controls"><div id="country-map-projection-toggle" class="country-map-projection-toggle" role="group" aria-label="Kartvisning"><button type="button" data-country-projection="flat" onclick="setCountryMapProjection('flat')">2D-kart</button><button type="button" data-country-projection="globe" onclick="setCountryMapProjection('globe')">3D-globus</button></div><div class="country-map-camera-controls" role="group" aria-label="Zoom og utsnitt"><button type="button" onclick="zoomCountryMap(1.2)" aria-label="Zoom inn">+</button><button type="button" onclick="zoomCountryMap(1/1.2)" aria-label="Zoom ut">−</button><button type="button" onclick="resetCountryMapCamera()" aria-label="Tilbakestill utsnitt" title="Tilbakestill utsnitt">↺</button></div></div>`);
+  wrap?.insertAdjacentHTML('beforeend',`<div class="country-map-view-controls"><div id="country-map-projection-toggle" class="country-map-projection-toggle" role="group" aria-label="Kartvisning"><button type="button" data-country-projection="flat" onclick="setCountryMapProjection('flat')">2D-kart</button><button type="button" data-country-projection="globe" onclick="setCountryMapProjection('globe')">3D-globus</button></div><div class="country-map-camera-controls" role="group" aria-label="Utsnitt"><button type="button" onclick="resetCountryMapCamera()" aria-label="Tilbakestill utsnitt" title="Tilbakestill utsnitt">↺</button></div></div>`);
   const input=app.querySelector('#country-guess'); input?.focus(); input?.addEventListener('keydown',e=>{if(e.key==='Enter')checkCountryGuess()});
   const countryCanvas=app.querySelector('#country-map-canvas');
   if(countryCanvas){
@@ -1110,7 +1125,7 @@ function countryMapProject(lon,lat,w,h,meta){
   let rel=lon-meta.center; while(rel>180)rel-=360; while(rel<-180)rel+=360;
   const xMin=-meta.span,xMax=meta.span,latMin=meta.latMin,latMax=meta.latMax,pad=Math.max(8,Math.min(w,h)*.025);
   const sx=(w-pad*2)/(xMax-xMin), sy=(h-pad*2)/(latMax-latMin), scale=Math.min(sx,sy)*(meta.zoom||1);
-  const mapW=(xMax-xMin)*scale,mapH=(latMax-latMin)*scale, pan=clampCountryMapPan(meta.pan||[0,0],w,h,meta.zoom||1), ox=(w-mapW)/2+pan[0],oy=(h-mapH)/2+pan[1];
+  const mapW=(xMax-xMin)*scale,mapH=(latMax-latMin)*scale, pan=clampCountryMapPan(meta.pan||[0,0],w,h,meta.zoom||1), ox=(w-mapW)/2+pan[0]+(meta.focusPan?.[0]||0),oy=(h-mapH)/2+pan[1]+(meta.focusPan?.[1]||0);
   return [ox+(rel-xMin)*scale, oy+(latMax-lat)*scale];
 }
 function countryMapTraceRing(ctx,ring,w,h,meta){
@@ -1179,7 +1194,7 @@ function countryMapVectorSet(regionId){
 }
 function countryMapTransform(ctx,w,h,meta,dpr){
   const xMin=-meta.span,xMax=meta.span,latMin=meta.latMin,latMax=meta.latMax,pad=Math.max(8,Math.min(w,h)*.025);
-  const sx=(w-pad*2)/(xMax-xMin),sy=(h-pad*2)/(latMax-latMin),scale=Math.min(sx,sy)*(meta.zoom||1),mapW=(xMax-xMin)*scale,mapH=(latMax-latMin)*scale,pan=clampCountryMapPan(meta.pan||[0,0],w,h,meta.zoom||1),ox=(w-mapW)/2+pan[0],oy=(h-mapH)/2+pan[1],tx=ox-scale*xMin,ty=oy+scale*latMax;
+  const sx=(w-pad*2)/(xMax-xMin),sy=(h-pad*2)/(latMax-latMin),scale=Math.min(sx,sy)*(meta.zoom||1),mapW=(xMax-xMin)*scale,mapH=(latMax-latMin)*scale,pan=clampCountryMapPan(meta.pan||[0,0],w,h,meta.zoom||1),ox=(w-mapW)/2+pan[0]+(meta.focusPan?.[0]||0),oy=(h-mapH)/2+pan[1]+(meta.focusPan?.[1]||0),tx=ox-scale*xMin,ty=oy+scale*latMax;
   ctx.setTransform(dpr*scale,0,0,-dpr*scale,dpr*tx,dpr*ty);return scale;
 }
 const COUNTRY_MAP_GALAPAGOS=[[-91.55,-.37],[-91.08,-.66],[-90.35,-.62],[-89.43,-.86]];
@@ -1204,7 +1219,7 @@ function drawCountryMap(){
     return;
   }
   s.mapPan=clampCountryMapPan(s.mapPan||[0,0],cssW,cssH,s.mapZoom||1);
-  const meta={...s.regionMeta,zoom:(s.regionMeta.zoom||1)*(s.mapZoom||1),pan:(s.mapPan||[0,0])},vectors=countryMapVectorSet(s.regionId),found=new Set(s.found.map(x=>x.country)),reverse={},regionFeatureNames=new Set(s.regionNames.map(c=>COUNTRY_MAP_FEATURE[c]).filter(Boolean)),foundFeatureNames=countryMapFoundFeatureSet(s.found.map(x=>x.country)),drawAllFeatures=s.regionId==='world';
+  const meta=countryMapCameraMeta(s,cssW,cssH),vectors=countryMapVectorSet(s.regionId),found=new Set(s.found.map(x=>x.country)),reverse={},regionFeatureNames=new Set(s.regionNames.map(c=>COUNTRY_MAP_FEATURE[c]).filter(Boolean)),foundFeatureNames=countryMapFoundFeatureSet(s.found.map(x=>x.country)),drawAllFeatures=s.regionId==='world';
   for(const country of s.regionNames)(COUNTRY_MAP_FILL_EXTRA_FEATURES[country]||[]).forEach(name=>regionFeatureNames.add(name));
   Object.keys(COUNTRY_MAP_FEATURE).forEach(c=>reverse[COUNTRY_MAP_FEATURE[c]]=c);
   if(typeof Path2D!=='undefined'&&vectors){
@@ -1257,7 +1272,7 @@ function checkCountryGuess(){
   const s=worldTrainerState;if(!s||s.mode!=='countries'||s.ended)return;const app=activeWorldApp(),input=app?.querySelector('#country-guess'),fb=app?.querySelector('#country-feedback');if(!input)return;
   const value=input.value.trim();if(!value)return;const hitName=s.regionNames.find(name=>answerMatches(value,name));
   if(hitName && !s.found.some(x=>x.country===hitName)){
-    s.found.push({country:hitName});s.score=s.found.length;if(fb){fb.textContent=`Riktig: ${hitName}`;fb.className='country-map-feedback good'};drawCountryMap();renderCountryFound();
+    s.found.push({country:hitName});s.score=s.found.length;focusCountryMap(hitName);if(fb){fb.textContent=`Riktig: ${hitName}`;fb.className='country-map-feedback good'};drawCountryMap();renderCountryFound();
     if(s.found.length===s.regionNames.length) finishCountryMapQuiz();
   }else if(hitName){if(fb){fb.textContent=`${hitName} er allerede tatt.`;fb.className='country-map-feedback'}}
   else {if(fb){fb.textContent=`${value} er ikke et land i dette området.`;fb.className='country-map-feedback bad'}}

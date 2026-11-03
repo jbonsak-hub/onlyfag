@@ -707,3 +707,12 @@ body[data-quiz] #verden-quiz .places-visual-setup :is(.streak-region-btn,.streak
 .country-map-view-controls button:hover{filter:brightness(.96)}
 .country-map-view-controls button:focus-visible{outline:3px solid #b17a22;outline-offset:-3px}
 @media(max-width:700px){.country-map-view-controls{top:7px;right:7px;gap:5px;max-width:calc(100% - 14px)}.country-map-view-controls button{min-height:40px;padding:7px 9px;font-size:11px}.country-map-camera-controls button{min-width:36px}}
+
+/* Country quiz starts with the same broad, minimal control panel as the reference. */
+body[data-quiz=countries]{--q-panel:425px}
+body[data-quiz=countries] .country-map-side>p,
+body[data-quiz=countries] .country-map-side>div:has(>h2){display:none!important}
+body[data-quiz=countries] .country-map-side-stats{display:grid;grid-template-columns:1fr;gap:7px}
+body[data-quiz=countries] .country-map-side-stats .country-map-stat{text-align:left}
+
+body[data-quiz=countries] .country-map-actions{justify-content:flex-end}

@@ -59,5 +59,12 @@ return i.size=function(n){return arguments.length?(l=n,i):l},i.padding=function(
     }
     ctx.restore();
   }
-  window.CountryQuizGlobe={draw,featureNames};
+  function center(name){
+    let geometry=world.features.find(feature=>feature.properties.name===name)?.geometry;
+    if(!geometry)return null;
+    // Keep the focus on the main landmass rather than an overseas territory.
+    if(geometry.type==='MultiPolygon')geometry=geometry.coordinates.map(coordinates=>({type:'Polygon',coordinates})).sort((a,b)=>d3.geo.area(b)-d3.geo.area(a))[0];
+    return d3.geo.centroid(geometry);
+  }
+  window.CountryQuizGlobe={draw,featureNames,center};
 })();

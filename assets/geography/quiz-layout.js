@@ -121,7 +121,7 @@
     if (frame.contentDocument?.readyState === 'complete') frameLayout(frame);
     return;
   }
-  const panelResize = window.OnlyfagPanelResize({defaultWidth:setupLabels[mode]?220:280,active:() => !document.body.classList.contains('quiz-mapwiz-playing')});
+  const panelResize = window.OnlyfagPanelResize({defaultWidth:mode==='countries'?425:setupLabels[mode]?220:280,active:() => !document.body.classList.contains('quiz-mapwiz-playing')});
   function update() {
     if(topTen)topTen.hidden=!document.querySelector('.world-game,.country-map-game');
     document.querySelectorAll('.jeopardy-value.done,.jeopardy-value.used').forEach(cell => {
@@ -165,7 +165,7 @@
         const wrap = document.querySelector('.country-map-wrap');
         if (wrap && !wrap.querySelector('.country-zoom-tip')) {
           const tip = document.createElement('span'); tip.className = 'country-zoom-tip';
-          tip.textContent = 'Dra for å flytte · zoom med +/−'; wrap.append(tip);
+          tip.textContent = 'Dra for å flytte'; wrap.append(tip);
           if(typeof updateCountryMapProjectionControls==='function')updateCountryMapProjectionControls();
         }
       }

@@ -56,11 +56,16 @@ if(artifactDir)fs.mkdirSync(artifactDir,{recursive:true});
       }
       for(const region of ['world','europe','oceania']){
         await page.goto(base+'/geografi/landquiz.html');
+        await page.evaluate(()=>localStorage.setItem('onlyfag-geography-panel-width','280'));
         await page.locator('[data-region="'+region+'"]').click();
         const canvas=page.locator('#country-map-canvas'),flat=page.locator('[data-country-projection="flat"]'),globe=page.locator('[data-country-projection="globe"]');
         await canvas.waitFor();await globe.waitFor();await paint();
-        assert.equal(await page.evaluate(()=>worldTrainerState.mapProjection),'flat','the established 2D map is the default');
-        assert.equal(await flat.getAttribute('aria-pressed'),'true');
+        assert.equal(await page.evaluate(()=>worldTrainerState.mapProjection),'globe','3D is the default');
+        assert.equal(await globe.getAttribute('aria-pressed'),'true');
+        assert.equal(await page.getByRole('button',{name:'Zoom inn',exact:true}).count(),0);
+        assert.equal(await page.getByRole('button',{name:'Zoom ut',exact:true}).count(),0);
+        if(viewport.width>700)assert.equal(await page.locator('.country-map-bottom-bar,.country-map-side').evaluate(el=>Math.round(el.getBoundingClientRect().width)),425,'reference panel width is the default');
+        await flat.click();await paint();
         const before=await round();
         const flatCamera=await page.evaluate(()=>({zoom:worldTrainerState.mapZoom,pan:worldTrainerState.mapPan.slice()}));
         await page.locator('#country-guess').fill('Delvis skrevet');
@@ -99,6 +104,12 @@ if(artifactDir)fs.mkdirSync(artifactDir,{recursive:true});
         const answer=region==='oceania'?'Australia':'Norge';
         await page.locator('#country-guess').fill(answer);await page.locator('#country-guess').press('Enter');
         await page.waitForFunction(answer=>worldTrainerState.found.some(country=>country.country===answer),answer);await paint();
+        const centered=await page.evaluate(()=>{
+          const s=worldTrainerState,canvas=document.getElementById('country-map-canvas'),r=canvas.getBoundingClientRect();
+          const p=s.globeProjection(s.mapFocus);return {country:s.mapFocusCountry,dx:p[0]-r.width/2,dy:p[1]-r.height/2};
+        });
+        assert.equal(centered.country,answer);assert.ok(Math.abs(centered.dx)<1&&Math.abs(centered.dy)<1,'latest found country is centered on the globe');
+
         if(region!=='oceania'){
           await page.evaluate(()=>{worldTrainerState.globeRotation=[-10,-40,0];drawCountryMap();});await paint();
           const colored=await colors();
@@ -116,6 +127,9 @@ if(artifactDir)fs.mkdirSync(artifactDir,{recursive:true});
         assert.deepEqual(await round(),answered);assert.equal(await page.locator('#country-guess').inputValue(),'Neste land');
         assert.deepEqual(await page.evaluate(()=>({zoom:worldTrainerState.mapZoom,pan:worldTrainerState.mapPan.slice()})),flatCamera,'globe gestures leave the 2D camera unchanged');
         assert.ok((await colors()).found>0,'the found country is green after returning to the 2D map');
+        const flatCenter=await page.evaluate(()=>{const s=worldTrainerState,r=document.getElementById('country-map-canvas').getBoundingClientRect(),meta=countryMapCameraMeta(s,Math.round(r.width),Math.round(r.height)),p=countryMapProject(...s.mapFocus,Math.round(r.width),Math.round(r.height),meta);return [p[0]-r.width/2,p[1]-r.height/2];});
+        assert.ok(flatCenter.every(value=>Math.abs(value)<1),'latest found country is centered on the 2D map too');
+
         await globe.click();await paint();
         assert.deepEqual(await round(),answered);
         assert.deepEqual(await page.evaluate(()=>worldTrainerState.globeRotation),answerRotation,'globe rotation survives toggling');
@@ -129,12 +143,43 @@ if(artifactDir)fs.mkdirSync(artifactDir,{recursive:true});
         const dark=await colors();assert.notDeepEqual(dark.corner,light.corner,'changing theme redraws the globe');
         assert.deepEqual(await round(),answered);await checkControls();
         if(artifactDir)await page.screenshot({path:path.join(artifactDir,region+'-globe-'+viewport.width+'.png')});
+        if(region==='world'){
+          for(const country of ['USA','Fiji','Kiribati']){
+            await page.locator('#country-guess').fill(country);await page.locator('#country-guess').press('Enter');await paint();
+            const focus=await page.evaluate(()=>{
+              const s=worldTrainerState,r=document.getElementById('country-map-canvas').getBoundingClientRect(),p=s.globeProjection(s.mapFocus);
+              return {country:s.mapFocusCountry,offset:[p[0]-r.width/2,p[1]-r.height/2]};
+            });
+            assert.equal(focus.country,country);assert.ok(focus.offset.every(value=>Math.abs(value)<1),country+': latest country centered including main landmass and small Pacific states');
+            await flat.click();await paint();
+            const offset=await page.evaluate(()=>{const s=worldTrainerState,r=document.getElementById('country-map-canvas').getBoundingClientRect(),w=Math.round(r.width),h=Math.round(r.height),p=countryMapProject(...s.mapFocus,w,h,countryMapCameraMeta(s,w,h));return [p[0]-w/2,p[1]-h/2];});
+            assert.ok(offset.every(value=>Math.abs(value)<1),country+': correct 2D center across the date line');
+            await globe.click();await paint();
+          }
+          const camera=await page.evaluate(()=>worldTrainerState.globeRotation.slice());
+          for(const duplicateOrWrong of ['Kiribati','Ikke et land']){
+            await page.locator('#country-guess').fill(duplicateOrWrong);await page.locator('#country-guess').press('Enter');
+            assert.deepEqual(await page.evaluate(()=>worldTrainerState.globeRotation),camera,'only newly marked countries recenter the view');
+          }
+        }
         await page.locator('.country-map-action.finish').click();await page.locator('#country-map-complete').waitFor();
         assert.equal(await page.evaluate(()=>worldTrainerState.ended),true);
         await page.locator('.country-map-result-btn').click();
         await page.waitForFunction(runId=>worldTrainerState.runId!==runId,answered.runId);await canvas.waitFor();
         assert.equal(await page.evaluate(()=>worldTrainerState.found.length),0,'replay resets answers');
         assert.notEqual((await round()).runId,answered.runId,'replay starts a new round');
+        if(region==='world'&&viewport.width>700){
+          const handle=page.getByRole('separator',{name:'Bredde på spillpanelet'});
+          await handle.focus();await page.keyboard.press('ArrowRight');await page.keyboard.press('ArrowRight');
+          await page.waitForFunction(()=>document.body.style.getPropertyValue('--q-panel')==='457px');
+          assert.equal(await page.evaluate(()=>localStorage.getItem('onlyfag-countries-panel-width')),'457');
+          assert.equal(await page.evaluate(()=>localStorage.getItem('onlyfag-geography-panel-width')),'280','resizing countries leaves other quiz preferences untouched');
+          await page.reload();await page.locator('[data-region="world"]').click();await canvas.waitFor();
+          assert.equal(await handle.getAttribute('aria-valuenow'),'457','explicit country panel preference survives reload');
+          await handle.focus();await page.keyboard.press('Home');
+          await page.waitForFunction(()=>document.body.style.getPropertyValue('--q-panel')==='425px');
+        }
+
       }
       await context.close();
     }
