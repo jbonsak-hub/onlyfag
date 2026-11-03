@@ -1,6 +1,6 @@
 import {selectedFigure} from './selected-figures.js?v=20261102-4';
 import {practicalFigure} from './practical-figures.js?v=20261101-3';
-import {recognitionFigure} from './recognition-figures.js?v=20261101-3';
+import {recognitionFigure} from './recognition-figures.js?v=20261103-1';
 import {appliedFigure} from './applied-figures.js?v=20261102-3';
 import {foodFigure} from './food-figures.js?v=20261101-3';
 import {supportFigure} from './support-figures.js?v=20261101-3';
@@ -112,6 +112,7 @@ const molecularFigures={
   return structural('Tre navngitte kjedemodeller: A stivelse, B glykogen, C cellulose.',cardLabel(105,'A')+seg([35,78,121,164],105)+line(78,91,78,64)+hex(78,50)+txt(105,171,'Stivelse',18)+cardLabel(328,'B')+seg([245,288,331,374],105)+[245,331,374].map(x=>line(x,91,x,64)+hex(x,50)).join('')+txt(320,171,'Glykogen',18)+cardLabel(554,'C')+seg([475,518,561,604],75)+seg([475,518,561,604],125)+txt(540,171,'Cellulose',18),'Én ring viser én glukoseenhet.',200);
  },
  'amino':()=>structural('NH₂ er forbundet til CH, som har R nedenfor og COOH til høyre. Bokstav A står ved NH₂, B ved COOH og C ved R.',txt(115,115,'H₂N',26)+line(145,108,247,108)+txt(275,115,'CH',26)+line(300,108,399,108)+txt(420,115,'C',26)+line(434,108,510,108)+txt(543,115,'OH',26)+line(416,91,416,56)+line(424,91,424,56)+txt(420,44,'O',25)+line(275,125,275,173)+txt(275,202,'R',26)+txt(115,69,'A',20)+txt(517,69,'B',20)+txt(312,188,'C',20),'',230),
+ 'amino-unlabelled':()=>structural('NH₂ er forbundet til CH, med R nedenfor og COOH til høyre. Ingen bokstavmerker er vist.',txt(115,115,'H₂N',26)+line(145,108,247,108)+txt(275,115,'CH',26)+line(300,108,399,108)+txt(420,115,'C',26)+line(434,108,510,108)+txt(543,115,'OH',26)+line(416,91,416,56)+line(424,91,424,56)+txt(420,44,'O',25)+line(275,125,275,173)+txt(275,202,'R',26),'',230),
  'dipeptide':()=>structural('Strukturformelen er H₂N–CH₂–C(=O)–NH–CH₂–C(=O)–OH. C–N-forbindelsen mellom C=O og NH er markert X.',txt(56,130,'H₂N',22)+line(82,123,127,123)+txt(151,130,'CH₂',22)+line(177,123,222,123)+txt(237,130,'C',22)+line(232,108,232,71)+line(242,108,242,71)+txt(237,57,'O',22)+line(252,123,310,123,'style="stroke:#b76334;stroke-width:5"')+txt(332,130,'NH',22)+line(357,123,402,123)+txt(427,130,'CH₂',22)+line(451,123,496,123)+txt(513,130,'C',22)+line(508,108,508,71)+line(518,108,518,71)+txt(513,57,'O',22)+line(528,123,575,123)+txt(599,130,'OH',22)+txt(281,100,'X',20),'',200),
  'glycerol-acid':()=>structural('Struktur A er en kjede med tre karbonatomer og tre OH-grupper. Struktur B viser en karbonkjede og en COOH-gruppe. Alle C- og H-atomer er tegnet.',cardLabel(85,'A')+glycerol()+cardLabel(420,'B')+fattyAcid(212,150,7,'sat',48),'',290),
  'triglyceride':()=>structural('En kort vertikal karbonkjede til venstre er forbundet gjennom oksygen til tre atskilte kjeder mot høyre. C-, H- og O-atomer er vist.',triglyceride(),'',310),
@@ -128,7 +129,7 @@ const molecularFigures={
   return structural('To fullt uttegnede fettsyrer merket A og B. C-, H- og O-atomer og bindinger er synlige.',cardLabel(330,'A',25)+molecule(20,false)+cardLabel(330,'B',225)+molecule(220,true),'',440);
  },
  'omega':()=>structural('Én fullt uttegnet fettsyre. C-, H- og O-atomer og bindingene er synlige.',fattyAcid(69,70,10,'cis',48),'',180),
- 'hydrolysis-count':()=>structural('Fem sirkler i en sammenhengende kjede over fem atskilte sirkler.',txt(330,29,'Før',18)+[150,240,330,420,510].map((x,i)=>`<circle cx="${x}" cy="75" r="20" fill="#e1ecda" stroke="${green}"/>`+txt(x,82,'ABCDE'[i],18)+(i<4?line(x+20,75,x+70,75):'')).join('')+txt(330,129,'↓',30)+[110,220,330,440,550].map((x,i)=>`<circle cx="${x}" cy="177" r="20" fill="#e1ecda" stroke="${green}"/>`+txt(x,184,'ABCDE'[i],18)).join(''),'Hver sirkel viser én aminosyre.',220)
+ 'hydrolysis-count':()=>structural('En sammenhengende kjedemodell. Bare kjeden før oppdeling er vist.',[150,240,330,420,510].map((x,i)=>`<circle cx="${x}" cy="75" r="20" fill="#e1ecda" stroke="${green}"/>`+(i<4?line(x+20,75,x+70,75):'')).join(''),'Modell av kjeden før oppdeling.',150)
 };
 // Historical key now also resolves to the ring-shaped structures; no open-chain alternative exists.
 molecularFigures.fischer=molecularFigures['sugar-rings'];

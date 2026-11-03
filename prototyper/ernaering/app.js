@@ -1,10 +1,10 @@
-import {questions, sources} from './questions.js?v=20261102-5';
+import {questions, sources} from './questions.js?v=20261103-1';
 import {organs, digestiveSVG} from './diagram.js?v=20261101-4';
-import {figure} from './figures.js?v=20261102-5';
+import {figure} from './figures.js?v=20261103-1';
 import {placementUI,placeMatch,placeSort} from './placement-ui.js?v=20261101-4';
 import {foodArtworkSVG} from './food-figures.js?v=20261101-4';
 import {STORE_KEY, topics, types, shuffle, mixedOrder, evaluate, needsReview, resultRecord, pickNext, rememberQuestion, recentSummary, recordRecentResult} from './engine.js?v=20261101-4';
-import {createFlashcardView, renderConcepts} from './flashcard-view.js?v=20261102-5';
+import {createFlashcardView, renderConcepts} from './flashcard-view.js?v=20261103-1';
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

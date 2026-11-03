@@ -51,13 +51,12 @@ export const selectedQuestions = [
   },
   {
     id:'selected-dietary-guidelines',topic:'energy',type:'open',level:2,
-    title:'Kostråd i praksis',
-    prompt:'Foreslå fire konkrete endringer som kan gjøre en ukemeny mer i tråd med norske kostråd. Menyen har lite grønnsaker, lyst brød, mye rødt og bearbeidet kjøtt og ofte brus som tørstedrikk.',
-    model:'Ta med mer grønnsaker, frukt eller bær til måltidene. Velg oftere fullkornsbrød framfor lyst brød. Bytt ut noen kjøttmåltider med fisk eller belgvekster, og begrens bearbeidet kjøtt. Bruk vann som tørstedrikk. Et variert kosthold over tid er viktigere enn å vurdere én enkelt matvare isolert.',
-    checklist:['Jeg foreslår mer grønnsaker, frukt eller bær.','Jeg foreslår mer fullkorn.','Jeg foreslår fisk eller belgvekster som erstatning for noe kjøtt.','Jeg foreslår vann som tørstedrikk.'],
-    hint:'Se på plantevarer, valg av korn, variasjon i middager og valg av drikke.',
-    explanation:'De norske kostrådene legger vekt på variasjon, mest mat fra planteriket, grønnsaker og frukt, fullkorn, fisk og belgvekster, mindre rødt og bearbeidet kjøtt og vann som tørstedrikk.',
-    referenceLink:{label:'Norske kostråd',url:'https://www.helsenorge.no/kosthold-og-ernaring/kostrad/'},
+    title:'Godt og dårlig kosthold',
+    prompt:'Hva kjennetegner et godt og et dårlig kosthold? Forklar og gi eksempler.',
+    model:'Et godt kosthold er variert og gir nok energi og nødvendige næringsstoffer over tid. Det har blant annet grønnsaker, frukt og bær, fullkorn, fisk eller belgvekster, og vann som tørstedrikk. Et dårlig sammensatt kosthold er ensidig eller gir for lite eller for mye av det kroppen trenger, for eksempel lite kostfiber og mye salt eller tilsatt sukker. Det er kostholdet over tid som teller; én matvare eller ett måltid avgjør ikke alene.',
+    checklist:['Jeg beskriver både et godt og et dårlig sammensatt kosthold.','Jeg forklarer betydningen av variasjon, energi og nødvendige næringsstoffer.','Jeg gir konkrete eksempler og begrunner dem.','Jeg vurderer kostholdet over tid, ikke bare én matvare.'],
+    hint:'Tenk på hva kroppen trenger gjennom en hel uke, og begrunn eksemplene dine.',
+    explanation:'Kosthold vurderes ut fra helheten over tid: variasjon, næringsstoffer og energi i forhold til behovet. Kostrådene gir hjelp til å velge matvarer som dekker behovene.',
     family:'dietary-guidelines'
   }
 ];

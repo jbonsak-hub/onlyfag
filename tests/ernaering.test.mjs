@@ -168,8 +168,7 @@ test('expanded fatty-acid drawings obey ordinary C/H/O valences',()=>{
 // Read the actual atom groups and bond endpoints, rather than assuming that a
 // figure's key or description proves its chemistry. OH and CH₂OH are familiar
 // groups with one external bond; their internal atoms still count in formulas.
-function recognitionGraph(key){
- const drawing=figure(key);
+function recognitionGraph(key,drawing=figure(key)){
  const atoms=[...drawing.matchAll(/<rect\b[^>]*\/><text\b([^>]*)>([^<]+)<\/text>/g)].map(match=>{
   const attrs=Object.fromEntries([...match[1].matchAll(/([\w-]+)="([^"]*)"/g)].map(m=>[m[1],m[2]]));
   return {x:Number(attrs.x),y:Number(attrs.y)-Number(attrs['font-size'])*.3,symbol:match[2]};
@@ -271,7 +270,11 @@ test('new molecular drawings have correct formulas, valences and sugar rings',()
   assert.ok(!sucrose.neighbors(index).some(next=>sucrose.atoms[next].symbol==='OH'),'the linking positions have no extra free OH');
  }
  // The two mixed boards reuse equally valid molecular structures.
- for(const key of ['recognition-mixed-sugar-amino','recognition-mixed-sugar-fat'])assert.deepEqual(recognitionGraph(key).cycles.map(cycle=>cycle.length),[6],key);
+ assert.deepEqual(recognitionGraph('recognition-mixed-sugar-fat').cycles.map(cycle=>cycle.length),[6]);
+ const panels=figure('recognition-mixed-sugar-amino').match(/<svg\b[\s\S]*?<\/svg>/g);
+ assert.equal(panels.length,4);
+ const expected=[{C:6,H:12,O:6},{C:2,H:5,N:1,O:2},{C:3,H:8,O:3},{C:4,H:8,O:2}];
+ panels.forEach((drawing,i)=>{const graph=recognitionGraph('four structures '+i,drawing);assert.deepEqual(graph.formula,expected[i]);assert.deepEqual(graph.cycles.map(c=>c.length),i===0?[6]:[]);});
 });
 
 test('applied figures span five subject themes and keep conclusions for feedback',()=>{

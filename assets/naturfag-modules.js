@@ -39,7 +39,7 @@
  function ensureFrame(){
   if(frameStarted){sendDesired();return;}
   frameStarted=true;
-  frame.src='prototyper/ernaering.html?embedded=1&topic='+encodeURIComponent(desired.topic)+'&view='+encodeURIComponent(desired.view)+'&v=20261102-5';
+  frame.src='prototyper/ernaering.html?embedded=1&topic='+encodeURIComponent(desired.topic)+'&view='+encodeURIComponent(desired.view)+'&v=20261103-1';
  }
  frame.addEventListener('load',()=>{if(!frameStarted)return;frameReady=true;sendTheme();sendHostLayout();sendDesired();});
  function closeMenu({focus=false}={}){

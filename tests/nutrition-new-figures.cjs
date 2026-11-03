@@ -73,7 +73,7 @@ if(screenshots)fs.mkdirSync(screenshots,{recursive:true});
    for(const q of questions){
     await frame.evaluate(id=>{location.hash=id;},q.id);
     await frame.waitForFunction(id=>document.querySelector('[data-question]')?.dataset.question===id,q.id);
-    assert.equal(await frame.locator('.mini-figure svg:visible').count(),1,q.id+': one readable figure variant is shown');
+    assert.equal(await frame.locator('.mini-figure svg:visible').count(),q.id==='recognition-mixed-sugar-amino'?4:1,q.id+': all structure panels are shown');
     assert.equal(await frame.locator('.feedback,.open-model,.exercise .correct').count(),0,q.id+': no solution or correctness is shown before answering');
     const before=await geometry(frame);checkBounds(q.id,viewport,'before',before);
     maxScrollHeight=Math.max(maxScrollHeight,before.scrollHeight);

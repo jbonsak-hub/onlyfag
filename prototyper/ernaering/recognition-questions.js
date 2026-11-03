@@ -63,14 +63,16 @@ export const recognitionQuestions = [
   {
     id: 'recognition-mixed-sugar-amino', topic: 'protein', type: 'match', level: 2,
     family: 'recognition-mixed', figure: 'recognition-mixed-sugar-amino',
-    title: 'To strukturer fra ulike næringsstoffer',
+    title: 'Fire strukturer fra ulike næringsstoffer',
     prompt: 'Koble hver bokstav til riktig navn.',
     pairs: [
       {left: 'A', right: 'Glukose'},
-      {left: 'B', right: 'Aminosyre'}
+      {left: 'B', right: 'Aminosyre'},
+      {left: 'C', right: 'Glyserol'},
+      {left: 'D', right: 'Fettsyre'}
     ],
-    hint: 'Sammenlign ringstrukturen med modellen som inneholder N. Begge har C, H og O.',
-    explanation: 'A er glukose, et monosakkarid med én ring i denne modellen. B er en aminosyre med både NH₂ og COOH. Aminosyrer kan bindes sammen til proteiner. At begge molekylene inneholder C, H og O, er ikke nok til å plassere dem i samme gruppe.'
+    hint: 'Se etter ringer, hvilke grunnstoffer som er med, og hvordan O og H er plassert.',
+    explanation: 'A er glukose med en ringstruktur. B er en aminosyre med NH₂ og COOH. C er glyserol med tre karbonatomer og tre OH-grupper. D er en fettsyre med en karbonkjede og en COOH-gruppe. Glyserol og fettsyrer er byggesteiner i vanlig fett, mens aminosyrer er byggesteiner i proteiner.'
   },
   {
     id: 'recognition-mixed-sugar-fat', topic: 'fat', type: 'match', level: 2,

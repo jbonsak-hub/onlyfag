@@ -95,7 +95,10 @@ const figures={
   'recognition-glucose':()=>figure('Én ring med fem C-atomer og ett O-atom. OH- og H-grupper er vist rundt ringen, og CH₂OH er vist utenfor den.',glucose(110,130),230,250),
   'recognition-sucrose':()=>figure('En seksleddet ring og en femleddet ring er forbundet via ett O-atom. Atomene C og O og gruppene H, OH og CH₂OH er vist.',sucrose(),430,270),
   'recognition-starch':()=>figure('Fem sammenbundne ringmodeller danner en kjede. Prikker viser at kjeden fortsetter.',starch(),475,165,'Én ring viser én sukkerenhet. Kjeden fortsetter.'),
-  'recognition-mixed-sugar-amino':()=>figure('A er en ring med fem C og ett O, med H, OH og CH₂OH utenfor ringen. B har N med to H, et C med to H og C med O og OH. Ingen stoffnavn er oppgitt.',text(100,25,'A',20,700)+glucose(100,132)+text(330,25,'B',20,700)+aminoAcid(302,143,20),455,245),
+  'recognition-mixed-sugar-amino':()=>{
+    const panel=(label,body,w,h)=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -10 ${w} ${h+20}" role="img" aria-label="Struktur ${label}"><g font-family="system-ui,sans-serif">${text(w/2,25,label,24,700)}${body}</g></svg>`;
+    return `<figure class="mini-figure structure-figure recognition-figure structure-grid" aria-label="Fire strukturer merket A, B, C og D. Ingen stoffnavn er oppgitt.">${panel('A',glucose(110,135).replaceAll('font-size="17"','font-size="19"').replaceAll('font-size="18"','font-size="19"'),235,255)}${panel('B',aminoAcid(132,140,24),310,255)}${panel('C',`<g transform="translate(0,28)">${glycerol()}</g>`,215,265)}${panel('D',fattyAcid(45,135,4,42,24),275,255)}</figure>`;
+  },
   'recognition-mixed-sugar-fat':()=>figure('A er en ring med fem C og ett O, med H, OH og CH₂OH utenfor ringen. B er en kjede med fem C-atomer og en endestilt gruppe med O og OH. Alle H-atomer i kjeden er tegnet.',text(100,25,'A',20,700)+glucose(100,132)+text(325,25,'B',20,700)+fattyAcid(222,132,5,31,20),440,245)
 };
 
