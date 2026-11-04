@@ -68,7 +68,7 @@ async function inspectSetup(page,quiz,label,{desktop=true,expectedWidth=220}={})
     assert(await options.locator('#capital-show-flag').isChecked(),label+' flag is selected by default');
     assert.equal(await setup.locator('.world-country-display').inputValue(),'both',label+' defaults to both country clues');
   }
-  assert.equal(await setup.getByRole('button',{name:/Topp\s*10|Top\s*10/i}).count(),0,label+' setup omits ranking controls');
+  assert.equal(await setup.getByRole('button',{name:/Topp\s*10|Top\s*10/i}).count(),1,label+' setup offers one compact ranking control');
   assert.equal(await page.locator('.quiz-in-game-top-ten:visible').count(),0,label+' in-game ranking stays out of the setup');
   await noHorizontalOverflow(page,label);await visibleChrome(page,label);
   if(desktop){

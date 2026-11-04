@@ -1,0 +1,7 @@
+{
+  "source": "Natural Earth 5.1.2 admin-0 map units (public domain)",
+  "url": "https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_10m_admin_0_map_units.geojson",
+  "originalSHA256": "57da82be755f4afccd8f3b14251bb2752f5df1395f47d2d86f817470c4a48862",
+  "extractSHA256": "dffab232b4ed215f7caff4f7ec892c1449006a9ae6cafb926ef5db608361d781",
+  "method": "ISO_A2_EH country groups; mainland Norway and mainland France map units; preserve existing Morocco/Cyprus/Somalia joined territorial outlines."
+}

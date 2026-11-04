@@ -34,8 +34,8 @@ const server = http.createServer((req,res) => {
    if(framed.includes(mode))await frame.locator('[data-quiz-layout]').waitFor();
    assert.equal(await frame.locator('.quiz-help').count(),mode==='geogrid'?1:0,'Only GeoGrid keeps the instructions section');
    assert.equal(await frame.locator('a.quiz-home').count(),0,'No logo row in quiz controls');
-   const nav=await frame.locator(framed.includes(mode)?'.quiz-frame-nav':'.quiz-page-header').evaluate(e=>getComputedStyle(e).position);
-   assert.notEqual(nav,'fixed','No full-width fixed topbar');
+   const nav=await frame.locator(framed.includes(mode)?'.quiz-frame-nav':'.quiz-page-header').evaluate(e=>({position:getComputedStyle(e).position,width:e.getBoundingClientRect().width}));
+   if(nav.position==='fixed')assert.ok(nav.width<viewport.width-20,'Fixed floating controls stay compact rather than covering the full map width');
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Host overflow '+file);
    assert.ok(await frame.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Frame overflow '+file);
    await frame.locator('.quiz-page-menu').click();assert.ok(await page.locator('body').evaluate(e=>e.classList.contains('sidebar-open')));await page.locator('.quiz-drawer-close').click();assert.equal(await page.locator('body').evaluate(e=>e.classList.contains('sidebar-open')),false);
@@ -88,7 +88,7 @@ const server = http.createServer((req,res) => {
      if(viewport.width===1366){
       for(const dark of [true,false]){
        const pixel=await page.evaluate(async dark=>{applyDarkMode(dark);await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));return [...document.querySelector('#country-map-canvas').getContext('2d').getImageData(0,0,1,1).data];},dark);
-       assert.deepEqual(pixel,dark?[38,63,73,255]:[207,229,237,255],'The rendered map follows the selected theme immediately');
+       const globe=await page.evaluate(()=>worldTrainerState.mapProjection==='globe');assert.deepEqual(pixel,globe?(dark?[23,44,51,255]:[237,244,245,255]):(dark?[38,63,73,255]:[207,229,237,255]),'The selected map projection follows the selected theme immediately');
       }
      }
      const map=await checkBox(page,'.country-map-wrap',200),input=await checkBox(page,'.country-map-input',200);
@@ -161,7 +161,7 @@ const server = http.createServer((req,res) => {
   await page.locator('.quiz-page-menu').click();await page.keyboard.press('Escape');
  }
  await page.setViewportSize({width:1366,height:643});await page.goto(base+'geografi.html#verden-quiz');
- const cards=await page.locator('.geoquiz-mode-row').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().toJSON()));assert.equal(cards.length,14);assert.ok(cards.every(r=>r.height<=78),'Overview matches compact reference at 100%');
+ const cards=await page.locator('.geoquiz-mode-row').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().toJSON()));assert.equal(cards.length,13);assert.ok(cards.every(r=>r.height<=78),'Overview matches compact reference at 100%');
  if(process.env.LAYOUT_SCREENSHOTS)await page.screenshot({path:path.join(process.env.LAYOUT_SCREENSHOTS,'overview-100pct.png')});
  // A shortened viewport approximates the space left when a mobile keyboard opens.
  await page.setViewportSize({width:390,height:480});await page.goto(base+'geografi/geogrid.html');

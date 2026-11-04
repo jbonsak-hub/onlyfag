@@ -716,3 +716,14 @@ body[data-quiz=countries] .country-map-side-stats{display:grid;grid-template-col
 body[data-quiz=countries] .country-map-side-stats .country-map-stat{text-align:left}
 
 body[data-quiz=countries] .country-map-actions{justify-content:flex-end}
+
+/* Setup rankings follow the selected region and question direction. */
+body:is([data-quiz=flags],[data-quiz=capitals]) #verden-quiz .quiz-setup-top-ten{flex:none;margin-left:auto;padding:9px 13px!important;border:1px solid var(--q-line)!important;border-radius:6px!important;background:var(--q-soft)!important;color:var(--q-ink)!important;font-size:12px!important;font-weight:700;line-height:1.2;white-space:nowrap;box-shadow:none!important}
+body:is([data-quiz=flags],[data-quiz=capitals]) #verden-quiz .quiz-setup-top-ten:hover{filter:brightness(.96);transform:none!important}
+body:is([data-quiz=flags],[data-quiz=capitals]) #verden-quiz .quiz-setup-top-ten:focus-visible{outline:3px solid var(--q-green);outline-offset:3px}
+@media(max-width:700px){
+ body:is([data-quiz=flags],[data-quiz=capitals]) #verden-quiz .visual-quiz-setup .quiz-setup-actions{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px 12px;align-items:center}
+ body:is([data-quiz=flags],[data-quiz=capitals]) #verden-quiz .quiz-setup-actions .streak-start-btn{grid-column:1;grid-row:1;justify-self:start}
+ body:is([data-quiz=flags],[data-quiz=capitals]) #verden-quiz .quiz-setup-actions .quiz-selection-summary{grid-column:1/-1;grid-row:2;padding-top:0}
+ body:is([data-quiz=flags],[data-quiz=capitals]) #verden-quiz .quiz-setup-actions .quiz-setup-top-ten{grid-column:2;grid-row:1}
+}

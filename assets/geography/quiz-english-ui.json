@@ -713,5 +713,10 @@
   "Et kjent fjell i Alpene": "A famous mountain in the Alps",
   "Et kjent fjell i Japan": "A famous mountain in Japan",
   "Nord-Amerikas høyeste fjell": "North America’s highest mountain",
-  "Byer": "Cities"
+  "Byer": "Cities",
+  "Avstand:": "Distance:",
+  "Korteste vei mellom landegrensene. Naboland med felles grense gir 0 km.": "Shortest distance between country borders. Countries sharing a land border are 0 km apart.",
+  "Klargjør kart …": "Preparing map …",
+  "Terreng og omriss: Natural Earth": "Terrain and outlines: Natural Earth",
+  "Foto: Esri World Imagery · omriss: Natural Earth": "Imagery: Esri World Imagery · outlines: Natural Earth"
 }

@@ -37,6 +37,11 @@
  }
 
  window.GeoOnline={enabled:true,
+  showSetup(game,button){
+   const setup=button?.closest('.world-setup');if(!setup||!['flags','capitals'].includes(game))return false;
+   const region=setup.querySelector('.world-region')?.value||'world',variant=setup.querySelector('.world-submode')?.value;
+   showBoard({game,region,variant,...(game==='capitals'?{countryDisplay:capitalCountryDisplay(setup.querySelector('.world-country-display')?.value)}:{}),language:language()},null);return true;
+  },
   showWorld(game){
    if(!['flags','capitals','flagcapital','countries'].includes(game))return false;
    const state=typeof worldTrainerState!=='undefined'&&worldTrainerState?.mode===game?worldTrainerState:null;

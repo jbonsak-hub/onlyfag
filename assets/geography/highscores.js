@@ -49,7 +49,7 @@
     if(mode==='detective')return modeLabel(mode);
     return modeLabel(mode);
   }
-  window.geoHsShowCurrentWorld=function(mode,btn){const setup=btn&&btn.closest('.world-setup'),region=setup?.querySelector('.world-region')?.value||'world',sub=setup?.querySelector('.world-submode')?.value||'',pace=setup?.querySelector('.world-pace')?.value||'sudden',key=hsWorldKey(mode,region,sub,pace);if(key)geoHsShow(key,hsWorldLabel(mode,region,sub,pace))};
+  window.geoHsShowCurrentWorld=function(mode,btn){const setup=btn&&btn.closest('.world-setup');if(setup&&window.GeoOnline?.showSetup(mode,btn))return;const region=setup?.querySelector('.world-region')?.value||'world',sub=setup?.querySelector('.world-submode')?.value||'',pace=setup?.querySelector('.world-pace')?.value||'sudden',key=hsWorldKey(mode,region,sub,pace)||(setup&&['flags','capitals'].includes(mode)?mode+'|'+region:null);if(key)geoHsShow(key,hsWorldLabel(mode,region,sub,pace))};
 
   // Region counts remain on capitals/flags/flag+capital/detective. Highscore only appears for world where requested.
   window.worldRegionButtonsHtml=function(mode){

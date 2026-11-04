@@ -696,6 +696,10 @@ body.dark .tradle-cell-html{color:#102b20}
   opacity:.65;
   vector-effect:non-scaling-stroke;
 }
+.tradle-help-guess{fill:#efb466;stroke:#80522c;stroke-width:1.15;vector-effect:non-scaling-stroke}
+.tradle-help-guess.correct{fill:#39a46c;stroke:#176640}
+body.dark .tradle-help-guess{fill:#c88b46;stroke:#f4d2a6}
+body.dark .tradle-help-guess.correct{fill:#45b47d;stroke:#b2e4ca}
 .tradle-help-land{
   fill:#dfeae4;
   stroke:#698a7b;
@@ -1499,7 +1503,7 @@ body.dark .travle-country-arrow{color:#eef4ef!important}
       <div id="tradleHistory" class="tradle-history"></div>
       <div class="tradle-help-bottom">
         <button id="tradleGlobeHelp" class="tradle-globe-help-btn" type="button">🌐 Vis globus</button>
-        <div class="geo-distance-note"><strong>Avstandshjelp:</strong> Jordas omkrets er ca. 40 000 km. Europa er omtrent 5 000 km fra vest til øst – rundt 1/8 av jordas omkrets.</div>
+        <div class="geo-distance-note"><strong>Avstand:</strong> Korteste vei mellom landegrensene. Naboland med felles grense gir 0 km.</div>
       </div>
     </aside>
     <div class="panel tradle-chart-panel">
@@ -2584,16 +2588,56 @@ function tradleProfileByName(name){
   var f=findCountry(name);if(f){for(var j=0;j<TRADLE_DATA.length;j++)if(TRADLE_DATA[j].feature===f.properties.name)return TRADLE_DATA[j];var dn=countryDisplayName(f);if(!tradleIsExcluded(dn))return{country:dn,feature:f.properties.name,coord:d3.geo.centroid(f),products:[],guessOnly:true}}
   return null
 }
-function tradleCoord(p){if(p.coord)return p.coord;var f=p.feature&&findCountry(p.feature);return f?d3.geo.centroid(f):null}
-function tradleDistance(a,b){var A=tradleCoord(a),B=tradleCoord(b);return A&&B?haversine(A,B):null}
+function tradleCoord(p){if(p.coord)return p.coord;var f=findCountry(p.feature||p.country);if(f)return d3.geo.centroid(f);for(var i=0;i<TRADLE_EXTRA_GUESSES.length;i++)if(tradleNormName(TRADLE_EXTRA_GUESSES[i].country)===tradleNormName(p.country))return TRADLE_EXTRA_GUESSES[i].coord;return null}
+// Tradle measures the shortest distance between country boundaries. The
+// globe geometry is shared with the map, while vectors and country pairs are
+// cached so a guess does not add network requests or repeatedly scan borders.
+var tradleBoundaryCache={},tradleDistanceCache={};
+var TRADLE_SMALL_STATE_BORDERS={Andorra:['France','Spain'],Liechtenstein:['Austria','Switzerland'],Monaco:['France'],'San Marino':['Italy'],Vatikanstaten:['Italy']};
+function tradleFeature(profile){return profile&&findCountry(profile.feature||profile.country)}
+function tradleVector(point){var lon=point[0]*Math.PI/180,lat=point[1]*Math.PI/180,c=Math.cos(lat);return[c*Math.cos(lon),c*Math.sin(lon),Math.sin(lat)]}
+function tradleDot(a,b){return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]}
+function tradleCross(a,b){return[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]]}
+function tradleBoundary(profile){
+  var feature=tradleFeature(profile),key=feature?feature.properties.name:profile.country;
+  if(tradleBoundaryCache[key])return tradleBoundaryCache[key];
+  var points=[],segments=[],keys={};
+  function ring(coords){
+    var vectors=coords.map(tradleVector);vectors.forEach(function(v,i){points.push(v);var c=coords[i],lon=((c[0]+180)%360+360)%360-180;keys[lon.toFixed(7)+','+c[1].toFixed(7)]=true});
+    for(var i=1;i<vectors.length;i++){
+      var a=vectors[i-1],b=vectors[i],n=tradleCross(a,b),length=Math.sqrt(tradleDot(n,n));if(length<1e-12)continue;
+      n=n.map(function(x){return x/length});segments.push({a:a,b:b,n:n,start:tradleCross(n,a),end:tradleCross(b,n)});
+    }
+  }
+  if(feature){var geom=feature.geometry,polys=geom.type==='Polygon'?[geom.coordinates]:geom.coordinates;polys.forEach(function(poly){poly.forEach(ring)})}
+  else{var point=tradleCoord(profile);if(point)ring([point])}
+  return tradleBoundaryCache[key]={points:points,segments:segments,keys:keys};
+}
+function tradlePointArcCos(point,arc){
+  if(tradleDot(point,arc.start)>=-1e-12&&tradleDot(point,arc.end)>=-1e-12){var d=tradleDot(point,arc.n);return Math.sqrt(Math.max(0,1-d*d))}
+  return Math.max(tradleDot(point,arc.a),tradleDot(point,arc.b));
+}
+function tradleDistance(a,b){
+  if(a.country===b.country)return 0;
+  var af=tradleFeature(a),bf=tradleFeature(b),an=af?af.properties.name:a.country,bn=bf?bf.properties.name:b.country;
+  if((TRADLE_SMALL_STATE_BORDERS[a.country]||[]).indexOf(bn)>=0||(TRADLE_SMALL_STATE_BORDERS[b.country]||[]).indexOf(an)>=0)return 0;
+  var key=[an,bn].sort().join('|');if(Object.prototype.hasOwnProperty.call(tradleDistanceCache,key))return tradleDistanceCache[key];
+  var A=tradleBoundary(a),B=tradleBoundary(b);if(!A.points.length||!B.points.length)return null;
+  for(var vertex in A.keys)if(B.keys[vertex])return tradleDistanceCache[key]=0;
+  var best=-1;
+  function scan(points,segments){for(var i=0;i<points.length;i++)for(var j=0;j<segments.length;j++)best=Math.max(best,tradlePointArcCos(points[i],segments[j]))}
+  scan(A.points,B.segments);scan(B.points,A.segments);
+  if(!A.segments.length&&!B.segments.length)best=tradleDot(A.points[0],B.points[0]);
+  return tradleDistanceCache[key]=R*Math.acos(clamp(best,-1,1));
+}
 function tradleArrow(a,b){var A=tradleCoord(a),B=tradleCoord(b);if(!A||!B)return'·';var br=bearing(A,B),arr=['↑','↗','→','↘','↓','↙','←','↖'];return arr[Math.round(br/45)%8]}
-function resetTradleUi(){state.tradle.guesses=[];state.tradle.solved=false;document.getElementById('tradleGuess').value='';document.getElementById('tradleFeedback').textContent='';document.getElementById('tradleFeedback').className='feedback';renderTradleHistory()}
+function resetTradleUi(){state.tradle.guesses=[];state.tradle.solved=false;document.getElementById('tradleGuess').value='';document.getElementById('tradleFeedback').textContent='';document.getElementById('tradleFeedback').className='feedback';renderTradleHistory();drawTradleHelpGlobe()}
 function newTradleGame(){var seq=++state.tradle.loadSeq;resetTradleUi();var src=document.getElementById('tradleSource'),chart=document.getElementById('tradleChart');
   function useProfile(p,label){state.tradle.target=p;state.tradle.source=p.source||label||'embedded';if(src)src.textContent=label||((p.source||'Data')+' · 2024');if(chart)chart.classList.remove('tradle-loading');drawTradle()}
   if(navigator.onLine&&TRADLE_ONLINE_TARGETS.length){var t=TRADLE_ONLINE_TARGETS[Math.floor(Math.random()*TRADLE_ONLINE_TARGETS.length)];state.tradle.target=null;state.tradle.source='loading';if(src)src.textContent='Henter 2024-data …';if(chart)chart.classList.add('tradle-loading');document.getElementById('tradleCoverage').textContent='';document.getElementById('tradleScale').textContent='';loadTradleOnline(t).then(function(p){if(seq!==state.tradle.loadSeq)return;useProfile(p,(p.source||'Data')+' · 2024')}).catch(function(){if(seq!==state.tradle.loadSeq)return;useProfile(TRADLE_DATA[Math.floor(Math.random()*TRADLE_DATA.length)],'Innebygd profil')})}
   else{var cached=tradleCachedProfiles();if(cached.length&&Math.random()<.75)useProfile(cached[Math.floor(Math.random()*cached.length)],'Lagret 2024-profil');else useProfile(TRADLE_DATA[Math.floor(Math.random()*TRADLE_DATA.length)],'Innebygd profil')}
 }
-function submitTradleGuess(){if(state.tradle.solved)return;var input=document.getElementById('tradleGuess'),fb=document.getElementById('tradleFeedback');if(!state.tradle.target){fb.textContent='Henter eksportdata …';fb.className='feedback';return}var p=tradleProfileByName(input.value);if(!p){fb.textContent='Fant ikke landet, eller landet er utelatt fra spillet.';fb.className='feedback bad';return}for(var i=0;i<state.tradle.guesses.length;i++)if(state.tradle.guesses[i].profile.country===p.country){fb.textContent='Det landet har du allerede prøvd.';fb.className='feedback';return}var correct=p.country===state.tradle.target.country,d=correct?0:tradleDistance(p,state.tradle.target);state.tradle.guesses.unshift({profile:p,correct:correct,distance:d,arrow:tradleArrow(p,state.tradle.target)});input.value='';if(correct){state.tradle.solved=true;fb.textContent='Riktig! '+p.country+' på '+state.tradle.guesses.length+' forsøk.';fb.className='feedback good'}else if(state.tradle.guesses.length>=state.tradle.max){state.tradle.solved=true;fb.textContent='Landet var '+state.tradle.target.country+'.';fb.className='feedback bad'}else{fb.textContent=d==null?'Ikke riktig.':('Ikke riktig · omtrent '+km(d)+' fra målet.');fb.className='feedback'}renderTradleHistory();drawTradle()}
+function submitTradleGuess(){if(state.tradle.solved)return;var input=document.getElementById('tradleGuess'),fb=document.getElementById('tradleFeedback');if(!state.tradle.target){fb.textContent='Henter eksportdata …';fb.className='feedback';return}var p=tradleProfileByName(input.value);if(!p){fb.textContent='Fant ikke landet, eller landet er utelatt fra spillet.';fb.className='feedback bad';return}for(var i=0;i<state.tradle.guesses.length;i++)if(state.tradle.guesses[i].profile.country===p.country){fb.textContent='Det landet har du allerede prøvd.';fb.className='feedback';return}var correct=p.country===state.tradle.target.country,d=correct?0:tradleDistance(p,state.tradle.target);state.tradle.guesses.unshift({profile:p,correct:correct,distance:d,arrow:tradleArrow(p,state.tradle.target)});input.value='';if(correct){state.tradle.solved=true;fb.textContent='Riktig! '+p.country+' på '+state.tradle.guesses.length+' forsøk.';fb.className='feedback good'}else if(state.tradle.guesses.length>=state.tradle.max){state.tradle.solved=true;fb.textContent='Landet var '+state.tradle.target.country+'.';fb.className='feedback bad'}else{fb.textContent=d==null?'Ikke riktig.':('Ikke riktig · omtrent '+km(d)+' fra målet.');fb.className='feedback'}renderTradleHistory();drawTradle();drawTradleHelpGlobe()}
 function renderTradleHistory(){var box=document.getElementById('tradleHistory');if(!box)return;box.innerHTML='';var best=1e12,bestName='–';state.tradle.guesses.forEach(function(g){if(g.correct){best=0;bestName=g.profile.country}else if(g.distance!=null&&g.distance<best){best=g.distance;bestName=g.profile.country}var r=document.createElement('div');r.className='tradle-row';r.innerHTML='<strong>'+g.profile.country+'</strong><span>'+(g.correct?'Mål':(g.distance==null?'–':km(g.distance)))+'</span><span class="arrow">'+(g.correct?'✓':g.arrow)+'</span>';box.appendChild(r)});document.getElementById('tradleCount').textContent=state.tradle.guesses.length+'/'+state.tradle.max+' forsøk';document.getElementById('tradleBest').textContent='Nærmest: '+bestName}
 function tradleColor(group){return({energy:'#e9a45f',food:'#91bd75',machine:'#79a9c8',chemical:'#b88bc5',metal:'#a6a49a',precious:'#d6bb68',material:'#b99a78',other:'#b4b8b3'})[group]||'#aebbb2'}
 function tradleItems(profile){
@@ -2945,6 +2989,12 @@ function drawTradleHelpGlobe(){
   svg.append('path').attr('class','tradle-help-sphere').attr('d',path({type:'Sphere'}));
   svg.append('path').attr('class','tradle-help-graticule').attr('d',path(graticule()));
   svg.append('path').attr('class','tradle-help-land').attr('d',path(worldCollection));
+  var guessed=state.tradle.guesses.map(function(guess){return{guess:guess,geometry:tradleFeature(guess.profile)||{type:'Point',coordinates:tradleCoord(guess.profile)}}}).filter(function(item){return item.geometry.coordinates!==null});
+  svg.selectAll('.tradle-help-guess').data(guessed).enter().append('path')
+    .attr('class',function(item){return'tradle-help-guess'+(item.guess.correct?' correct':'')})
+    .attr('data-country',function(item){return item.guess.profile.country})
+    .attr('d',function(item){return path.pointRadius(4)(item.geometry)})
+    .append('title').text(function(item){return item.guess.profile.country});
 
   sg.onpointerdown=function(ev){
     tradleHelpGlobeState.drag=true;
@@ -2970,6 +3020,7 @@ function drawTradleHelpGlobe(){
       svg.select('.tradle-help-sphere').attr('d',pth({type:'Sphere'}));
       svg.select('.tradle-help-graticule').attr('d',pth(graticule()));
       svg.select('.tradle-help-land').attr('d',pth(worldCollection));
+      svg.selectAll('.tradle-help-guess').attr('d',function(item){return pth.pointRadius(4)(item.geometry)});
     });
     ev.stopPropagation();
   };
@@ -3155,5 +3206,5 @@ init();
 </script>
 <script src="maplab-navigation.js?v=05ac47a8083a"></script>
 <script src="quiz-mobile-answers.js?v=b6752b6c9021"></script>
-<script src="quiz-language.js?v=4f5130e4a6fd"></script>
+<script src="quiz-language.js?v=a80e3bdd6cc1"></script>
 </body></html>

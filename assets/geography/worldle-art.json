@@ -1,0 +1,13 @@
+{
+  "atlas": "/assets/geography/worldle-art/countries-d26f6b871891.json",
+  "atlasSHA256": "d26f6b871891ea2881412f64418283bc2accc5687e9407736a38e0392bf60c3c",
+  "countries": 197,
+  "atlasBytes": 14530,
+  "atlasGzipBytes": 3640,
+  "imageBytesTotal": 2087402,
+  "largestImageBytes": 46384,
+  "geometrySource": "sources/worldle/source.json",
+  "reliefSource": "sources/mapwiz-world/source.json",
+  "projection": "EPSG:3857",
+  "clipTolerancePx": 0.23
+}
