@@ -1,0 +1,8 @@
+{
+  "url": "https://gis3.nve.no/map/rest/services/Mapservices/Nevina4/MapServer/3/query?f=json&where=vassdragsOmradeNr+%3E%3D+%27017%27+AND+vassdragsOmradeNr+%3C%3D+%27112%27+AND+%28lengde_m+%3E%3D+5000+OR+arealElverute_km2+%3E%3D+2%29&returnIdsOnly=true",
+  "parameters": {
+    "f": "json",
+    "where": "vassdragsOmradeNr >= '017' AND vassdragsOmradeNr <= '112' AND (lengde_m >= 5000 OR arealElverute_km2 >= 2)",
+    "returnIdsOnly": "true"
+  }
+}

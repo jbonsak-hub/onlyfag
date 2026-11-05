@@ -49,7 +49,13 @@ async function registration(page,layer){
  const rgb=colors[layer][1].slice(1).match(/../g).map(value=>parseInt(value,16));
  const result=await page.evaluate(({points,rgb})=>{
   const canvas=document.getElementById('river-map'),context=canvas.getContext('2d'),ratio=canvas.width/canvas.clientWidth,visible=[];
+  // The expanded coverage puts some reference rivers behind the compass and
+  // scale bar, which are painted onto this same canvas after the basemap.
+  // Check unobscured basemap pixels rather than the foreground map ornaments.
+  const state=DropPrototype.snapshot(),scaleY=state.playerVisible?Math.min(innerHeight-58,document.getElementById('player').getBoundingClientRect().top-22):innerHeight-58;
   for(const point of points){const p=DropPrototype.worldToScreen(point.raw);if(p.x<20||p.x>innerWidth-20||p.y<20||p.y>innerHeight-20)continue;
+   if(p.x>innerWidth-180&&p.y>scaleY-35&&p.y<scaleY+22)continue;
+   if(p.x>innerWidth-62&&p.y>80&&p.y<225)continue;
    const x=Math.round(p.x*ratio),y=Math.round(p.y*ratio),pixels=context.getImageData(x-2,y-2,5,5).data;
    let found=false;for(let i=0;i<pixels.length;i+=4)if(rgb.every((value,j)=>Math.abs(pixels[i+j]-value)<20))found=true;
    visible.push({raw:point.raw,screen:p,found});

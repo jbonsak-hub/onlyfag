@@ -35,6 +35,12 @@ for (const segment of segments) {
   for (const key of trail) terminalById.set(key, terminal);
 }
 for(const segment of segments.filter(segment=>segment.routable!==false))assert.equal(terminalById.get(segment.id),String(basins.get(segment.basin).outletSegment),'Every routable river reaches its declared main outlet');
+assert.equal(new Set(data.starts.map(start=>String(start.id))).size,data.starts.length,'Every preset has a unique selection ID');
+for(const start of data.starts){const segment=byId.get(String(start.segment));assert(segment&&segment.routable!==false,'Every listed preset is on a verified downstream route');assert.equal(terminalById.get(segment.id),String(basins.get(segment.basin).outletSegment),'Every preset reaches its declared mouth');}
+// All presets are checked against the graph above. Exercise representative old
+// and new networks in the browser without repeating hundreds of identical UI paths.
+const representativeIds=new Set(['002-34','006-11','008-1','012-1','015-18','016-35','002-34-8230','002-34-8500','002-34-3661','021-13','022-48','026-22','027-32','036-17','050-27','062-17','076-65','084-66','103-29','109-70','112-19']);
+const browserStarts=data.starts.length<=40?data.starts:data.starts.filter(start=>representativeIds.has(String(start.id)));
 
 function expectedRoute(start) {
   const route = [];
@@ -208,7 +214,8 @@ const server = http.createServer((request, response) => {
       await page.screenshot({path:path.join(out,'drop-ready-'+viewport.width+'.png')});
 
       const values = await page.locator('#start-point option').evaluateAll(options => options.map(option => option.value).filter(Boolean));
-      for(const start of data.starts){
+      assert.deepEqual([...values].sort(),data.starts.map(start=>String(start.id)).sort(),'All available presets remain accessible in the picker');
+      for(const start of browserStarts){
         await page.locator('#start-point').selectOption(String(start.id));await pause(page);
         const selected=await routeCheck(page);assert.equal(selected.selectedSegment,String(start.segment),'Every listed starting place selects its own verified river');
       }
@@ -290,7 +297,7 @@ const server = http.createServer((request, response) => {
       await page.locator('#rain').click();
       await page.locator('#replay').click();await pause(page);assert.equal((await snapshot(page)).completed,false);
       await layoutCheck(page,viewport);
-      report.viewports.push({viewport,deviceScaleFactor,presets:data.starts.length,keyboard:true,riverClick:true,pause:true,replay:true,speed:4,basinMode:true,pan:true,zoomReset:true,noGhosting:true,continuousRain:true,correctOutlet:complete.outlet});
+      report.viewports.push({viewport,deviceScaleFactor,presets:data.starts.length,browserPresets:browserStarts.length,keyboard:true,riverClick:true,pause:true,replay:true,speed:4,basinMode:true,pan:true,zoomReset:true,noGhosting:true,continuousRain:true,correctOutlet:complete.outlet});
       await current.close();
     }
 

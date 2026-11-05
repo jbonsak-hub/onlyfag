@@ -6,7 +6,7 @@ Ordinary builds and --check use only the compact pinned source in the repo.
 """
 
 import argparse
-from collections import defaultdict, deque
+from collections import Counter, defaultdict, deque
 import gzip
 import hashlib
 import json
@@ -25,6 +25,9 @@ SOURCES = DIRECTORY / "sources"
 SOURCE = SOURCES / "elvis-directed-network.json.gz"
 OUTPUT = DIRECTORY / "data.json"
 SOURCE_SHA256 = "442188c7c8950625c866cf6b86c85eb2e28b2257b6a20c057890d0ca4bbfa342"
+SOUTHWEST_SOURCE = SOURCES / "southwest/elvis-directed-network.json.gz"
+SOUTHWEST_SOURCE_SHA256 = "49603ef67d72cb667c3d2ce4b14a9400c9ea7643bf916ed1888fdbea95e778e8"
+BROWSER_BUDGET_BYTES = 12_000_000
 FAMILIES = {
     "002-34": ("Glomma", "#47bdff"),
     "006-11": ("Akerselva og Nordmarka", "#fa6ba9"),
@@ -233,11 +236,41 @@ def prepare_source(downloads):
     print(f"Source gzip {SOURCE.stat().st_size:,} bytes; SHA256 {hashlib.sha256(SOURCE.read_bytes()).hexdigest()}", flush=True)
 
 
+def load_sources():
+    snapshots, provenance = [], []
+    for filename, expected in [(SOURCE, SOURCE_SHA256), (SOUTHWEST_SOURCE, SOUTHWEST_SOURCE_SHA256)]:
+        raw = filename.read_bytes()
+        assert hashlib.sha256(raw).hexdigest() == expected, f"Unexpected pinned river network: {filename.name}"
+        snapshot = json.loads(gzip.decompress(raw))
+        assert snapshot["crs"] == "EPSG:25833"
+        snapshots.append(snapshot)
+        provenance.append({"file": filename.relative_to(ROOT).as_posix(), "sha256": expected,
+                           "bytes": len(raw), "basins": len(snapshot["basins"]),
+                           "segments": len(snapshot["segments"])})
+    basins = [basin for snapshot in snapshots for basin in snapshot["basins"]]
+    segments = [segment for snapshot in snapshots for segment in snapshot["segments"]]
+    assert len({basin["id"] for basin in basins}) == len(basins), "Pinned snapshots cannot overlap basin IDs"
+    assert len({segment["id"] for segment in segments}) == len(segments), "Pinned snapshots cannot overlap river IDs"
+    validation = {}
+    for key in ["rawRouteCount", "routeParts", "verifiedJunctions", "segmentCount", "routableSegments"]:
+        validation[key] = sum(snapshot["validation"][key] for snapshot in snapshots)
+    for key in ["omittedMeasureParts", "unmatchedRoutes", "ambiguousJunctions", "cycleBreaks"]:
+        validation[key] = [entry for snapshot in snapshots for entry in snapshot["validation"][key]]
+    validation["maximumJunctionSnapM"] = max(snapshot["validation"]["maximumJunctionSnapM"] for snapshot in snapshots)
+    for key in ["simplificationM", "junctionToleranceM"]:
+        values = {snapshot["validation"][key] for snapshot in snapshots}
+        assert len(values) == 1, "All source snapshots use the same geometric precision"
+        validation[key] = values.pop()
+    validation["routablePercent"] = round(100 * validation["routableSegments"] / validation["segmentCount"], 3)
+    for basin in basins:
+        basin.setdefault("region", "Østlandet" if basin["id"] in FAMILIES else "Vestlandet")
+    return {"crs": "EPSG:25833", "regionTitle": "Elver i Sør-Norge", "basins": basins,
+            "segments": segments, "starts": [start for snapshot in snapshots for start in snapshot["starts"]],
+            "validation": validation}, provenance
+
+
 def build():
-    raw = SOURCE.read_bytes()
-    assert hashlib.sha256(raw).hexdigest() == SOURCE_SHA256, "Unexpected pinned river network"
-    data = json.loads(gzip.decompress(raw))
-    assert data["crs"] == "EPSG:25833"
+    data, provenance = load_sources()
     source_segments = {segment["id"]: segment for segment in data["segments"]}
     source_outlets = {basin["id"]: basin["outletSegment"] for basin in data["basins"]}
     terminal = {}
@@ -258,7 +291,15 @@ def build():
     for segment in data["segments"]:
         assert segment["routable"] == (terminal[segment["id"]] == source_outlets[segment["basin"]])
     initial_starts = {start["id"]: start for start in data["starts"]}
-    data["starts"] = [initial_starts[family] for family in FAMILIES]
+    name_counts = Counter(basin["name"] for basin in data["basins"])
+    data["starts"] = []
+    for basin in data["basins"]:
+        family = basin["id"]
+        start = initial_starts.get(family, {"id": family, "segment": basin["outletSegment"], "fraction": 0.05})
+        assert source_segments[start["segment"]]["routable"], "A preset must reach its actual main outlet"
+        start["region"] = basin["region"]
+        start["label"] = basin["name"] if name_counts[basin["name"]] == 1 else f"{basin['name']} · {family}"
+        data["starts"].append(start)
     for route, label in [("002-34-8230", "Otta → Glomma"),
                          ("002-34-8500", "Rena → Glomma"),
                          ("002-34-3661", "Lågen og Vorma → Glomma")]:
@@ -284,7 +325,7 @@ def build():
             segment.pop(key)
     for basin in data["basins"]:
         basin["outlet"] = point(basin["outlet"])
-        basin["outletLabel"] = OUTLET_LABELS[basin["id"]]
+        basin["outletLabel"] = OUTLET_LABELS.get(basin["id"], basin.get("outletLabel") or f"Utløpet av {basin['name']}")
     by_id = {segment["id"]: segment for segment in data["segments"]}
     for segment in data["segments"]:
         following = segment["next"]
@@ -300,12 +341,12 @@ def build():
                          "url": "https://gis3.nve.no/map/rest/services/Mapservices/Nevina4/MapServer/3",
                          "license": "NLOD", "licenseUrl": "https://data.norge.no/nlod/no/2.0",
                          "crs": "EPSG:25833", "projectedBounds": [west, south, east, north],
-                         "normalizedSourceSha256": hashlib.sha256(raw).hexdigest(),
-                         "selection": "Six exact NVE river families; source routes at least 5 km long or with mapped catchment area at least 2 km².",
+                         "normalizedSources": provenance,
+                         "selection": "Six established eastern networks plus NVE drainage areas 017–112 along the southern and western coast; source routes at least 5 km long or with mapped catchment area at least 2 km².",
                          "direction": "Source M values increase downstream; calibrated against Glomma's named main route from M=0 at its source to M=620920 at Fredrikstad. Each retained route is checked for monotonic measures.",
                          "outletCalibrations": calibrations,
                          "connections": "Only same-family downstream endpoints within 1 m of an actual source river line are connected. Receiving lines are split at those junctions. No nearest-river routing across drainage divides.",
-                         "limitations": "This is a river-line prototype, not terrain routing. Small/unrepresented streams and unmatched or ambiguous ends remain unavailable to drops; only routable=true lines reach one of six verified main-route outlets. Visual simplification retains every fixed junction.",
+                         "limitations": "This is a river-line prototype, not terrain routing. Small/unrepresented streams and unmatched or ambiguous ends remain unavailable to drops; only routable=true lines reach their declared measured main-route outlet. Visual simplification retains every fixed junction.",
                          "validation": data["validation"]}}
     return encoded(result)
 
@@ -323,7 +364,7 @@ def main():
     else:
         DIRECTORY.mkdir(parents=True, exist_ok=True)
         OUTPUT.write_bytes(content)
-    assert len(content) < 5_000_000, "Browser data must stay within the prototype budget"
+    assert len(content) < BROWSER_BUDGET_BYTES, "Browser data must stay within the regional network budget"
     print(f"{'Verified' if args.check else 'Built'} {len(content):,} bytes of real directed river data", flush=True)
 
 

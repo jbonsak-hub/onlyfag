@@ -1,6 +1,17 @@
 # River-drop prototype: real directed NVE river lines
 
-The prototype uses six **actual NVE ELVIS river networks**: Glomma,
+The prototype combines **actual NVE ELVIS river networks** on Østlandet,
+Sørlandet and Vestlandet. The southern/western extension covers NVE drainage
+areas 017–112, from the southern coast through Rogaland and Vestland to Møre og
+Romsdal. See the extension's selection and audit below.
+
+The combined browser dataset contains **941 networks, 13,115 directed segments
+and 352,313 vertices**, in 9,326,254 bytes before HTTP compression. **13,023
+segments (99.30%)** reach their declared measured main outlet. All 941 networks
+have a verified start in the searchable keyboard picker. The 92 uncertain
+segments remain context only.
+
+The original eastern snapshot retains six networks: Glomma,
 Nordmarkvassdraget/Akerselva, Sandvikselva, Drammensvassdraget, Numedalslågen
 and Skiensvassdraget. It is a river-line experiment, not a terrain or rainfall
 model. Clicking snaps to a represented river; it does not claim where water
@@ -17,12 +28,12 @@ would flow from arbitrary surrounding land.
   polyline geometry (`returnM=true`). The raw service metadata is preserved in
   `elvis-service-metadata.json.gz`.
 
-The six exact route families are `002-34`, `006-11`, `008-1`, `012-1`,
+The original eastern snapshot's six exact route families are `002-34`, `006-11`, `008-1`, `012-1`,
 `015-18` and `016-35`. These are more specific than three-digit
 vassdragsområder, which also contain neighbouring independent coastal streams.
-Only source routes at least **5 km** long, or with a mapped upstream catchment
+In both snapshots, only source routes at least **5 km** long, or with a mapped upstream catchment
 area at least **2 km²**, are included. This explicit display-scale selection
-retains 3,367 real source features, rather than downloading or pretending to
+retains 3,367 real source features in the original eastern snapshot, rather than pretending to
 represent every tiny brook in the region.
 
 `selection-query.json` records the exact selection request and
@@ -54,7 +65,7 @@ the compact projected snapshot. This is below a tenth of a pixel at the full
 regional view. Simplification does not move junctions or invent connecting
 river paths.
 
-The resulting network contains **6,698 directed segments**. **6,633 (99.03%)**
+The original eastern snapshot contains **6,698 directed segments**. **6,633 (99.03%)**
 reach one of the six verified main-route outlets. All downstream walks are
 checked for cycles; this snapshot required no cycle removal. Five unmatched
 route ends and twenty ambiguous junctions remain documented. Their affected
@@ -86,10 +97,10 @@ PYTHONPATH=/workspace/shared/municipality-python-deps python3 -B scripts/build-d
 PYTHONPATH=/workspace/shared/municipality-python-deps python3 -B scripts/build-drop-prototype-data.py --check
 ```
 
-Both operations are offline. They verify the source hash, graph references,
+Both operations are offline. They verify both pinned source hashes, graph references,
 acyclicity, outlet reachability and exact shared junction coordinates. The
-builder writes `assets/geography/drop-prototype/data.json`, with browser data
-below 5 MB. To reproduce the compact snapshot from the retained original
+builder writes `assets/geography/drop-prototype/data.json`, with a 12 MB budget
+for the expanded regional network. To reproduce the original eastern snapshot from the retained original
 downloads, use `--prepare-source /workspace/artifacts/drop-prototype/source-downloads`
 before the ordinary build. Every raw response is checked against its recorded
 SHA-256 first.
@@ -102,3 +113,66 @@ axis is stretched independently. Each basin supplies its actual
 `outletSegment`, outlet point and human-readable outlet label. Presets include
 all six main rivers plus real Otta, Rena and Vorma/Lågen tributary starts within
 the verified Glomma network.
+
+## Southern and western extension · 5 November 2026
+
+The complete selection is recorded in `southwest/selection-query.json`:
+
+```sql
+vassdragsOmradeNr >= '017' AND vassdragsOmradeNr <= '112'
+AND (lengde_m >= 5000 OR arealElverute_km2 >= 2)
+```
+
+The service returned 3,709 source objects in 936 exact river families. The raw
+responses were fetched in 38 indexed batches of at most 100 objects, with
+measured geometry in EPSG:25833. Each response is checked for missing IDs and
+transfer-limit truncation. `southwest/arcgis-download-index.json` retains the
+exact requests, IDs, byte counts and SHA-256 hashes. The original compressed
+responses are kept outside the website repository in
+`work/southwest-research/source-downloads/` in the task workspace.
+
+The importer removes only exact duplicate measured route geometries (27 source
+objects in drainage area 082), retaining the lowest official OBJECTID and an
+audit of both IDs. It preserves distinct multipart geometry. It also checks
+that every represented main outlet reaches the maximum measured endpoint of
+the raw main route. Family `056-75` is excluded: its downstream main-route
+parts have constant, unusable M values, so accepting its remaining inland
+fragment would claim a false outlet. This leaves **935 calibrated southern
+and western families**. All exclusions, ambiguous junctions, missing measures
+and duplicate IDs are retained in the supplementary snapshot's diagnostics.
+
+`southwest/elvis-directed-network.json.gz` keeps the same metre-based graph
+schema as the eastern snapshot. The ordinary builder verifies both hashes,
+merges disjoint river and basin IDs, and applies one uniform projected scale.
+The older eastern geometry and downstream links are preserved. Every displayed
+drop follows a `routable: true` route to its own measured main outlet; uncertain
+branches may be drawn as context but do not accept simulated drops.
+
+The supplementary compressed source's SHA-256 is
+`49603ef67d72cb667c3d2ce4b14a9400c9ea7643bf916ed1888fdbea95e778e8`.
+
+Start choices include every retained basin, grouped by Østlandet, Sørlandet
+and Vestlandet. Search matches names and regions; duplicate official names
+also show their NVE family ID. Basin colors and a Strahler-style display order
+help distinguish the river networks. They do not represent discharge or
+computed watershed polygons. The terrain background remains a separate
+Kartverket layer.
+
+Rebuild the supplementary source offline from the retained downloads:
+
+```sh
+python scripts/fetch-drop-southwest-source.py PATH_TO_DOWNLOADED_RESPONSES
+python scripts/fetch-drop-southwest-source.py PATH_TO_DOWNLOADED_RESPONSES --check
+python -B scripts/build-drop-prototype-data.py
+python -B scripts/build-drop-prototype-data.py --check
+node scripts/build-drop-prototype-assets.cjs
+```
+
+GIS dependency versions for this import are Shapely 2.1.2 and Pyproj 3.7.2.
+`--download` explicitly refreshes the upstream selection; review changed source
+hashes before updating the ordinary builder's pin. Tests in
+`tests/drop-southwest-data.cjs` compare every browser vertex and downstream link
+against both pinned graphs, check coastal coverage and all presets, and verify
+that routes never cross drainage divides. The browser tests cover search,
+western/southern journeys, offscreen preset navigation, map clicks and mobile
+controls.
