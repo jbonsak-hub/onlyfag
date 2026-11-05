@@ -201,6 +201,8 @@
     state.selectedSegment=segment.id;state.selectedFraction=Math.max(0,Math.min(.99999,fraction));state.basin=segment.basin;state.route=walk(segment);state.progress=0;state.completed=false;state.selectedStart=startId;state.paused=false;
     selectedPrefix=section(segment,0,segment.length*state.selectedFraction);
     route=makeRoute(state.route,fraction);routeLength=route.reduce((n,p)=>n+p.length,0);duration=Math.max(12,Math.min(42,12+Math.sqrt(routeLength/(data.unitsPerKm||1000))*2));
+    const kilometres=route.reduce((sum,p)=>sum+(Number(p.segment.lengthKm)||p.segment.length/data.unitsPerKm)*p.length/p.segment.length,0);
+    $('route-distance').textContent=kilometres<.1?'<0,1 km':'ca. '+new Intl.NumberFormat('nb-NO',{maximumFractionDigits:kilometres<10?1:0}).format(kilometres)+' km';$('selected-distance').hidden=false;
     upstream=new Set();const stack=[segment.id];while(stack.length){const key=stack.pop();if(upstream.has(key))continue;upstream.add(key);stack.push(...byId.get(key).parents);}
     const basin=basins.get(state.basin);document.documentElement.style.setProperty('--basin-color',basin.color);$('basin-name').textContent=basin.name;$('basin-name').title=basin.name;$('selected-basin').hidden=false;showWaterbody(segment,state.selectedFraction);$('selected-river').hidden=false;
     if($('start-search').value.trim())startOptions();else $('start-point').value=startId||'';
@@ -211,6 +213,7 @@
     state.waterbody={name,kind};if($('current-river').textContent!==name)$('current-river').textContent=name;$('waterbody-kind').textContent=kind==='lake'?'Innsjø':'Elv';
   }
   function clearSelection(){
+    $('selected-distance').hidden=true;$('route-distance').textContent='';
     Object.assign(state,{selectedSegment:null,selectedStart:null,basin:null,route:[],waterbody:null,progress:0,completed:false,isolateBasin:false});route=[];routeLength=0;selectedPrefix=null;upstream.clear();$('selected-basin').hidden=true;$('selected-river').hidden=true;$('current-river').textContent='';$('basin-name').textContent='';$('isolate-basin').checked=false;startOptions();if(state.rain)fillParticles();else state.paused=true;dirty=true;controls();styleControls();
   }
   function nearest(x,y){

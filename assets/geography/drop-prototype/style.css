@@ -231,6 +231,8 @@ h1{font-size:21px}
 @media(max-width:899px){.height-legend,.map-status{top:136px}}
 .masthead .selected-river{font-size:11px;margin-top:2px;color:#a2b6aa}
 .selected-river strong{font-weight:550;color:#d5e8dd}
+.masthead .selected-distance{font-size:10px;margin-top:2px;color:#a2b6aa}
+.selected-distance strong{font-weight:550;color:#d5e8dd;font-variant-numeric:tabular-nums}
 @media(max-width:899px){.map-actions{top:112px}.style-panel{top:152px;max-height:calc(100dvh - 170px)}.height-legend,.map-status{top:156px}.masthead .selected-river{font-size:10px}}
 .region-selector{position:relative}
 .region-selector summary{display:flex;align-items:center;justify-content:center;gap:7px;min-height:36px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#09110ee6;color:#b5c9bc;font-size:11px;cursor:pointer;list-style:none}
