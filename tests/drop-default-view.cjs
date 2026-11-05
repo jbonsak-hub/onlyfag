@@ -2,7 +2,8 @@
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const root=path.resolve(__dirname,'..'),out=process.env.DROP_SCREENSHOTS||path.resolve(root,'../watershed-default-review');
-const data=JSON.parse(fs.readFileSync(path.join(root,'assets/geography/drop-prototype/data.json'),'utf8'));
+const regionDir=path.join(root,'assets/geography/drop-prototype'),manifest=JSON.parse(fs.readFileSync(path.join(regionDir,'regions.json'),'utf8'));
+const data=JSON.parse(fs.readFileSync(path.resolve(regionDir,manifest.regions.find(r=>r.id==='south').url),'utf8'));
 const byId=new Map(data.segments.map(s=>[String(s.id),s])),basins=new Map(data.basins.map(b=>[String(b.id),b]));
 const basinSizes=new Map();for(const s of data.segments)basinSizes.set(s.basin,(basinSizes.get(s.basin)||0)+1);
 const singleBasin=data.basins.find(b=>basinSizes.get(b.id)===1&&byId.get(b.outletSegment).routable!==false&&data.starts.some(s=>String(s.id)===String(b.id)));assert(singleBasin);

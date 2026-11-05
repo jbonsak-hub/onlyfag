@@ -1,4 +1,4 @@
-# Vassdrag og nedbørfelt — 2D prototype
+# Vassdrag og nedbørfelt — interactive river map
 
 Entry point: `/geografi/vassdrag.html`.
 
@@ -10,16 +10,56 @@ state on return. The prototype copy has been removed.
 Vanndråper dims the river network even before a basin is selected, so the rain
 particles stand out across the complete overview. Glomma uses blue and the
 Drammen network uses a warmer pink; these display colors do not change source
-geometry or routing. The current river label follows the NVE name of the
-segment carrying the selected drop, including compound route names when NVE
-provides them; unnamed branches are labeled Navnløs sideelv.
+geometry or routing. The moving label follows precomputed local waterbody
+intervals: detailed Vann-Nett reaches split collective ELVIS route names, and
+named NVE lake polygons take priority over river labels. A shoreline tolerance
+of up to 20 m accommodates display simplification, with a smaller tolerance for
+small lakes. Unresolved local river names are
+labeled Navnløs elv instead of a collective catchment name. The data sources,
+matching tolerances, coverage limits and pins are in `sources/names/README.md`.
 
-The standalone explorer renders 941 real Norwegian river networks as coloured
+The standalone explorer renders up to 2,698 real Norwegian river networks as coloured
 lines on a dark, north-up canvas. It starts with no selected river, a complete
-regional overview and rain enabled. Select a represented river or one of 944
+regional overview and rain enabled. Select a represented river or one of the
 preset starts to follow a downstream journey. Speed, rain particles,
 upstream highlighting, wheel/pinch zoom, pointer pan and keyboard controls are
-local to this prototype; it has no game scores, accounts or server mutations.
+local to this module; it has no game scores, accounts or server mutations.
+
+## Regional loading
+
+Only the small versioned manifest and the selected South chunk load initially.
+Each checkbox fetches its immutable region once, retains the downloaded graph
+in memory, and removes its rivers and start choices when unchecked. Whole
+families remain together; no journey is split at a loading boundary. A failed
+optional download preserves the active graph and can be retried. Removing the
+region of the selected river clears that selection. All three can be unchecked.
+
+| Region | Basins | Segments | JSON | Approximate gzip |
+|---|---:|---:|---:|---:|
+| Sør-Norge (default) | 1,040 | 14,479 | 12.15 MB | 3.80 MB |
+| Midt-Norge | 348 | 4,899 | 4.07 MB | 1.26 MB |
+| Nord-Norge | 1,310 | 10,863 | 10.48 MB | 3.03 MB |
+
+The groups cover mainland Norway and coastal islands, including cross-border
+catchments; Svalbard is outside the source extent. The existing 5 km route or
+2 km² catchment selection still applies, so this is not every tiny brook.
+Mapped endpoints in Sweden/Finland are not presented as Norwegian sea mouths.
+
+“Last bakgrunnskart med området” optionally enables a topographic background
+with the river selection. Background tiles remain viewport-driven and limited
+to selected region extents in this mode; no whole-country raster download or
+background prefetch runs at startup. Existing topographic, hiking and relief
+controls continue to work independently.
+
+All chunks share the original southern EPSG:25833 anchor and uniform scale.
+Activating a northern region changes only the camera's fitting bounds, never
+the physical position of existing rivers, junctions, labels or background tiles.
+`scripts/build-watershed-regions.py` verifies pinned sources, annotates local
+names offline, and generates three content-addressed files plus `regions.json`.
+Run it with `--check` for reproducibility, then run
+`node scripts/build-drop-prototype-assets.cjs` to update asset references.
+The legacy `data.json` is retained for cached older pages and source regression
+checks; the current browser does not download it.
 
 Rain continuously renews a bounded pool of drops in tributaries and headwaters,
 following the same verified downstream links. It continues after the selected
@@ -103,10 +143,10 @@ The normalized source coordinates are converted back to projected metres using
 `source.projectedBounds` and `unitsPerKm`. Both the tile grid and river geometry
 use the same UTM33 camera; there is no reprojected or stretched approximation.
 
-This is a **river-network prototype**, not arbitrary overland rainfall routing.
+This is a **river-network map**, not arbitrary overland rainfall routing.
 Catchment boundary polygons are deliberately absent: the available broader NVE
-vassdragsområder do not equal these exact river-family catchments. “Se
-sideelvene” therefore highlights contributing river lines rather than inventing
+vassdragsområder do not equal these exact river-family catchments. “Nedbørfelt”
+therefore highlights contributing river lines rather than inventing
 a precise upstream land polygon. Unresolved branches remain visible and explain
 their limitation when selected; drops never jump to a nearby unrelated river.
 The journey's pace is illustrative, not a physical water travel-time model.
@@ -117,20 +157,26 @@ ordinary builds are offline from the pinned compact snapshot.
 
 ```sh
 PYTHONPATH=/workspace/shared/municipality-python-deps python3 -B scripts/build-drop-prototype-data.py --check
+PYTHONPATH=/workspace/shared/municipality-python-deps python3 -B scripts/build-watershed-regions.py --check
 node scripts/build-drop-prototype-assets.cjs
 node scripts/build-drop-prototype-assets.cjs --check
-BROWSER_EXECUTABLE=/usr/bin/chromium node tests/drop-prototype.cjs
+node tests/watershed-regions-data.cjs
+BROWSER_EXECUTABLE=/usr/bin/chromium node tests/watershed-regions.cjs
+BROWSER_EXECUTABLE=/usr/bin/chromium node tests/drop-default-view.cjs
+BROWSER_EXECUTABLE=/usr/bin/chromium node tests/watershed-embed.cjs
 BROWSER_EXECUTABLE=/usr/bin/chromium node tests/drop-basemap.cjs
 BROWSER_EXECUTABLE=/usr/bin/chromium node tests/drop-map-style.cjs
 BASE_URL=http://127.0.0.1:58390 BROWSER_EXECUTABLE=/usr/bin/chromium node tests/drop-panels.cjs
 ```
 
 After changing data or browser sources, rebuild the versioned assets. Retain
-published `app-*.js`, `style-*.css` and `data-*.json` files so cached pages retain
+published `app-*.js`, `style-*.css`, `data-*.json`, `regions-*.json` and regional
+chunks so cached pages retain
 compatible geometry and renderer versions. The existing quizzes, municipality
 maps and score service do not depend on this prototype.
 
-The browser test independently follows all downstream graph links, checks the
-six verified outlets, exercises all preset starts, clicks actual rivers,
-rejects unresolved branches, verifies the visible outlet marker and exercises
-desktop/mobile playback, rain, navigation and reduced-motion behaviour.
+The regional data test independently follows every preset's downstream graph,
+checks exact junctions and source pins, and inverts all displayed coordinates
+back to the measured source. Browser tests exercise lazy loading, failed
+downloads, region removal, local river/lake labels, background registration,
+desktop/mobile playback and main-site navigation.

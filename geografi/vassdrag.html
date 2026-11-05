@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="color-scheme" content="dark">
   <title>Vassdrag og nedbørfelt – OnlyFag</title>
-  <link rel="stylesheet" href="../assets/geography/drop-prototype/style-36c91bc18b40.css">
-  <script src="../assets/geography/drop-prototype/app-2135b1b149b7.js" defer></script>
+  <link rel="stylesheet" href="../assets/geography/drop-prototype/style-b9da442a8c1f.css">
+  <script src="../assets/geography/drop-prototype/app-cbcf5fb3f4d0.js" defer></script>
 </head>
 <body data-map-layer="dark" data-player-visible="true">
   <main class="drop-explorer" aria-label="Følg dråpen gjennom norske vassdrag">
@@ -26,7 +26,7 @@
         </div>
         <p id="map-help">Klikk i kartet og se hvor dråpen tar veien.</p>
         <p id="selected-basin" class="selected-basin" aria-live="polite" hidden><span>Valgt vassdrag:</span> <strong id="basin-name"></strong></p>
-        <p id="selected-river" class="selected-river" hidden>Elv: <strong id="current-river"></strong></p>
+        <p id="selected-river" class="selected-river" hidden><span id="waterbody-kind">Elv</span>: <strong id="current-river"></strong></p>
       </div>
     </header>
 
@@ -38,6 +38,18 @@
       <button class="map-action" id="toggle-player" type="button" title="Vis eller skjul dråpepanelet" aria-label="Vis eller skjul dråpepanelet" aria-controls="player" aria-expanded="true">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C9 7 6 10 6 14a6 6 0 0 0 12 0c0-4-3-7-6-11Z"/></svg><span>Dråpen</span>
       </button>
+      <details class="region-selector" id="region-selector">
+        <summary title="Velg områder"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3Zm6-3v15m6-12v15"/></svg><span>Områder</span></summary>
+        <div class="region-panel">
+          <strong>Vis vassdrag i</strong>
+          <label><input id="region-south" type="checkbox" checked disabled> Sør-Norge</label>
+          <label><input id="region-midtnorge" type="checkbox" disabled> Midt-Norge</label>
+          <label><input id="region-nordnorge" type="checkbox" disabled> Nord-Norge</label>
+          <label class="region-map-choice"><input id="region-basemap" type="checkbox"> Last bakgrunnskart med området</label>
+          <small>Områder lastes når du velger dem. Kartfliser lastes bare for utsnittet du ser.</small>
+          <p id="region-status" role="status" aria-live="polite"></p>
+        </div>
+      </details>
       <details class="map-style" id="map-style">
         <summary title="Vis eller skjul kartstil" aria-controls="style-panel">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h7m4 0h5M4 12h2m4 0h10M4 18h11m4 0h1M11 3v6M6 9v6m9 0v6"/></svg>

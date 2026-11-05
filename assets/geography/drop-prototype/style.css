@@ -232,3 +232,14 @@ h1{font-size:21px}
 .masthead .selected-river{font-size:11px;margin-top:2px;color:#a2b6aa}
 .selected-river strong{font-weight:550;color:#d5e8dd}
 @media(max-width:899px){.map-actions{top:112px}.style-panel{top:152px;max-height:calc(100dvh - 170px)}.height-legend,.map-status{top:156px}.masthead .selected-river{font-size:10px}}
+.region-selector{position:relative}
+.region-selector summary{display:flex;align-items:center;justify-content:center;gap:7px;min-height:36px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#09110ee6;color:#b5c9bc;font-size:11px;cursor:pointer;list-style:none}
+.region-selector summary::-webkit-details-marker{display:none}
+.region-panel{position:absolute;right:0;top:46px;width:245px;padding:16px;border:1px solid #3b5445;border-radius:10px;background:#101d16;box-shadow:0 12px 35px #0009;color:#c6d9ce}
+.region-panel strong{display:block;font-size:13px;margin-bottom:10px}
+.region-panel label{display:flex;align-items:center;gap:9px;padding:7px 0;font-size:12px;cursor:pointer}
+.region-panel input{accent-color:var(--mint);width:15px;height:15px;flex:none}
+.region-panel .region-map-choice{border-top:1px solid var(--line);margin-top:8px;padding-top:14px;font-size:11px}
+.region-panel small,.region-panel p{font-size:10px;line-height:1.5;color:var(--muted)}
+.region-panel p:empty{display:none}
+@media(max-width:899px){.region-selector summary{width:32px;min-height:32px;padding:7px}.region-selector summary>span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.region-panel{right:-75px;top:40px;max-width:calc(100vw - 28px)}}

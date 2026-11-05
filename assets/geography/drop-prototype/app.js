@@ -8,6 +8,9 @@
   const state={ready:false,mode:'flow',mapLayer:'dark',showRivers:true,riverWidth:1.1,riverIntensity:.82,mapOpacity:.73,heightColors:true,isolateBasin:false,playerVisible:true,paused:reduced.matches,speed:1,progress:0,completed:false,zoom:1,pan:[0,0],route:[],selectedSegment:null,basin:null,selectedStart:null,rain:true};
   const timeScale=2; // Normal is half the previously published rain speed.
   let data,segments=[],byId=new Map(),basins=new Map(),upstream=new Set(),route=[],routeLength=0,duration=30,particles=[],startEntries=[];
+  let regionManifest;
+  const regionData=new Map(),regionRequests=new Map(),desiredRegions=new Set(['south']);
+  const regionBase=new URL('../assets/geography/drop-prototype/',location.href);
   let rainSources=[],rainTributaries=[],rainElapsed=0,rainEmissions=0;
   let width=0,height=0,dpr=1,camera={scale:1,tx:0,ty:0},extent=[0,0,1,1],base=document.createElement('canvas'),dirty=true,last=performance.now(),hover=null,lastHover=null,selectedPrefix=null;
   const panelOffsets=new Map();
@@ -22,7 +25,7 @@
   // image stretching would assign different heights the same color at seams.
   const elevationRule={rasterFunction:'Colormap',rasterFunctionArguments:{Colorramp:{type:'multipart',colorRamps:heightPalette.slice(1).map((to,i)=>({type:'algorithmic',fromColor:[...heightPalette[i],255],toColor:[...to,255],algorithm:'esriCIELabAlgorithm'}))},Raster:{rasterFunction:'Stretch',rasterFunctionArguments:{Raster:'$$',StretchType:5,Statistics:[[0,2500,1250,700]],DRA:false,Min:0,Max:255,UseGamma:false},outputPixelType:'U8'}},outputPixelType:'U8'};
   let tileLoads=0,tileView=new Set(),exporting=false;
-  const id=value=>String(value),point=(p)=>[Number(p[0])-extent[0],data.yUp?extent[3]-Number(p[1]):Number(p[1])-extent[1]];
+  const id=value=>String(value),point=p=>[Number(p[0]),Number(p[1])];
   const screen=p=>({x:p[0]*camera.scale+camera.tx,y:p[1]*camera.scale+camera.ty});
   const world=(x,y)=>[(x-camera.tx)/camera.scale,(y-camera.ty)/camera.scale];
   const distance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
@@ -40,7 +43,7 @@
   function updateCamera(){
     const available=mapWindow();
     const fit=.96*Math.min(available.w/(extent[2]-extent[0]),available.h/(extent[3]-extent[1]));
-    camera={scale:fit*state.zoom,tx:available.x+available.w/2-(extent[2]-extent[0])/2*fit*state.zoom+state.pan[0],ty:available.y+available.h/2-(extent[3]-extent[1])/2*fit*state.zoom+state.pan[1]};dirty=true;
+    camera={scale:fit*state.zoom,tx:available.x+available.w/2-(extent[0]+extent[2])/2*fit*state.zoom+state.pan[0],ty:available.y+available.h/2-(extent[1]+extent[3])/2*fit*state.zoom+state.pan[1]};dirty=true;
   }
   const intersects=(a,b)=>a[0]<=b[2]&&a[2]>=b[0]&&a[1]<=b[3]&&a[3]>=b[1];
   function fitSelectedIfOffscreen(){
@@ -106,11 +109,11 @@
     if(state.mapLayer==='dark'||state.mapOpacity===0){tileView.clear();mapStatus();return;}
     const [west,,,north]=data.source.projectedBounds,units=data.unitsPerKm/1000;
     const z=Math.max(0,Math.min(18,Math.round(Math.log2(tileResolution*units*camera.scale))));
-    const a=world(0,0),b=world(width,height),minE=west+(a[0]+extent[0])/units,maxE=west+(b[0]+extent[0])/units,maxN=north-(a[1]+extent[1])/units,minN=north-(b[1]+extent[1])/units;
+    const a=world(0,0),b=world(width,height),minE=west+a[0]/units,maxE=west+b[0]/units,maxN=north-a[1]/units,minN=north-b[1]/units;
     const scene=mapScene.getContext('2d'),stage=tileStage.getContext('2d');
     scene.setTransform(dpr,0,0,dpr,0,0);scene.globalAlpha=1;scene.globalCompositeOperation='source-over';scene.fillStyle=state.mapLayer==='relief'?'#13231d':'#e8ecdf';scene.fillRect(0,0,width,height);
     const drawTile=tile=>{
-      const sizeInMeters=256*tileResolution/2**tile.z,p=screen([(tileOrigin[0]+tile.col*sizeInMeters-west)*units-extent[0],(north-tileOrigin[1]+tile.row*sizeInMeters)*units-extent[1]]),size=sizeInMeters*units*camera.scale;
+      const sizeInMeters=256*tileResolution/2**tile.z,p=screen([(tileOrigin[0]+tile.col*sizeInMeters-west)*units,(north-tileOrigin[1]+tile.row*sizeInMeters)*units]),size=sizeInMeters*units*camera.scale;
       if(p.x+size>=0&&p.x<=width&&p.y+size>=0&&p.y<=height)stage.drawImage(tile.image,p.x,p.y,size+.25,size+.25);
     };
     tileView=new Set();
@@ -125,6 +128,7 @@
       // Applying opacity once afterwards avoids dark seams and double blending.
       for(const tile of [...tiles.values()].filter(t=>t.layer===layer&&t.status==='ready'&&t.z!==level).sort((a,b)=>a.z-b.z))drawTile(tile);
       for(let row=firstRow;row<=lastRow;row++)for(let col=firstCol;col<=lastCol;col++){
+        if($('region-basemap').checked){const x=(tileOrigin[0]+col*span-west)*units,y=(north-tileOrigin[1]+row*span)*units,box=[x,y,x+span*units,y+span*units];if(![...desiredRegions].some(key=>regionData.has(key)&&intersects(box,regionData.get(key).bounds)))continue;}
         const key=[layer,level,row,col].join('/');tileView.add(key);
         if(!tiles.has(key))tiles.set(key,{layer,z:level,row,col,status:'queued'});
         const tile=tiles.get(key);tile.used=performance.now();
@@ -168,7 +172,7 @@
   }
   function walk(segment){const ids=[],seen=new Set();let s=segment;while(s&&!seen.has(s.id)){seen.add(s.id);ids.push(s.id);s=s.next===null?null:byId.get(s.next);}return ids;}
   function makeRoute(ids,fraction=0){let sum=0;return ids.map((key,i)=>{const s=byId.get(key),start=i===0?s.length*Math.max(0,Math.min(.99999,fraction)):0,length=s.length-start;const piece={segment:s,start,length,offset:sum,path:start?section(s,start,s.length):s.path};sum+=length;return piece;}).filter(s=>s.length>0);}
-  function routePosition(pieces,amount){const total=pieces.at(-1)?.offset+pieces.at(-1)?.length||0;const d=Math.max(0,Math.min(1,amount))*total;let piece=pieces.at(-1);for(const p of pieces){if(d<=p.offset+p.length){piece=p;break;}}return piece?{point:at(piece.segment.points,piece.segment.totals,piece.start+Math.max(0,d-piece.offset)),segment:piece.segment}:null;}
+  function routePosition(pieces,amount){const total=pieces.at(-1)?.offset+pieces.at(-1)?.length||0;const d=Math.max(0,Math.min(1,amount))*total;let piece=pieces.at(-1);for(const p of pieces){if(d<=p.offset+p.length){piece=p;break;}}return piece?{point:at(piece.segment.points,piece.segment.totals,piece.start+Math.max(0,d-piece.offset)),segment:piece.segment,fraction:(piece.start+Math.max(0,d-piece.offset))/piece.segment.length}:null;}
   function controls(){
     $('rain').setAttribute('aria-pressed',String(state.rain));$('rain').setAttribute('aria-label',state.rain?'Slå regnet av':'Slå regnet på');$('rain-state').textContent=state.rain?'På':'Av';
     for(const mode of ['flow','basin']){$('mode-'+mode).setAttribute('aria-pressed',String(state.mode===mode));$('mode-'+mode).classList.toggle('is-active',state.mode===mode);}
@@ -179,12 +183,16 @@
     selectedPrefix=section(segment,0,segment.length*state.selectedFraction);
     route=makeRoute(state.route,fraction);routeLength=route.reduce((n,p)=>n+p.length,0);duration=Math.max(12,Math.min(42,12+Math.sqrt(routeLength/(data.unitsPerKm||1000))*2));
     upstream=new Set();const stack=[segment.id];while(stack.length){const key=stack.pop();if(upstream.has(key))continue;upstream.add(key);stack.push(...byId.get(key).parents);}
-    const basin=basins.get(state.basin);document.documentElement.style.setProperty('--basin-color',basin.color);$('basin-name').textContent=basin.name;$('basin-name').title=basin.name;$('selected-basin').hidden=false;$('current-river').textContent=riverName(segment.name)||'Navnløs sideelv';$('selected-river').hidden=false;
+    const basin=basins.get(state.basin);document.documentElement.style.setProperty('--basin-color',basin.color);$('basin-name').textContent=basin.name;$('basin-name').title=basin.name;$('selected-basin').hidden=false;showWaterbody(segment,state.selectedFraction);$('selected-river').hidden=false;
     if($('start-search').value.trim())startOptions();else $('start-point').value=startId||'';
     if(state.rain&&state.isolateBasin)fillParticles();dirty=true;controls();styleControls();
   }
+  function showWaterbody(segment,fraction){
+    const labels=segment.labels||[],match=labels.find(item=>fraction>=item[0]-1e-9&&fraction<item[1])||(fraction>=1?labels.at(-1):null),name=match?.[2]||'Navnløs elv',kind=match?.[3]||'river';
+    state.waterbody={name,kind};if($('current-river').textContent!==name)$('current-river').textContent=name;$('waterbody-kind').textContent=kind==='lake'?'Innsjø':'Elv';
+  }
   function clearSelection(){
-    Object.assign(state,{selectedSegment:null,selectedStart:null,basin:null,route:[],progress:0,completed:false,isolateBasin:false});route=[];routeLength=0;selectedPrefix=null;upstream.clear();$('selected-basin').hidden=true;$('selected-river').hidden=true;$('current-river').textContent='';$('basin-name').textContent='';$('isolate-basin').checked=false;startOptions();if(state.rain)fillParticles();else state.paused=true;dirty=true;controls();styleControls();
+    Object.assign(state,{selectedSegment:null,selectedStart:null,basin:null,route:[],waterbody:null,progress:0,completed:false,isolateBasin:false});route=[];routeLength=0;selectedPrefix=null;upstream.clear();$('selected-basin').hidden=true;$('selected-river').hidden=true;$('current-river').textContent='';$('basin-name').textContent='';$('isolate-basin').checked=false;startOptions();if(state.rain)fillParticles();else state.paused=true;dirty=true;controls();styleControls();
   }
   function nearest(x,y){
     const p=world(x,y),limit=(width<600?20:13)/camera.scale;let hit=null,best=limit*limit;
@@ -250,7 +258,7 @@
       if(dirty)paintBase();ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(base,0,0);ctx.setTransform(dpr,0,0,dpr,0,0);
       if(state.rain){if(!state.paused)advanceRain(dt*state.speed*timeScale);if(state.showRivers){ctx.globalAlpha=state.riverIntensity;for(const particle of particles)if(!state.isolateBasin||particle.segment.basin===state.basin)dot(ctx,at(particle.segment.points,particle.segment.totals,particle.distance),particle.color,1.2*Math.sqrt(state.riverWidth),.16);ctx.globalAlpha=1;}}
       const pos=routePosition(route,state.progress);
-      if(pos){const name=riverName(pos.segment.name)||'Navnløs sideelv';if($('current-river').textContent!==name)$('current-river').textContent=name;}
+      if(pos)showWaterbody(pos.segment,pos.fraction);
       if(pos&&state.showRivers){
         const q=screen(pos.point);ctx.strokeStyle='#e4f8ee';ctx.globalAlpha=.2;ctx.lineWidth=1;ctx.beginPath();ctx.arc(q.x,q.y,state.completed?11:8,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;
         // A short luminous tail follows the actual downstream geometry.
@@ -314,21 +322,50 @@
   $('start-search').addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();$('start-search').value='';startOptions();}else if(event.key==='Enter'){event.preventDefault();$('start-point').focus();}});
   reduced.addEventListener('change',()=>{if(reduced.matches){state.paused=true;state.rain=false;particles=[];dirty=true;controls();}});
   addEventListener('resize',resize);new ResizeObserver(()=>{if(state.ready)updateCamera();}).observe($('player'));
-  window.DropPrototype={snapshot:()=>({...state,route:[...state.route],pan:[...state.pan],camera:{...camera},routeLength,duration,outlet:state.route.at(-1),rainSummary:{count:particles.length,emissions:rainEmissions,elapsed:rainElapsed},dataSummary:{segments:segments.length,basins:basins.size}}),worldToScreen:raw=>{const p=screen(point(raw)),r=canvas.getBoundingClientRect();return {x:p.x+r.x,y:p.y+r.y};}};
-  async function load(){
-    try{
-      setStatus('Henter elvenettet …');const response=await fetch('../assets/geography/drop-prototype/data.json');if(!response.ok)throw Error('data');data=await response.json();extent=data.bounds;data.unitsPerKm=data.unitsPerKm||1000;
+  window.DropPrototype={snapshot:()=>({...state,route:[...state.route],pan:[...state.pan],camera:{...camera},routeLength,duration,outlet:state.route.at(-1),rainSummary:{count:particles.length,emissions:rainEmissions,elapsed:rainElapsed},dataSummary:{segments:segments.length,basins:basins.size},regionSummary:{selected:[...desiredRegions],loaded:[...regionData.keys()],loading:[...regionRequests.keys()]}}),worldToScreen:raw=>{const p=screen(point(raw)),r=canvas.getBoundingClientRect();return {x:p.x+r.x,y:p.y+r.y};}};
+  let automaticRegionMap=false;
+  function regionControls(message=''){
+    for(const meta of regionManifest?.regions||[]){const box=$('region-'+meta.id);box.disabled=!state.ready;box.checked=desiredRegions.has(meta.id);box.setAttribute('aria-busy',String(regionRequests.has(meta.id)));}
+    $('region-status').textContent=message||([...regionRequests.keys()].length?'Laster '+[...regionRequests.keys()].map(k=>regionManifest.regions.find(r=>r.id===k)?.label).join(', ')+' …':'');
+  }
+  function rebuildRegions(fit=true){
+    hover=null;lastHover=null;
+    const active=[...desiredRegions].map(key=>regionData.get(key)).filter(Boolean),previous={...state},meta=active[0]||regionData.get('south');
+    data={...meta,basins:active.flatMap(g=>g.basins),segments:active.flatMap(g=>g.segments),starts:active.flatMap(g=>g.starts)};
+    extent=active.length?[Math.min(...active.map(g=>g.bounds[0])),Math.min(...active.map(g=>g.bounds[1])),Math.max(...active.map(g=>g.bounds[2])),Math.max(...active.map(g=>g.bounds[3]))]:meta.bounds;
+    basins=new Map();
       data.basins.forEach((b,i)=>{const basin={...b,id:id(b.id),color:b.color||palette[i%palette.length],bounds:null};if(b.rings){basin.path=new Path2D();for(const ring of b.rings){const p=ring.map(point);basin.path.addPath(path([...p,p[0]]));}}basins.set(basin.id,basin);});
       segments=data.segments.map(s=>{const points=s.points.map(point),m=metrics(points),xs=points.map(p=>p[0]),ys=points.map(p=>p[1]);return {...s,id:id(s.id),basin:id(s.basin),next:s.next==null?null:id(s.next),points,...m,path:path(points),parents:[],bounds:[Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys)]};});
       byId=new Map(segments.map(s=>[s.id,s]));for(const s of segments){if(!basins.has(s.basin)||s.points.length<2||s.length<=0)throw Error('invalid river');if(s.next!==null){const next=byId.get(s.next);if(!next||next.basin!==s.basin)throw Error('invalid downstream link');next.parents.push(s.id);}s.weight=s.area?.35+Math.min(1.8,Math.log2(1+Number(s.area))*.115):.3+Math.min(7,Number(s.order)||1)*.14;const b=basins.get(s.basin);b.bounds=b.bounds?[Math.min(b.bounds[0],s.bounds[0]),Math.min(b.bounds[1],s.bounds[1]),Math.max(b.bounds[2],s.bounds[2]),Math.max(b.bounds[3],s.bounds[3])]:[...s.bounds];}
-      const regionOrder=['Østlandet','Sørlandet','Vestlandet'],collator=new Intl.Collator('nb-NO');startEntries=data.starts.map(start=>{const basin=basins.get(byId.get(id(start.segment)).basin),region=start.region||basin.region||'Andre vassdrag';return {...start,region,search:searchText(start.label+' '+basin.name+' '+region)};}).sort((a,b)=>(regionOrder.includes(a.region)?regionOrder.indexOf(a.region):3)-(regionOrder.includes(b.region)?regionOrder.indexOf(b.region):3)||collator.compare(a.label,b.label));startOptions();$('start-search').disabled=false;
-      if(!data.starts.length)throw Error('no starting places');
+      const regionOrder=['Sør-Norge','Midt-Norge','Nord-Norge'],collator=new Intl.Collator('nb-NO');startEntries=data.starts.map(start=>{const basin=basins.get(byId.get(id(start.segment)).basin),region=regionManifest.regions.find(r=>r.id===basin.mapRegion)?.label||start.region||basin.region||'Andre vassdrag';return {...start,region,search:searchText(start.label+' '+basin.name+' '+region)};}).sort((a,b)=>(regionOrder.includes(a.region)?regionOrder.indexOf(a.region):3)-(regionOrder.includes(b.region)?regionOrder.indexOf(b.region):3)||collator.compare(a.label,b.label));startOptions();$('start-search').disabled=false;
+
+    if(previous.selectedSegment&&byId.has(previous.selectedSegment)){selectSegment(byId.get(previous.selectedSegment),previous.selectedFraction,previous.selectedStart);state.progress=previous.progress;state.completed=previous.completed;state.paused=previous.paused;}
+    else clearSelection();
+    if(state.rain)fillParticles();if(fit){state.zoom=1;state.pan=[0,0];}updateCamera();dirty=true;controls();styleControls();
+  }
+  async function ensureRegion(key){
+    if(regionData.has(key))return regionData.get(key);if(regionRequests.has(key))return regionRequests.get(key);
+    const meta=regionManifest.regions.find(r=>r.id===key);if(!meta)throw Error('Unknown region');
+    const task=(async()=>{const response=await fetch(new URL(meta.url,regionBase));if(!response.ok)throw Error('Region load failed');const value=await response.json();if(value.regionId!==key||!value.segments?.length||!value.basins?.length)throw Error('Invalid region');regionData.set(key,value);return value;})();
+    regionRequests.set(key,task);regionControls();try{return await task;}finally{regionRequests.delete(key);regionControls();}
+  }
+  function regionBackground(){if($('region-basemap').checked&&state.mapLayer==='dark'){$('map-layer').value='topo';$('map-layer').dispatchEvent(new Event('change'));automaticRegionMap=true;}}
+  for(const key of ['south','midtnorge','nordnorge'])$('region-'+key).addEventListener('change',async event=>{
+    $('region-status').textContent='';
+    if(event.target.checked){desiredRegions.add(key);try{await ensureRegion(key);if(desiredRegions.has(key)){rebuildRegions();regionBackground();}}catch(error){desiredRegions.delete(key);regionControls('Området kunne ikke lastes. Prøv igjen.');}}
+    else{desiredRegions.delete(key);rebuildRegions();}regionControls($('region-status').textContent.includes('kunne ikke')?$('region-status').textContent:'');
+  });
+  $('region-basemap').addEventListener('change',()=>{if($('region-basemap').checked)regionBackground();else if(automaticRegionMap){$('map-layer').value='dark';$('map-layer').dispatchEvent(new Event('change'));automaticRegionMap=false;}dirty=true;});
+  async function load(){
+    try{
+      setStatus('Henter elvenettet …');const response=await fetch('../assets/geography/drop-prototype/regions.json');if(!response.ok)throw Error('manifest');regionManifest=await response.json();
+      await ensureRegion('south');data=regionData.get('south');data.unitsPerKm=regionManifest.projection.unitsPerKm;rebuildRegions(false);
       $('river-source').replaceChildren(document.createTextNode(data.source.title+' · '));const credit=document.createElement('a');credit.href=data.source.url;credit.textContent=data.source.license;credit.target='_blank';credit.rel='noopener';$('river-source').append(credit);
-      const description=data.description||['Et nedbørfelt samler vann mot et felles utløp. Fargene viser '+new Intl.NumberFormat('nb-NO').format(basins.size)+' norske vassdrag. De lyseste sideelvene leder vann til startpunktet du har valgt.','Klikk på en elv eller søk etter et startsted i listen. Prototypen følger kartlagte elveløp; den beregner ikke avrenning fra vilkårlige punkter på land. Noen mindre sidegrener vises bare som bakgrunn.','Dråpen viser vannets vei gjennom elvenettet. Tempoet er tilpasset visningen og viser ikke hvor lang tid vannet bruker i virkeligheten.'];
-      $('about-copy').replaceChildren();for(const text of description){const p=document.createElement('p');p.textContent=text;$('about-copy').append(p);}
-      const mapHelp=document.createElement('p');mapHelp.textContent='Velg topografisk kart, turkart eller terrengrelieff under Bakgrunn. Slå av Vis elver for å studere landskapet. Terrengrelieff viser fjellrygger og daler, men tegner ikke inn beregnede vannskiller.';$('about-copy').append(mapHelp);
-      state.ready=true;document.body.dataset.ready='true';$('map-layer').disabled=false;$('export-map').disabled=false;$('rain').disabled=false;initHeightLegend();styleControls();resize();if(state.rain)fillParticles();controls();updateCamera();
-    }catch(error){setStatus('Kartet kunne ikke lastes. Last siden på nytt for å prøve igjen.');$('status').classList.remove('sr-only');document.body.dataset.error='true';console.error('River prototype:',error);}
+      const paragraphs=['Kartet følger kartlagte elveløp og sammenhengende vassdrag. Velg områder for å laste mer av landet. Sør-Norge vises fra start.','Lokale elvenavn kommer fra Vann-Nett, og innsjønavn fra NVEs innsjødatabase. Navnløs elv brukes der kilden ikke gir et sikkert lokalt navn. Enkelte navngitte elver kan dele navn.','Dråpene følger målte elveruter; tempoet viser ikke virkelig reisetid. Kartet beregner ikke avrenning fra vilkårlige punkter på land. Ruter over riksgrensen kan ende ved kartgrunnlagets grense.'];
+      $('about-copy').replaceChildren();for(const text of paragraphs){const paragraph=document.createElement('p');paragraph.textContent=text;$('about-copy').append(paragraph);}
+      const credits=document.createElement('p');for(const [label,url] of [['Elvenett og innsjønavn: NVE','https://www.nve.no/kart/'],['Lokale elvestrekninger: Vann-Nett/Miljødirektoratet','https://vann-nett.no/']]){if(credits.childNodes.length)credits.append(document.createElement('br'));const link=document.createElement('a');link.textContent=label;link.href=url;link.target='_blank';link.rel='noopener';credits.append(link);}$('about-copy').append(credits);
+      state.ready=true;document.body.dataset.ready='true';$('map-layer').disabled=false;$('export-map').disabled=false;$('rain').disabled=false;initHeightLegend();styleControls();resize();if(state.rain)fillParticles();controls();updateCamera();regionControls();
+    }catch(error){setStatus('Kartet kunne ikke lastes. Last siden på nytt for å prøve igjen.');$('status').classList.remove('sr-only');document.body.dataset.error='true';console.error('River map:',error);}
   }
   if(parent!==window&&new URLSearchParams(location.search).get('embedded')==='1'){
     document.querySelector('.back-link').addEventListener('click',event=>{event.preventDefault();parent.postMessage({type:'watershed-model-back'},location.origin);});
