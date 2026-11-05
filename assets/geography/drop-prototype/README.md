@@ -113,6 +113,8 @@ the service's limits. Linked Kartverket attribution remains visible and is
 included in exports.
 
 The adjacent height-colour intensity slider ranges from 0–300%, default 100%.
+The fixed palette uses green at 0–500 m, brown at 1000–1500 m and near-white
+at 2000–2500 m, with continuous transitions between these anchors.
 It adjusts saturation and (above 100%) contrast of the elevation overlay locally,
 before hillshade composition. The screen/export keys use the same filter;
 river colours and source imagery remain untouched, and no new tile requests

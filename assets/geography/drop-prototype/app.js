@@ -22,7 +22,7 @@
   const tiles=new Map(),tileOrigin=[-2500000,9045984],tileResolution=21664;
   const terrainTiles={};
   const mapScene=document.createElement('canvas'),tileStage=document.createElement('canvas');
-  const heightPalette=[[59,105,78],[130,157,112],[191,180,133],[169,140,114],[190,187,175],[245,246,240]];
+  const heightPalette=[[28,112,58],[91,151,67],[163,122,69],[137,91,56],[239,236,225],[255,255,255]];
   // Fixed physical height statistics and one palette for every tile. Dynamic
   // image stretching would assign different heights the same color at seams.
   const elevationRule={rasterFunction:'Colormap',rasterFunctionArguments:{Colorramp:{type:'multipart',colorRamps:heightPalette.slice(1).map((to,i)=>({type:'algorithmic',fromColor:[...heightPalette[i],255],toColor:[...to,255],algorithm:'esriCIELabAlgorithm'}))},Raster:{rasterFunction:'Stretch',rasterFunctionArguments:{Raster:'$$',StretchType:5,Statistics:[[0,2500,1250,700]],DRA:false,Min:0,Max:255,UseGamma:false},outputPixelType:'U8'}},outputPixelType:'U8'};

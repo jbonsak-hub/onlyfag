@@ -20,6 +20,10 @@ function tileRequest(url){
   const key=[kind,z,row,col].join('/');
   if(!verifiedLocalTiles.has(key)){
    terrainManifest??=JSON.parse(fs.readFileSync(path.join(root,'assets/geography/drop-prototype/terrain-cache/manifest.json'),'utf8'));
+   const stops=terrainManifest.elevationRule.rasterFunctionArguments.Colorramp.colorRamps;
+   assert(stops[0].fromColor[1]>stops[0].fromColor[0]*2,'Lowland is distinctly green');
+   for(const index of [2,3]){const rgb=stops[index].fromColor;assert(rgb[0]>rgb[1]&&rgb[1]>rgb[2],'Middle elevations use brown');}
+   assert(stops.at(-1).fromColor.slice(0,3).every(v=>v>=225)&&stops.at(-1).toColor.slice(0,3).every(v=>v>=245),'Highest mountains use white');
    assert.deepEqual(terrainManifest.projection,manifest.projection);assert.deepEqual(terrainManifest.matrix.origin,origin);assert.equal(terrainManifest.matrix.resolution,21664);assert.equal(terrainManifest.matrix.tileSize,256);
    const source=terrainManifest.tiles[key];assert(source,'Every local tile has a pinned original request');assert.equal(source.file,path.basename(u.pathname));
    const file=path.resolve(root,'.'+u.pathname),bytes=fs.readFileSync(file),hash=require('node:crypto').createHash('sha256').update(bytes).digest('hex');
