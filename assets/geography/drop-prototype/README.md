@@ -112,6 +112,12 @@ Color tiles use matrix level 5 or finer because larger source mosaics can exceed
 the service's limits. Linked Kartverket attribution remains visible and is
 included in exports.
 
+The adjacent height-colour intensity slider ranges from 0–300%, default 100%.
+It adjusts saturation and (above 100%) contrast of the elevation overlay locally,
+before hillshade composition. The screen/export keys use the same filter;
+river colours and source imagery remain untouched, and no new tile requests
+are needed. At 100%, the original rendering is restored exactly.
+
 The dynamically colored WMS layer was deliberately excluded: equal-resolution
 nested sample requests assigned different colors to the same geographic pixels.
 The fixed-statistics REST rule passed a pixel-identical overlap check.

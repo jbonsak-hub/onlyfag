@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="color-scheme" content="dark">
   <title>Vassdrag og nedbørfelt – OnlyFag</title>
-  <link rel="stylesheet" href="../assets/geography/drop-prototype/style-a4ceaa30ee2a.css">
-  <script src="../assets/geography/drop-prototype/app-d0c82464fbe3.js" defer></script>
+  <link rel="stylesheet" href="../assets/geography/drop-prototype/style-fb6dfe7f429a.css">
+  <script src="../assets/geography/drop-prototype/app-4bd6474a1621.js" defer></script>
 </head>
 <body data-map-layer="dark" data-player-visible="true">
   <main class="drop-explorer" aria-label="Følg dråpen gjennom norske vassdrag">
@@ -86,10 +86,14 @@
             <span>Kartlagets synlighet <output id="map-opacity-value" for="map-opacity">73 %</output></span>
             <input id="map-opacity" type="range" min="0" max="100" step="1" value="73">
           </label>
+          <div class="height-color-controls">
           <label class="style-check" for="height-colors">
             <input id="height-colors" type="checkbox" checked disabled title="Terrengrelieff">
             <span><strong>Høydefarger</strong></span>
           </label>
+          <input id="height-intensity" type="range" min="0" max="300" step="5" value="100" aria-label="Høydefargenes intensitet" title="Fargeintensitet" disabled>
+          <output id="height-intensity-value" for="height-intensity">100 %</output>
+          </div>
           <fieldset class="river-style-controls">
             <legend>Elvenett</legend>
             <label class="style-range" for="river-width">

@@ -241,4 +241,9 @@ h1{font-size:21px}
 .region-panel input{accent-color:var(--mint);width:15px;height:15px;flex:none}
 .region-panel small,.region-panel p{font-size:10px;line-height:1.5;color:var(--muted)}
 .region-panel p:empty{display:none}
+.height-color-controls{display:flex;align-items:center;gap:10px;margin-top:14px;padding:12px 0 15px;border-bottom:1px solid var(--line)}
+.height-color-controls .style-check{flex:none;margin:0;padding:0;border:0}
+.height-color-controls input[type="range"]{min-width:0;flex:1;width:80px;accent-color:var(--mint)}
+.height-color-controls output{flex:none;min-width:35px;text-align:right;font-size:10px;color:var(--mint);font-variant-numeric:tabular-nums}
+.height-color-controls:has(#height-intensity:disabled) output{opacity:.45}
 @media(max-width:899px){.region-selector summary{width:32px;min-height:32px;padding:7px}.region-selector summary>span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.region-panel{right:-75px;top:40px;max-width:calc(100vw - 28px)}}

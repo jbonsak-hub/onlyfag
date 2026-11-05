@@ -6,6 +6,7 @@
   let hostVisible=true;
   const palette=['#d690b9','#7dc9b7','#d8ba79','#9b9bd7','#99c67f','#d78f73','#7dbbd7','#b79ad1','#c6cb7a','#79b6a2','#da9fa0','#9db4da'];
   const state={ready:false,mode:'flow',mapLayer:'dark',showRivers:true,riverWidth:1.1,riverIntensity:.82,mapOpacity:.73,heightColors:true,isolateBasin:false,playerVisible:true,paused:reduced.matches,speed:1,progress:0,completed:false,zoom:1,pan:[0,0],route:[],selectedSegment:null,basin:null,selectedStart:null,rain:true};
+  state.heightIntensity=1;
   const timeScale=2; // Normal is half the previously published rain speed.
   let data,segments=[],byId=new Map(),basins=new Map(),upstream=new Set(),route=[],routeLength=0,duration=30,particles=[],startEntries=[];
   let regionManifest;
@@ -77,13 +78,16 @@
     $('river-intensity-value').textContent=Math.round(state.riverIntensity*100)+' %';$('map-opacity-value').textContent=Math.round(state.mapOpacity*100)+' %';
     $('map-opacity').disabled=state.mapLayer==='dark';$('height-colors').disabled=state.mapLayer!=='relief';
     $('isolate-basin').disabled=!state.basin;
+    $('height-intensity').disabled=state.mapLayer!=='relief'||!state.heightColors;$('height-intensity-value').textContent=Math.round(state.heightIntensity*100)+' %';
     $('height-legend').hidden=state.mapLayer!=='relief'||!state.heightColors||state.mapOpacity===0||![...desiredRegions].some(key=>regionData.has(key));
   }
+  const heightColorFilter=()=>state.heightIntensity===1?'none':'saturate('+state.heightIntensity+') contrast('+(1+Math.max(0,state.heightIntensity-1)*.35)+')';
   function drawHeightLegend(c,x,y,w){
-    const ramp=c.createLinearGradient(x,0,x+w,0);heightPalette.forEach((rgb,i)=>ramp.addColorStop(i/(heightPalette.length-1),'rgb('+rgb.join(',')+')'));c.fillStyle=ramp;c.fillRect(x,y,w,9);c.font='9px system-ui,sans-serif';c.fillStyle='#c9dace';c.textAlign='left';c.fillText('0 m',x,y+23);c.textAlign='center';c.fillText('1 000 m',x+w*.4,y+23);c.fillText('2 000 m',x+w*.8,y+23);c.textAlign='right';c.fillText('2 500 m',x+w,y+23);c.textAlign='left';
+    c.save();c.filter=heightColorFilter();
+    const ramp=c.createLinearGradient(x,0,x+w,0);heightPalette.forEach((rgb,i)=>ramp.addColorStop(i/(heightPalette.length-1),'rgb('+rgb.join(',')+')'));c.fillStyle=ramp;c.fillRect(x,y,w,9);c.restore();c.font='9px system-ui,sans-serif';c.fillStyle='#c9dace';c.textAlign='left';c.fillText('0 m',x,y+23);c.textAlign='center';c.fillText('1 000 m',x+w*.4,y+23);c.fillText('2 000 m',x+w*.8,y+23);c.textAlign='right';c.fillText('2 500 m',x+w,y+23);c.textAlign='left';
   }
   function initHeightLegend(){
-    const title=document.createElement('strong');title.textContent='Høyde over havet';const ramp=document.createElement('div');ramp.className='height-ramp';ramp.style.background='linear-gradient(to right,'+heightPalette.map(rgb=>'rgb('+rgb.join(',')+')').join(',')+')';
+    const title=document.createElement('strong');title.textContent='Høyde over havet';const ramp=document.createElement('div');ramp.className='height-ramp';ramp.style.background='linear-gradient(to right,'+heightPalette.map(rgb=>'rgb('+rgb.join(',')+')').join(',')+')';ramp.style.filter=heightColorFilter();
     const ticks=document.createElement('div');ticks.className='height-ticks';for(const text of ['0','500','1 000','1 500','2 000','2 500 m']){const tick=document.createElement('span');tick.textContent=text;ticks.append(tick);}
     $('height-legend').replaceChildren(title,ramp,ticks);
   }
@@ -150,9 +154,9 @@
         if(tile.status==='ready')drawTile(tile);
       }
       scene.globalCompositeOperation=colored&&layer==='relief'?'multiply':'source-over';scene.globalAlpha=colored&&layer==='relief'?.62:1;
-      scene.drawImage(tileStage,0,0,width,height);
+      scene.filter=layer==='elevation'?heightColorFilter():'none';scene.drawImage(tileStage,0,0,width,height);
     }
-    scene.globalCompositeOperation='source-over';scene.globalAlpha=1;
+    scene.globalCompositeOperation='source-over';scene.globalAlpha=1;scene.filter='none';
     c.save();c.beginPath();for(const bounds of selectedMapBounds()){const p=screen(bounds),q=screen(bounds.slice(2));c.rect(p.x,p.y,q.x-p.x,q.y-p.y);}c.clip();c.globalAlpha=state.mapOpacity;c.drawImage(mapScene,0,0,width,height);c.restore();
     // Bound decoded image memory during long exploration. Late responses are
     // always positioned with the current camera on the next repaint.
@@ -309,6 +313,7 @@
   });
   for(const [name,key,scale] of [['river-width','riverWidth',1],['river-intensity','riverIntensity',100],['map-opacity','mapOpacity',100]])$(name).addEventListener('input',()=>{state[key]=Number($(name).value)/scale;dirty=true;styleControls();});
   $('height-colors').addEventListener('change',()=>{state.heightColors=$('height-colors').checked;dirty=true;styleControls();});
+  $('height-intensity').addEventListener('input',()=>{state.heightIntensity=Number($('height-intensity').value)/100;dirty=true;styleControls();initHeightLegend();});
   $('isolate-basin').addEventListener('change',()=>{state.isolateBasin=$('isolate-basin').checked;hover=null;if(state.rain)fillParticles();dirty=true;});
   $('toggle-player').addEventListener('click',()=>{state.playerVisible=!state.playerVisible;document.body.dataset.playerVisible=String(state.playerVisible);$('toggle-player').setAttribute('aria-expanded',String(state.playerVisible));$('player').inert=!state.playerVisible;if(state.playerVisible)document.body.dataset.frontPanel='player';$('toggle-player').setAttribute('aria-label',state.playerVisible?'Skjul dråpepanelet':'Vis dråpepanelet');dirty=true;});
   $('export-map').addEventListener('click',exportMap);
