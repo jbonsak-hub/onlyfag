@@ -6,6 +6,7 @@ import {foodArtworkSVG} from './food-figures.js?v=20261101-4';
 import {STORE_KEY, topics, types, shuffle, mixedOrder, evaluate, needsReview, resultRecord, pickNext, rememberQuestion, recentSummary, recordRecentResult} from './engine.js?v=20261101-4';
 import {createFlashcardView, renderConcepts} from './flashcard-view.js?v=20261103-1';
 
+document.body.classList.toggle('dark',document.documentElement.classList.contains('dark'));
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ids=organs.map(o=>o.id);
@@ -302,6 +303,7 @@ window.addEventListener('message',event=>{
     document.documentElement.classList.toggle('nutrition-host-collapsed',message.sidebarCollapsed);
   }
   if(message?.type==='onlyfag:nutrition:theme'&&typeof message.dark==='boolean'){
+    document.documentElement.classList.toggle('dark',message.dark);
     document.body.classList.toggle('dark',message.dark);
   }
   if(message?.type==='onlyfag:nutrition:request-state')publishState();

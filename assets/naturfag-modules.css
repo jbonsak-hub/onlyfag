@@ -71,3 +71,18 @@ body.nf-subjects-active>.main>.content{max-width:none!important;height:100dvh;pa
 @media(max-width:760px){.page .question,.page .quiz-big{font-size:16px!important;font-weight:700!important}}
 
 @media print{.nf-subject-card{break-inside:avoid}}
+
+/* Keep filled controls and reference-table labels readable in dark mode. */
+body.dark{color-scheme:dark}
+html:has(>body.dark){color-scheme:dark}
+body.dark .btn:not(.secondary):not(.ghost){background:#17664f;color:#fff}
+body.dark .btn:not(.secondary):not(.ghost):hover{background:#1b785c}
+body.dark .brand-mark{background:#17664f}
+body.dark .atom-core{fill:#17664f}
+body.dark .pt-cell{color:var(--text)}
+body.dark .pt-cell.dim{opacity:.8}
+body.dark #page-elementquiz.quiz-pt-color .pt-cell{color:#203c32!important}
+body.dark #page-elementquiz.quiz-pt-color .pt-cell :is(.num,.nm,.sym){color:inherit!important}
+body.dark #page-elementquiz.quiz-pt-color .pt-cell.selected{background:var(--soft)!important;color:var(--text)!important}
+body.dark #page-elementquiz.quiz-pt-color .pt-cell:is(.miss,.ish-click){background:var(--badbg)!important;color:var(--text)!important}
+body.dark #page-elementquiz.quiz-pt-color .pt-cell:is(.solved,.ish-target){background:var(--goodbg)!important;color:var(--text)!important}
