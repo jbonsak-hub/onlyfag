@@ -124,13 +124,21 @@ topographic `topo` and tour-map `toporaster` layers, and real terrain relief
 inspect the underlying landscape without changing the camera or journey.
 Terrain relief makes ridges visible; it does not compute drainage divides.
 
-Maps are requested directly from the official public services only after a
-background is selected. Linked `© Kartverket` attribution appears with the map.
-No API key, backend proxy, bundled map imagery or new library is required.
-The dark map still works without either remote service. Failed tiles show a
-message; changing layers retries. Requests are bounded to eight concurrent
-images, decoded tiles are capped at 160 after each repaint, and already loaded
-geographically aligned tiles remain visible while new detail arrives.
+Maps load only after a background is selected. Linked `© Kartverket` attribution
+appears with the map. The terrain overview uses 109 pinned, unmodified PNG
+responses (2.56 MB for the full stored set): hillshade at levels 3–5 and elevation
+colours at level 5. Only visible tiles within selected regions are requested.
+No image is resized or recompressed. Higher detail and topographic/hiking maps
+continue to use the original official services. A failed local image falls back
+to its exact original request. Source URLs, hashes, 256-pixel dimensions and
+licence are recorded in [terrain-cache/README.md](terrain-cache/README.md).
+
+The queue starts near the viewport centre and reserves capacity for both
+hillshade and elevation colours, with at most eight images overall and four per
+terrain layer. Pan, zoom and layer changes cancel obsolete pending requests;
+ready images remain cached for revisits and geographic fallback. Decoded tiles
+are capped at 160 after each repaint. No API key, backend proxy or new library
+is required. The dark map works without remote services.
 
 - [WMTS service and capabilities](https://cache.kartverket.no/):
   `https://cache.kartverket.no/v1/wmts/1.0.0/{layer}/default/utm33n/{matrix}/{row}/{col}.png`
@@ -161,12 +169,14 @@ PYTHONPATH=/workspace/shared/municipality-python-deps python3 -B scripts/build-d
 PYTHONPATH=/workspace/shared/municipality-python-deps python3 -B scripts/build-watershed-regions.py --check
 node scripts/build-drop-prototype-assets.cjs
 node scripts/build-drop-prototype-assets.cjs --check
+node scripts/fetch-watershed-terrain-cache.cjs --check
 node tests/watershed-regions-data.cjs
 BROWSER_EXECUTABLE=/usr/bin/chromium node tests/watershed-regions.cjs
 BROWSER_EXECUTABLE=/usr/bin/chromium node tests/drop-default-view.cjs
 BROWSER_EXECUTABLE=/usr/bin/chromium node tests/watershed-embed.cjs
 BROWSER_EXECUTABLE=/usr/bin/chromium node tests/drop-basemap.cjs
 BROWSER_EXECUTABLE=/usr/bin/chromium node tests/drop-map-style.cjs
+BROWSER_EXECUTABLE=/usr/bin/chromium node tests/watershed-map-loading.cjs
 BASE_URL=http://127.0.0.1:58390 BROWSER_EXECUTABLE=/usr/bin/chromium node tests/drop-panels.cjs
 ```
 

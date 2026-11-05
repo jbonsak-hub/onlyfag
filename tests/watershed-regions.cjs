@@ -1,5 +1,6 @@
 // User-level checks for on-demand national coverage and local waterbody labels.
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
+const {terrainSourceURL}=require('./watershed-map-fixtures.cjs');
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright'),root=path.resolve(__dirname,'..'),dir=path.join(root,'assets/geography/drop-prototype'),out=process.env.DROP_SCREENSHOTS||path.resolve(root,'../watershed-regions-review');
 const manifest=JSON.parse(fs.readFileSync(process.env.WATERSHED_MANIFEST||path.join(dir,'regions.json'),'utf8'));
 const regions=new Map(manifest.regions.map(r=>[r.id,{...r,data:JSON.parse(fs.readFileSync(r.url.startsWith('/')?path.join(root,r.url.split('?')[0]):path.resolve(dir,r.url.split('?')[0]),'utf8'))}]));
@@ -16,9 +17,9 @@ function scopedTiles(requests,ids){for(const url of requests){const box=tileBoun
  async function open(viewport,{failMid=false}={}){
   const context=await browser.newContext({viewport,reducedMotion:'reduce'}),page=await context.newPage(),requests=[],mapRequests=[];let failRegion=failMid;
   const urlFor=id=>new URL(regions.get(id).url,base+'/assets/geography/drop-prototype/regions.json').href;
-  await context.route('**/*',route=>{const req=route.request(),url=req.url();if(!['GET','HEAD'].includes(req.method())){report.external.push(req.method()+' '+url);return route.abort();}
-   if(url.startsWith(base+'/')||/^(data|blob):/.test(url)){requests.push(url);if(failRegion&&url.split('?')[0]===urlFor('midtnorge').split('?')[0])return route.fulfill({status:503,body:'deliberate region failure'});return route.continue();}
-   if(/^https:\/\/(cache\.kartverket\.no|wms\.geonorge\.no|hoydedata\.no)\//.test(url)){mapRequests.push(url);return route.fulfill({status:200,contentType:'image/svg+xml',headers:{'access-control-allow-origin':'*'},body:'<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="#b1c1aa"/></svg>'});}
+  await context.route('**/*',route=>{const req=route.request(),url=req.url(),serviceURL=terrainSourceURL(url)||url;if(!['GET','HEAD'].includes(req.method())){report.external.push(req.method()+' '+url);return route.abort();}
+   if(serviceURL===url&&(url.startsWith(base+'/')||/^(data|blob):/.test(url))){requests.push(url);if(failRegion&&url.split('?')[0]===urlFor('midtnorge').split('?')[0])return route.fulfill({status:503,body:'deliberate region failure'});return route.continue();}
+   if(/^https:\/\/(cache\.kartverket\.no|wms\.geonorge\.no|hoydedata\.no)\//.test(serviceURL)){mapRequests.push(serviceURL);return route.fulfill({status:200,contentType:'image/svg+xml',headers:{'access-control-allow-origin':'*'},body:'<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="#b1c1aa"/></svg>'});}
    report.external.push(url);return route.abort();
   });
   page.on('pageerror',e=>report.errors.push(e.message));page.on('response',r=>{if(r.status()>=400&&!(failMid&&r.status()===503))report.missing.push(r.url());});

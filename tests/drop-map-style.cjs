@@ -2,6 +2,7 @@
 // chosen river. Uniform remote-map mocks make alpha composition measurable.
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const {terrainSourceURL}=require('./watershed-map-fixtures.cjs');
 const root=path.resolve(__dirname,'..'),out=process.env.DROP_SCREENSHOTS||path.resolve(root,'../drop-map-style-validation');
 const report={viewports:[],requests:[],errors:[],unexpected:[],mutations:[]};
 const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json'};
@@ -29,11 +30,11 @@ async function controlFits(page,id){const input=page.locator('#'+id);await input
   for(const [viewport,dpr] of [[{width:1366,height:900},1],[{width:390,height:844},2]]){
    const context=await browser.newContext({viewport,deviceScaleFactor:dpr,reducedMotion:'reduce'}),requests=[],network={hold:false,pending:[]};
    await context.route('**/*',route=>{
-    const request=route.request(),url=request.url();
+    const request=route.request(),url=request.url(),serviceURL=terrainSourceURL(url)||url;
     if(!['GET','HEAD'].includes(request.method())){report.mutations.push(request.method()+' '+url);return route.abort();}
-    if(url.startsWith(base+'/')||/^(data|blob):/.test(url))return route.continue();
-    if(!/^https:\/\/(cache\.kartverket\.no|wms\.geonorge\.no|hoydedata\.no)\//.test(url)){report.unexpected.push(url);return route.abort();}
-    const u=new URL(url),layers=u.searchParams.get('layers')||u.pathname.split('/')[4],height=u.hostname==='hoydedata.no';
+    if(serviceURL===url&&(url.startsWith(base+'/')||/^(data|blob):/.test(url)))return route.continue();
+    if(!/^https:\/\/(cache\.kartverket\.no|wms\.geonorge\.no|hoydedata\.no)\//.test(serviceURL)){report.unexpected.push(url);return route.abort();}
+    const u=new URL(serviceURL),layers=u.searchParams.get('layers')||u.pathname.split('/')[4],height=u.hostname==='hoydedata.no';
     if(height){
      assert.equal(u.pathname,'/arcgis/rest/services/DTM/ImageServer/exportImage');
      const rule=JSON.parse(u.searchParams.get('renderingRule')),stretch=rule.rasterFunctionArguments?.Raster;

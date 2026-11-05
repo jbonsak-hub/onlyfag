@@ -19,6 +19,7 @@
   // Kartverket's UTM33 matrix shares the source rivers' CRS. Tile edges and
   // river points use the same camera, without geographic stretching.
   const tiles=new Map(),tileOrigin=[-2500000,9045984],tileResolution=21664;
+  const terrainTiles={};
   const mapScene=document.createElement('canvas'),tileStage=document.createElement('canvas');
   const heightPalette=[[59,105,78],[130,157,112],[191,180,133],[169,140,114],[190,187,175],[245,246,240]];
   // Fixed physical height statistics and one palette for every tile. Dynamic
@@ -41,6 +42,7 @@
     return width>=900?{x:20,y:30,w:width-290,h:height-56}:{x:12,y:116,w:width-24,h:Math.max(150,height-150)};
   }
   function updateCamera(){
+    tileView.clear();
     const available=mapWindow();
     const fit=.96*Math.min(available.w/(extent[2]-extent[0]),available.h/(extent[3]-extent[1]));
     camera={scale:fit*state.zoom,tx:available.x+available.w/2-(extent[0]+extent[2])/2*fit*state.zoom+state.pan[0],ty:available.y+available.h/2-(extent[1]+extent[3])/2*fit*state.zoom+state.pan[1]};dirty=true;
@@ -75,7 +77,6 @@
     $('river-intensity-value').textContent=Math.round(state.riverIntensity*100)+' %';$('map-opacity-value').textContent=Math.round(state.mapOpacity*100)+' %';
     $('map-opacity').disabled=state.mapLayer==='dark';$('height-colors').disabled=state.mapLayer!=='relief';
     $('isolate-basin').disabled=!state.basin;
-    $('height-color-help').textContent=state.mapLayer==='relief'?'En fast fargeskala viser høyde over havet.':'Velg Terrengrelieff for høydefarger.';
     $('height-legend').hidden=state.mapLayer!=='relief'||!state.heightColors||state.mapOpacity===0||![...desiredRegions].some(key=>regionData.has(key));
   }
   function drawHeightLegend(c,x,y,w){
@@ -92,16 +93,22 @@
     const x=(tileOrigin[0]+tile.col*span-west)*units,y=(north-tileOrigin[1]+tile.row*span)*units;
     return selectedMapBounds().some(bounds=>intersects([x,y,x+span*units,y+span*units],bounds));
   }
+  function cancelUnusedTiles(){for(const [key,tile] of tiles)if(tile.status==='loading'&&!tileView.has(key))tile.cancel();}
   function loadTiles(){
-    for(const key of tileView){
-      if(tileLoads>=(state.mapLayer==='relief'?4:8))break;
-      const tile=tiles.get(key);if(tile.status!=='queued'||!tileInSelectedRegions(tile))continue;
+    const active={};for(const tile of tiles.values())if(tile.status==='loading')active[tile.layer]=(active[tile.layer]||0)+1;
+    const priority=tile=>{const {west,north,unitsPerKm}=regionManifest.projection,units=unitsPerKm/1000,span=256*tileResolution/2**tile.z,p=screen([(tileOrigin[0]+(tile.col+.5)*span-west)*units,(north-tileOrigin[1]+(tile.row+.5)*span)*units]);return (p.x-width/2)**2+(p.y-height/2)**2;};
+    const pending=[...tileView].map(key=>tiles.get(key)).filter(tile=>tile.status==='queued'&&tileInSelectedRegions(tile)).sort((a,b)=>priority(a)-priority(b));
+    for(const tile of pending){
+      if(tileLoads>=8)break;
+      const limit=['relief','elevation'].includes(tile.layer)?4:8;if((active[tile.layer]||0)>=limit)continue;active[tile.layer]=(active[tile.layer]||0)+1;
       tile.status='loading';tile.attempts=(tile.attempts||0)+1;tileLoads++;const img=new Image();tile.image=img;img.crossOrigin='anonymous';
-      let settled=false;const timeout=setTimeout(()=>{done('error');img.src='';},['relief','elevation'].includes(tile.layer)?45000:20000);
-      const done=status=>{if(settled)return;settled=true;clearTimeout(timeout);if(status==='cancelled')tile.attempts--;tile.status=status==='cancelled'||status==='error'&&tile.attempts<2?'queued':status;tileLoads--;dirty=true;loadTiles();mapStatus();};
+      const cached=terrainTiles[[tile.layer,tile.z,tile.row,tile.col].join('/')];tile.cachedSource=Boolean(cached&&!tile.skipLocal);
+      let settled=false;const timeout=setTimeout(()=>{done('error');img.src='';},tile.cachedSource?8000:['relief','elevation'].includes(tile.layer)?45000:20000);
+      const done=status=>{if(settled)return;settled=true;clearTimeout(timeout);const fallback=status==='error'&&tile.cachedSource;if(fallback)tile.skipLocal=true;if(status==='cancelled'||fallback)tile.attempts--;tile.status=status==='cancelled'||fallback||status==='error'&&tile.attempts<2?'queued':status;tileLoads--;dirty=true;loadTiles();mapStatus();};
       tile.cancel=()=>{done('cancelled');img.src='';};
       img.onload=()=>done('ready');img.onerror=()=>done('error');
-      if(tile.layer==='elevation'){
+      if(tile.cachedSource)img.src=new URL('terrain-cache/'+cached,regionBase);
+      else if(tile.layer==='elevation'){
         const span=256*tileResolution/2**tile.z,x=tileOrigin[0]+tile.col*span,y=tileOrigin[1]-tile.row*span;
         const query=new URLSearchParams({f:'image',format:'png32',bbox:[x,y-span,x+span,y].join(','),bboxSR:'25833',imageSR:'25833',size:'256,256',interpolation:'RSP_BilinearInterpolation',renderingRule:JSON.stringify(elevationRule)});
         img.src='https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/exportImage?'+query;
@@ -113,7 +120,7 @@
     }
   }
   function paintMap(c){
-    if(state.mapLayer==='dark'||state.mapOpacity===0||!selectedMapBounds().length){tileView.clear();mapStatus();return;}
+    if(state.mapLayer==='dark'||state.mapOpacity===0||!selectedMapBounds().length){tileView.clear();cancelUnusedTiles();mapStatus();return;}
     const [west,,,north]=data.source.projectedBounds,units=data.unitsPerKm/1000;
     const z=Math.max(0,Math.min(18,Math.round(Math.log2(tileResolution*units*camera.scale))));
     const a=world(0,0),b=world(width,height),minE=west+a[0]/units,maxE=west+b[0]/units,maxN=north-a[1]/units,minN=north-b[1]/units;
@@ -150,7 +157,7 @@
     // Bound decoded image memory during long exploration. Late responses are
     // always positioned with the current camera on the next repaint.
     if(tiles.size>160)for(const [key,tile] of [...tiles].sort((a,b)=>a[1].used-b[1].used)){if(tiles.size<=160)break;if(!tileView.has(key)&&tile.status!=='loading')tiles.delete(key);}
-    loadTiles();mapStatus();
+    cancelUnusedTiles();loadTiles();mapStatus();
   }
   function paintBase(){
     // The route is translucent. Never carry its alpha into the next opaque

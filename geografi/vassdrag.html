@@ -6,7 +6,7 @@
   <meta name="color-scheme" content="dark">
   <title>Vassdrag og nedbørfelt – OnlyFag</title>
   <link rel="stylesheet" href="../assets/geography/drop-prototype/style-a4ceaa30ee2a.css">
-  <script src="../assets/geography/drop-prototype/app-33e1b7ba12ca.js" defer></script>
+  <script src="../assets/geography/drop-prototype/app-d0c82464fbe3.js" defer></script>
 </head>
 <body data-map-layer="dark" data-player-visible="true">
   <main class="drop-explorer" aria-label="Følg dråpen gjennom norske vassdrag">
@@ -41,11 +41,9 @@
       <details class="region-selector" id="region-selector">
         <summary title="Velg områder"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3Zm6-3v15m6-12v15"/></svg><span>Områder</span></summary>
         <div class="region-panel">
-          <strong>Vis vassdrag i</strong>
           <label><input id="region-south" type="checkbox" checked disabled> Sør-Norge</label>
           <label><input id="region-midtnorge" type="checkbox" disabled> Midt-Norge</label>
           <label><input id="region-nordnorge" type="checkbox" disabled> Nord-Norge</label>
-          <small>Områder lastes når du velger dem. Velg bakgrunn under Kartstil. Kartfliser lastes bare innenfor valgte områder.</small>
           <p id="region-status" role="status" aria-live="polite"></p>
         </div>
       </details>
@@ -73,8 +71,7 @@
 
         <section class="style-panel movable-panel" id="style-panel" aria-label="Kartstil" hidden>
           <div class="style-panel-heading">
-            <button type="button" id="style-grip" class="panel-grip" aria-label="Flytt kartstilpanelet. Bruk piltastene for å flytte."><span>Form kartet</span><span class="grip-dots" aria-hidden="true">⠿</span></button>
-            <p>Finn balansen mellom vann og landskap.</p>
+            <button type="button" id="style-grip" class="panel-grip" aria-label="Flytt kartstilpanelet. Bruk piltastene for å flytte."><span>Kartstil</span><span class="grip-dots" aria-hidden="true">⠿</span></button>
           </div>
           <div class="map-layer-controls">
             <label for="map-layer">Bakgrunn</label>
@@ -88,11 +85,10 @@
           <label class="style-range" for="map-opacity">
             <span>Kartlagets synlighet <output id="map-opacity-value" for="map-opacity">73 %</output></span>
             <input id="map-opacity" type="range" min="0" max="100" step="1" value="73">
-            <small>Demp bakgrunnen for å løfte frem elvene.</small>
           </label>
           <label class="style-check" for="height-colors">
-            <input id="height-colors" type="checkbox" checked disabled>
-            <span><strong>Høydefarger</strong><small id="height-color-help">Velg Terrengrelieff for høydefarger.</small></span>
+            <input id="height-colors" type="checkbox" checked disabled title="Terrengrelieff">
+            <span><strong>Høydefarger</strong></span>
           </label>
           <fieldset class="river-style-controls">
             <legend>Elvenett</legend>

@@ -2,6 +2,7 @@
 // maps, so registration, late responses and failure recovery run offline.
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const {terrainSourceURL}=require('./watershed-map-fixtures.cjs');
 const root=path.resolve(__dirname,'..'),out=process.env.DROP_SCREENSHOTS||path.resolve(root,'../drop-basemap-validation');
 const data=JSON.parse(fs.readFileSync(path.join(root,'assets/geography/drop-prototype/data.json'),'utf8'));
 assert.equal(data.source.crs,'EPSG:25833');assert.equal(data.yUp,false);
@@ -73,12 +74,12 @@ async function registration(page,layer){
   async function open(viewport,deviceScaleFactor=1){
    const context=await browser.newContext({viewport,deviceScaleFactor,reducedMotion:'reduce'}),network={hold:false,pending:[],fail:new Set()};
    await context.route('**/*',async route=>{
-    const request=route.request(),url=request.url();
+    const request=route.request(),url=request.url(),serviceURL=terrainSourceURL(url)||url;
     if(!['GET','HEAD'].includes(request.method())){report.mutations.push(request.method()+' '+url);return route.abort();}
-    if(url.startsWith(base+'/')||/^(data|blob):/.test(url))return route.continue();
-    if(!/^https:\/\/(cache\.kartverket\.no|wms\.geonorge\.no)\//.test(url)){report.unexpected.push(url);return route.abort();}
+    if(serviceURL===url&&(url.startsWith(base+'/')||/^(data|blob):/.test(url)))return route.continue();
+    if(!/^https:\/\/(cache\.kartverket\.no|wms\.geonorge\.no)\//.test(serviceURL)){report.unexpected.push(url);return route.abort();}
     try{
-     const tile=requestedTile(url);report.requests.push({method:request.method(),url,...tile});
+     const tile=requestedTile(serviceURL);report.requests.push({method:request.method(),url,...tile});
      if(network.hold)await new Promise(resolve=>network.pending.push({tile,resolve}));
      if(network.fail.has(tile.layer))return route.fulfill({status:503,contentType:'text/plain',headers:{'access-control-allow-origin':'*'},body:'mock unavailable'});
      return route.fulfill({status:200,contentType:'image/svg+xml',headers:{'access-control-allow-origin':'*'},body:mockImage(tile)});

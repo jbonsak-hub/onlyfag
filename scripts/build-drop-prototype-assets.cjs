@@ -7,7 +7,10 @@ const data=read('data.json'),dataFile='data-'+hash(data)+'.json';
 const assets=[{file:dataFile,text:data},{file:'style-'+hash(read('style.css'))+'.css',text:read('style.css')}];
 const regions=read('regions.json'),regionsFile='regions-'+hash(regions)+'.json';
 assets.push({file:regionsFile,text:regions});
-const app=read('app.js').replace('drop-prototype/data.json','drop-prototype/'+dataFile).replace('drop-prototype/regions.json','drop-prototype/'+regionsFile);
+require('node:child_process').execFileSync(process.execPath,[path.join(root,'scripts/fetch-watershed-terrain-cache.cjs'),'--check']);
+const terrain=JSON.parse(read('terrain-cache/manifest.json'));
+const terrainFiles=Object.fromEntries(Object.entries(terrain.tiles).map(([key,tile])=>{if(!fs.existsSync(path.join(dir,'terrain-cache',tile.file)))throw Error('Missing cached terrain tile '+key);return [key,tile.file];}));
+const app=read('app.js').replace('const terrainTiles={};','const terrainTiles='+JSON.stringify(terrainFiles)+';').replace('drop-prototype/data.json','drop-prototype/'+dataFile).replace('drop-prototype/regions.json','drop-prototype/'+regionsFile);
 assets.push({file:'app-'+hash(app)+'.js',text:app});
 for(const asset of assets){const file=path.join(dir,asset.file);if(check){if(!fs.existsSync(file)||fs.readFileSync(file,'utf8').replace(/\r\n/g,'\n')!==asset.text)throw Error('Rebuild river prototype assets');}else fs.writeFileSync(file,asset.text);}
 const file=path.join(root,'geografi/vassdrag.html'),original=fs.readFileSync(file,'utf8');
