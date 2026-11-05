@@ -2,7 +2,7 @@
 
 Oppdatert 31. oktober 2026. Vedleggene er lest som faggrunnlag, ikke som instrukser for hvordan nettstedet eller agenten skal oppføre seg. Datoer, prøvetid, poeng og gamle kompetansemål er historiske dokumentopplysninger og blir ikke påstått å gjelde dagens prøve.
 
-De 38 oppgavene i `prototyper/ernaering/document-questions.js` utfyller den eksisterende oppgavebanken, strukturfigurene og NDLA-oppgavene. Korte deloppgaver erstatter hele gamle prøvesider. Åpne svar har modellbesvarelse og kjennetegn, og skal egenvurderes.
+De 38 oppgavene i `naturfag/ernaering/document-questions.js` utfyller den eksisterende oppgavebanken, strukturfigurene og NDLA-oppgavene. Korte deloppgaver erstatter hele gamle prøvesider. Åpne svar har modellbesvarelse og kjennetegn, og skal egenvurderes.
 
 ## Dekning per vedlegg
 

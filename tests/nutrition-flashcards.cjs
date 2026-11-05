@@ -31,7 +31,7 @@ if(artifactDir)fs.mkdirSync(artifactDir,{recursive:true});
       const page=await context.newPage();page.on('pageerror',error=>errors.push(error.message));
       await page.goto(base+url);
       let frame=page.mainFrame();
-      if(url.startsWith('/naturfag'))frame=await (await page.locator('#nutrition-module-frame').elementHandle()).contentFrame();
+      if(new URL(url,base).pathname==='/naturfag.html')frame=await (await page.locator('#nutrition-module-frame').elementHandle()).contentFrame();
       await frame.locator(url.includes('concepts')?'.concept-list':'[data-flashcard]').waitFor();
       return {page,frame,context};
     }
@@ -150,7 +150,7 @@ if(artifactDir)fs.mkdirSync(artifactDir,{recursive:true});
       await context.close();
     }
     // Standalone routes work as direct links and keep the same quick controls.
-    for(const route of ['/prototyper/ernaering.html?topic=flashcards','/prototyper/ernaering.html#flashcards']){
+    for(const route of ['/naturfag/ernaering.html?topic=flashcards','/naturfag/ernaering.html#flashcards']){
       const {page,frame,context}=await open({width:390,height:844},route);
       await frame.locator('#flip-flashcard').press('Space');assert.equal(await frame.locator('#flashcard-definition').isVisible(),true);
       await geometry(frame);
@@ -193,7 +193,7 @@ if(artifactDir)fs.mkdirSync(artifactDir,{recursive:true});
       assert.equal(new URL(page.url()).hash,'#nutrition/all/concepts');
       await context.close();
     }
-    for(const route of ['/prototyper/ernaering.html?view=concepts','/prototyper/ernaering.html#concepts']){
+    for(const route of ['/naturfag/ernaering.html?view=concepts','/naturfag/ernaering.html#concepts']){
       const {page,frame,context}=await open({width:390,height:844},route);
       assert.equal(await frame.locator('.concept-list dt').count(),64);
       assert.equal(await frame.locator('#concepts-tab').getAttribute('aria-pressed'),'true');

@@ -86,6 +86,9 @@ async function registration(page,layer){
    });
    const page=await context.newPage();page.on('pageerror',error=>report.errors.push(error.message));
    await page.goto(base+'/prototyper/folg-drapen.html');await page.waitForFunction(()=>window.DropPrototype?.snapshot().ready);await settled(page);
+   // This fixture isolates geometric basemap registration; the independent
+   // map-style suite checks the default elevation-color layer separately.
+   await page.locator('#height-colors').evaluate(e=>{e.checked=false;e.dispatchEvent(new Event('change',{bubbles:true}));});
    await page.locator('#map-style > summary').click();
    // Registration checks use fully opaque imagery, independently of the
    // presentation default chosen by the cartographic opacity control.
@@ -94,7 +97,7 @@ async function registration(page,layer){
   }
   for(const [viewport,dpr] of [[{width:1366,height:900},1],[{width:390,height:844},2]]){
    const {page,context}=await open(viewport,dpr);const initial=await snapshot(page),beforeRequests=report.requests.length;
-   assert.equal(initial.mapLayer,'dark');assert(initial.showRivers&&initial.paused);assert(await page.locator('#show-rivers').isDisabled());assert(await page.locator('#basemap-credit').isHidden());
+   assert.equal(initial.mapLayer,'dark');assert(initial.showRivers&&initial.paused&&initial.rain);assert.equal(initial.basin,null);assert.deepEqual(initial.route,[]);assert(await page.locator('#show-rivers').isDisabled());assert(await page.locator('#basemap-credit').isHidden());
    await page.locator('#river-map').focus();await page.keyboard.press('+');await page.keyboard.press('ArrowLeft');await settled(page);
    assert.equal(report.requests.length,beforeRequests,'The default dark map makes no external tile requests, including during navigation');
    const retained=journey(await snapshot(page)),registrations={};

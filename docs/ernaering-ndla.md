@@ -1,6 +1,6 @@
 # NDLA-grunnlag for ernæringsoppgavene
 
-Gjennomgått 31. oktober 2026. Utgangspunktet var lærerens lenke til **Karbohydrater**, og avgrensningen er hele emnet **Næringsstoffer** i Naturfag (SF): ti læringsressurser og alle tolv tilleggsressurser i sidens innholdsliste. Sideteksten er åpnet og lest, ikke bare søkeresultater. Oppgavene i `prototyper/ernaering/ndla-questions.js` er nyformulerte. Molekylfigurene er tegnet for OnlyFag; NDLA-bilder er ikke kopiert.
+Gjennomgått 31. oktober 2026. Utgangspunktet var lærerens lenke til **Karbohydrater**, og avgrensningen er hele emnet **Næringsstoffer** i Naturfag (SF): ti læringsressurser og alle tolv tilleggsressurser i sidens innholdsliste. Sideteksten er åpnet og lest, ikke bare søkeresultater. Oppgavene i `naturfag/ernaering/ndla-questions.js` er nyformulerte. Molekylfigurene er tegnet for OnlyFag; NDLA-bilder er ikke kopiert.
 
 | Ressurs | Lenke | Dekning i modulen |
 | --- | --- | --- |

@@ -26,7 +26,7 @@ const server=http.createServer((req,res)=>{
     return route.abort();
    });
    const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
-   await page.goto(base+'/prototyper/ernaering.html');await page.locator('[data-question]').waitFor();
+   await page.goto(base+'/naturfag/ernaering.html');await page.locator('[data-question]').waitFor();
    return {page,context};
   }
   async function open(page,id){

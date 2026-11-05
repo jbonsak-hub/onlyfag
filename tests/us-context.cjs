@@ -76,7 +76,6 @@ async function inspectContext(page){
       await realStateClick(page,target);assert.equal(await page.locator('#completed').textContent(),'1','State answers still work beside the context');
       await context.close();
     }
-    const prototype=await browser.newPage({viewport:{width:1366,height:900}});prototype.on('pageerror',e=>errors.push(e.message));await prototype.goto(base+'/prototyper/statle.html');await prototype.locator('#start:enabled').waitFor();await inspectContext(prototype);await prototype.close();
-    assert.deepEqual(errors,[]);console.log('PASS USA context: Canada/Mexico, unchanged 50 targets, no neighbor scoring, aligned transforms/insets, light/dark, desktop/mobile, zoom and prototype');
+    assert.deepEqual(errors,[]);console.log('PASS USA context: Canada/Mexico, unchanged 50 targets, no neighbor scoring, aligned transforms/insets, light/dark, desktop/mobile and zoom');
   }finally{await browser.close();}
 })().catch(error=>{console.error(error);process.exitCode=1;}).finally(()=>server.close());

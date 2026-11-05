@@ -51,7 +51,14 @@ async function controlFits(page,id){const input=page.locator('#'+id);await input
    const page=await context.newPage();page.on('pageerror',error=>report.errors.push(error.message));
    await page.addInitScript(()=>{window.exportText=[];const fill=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(text,...args){if(!this.canvas.id)window.exportText.push(String(text));return fill.call(this,text,...args);};});
    await page.goto(base+'/prototyper/folg-drapen.html');await page.waitForFunction(()=>window.DropPrototype?.snapshot().ready);await settled(page);
-   const initial=journey(await snapshot(page));assert.equal(requests.length,0,'The initial dark map makes no remote requests');
+   assert.equal(requests.length,0,'The initial dark map makes no remote requests');
+   assert.equal((await snapshot(page)).basin,null,'The overview has no preselected river');
+   await page.locator('#start-point').selectOption('002-34');
+   // Selecting a river is an explicit choice to animate. A real reduced-motion
+   // preference change freezes it for pixel comparisons without a pause button.
+   await page.emulateMedia({reducedMotion:'no-preference'});await page.waitForFunction(()=>!matchMedia('(prefers-reduced-motion: reduce)').matches);
+   await page.emulateMedia({reducedMotion:'reduce'});await page.waitForFunction(()=>DropPrototype.snapshot().paused);
+   const initial=journey(await snapshot(page));
    await styleOpen(page);assert.deepEqual(journey(await snapshot(page)),initial,'Opening style controls does not move the map or selected journey');
    for(const id of ['river-width','river-intensity','map-opacity','height-colors','isolate-basin','map-layer','show-rivers'])await controlFits(page,id);
    assert(await page.locator('#height-colors').isDisabled(),'Elevation colours are enabled only for terrain relief');
@@ -73,7 +80,7 @@ async function controlFits(page,id){const input=page.locator('#'+id);await input
    const blend=await page.evaluate(()=>{const c=document.getElementById('river-map'),p=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let maxError=0,changed=0;for(const x of [.21,.47,.79])for(const y of [.19,.43,.73]){const i=(Math.round(y*(c.height-1))*c.width+Math.round(x*(c.width-1)))*4;for(let k=0;k<3;k++){maxError=Math.max(maxError,Math.abs(p[i+k]-(styleZero[i+k]+styleFull[i+k])/2));changed=Math.max(changed,Math.abs(styleFull[i+k]-styleZero[i+k]));}}return {maxError,changed};});
    assert(blend.changed>50,'Opacity changes the actual map pixels');assert(blend.maxError<=3,'A 50% map is blended once against the dark background: '+JSON.stringify(blend));
    // Colouring must use elevation imagery, be reversible, and retain location.
-   await page.locator('#map-layer').selectOption('relief');await range(page,'map-opacity',100);await settled(page);assert(!(await page.locator('#height-colors').isDisabled()));const terrainJourney=journey(await snapshot(page));await storePixels(page,'styleMono');
+   await page.locator('#map-layer').selectOption('relief');await page.locator('#height-colors').uncheck();await range(page,'map-opacity',100);await settled(page);assert(!(await page.locator('#height-colors').isDisabled()));const terrainJourney=journey(await snapshot(page));await storePixels(page,'styleMono');
    await page.locator('#height-colors').check();await settled(page);assert((await snapshot(page)).heightColors);assert(requests.some(request=>request.height),'Elevation colour uses a height-data image');await page.locator('#map-style > summary').click();await painted(page);assert(await page.locator('#height-legend').isVisible(),'Coloured elevation has a visible height legend');
    const colourChange=await page.evaluate(()=>{const c=document.getElementById('river-map'),p=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let changed=0;for(let i=0;i<p.length;i+=4)if(Math.max(...[0,1,2].map(k=>Math.abs(p[i+k]-styleMono[i+k])))>20)changed++;return changed;});assert(colourChange>viewport.width*viewport.height*.1,'The height effect changes a substantial part of the terrain');assert.deepEqual(journey(await snapshot(page)),terrainJourney);
    await styleOpen(page);await range(page,'map-opacity',0);await page.locator('#map-style > summary').click();await painted(page);assert(await page.locator('#height-legend').isHidden(),'A hidden terrain background does not show a misleading height legend');await styleOpen(page);

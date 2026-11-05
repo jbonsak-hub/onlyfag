@@ -5,10 +5,10 @@ const root=path.resolve(__dirname,'..');
 const {buildSync}=require('esbuild');
 // Bundle real ESM imports instead of stripping them: independent question banks
 // and figure helpers must retain their own module scopes.
-const source=buildSync({stdin:{contents:`import './prototyper/ernaering/app.js';import {questions} from './prototyper/ernaering/questions.js';import {organs} from './prototyper/ernaering/diagram.js';window.__qa={questions,organs};`,resolveDir:root},bundle:true,write:false,format:'iife',platform:'browser'}).outputFiles[0].text;
+const source=buildSync({stdin:{contents:`import './naturfag/ernaering/app.js';import {questions} from './naturfag/ernaering/questions.js';import {organs} from './naturfag/ernaering/diagram.js';window.__qa={questions,organs};`,resolveDir:root},bundle:true,write:false,format:'iife',platform:'browser'}).outputFiles[0].text;
 function boot({mobile=false,stored,blocked=false}={}){
  const errors=[];const console=new VirtualConsole();console.on('jsdomError',e=>errors.push(e));
- const dom=new JSDOM(fs.readFileSync(path.join(root,'prototyper/ernaering.html'),'utf8'),{url:'https://onlyfag.no/prototyper/ernaering.html',runScripts:'outside-only',virtualConsole:console});const w=dom.window;
+ const dom=new JSDOM(fs.readFileSync(path.join(root,'naturfag/ernaering.html'),'utf8'),{url:'https://onlyfag.no/naturfag/ernaering.html',runScripts:'outside-only',virtualConsole:console});const w=dom.window;
  w.scrollTo=function(){};w.HTMLElement.prototype.scrollIntoView=function(){};w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;};
  w.matchMedia=()=>({matches:mobile,addEventListener(){}});
  if(stored)w.localStorage.setItem('onlyfag.nutrition.v1',stored);

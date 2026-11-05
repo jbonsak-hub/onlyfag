@@ -1,9 +1,9 @@
 const fs=require('fs'),path=require('path'),assert=require('assert/strict');
-// Run against a served prototype or the self-contained HTML export.
+// Run against the canonical Statle page or a self-contained HTML export.
 // Set STATLE_PREVIEW_URL; PLAYWRIGHT_MODULE and BROWSER_EXECUTABLE are optional.
 const pw=require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const screenshots=process.env.STATLE_SCREENSHOT_DIR || require('os').tmpdir();
-assert.ok(process.env.STATLE_PREVIEW_URL, 'Set STATLE_PREVIEW_URL to the prototype URL');
+assert.ok(process.env.STATLE_PREVIEW_URL, 'Set STATLE_PREVIEW_URL to the canonical Statle URL');
 (async()=>{
  const browser=await pw.chromium.launch({headless:true,executablePath:process.env.BROWSER_EXECUTABLE});
  const page=await browser.newPage({viewport:{width:1440,height:1100}}),errors=[];
@@ -88,7 +88,6 @@ assert.ok(process.env.STATLE_PREVIEW_URL, 'Set STATLE_PREVIEW_URL to the prototy
  await page.waitForURL('**/geografi.html#verden-land');
  await page.locator('#verden-land.active').waitFor();
  await page.goto(url);
- if(new URL(url).pathname.includes('/prototyper/')){await page.locator('footer a[href$="statle.html"]').click();await page.waitForURL('**/geografi/statle.html');}
  await page.locator('.quiz-page-back').click();await page.waitForURL('**/geografi/kart.html');
  assert.ok(await page.locator('#kart-selection').isVisible(),'Choose map returns to the map overview');
  assert.deepEqual(errors,[]);console.log(JSON.stringify({states:50,wholeRound:true,hover:true,wrongLabel:true,threeMistakeHint:true,timePenaltyRemoved:true,fourColorBands:true,pauseRemoved:true,menu:true,restart:true,skip:true,mobile:true,fullHeightLayout:true,errors}));

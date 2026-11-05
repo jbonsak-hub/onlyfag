@@ -72,7 +72,7 @@ const viewports = [{width:1366,height:646},{width:1024,height:600},{width:390,he
     console.log('PASS earth layers: hover, click, keyboard, single description, desktop columns and mobile width');
 
     await page.setViewportSize(viewports[0]);
-    await page.goto(base + '/prototyper/hotspot.html');
+    await page.goto(base + '/geografi/hotspot.html');
     const range = page.locator('#progress');
     assert.equal(await range.inputValue(), '0');
     const set = n => range.fill(String(n));
@@ -176,8 +176,8 @@ const viewports = [{width:1366,height:646},{width:1024,height:600},{width:390,he
     await model.locator('#progress').waitFor();
     assert.equal(await model.locator('#progress').inputValue(), '0');
     await page.goto(base + '/prototyper/index.html');
-    assert.equal(await page.locator('a.prototype-card[href="hotspot.html"]').count(), 1);
+    assert.equal(await page.locator('a[href="hotspot.html"]').count(), 0, 'The finished model is removed from the prototype index');
     assert.deepEqual(errors, []);assert.deepEqual(missing, []);
-    console.log('PASS embedded viewport fit, theme, pause on hide, restart on reopen, back link and prototype entry');
+    console.log('PASS embedded viewport fit, theme, pause on hide, restart on reopen, back link and retired prototype entry');
   } finally {await browser.close();}
 })().catch(error => {console.error(error);process.exitCode=1;}).finally(() => server.close());

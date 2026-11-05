@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {test} from 'node:test';
-import {questions, sources} from '../prototyper/ernaering/questions.js';
-import {organs} from '../prototyper/ernaering/diagram.js';
-import {figure} from '../prototyper/ernaering/figures.js';
-import {foodIllustrations,foodArtwork} from '../prototyper/ernaering/food-illustrations.js';
-import {supportFigures} from '../prototyper/ernaering/support-figures.js';
-import {evaluate, accepts, resultRecord, needsReview, mixedOrder, pickNext, rememberQuestion, topics, types, recordRecentResult, recentSummary} from '../prototyper/ernaering/engine.js';
+import {questions, sources} from '../naturfag/ernaering/questions.js';
+import {organs} from '../naturfag/ernaering/diagram.js';
+import {figure} from '../naturfag/ernaering/figures.js';
+import {foodIllustrations,foodArtwork} from '../naturfag/ernaering/food-illustrations.js';
+import {supportFigures} from '../naturfag/ernaering/support-figures.js';
+import {evaluate, accepts, resultRecord, needsReview, mixedOrder, pickNext, rememberQuestion, topics, types, recordRecentResult, recentSummary} from '../naturfag/ernaering/engine.js';
 const ids=organs.map(o=>o.id), processIds=ids.filter(id=>id!=='duodenum');
 function answer(q){switch(q.type){case 'anatomy':return ids;case 'choice':return [q.answer];case 'multi':case 'process':return q.answer;case 'sort':return q.items.map(x=>x.group);case 'match':return q.pairs.map(x=>x.right);case 'fill':return q.blanks.map(x=>x.answers[0]);case 'order':return q.items;}}
 test('all questions have coherent schemas and every automatic key is accepted',()=>{
@@ -293,7 +293,7 @@ test('applied figures span five subject themes and keep conclusions for feedback
 test('food tasks use ten distinct named illustrations from the local artwork',()=>{
  const foods=questions.filter(q=>q.id.startsWith('food-nutrients-'));
  assert.equal(foods.length,10);
- const bytes=readFileSync(new URL('..'+new URL(foodArtwork.src,'https://onlyfag.test/prototyper/ernaering.html').pathname,import.meta.url));
+ const bytes=readFileSync(new URL('..'+new URL(foodArtwork.src,'https://onlyfag.test/naturfag/ernaering.html').pathname,import.meta.url));
  assert.ok(bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])),'the shared artwork has real PNG bytes');
  assert.equal(bytes.readUInt32BE(16),foodArtwork.width);assert.equal(bytes.readUInt32BE(20),foodArtwork.height);
  const cells=new Set();
@@ -359,7 +359,7 @@ test('comparison questions offer four named pictures with coherent answers',()=>
 });
 
 test('help and page copy obey the same taught-vocabulary limits as questions',()=>{
- const html=readFileSync(new URL('../prototyper/ernaering.html',import.meta.url),'utf8');
+ const html=readFileSync(new URL('../naturfag/ernaering.html',import.meta.url),'utf8');
  assert.doesNotMatch(html,/esterbinding|esterforbindelse|glykosid|hydrolys|mikrovilli|lipase|lysin|peristaltikk|Fischer|metylend|[αβ]|lærerens/i);
 });
 
@@ -402,7 +402,7 @@ test('recent-answer windows retain only the latest twenty and preserve prior his
 test('sources and help are professional and independent of a particular class',()=>{
  const classReferences=/presentasj|powerpoint|vedlag|vedlegg|lærer|\b2016\b|prøven|prøveark|i timen|mine timer|min undervisning/i;
  assert.doesNotMatch(JSON.stringify(sources),classReferences,'source list must not refer to private classroom material');
- const html=readFileSync(new URL('../prototyper/ernaering.html',import.meta.url),'utf8');
+ const html=readFileSync(new URL('../naturfag/ernaering.html',import.meta.url),'utf8');
  const help=html.match(/<dialog id="about-dialog"[\s\S]*?<\/dialog>/)?.[0];
  assert.ok(help,'the help/source dialog exists');
  assert.doesNotMatch(help,classReferences,'static source fallback and help must work for any learner');

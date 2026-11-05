@@ -6,7 +6,7 @@ Et ekstra illustrasjonsark, `illustrated-food-concepts.png`, viser tre, rå pote
 
 Resten av dette dokumentet dokumenterer **de tidligere fotografiene**, som beholdes for eldre cachede sideversjoner og kildehistorikk, med opprinnelige lisensnotiser. De vises ikke i den oppdaterte modulen.
 
-Ti fotografier er lagret lokalt i `assets/nutrition/food/`. Ingen av bildene er KI-generert. Originalenes bakgrunn er allerede behandlet av datasettforfatterne; OnlyFag har bare konvertert filene til WebP, uten ny beskjæring, oppskalering eller endring av matvarene. Navn, alternativtekst og kreditering finnes også i `prototyper/ernaering/food-photo-data.js`.
+Ti fotografier er lagret lokalt i `assets/nutrition/food/`. Ingen av bildene er KI-generert. Originalenes bakgrunn er allerede behandlet av datasettforfatterne; OnlyFag har bare konvertert filene til WebP, uten ny beskjæring, oppskalering eller endring av matvarene. Navn, alternativtekst og kreditering finnes også i `naturfag/ernaering/food-photo-data.js`.
 
 Alle ti sluttfiler er visuelt kontrollert: matvaren er gjenkjennelig og stemmer med navnet. Eggbildet viser et **stekt egg**, ikke et rått egg. Risbildet viser **kokt basmatiris** uten synlig tilbehør. Bildet som opprinnelig var vurdert av ovnsbakte poteter, ble valgt bort fordi mulig tilsatt fett gjorde det mindre entydig.
 

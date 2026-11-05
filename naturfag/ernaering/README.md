@@ -1,6 +1,6 @@
 # Ernæring og helse
 
-Minimalistisk øvingsmodul i eksisterende OnlyFag, tilgjengelig som modulen «Næringsstoffer og fordøyelsen» på `/naturfag.html#nutrition/all`. Den selvstendige adressen `/prototyper/ernaering.html` støttes fortsatt.
+Minimalistisk øvingsmodul i eksisterende OnlyFag, tilgjengelig som modulen «Næringsstoffer og fordøyelsen» på `/naturfag.html#nutrition/all`. Den selvstendige adressen `/naturfag/ernaering.html` støttes fortsatt.
 
 184 oppgaver, hvorav 92 med figur, illustrerte svaralternativer eller organmodell. Seks fagtemaer; figuroppgaver ligger under fagtemaet de hører til. Blandet øving står sist. Ingen installasjon eller byggesteg for nettsiden.
 
@@ -123,7 +123,7 @@ oppgavenes prosentberegning eller repetisjonshistorikk.
 «Begreper» ved siden av Oppgavebank viser hele begrepslisten med de samme
 forklaringene, sortert etter norsk alfabet. Felles innganger: `/naturfag.html#nutrition/flashcards` og
 `/naturfag.html#nutrition/all/concepts`. Selvstendige innganger:
-`/prototyper/ernaering.html#flashcards` og `/prototyper/ernaering.html#concepts`.
+`/naturfag/ernaering.html#flashcards` og `/naturfag/ernaering.html#concepts`.
 
 Nettleserregresjon: `node tests/nutrition-flashcards.cjs` (Playwright og Chromium).
 

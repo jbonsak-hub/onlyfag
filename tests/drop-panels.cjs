@@ -10,7 +10,7 @@ const base=process.env.BASE_URL||'http://127.0.0.1:58390',out=process.env.DROP_S
    else{await page.mouse.move(x,y);await page.mouse.down();await page.mouse.move(x+dx,y+dy,{steps:6});await page.mouse.up();}
    await page.waitForTimeout(80);const after=await page.locator(panel).boundingBox();assert(Math.hypot(after.x-before.x,after.y-before.y)>60,'The panel follows its drag handle');assert(after.x>=7&&after.y>=7&&after.x+after.width<=viewport.width-7&&after.y+after.height<=viewport.height-7,'Panel stays inside the viewport');assert.deepEqual((await snapshot()).camera,original.camera,'Moving a panel never moves the map');return after;
   }
-  const movedPlayer=await move('#player','#player-grip',viewport.width<600?0:230,-150,viewport.width<600);
+  const movedPlayer=await move('#player','#player-grip',viewport.width<600?0:-230,-150,viewport.width<600);
   await page.locator('#toggle-player').click();assert(await page.locator('#player').isHidden());assert.equal(await page.locator('#toggle-player').getAttribute('aria-expanded'),'false');await page.locator('#toggle-player').click();assert.deepEqual(await page.locator('#player').boundingBox(),movedPlayer,'Player position survives hide/show');
   await page.locator('#map-style summary').click();await page.locator('#style-panel').waitFor({state:'visible'});assert(await page.locator('#player').isVisible(),'Both panels can be open together');
   const movedStyle=await move('#style-panel','#style-grip',-220,120,viewport.width<600);

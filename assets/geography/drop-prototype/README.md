@@ -1,16 +1,20 @@
-# Følg dråpen — 2D prototype
+# Vassdrag og nedbørfelt — 2D prototype
 
 Entry point: `/prototyper/folg-drapen.html`.
 
-The standalone explorer renders six real Norwegian river networks as coloured
-lines on a dark, north-up canvas. Select a represented river or one of nine
-preset starts to follow a downstream journey. Playback, speed, rain particles,
+The standalone explorer renders 941 real Norwegian river networks as coloured
+lines on a dark, north-up canvas. It starts with no selected river, a complete
+regional overview and rain enabled. Select a represented river or one of 944
+preset starts to follow a downstream journey. Speed, rain particles,
 upstream highlighting, wheel/pinch zoom, pointer pan and keyboard controls are
 local to this prototype; it has no game scores, accounts or server mutations.
 
 Rain continuously renews a bounded pool of drops in tributaries and headwaters,
 following the same verified downstream links. It continues after the selected
-journey arrives; Pause stops all motion, and reduced motion remains opt-in.
+journey arrives. The rain button visibly shows On/Off; there are no separate
+Pause or Replay buttons. Normal speed is the former 4×, with half and double
+speed available. Reduced-motion preferences prevent initial autoplay; an
+explicit rain choice or river selection can start the animation.
 The static canvas cache resets opacity before each background fill, so fast
 pan/zoom fully replaces the previous camera's image.
 
@@ -24,7 +28,15 @@ compound the opacity. At zero opacity the background is hidden and further tile
 requests stop. “Bare valgt vassdrag” isolates its river family, including rain
 and river picking. These controls do not restart the selected journey.
 
-The top “Dråpen” button independently shows or hides the journey panel, and
+The 220-pixel control panel contains the “Nedbørfelt” and “Vanndråper” modes,
+search, an initially empty river picker, rain and speed. The selected basin's
+name appears under the masthead, rather than taking up panel space. Defaults
+match the owner's map: river width 1.1×, intensity 82%, background opacity 73%,
+dark river map, and height colors ready for the relief layer. Filtering to a
+single basin is disabled until a basin has been selected. Rain also works in
+small coastal basins consisting of just one segment.
+
+The top “Dråpen” button independently shows or hides the control panel, and
 “Kartstil” toggles its own panel. Both panels have drag handles that support
 mouse, touch and keyboard arrows (Shift for larger steps). Their locations are
 retained while hidden and clamped inside the viewport after resizing. Panel

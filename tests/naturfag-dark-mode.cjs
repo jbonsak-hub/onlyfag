@@ -121,7 +121,7 @@ function contrastAudit(){
      if(width===1366&&['atom','binding','carbon','balance'].includes(id))await page.screenshot({path:path.join(output,'chemistry-'+id+'.png'),fullPage:true});
     }
     const standalone=await context.newPage();
-    await standalone.goto(base+'/prototyper/ernaering.html#micro-function-match');await standalone.locator('[data-question]').waitFor();
+    await standalone.goto(base+'/naturfag/ernaering.html#micro-function-match');await standalone.locator('[data-question]').waitFor();
     assert.equal(await standalone.locator('html.dark,body.dark').count(),2,'standalone exercises restore the saved theme');
     await add(standalone,`${width}/standalone`);await standalone.close();
    }

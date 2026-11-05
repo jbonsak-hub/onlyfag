@@ -59,3 +59,5 @@ at its canonical `/prototyper/` path and add new pages to `prototyper/index.html
 
 Content-addressed asset directories such as `assets/astronomy-prototypes/` have
 their own names and must not be renamed as part of page-path maintenance.
+
+When the owner asks to promote a prototype to the ordinary site, remove its prototype copy and entry automatically after updating dependent embeds, links, build scripts and tests. Finished modules belong at their canonical subject paths; preserve their functioning main-site entry points.
