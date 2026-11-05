@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="color-scheme" content="dark">
   <title>Vassdrag og nedbørfelt – OnlyFag</title>
-  <link rel="stylesheet" href="../assets/geography/drop-prototype/style-0c7999f9e3f1.css">
-  <script src="../assets/geography/drop-prototype/app-6831f8f16349.js" defer></script>
+  <link rel="stylesheet" href="../assets/geography/drop-prototype/style-36c91bc18b40.css">
+  <script src="../assets/geography/drop-prototype/app-2135b1b149b7.js" defer></script>
 </head>
 <body data-map-layer="dark" data-player-visible="true">
   <main class="drop-explorer" aria-label="Følg dråpen gjennom norske vassdrag">
@@ -16,7 +16,7 @@
     <span id="keyboard-help" class="sr-only">Velg startsted i listen med tastaturet. Når kartet har fokus, flytter piltastene kartet, pluss og minus zoomer, null viser hele kartet og mellomrom slår regnet av eller på.</span>
 
     <header class="masthead" id="masthead">
-      <a class="back-link" href="../geografi/kart.html" aria-label="Tilbake til Kart">
+      <a class="back-link" href="../geografi.html#ytre-fagstoff" aria-label="Tilbake til Kart">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6M8 12h11"/></svg>
       </a>
       <div class="masthead-copy">
@@ -26,6 +26,7 @@
         </div>
         <p id="map-help">Klikk i kartet og se hvor dråpen tar veien.</p>
         <p id="selected-basin" class="selected-basin" aria-live="polite" hidden><span>Valgt vassdrag:</span> <strong id="basin-name"></strong></p>
+        <p id="selected-river" class="selected-river" hidden>Elv: <strong id="current-river"></strong></p>
       </div>
     </header>
 
@@ -126,7 +127,7 @@
             <span>Regn</span><span id="rain-state">På</span>
           </button>
         </div>
-        <label class="speed-control" for="speed"><span>Tempo</span><select id="speed"><option value="0.5">0,5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
+        <label class="speed-control" for="speed"><span>Tempo</span><select id="speed"><option value="0.5">0,5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option></select></label>
       </div>
     </section>
     <p class="sr-only" id="status" role="status" aria-live="polite"></p>

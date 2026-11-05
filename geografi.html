@@ -67,6 +67,7 @@
 <link rel="stylesheet" href="assets/geography/earth-layers/model.css?v=190bce194b1c">
 <script src="assets/geography/earth-layers/model.js?v=36bf7abadd41" defer></script>
 <link rel="stylesheet" href="assets/geography/global-circulation/embed.css?v=f125fb32c337">
+<link rel="stylesheet" href="assets/geography/drop-prototype/embed.css?v=0d6f24270b30"><script src="assets/geography/drop-prototype/embed.js?v=b4656d49ca6b" defer></script>
 </head>
 <body data-geography-page>
 <button class="geo-mobile-quiz-back" id="geoMobileQuizBack" type="button" onclick="exitQuizMode()" aria-label="Tilbake til quizoversikten" title="Tilbake til quizoversikten">← Oversikt</button>
@@ -93,6 +94,7 @@
 </div></div>
 <div class="menu-item"><div class="menu-header" onclick="toggleMenu(this)"><span class="menu-icon">▶</span>Ytre krefter og landformer</div><div class="submenu">
 <div class="submenu-item" onclick="showContent('ytre-fagstoff', this)">Fagstoff</div>
+<div class="submenu-item" onclick="showContent('ytre-vassdrag', this)">Vassdrag og nedbørfelt</div>
 <div class="submenu-item" onclick="showContent('ytre-marin-grense', this)">Marin grense</div>
 <div class="submenu-item" onclick="showContent('ytre-begreper', this)">Begrepsliste</div>
 <div class="submenu-item" onclick="showContent('ytre-sporsmal', this)">Test deg selv</div>
@@ -152,6 +154,7 @@
 <section class="page-section" id="indre-plategrenser" aria-label="Plategrenser – interaktive modeller">
 <iframe id="plate-model-frame" class="plate-model-frame" title="Plategrenser – fem interaktive modeller" data-src="geografi/plategrenser.html?embedded=1&amp;v=1bed662aed92" allow="fullscreen"></iframe>
 </section>
+<section class="page-section" id="ytre-vassdrag" aria-label="Vassdrag og nedbørfelt"><iframe id="watershed-model-frame" class="watershed-model-frame" title="Vassdrag og nedbørfelt" data-src="geografi/vassdrag.html?embedded=1&amp;v=9d91d25bb1d0" allow="fullscreen"></iframe></section>
 <section class="page-section" id="indre-hotspot" aria-label="Hotspot-vulkanisme – Hawaii, interaktiv prototype">
 <iframe id="hotspot-model-frame" class="hotspot-model-frame" title="Hotspot-vulkanisme – Hawaii" data-src="geografi/hotspot.html?embedded=1&amp;v=2c2850451b12" allow="fullscreen"></iframe>
 </section>

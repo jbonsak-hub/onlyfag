@@ -3,9 +3,10 @@
   'use strict';
   const $=id=>document.getElementById(id),canvas=$('river-map'),ctx=canvas.getContext('2d',{alpha:false});
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+  let hostVisible=true;
   const palette=['#d690b9','#7dc9b7','#d8ba79','#9b9bd7','#99c67f','#d78f73','#7dbbd7','#b79ad1','#c6cb7a','#79b6a2','#da9fa0','#9db4da'];
   const state={ready:false,mode:'flow',mapLayer:'dark',showRivers:true,riverWidth:1.1,riverIntensity:.82,mapOpacity:.73,heightColors:true,isolateBasin:false,playerVisible:true,paused:reduced.matches,speed:1,progress:0,completed:false,zoom:1,pan:[0,0],route:[],selectedSegment:null,basin:null,selectedStart:null,rain:true};
-  const timeScale=4; // The former 4× setting is now the normal speed.
+  const timeScale=2; // Normal is half the previously published rain speed.
   let data,segments=[],byId=new Map(),basins=new Map(),upstream=new Set(),route=[],routeLength=0,duration=30,particles=[],startEntries=[];
   let rainSources=[],rainTributaries=[],rainElapsed=0,rainEmissions=0;
   let width=0,height=0,dpr=1,camera={scale:1,tx:0,ty:0},extent=[0,0,1,1],base=document.createElement('canvas'),dirty=true,last=performance.now(),hover=null,lastHover=null,selectedPrefix=null;
@@ -156,7 +157,7 @@
       if(state.isolateBasin&&s.basin!==state.basin)continue;
       if(!intersects(s.bounds,visible))continue;
       const selected=s.basin===state.basin,contributing=upstream.has(s.id);
-      const alpha=(state.mode==='basin'&&state.basin?(contributing&&s.id!==state.selectedSegment?1:selected?.3:.12):(selected?1:.9))*state.riverIntensity,lineWidth=s.weight*Math.pow(state.zoom,.2)*state.riverWidth/camera.scale;
+      const alpha=(state.mode==='basin'?(contributing&&s.id!==state.selectedSegment?1:selected?.3:.12):(selected?1:.9))*state.riverIntensity,lineWidth=s.weight*Math.pow(state.zoom,.2)*state.riverWidth/camera.scale;
       if(state.mapLayer!=='dark'){c.globalAlpha=alpha*.5;c.strokeStyle='#061b18';c.lineWidth=lineWidth+1.1/camera.scale;c.stroke(s.path);}
       c.globalAlpha=alpha;c.strokeStyle=basins.get(s.basin).color;c.lineWidth=lineWidth;c.stroke(s.path);
     }
@@ -178,12 +179,12 @@
     selectedPrefix=section(segment,0,segment.length*state.selectedFraction);
     route=makeRoute(state.route,fraction);routeLength=route.reduce((n,p)=>n+p.length,0);duration=Math.max(12,Math.min(42,12+Math.sqrt(routeLength/(data.unitsPerKm||1000))*2));
     upstream=new Set();const stack=[segment.id];while(stack.length){const key=stack.pop();if(upstream.has(key))continue;upstream.add(key);stack.push(...byId.get(key).parents);}
-    const basin=basins.get(state.basin);document.documentElement.style.setProperty('--basin-color',basin.color);$('basin-name').textContent=basin.name;$('basin-name').title=basin.name;$('selected-basin').hidden=false;
+    const basin=basins.get(state.basin);document.documentElement.style.setProperty('--basin-color',basin.color);$('basin-name').textContent=basin.name;$('basin-name').title=basin.name;$('selected-basin').hidden=false;$('current-river').textContent=riverName(segment.name)||'Navnløs sideelv';$('selected-river').hidden=false;
     if($('start-search').value.trim())startOptions();else $('start-point').value=startId||'';
     if(state.rain&&state.isolateBasin)fillParticles();dirty=true;controls();styleControls();
   }
   function clearSelection(){
-    Object.assign(state,{selectedSegment:null,selectedStart:null,basin:null,route:[],progress:0,completed:false,isolateBasin:false});route=[];routeLength=0;selectedPrefix=null;upstream.clear();$('selected-basin').hidden=true;$('basin-name').textContent='';$('isolate-basin').checked=false;startOptions();if(state.rain)fillParticles();else state.paused=true;dirty=true;controls();styleControls();
+    Object.assign(state,{selectedSegment:null,selectedStart:null,basin:null,route:[],progress:0,completed:false,isolateBasin:false});route=[];routeLength=0;selectedPrefix=null;upstream.clear();$('selected-basin').hidden=true;$('selected-river').hidden=true;$('current-river').textContent='';$('basin-name').textContent='';$('isolate-basin').checked=false;startOptions();if(state.rain)fillParticles();else state.paused=true;dirty=true;controls();styleControls();
   }
   function nearest(x,y){
     const p=world(x,y),limit=(width<600?20:13)/camera.scale;let hit=null,best=limit*limit;
@@ -244,11 +245,12 @@
   }
   function frame(now){
     const dt=Math.min(.15,Math.max(0,(now-last)/1000));last=now;
-    if(state.ready&&!document.hidden&&(dirty||!state.paused||hover!==lastHover)){
+    if(state.ready&&hostVisible&&!document.hidden&&(dirty||!state.paused||hover!==lastHover)){
       if(route.length&&!state.paused&&!state.completed){state.progress=Math.min(1,state.progress+dt*state.speed*timeScale/duration);if(state.progress===1){state.completed=true;state.paused=!state.rain;controls();}}
       if(dirty)paintBase();ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(base,0,0);ctx.setTransform(dpr,0,0,dpr,0,0);
       if(state.rain){if(!state.paused)advanceRain(dt*state.speed*timeScale);if(state.showRivers){ctx.globalAlpha=state.riverIntensity;for(const particle of particles)if(!state.isolateBasin||particle.segment.basin===state.basin)dot(ctx,at(particle.segment.points,particle.segment.totals,particle.distance),particle.color,1.2*Math.sqrt(state.riverWidth),.16);ctx.globalAlpha=1;}}
       const pos=routePosition(route,state.progress);
+      if(pos){const name=riverName(pos.segment.name)||'Navnløs sideelv';if($('current-river').textContent!==name)$('current-river').textContent=name;}
       if(pos&&state.showRivers){
         const q=screen(pos.point);ctx.strokeStyle='#e4f8ee';ctx.globalAlpha=.2;ctx.lineWidth=1;ctx.beginPath();ctx.arc(q.x,q.y,state.completed?11:8,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;
         // A short luminous tail follows the actual downstream geometry.
@@ -327,6 +329,10 @@
       const mapHelp=document.createElement('p');mapHelp.textContent='Velg topografisk kart, turkart eller terrengrelieff under Bakgrunn. Slå av Vis elver for å studere landskapet. Terrengrelieff viser fjellrygger og daler, men tegner ikke inn beregnede vannskiller.';$('about-copy').append(mapHelp);
       state.ready=true;document.body.dataset.ready='true';$('map-layer').disabled=false;$('export-map').disabled=false;$('rain').disabled=false;initHeightLegend();styleControls();resize();if(state.rain)fillParticles();controls();updateCamera();
     }catch(error){setStatus('Kartet kunne ikke lastes. Last siden på nytt for å prøve igjen.');$('status').classList.remove('sr-only');document.body.dataset.error='true';console.error('River prototype:',error);}
+  }
+  if(parent!==window&&new URLSearchParams(location.search).get('embedded')==='1'){
+    document.querySelector('.back-link').addEventListener('click',event=>{event.preventDefault();parent.postMessage({type:'watershed-model-back'},location.origin);});
+    addEventListener('message',event=>{if(event.origin!==location.origin||event.source!==parent||event.data?.type!=='watershed-model-host')return;hostVisible=Boolean(event.data.visible);last=performance.now();dirty=true;});
   }
   resize();requestAnimationFrame(frame);load();
 })();

@@ -7,9 +7,13 @@ const data=read('data.json'),dataFile='data-'+hash(data)+'.json';
 const assets=[{file:dataFile,text:data},{file:'style-'+hash(read('style.css'))+'.css',text:read('style.css')}];
 const app=read('app.js').replace('drop-prototype/data.json','drop-prototype/'+dataFile);
 assets.push({file:'app-'+hash(app)+'.js',text:app});
-for(const asset of assets){const file=path.join(dir,asset.file);if(check){if(!fs.existsSync(file)||fs.readFileSync(file,'utf8')!==asset.text)throw Error('Rebuild river prototype assets');}else fs.writeFileSync(file,asset.text);}
-const file=path.join(root,'prototyper/folg-drapen.html'),original=fs.readFileSync(file,'utf8');
+for(const asset of assets){const file=path.join(dir,asset.file);if(check){if(!fs.existsSync(file)||fs.readFileSync(file,'utf8').replace(/\r\n/g,'\n')!==asset.text)throw Error('Rebuild river prototype assets');}else fs.writeFileSync(file,asset.text);}
+const file=path.join(root,'geografi/vassdrag.html'),original=fs.readFileSync(file,'utf8');
 let html=original;
 for(const type of ['style','app']){const asset=assets.find(a=>a.file.startsWith(type+'-'));html=html.replace(new RegExp('drop-prototype/'+type+'(?:-[a-f0-9]{12})?\\.'+(type==='style'?'css':'js'),'g'),'drop-prototype/'+asset.file);}
 if(check){if(html!==original)throw Error('Rebuild river prototype page references');}else fs.writeFileSync(file,html);
+const host=path.join(root,'geografi.html'),before=fs.readFileSync(host,'utf8');let after=before;
+for(const ext of ['js','css'])after=after.replace(new RegExp('drop-prototype/embed\\.'+ext+'(?:\\?v=[^"\\s]+)?','g'),'drop-prototype/embed.'+ext+'?v='+hash(read('embed.'+ext)));
+after=after.replace(/geografi\/vassdrag\.html\?embedded=1(?:&amp;v=[^"\s]+)?/g,'geografi/vassdrag.html?embedded=1&amp;v='+hash(html.replace(/\r\n/g,'\n')));
+if(check){if(after!==before)throw Error('Rebuild watershed embedding references');}else fs.writeFileSync(host,after);
 console.log('PASS '+(check?'verified':'built')+' versioned river prototype assets');

@@ -1,0 +1,7 @@
+body.watershed-model-open{overflow:hidden}
+body.watershed-model-open .content{max-width:none!important;min-width:0;width:auto;height:100vh;height:100svh;padding:0!important;overflow:hidden}
+#ytre-vassdrag.page-section{padding:0;margin:0;border-radius:0;box-shadow:none;background:transparent;overflow:hidden}
+#ytre-vassdrag.active{height:100vh;height:100svh;animation:none}
+.watershed-model-frame{display:block;width:100%;height:100%;border:0;background:transparent}
+@media(max-width:1000px){body.watershed-model-open .sidebar,body.watershed-model-open .sidebar-collapse-toggle{display:none!important}body.watershed-model-open .content{width:100%}}
+@media print{#ytre-vassdrag{display:none!important}}

@@ -85,7 +85,7 @@ async function registration(page,layer){
     }catch(error){report.errors.push(error.message);return route.abort();}
    });
    const page=await context.newPage();page.on('pageerror',error=>report.errors.push(error.message));
-   await page.goto(base+'/prototyper/folg-drapen.html');await page.waitForFunction(()=>window.DropPrototype?.snapshot().ready);await settled(page);
+   await page.goto(base+'/geografi/vassdrag.html');await page.waitForFunction(()=>window.DropPrototype?.snapshot().ready);await settled(page);
    // This fixture isolates geometric basemap registration; the independent
    // map-style suite checks the default elevation-color layer separately.
    await page.locator('#height-colors').evaluate(e=>{e.checked=false;e.dispatchEvent(new Event('change',{bubbles:true}));});

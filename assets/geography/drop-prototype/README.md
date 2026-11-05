@@ -1,6 +1,18 @@
 # Vassdrag og nedbørfelt — 2D prototype
 
-Entry point: `/prototyper/folg-drapen.html`.
+Entry point: `/geografi/vassdrag.html`.
+
+The main geography navigation embeds this page at
+`/geografi.html#ytre-vassdrag`, under Ytre krefter og landformer. The frame loads
+on entry, suspends animation while another section is open, and retains its
+state on return. The prototype copy has been removed.
+
+Vanndråper dims the river network even before a basin is selected, so the rain
+particles stand out across the complete overview. Glomma uses blue and the
+Drammen network uses a warmer pink; these display colors do not change source
+geometry or routing. The current river label follows the NVE name of the
+segment carrying the selected drop, including compound route names when NVE
+provides them; unnamed branches are labeled Navnløs sideelv.
 
 The standalone explorer renders 941 real Norwegian river networks as coloured
 lines on a dark, north-up canvas. It starts with no selected river, a complete
@@ -12,8 +24,8 @@ local to this prototype; it has no game scores, accounts or server mutations.
 Rain continuously renews a bounded pool of drops in tributaries and headwaters,
 following the same verified downstream links. It continues after the selected
 journey arrives. The rain button visibly shows On/Off; there are no separate
-Pause or Replay buttons. Normal speed is the former 4×, with half and double
-speed available. Reduced-motion preferences prevent initial autoplay; an
+Pause or Replay buttons. Normal speed is half the previously published normal
+(the original 2×), with 0.5×, 1×, 2× and 4× choices. Reduced-motion preferences prevent initial autoplay; an
 explicit rain choice or river selection can start the animation.
 The static canvas cache resets opacity before each background fill, so fast
 pan/zoom fully replaces the previous camera's image.

@@ -32,7 +32,7 @@ FAMILIES = {
     "002-34": ("Glomma", "#47bdff"),
     "006-11": ("Akerselva og Nordmarka", "#fa6ba9"),
     "008-1": ("Sandvikselva", "#c7fa62"),
-    "012-1": ("Drammensvassdraget", "#b590ff"),
+    "012-1": ("Drammensvassdraget", "#e68bcf"),
     "015-18": ("Numedalslågen", "#ffad58"),
     "016-35": ("Skiensvassdraget", "#55e2bc"),
 }
@@ -263,6 +263,8 @@ def load_sources():
         validation[key] = values.pop()
     validation["routablePercent"] = round(100 * validation["routableSegments"] / validation["segmentCount"], 3)
     for basin in basins:
+        if basin["id"] in FAMILIES:
+            basin["color"] = FAMILIES[basin["id"]][1]
         basin.setdefault("region", "Østlandet" if basin["id"] in FAMILIES else "Vestlandet")
     return {"crs": "EPSG:25833", "regionTitle": "Elver i Sør-Norge", "basins": basins,
             "segments": segments, "starts": [start for snapshot in snapshots for start in snapshot["starts"]],

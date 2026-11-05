@@ -50,7 +50,7 @@ async function controlFits(page,id){const input=page.locator('#'+id);await input
    });
    const page=await context.newPage();page.on('pageerror',error=>report.errors.push(error.message));
    await page.addInitScript(()=>{window.exportText=[];const fill=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(text,...args){if(!this.canvas.id)window.exportText.push(String(text));return fill.call(this,text,...args);};});
-   await page.goto(base+'/prototyper/folg-drapen.html');await page.waitForFunction(()=>window.DropPrototype?.snapshot().ready);await settled(page);
+   await page.goto(base+'/geografi/vassdrag.html');await page.waitForFunction(()=>window.DropPrototype?.snapshot().ready);await settled(page);
    assert.equal(requests.length,0,'The initial dark map makes no remote requests');
    assert.equal((await snapshot(page)).basin,null,'The overview has no preselected river');
    await page.locator('#start-point').selectOption('002-34');

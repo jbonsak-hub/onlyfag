@@ -229,3 +229,6 @@ h1{font-size:21px}
 @media(max-width:899px){.masthead{max-width:calc(100vw - 28px);left:14px;top:14px;gap:8px}.masthead-copy{min-width:0}.masthead h1{font-size:clamp(16px,4vw,20px)}.masthead p{font-size:10px;max-width:none}.map-actions{top:92px;right:14px}.player{right:14px;left:auto;bottom:35px}.style-panel{top:132px;max-height:calc(100dvh - 150px)}.back-link{width:30px;height:30px}.masthead .selected-basin{font-size:10px;margin-top:3px}}
 @media(max-height:530px) and (min-width:900px){.player{right:16px;left:auto;bottom:18px}.masthead{top:14px}.masthead #map-help{display:block}.player-toolbar{grid-template-columns:minmax(0,1fr) 64px;grid-template-areas:"start start" "playback speed"}}
 @media(max-width:899px){.height-legend,.map-status{top:136px}}
+.masthead .selected-river{font-size:11px;margin-top:2px;color:#a2b6aa}
+.selected-river strong{font-weight:550;color:#d5e8dd}
+@media(max-width:899px){.map-actions{top:112px}.style-panel{top:152px;max-height:calc(100dvh - 170px)}.height-legend,.map-status{top:156px}.masthead .selected-river{font-size:10px}}
