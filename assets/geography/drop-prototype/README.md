@@ -1,6 +1,6 @@
 # Følg dråpen — 2D prototype
 
-Entry point: `/prototypes/folg-drapen.html`.
+Entry point: `/prototyper/folg-drapen.html`.
 
 The standalone explorer renders six real Norwegian river networks as coloured
 lines on a dark, north-up canvas. Select a represented river or one of nine

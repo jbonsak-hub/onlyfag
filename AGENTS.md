@@ -49,3 +49,13 @@ Nutrition exercise spacing (updated 2 November 2026): position short exercises n
 Latest placement and practical task preferences (November 2026): use visible draggable chips and targets for matching and sorting throughout nutrition, with tap and keyboard alternatives. Do not hide the available terms in dropdowns. In structure-naming tasks show substance names alone, without definitions that give the answer away. There is no «Øv på nytt» menu/button; keep useful automatic repetition and the current exercise's retry. New illustrations comparing meals should explain energy density and nutrients neutrally, without moralizing about particular foods or brands.
 
 Landquiz defaults (3 November 2026): start new region rounds in 3D-globus. Use the minimal left control panel shown by the owner, with 425 px as the desktop default and a country-quiz-specific saved width. Remove the +/− zoom buttons while retaining mouse-wheel zoom and manual map/globe movement. Center both projections on each newly found country, using its main landmass or its small-state marker; incorrect and duplicate answers do not move the camera.
+
+# Prototype locations
+
+All standalone prototypes belong under `/prototyper/`. Use this spelling in
+links, build scripts, tests and documentation. Do not create a `/prototypes/`
+directory or maintain parallel copies of a prototype. Keep the current version
+at its canonical `/prototyper/` path and add new pages to `prototyper/index.html`.
+
+Content-addressed asset directories such as `assets/astronomy-prototypes/` have
+their own names and must not be renamed as part of page-path maintenance.

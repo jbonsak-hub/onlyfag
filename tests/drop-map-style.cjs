@@ -50,7 +50,7 @@ async function controlFits(page,id){const input=page.locator('#'+id);await input
    });
    const page=await context.newPage();page.on('pageerror',error=>report.errors.push(error.message));
    await page.addInitScript(()=>{window.exportText=[];const fill=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(text,...args){if(!this.canvas.id)window.exportText.push(String(text));return fill.call(this,text,...args);};});
-   await page.goto(base+'/prototypes/folg-drapen.html');await page.waitForFunction(()=>window.DropPrototype?.snapshot().ready);await settled(page);
+   await page.goto(base+'/prototyper/folg-drapen.html');await page.waitForFunction(()=>window.DropPrototype?.snapshot().ready);await settled(page);
    const initial=journey(await snapshot(page));assert.equal(requests.length,0,'The initial dark map makes no remote requests');
    await styleOpen(page);assert.deepEqual(journey(await snapshot(page)),initial,'Opening style controls does not move the map or selected journey');
    for(const id of ['river-width','river-intensity','map-opacity','height-colors','isolate-basin','map-layer','show-rivers'])await controlFits(page,id);

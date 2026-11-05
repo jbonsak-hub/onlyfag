@@ -105,7 +105,7 @@ Statle på /geografi/statle.html bruker nå et kart med 50 klikkbare delstater o
 
 Kartet fyller vindushøyden på desktop. Fastlandet er forstørret. Alaska og Hawaii vises uten navn, med skillelinjer som ikke skjærer gjennom delstatene. Hawaii flukter nederst med Florida. På mobil ligger panelet under kartet. Kartgrunnlaget er det samme Census-grunnlaget som tidligere. Spillsvar holdes i minnet, eksisterende lokal lagring røres ikke, og siden bruker samme analytics-loader/token og sidesti som før. Andre quiz- og fagmoduler er uendret.
 
-prototypes/statle.html deler kartkode og stil med den publiserte siden, men laster ingen analytics. tests/statle-prototype.cjs kontrollerer alle 50 delstatene gjennom en komplett runde, farger, hover, feilnavn, hint, omstart, mobil og full vindushøyde. Menyen starter lukket og åpnes over venstre del av kartet, med støtte for Escape, lukkeknapp og klikk utenfor. Statle-tittelen står øverst i venstrepanelet, og Quizoversikt-lenken er forstørret. Sett STATLE_PREVIEW_URL til den lokale siden og bruk PLAYWRIGHT_MODULE/BROWSER_EXECUTABLE ved behov. Den vanlige geography-analytics-testen dekker også den nye Statle-siden og de gamle adressene.
+prototyper/statle.html deler kartkode og stil med den publiserte siden, men laster ingen analytics. tests/statle-prototype.cjs kontrollerer alle 50 delstatene gjennom en komplett runde, farger, hover, feilnavn, hint, omstart, mobil og full vindushøyde. Menyen starter lukket og åpnes over venstre del av kartet, med støtte for Escape, lukkeknapp og klikk utenfor. Statle-tittelen står øverst i venstrepanelet, og Quizoversikt-lenken er forstørret. Sett STATLE_PREVIEW_URL til den lokale siden og bruk PLAYWRIGHT_MODULE/BROWSER_EXECUTABLE ved behov. Den vanlige geography-analytics-testen dekker også den nye Statle-siden og de gamle adressene.
 
 
 ## Kompakte quizoppsett med Statle-palett
@@ -158,7 +158,7 @@ Kjør også node tests/geography-panel-resize.cjs. Den tester faktisk dragging, 
 
 ### Utvidet MapWiz
 
-Den godkjente versjonen ligger på /geografi/mapwiz.html, og gamle GeoWiz-lenker fører dit. /prototypes/mapwiz.html er fortsatt en forhåndsvisning med samme spillkode. MapWiz har 15 kategorier og ingen forhåndsvalg. Alle runder har ti spørsmål. Med flere enn fem valgte kategorier er grensen to fra hver; med færre valg fordeles spørsmålene balansert. Små kategorier bruker alle tilgjengelige mål før gjentakelser, uten to like mål etter hverandre. Norge alene bruker Norgeskart; blandede runder bruker bare mål innenfor verdenskartet.
+Den godkjente versjonen ligger på /geografi/mapwiz.html, og gamle GeoWiz-lenker fører dit. /prototyper/mapwiz.html er fortsatt en forhåndsvisning med samme spillkode. MapWiz har 15 kategorier og ingen forhåndsvalg. Alle runder har ti spørsmål. Med flere enn fem valgte kategorier er grensen to fra hver; med færre valg fordeles spørsmålene balansert. Små kategorier bruker alle tilgjengelige mål før gjentakelser, uten to like mål etter hverandre. Norge alene bruker Norgeskart; blandede runder bruker bare mål innenfor verdenskartet.
 
 Startsiden samler tekst og valg til venstre og tre kategorikolonner til høyre i et sentrert felt. En kort, synlig forklaring ligger rett under, uten den tidligere tomme flaten. Mobil bruker to kategorikolonner. Kategorien med tre landopplysninger og tilhørende GeoGrid-predikater/data er fjernet fra MapWiz; selve GeoGrid-spillet endres ikke.
 

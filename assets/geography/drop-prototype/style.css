@@ -191,4 +191,20 @@ select:hover{border-color:#617e6b}
 .style-panel-heading .panel-grip{font-size:15px}
 body[data-front-panel="player"] .player{z-index:7}
 body[data-front-panel="style-panel"] .style-panel{z-index:7}
+/* Compact player keeps the map available at every screen width. */
+.player{left:14px;transform:none;width:min(260px,calc(100vw - 28px));padding:10px;border-radius:12px}
+.player .panel-grip{padding-bottom:6px;margin-bottom:6px;font-size:11px}
+.player-topline{padding-bottom:6px}.player .live-mark{display:none}
+.journey-heading{display:block;margin-bottom:0}.journey-place h2{font-size:15px}
+.journey-distance{display:flex;align-items:baseline;gap:5px;margin-top:4px;text-align:left}
+.journey-distance span{font-size:15px}.journey-distance small{margin:0;font-size:8px}
+.player .route-stages{margin:6px 0;font-size:9px}
+.player-toolbar{grid-template-columns:minmax(0,1fr) 54px;grid-template-areas:"start speed" "playback playback";gap:7px;margin-top:7px}
+.start-control{grid-area:start}.speed-control{grid-area:speed}.playback{grid-area:playback;gap:4px}
+.player .playback button{flex:1;min-width:0;min-height:32px;padding:6px 3px;font-size:10px;gap:4px}
+.player .playback button svg{width:13px;height:13px;flex-shrink:0}
+.player .status{margin-top:6px;font-size:9px;line-height:1.4}
+.player #basin-name,.player #river-name{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;overflow-wrap:normal}
+.player .route-stages{display:none}
+.player .status{height:2.8em;overflow:hidden}
 @media(max-width:760px){.style-panel{right:14px;top:62px}.panel-grip{font-size:11px}}

@@ -207,7 +207,7 @@ const server = http.createServer((request, response) => {
       const deviceScaleFactor=viewport.width<700?2:1;
       const current = await context({viewport, hasTouch:true,deviceScaleFactor});
       const page = await current.newPage();await page.clock.install();page.setDefaultTimeout(10000);
-      await page.goto(base + '/prototypes/folg-drapen.html');await page.waitForFunction(() => window.DropPrototype?.snapshot().ready);
+      await page.goto(base + '/prototyper/folg-drapen.html');await page.waitForFunction(() => window.DropPrototype?.snapshot().ready);
       await pause(page);await page.clock.runFor(40);await layoutCheck(page, viewport);
       const initial = await routeCheck(page);
       assert.deepEqual(initial.dataSummary,{segments:segments.length,basins:basins.size});
@@ -302,7 +302,7 @@ const server = http.createServer((request, response) => {
     }
 
     const reduced = await context({viewport:{width:390,height:844},hasTouch:true,reducedMotion:'reduce'});
-    const page = await reduced.newPage();await page.clock.install();await page.goto(base+'/prototypes/folg-drapen.html');await page.waitForFunction(()=>window.DropPrototype?.snapshot().ready);
+    const page = await reduced.newPage();await page.clock.install();await page.goto(base+'/prototyper/folg-drapen.html');await page.waitForFunction(()=>window.DropPrototype?.snapshot().ready);
     const still=await routeCheck(page);assert(still.paused && !still.rain,'Reduced motion starts paused with rain disabled');await page.clock.runFor(1500);assert.equal((await snapshot(page)).progress,still.progress,'Reduced motion does not autoplay');
     await page.locator('#rain').click();const reducedRain=await snapshot(page);assert(reducedRain.rain&&reducedRain.paused,'Reduced-motion rain waits for explicit playback');
     await page.clock.runFor(1000);assert.deepEqual((await snapshot(page)).rainSummary,reducedRain.rainSummary,'Reduced-motion rain does not autoplay');

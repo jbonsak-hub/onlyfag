@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="color-scheme" content="dark">
   <title>Følg dråpen – OnlyFag</title>
-  <link rel="stylesheet" href="../assets/geography/drop-prototype/style-493c19c0cd2b.css">
-  <script src="../assets/geography/drop-prototype/app-41818aa98aab.js" defer></script>
+  <link rel="stylesheet" href="../assets/geography/drop-prototype/style-f36e64507b70.css">
+  <script src="../assets/geography/drop-prototype/app-138ebe236c8f.js" defer></script>
 </head>
 <body data-map-layer="dark" data-player-visible="true">
   <main class="drop-explorer" aria-label="Følg dråpen gjennom norske vassdrag">
@@ -130,10 +130,12 @@
       <progress id="progress" max="1" value="0" aria-label="Dråpens vei mot utløpet"></progress>
 
       <div class="player-toolbar">
-        <label class="start-control" for="start-point">
-          <span>Start ved</span>
+        <div class="start-control">
+          <div class="start-label"><label for="start-search">Start ved</label><output id="start-search-count" for="start-search" aria-live="polite"></output></div>
+          <input id="start-search" type="search" placeholder="Søk etter elv eller vassdrag" aria-label="Søk etter startsted" aria-controls="start-point" aria-describedby="start-search-count" spellcheck="false" autocomplete="off" disabled>
+          <label for="start-point" class="sr-only">Velg startsted</label>
           <select id="start-point"><option value="">Velg et sted i kartet</option></select>
-        </label>
+        </div>
 
         <div class="playback" role="group" aria-label="Animasjon">
           <button id="pause" class="play-button" type="button" disabled>

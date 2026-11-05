@@ -28,7 +28,7 @@ const server=http.createServer((request,response)=>{
       const context=await browser.newContext({viewport,reducedMotion:'reduce'}),page=await context.newPage();
       await context.route('**/*',route=>{const q=route.request();if(['GET','HEAD'].includes(q.method())&&(q.url().startsWith(base+'/')||/^(data|blob):/.test(q.url())))return route.continue();report.external.push(q.url());return route.abort();});
       page.on('pageerror',e=>report.errors.push(e.message));page.on('response',r=>{if(r.status()>=400)report.missing.push(r.url());});
-      await page.clock.install();await page.goto(base+'/prototypes/folg-drapen.html');await page.waitForFunction(()=>window.DropPrototype?.snapshot().ready);
+      await page.clock.install();await page.goto(base+'/prototyper/folg-drapen.html');await page.waitForFunction(()=>window.DropPrototype?.snapshot().ready);
       const snapshot=()=>page.evaluate(()=>DropPrototype.snapshot()),options=()=>page.locator('#start-point option').evaluateAll(es=>es.map(e=>e.value).filter(Boolean).sort());
       assert.deepEqual(await options(),startIds,'Every supplied start remains selectable, without duplicate values');
       for(const region of regions)assert(await page.locator('#start-point optgroup[label="'+region+'"]').count());

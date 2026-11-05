@@ -88,7 +88,7 @@ assert.ok(process.env.STATLE_PREVIEW_URL, 'Set STATLE_PREVIEW_URL to the prototy
  await page.waitForURL('**/geografi.html#verden-land');
  await page.locator('#verden-land.active').waitFor();
  await page.goto(url);
- if(new URL(url).pathname.includes('/prototypes/')){await page.locator('footer a[href$="statle.html"]').click();await page.waitForURL('**/geografi/statle.html');}
+ if(new URL(url).pathname.includes('/prototyper/')){await page.locator('footer a[href$="statle.html"]').click();await page.waitForURL('**/geografi/statle.html');}
  await page.locator('.quiz-page-back').click();await page.waitForURL('**/geografi/kart.html');
  assert.ok(await page.locator('#kart-selection').isVisible(),'Choose map returns to the map overview');
  assert.deepEqual(errors,[]);console.log(JSON.stringify({states:50,wholeRound:true,hover:true,wrongLabel:true,threeMistakeHint:true,timePenaltyRemoved:true,fourColorBands:true,pauseRemoved:true,menu:true,restart:true,skip:true,mobile:true,fullHeightLayout:true,errors}));

@@ -57,7 +57,7 @@ const riverData=JSON.parse(read('assets/geography/mapwiz-river-midpoints.json'))
 const outputs={'assets/geography/mapwiz-prototype-data.js':out,'assets/geography/mapwiz-river-data.js':'/* Public Natural Earth main-course midpoint snapshot. See mapwiz-river-midpoints.json. */\nwindow.MAPWIZ_RIVER_MIDPOINTS='+JSON.stringify(riverData.targets)+';\n'};
 // Begin the two map downloads while the menu scripts are loading. Keep their
 // addresses in sync with the projection manifest and retain cached old assets.
-for(const page of ['geografi/mapwiz.html','prototypes/mapwiz.html']){
+for(const page of ['geografi/mapwiz.html','prototyper/mapwiz.html']){
  const choices={light:[worldMap.image,worldMap.hydrology.image],dark:[worldMap.dark.image,worldMap.dark.hydrology.image]};
  const html=read(page),preloads='<!-- mapwiz-map-preload:start --><script>(()=>{const maps='+JSON.stringify(choices)+';let dark=false;try{dark=localStorage.getItem("geoDarkMode")==="1";}catch{}for(const href of maps[dark?"dark":"light"]){const link=document.createElement("link");link.rel="preload";link.as="image";link.href=href;link.fetchPriority="low";document.head.append(link);}})();</script><!-- mapwiz-map-preload:end -->';
  const updated=html.includes('<!-- mapwiz-map-preload:start -->')?html.replace(/<!-- mapwiz-map-preload:start -->[\s\S]*?<!-- mapwiz-map-preload:end -->/,preloads):html.replace('</head>',preloads+'</head>');

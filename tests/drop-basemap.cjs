@@ -85,7 +85,7 @@ async function registration(page,layer){
     }catch(error){report.errors.push(error.message);return route.abort();}
    });
    const page=await context.newPage();page.on('pageerror',error=>report.errors.push(error.message));
-   await page.goto(base+'/prototypes/folg-drapen.html');await page.waitForFunction(()=>window.DropPrototype?.snapshot().ready);await settled(page);
+   await page.goto(base+'/prototyper/folg-drapen.html');await page.waitForFunction(()=>window.DropPrototype?.snapshot().ready);await settled(page);
    await page.locator('#map-style > summary').click();
    // Registration checks use fully opaque imagery, independently of the
    // presentation default chosen by the cartographic opacity control.
