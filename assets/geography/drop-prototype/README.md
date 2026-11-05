@@ -45,11 +45,12 @@ catchments; Svalbard is outside the source extent. The existing 5 km route or
 2 km² catchment selection still applies, so this is not every tiny brook.
 Mapped endpoints in Sweden/Finland are not presented as Norwegian sea mouths.
 
-“Last bakgrunnskart med området” optionally enables a topographic background
-with the river selection. Background tiles remain viewport-driven and limited
-to selected region extents in this mode; no whole-country raster download or
-background prefetch runs at startup. Existing topographic, hiking and relief
-controls continue to work independently.
+Kartstil is the sole background selector. Background tiles are always limited
+to selected region extents and the visible viewport; panning over an unselected
+region downloads no tiles there. Removing a region cancels its pending tile
+requests, and cached imagery is clipped to the selected extents. No whole-country
+raster download or background prefetch runs at startup. Changing regions retains
+the chosen topographic, hiking, relief or dark background.
 
 All chunks share the original southern EPSG:25833 anchor and uniform scale.
 Activating a northern region changes only the camera's fitting bounds, never

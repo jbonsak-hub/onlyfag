@@ -76,7 +76,7 @@
     $('map-opacity').disabled=state.mapLayer==='dark';$('height-colors').disabled=state.mapLayer!=='relief';
     $('isolate-basin').disabled=!state.basin;
     $('height-color-help').textContent=state.mapLayer==='relief'?'En fast fargeskala viser høyde over havet.':'Velg Terrengrelieff for høydefarger.';
-    $('height-legend').hidden=state.mapLayer!=='relief'||!state.heightColors||state.mapOpacity===0;
+    $('height-legend').hidden=state.mapLayer!=='relief'||!state.heightColors||state.mapOpacity===0||![...desiredRegions].some(key=>regionData.has(key));
   }
   function drawHeightLegend(c,x,y,w){
     const ramp=c.createLinearGradient(x,0,x+w,0);heightPalette.forEach((rgb,i)=>ramp.addColorStop(i/(heightPalette.length-1),'rgb('+rgb.join(',')+')'));c.fillStyle=ramp;c.fillRect(x,y,w,9);c.font='9px system-ui,sans-serif';c.fillStyle='#c9dace';c.textAlign='left';c.fillText('0 m',x,y+23);c.textAlign='center';c.fillText('1 000 m',x+w*.4,y+23);c.fillText('2 000 m',x+w*.8,y+23);c.textAlign='right';c.fillText('2 500 m',x+w,y+23);c.textAlign='left';
@@ -86,13 +86,20 @@
     const ticks=document.createElement('div');ticks.className='height-ticks';for(const text of ['0','500','1 000','1 500','2 000','2 500 m']){const tick=document.createElement('span');tick.textContent=text;ticks.append(tick);}
     $('height-legend').replaceChildren(title,ramp,ticks);
   }
+  const selectedMapBounds=()=>[...desiredRegions].filter(key=>regionData.has(key)).map(key=>regionData.get(key).bounds);
+  function tileInSelectedRegions(tile){
+    const {west,north,unitsPerKm}=regionManifest.projection,units=unitsPerKm/1000,span=256*tileResolution/2**tile.z;
+    const x=(tileOrigin[0]+tile.col*span-west)*units,y=(north-tileOrigin[1]+tile.row*span)*units;
+    return selectedMapBounds().some(bounds=>intersects([x,y,x+span*units,y+span*units],bounds));
+  }
   function loadTiles(){
     for(const key of tileView){
       if(tileLoads>=(state.mapLayer==='relief'?4:8))break;
-      const tile=tiles.get(key);if(tile.status!=='queued')continue;
+      const tile=tiles.get(key);if(tile.status!=='queued'||!tileInSelectedRegions(tile))continue;
       tile.status='loading';tile.attempts=(tile.attempts||0)+1;tileLoads++;const img=new Image();tile.image=img;img.crossOrigin='anonymous';
       let settled=false;const timeout=setTimeout(()=>{done('error');img.src='';},['relief','elevation'].includes(tile.layer)?45000:20000);
-      const done=status=>{if(settled)return;settled=true;clearTimeout(timeout);tile.status=status==='error'&&tile.attempts<2?'queued':status;tileLoads--;dirty=true;loadTiles();mapStatus();};
+      const done=status=>{if(settled)return;settled=true;clearTimeout(timeout);if(status==='cancelled')tile.attempts--;tile.status=status==='cancelled'||status==='error'&&tile.attempts<2?'queued':status;tileLoads--;dirty=true;loadTiles();mapStatus();};
+      tile.cancel=()=>{done('cancelled');img.src='';};
       img.onload=()=>done('ready');img.onerror=()=>done('error');
       if(tile.layer==='elevation'){
         const span=256*tileResolution/2**tile.z,x=tileOrigin[0]+tile.col*span,y=tileOrigin[1]-tile.row*span;
@@ -106,13 +113,14 @@
     }
   }
   function paintMap(c){
-    if(state.mapLayer==='dark'||state.mapOpacity===0){tileView.clear();mapStatus();return;}
+    if(state.mapLayer==='dark'||state.mapOpacity===0||!selectedMapBounds().length){tileView.clear();mapStatus();return;}
     const [west,,,north]=data.source.projectedBounds,units=data.unitsPerKm/1000;
     const z=Math.max(0,Math.min(18,Math.round(Math.log2(tileResolution*units*camera.scale))));
     const a=world(0,0),b=world(width,height),minE=west+a[0]/units,maxE=west+b[0]/units,maxN=north-a[1]/units,minN=north-b[1]/units;
     const scene=mapScene.getContext('2d'),stage=tileStage.getContext('2d');
     scene.setTransform(dpr,0,0,dpr,0,0);scene.globalAlpha=1;scene.globalCompositeOperation='source-over';scene.fillStyle=state.mapLayer==='relief'?'#13231d':'#e8ecdf';scene.fillRect(0,0,width,height);
     const drawTile=tile=>{
+      if(!tileInSelectedRegions(tile))return;
       const sizeInMeters=256*tileResolution/2**tile.z,p=screen([(tileOrigin[0]+tile.col*sizeInMeters-west)*units,(north-tileOrigin[1]+tile.row*sizeInMeters)*units]),size=sizeInMeters*units*camera.scale;
       if(p.x+size>=0&&p.x<=width&&p.y+size>=0&&p.y<=height)stage.drawImage(tile.image,p.x,p.y,size+.25,size+.25);
     };
@@ -128,7 +136,7 @@
       // Applying opacity once afterwards avoids dark seams and double blending.
       for(const tile of [...tiles.values()].filter(t=>t.layer===layer&&t.status==='ready'&&t.z!==level).sort((a,b)=>a.z-b.z))drawTile(tile);
       for(let row=firstRow;row<=lastRow;row++)for(let col=firstCol;col<=lastCol;col++){
-        if($('region-basemap').checked){const x=(tileOrigin[0]+col*span-west)*units,y=(north-tileOrigin[1]+row*span)*units,box=[x,y,x+span*units,y+span*units];if(![...desiredRegions].some(key=>regionData.has(key)&&intersects(box,regionData.get(key).bounds)))continue;}
+        if(!tileInSelectedRegions({z:level,row,col}))continue;
         const key=[layer,level,row,col].join('/');tileView.add(key);
         if(!tiles.has(key))tiles.set(key,{layer,z:level,row,col,status:'queued'});
         const tile=tiles.get(key);tile.used=performance.now();
@@ -138,7 +146,7 @@
       scene.drawImage(tileStage,0,0,width,height);
     }
     scene.globalCompositeOperation='source-over';scene.globalAlpha=1;
-    c.save();c.globalAlpha=state.mapOpacity;c.drawImage(mapScene,0,0,width,height);c.restore();
+    c.save();c.beginPath();for(const bounds of selectedMapBounds()){const p=screen(bounds),q=screen(bounds.slice(2));c.rect(p.x,p.y,q.x-p.x,q.y-p.y);}c.clip();c.globalAlpha=state.mapOpacity;c.drawImage(mapScene,0,0,width,height);c.restore();
     // Bound decoded image memory during long exploration. Late responses are
     // always positioned with the current camera on the next repaint.
     if(tiles.size>160)for(const [key,tile] of [...tiles].sort((a,b)=>a[1].used-b[1].used)){if(tiles.size<=160)break;if(!tileView.has(key)&&tile.status!=='loading')tiles.delete(key);}
@@ -240,7 +248,7 @@
     try{
       await new Promise(resolve=>requestAnimationFrame(resolve));
       if(state.mapLayer!=='dark'&&state.mapOpacity>0&&[...tileView].some(key=>tiles.get(key)?.status!=='ready'))throw Error('pending map');
-      const colored=state.heightColors&&state.mapLayer==='relief'&&state.mapOpacity>0,image=document.createElement('canvas'),header=62,footer=colored?100:70;image.width=canvas.width;image.height=canvas.height+Math.round((header+footer)*dpr);
+      const colored=state.heightColors&&state.mapLayer==='relief'&&state.mapOpacity>0&&selectedMapBounds().length>0,image=document.createElement('canvas'),header=62,footer=colored?100:70;image.width=canvas.width;image.height=canvas.height+Math.round((header+footer)*dpr);
       const c=image.getContext('2d',{alpha:false});c.fillStyle='#07110c';c.fillRect(0,0,image.width,image.height);c.drawImage(canvas,0,header*dpr);c.scale(dpr,dpr);
       c.fillStyle='#e1f0e6';c.font='600 17px system-ui,sans-serif';c.fillText('OnlyFag · Vann og landskap',20,27);c.font='11px system-ui,sans-serif';c.fillStyle='#b4cabe';c.fillText((state.isolateBasin?basins.get(state.basin).name:'Norske vassdrag')+' · '+$('map-layer').selectedOptions[0].textContent,20,46);
       let y=header+height+23;c.font='10px system-ui,sans-serif';c.fillText('Elvedata: NVE ELVIS · NLOD · onlyfag.no',20,y);
@@ -323,13 +331,13 @@
   reduced.addEventListener('change',()=>{if(reduced.matches){state.paused=true;state.rain=false;particles=[];dirty=true;controls();}});
   addEventListener('resize',resize);new ResizeObserver(()=>{if(state.ready)updateCamera();}).observe($('player'));
   window.DropPrototype={snapshot:()=>({...state,route:[...state.route],pan:[...state.pan],camera:{...camera},routeLength,duration,outlet:state.route.at(-1),rainSummary:{count:particles.length,emissions:rainEmissions,elapsed:rainElapsed},dataSummary:{segments:segments.length,basins:basins.size},regionSummary:{selected:[...desiredRegions],loaded:[...regionData.keys()],loading:[...regionRequests.keys()]}}),worldToScreen:raw=>{const p=screen(point(raw)),r=canvas.getBoundingClientRect();return {x:p.x+r.x,y:p.y+r.y};}};
-  let automaticRegionMap=false;
   function regionControls(message=''){
     for(const meta of regionManifest?.regions||[]){const box=$('region-'+meta.id);box.disabled=!state.ready;box.checked=desiredRegions.has(meta.id);box.setAttribute('aria-busy',String(regionRequests.has(meta.id)));}
     $('region-status').textContent=message||([...regionRequests.keys()].length?'Laster '+[...regionRequests.keys()].map(k=>regionManifest.regions.find(r=>r.id===k)?.label).join(', ')+' …':'');
   }
   function rebuildRegions(fit=true){
     hover=null;lastHover=null;
+    tileView.clear();for(const tile of tiles.values())if(tile.status==='loading'&&!tileInSelectedRegions(tile))tile.cancel();
     const active=[...desiredRegions].map(key=>regionData.get(key)).filter(Boolean),previous={...state},meta=active[0]||regionData.get('south');
     data={...meta,basins:active.flatMap(g=>g.basins),segments:active.flatMap(g=>g.segments),starts:active.flatMap(g=>g.starts)};
     extent=active.length?[Math.min(...active.map(g=>g.bounds[0])),Math.min(...active.map(g=>g.bounds[1])),Math.max(...active.map(g=>g.bounds[2])),Math.max(...active.map(g=>g.bounds[3]))]:meta.bounds;
@@ -349,13 +357,11 @@
     const task=(async()=>{const response=await fetch(new URL(meta.url,regionBase));if(!response.ok)throw Error('Region load failed');const value=await response.json();if(value.regionId!==key||!value.segments?.length||!value.basins?.length)throw Error('Invalid region');regionData.set(key,value);return value;})();
     regionRequests.set(key,task);regionControls();try{return await task;}finally{regionRequests.delete(key);regionControls();}
   }
-  function regionBackground(){if($('region-basemap').checked&&state.mapLayer==='dark'){$('map-layer').value='topo';$('map-layer').dispatchEvent(new Event('change'));automaticRegionMap=true;}}
   for(const key of ['south','midtnorge','nordnorge'])$('region-'+key).addEventListener('change',async event=>{
     $('region-status').textContent='';
-    if(event.target.checked){desiredRegions.add(key);try{await ensureRegion(key);if(desiredRegions.has(key)){rebuildRegions();regionBackground();}}catch(error){desiredRegions.delete(key);regionControls('Området kunne ikke lastes. Prøv igjen.');}}
+    if(event.target.checked){desiredRegions.add(key);try{await ensureRegion(key);if(desiredRegions.has(key))rebuildRegions();}catch(error){desiredRegions.delete(key);regionControls('Området kunne ikke lastes. Prøv igjen.');}}
     else{desiredRegions.delete(key);rebuildRegions();}regionControls($('region-status').textContent.includes('kunne ikke')?$('region-status').textContent:'');
   });
-  $('region-basemap').addEventListener('change',()=>{if($('region-basemap').checked)regionBackground();else if(automaticRegionMap){$('map-layer').value='dark';$('map-layer').dispatchEvent(new Event('change'));automaticRegionMap=false;}dirty=true;});
   async function load(){
     try{
       setStatus('Henter elvenettet …');const response=await fetch('../assets/geography/drop-prototype/regions.json');if(!response.ok)throw Error('manifest');regionManifest=await response.json();
