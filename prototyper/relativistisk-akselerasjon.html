@@ -42,6 +42,18 @@ details{border-top:1px solid var(--line);padding-top:13px;font-size:12px;line-he
 @media(max-width:380px){h1{font-size:14px}.button{padding:6px 8px}.heading{gap:7px}.legend{font-size:11px;gap:9px}.chartbar{padding-left:12px;padding-right:12px}.back{display:none}}
 @media(pointer:coarse){.button{min-height:42px}.check{min-height:31px}.tab{min-height:44px}input[type=range]{height:30px}.number{min-height:38px}.probe-edit input{min-height:32px}}
 
+/* Kinetisk energi: farten som funksjon av tilført energi */
+.chart-actions{display:flex;align-items:center;gap:13px}
+.energy-main{display:flex;align-items:baseline;gap:7px;margin:6px 0 9px}
+.energy-main strong{font-size:27px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--purple);line-height:1.2}
+.energy-main span{font:italic 17px Cambria,Georgia,serif}
+.energy-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.energy-joules{margin:14px 0 0;font-size:12px;color:var(--muted)}
+.energy-joules strong{color:var(--ink);font-weight:650}
+.energy-hint{margin:8px 0 0;font-size:11px;line-height:1.45;color:var(--muted)}
+.chart .speed-limit{stroke:#db7a3e;stroke-width:2.2;stroke-dasharray:7 5}
+.chart .limit-label{fill:#b85d27;font-size:12px;font-weight:750}
+@media(max-width:760px){.chart-actions{gap:8px}.chart-actions .button{font-size:11px;padding:6px 8px}.energy-main strong{font-size:24px}}
 /* Shared module selector */
 .app{grid-template-rows:auto auto minmax(0,1fr)}
 .modebar{display:flex;align-items:center;gap:7px;padding:7px 16px;background:var(--paper);border-bottom:1px solid var(--line);min-height:46px}
@@ -78,7 +90,7 @@ details{border-top:1px solid var(--line);padding-top:13px;font-size:12px;line-he
   <div class="layout" id="layout">
     <button class="backdrop" id="backdrop" aria-label="Lukk kontroller" tabindex="-1"></button>
     <aside class="sidebar" id="sidebar" aria-label="Grafinnstillinger">
-      <section>
+      <section id="axisPicker">
         <h2>Variabel på x-aksen</h2>
         <div class="tabs" role="group" aria-label="Velg x-akse">
           <button class="tab" data-axis="v" aria-pressed="true">Fart <em>v</em></button>
@@ -98,6 +110,15 @@ details{border-top:1px solid var(--line);padding-top:13px;font-size:12px;line-he
         <div class="formula-row"><span class="formula-label">Klassisk</span><span class="math">E<sub>k</sub> = ½mv<sup>2</sup></span></div>
         <div class="formula-row"><span class="formula-label">Relativistisk</span><span class="math">E<sub>k</sub> = (γ − 1)mc<sup>2</sup></span></div>
       </div>
+      <section class="energy-control" id="energyControl" hidden>
+        <h2>Tilført kinetisk energi</h2>
+        <div class="energy-main"><strong id="energyValue">0,25</strong><span>mc²</span></div>
+        <input id="energyRange" type="range" min="0" max="1" step="0.0005" value="0.136" aria-label="Tilført kinetisk energi i enheter mc i andre">
+        <div class="ends"><span>0</span><span>1000 mc²</span></div>
+        <div class="energy-buttons"><button type="button" class="button" id="divideEnergy">÷ 10</button><button type="button" class="button" id="multiplyEnergy">× 10</button></div>
+        <p class="energy-joules">Dette tilsvarer <strong id="energyJoules">4,49 × 10¹⁶ J</strong>.</p>
+        <p class="energy-hint">1 mc² er energienheten for valgt masse. Prøv å tidoble flere ganger.</p>
+      </section>
       <section>
         <h2>Holdes konstante</h2>
         <div class="parameters">
@@ -120,9 +141,9 @@ details{border-top:1px solid var(--line);padding-top:13px;font-size:12px;line-he
       </section>
       <section class="checks" aria-label="Visning">
         <label class="check"><input id="showNewton" type="checkbox" checked><span id="compareLabel">Vis Newtons a = F/m</span></label>
-        <label class="check"><input id="lockY" type="checkbox" checked>Lås y-aksen</label>
+        <label class="check" id="lockYRow"><input id="lockY" type="checkbox" checked>Lås y-aksen</label>
         <button class="button fit" id="fitButton">Tilpass y-aksen</button>
-        <p class="check-help">Låst skala gjør endringer i kurvene synlige.</p>
+        <p class="check-help" id="yHelp">Låst skala gjør endringer i kurvene synlige.</p>
       </section>
       <details id="axisDetails">
         <summary>Område på x-aksen</summary>
@@ -144,7 +165,7 @@ details{border-top:1px solid var(--line);padding-top:13px;font-size:12px;line-he
     <main class="main" aria-label="Relativistisk graf">
       <div class="chartbar">
         <div class="legend"><span><i class="swatch" aria-hidden="true"></i>Relativistisk</span><span id="newtonLegend"><i class="swatch classic" aria-hidden="true"></i>Newton</span></div>
-        <span class="axis-tag" id="axisTag">a(v)</span>
+        <div class="chart-actions"><button class="button" type="button" id="swapAxes" hidden>Bytt akser</button><span class="axis-tag" id="axisTag">a(v)</span></div>
       </div>
       <div class="plot-wrap" id="plotWrap">
         <svg class="chart" id="chart" xmlns="http://www.w3.org/2000/svg" tabindex="0" role="slider" aria-label="Avlesningspunkt i akselerasjonsgrafen. Bruk piltastene for å flytte punktet." aria-valuemin="0" aria-valuemax="0.9999" aria-valuenow="0.6"></svg>
@@ -180,13 +201,42 @@ details{border-top:1px solid var(--line);padding-top:13px;font-size:12px;line-he
     F:{name:'Netto kraft F',unit:'N',axis:'Netto kraft F (N)',hint:'Kraften F virker langs bevegelsesretningen.'}
   };
   function makeState(mode){
-    return {axis:'v',v:.6,m:2,F:10,showNewton:true,lockY:true,
+    return {axis:'v',v:.6,m:2,F:10,showNewton:true,lockY:true,swapped:false,energy:.25,energyXmax:5,
       domains:{v:[0,mode==='a'?1:1.12],m:[.5,10],F:[0,20]},
       sliderBounds:{v:[0,.9999],m:[.1,20],F:[0,100]},
       yMax:mode==='a'?6:mode==='p'?22:45};
   }
   const states={a:makeState('a'),p:makeState('p'),ek:makeState('ek')};
   let mode='a',state=states.a,frame=0,geometry=null,dragging=false;
+  const isInverse=()=>mode==='ek'&&!state.swapped;
+  const energyFromBeta=b=>{
+    const root=Math.sqrt(Math.max(0,(1-b)*(1+b)));
+    return b*b/(root*(1+root));
+  };
+  const betaFromEnergy=e=>Math.sqrt(Math.max(0,e*(e+2)))/(1+e);
+  const energyFromSlider=t=>.1*(Math.pow(10,4*t)-1);
+  const sliderFromEnergy=e=>Math.log10(1+e/.1)/4;
+  function energyLabelJoules(){
+    const E=state.energy*state.m*C*C;
+    if(E===0)return '0 J';
+    const exponent=Math.floor(Math.log10(E)),mantissa=E/Math.pow(10,exponent);
+    return fmt(mantissa,3)+' × 10'+Array.from(String(exponent),d=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[+d]).join('')+' J';
+  }
+  function syncEnergyUI(){
+    $('energyRange').value=String(sliderFromEnergy(state.energy));
+    $('energyValue').textContent=fmt(state.energy,state.energy<1?4:2);
+    $('energyJoules').textContent=energyLabelJoules();
+    $('energyRange').setAttribute('aria-valuetext',fmt(state.energy,4)+' mc²');
+  }
+  function setEnergy(e, announce=false){
+    if(!Number.isFinite(e))return;
+    state.energy=clamp(e,0,999.9);
+    state.v=betaFromEnergy(state.energy);
+    state.energyXmax=Math.max(5,niceStep(state.energy*1.6));
+    syncEnergyUI();
+    readout(announce);
+    schedule();
+  }
   const fmt=(n,places=3)=>{
     if(!Number.isFinite(n))return '–';
     if(n===0)return '0';
@@ -211,6 +261,7 @@ details{border-top:1px solid var(--line);padding-top:13px;font-size:12px;line-he
     return b*(n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10);
   }
   function maxValue(){
+    if(isInverse())return 1;
     const [lo,hi]=state.domains[state.axis];
     let points=[at(lo),at(hi)];
     if(state.axis==='v'&&mode!=='a'&&lo<1){
@@ -221,10 +272,12 @@ details{border-top:1px solid var(--line);padding-top:13px;font-size:12px;line-he
     return Math.max(0,...values);
   }
   function fitY(){
+    if(isInverse())return;
     const m=maxValue()||1,step=niceStep(m*1.12/5);
     state.yMax=Math.max(step,Math.ceil((m*1.12)/step)*step);
   }
   function probeBounds(){
+    if(isInverse())return [0,state.energyXmax];
     const [lo,hi]=state.domains[state.axis];
     return [lo,state.axis==='v'?Math.min(hi,MAX_BETA):hi];
   }
@@ -238,13 +291,24 @@ details{border-top:1px solid var(--line);padding-top:13px;font-size:12px;line-he
   function updateModeUI(){
     document.querySelectorAll('[data-mode]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.mode===mode)));
     $('formulaA').hidden=mode!=='a';$('formulaP').hidden=mode!=='p';$('formulaEk').hidden=mode!=='ek';
+    $('swapAxes').hidden=mode!=='ek';
+    $('swapAxes').textContent='Bytt akser';
     document.querySelector('[data-axis="F"]').hidden=mode!=='a';
     $('compareLabel').textContent=mode==='a'?'Vis Newtons a = F/m':mode==='p'?'Vis klassisk p = mv':'Vis klassisk Eₖ = ½mv²';
     $('newtonLegend').lastChild.textContent=mode==='a'?'Newton':'Klassisk';
     chart.setAttribute('aria-label','Avlesningspunkt for '+modes[mode].label.toLowerCase()+'. Bruk piltastene for å flytte punktet.');
     $('classicLabel').textContent=mode==='a'?'Newton a':'Klassisk '+modes[mode].sym;
     $('relLabel').textContent='Relativistisk '+modes[mode].sym;
-    $('factorLabel').textContent=modes[mode].metric;
+    $('factorLabel').textContent=isInverse()?'Mangler til c':modes[mode].metric;
+    $('axisPicker').hidden=isInverse();
+    $('energyControl').hidden=!isInverse();
+    $('axisDetails').hidden=isInverse();
+    $('lockYRow').hidden=isInverse();
+    $('fitButton').hidden=isInverse();
+    $('yHelp').hidden=isInverse();
+    $('relLabel').textContent=isInverse()?'Fart · relativistisk':'Relativistisk '+modes[mode].sym;
+    $('classicLabel').textContent=isInverse()?'Fart · klassisk':mode==='a'?'Newton a':'Klassisk '+modes[mode].sym;
+    $('swapAxes').setAttribute('aria-label',isInverse()?'Bytt akser til kinetisk energi som funksjon av fart':'Bytt akser til fart som funksjon av energi');
     $('modelDetails').innerHTML='<summary>Om modellen</summary><p>'+modes[mode].info+'</p><p>c = 299 792 458 m/s. Ved v ≥ c vises kun den klassiske sammenligningskurven; legemer med hvilemasse kan ikke nå lyshastigheten.</p>';
   }
   function syncControls(){
@@ -279,8 +343,29 @@ details{border-top:1px solid var(--line);padding-top:13px;font-size:12px;line-he
     $('probeInput').setAttribute('aria-label',vars[state.axis].name+' ved avlesningspunktet ('+vars[state.axis].unit+')');
     const [l,h]=probeBounds();$('probeInput').min=l;$('probeInput').max=h;
     $('domainError').hidden=true;
+    if(isInverse()){
+      $('axisTag').textContent='v(Eₖ)';
+      $('probeLabel').textContent='Energi Eₖ';
+      $('probeUnit').textContent='mc²';
+      $('probeInput').min=0;$('probeInput').max=state.energyXmax;
+      $('probeInput').setAttribute('aria-label','Kinetisk energi i enheten mc²');
+      syncEnergyUI();
+    }
   }
   function readout(announce=false){
+    if(isInverse()){
+      const energy=state.energy,beta=betaFromEnergy(energy),classic=Math.sqrt(2*energy);
+      if(document.activeElement!==$('probeInput'))$('probeInput').value=String(Number(energy.toPrecision(7)));
+      $('relValue').innerHTML=fmt(beta,8)+'<span>c</span>';
+      $('newtonValue').innerHTML=fmt(classic,6)+'<span>c</span>';
+      $('factorValue').textContent=fmt(100*(1-beta),7)+' %';
+      chart.setAttribute('aria-valuemin','0');
+      chart.setAttribute('aria-valuemax',String(state.energyXmax));
+      chart.setAttribute('aria-valuenow',String(energy));
+      chart.setAttribute('aria-valuetext','Energi '+fmt(energy,4)+' mc². Relativistisk fart '+fmt(beta,8)+' c. Gjenstående '+fmt(100*(1-beta),6)+' prosent til lysfarten.');
+      if(announce)$('liveStatus').textContent=chart.getAttribute('aria-valuetext');
+      return;
+    }
     const x=state[state.axis],p=at(x),unit=modes[mode].unit;
     if(document.activeElement!==$('probeInput'))$('probeInput').value=String(Number(x.toPrecision(7)));
     $('relValue').innerHTML=pretty(p.rel)+'<span>'+unit+'</span>';
@@ -296,6 +381,7 @@ details{border-top:1px solid var(--line);padding-top:13px;font-size:12px;line-he
     if(announce)$('liveStatus').textContent=chart.getAttribute('aria-valuetext');
   }
   function draw(){
+    if(isInverse())return drawInverse();
     const w=$('plotWrap').clientWidth,h=$('plotWrap').clientHeight;
     if(w<80||h<80)return;
     const L=w<500?60:77,R=29,T=44,B=56,pw=Math.max(1,w-L-R),ph=Math.max(1,h-T-B);
@@ -361,6 +447,49 @@ details{border-top:1px solid var(--line);padding-top:13px;font-size:12px;line-he
     $('clipWarning').hidden=divergent||maxValue()<=ymax*(1+1e-9);
     readout();
   }
+  function drawInverse(){
+    const w=$('plotWrap').clientWidth,h=$('plotWrap').clientHeight;
+    if(w<80||h<80)return;
+    const L=w<500?56:71,R=29,T=39,B=56,pw=w-L-R,ph=h-T-B;
+    const max=state.energyXmax,ymax=1.10;
+    const X=e=>L+e/max*pw,Y=v=>T+ph-(v/ymax)*ph;
+    geometry={L,pw,w,h,xmin:0,xmax:max};
+    chart.setAttribute('viewBox','0 0 '+w+' '+h);
+    const out=['<title>Fart som funksjon av kinetisk energi: relativistisk og klassisk</title><defs><clipPath id="plotClip"><rect x="'+L+'" y="'+T+'" width="'+pw+'" height="'+(ph+1)+'"/></clipPath></defs>'];
+    for(let y=0;y<1.101;y+=.2){
+      const yy=Y(y);
+      out.push('<line class="grid" x1="'+L+'" x2="'+(w-R)+'" y1="'+yy+'" y2="'+yy+'"/><text x="'+(L-10)+'" y="'+(yy+4)+'" text-anchor="end">'+fmt(y,1)+'</text>');
+    }
+    const step=niceStep(max/(w<550?4:7));
+    for(let i=0;i<30;i++){
+      const energy=i*step;
+      if(energy>max+1e-8)break;
+      const xx=X(energy);
+      out.push('<line class="grid" x1="'+xx+'" x2="'+xx+'" y1="'+T+'" y2="'+(T+ph)+'"/><text x="'+xx+'" y="'+(T+ph+23)+'" text-anchor="middle">'+fmt(energy,2)+'</text>');
+    }
+    out.push('<line class="axis-line" x1="'+L+'" x2="'+L+'" y1="'+T+'" y2="'+(T+ph)+'"/><line class="axis-line" x1="'+L+'" x2="'+(w-R)+'" y1="'+(T+ph)+'" y2="'+(T+ph)+'"/>');
+    out.push('<text class="axis-title" x="'+L+'" y="21">Fart v / c</text><text class="axis-title" x="'+(L+pw/2)+'" y="'+(h-9)+'" text-anchor="middle">Kinetisk energi Eₖ / mc²</text>');
+    out.push('<line class="speed-limit" x1="'+L+'" x2="'+(w-R)+'" y1="'+Y(1)+'" y2="'+Y(1)+'"/>');
+    out.push('<text class="limit-label" x="'+(w-R-5)+'" y="'+(Y(1)-10)+'" text-anchor="end">Lysfarten c</text>');
+    const sample=Math.max(400,Math.min(1600,Math.round(pw*1.4))),rel=[],classic=[];
+    for(let i=0;i<=sample;i++){
+      const e=max*i/sample,xx=X(e).toFixed(2);
+      rel.push((i?'L':'M')+xx+','+Y(betaFromEnergy(e)).toFixed(2));
+      classic.push((i?'L':'M')+xx+','+Math.max(-100000,Math.min(100000,Y(Math.sqrt(2*e)))).toFixed(2));
+    }
+    out.push('<g clip-path="url(#plotClip)">');
+    if(state.showNewton)out.push('<path class="newton-curve" d="'+classic.join(' ')+'"/>');
+    out.push('<path class="rel-curve" d="'+rel.join(' ')+'"/></g>');
+    const px=X(state.energy),beta=betaFromEnergy(state.energy),py=Y(beta);
+    out.push('<line class="cursor" x1="'+px+'" x2="'+px+'" y1="'+T+'" y2="'+(T+ph)+'"/>');
+    if(state.showNewton&&Math.sqrt(2*state.energy)<=ymax)out.push('<circle class="newton-dot" cx="'+px+'" cy="'+Y(Math.sqrt(2*state.energy))+'" r="4"/>');
+    out.push('<circle class="rel-dot" cx="'+px+'" cy="'+py+'" r="5"/>');
+    const anchor=px>L+pw*.72?'end':'start',tx=px+(anchor==='end'?-12:12),ty=py<T+26?py+22:py-12;
+    out.push('<text class="point-label" x="'+tx+'" y="'+ty+'" text-anchor="'+anchor+'">'+fmt(beta,7)+' c</text>');
+    chart.innerHTML=out.join('');
+    $('clipWarning').hidden=true;
+    readout();
+  }
   function setParameter(key,value){
     if(!Number.isFinite(value))return;
     const el=$(key+'Range');
@@ -381,6 +510,7 @@ details{border-top:1px solid var(--line);padding-top:13px;font-size:12px;line-he
     states[mode]=state;
     mode=next;state=states[mode];
     state.v=v;state.m=m;
+    if(next==='ek'&&!state.swapped){state.axis='v';state.energy=clamp(energyFromBeta(clamp(v,0,MAX_BETA)),0,999.9);state.energyXmax=Math.max(5,niceStep(state.energy*1.6));}
     if(!state.lockY)fitY();
     updateModeUI();syncControls();schedule();
   }
@@ -389,6 +519,22 @@ details{border-top:1px solid var(--line);padding-top:13px;font-size:12px;line-he
     if(el.dataset.axis==='F'&&mode!=='a')return;
     state.axis=el.dataset.axis;constrainProbe();fitY();syncControls();schedule();
   }));
+  $('swapAxes').addEventListener('click',()=>{
+    if(mode!=='ek')return;
+    if(!state.swapped){
+      state.v=betaFromEnergy(state.energy);
+      state.swapped=true;state.axis='v';
+      fitY();
+    }else{
+      state.swapped=false;state.axis='v';
+      state.energy=clamp(energyFromBeta(state.v),0,999.9);
+      state.energyXmax=Math.max(5,niceStep(state.energy*1.6));
+    }
+    updateModeUI();syncControls();schedule();
+  });
+  $('energyRange').addEventListener('input',e=>setEnergy(energyFromSlider(Number(e.target.value))));
+  $('multiplyEnergy').addEventListener('click',()=>setEnergy(state.energy===0?.1:state.energy*10,true));
+  $('divideEnergy').addEventListener('click',()=>setEnergy(state.energy/10,true));
   $('showNewton').addEventListener('change',e=>{state.showNewton=e.target.checked;if(!state.lockY)fitY();syncControls();schedule();});
   $('lockY').addEventListener('change',e=>{state.lockY=e.target.checked;if(!state.lockY)fitY();schedule();});
   function fitAndRender(){fitY();schedule();}
@@ -407,11 +553,12 @@ details{border-top:1px solid var(--line);padding-top:13px;font-size:12px;line-he
   $('xMin').addEventListener('change',changeDomain);$('xMax').addEventListener('change',changeDomain);
   function setProbe(value,announce=false){
     if(!Number.isFinite(value))return;
+    if(isInverse())return setEnergy(value,announce);
     state[state.axis]=value;constrainProbe();readout(announce);schedule();
   }
   $('probeInput').addEventListener('change',e=>{
     if(e.target.value!=='')setProbe(Number(e.target.value),true);
-    e.target.value=String(Number(state[state.axis].toPrecision(7)));
+    e.target.value=String(Number((isInverse()?state.energy:state[state.axis]).toPrecision(7)));
   });
   function pointAt(e){
     if(!geometry)return;
@@ -427,7 +574,7 @@ details{border-top:1px solid var(--line);padding-top:13px;font-size:12px;line-he
   chart.addEventListener('pointercancel',()=>{dragging=false;});
   chart.addEventListener('keydown',e=>{
     const [lo,hi]=probeBounds(),step=(hi-lo)/(e.shiftKey?20:200);
-    let x=state[state.axis];
+    let x=isInverse()?state.energy:state[state.axis];
     if(e.key==='ArrowRight'||e.key==='ArrowUp')x+=step;
     else if(e.key==='ArrowLeft'||e.key==='ArrowDown')x-=step;
     else if(e.key==='Home')x=lo;
