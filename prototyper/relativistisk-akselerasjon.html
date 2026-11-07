@@ -240,6 +240,8 @@ details{border-top:1px solid var(--line);padding-top:13px;font-size:12px;line-he
     $('formulaA').hidden=mode!=='a';$('formulaP').hidden=mode!=='p';$('formulaEk').hidden=mode!=='ek';
     document.querySelector('[data-axis="F"]').hidden=mode!=='a';
     $('compareLabel').textContent=mode==='a'?'Vis Newtons a = F/m':mode==='p'?'Vis klassisk p = mv':'Vis klassisk Eₖ = ½mv²';
+    $('newtonLegend').lastChild.textContent=mode==='a'?'Newton':'Klassisk';
+    chart.setAttribute('aria-label','Avlesningspunkt for '+modes[mode].label.toLowerCase()+'. Bruk piltastene for å flytte punktet.');
     $('classicLabel').textContent=mode==='a'?'Newton a':'Klassisk '+modes[mode].sym;
     $('relLabel').textContent='Relativistisk '+modes[mode].sym;
     $('factorLabel').textContent=modes[mode].metric;
