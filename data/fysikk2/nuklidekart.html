@@ -51,7 +51,7 @@ button,input,select{font:inherit}button{color:inherit}
 .chart-card canvas:active{cursor:grabbing}
 
 .details-wrap{position:relative;min-width:0;border-left:1px solid var(--line);background:var(--panel);overflow:hidden}
-.details-toggle,.left-ui-toggle{
+.details-toggle{
   border:1px solid color-mix(in srgb,var(--purple) 75%,#000 10%);background:var(--strong);color:#fff;
   font-weight:900;cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,.16)
 }
@@ -78,7 +78,7 @@ button,input,select{font:inherit}button{color:inherit}
 .chain-list b{color:var(--purple)}.chain-list i{color:var(--muted);font-style:normal}
 
 .chart-mini,.nav-mini{position:absolute;z-index:10;left:9px;border:1px solid var(--line);border-radius:8px;background:var(--overlay);box-shadow:var(--shadow);backdrop-filter:blur(5px)}
-.chart-mini{left:33px;top:9px;width:204px;padding:7px 8px}
+.chart-mini{top:9px;width:204px;padding:7px 8px}
 .nav-mini{top:50px;width:118px;padding:5px 6px}
 .chart-mini.collapsed,.nav-mini.collapsed{width:auto}
 .chart-mini-head{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--ink);font-size:.61rem;font-weight:850;text-transform:uppercase;letter-spacing:.04em}
@@ -98,8 +98,6 @@ button,input,select{font:inherit}button{color:inherit}
 .nav-pad button,.nav-row button{border:1px solid var(--line);border-radius:5px;background:var(--panel-2);color:var(--ink);font-weight:850;cursor:pointer;padding:0}
 .nav-pad .up{grid-column:2}.nav-pad .left{grid-column:1;grid-row:2}.nav-pad .home{grid-column:2;grid-row:2;font-size:.9rem}.nav-pad .right{grid-column:3;grid-row:2}.nav-pad .down{grid-column:2;grid-row:3}
 .nav-row{display:flex;gap:3px;margin-top:3px}.nav-row button{height:25px;flex:1;font-size:.8rem}
-.left-ui-toggle{position:absolute;z-index:12;left:0;top:9px;transform:none;width:23px;height:40px;border-left:0;border-radius:0 7px 7px 0}
-.chart-card.left-ui-hidden .chart-mini,.chart-card.left-ui-hidden .nav-mini{display:none!important}
 
 .axis-label{position:absolute;z-index:7;pointer-events:none;color:var(--canvas-muted);font-size:.62rem;font-weight:800;letter-spacing:.01em;text-shadow:0 1px 0 var(--canvas-bg)}
 .axis-n{left:50%;bottom:7px;transform:translateX(-50%)}
@@ -231,7 +229,6 @@ button,input,select{font:inherit}button{color:inherit}
         <strong>Fe/Ni-toppen</strong>
         Ni-62 har høyest bindingsenergi per nukleon. Fe-56 markerer den klassiske jern-gruppen der vanlig stjernefusjon slutter å gi netto energi.
       </div>
-      <button class="left-ui-toggle" id="left-ui-toggle" type="button" title="Skjul/vis paneler">‹</button>
       <div class="gesture-hint">Dra: flytt · hjul: zoom</div>
       <div class="tooltip" id="tooltip"></div>
       <div class="loading" id="loading"><div class="loading-box"><strong>Laster nuklidedata</strong><span id="loading-text">lokal kopi / nett …</span></div></div>
@@ -1148,7 +1145,6 @@ document.querySelectorAll("[data-pan]").forEach(b=>b.addEventListener("click",()
   const p=b.dataset.pan;if(p==="home"){reset3D();draw();return}const s=25;if(p==="left")state.pan3DX+=s;if(p==="right")state.pan3DX-=s;if(p==="up")state.pan3DY+=s;if(p==="down")state.pan3DY-=s;draw()
 }));
 document.querySelectorAll("[data-rot]").forEach(b=>b.addEventListener("click",()=>{state.angle+=b.dataset.rot==="left"?-.09:.09;draw()}));
-document.getElementById("left-ui-toggle").addEventListener("click",e=>{const hidden=card.classList.toggle("left-ui-hidden");e.currentTarget.textContent=hidden?"›":"‹";e.currentTarget.title=hidden?"Vis paneler":"Skjul paneler"});
 document.getElementById("details-toggle").addEventListener("click",e=>{const c=workspace.classList.toggle("details-collapsed");e.currentTarget.textContent=c?"‹":"›";e.currentTarget.title=c?"Vis detaljer":"Minimer detaljer";setTimeout(resize,0)});
 document.getElementById("theme-toggle").addEventListener("click",()=>setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"));
 document.getElementById("about-toggle").addEventListener("click",openAbout);
