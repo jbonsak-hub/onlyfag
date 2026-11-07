@@ -57,6 +57,8 @@ All standalone prototypes belong under `/prototyper/`. Use this spelling in
 links, build scripts, tests and documentation. Do not create a `/prototypes/`
 directory or maintain parallel copies of a prototype. Keep the current version
 at its canonical `/prototyper/` path and add new pages to `prototyper/index.html`.
+The owner confirmed on 7 November 2026 that every new prototype must have a
+visible link at https://onlyfag.no/prototyper/ when delivered.
 
 Content-addressed asset directories such as `assets/astronomy-prototypes/` have
 their own names and must not be renamed as part of page-path maintenance.

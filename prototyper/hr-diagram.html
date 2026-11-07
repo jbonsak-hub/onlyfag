@@ -1,0 +1,460 @@
+<!doctype html><html lang="nb"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HR-diagrammet · prototype · OnlyFag</title><style>body{margin:0 auto;max-width:1180px;padding:clamp(4px,2vw,22px);background:#f5f4f6}</style><script src="/assets/analytics.js" defer></script></head><body><nav style="margin:0 0 12px;font:14px system-ui,sans-serif"><a href="./" style="color:#5b2d90">← Prototyper</a></nav><div id="of-hr" lang="nb">
+  <style>
+    #of-hr {color-scheme:light dark;--bg:light-dark(#f5f4f6,#201c27);--panel:light-dark(#fff,#292430);--plot:light-dark(#fff,#201f2a);--ink:light-dark(#261d30,#f4effa);--muted:light-dark(#645b6d,#c8bed2);--border:light-dark(#d8d1de,#514959);--grid:light-dark(#e8e4ed,#39343f);--brand:light-dark(#5b2d90,#cba6ef);--wash:light-dark(#f1e9f9,#3e314f);--band-text:light-dark(#302939,#f7f1ff);--point-edge:light-dark(#48384e,#eee5f2);--cloud-stroke:light-dark(#ffffff,#211e28);--ring:light-dark(#602f94,#dec2ff);width:100%;container-type:inline-size;color:var(--ink);background:var(--bg);font:14px/1.4 Inter,system-ui,sans-serif;border:1px solid var(--border);border-radius:10px;box-sizing:border-box;overflow:hidden}
+    #of-hr *,#of-hr *::before,#of-hr *::after{box-sizing:border-box}
+    #of-hr [hidden]{display:none!important}
+    #of-hr header{min-height:50px;padding:9px 15px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--panel);border-bottom:1px solid var(--border)}
+    #of-hr h2{margin:0;color:var(--brand);font:700 19px/1.25 Inter,system-ui,sans-serif;letter-spacing:-.035em}
+    #of-hr h3{margin:0;font:650 14px/1.4 Inter,system-ui,sans-serif}
+    #of-hr button,#of-hr select{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--border);border-radius:7px;min-height:34px}
+    #of-hr button{cursor:pointer}
+    #of-hr button:focus-visible,#of-hr select:focus-visible,#of-hr input:focus-visible,#of-hr summary:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+    #of-hr .hr-fold{display:inline-flex;align-items:center;gap:9px;padding:3px 10px;font-size:13px}
+    #of-hr .hr-fold b{color:var(--brand);font-size:19px;font-weight:500;line-height:1}
+    #of-hr .hr-layout{display:grid;grid-template-columns:minmax(0,1fr) 194px;align-items:start}
+    #of-hr .hr-layout.hr-closed{grid-template-columns:minmax(0,1fr)}
+    #of-hr .hr-main{min-width:0;background:var(--plot);padding:12px 10px 12px}
+    #of-hr .hr-modes{display:inline-flex;gap:2px;max-width:100%;margin:0 0 8px 3px;padding:2px;border:1px solid var(--border);border-radius:8px;background:var(--bg)}
+    #of-hr .hr-modes button{padding:4px 10px;min-height:30px;border:0;background:transparent;font-size:13px;white-space:nowrap}
+    #of-hr .hr-modes button[aria-pressed=true]{color:var(--brand);background:var(--panel);box-shadow:0 0 0 1px var(--border);font-weight:650}
+    #of-hr .hr-side{padding:14px 13px;display:grid;gap:14px;color:var(--ink)}
+    #of-hr .hr-field{display:grid;gap:4px;min-width:0}
+    #of-hr .hr-field>span{font-size:12px;font-weight:600;color:var(--muted)}
+    #of-hr select{width:100%;min-width:0;padding:4px 5px;font-size:13px}
+    #of-hr fieldset{border:none;padding:0;margin:0}
+    #of-hr legend{padding:0 0 5px;font-size:13px;font-weight:650}
+    #of-hr .hr-check{display:flex;align-items:center;gap:7px;font-size:13px;min-height:29px;cursor:pointer}
+    #of-hr input[type=checkbox]{width:16px;height:16px;margin:0;accent-color:var(--brand)}
+    #of-hr .hr-check:has(:disabled){opacity:.6}
+    #of-hr .hr-divider{border-top:1px solid var(--border);padding-top:12px}
+    #of-hr .hr-axis-options{display:grid;gap:9px}
+    #of-hr .hr-plotwrap{position:relative;min-width:0}
+    #of-hr .hr-chart{overflow:visible;display:block;width:100%;touch-action:pan-y}
+    #of-hr .hr-chart text{font:12px/1 Inter,system-ui,sans-serif;fill:var(--ink);user-select:none;pointer-events:none}
+    #of-hr .hr-chart .hr-tick{fill:var(--muted)}
+    #of-hr .hr-chart .hr-axis{font-weight:600}
+    #of-hr .hr-chart .hr-sp{fill:var(--band-text);font-weight:650}
+    #of-hr .hr-chart .hr-annotation{paint-order:stroke fill;stroke:var(--plot);stroke-width:3.5px;stroke-linejoin:round}
+    #of-hr .hr-chart .hr-regionname{fill:var(--muted);font-style:italic;font-weight:600}
+    #of-hr .hr-chart .hr-starname{font-size:12px}
+    #of-hr .hr-chart .hr-rlabel{font-size:11px;fill:var(--brand)}
+    #of-hr .hr-chart .hr-ring{fill:none;stroke:var(--ring);stroke-width:2}
+    #of-hr .hr-tip{pointer-events:none;position:absolute;z-index:2;background:var(--panel);color:var(--ink);border:1px solid var(--border);border-radius:5px;padding:4px 7px;font-size:12px;box-shadow:0 2px 8px #0002}
+    #of-hr .hr-readout{border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--panel);display:flex;align-items:center;gap:10px 24px;padding:12px 16px;flex-wrap:wrap}
+    #of-hr .hr-id{flex:1 1 145px;min-width:0}
+    #of-hr .hr-id strong{font-size:16px}
+    #of-hr .hr-id small,#of-hr .hr-metric small{display:block;color:var(--muted);font-size:12px}
+    #of-hr .hr-metric{min-width:83px}
+    #of-hr .hr-metric b{font-weight:600;font-variant-numeric:tabular-nums}
+    #of-hr footer{padding:9px 15px}
+    #of-hr summary{cursor:pointer;color:var(--brand);font-size:12px;font-weight:600}
+    #of-hr footer p{margin:7px 0 0;color:var(--muted);max-width:90ch;font-size:13px}
+    #of-hr a{color:var(--brand);text-decoration:underline}
+    @container(max-width:700px){#of-hr .hr-layout{grid-template-columns:minmax(0,1fr)}#of-hr .hr-side{display:flex;flex-wrap:wrap;align-items:flex-start;gap:14px 22px;border-top:1px solid var(--border)}#of-hr .hr-side>.hr-field{flex:1 1 135px}#of-hr .hr-axis-options{flex:1 1 155px}#of-hr .hr-side .hr-divider{border:0;padding-top:0}#of-hr .hr-check{min-height:27px}}
+    @container(max-width:430px){#of-hr header{padding:8px 9px}#of-hr h2{font-size:17px}#of-hr .hr-main{padding:10px 3px}#of-hr .hr-fold{gap:4px}#of-hr .hr-modes{margin-left:5px}#of-hr .hr-modes button{padding:4px 8px}#of-hr .hr-readout{display:grid;grid-template-columns:1fr 1fr;padding:10px;gap:9px}#of-hr .hr-side{padding:10px;gap:10px 14px}}
+    @media(pointer:coarse){#of-hr .hr-check,#of-hr .hr-modes button,#of-hr select,#of-hr .hr-fold{min-height:42px}}
+  </style>
+  <header><h2>Hertzsprung-Russell-diagrammet</h2><button type="button" class="hr-fold" id="hr-fold" aria-expanded="true" aria-controls="hr-side">Visningsvalg <b aria-hidden="true" id="hr-foldsign">-</b></button></header>
+  <div id="hr-layout" class="hr-layout">
+    <div class="hr-main">
+      <div class="hr-modes" role="group" aria-label="Velg stjerner i diagrammet">
+        <button type="button" data-mode="field" aria-pressed="false">Stjernefelt</button>
+        <button type="button" data-mode="named" aria-pressed="false">Kjente stjerner</button>
+        <button type="button" data-mode="both" aria-pressed="true">Begge</button>
+      </div>
+      <div class="hr-plotwrap" id="hr-plotwrap">
+        <svg class="hr-chart" id="hr-svg" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="HR-diagram. Varmere stjerner til venstre og mer lyssterke stjerner �verst."></svg>
+        <div class="hr-tip" id="hr-tip" role="tooltip" hidden></div>
+      </div>
+    </div>
+    <aside id="hr-side" class="hr-side" aria-label="Visningsvalg">
+      <label class="hr-field"><span>Finn en stjerne</span><select id="hr-picker"><option value="">Velg stjerne .</option></select></label>
+      <fieldset class="hr-divider"><legend>Lag i diagrammet</legend>
+        <label class="hr-check"><input id="hr-regions" type="checkbox" checked>Stjerneomr�der</label>
+        <label class="hr-check"><input id="hr-radii" type="checkbox">Linjer for lik radius</label>
+        <label class="hr-check"><input id="hr-labels" type="checkbox" checked>Stjernenavn</label>
+        <label class="hr-check"><input id="hr-grid" type="checkbox" checked>Rutenett</label>
+      </fieldset>
+      <div class="hr-axis-options hr-divider">
+        <label class="hr-field"><span>Temperaturakse</span><select id="hr-scale"><option value="log">Logaritmisk (K)</option><option value="linear">Line�r (K)</option></select></label>
+        <label class="hr-field"><span>Lysstyrkeakse</span><select id="hr-units"><option value="solar">Luminositet (L?), log</option><option value="watts">Utstr�lt effekt (W), log</option><option value="mag">Bolometrisk magnitude</option></select></label>
+      </div>
+    </aside>
+  </div>
+  <div class="hr-readout" aria-live="polite" aria-atomic="true">
+    <div class="hr-id"><strong id="hr-selected">Solen</strong><small id="hr-type">Hovedseriestjerne � G2 V</small></div>
+    <div class="hr-metric"><small>Temperatur</small><b id="hr-temperature">5 772 K</b></div>
+    <div class="hr-metric"><small>Luminositet</small><b id="hr-luminosity">1 L?</b></div>
+    <div class="hr-metric"><small>Beregnet radius</small><b id="hr-radius">1 R?</b></div>
+  </div>
+  <footer><details><summary>Om punktene, aksene og kildene</summary>
+    <p>Stjernefeltet er simulert for � vise m�nstrene. Antallet punkter i hver gruppe er valgt for lesbarhet. De navngitte stjernene har avrundede verdier. Klikk p� en stjerne for � lese av data, eller p� et tomt sted for � unders�ke en tenkt stjerne.</p>
+    <p>Fargeb�ndet viser omtrentlige temperaturintervaller for O-M. Hvite dverger har egne spektraltyper. Luminositeten omfatter alle b�lgelengder. Radiusen f�lger av Stefan-Boltzmanns lov, R/R? = V(L/L?) � (5 772 K/T)�.</p>
+    <p><a href="https://snl.no/Hertzsprung-Russell-diagrammet" target="_blank" rel="noopener noreferrer">Om HR-diagrammet (SNL)</a> � <a href="https://www.pas.rochester.edu/~emamajek/EEM_dwarf_UBVIJHK_colors_Teff.txt" target="_blank" rel="noopener noreferrer">Hovedserien (Pecaut og Mamajek)</a> � <a href="https://openstax.org/books/astronomy-2e/pages/17-3-the-spectra-of-stars-and-brown-dwarfs" target="_blank" rel="noopener noreferrer">Spektralklasser (OpenStax)</a><span id="hr-sourcewrap"> � <a id="hr-source" href="https://www.iau.org/common/Uploaded%20files/IAUGA2015-Resolution-B3-recommended-nominal-conversion.pdf" target="_blank" rel="noopener noreferrer">Stjernedata for Solen</a></span></p>
+  </details></footer>
+</div>
+
+
+<script>
+(() => {
+// Approximate effective temperatures (K) and bolometric luminosities (solar units).
+// For each entry, source resolves to https://www.star-facts.com/<source>/.
+const namedStars = [
+  {name: "Solen", t: 5772, l: 1, spec: "G2 V", group: "main", source: "types-of-stars"},
+  {name: "Sirius A", t: 9850, l: 24.7, spec: "A1 V", group: "main", source: "sirius"},
+  {name: "Sirius B", t: 25000, l: 0.0245, spec: "DA2", group: "white", source: "sirius"},
+  {name: "Procyon A", t: 6530, l: 6.93, spec: "F5 IV-V", group: "subgiant", source: "procyon"},
+  {name: "Procyon B", t: 7740, l: 0.00049, spec: "DQZ", group: "white", source: "procyon"},
+  {name: "Proxima Centauri", t: 2990, l: 0.00157, spec: "M5.5 Ve", group: "main", source: "alpha-centauri"},
+  {name: "Alfa Centauri A", t: 5800, l: 1.51, spec: "G2 V", group: "main", source: "alpha-centauri"},
+  {name: "Alfa Centauri B", t: 5210, l: 0.498, spec: "K1 V", group: "main", source: "alpha-centauri"},
+  {name: "Barnards stjerne", t: 3200, l: 0.0034, spec: "M4 V", group: "main", source: "barnards-star"},
+  {name: "Wolf 359", t: 2800, l: 0.0014, spec: "M6.5 Ve", group: "main", source: "wolf-359"},
+  {name: "Tau Ceti", t: 5320, l: 0.488, spec: "G8 V", group: "main", source: "tau-ceti"},
+  {name: "Epsilon Eridani", t: 5080, l: 0.34, spec: "K2 V", group: "main", source: "epsilon-eridani-ran"},
+  {name: "Vega", t: 9600, l: 40.1, spec: "A0 V", group: "main", source: "vega"},
+  {name: "Altair", t: 7700, l: 10.6, spec: "A7 V", group: "main", source: "altair"},
+  {name: "Fomalhaut", t: 8590, l: 16.6, spec: "A4 V", group: "main", source: "fomalhaut"},
+  {name: "Haedus", t: 17200, l: 955, spec: "B3 V", group: "main", source: "haedus-eta-aurigae"},
+  {name: "Spica B", t: 20900, l: 2250, spec: "B2 V", group: "main", source: "spica"},
+  {name: "Spica A", t: 25300, l: 20500, spec: "B1 III-IV", group: "giant", source: "spica"},
+  {name: "Arcturus", t: 4290, l: 180, spec: "K1.5 III", group: "giant", source: "arcturus"},
+  {name: "Pollux", t: 4670, l: 43, spec: "K0 IIIb", group: "giant", source: "pollux"},
+  {name: "Aldebaran", t: 3900, l: 439, spec: "K5 III", group: "giant", source: "aldebaran"},
+  {name: "Capella Aa", t: 4970, l: 78.7, spec: "G8 III", group: "giant", source: "capella"},
+  {name: "Capella Ab", t: 5730, l: 72.7, spec: "G0 III", group: "giant", source: "capella"},
+  {name: "Rigel", t: 12100, l: 120000, spec: "B8 Ia", group: "super", source: "rigel"},
+  {name: "Betelgeuse", t: 3650, l: 85000, spec: "M1-2 Ia-ab", group: "super", source: "betelgeuse"},
+  {name: "Antares A", t: 3660, l: 76000, spec: "M1.5 Iab", group: "super", source: "antares"},
+  {name: "Deneb", t: 8530, l: 196000, spec: "A2 Ia", group: "super", source: "deneb"},
+  {name: "Naos", t: 40000, l: 813000, spec: "O4 If(n)p", group: "super", source: "naos"}
+];
+
+// Syntetisk undervisningsutvalg. Antallet stjerner i hver gruppe er valgt for lesbarhet.
+// Hovedseriens avrundede holdepunkter bygger p� Pecaut & Mamajeks temperatursekvens:
+// https://www.pas.rochester.edu/~emamajek/EEM_dwarf_UBVIJHK_colors_Teff.txt
+const { population, hrRegions } = (() => {
+  const stars = [];
+  const regions = [];
+  let seed = 314159265;
+  function random() {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    return (seed + 0.5) / 4294967296;
+  }
+  function normal() {
+    return Math.sqrt(-2 * Math.log(random())) * Math.cos(2 * Math.PI * random());
+  }
+  // Each anchor is [effective temperature in K, log10(L/Lsun)].
+  const main = [[2500,-3.40],[2800,-3.00],[3100,-2.55],[3250,-2.15],
+    [3450,-1.70],[3700,-1.28],[4100,-0.94],[4700,-0.62],[5270,-0.34],
+    [5772,0],[6500,0.53],[7400,0.89],[8500,1.20],[9700,1.58],
+    [14500,2.50],[20500,3.4],[31400,4.65],[44000,5.76]];
+  const giant = [[3300,3.33],[3500,3.06],[3800,2.63],[4100,2.22],
+    [4400,1.90],[4750,1.65],[5050,1.48],[5300,1.33],[5600,1.20]];
+  const supergiant = [[3350,4.69],[3700,4.91],[4500,4.76],[6500,4.65],
+    [9500,4.69],[15000,4.87],[23500,5.13],[30000,5.38]];
+  const white = [4800,6500,9000,13500,21000,36000].map(t =>
+    [t, Math.log10(0.0125 ** 2 * (t / 5772) ** 4)]);
+
+  function interpolate(anchors, t) {
+    const end = anchors.findIndex(anchor => anchor[0] >= t);
+    if (end <= 0) return anchors[end === 0 ? 0 : anchors.length - 1][1];
+    const [t0, l0] = anchors[end - 1];
+    const [t1, l1] = anchors[end];
+    return l0 + (l1 - l0) * Math.log(t / t0) / Math.log(t1 / t0);
+  }
+  function logBetween(low, high, u) {
+    return low * (high / low) ** u;
+  }
+  function fillBand(group, anchors, count, sampleT, width, label) {
+    for (let i = 0; i < count; i++) {
+      const t = sampleT();
+      const offset = Math.max(-2.65, Math.min(2.65, normal())) * width(t);
+      stars.push({t, l: 10 ** (interpolate(anchors,t) + offset), group});
+    }
+    const edge = sign => anchors.map(([t, logL]) =>
+      [t, 10 ** (logL + sign * 2.4 * width(t))]);
+    regions.push({group, polygon: [...edge(1), ...edge(-1).reverse()], label});
+  }
+  fillBand('main', main, 1090, () => {
+    // Include hot, short-lived stars for teaching, with more points towards cooler stars.
+    const u = random();
+    if (u < 0.54) return logBetween(2500,6000,random());
+    if (u < 0.85) return logBetween(5500,16500,random());
+    return logBetween(14500,44000,random());
+  }, t => t < 4000 ? 0.16 : 0.13, [8400,15]);
+  fillBand('giant', giant, 220, () => {
+    // A concentration near the red clump, plus a sparser upper red-giant branch.
+    if (random() < 0.40) return Math.max(4050,Math.min(5250,4750 + 180 * normal()));
+    return logBetween(3300,5600,random());
+  }, () => 0.18, [4020,190]);
+  fillBand('super', supergiant, 94, () => {
+    if (random() < 0.34) return logBetween(3350,4300,random());
+    return logBetween(3600,30000,random());
+  }, () => 0.28, [7500,48000]);
+  fillBand('white', white, 190, () => logBetween(4800,36000,random() ** 1.35),
+    () => 0.15, [12500,0.0035]);
+  return {population: stars, hrRegions: regions};
+})();
+
+const root = document.getElementById('of-hr');
+const byId = id => document.getElementById(id);
+const svg = byId('hr-svg');
+const wrap = byId('hr-plotwrap');
+const picker = byId('hr-picker');
+const tooltip = byId('hr-tip');
+const modeButtons = [...root.querySelectorAll('[data-mode]')];
+const controls = Object.fromEntries(['regions','radii','labels','grid','scale','units'].map(k => [k,byId('hr-'+k)]));
+const groupInfo = {
+  main: ['Hovedserien','Hovedseriestjerne','#8772bc'],
+  giant: ['Kjemper','Kjempe','#c88738'],
+  super: ['Superkjemper','Superkjempe','#c8667f'],
+  white: ['Hvite dverger','Hvit dverg','#438da5'],
+  subgiant: ['Underkjemper','Underkjempe','#9e82ac']
+};
+const spectrum = [
+  ['O',50000,30000,'#708ce0'],['B',30000,10000,'#84a3de'],
+  ['A',10000,7500,'#a9bdd9'],['F',7500,6000,'#c5c3a7'],
+  ['G',6000,5200,'#dcaf62'],['K',5200,3700,'#da965a'],['M',3700,2400,'#c7715d']
+];
+const priority = ['Solen','Sirius B','Betelgeuse','Rigel','Proxima Centauri','Sirius A','Aldebaran','Deneb','Naos','Procyon B','Vega','Arcturus','Spica B','Altair'];
+const namedByName = new Map(namedStars.map(s => [s.name,s]));
+const fmt = (n,d=3) => new Intl.NumberFormat('nb-NO',{maximumSignificantDigits:d}).format(n);
+const temperatureText = n => Math.round(n).toLocaleString('nb-NO');
+const symbols = '0���45679?';
+const power = n => '10'+String(n).split('').map(d => d==='-'?'?':symbols[Number(d)]).join('');
+const colour = t => (spectrum.find(s => t>=s[2]) || spectrum[spectrum.length-1])[3];
+const radius = (t,l) => Math.sqrt(l) * (5772/t)**2;
+const solarWatts = 3.828e26;
+const sunSource = 'https://www.iau.org/common/Uploaded%20files/IAUGA2015-Resolution-B3-recommended-nominal-conversion.pdf';
+const T_HOT=50000, T_COOL=2400, L_HIGH=1e6, L_LOW=1e-5;
+let mode='both', selected=namedByName.get('Solen'), geometry, screenPoints=[];
+
+function makeScale(domain,range,logarithmic) {
+  if(window.d3) return (logarithmic ? window.d3.scaleLog() : window.d3.scaleLinear()).domain(domain).range(range);
+  const transform = logarithmic ? Math.log : x => x;
+  const undo = logarithmic ? Math.exp : x => x;
+  const [a,b]=domain.map(transform),[c,d]=range;
+  const scale = x => c+(d-c)*(transform(x)-a)/(b-a);
+  scale.invert = y => undo(a+(b-a)*(y-c)/(d-c));
+  return scale;
+}
+function setReadout(){
+  const hasName = Boolean(selected && selected.name);
+  picker.value = hasName ? selected.name : '';
+  byId('hr-selected').textContent = selected ? selected.name || (selected.group?'Simulert stjerne':'Tenkt stjerne') : 'Velg et punkt';
+  byId('hr-type').textContent = !selected ? 'Klikk i diagrammet' : selected.group ? [groupInfo[selected.group][1],selected.spec].filter(Boolean).join(' � ') : 'Avlest i diagrammet';
+  byId('hr-temperature').textContent = selected ? temperatureText(selected.t)+' K' : '-';
+  byId('hr-luminosity').textContent = selected ? fmt(selected.l)+' L?' : '-';
+  byId('hr-radius').textContent = selected ? fmt(radius(selected.t,selected.l))+' R?' : '-';
+  byId('hr-sourcewrap').hidden = !hasName;
+  if(hasName){
+    const source = byId('hr-source');
+    source.textContent = 'Stjernedata for '+selected.name;
+    source.href = selected.name==='Solen' ? sunSource : 'https://www.star-facts.com/'+selected.source+'/';
+  }
+}
+function setMode(next){
+  mode=next;
+  for(const b of modeButtons) b.setAttribute('aria-pressed',String(b.dataset.mode===mode));
+  controls.labels.disabled=mode==='field';
+  if(selected && ((selected.name && mode==='field') || (!selected.name && selected.group && mode==='named'))) selected=null;
+  tooltip.hidden=true;
+  setReadout();draw();
+}
+function draw(){
+  const w=Math.max(270,Math.round(wrap.getBoundingClientRect().width||660));
+  const h=Math.round(Math.min(498,Math.max(372,w*.64)));
+  const left=w<450?60:72, right=w-13, top=45, bottom=h-45;
+  const X=makeScale([T_HOT,T_COOL],[left,right],controls.scale.value!=='linear');
+  const Y=makeScale([L_LOW,L_HIGH],[bottom,top],true);
+  geometry={w,h,left,right,top,bottom,X,Y};
+  svg.setAttribute('viewBox','0 0 '+w+' '+h);
+  svg.setAttribute('height',String(h));
+  const c = v=>Number(v.toFixed(2));
+  const line=(x1,y1,x2,y2,stroke,extra='')=>'<line x1="'+c(x1)+'" y1="'+c(y1)+'" x2="'+c(x2)+'" y2="'+c(y2)+'" stroke="'+stroke+'" '+extra+'/>';
+  const rect=(x,y,rw,rh,attrs)=>'<rect x="'+c(x)+'" y="'+c(y)+'" width="'+c(rw)+'" height="'+c(rh)+'" '+attrs+'/>';
+  const txt=(x,y,s,cl='',anchor='middle',attrs='')=>'<text x="'+c(x)+'" y="'+c(y)+'" text-anchor="'+anchor+'" class="'+cl+'" '+attrs+'>'+s+'</text>';
+  const dot=(x,y,r,attrs)=>'<circle cx="'+c(x)+'" cy="'+c(y)+'" r="'+r+'" '+attrs+'/>';
+  const chart=[], base=[], fields=[], markups=[], annotations=[], occupied=[];
+  const inFrame=(x,y,margin=0)=>x>=left+margin && x<=right-margin && y>=top+margin && y<=bottom-margin;
+  const boxesTouch=(a,b)=>a.x<b.x+b.w+3 && a.x+a.w+3>b.x && a.y<b.y+b.h+2 && a.y+a.h+2>b.y;
+  function placeLabel(s,px,py,offsets,cls){
+    const sw=[...s].reduce((n,ch)=>n+('ilI t.,'.includes(ch)?3.5:'MWm'.includes(ch)?9:6.6),0)+2;
+    for(const [dx,dy,anchor] of offsets){
+      const x=px+dx,y=py+dy, x0=anchor==='middle'?x-sw/2:anchor==='end'?x-sw:x;
+      const box={x:x0,y:y-10,w:sw,h:13};
+      if(!inFrame(x0,box.y,1)||!inFrame(x0+sw,box.y+box.h,1)||occupied.some(other=>boxesTouch(box,other)))continue;
+      occupied.push(box);
+      annotations.push(txt(x,y,s,'hr-annotation '+cls,anchor));return true;
+    }
+    return false;
+  }
+  chart.push('<title>Hertzsprung-Russell-diagram</title><desc>Temperaturen avtar mot h�yre. Luminositeten �ker oppover. Velg en kjent stjerne fra listen, eller klikk i diagrammet.</desc>');
+  chart.push('<defs><clipPath id="hr-clip">'+rect(left,top,right-left,bottom-top,'')+'</clipPath></defs>');
+  chart.push(txt(left,12,'Spektralklasse','hr-tick','start'));
+  let lastClassX=-Infinity;
+  for(const [sp,hot,cool,col] of spectrum){
+    const xa=X(hot),xb=X(cool),mid=(xa+xb)/2;
+    chart.push(rect(xa,18,xb-xa,19,'fill="'+col+'" fill-opacity=".72"'));
+    if(mid-lastClassX>10 && xb-xa>8) {chart.push(txt(mid,32,sp,'hr-sp'));lastClassX=mid;}
+  }
+  const isLog=controls.scale.value!=='linear', axis=controls.units.value;
+  const xTicks=isLog ? (w<450?[40000,15000,6000,3000]:[40000,20000,10000,6000,4000,3000]) : (w<450?[40000,25000,10000,2500]:[50000,40000,30000,20000,10000,2500]);
+  for(const t of xTicks){
+    const x=X(t);
+    if(controls.grid.checked)base.push(line(x,top,x,bottom,'var(--grid)'));
+    chart.push(line(x,bottom,x,bottom+4,'var(--border)'));
+    chart.push(txt(x,bottom+17,temperatureText(t),'hr-tick',x<left+18?'start':x>right-18?'end':'middle'));
+  }
+  const yTicks=[];
+  if(axis==='mag'){
+    for(let m=-10;m<=17;m+=w<450?5:2) yTicks.push([10**((4.74-m)/2.5),String(m).replace('-','-')]);
+  }else if(axis==='watts'){
+    for(let p=22;p<=32;p+=w<450?2:1)yTicks.push([10**p/solarWatts,power(p)]);
+  }else{
+    for(let p=-5;p<=6;p++)if(w>=450||p%2===0)yTicks.push([10**p,p===0?'1':power(p)]);
+  }
+  for(const [l,label] of yTicks){
+    const y=Y(l);if(y<top-.001||y>bottom+.001)continue;
+    if(controls.grid.checked)base.push(line(left,y,right,y,'var(--grid)'));
+    chart.push(line(left-4,y,left,y,'var(--border)'));chart.push(txt(left-7,y+4,label,'hr-tick','end'));
+  }
+  const yTitle=axis==='solar'?'Luminositet (L?)':axis==='watts'?'Utstr�lt effekt (W)':'Absolutt bolometrisk magnitude';
+  const midY=(top+bottom)/2;
+  chart.push(txt(13,midY,yTitle,'hr-axis axis-title','middle','data-axis="y" transform="rotate(-90 13 '+c(midY)+')"'));
+  chart.push(txt((left+right)/2,h-5,'Effektiv temperatur (K)','hr-axis axis-title','middle','data-axis="x"'));
+  if(controls.regions.checked){
+    for(const region of hrRegions){
+      // Interpolate in log T and log L to preserve the shape on both temperature scales.
+      const vertices=[];
+      region.polygon.forEach(([t0,l0],i,poly)=>{
+        const [t1,l1]=poly[(i+1)%poly.length];
+        for(let j=0;j<5;j++)vertices.push(c(X(t0*(t1/t0)**(j/5)))+','+c(Y(l0*(l1/l0)**(j/5))));
+      });
+      base.push('<polygon data-region="'+region.group+'" points="'+vertices.join(' ')+'" fill="'+groupInfo[region.group][2]+'" fill-opacity=".21"/>');
+    }
+  }
+  const visibleNamed=mode==='field'?[]:namedStars;
+  screenPoints=[];
+  if(mode!=='named'){
+    const grouped=new Map(spectrum.map(s=>[s[3],[]]));
+    for(const star of population){
+      const x=X(star.t),y=Y(star.l);
+      grouped.get(colour(star.t)).push('M'+c(x)+','+c(y)+'h.01');
+      screenPoints.push({x,y,star});
+    }
+    for(const [col,path] of grouped)fields.push('<path data-field="true" d="'+path.join(' ')+'" fill="none" stroke="'+col+'" stroke-width="'+(w<450?2.5:3.1)+'" stroke-linecap="round" opacity=".84"/>');
+  }
+  const radii=[];
+  if(controls.radii.checked){
+    for(const r of [.001,.01,.1,1,10,100,1000]){
+      const low=Math.max(T_COOL,5772*(L_LOW/(r*r))**.25);
+      const high=Math.min(T_HOT,5772*(L_HIGH/(r*r))**.25);
+      if(low>=high)continue;
+      const curve=[];
+      for(let i=0;i<=55;i++){
+        const t=high*(low/high)**(i/55);curve.push(c(X(t))+','+c(Y(r*r*(t/5772)**4)));
+      }
+      radii.push('<polyline data-radius="'+r+'" points="'+curve.join(' ')+'" fill="none" stroke="var(--brand)" stroke-opacity=".68" stroke-width="1" stroke-dasharray="4 4"/>');
+      const rtxt=fmt(r)+' R?';
+      for(const u of [.18,.63,.36,.78]){
+        const t=high*(low/high)**u;
+        if(placeLabel(rtxt,X(t),Y(r*r*(t/5772)**4),[[0,-4,'middle'],[0,12,'middle']],'hr-rlabel'))break;
+      }
+    }
+  }
+  for(const star of visibleNamed){
+    const x=X(star.t),y=Y(star.l);
+    screenPoints.push({x,y,star});
+    markups.push(dot(x,y,3.7,'data-star="'+star.name+'" fill="'+colour(star.t)+'" stroke="var(--point-edge)" stroke-width="1.15"'));
+  }
+  const preferred=[selected?.name,...priority,...visibleNamed.map(s=>s.name)].filter(Boolean);
+  const starOffsets=[[7,-6,'start'],[7,14,'start'],[-7,-6,'end'],[-7,14,'end'],[0,-10,'middle'],[0,19,'middle']];
+  function starLabel(name){
+    if(!controls.labels.checked || mode==='field')return false;
+    const s=namedByName.get(name);
+    return s && placeLabel(name,X(s.t),Y(s.l),starOffsets,'hr-starname');
+  }
+  if(selected?.name)starLabel(selected.name);
+  if(controls.regions.checked){
+    for(const reg of hrRegions){
+      const [t,l]=reg.label;
+      placeLabel(groupInfo[reg.group][0],X(t),Y(l),[[0,-13,'middle'],[0,19,'middle'],[-5,-4,'end'],[5,-4,'start'],[0,3,'middle']],'hr-regionname');
+    }
+  }
+  if(controls.labels.checked && mode!=='field'){
+    let labelled=selected?.name?1:0;
+    const limit=mode==='named'?namedStars.length:w<450?5:10;
+    for(const n of new Set(preferred))if(n!==selected?.name && labelled<limit && starLabel(n))labelled++;
+  }
+  if(selected)markups.push(dot(X(selected.t),Y(selected.l),7.4,'class="hr-ring"'));
+  chart.push(rect(left,top,right-left,bottom-top,'fill="var(--plot)"'));
+  chart.push('<g clip-path="url(#hr-clip)">'+base.join('')+fields.join('')+radii.join('')+markups.join('')+annotations.join('')+'</g>');
+  chart.push(rect(left,top,right-left,bottom-top,'data-chart-frame="true" fill="none" stroke="var(--border)"'));
+  chart.push(rect(left,top,right-left,bottom-top,'data-chart-hit="true" fill="transparent" style="cursor:crosshair"'));
+  svg.innerHTML=chart.join('');
+}
+
+function pointerData(event){
+  if(!geometry)return null;
+  const box=svg.getBoundingClientRect();
+  if(!box.width || !box.height)return null;
+  const {w,h,left,right,top,bottom,X,Y}=geometry;
+  const x=(event.clientX-box.left)*w/box.width;
+  const y=(event.clientY-box.top)*h/box.height;
+  if(x<left || x>right || y<top || y>bottom)return null;
+  // Give the outlined named stars a larger target than the dense synthetic field.
+  let bestNamed=null,bestField=null,nd=Infinity,fd=Infinity;
+  for(const p of screenPoints){
+    const d=(p.x-x)**2+(p.y-y)**2;
+    if(p.star.name && d<nd){nd=d;bestNamed=p.star;}
+    if(!p.star.name && d<fd){fd=d;bestField=p.star;}
+  }
+  const namedRange=event.pointerType==='touch'?16:9;
+  const fieldRange=event.pointerType==='touch'?7:4;
+  const star=nd<namedRange**2?bestNamed:fd<fieldRange**2?bestField:null;
+  return {x,y,star,probe:{t:X.invert(x),l:Y.invert(y)}};
+}
+svg.addEventListener('pointermove',event=>{
+  if(event.pointerType==='touch')return;
+  const p=pointerData(event);
+  if(!p || !p.star){tooltip.hidden=true;return;}
+  const s=p.star;
+  tooltip.textContent=(s.name||'Simulert stjerne')+' � '+temperatureText(s.t)+' K � '+fmt(s.l)+' L?';
+  tooltip.hidden=false;
+  const tw=tooltip.offsetWidth||170;
+  tooltip.style.left=Math.max(0,Math.min(geometry.w-tw-3,p.x+12))+'px';
+  tooltip.style.top=(p.y>48 ? p.y-34 : p.y+13)+'px';
+});
+svg.addEventListener('pointerleave',()=>{tooltip.hidden=true;});
+svg.addEventListener('click',event=>{
+  const p=pointerData(event);if(!p)return;
+  selected=p.star||p.probe;tooltip.hidden=true;setReadout();draw();
+});
+for(const b of modeButtons)b.addEventListener('click',()=>setMode(b.dataset.mode));
+for(const control of Object.values(controls))control.addEventListener('change',()=>{tooltip.hidden=true;draw();});
+picker.innerHTML='<option value="">Velg stjerne .</option>'+[...namedStars].sort((a,b)=>a.name.localeCompare(b.name,'nb')).map(s=>'<option value="'+s.name+'">'+s.name+'</option>').join('');
+picker.addEventListener('change',()=>{
+  selected=namedByName.get(picker.value)||null;
+  if(mode==='field' && selected){setMode('both');return;}
+  setReadout();draw();
+});
+byId('hr-fold').addEventListener('click',()=>{
+  const side=byId('hr-side');side.hidden=!side.hidden;
+  byId('hr-layout').classList.toggle('hr-closed',side.hidden);
+  byId('hr-fold').setAttribute('aria-expanded',String(!side.hidden));
+  byId('hr-foldsign').textContent=side.hidden?'+':'-';
+  draw();
+});
+setReadout();draw();
+if(typeof ResizeObserver==='function'){
+  let lastWidth=Math.round(wrap.getBoundingClientRect().width);
+  new ResizeObserver(()=>{
+    const width=Math.round(wrap.getBoundingClientRect().width);
+    if(width!==lastWidth){lastWidth=width;tooltip.hidden=true;draw();}
+  }).observe(wrap);
+}else{window.addEventListener('resize',draw);}
+
+})();
+</script></body></html>
