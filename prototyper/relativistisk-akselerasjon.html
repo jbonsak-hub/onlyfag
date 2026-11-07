@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Utforsk relativistisk akselerasjon som funksjon av fart, masse eller kraft. Sammenlign med Newtons andre lov.">
+<title>Relativistisk akselerasjon · OnlyFag</title>
+<script>
+// Shared OnlyFag analytics on the hosted page; the downloaded file works offline.
+if (/^(www\.)?onlyfag\.no$/.test(location.hostname)) {
+  const analytics = document.createElement('script');
+  analytics.src = '/assets/analytics.js';
+  analytics.defer = true;
+  document.head.appendChild(analytics);
+}
+</script>
+<style>
+:root{color-scheme:light;--ink:#292231;--muted:#716879;--line:#e2dce7;--grid:#eeeaf2;--purple:#693a98;--wash:#f2ebf9;--paper:#fff;--bg:#f7f5f9;--classic:#8b8793;--warning:#815117;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}body{color:var(--ink);background:var(--bg)}[hidden]{display:none!important}
+button,input,select{font:inherit;color:inherit}button,a,input,summary{-webkit-tap-highlight-color:transparent}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,svg:focus-visible{outline:3px solid #9e74c4;outline-offset:3px}a{color:var(--purple);text-underline-offset:3px}
+.app{height:100vh;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr)}
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:8px 16px;border-bottom:1px solid var(--line);background:var(--paper)}
+.heading,.actions{display:flex;align-items:center;gap:16px;min-width:0}.actions{gap:7px}.back{font-size:12px;white-space:nowrap;text-decoration:none}.back:hover{text-decoration:underline}h1{font-size:18px;line-height:1.2;letter-spacing:-.035em;margin:0;font-weight:700;color:var(--purple)}
+.button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:34px;padding:6px 10px;background:var(--paper);border:1px solid var(--line);border-radius:7px;font-size:12px;font-weight:550;white-space:nowrap;text-decoration:none}.button:hover{background:var(--wash)}.fold-symbol{font-size:18px;line-height:1;color:var(--purple)}
+.layout{display:grid;grid-template-columns:280px minmax(0,1fr);min-height:0;position:relative}.layout.closed{grid-template-columns:minmax(0,1fr)}
+.sidebar{background:var(--paper);border-right:1px solid var(--line);padding:20px 18px;overflow:auto;scrollbar-width:thin;min-height:0;display:flex;flex-direction:column;gap:23px}.sidebar section{min-width:0}h2,.section-label{display:block;font-size:11px;font-weight:700;letter-spacing:.085em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--bg);padding:4px;border:1px solid var(--line);border-radius:9px}.tab{border:0;background:transparent;border-radius:5px;min-height:42px;padding:7px 4px;color:var(--muted);font-weight:600;font-size:13px}.tab em{font:italic 18px Georgia,serif;margin-left:3px}.tab[aria-pressed=true]{color:var(--purple);background:white;box-shadow:0 1px 4px #2e194b19}
+.formula{display:flex;align-items:center;justify-content:center;gap:7px;color:var(--ink);font:22px Cambria,"Times New Roman",serif;white-space:nowrap;padding:3px 0 0}.fraction{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;font-size:.84em;line-height:1.2}.fraction>span:first-child{border-bottom:1px solid;padding:0 3px 2px}.fraction>span:last-child{padding-top:2px}.bracket{display:inline-flex;align-items:center;gap:5px}.paren{font-size:1.7em;font-weight:300}.formula sup{font-size:.65em}.formula .power{align-self:flex-start;margin-left:-5px;margin-top:0;font-size:13px}.formula i{font-weight:400}
+.parameters{display:flex;flex-direction:column;gap:22px}.parameter label{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;font-weight:650;margin-bottom:9px}.number-wrap{display:flex;align-items:center;gap:6px;color:var(--muted);font-weight:400}.number{width:76px;border:1px solid var(--line);border-radius:5px;padding:5px 6px;background:white;text-align:right;color:var(--ink);font-variant-numeric:tabular-nums;font-size:13px;min-height:32px}.number:invalid{border-color:#bd573a}.number-wrap .unit{width:20px;text-align:left;font-size:12px}
+input[type=range]{display:block;width:100%;height:22px;margin:0;cursor:pointer;accent-color:var(--purple)}.ends{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:1px;font-variant-numeric:tabular-nums}
+.checks{display:flex;flex-direction:column;gap:10px}.check{display:flex;align-items:center;gap:9px;font-size:13px;cursor:pointer;min-height:24px}.check input{margin:0;width:16px;height:16px;accent-color:var(--purple)}.fit{margin-top:3px;width:100%;color:var(--purple);border-color:#cfbfde}.check-help{font-size:11px;color:var(--muted);line-height:1.45;margin:3px 0 0}
+details{border-top:1px solid var(--line);padding-top:13px;font-size:12px;line-height:1.55}summary{cursor:pointer;font-weight:600;color:var(--purple)}details p{margin:9px 0 0;color:var(--muted)}.domain{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.domain label{display:flex;flex-direction:column;gap:4px;color:var(--muted);font-size:11px}.domain .number{width:100%;text-align:left}.domain-error{color:#a2382d!important;font-size:11px}.sidebar-bottom{margin-top:auto;display:flex;gap:8px}.sidebar-bottom .button{flex:1}.backdrop{display:none}
+.main{min-width:0;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto;background:var(--paper)}
+.chartbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 22px;min-height:48px}.legend{display:flex;align-items:center;flex-wrap:wrap;gap:9px 19px;font-size:12px}.legend span{display:inline-flex;align-items:center;gap:7px}.swatch{width:22px;border-top:3px solid var(--purple);display:inline-block}.swatch.classic{border-top:2px dashed var(--classic)}.axis-tag{font:italic 17px Georgia,serif;color:var(--muted);white-space:nowrap}
+.plot-wrap{position:relative;min-height:0;margin:0 12px 0 10px}.chart{width:100%;height:100%;display:block;touch-action:none;user-select:none;overflow:visible}.chart text{font-family:Inter,system-ui,sans-serif;font-size:12px;fill:var(--muted);pointer-events:none}.chart .axis-title{font-weight:600;fill:var(--ink);font-size:13px}.chart .grid{stroke:var(--grid);stroke-width:1}.chart .axis-line{stroke:#c6bdcf;stroke-width:1}.chart .rel-curve{stroke:var(--purple);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}.chart .newton-curve{stroke:var(--classic);stroke-width:2;fill:none;stroke-dasharray:7 6}.chart .cursor{stroke:#a78cbe;stroke-width:1;stroke-dasharray:3 4}.chart .rel-dot{fill:white;stroke:var(--purple);stroke-width:3}.chart .newton-dot{fill:white;stroke:var(--classic);stroke-width:2}.chart .point-label{font-size:12px;font-weight:650;fill:var(--purple);paint-order:stroke;stroke:white;stroke-width:5px;stroke-linejoin:round}
+.clip-warning{position:absolute;top:32px;right:24px;max-width:calc(100% - 85px);background:#fff7e8;border:1px solid #ecd7b1;border-radius:6px;padding:7px 9px;color:var(--warning);font-size:11px;box-shadow:0 2px 5px #00000008}.clip-warning button{border:0;background:none;text-decoration:underline;text-underline-offset:2px;color:inherit;font:inherit;padding:0 0 0 5px;font-weight:650}
+.bottom{border-top:1px solid var(--line);padding:15px 22px 12px}.readout{display:grid;grid-template-columns:1.05fr 1.2fr 1.2fr 1fr;gap:16px;align-items:start}.metric small{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}.metric strong{font-size:21px;font-weight:650;letter-spacing:-.035em;white-space:nowrap;font-variant-numeric:tabular-nums}.metric strong span{font-size:12px;font-weight:450;letter-spacing:0;color:var(--muted);margin-left:3px}.metric.rel strong{color:var(--purple)}.probe-edit{display:flex;align-items:center;gap:5px}.probe-edit input{font:650 20px Inter,system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.035em;max-width:105px;width:90px;padding:0 3px 2px 0;border:0;border-bottom:1px dashed #b9a7c8;border-radius:0;background:transparent;color:var(--ink)}.probe-edit span{font-size:12px;color:var(--muted);padding-top:2px}.footnote{display:flex;justify-content:space-between;gap:15px;margin-top:14px;font-size:11px;line-height:1.45;color:var(--muted)}.footnote p{margin:0}.instruction{white-space:nowrap}.live-status{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(min-width:1600px){.sidebar{width:300px;padding:24px}.layout{grid-template-columns:300px minmax(0,1fr)}.chartbar{padding-top:17px}.metric strong{font-size:25px}}
+@media(max-width:1050px){.header{padding:8px 12px}.heading{gap:10px}h1{font-size:16px}.layout{grid-template-columns:254px minmax(0,1fr)}.sidebar{padding:17px 15px}.bottom{padding:12px 15px}.readout{gap:11px}.metric strong{font-size:18px}.metric small{font-size:10px}.footnote{flex-direction:column;gap:4px}.chartbar{padding:12px 16px}.back{font-size:0}.back::before{content:'←';font-size:19px}.probe-edit input{font-size:18px}}
+@media(max-width:760px){.layout,.layout.closed{display:block}.main{height:100%}.sidebar{position:absolute;inset:0 auto 0 0;width:min(290px,calc(100% - 40px));z-index:10;box-shadow:4px 0 20px #27133324}.backdrop{display:block;position:absolute;inset:0;border:0;background:#29183724;z-index:9}.layout.closed .backdrop{display:none}.header{gap:7px;padding:8px 11px}.heading{gap:8px}h1{font-size:15px}.fullscreen{display:none}.plot-wrap{margin:0 6px 0 0}.chartbar{padding:10px 14px;min-height:43px}.bottom{padding:12px 15px 11px}.readout{grid-template-columns:1fr 1fr;gap:14px 18px}.metric small{font-size:11px}.metric strong{font-size:21px}.probe-edit input{font-size:21px}.footnote{margin-top:12px}.instruction{font-size:10px}.clip-warning{right:12px;top:30px}.axis-tag{font-size:15px}}
+@media(max-height:650px) and (min-width:761px){.sidebar{gap:17px;padding-top:15px}.parameters{gap:16px}.bottom{padding-top:10px;padding-bottom:8px}.footnote{margin-top:8px}.chartbar{min-height:39px;padding-top:9px;padding-bottom:9px}}
+@media(max-width:380px){h1{font-size:14px}.button{padding:6px 8px}.heading{gap:7px}.legend{font-size:11px;gap:9px}.chartbar{padding-left:12px;padding-right:12px}.back{display:none}}
+@media(pointer:coarse){.button{min-height:42px}.check{min-height:31px}.tab{min-height:44px}input[type=range]{height:30px}.number{min-height:38px}.probe-edit input{min-height:32px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="header">
+    <div class="heading"><a class="back" href="./" aria-label="Til prototypeoversikten">← Prototyper</a><h1>Relativistisk akselerasjon</h1></div>
+    <div class="actions">
+      <button class="button" id="menuButton" aria-controls="sidebar" aria-expanded="true"><span class="fold-symbol" aria-hidden="true">−</span>Kontroller</button>
+      <button class="button fullscreen" id="fullscreenButton">Fullskjerm</button>
+    </div>
+  </header>
+  <div class="layout" id="layout">
+    <button class="backdrop" id="backdrop" aria-label="Lukk kontroller" tabindex="-1"></button>
+    <aside class="sidebar" id="sidebar" aria-label="Grafinnstillinger">
+      <section>
+        <h2>Variabel på x-aksen</h2>
+        <div class="tabs" role="group" aria-label="Velg x-akse">
+          <button class="tab" data-axis="v" aria-pressed="true">Fart <em>v</em></button>
+          <button class="tab" data-axis="m" aria-pressed="false">Masse <em>m</em></button>
+          <button class="tab" data-axis="F" aria-pressed="false">Kraft <em>F</em></button>
+        </div>
+      </section>
+      <div class="formula" role="img" aria-label="a er lik F dividert på m, ganger parentesen 1 minus v i andre dividert på c i andre, opphøyd i tre halve">
+        <i>a</i><span>=</span><span class="fraction"><span><i>F</i></span><span><i>m</i></span></span>
+        <span class="bracket"><span class="paren">(</span><span>1 −</span><span class="fraction"><span><i>v</i><sup>2</sup></span><span><i>c</i><sup>2</sup></span></span><span class="paren">)</span></span><sup class="power">3/2</sup>
+      </div>
+      <section>
+        <h2>Holdes konstante</h2>
+        <div class="parameters">
+          <div class="parameter" data-parameter="v" hidden>
+            <label for="vRange">Fart <i>v</i><span class="number-wrap"><input class="number" id="vNumber" type="number" min="0" max="0.9999" step="any" value="0.6" aria-label="Fart som andel av lyshastigheten"><span class="unit">c</span></span></label>
+            <input type="range" id="vRange" min="0" max="0.9999" step="0.0001" value="0.6" aria-label="Fart som andel av lyshastigheten">
+            <div class="ends"><span>0</span><span>0,9999 c</span></div>
+          </div>
+          <div class="parameter" data-parameter="m">
+            <label for="mRange">Masse <i>m</i><span class="number-wrap"><input class="number" id="mNumber" type="number" min="0.1" max="20" step="any" value="2" aria-label="Masse i kilogram"><span class="unit">kg</span></span></label>
+            <input type="range" id="mRange" min="0.1" max="20" step="0.1" value="2" aria-label="Masse i kilogram">
+            <div class="ends"><span>0,1 kg</span><span>20 kg</span></div>
+          </div>
+          <div class="parameter" data-parameter="F">
+            <label for="FRange">Netto kraft <i>F</i><span class="number-wrap"><input class="number" id="FNumber" type="number" min="0" max="100" step="any" value="10" aria-label="Netto kraft i newton"><span class="unit">N</span></span></label>
+            <input type="range" id="FRange" min="0" max="100" step="0.1" value="10" aria-label="Netto kraft i newton">
+            <div class="ends"><span>0 N</span><span>100 N</span></div>
+          </div>
+        </div>
+      </section>
+      <section class="checks" aria-label="Visning">
+        <label class="check"><input id="showNewton" type="checkbox" checked>Vis Newtons a = F/m</label>
+        <label class="check"><input id="lockY" type="checkbox" checked>Lås y-aksen</label>
+        <button class="button fit" id="fitButton">Tilpass y-aksen</button>
+        <p class="check-help">Låst skala gjør endringer i akselerasjonen synlige.</p>
+      </section>
+      <details id="axisDetails">
+        <summary>Område på x-aksen</summary>
+        <div class="domain">
+          <label for="xMin">Fra <span id="minUnit"></span><input class="number" id="xMin" type="number" step="any" value="0"></label>
+          <label for="xMax">Til <span id="maxUnit"></span><input class="number" id="xMax" type="number" step="any" value="1"></label>
+        </div>
+        <p id="domainHint">Fart oppgis som andel av c. 1 er grensen v → c.</p>
+        <p class="domain-error" id="domainError" role="status" hidden></p>
+      </details>
+      <details>
+        <summary>Om modellen</summary>
+        <p>Netto kraft virker i bevegelsesretningen. <i>m</i> er hvilemassen. Fart, kraft og akselerasjon måles i samme treghetssystem.</p>
+        <p><i>F</i> = γ³<i>ma</i>, der γ = 1/√(1 − <i>v</i>²/<i>c</i>²). Ved liten fart nærmer modellen seg Newtons andre lov.</p>
+        <p><i>c</i> = 299 792 458 m/s. Et legeme med masse har alltid <i>v</i> &lt; <i>c</i>. Den åpne sirkelen ved <i>c</i> viser en grenseverdi.</p>
+      </details>
+      <div class="sidebar-bottom"><button class="button" id="resetButton">Nullstill</button><a class="button" href="relativistisk-akselerasjon.html" download="relativistisk-akselerasjon.html">Last ned HTML</a></div>
+    </aside>
+    <main class="main" aria-label="Akselerasjonsgraf">
+      <div class="chartbar">
+        <div class="legend"><span><i class="swatch" aria-hidden="true"></i>Relativistisk</span><span id="newtonLegend"><i class="swatch classic" aria-hidden="true"></i>Newton</span></div>
+        <span class="axis-tag" id="axisTag">a(v)</span>
+      </div>
+      <div class="plot-wrap" id="plotWrap">
+        <svg class="chart" id="chart" xmlns="http://www.w3.org/2000/svg" tabindex="0" role="slider" aria-label="Avlesningspunkt i akselerasjonsgrafen. Bruk piltastene for å flytte punktet." aria-valuemin="0" aria-valuemax="0.9999" aria-valuenow="0.6"></svg>
+        <div class="clip-warning" id="clipWarning" hidden>Kurven går over visningen.<button id="warningFit">Tilpass y-aksen</button></div>
+      </div>
+      <div class="bottom">
+        <div class="readout">
+          <div class="metric"><small id="probeLabel">Fart v</small><div class="probe-edit"><input id="probeInput" type="number" step="any" min="0" max="0.9999" value="0.6" aria-label="Fart ved avlesningspunktet, i andeler av c"><span id="probeUnit">c</span></div></div>
+          <div class="metric rel"><small>Relativistisk a</small><strong id="relValue">2,56<span>m/s²</span></strong></div>
+          <div class="metric" id="classicMetric"><small>Newton a</small><strong id="newtonValue">5,00<span>m/s²</span></strong></div>
+          <div class="metric"><small>Faktor 1/γ³</small><strong id="factorValue">0,512</strong></div>
+        </div>
+        <div class="footnote"><p id="trendText">Samme kraft og masse: Akselerasjonen avtar når farten øker.</p><p class="instruction">Pek eller trykk i grafen · ← → flytter punktet</p></div>
+      </div>
+    </main>
+  </div>
+  <div id="liveStatus" class="live-status" role="status" aria-live="polite"></div>
+</div>
+<noscript>Denne interaktive grafen krever JavaScript.</noscript>
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const MAX_BETA = 0.999999;
+  const meta = {
+    v:{name:'Fart v',unit:'c',axis:'Fart v / c',trend:'Samme kraft og masse: Akselerasjonen avtar når farten øker.',hint:'Fart oppgis som andel av c. 1 er grensen v → c.'},
+    m:{name:'Masse m',unit:'kg',axis:'Masse m (kg)',trend:'Samme fart og kraft: Dobbel masse gir halv akselerasjon.',hint:'Massen må være større enn 0 kg.'},
+    F:{name:'Netto kraft F',unit:'N',axis:'Netto kraft F (N)',trend:'Samme fart og masse: Dobbel kraft gir dobbel akselerasjon.',hint:'Her virker kraften i bevegelsesretningen: F ≥ 0.'}
+  };
+  const defaults = () => ({axis:'v',v:0.6,m:2,F:10,showNewton:true,lockY:true,domains:{v:[0,1],m:[0.5,10],F:[0,20]},sliderBounds:{v:[0,0.9999],m:[0.1,20],F:[0,100]},yMax:6});
+  let state=defaults(), frame=0, geometry=null, dragging=false;
+  const chart=$('chart');
+  const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+  const factor=beta=>Math.pow(Math.max(0,(1-beta)*(1+beta)),1.5);
+  const acceleration=(beta,mass,force)=>force/mass*factor(beta);
+  function at(x){
+    const beta=state.axis==='v'?x:state.v;
+    const mass=state.axis==='m'?x:state.m;
+    const force=state.axis==='F'?x:state.F;
+    return {rel:acceleration(beta,mass,force),classic:force/mass,beta,mass,force};
+  }
+  function fmt(x,digits=2){
+    if(x===0)return '0';
+    if(Math.abs(x)<0.001 || Math.abs(x)>=1e6)return x.toExponential(2).replace('.',',').replace('e+','e');
+    return x.toLocaleString('nb-NO',{maximumFractionDigits:digits});
+  }
+  function precise(x){return fmt(x,Math.abs(x)<0.1?5:3);}
+  function inputText(x){
+    const span=state.domains[state.axis][1]-state.domains[state.axis][0];
+    return span<Math.abs(x)*1e-6?String(x):String(Number(x.toPrecision(7)));
+  }
+  function niceStep(raw){
+    if(!(raw>0)||!Number.isFinite(raw))return 1;
+    const base=10**Math.floor(Math.log10(raw)),n=raw/base;
+    return (n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10)*base;
+  }
+  function maxValue(){
+    const [lo,hi]=state.domains[state.axis],ends=[at(lo),at(hi)];
+    return Math.max(...ends.map(v=>state.showNewton?Math.max(v.rel,v.classic):v.rel));
+  }
+  function fitY(){
+    const max=maxValue();
+    const step=niceStep((max||1)*1.1/5);
+    state.yMax=Math.max(step,Math.ceil((max||1)*1.1/step)*step);
+  }
+  function probeBounds(){const d=state.domains[state.axis];return [d[0],state.axis==='v'?Math.min(d[1],MAX_BETA):d[1]];}
+  function constrainProbe(){const [a,b]=probeBounds();state[state.axis]=clamp(state[state.axis],a,b);}
+  function schedule(){if(!frame)frame=requestAnimationFrame(()=>{frame=0;draw();});}
+  function syncControls(){
+    document.querySelectorAll('[data-axis]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.axis===state.axis)));
+    document.querySelectorAll('[data-parameter]').forEach(p=>p.hidden=p.dataset.parameter===state.axis);
+    for(const key of ['v','m','F']){
+      // Numeric fields retain exact values; extend a slider when a graph selection falls outside its usual span.
+      const lo=Math.min(state.sliderBounds[key][0],state[key]),hi=Math.max(state.sliderBounds[key][1],state[key]);
+      state.sliderBounds[key]=[lo,hi];
+      const range=$(key+'Range'),num=$(key+'Number');
+      range.min=num.min=String(lo);range.max=num.max=String(hi);
+      range.value=String(state[key]);num.value=String(Number(state[key].toPrecision(9)));
+      range.setAttribute('aria-valuetext',fmt(state[key],5)+' '+meta[key].unit);
+      const labels=range.nextElementSibling.children;
+      labels[0].textContent=fmt(lo,4)+(key==='v'?'':' '+meta[key].unit);
+      labels[1].textContent=fmt(hi,6)+' '+meta[key].unit;
+    }
+    $('showNewton').checked=state.showNewton;$('lockY').checked=state.lockY;
+    $('newtonLegend').hidden=!state.showNewton;
+    const d=state.domains[state.axis];$('xMin').value=d[0];$('xMax').value=d[1];
+    $('xMin').min=state.axis==='m'?'0.000001':'0';$('xMax').min=$('xMin').min;
+    $('xMin').max=state.axis==='v'?'0.999999':'999999999';$('xMax').max=state.axis==='v'?'1':'1000000000';
+    $('minUnit').textContent=$('maxUnit').textContent='('+meta[state.axis].unit+')';
+    $('domainHint').textContent=meta[state.axis].hint;
+    $('axisTag').textContent='a('+state.axis+')';$('trendText').textContent=meta[state.axis].trend;
+    $('probeLabel').textContent=meta[state.axis].name;$('probeUnit').textContent=meta[state.axis].unit;
+    $('probeInput').setAttribute('aria-label',meta[state.axis].name+' ved avlesningspunktet ('+meta[state.axis].unit+')');
+    const bounds=probeBounds();$('probeInput').min=bounds[0];$('probeInput').max=bounds[1];
+    $('domainError').hidden=true;
+  }
+  function readout(announce=false){
+    const x=state[state.axis],p=at(x),f=factor(p.beta);
+    if(document.activeElement!==$('probeInput'))$('probeInput').value=inputText(x);
+    $('relValue').innerHTML=precise(p.rel)+'<span>m/s²</span>';
+    $('newtonValue').innerHTML=precise(p.classic)+'<span>m/s²</span>';
+    $('factorValue').textContent=fmt(f,5);
+    $('factorValue').title=fmt(100*f,3)+' % av den klassiske akselerasjonen når F > 0';
+    const [lo,hi]=probeBounds();
+    chart.setAttribute('aria-valuemin',String(lo));chart.setAttribute('aria-valuemax',String(hi));chart.setAttribute('aria-valuenow',String(x));
+    chart.setAttribute('aria-valuetext',meta[state.axis].name+' '+fmt(x,6)+' '+meta[state.axis].unit+'. Akselerasjon '+precise(p.rel)+' meter per sekund i andre.');
+    if(announce)$('liveStatus').textContent=chart.getAttribute('aria-valuetext');
+  }
+  function draw(){
+    const w=$('plotWrap').clientWidth,h=$('plotWrap').clientHeight;
+    if(w<80||h<80)return;
+    const L=w<500?59:72,R=25,T=39,B=56,pw=Math.max(1,w-L-R),ph=Math.max(1,h-T-B);
+    const [xmin,xmax]=state.domains[state.axis],ymax=state.yMax;
+    const X=x=>L+(x-xmin)/(xmax-xmin)*pw,Y=y=>T+ph-y/ymax*ph;
+    geometry={L,R,T,B,pw,ph,w,h,xmin,xmax};
+    chart.setAttribute('viewBox',`0 0 ${w} ${h}`);
+    const parts=[`<title>Akselerasjon som funksjon av ${meta[state.axis].name.toLowerCase()}</title><defs><clipPath id="plotClip"><rect x="${L}" y="${T}" width="${pw}" height="${ph+1}"/></clipPath><linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#693a98" stop-opacity="0.10"/><stop offset="1" stop-color="#693a98" stop-opacity="0.015"/></linearGradient></defs>`];
+    const ystep=niceStep(ymax/Math.max(3,Math.min(7,Math.floor(ph/65))));
+    for(let y=0;y<=ymax+ystep*1e-7;y+=ystep){
+      const yy=Y(y);parts.push(`<line class="grid" x1="${L}" x2="${w-R}" y1="${yy}" y2="${yy}"/><text x="${L-12}" y="${yy+4}" text-anchor="end">${fmt(y,6)}</text>`);
+    }
+    const tickCount=w<500?4:Math.min(8,Math.max(4,Math.floor(pw/100)));
+    const xstep=niceStep((xmax-xmin)/tickCount);
+    const ticks=[xmin];
+    const firstTick=Math.ceil((xmin+xstep*1e-7)/xstep);
+    for(let i=0;i<64;i++){
+      const x=(firstTick+i)*xstep;
+      if(x>=xmax-xstep*1e-7)break;
+      if(x>ticks[ticks.length-1]&&(x-xmin)/(xmax-xmin)*pw>34&&(xmax-x)/(xmax-xmin)*pw>34)ticks.push(x);
+    }
+    ticks.push(xmax);
+    for(const x of ticks){
+      const xx=X(x),label=state.axis==='v'&&Math.abs(x-1)<1e-10?'1 (c)':fmt(x,6);
+      parts.push(`<line class="grid" x1="${xx}" x2="${xx}" y1="${T}" y2="${T+ph}"/><text x="${xx}" y="${T+ph+23}" text-anchor="middle">${label}</text>`);
+    }
+    parts.push(`<line class="axis-line" x1="${L}" x2="${L}" y1="${T}" y2="${T+ph}"/><line class="axis-line" x1="${L}" x2="${w-R}" y1="${T+ph}" y2="${T+ph}"/><text class="axis-title" x="${L}" y="20">Akselerasjon a (m/s²)</text><text class="axis-title" x="${L+pw/2}" y="${h-9}" text-anchor="middle">${meta[state.axis].axis}</text>`);
+    const samples=Math.max(250,Math.min(1200,Math.round(pw))),rp=[],np=[];
+    for(let i=0;i<=samples;i++){
+      const x=xmin+(xmax-xmin)*i/samples,p=at(x);
+      // Bound off-screen coordinates before serialization; the SVG clip keeps the plotted domain exact.
+      rp.push(`${i?'L':'M'}${X(x).toFixed(2)},${clamp(Y(p.rel),-1000000,1000000).toFixed(2)}`);
+      np.push(`${i?'L':'M'}${X(x).toFixed(2)},${clamp(Y(p.classic),-1000000,1000000).toFixed(2)}`);
+    }
+    const relPath=rp.join(' ');
+    parts.push(`<g clip-path="url(#plotClip)"><path d="${relPath} L${X(xmax)},${Y(0)} L${X(xmin)},${Y(0)} Z" fill="url(#areaFill)"/>`);
+    if(state.showNewton)parts.push(`<path class="newton-curve" d="${np.join(' ')}"/>`);
+    parts.push(`<path class="rel-curve" d="${relPath}"/></g>`);
+    const px=state[state.axis],p=at(px),cx=X(px),cy=Y(p.rel);
+    parts.push(`<line class="cursor" x1="${cx}" x2="${cx}" y1="${T}" y2="${T+ph}"/>`);
+    if(state.showNewton&&p.classic<=ymax)parts.push(`<circle class="newton-dot" cx="${cx}" cy="${Y(p.classic)}" r="4"/>`);
+    if(p.rel<=ymax){
+      parts.push(`<circle class="rel-dot" cx="${cx}" cy="${cy}" r="5"/>`);
+      const anchor=cx>L+pw*.72?'end':'start',tx=cx+(anchor==='end'?-12:12),ty=cy<T+26?cy+22:cy-13;
+      parts.push(`<text class="point-label" x="${tx}" y="${ty}" text-anchor="${anchor}">${precise(p.rel)} m/s²</text>`);
+    }
+    if(state.axis==='v'&&xmax===1)parts.push(`<circle cx="${X(1)}" cy="${Y(0)}" r="4" fill="white" stroke="#693a98" stroke-width="2"/><text x="${X(1)-9}" y="${Y(0)-12}" text-anchor="end">v → c</text>`);
+    chart.innerHTML=parts.join('');
+    $('clipWarning').hidden=maxValue()<=ymax*(1+1e-9);
+    readout();
+  }
+  function setParameter(key,value){
+    if(!Number.isFinite(value))return;
+    const range=$(key+'Range');
+    state[key]=clamp(value,Number(range.min),Number(range.max));
+    if(!state.lockY)fitY();syncControls();schedule();
+  }
+  for(const key of ['v','m','F']){
+    $(key+'Range').addEventListener('input',e=>setParameter(key,Number(e.target.value)));
+    $(key+'Number').addEventListener('change',e=>{if(e.target.value===''){syncControls();return;}setParameter(key,Number(e.target.value));});
+  }
+  document.querySelectorAll('[data-axis]').forEach(b=>b.addEventListener('click',()=>{
+    state.axis=b.dataset.axis;constrainProbe();fitY();syncControls();schedule();
+  }));
+  $('showNewton').addEventListener('change',e=>{state.showNewton=e.target.checked;if(!state.lockY)fitY();syncControls();schedule();});
+  $('lockY').addEventListener('change',e=>{state.lockY=e.target.checked;if(!state.lockY)fitY();schedule();});
+  function fitAndRender(){fitY();schedule();}
+  $('fitButton').addEventListener('click',fitAndRender);$('warningFit').addEventListener('click',fitAndRender);
+  function changeDomain(){
+    const min=Number($('xMin').value),max=Number($('xMax').value),valid=$('xMin').value!==''&&$('xMax').value!==''&&Number.isFinite(min)&&Number.isFinite(max)&&min<max&&min>=(state.axis==='m'?1e-6:0)&&max<=(state.axis==='v'?1:1e9)&&(state.axis!=='v'||min<=MAX_BETA);
+    if(!valid){$('domainError').hidden=false;$('domainError').textContent=state.axis==='v'?'Velg 0 ≤ fra < til ≤ 1 (fra må være under 1).':state.axis==='m'?'Velg 0 < fra < til (minst 0,000001 kg).':'Velg 0 ≤ fra < til.';return;}
+    state.domains[state.axis]=[min,max];constrainProbe();fitY();syncControls();schedule();
+  }
+  $('xMin').addEventListener('change',changeDomain);$('xMax').addEventListener('change',changeDomain);
+  function setProbe(value,announce=false){if(!Number.isFinite(value))return;state[state.axis]=value;constrainProbe();readout(announce);schedule();}
+  $('probeInput').addEventListener('change',e=>{if(e.target.value!=='')setProbe(Number(e.target.value),true);e.target.value=inputText(state[state.axis]);});
+  function pointAt(e){
+    if(!geometry)return;const rect=chart.getBoundingClientRect(),g=geometry,x=(e.clientX-rect.left)/rect.width*g.w;
+    if(!dragging&&(x<g.L||x>g.L+g.pw))return;
+    const value=g.xmin+clamp((x-g.L)/g.pw,0,1)*(g.xmax-g.xmin);
+    setProbe(value);
+  }
+  chart.addEventListener('pointerdown',e=>{dragging=true;chart.setPointerCapture(e.pointerId);chart.focus({preventScroll:true});pointAt(e);});
+  chart.addEventListener('pointermove',e=>{if(dragging||e.pointerType==='mouse')pointAt(e);});
+  chart.addEventListener('pointerup',()=>{dragging=false;});chart.addEventListener('pointercancel',()=>{dragging=false;});
+  chart.addEventListener('keydown',e=>{
+    const [lo,hi]=probeBounds(),step=(hi-lo)/(e.shiftKey?20:200);
+    let x=state[state.axis];
+    if(e.key==='ArrowRight'||e.key==='ArrowUp')x+=step;
+    else if(e.key==='ArrowLeft'||e.key==='ArrowDown')x-=step;
+    else if(e.key==='Home')x=lo;
+    else if(e.key==='End')x=hi;
+    else return;
+    e.preventDefault();setProbe(x,true);
+  });
+  function setMenu(open){
+    $('layout').classList.toggle('closed',!open);$('sidebar').hidden=!open;
+    $('menuButton').setAttribute('aria-expanded',String(open));$('menuButton').querySelector('span').textContent=open?'−':'+';schedule();
+  }
+  $('menuButton').addEventListener('click',()=>setMenu($('sidebar').hidden));
+  $('backdrop').addEventListener('click',()=>setMenu(false));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('sidebar').hidden){setMenu(false);$('menuButton').focus();}});
+  $('resetButton').addEventListener('click',()=>{state=defaults();syncControls();schedule();});
+  $('fullscreenButton').addEventListener('click',async()=>{
+    try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}
+    catch{$('liveStatus').textContent='Fullskjerm støttes ikke her. Bruk nettleserens fullskjermvalg.';}
+  });
+  document.addEventListener('fullscreenchange',()=>{$('fullscreenButton').textContent=document.fullscreenElement?'Avslutt fullskjerm':'Fullskjerm';schedule();});
+  if(!document.fullscreenEnabled)$('fullscreenButton').hidden=true;
+  new ResizeObserver(schedule).observe($('plotWrap'));
+  setMenu(!matchMedia('(max-width:760px)').matches);syncControls();schedule();
+})();
+</script>
+</body>
+</html>
