@@ -1,5 +1,5 @@
 import {solutionHtml} from './math-presentation.js?v=20261114-visual-physics3';
-import {topics as waveTopics} from './waves.js?v=20261114-visual-physics3';
+import {topics as waveTopics} from './waves.js?v=20261114-visual-physics3a';
 import {topics as basicTopics} from './wave-basics.js?v=20261114-visual-physics3';
 import {topics as emTopics} from './em-atoms.js?v=20261114-visual-physics3';
 import {topics as radioTopics} from './radioactivity.js?v=20261114-visual-physics3';

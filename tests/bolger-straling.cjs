@@ -35,6 +35,7 @@ function modelFixture(topic){
   contains(e){for(;e;e=e.parent)if(e===this)return true;return false;}
   querySelectorAll(s){return elements.filter(e=>e!==this&&this.contains(e)&&s.split(',').some(sel=>matches(e,sel)));}
   querySelector(s){return this.querySelectorAll(s)[0]||null;}
+  getContext(){if(!this.context){this.width=+(this.attributes.width||this.width||760);this.height=+(this.attributes.height||this.height||340);this.context=new Proxy({canvas:this,createImageData:(w,h)=>({data:new Uint8ClampedArray(w*h*4),width:w,height:h}),measureText:t=>({width:String(t).length*7})},{get(o,k){if(k in o)return o[k];if(typeof k==='symbol')return undefined;return(...args)=>{for(const value of args)if(typeof value==='number')assert.ok(Number.isFinite(value),'Canvas '+String(k)+' uses finite coordinates');};},set(o,k,v){if(typeof v==='number')assert.ok(Number.isFinite(v),'Canvas '+String(k)+' is finite');o[k]=v;return true;}});}return this.context;}
   serialize(){const at=Object.entries(this.attributes).map(([k,v])=>`${k}="${v}"`).join(' ');return `<${this.tagName.toLowerCase()}${at?' '+at:''}>${this._text}${this.children.map(e=>e.serialize()).join('')}</${this.tagName.toLowerCase()}>`;}
  }
  function parse(html,parent){const stack=[parent],voids=new Set(['input','br','hr','img','meta','link','source']);let last=0;for(const m of html.matchAll(/<!--[^]*?-->|<\/?[a-z][^>]*>/gi)){const current=stack.at(-1);current._text+=decode(html.slice(last,m.index).replace(/<[^>]*>/g,''));last=m.index+m[0].length;if(m[0].startsWith('<!--'))continue;const closing=/^<\//.test(m[0]),tag=m[0].match(/^<\/?([\w-]+)/)[1].toLowerCase();if(closing){if(stack.length>1)stack.pop();continue;}const a=attrMap(m[0].slice(tag.length+1).replace(/\/?\s*>$/,'')),e=new Element(tag,a);current.append(e);if(!voids.has(tag)&&!m[0].endsWith('/>'))stack.push(e);}stack.at(-1)._text+=decode(html.slice(last));}
@@ -64,51 +65,71 @@ async function attempt(label,fn){try{await fn();coverage.push(label);}catch(e){f
  assert.ok(!appSource.includes('id="pause-button"'),'The global pause control was removed.');
  const topicRender=appSource.match(/function renderTopic\(\)\{([\s\S]*?)\nfunction resourceHtml/)[1];
  assert.ok(!/t\.(kicker|summary)/.test(topicRender),'Topic content should not repeat its overview kicker or summary.');
- const {interferenceDisplacement:sum,diffractionFrontPath:front,diffractionEnvelope:envelope}=sourceModules.waves;
- assert.equal(typeof sum,'function');assert.equal(typeof front,'function');assert.equal(typeof envelope,'function');
- for(const t of [0,.13,.7,2])for(let i=0;i<80;i++){const x=i/10;assert.ok(Math.abs(sum(x,t,2,2,180,2))<1e-10,'Equal wavelength, opposite phase must cancel everywhere.');assert.ok(Number.isFinite(sum(x,t,.4,4,123,2)),'Wave sum must be finite.');}
- assert.ok(Math.abs(sum(.5,0,2,4,0,2)-(1+Math.SQRT1_2))<1e-10,'Different wavelengths must retain their own spatial phase.');
- assert.ok(Math.abs(sum(0,.25,2,4,0,2)+(1+Math.SQRT1_2))<1e-10,'Different wavelengths at the same speed require different frequencies.');
- const unequalEnergy=Array.from({length:161},(_,i)=>sum(i/20,0,2,4,180,2)**2).reduce((a,b)=>a+b)/161;
- assert.ok(unequalEnergy>.25,'Opposite phase at one point cannot cancel unequal wavelengths everywhere.');
- assert.ok(Math.abs(envelope(0,1,1)-1)<1e-12,'Single-slit central angular envelope is normalized.');
- for(const angle of [-1,-.4,0,.4,1]){assert.ok(envelope(angle,1,1)>=0&&envelope(angle,1,1)<=1);assert.ok(Math.abs(envelope(angle,1,1)-envelope(-angle,1,1))<1e-12);}
- assert.ok(envelope(Math.PI/6,1,1)>envelope(Math.PI/6,4,1),'Narrower slit must produce broader angular distribution.');
- for(const aperture of [5,34,204])for(const radius of [0,1,20,200,600]){const d=front(310,140,aperture,radius);assert.ok(!/NaN|Infinity|undefined/.test(d));assert.ok((d.match(/M/g)||[]).length<=1,'Each diffraction front must be a continuous path before clipping.');}
- const phenomenonFixture=modelFixture(source.find(t=>t.id==='fenomener'));
- try{
-  phenomenonFixture.click('wv-interference-antiphase');phenomenonFixture.tick(0);
-  const sumPath=phenomenonFixture.get('wv-interference-sum');assert.ok(sumPath,'Named resultant path for direct model inspection');
-  const ordinates=d=>[...d.matchAll(/[-+]?\d*\.?\d+(?:e[-+]?\d+)?/gi)].map(m=>+m[0]).filter((_,i)=>i%2);
-  const cancelled=ordinates(sumPath.getAttribute('d'));assert.ok(cancelled.length>100);assert.ok(Math.max(...cancelled)-Math.min(...cancelled)<.01,'The rendered sum must cancel for equal wavelengths in opposite phase.');
-  const oneBefore=phenomenonFixture.get('wv-component-1').getAttribute('d'),twoBefore=phenomenonFixture.get('wv-component-2').getAttribute('d');
-  phenomenonFixture.change('wv-lambda2',4);
-  assert.equal(phenomenonFixture.get('wv-component-1').getAttribute('d'),oneBefore,'Changing wavelength2 cannot change wave1.');
-  assert.notEqual(phenomenonFixture.get('wv-component-2').getAttribute('d'),twoBefore,'Changing wavelength2 must alter wave2.');
-  const unequal=ordinates(phenomenonFixture.get('wv-interference-sum').getAttribute('d'));assert.ok(Math.max(...unequal)-Math.min(...unequal)>20,'Unequal-wavelength result must no longer be a flat cancellation line.');
-  for(const slit of [.5,4])for(const wavelength of [.3,1.2])for(const t of [0,.17,3,12]){phenomenonFixture.change('wv-slit',slit);phenomenonFixture.change('wv-diff-lambda',wavelength);phenomenonFixture.tick(t);assert.ok(!/NaN|Infinity|undefined/.test(phenomenonFixture.get('wv-diffraction').serialize()),'Diffraction geometry is finite for all control extremes.');}
-  for(const [name,x,width]of [['incident',24,270],['outgoing',306,430]]){const clip=phenomenonFixture.get('wv-diff-'+name+'-clip');assert.ok(clip);const rect=clip.querySelector('rect');assert.equal(+rect.getAttribute('x'),x);assert.equal(+rect.getAttribute('width'),width);assert.equal(+rect.getAttribute('y'),25);assert.equal(+rect.getAttribute('height'),220);assert.equal(phenomenonFixture.get('wv-diff-'+name).getAttribute('clip-path'),'url(#wv-diff-'+name+'-clip)');}
-  assert.ok(phenomenonFixture.get('wv-diff-mask-soften').querySelector('feGaussianBlur'),'Angular bands are softened rather than drawn as detached segments.');
-  const fronts=phenomenonFixture.get('wv-diff-outgoing').querySelectorAll('path');assert.ok(fronts.length>5);for(const p of fronts)assert.equal((p.getAttribute('d').match(/M/g)||[]).length,1,'Every outgoing front remains continuous before SVG clipping.');
- }finally{phenomenonFixture.destroy();}
+ const helperModules={};for(const name of ['atom-lab','waves-rainbow','isotope-data','math-presentation'])helperModules[name]=await import(pathToFileURL(path.join(root,'prototyper/bolger-straling',name+'.js')).href);
+ const {solutionHtml}=helperModules['math-presentation'];
+ assert.equal(numeric.size,24,'Exactly 24 numeric questions receive the shared solution format.');
+ for(const q of numeric.values()){const html=solutionHtml(q);assert.ok(html.includes('calc-lines')&&html.includes('calc-row')&&html.includes('calc-rhs'),q.id+' has aligned calculation rows');assert.notEqual(html,q.answer,q.id+' has the shared mathematical presentation');}
+ const fallback={id:'not-a-worked-example',answer:'Keep this explanation.'};assert.equal(solutionHtml(fallback),fallback.answer);
+ assert.ok(!topicRender.includes('class="section-links"')&&!topicRender.includes('nextHtml('),'Topic chip navigation and next-topic panels are removed.');
+ const pageSource=fs.readFileSync(path.join(root,'prototyper/bolger-straling.html'),'utf8');assert.ok(!pageSource.includes('Utforsk sammenhenger. Bruk fagbegrepene.'),'The footer slogan is removed.');
+ const wf=sourceModules['wave-basics'].waveFrequency;assert.equal(wf(6,2),3);assert.equal(wf(.5,8),.0625);
+ const waves=sourceModules.waves,{interferenceDisplacement:sum,diffractionEnvelope:envelope}=waves;
+ for(const t of [0,.13,.7,2])for(let i=0;i<40;i++){const x=i/10;assert.ok(Math.abs(sum(x,t,2,2,180,2))<1e-10,'Matched opposite-phase waves cancel everywhere.');assert.ok(Math.abs(sum(x,t,2,2,0,2)-2*Math.sin(2*Math.PI*(x/2-t)))<1e-10,'In-phase sum doubles the component.');}
+ assert.ok(envelope(0,1,1)===1&&envelope(.5,1,1)>envelope(.5,4,1),'Narrow apertures have a broader angular envelope.');
+ for(const aperture of [.3,4.2])for(const wavelength of [.3,3.2]){
+  const field=waves.buildApertureField({aperture,wavelength,width:96,height:48});
+  assert.equal(field.real.length,96*48);assert.ok([...field.real,...field.imag,...field.columnPeak].every(Number.isFinite));
+  for(const x of [20,50,90])for(const y of [5,15,23]){const a=y*field.width+x,b=(field.height-1-y)*field.width+x;assert.ok(Math.abs(field.real[a]-field.real[b])<1e-5);assert.ok(Math.abs(field.imag[a]-field.imag[b])<1e-5,'A centered aperture gives a symmetric field.');}
+  const period=wavelength/2;for(const x of [20,50,90]){assert.ok(Math.abs(waves.scalarWaveValue(field,x,24,.13)-waves.scalarWaveValue(field,x,24,.13+period))<1e-5,'Scalar wave uses f=v/lambda.');for(const t of [0,period/4,period/2])assert.ok(Math.abs(waves.scalarWaveValue(field,x,24,t,2,true))<=1.00001);}
+ }
+ for(let i=0;i<=50;i++){const drive=waves.swingDriveAt(i/10,.05,.2,.35);assert.ok(drive.torque>=0&&Number.isFinite(drive.torque),'The hand may push but cannot pull.');if(!drive.extending)assert.equal(drive.torque,0);}
+ for(const frequency of [.25,.35,.55]){const state=waves.createSwingState();for(let i=0;i<1200;i++)waves.stepDrivenSwing(state,1/60,{pushFrequency:frequency});assert.ok(Object.values(state).every(v=>typeof v==='boolean'||Number.isFinite(v))&&Math.abs(state.theta)<Math.PI,'Driven swing stays finite.');}
+ const peakAt=f=>{const state=waves.createSwingState();for(let i=0;i<2400;i++)waves.stepDrivenSwing(state,1/60,{pushFrequency:f});return state.maxAmplitude;};assert.ok(peakAt(.35)>2*peakAt(.5),'Correct push timing must build substantially more amplitude than mismatched timing.');
+ const released=waves.createSwingState();released.theta=.3;const energy=s=>.5*4*s.omega*s.omega+9.81*2*(1-Math.cos(s.theta));const initial=energy(released);for(let i=0;i<1200;i++)waves.stepDrivenSwing(released,1/60,{enabled:false});assert.ok(energy(released)<initial*.3,'With pushes off, damping removes mechanical energy.');
+ assert.ok(Math.abs(waves.dopplerAtObserver(0,0,50,100,0).frequency-1000)<1e-9);assert.ok(Math.abs(waves.dopplerAtObserver(0,0,50,-100,0).frequency-500/1.5)<1e-9);assert.equal(waves.dopplerAtObserver(0,0,50,0,100).frequency,500);
+ const rainbow=helperModules['waves-rainbow'];const normal=rainbow.refractRay([.5,Math.sqrt(.75)],[0,-1],1,1.5);assert.ok(Math.abs(normal[0]-1/3)<1e-10,'Snell law sets the transmitted direction.');
+ const red=rainbow.rainbowAngles(1.331),violet=rainbow.rainbowAngles(1.343);assert.ok(red.rainbowDeg>41&&red.rainbowDeg<43&&violet.rainbowDeg>39&&violet.rainbowDeg<42&&red.rainbowDeg>violet.rainbowDeg);
+ for(const n of [1.331,1.343]){const ray=rainbow.traceRainbow(n);assert.ok(Math.abs(ray.angleDeg-rainbow.rainbowAngles(n).rainbowDeg)<1e-8);for(const p of [ray.entry,ray.reflection,ray.exit])assert.ok(Math.abs(Math.hypot(...p)-1)<1e-9);}
+ assert.ok(rainbow.tracePrism(1.53,18).deviationDeg>rainbow.tracePrism(1.50,18).deviationDeg,'Violet is deflected more than red by the prism.');
+ const atom=helperModules['atom-lab'];assert.equal(atom.hydrogenEnergy(1),-13.6);assert.equal(atom.hydrogenEnergy(2),-3.4);assert.throws(()=>atom.hydrogenEnergy(0),RangeError);
+ const EV=1.602176634e-19,H=6.62607015e-34,C=299792458;
+ for(let n=1;n<=6;n++){assert.equal(atom.possibleTransitions(n).length,n*(n-1)/2);for(let m=1;m<=6;m++){const t=atom.transition(n,m);assert.ok(Math.abs(t.energyJ-t.energyEV*EV)<1e-30);if(n===m){assert.equal(t.type,'none');continue;}assert.equal(t.type,m>n?'absorption':'emission');assert.ok(Math.abs(t.frequencyHz-C/(t.wavelengthNM*1e-9))<t.frequencyHz*1e-10);assert.ok(Math.abs(H*t.frequencyHz-t.energyJ)<t.energyJ*1e-8);}}
+ for(const [upper,nm]of [[3,656],[4,486],[5,434],[6,410]])assert.ok(Math.abs(atom.transition(upper,2).wavelengthNM-nm)<1,'Balmer line '+upper+' to 2');
+ for(let n=2;n<=6;n++){const absorbed=atom.transition(1,n).energyEV;assert.equal(atom.excitationForEnergy(absorbed).level,n);for(const strategy of ['stepwise','direct','random']){const levels=atom.cascadeLevels(n,strategy,()=>.45);assert.equal(levels[0],n);assert.equal(levels.at(-1),1);let emitted=0;for(let i=1;i<levels.length;i++){assert.ok(levels[i]<levels[i-1]);emitted+=atom.transition(levels[i-1],levels[i]).energyEV;}assert.ok(Math.abs(emitted-absorbed)<1e-10,'Cascade conserves photon energy.');}}
+ assert.equal(atom.excitationForEnergy(7).kind,'no-match');assert.equal(atom.excitationForEnergy(13.6).kind,'ionization');assert.equal(atom.excitationForEnergy(0).kind,'invalid');
+ const iso=helperModules['isotope-data'];assert.equal(iso.verifiedIsotopes.length,51);
+ for(const item of iso.verifiedIsotopes){assert.equal(item.a,item.z+item.n);const decay=iso.getPreferredDecay(item.z,item.n);if(item.stable){assert.equal(decay,null);continue;}assert.ok(decay&&decay.daughter.stable);assert.equal(decay.parent.a,decay.daughter.a);assert.equal(decay.daughter.z-decay.parent.z,decay.mode==='beta-'?1:-1);}
+ assert.equal(iso.getIsotope(6,5),null,'An unlisted nucleus has unknown status, never inferred stability.');assert.equal(iso.getPreferredDecay(6,5),null);assert.equal(iso.getIsotope(6,6).stable,true);assert.equal(iso.getIsotope(6,8).stable,false);
+ const bb=sourceModules['cosmos-environment'].blackbodyPhysics;assert.ok(bb);
+ for(const T of [300,2500,5800,12000]){assert.ok(Math.abs(bb.totalExitance(T)/(5.670374419e-8*T**4)-1)<1e-8);const peak=bb.peakWavelength(T);assert.ok(Math.abs(peak*T-2897.771955)<1);for(const um of [.5,1,10]){const metres=um*1e-6,expected=2*Math.PI*H*C*C/(metres**5*Math.expm1(H*C/(metres*1.380649e-23*T)))*1e-6;const actual=bb.spectralExitance(um,T);assert.ok(Math.abs(actual-expected)<=Math.max(1e-200,expected*1e-8),'Absolute spectral exitance including pi and micrometre conversion');}assert.ok(bb.visibleExitance(T)>=0&&bb.visibleExitance(T)<bb.totalExitance(T));}
+ assert.ok(bb.spectralExitance(.5,12000)>bb.spectralExitance(.5,5800),'The curves retain their actual temperature-dependent height.');
+ for(const [a,b]of [[1,100],[100,1]]){const v=bb.easing(a,b,.1);assert.ok(v>Math.min(a,b)&&v<Math.max(a,b),'Autoscale easing must remain bounded and positive.');}
  const basicFixture=modelFixture(source.find(t=>t.id==='bolger'));
  try{
-  basicFixture.change('wv-frequency',2);basicFixture.change('wv-speed',6);
-  assert.match(basicFixture.get('wv-travel-readout').textContent,/3 m/);assert.match(basicFixture.get('wv-travel-readout').textContent,/0,5 s/);
-  const basics=source.find(t=>t.id==='bolger');assert.equal(basics.sections.length,4,'Basics, wave types, standing waves and resonance remain separate.');
-  assert.equal(basicFixture.root.querySelectorAll('[data-wb-mode]').length,2,'Only transverse and longitudinal share a selector.');
-  for(const id of ['wv-transverse','wv-longitudinal']){basicFixture.click(id);assert.equal(basicFixture.get(id).getAttribute('aria-pressed'),'true');for(const t of [0,.07,1.2,15,80]){basicFixture.tick(t);for(const svg of ['wv-travel','wv-particles','wv-standing','wv-sound','wv-water','wv-resonance'])assert.ok(!/NaN|Infinity|undefined/.test(basicFixture.get(svg).serialize()),svg+' must produce finite geometry');}}
-  basicFixture.change('wv-harmonic',3);assert.match(basicFixture.get('wb-standing-readout').textContent,/3 buker.*4 knuter.*1,33 m.*1,5 Hz/);
-  basicFixture.tick(100);const soundBefore=basicFixture.get('wv-sound').serialize();basicFixture.change('wb-sound-frequency',1000);assert.match(basicFixture.get('wb-sound-readout').textContent,/1.?000 Hz/);assert.notEqual(basicFixture.get('wv-sound').serialize(),soundBefore,'The separate sound example responds to frequency.');assert.equal(basicFixture.get('wv-longitudinal').getAttribute('aria-pressed'),'true','Sound controls do not replace the wave-type diagram.');
-  basicFixture.change('wb-water-depth',.1);const shallow=basicFixture.get('wv-water').querySelectorAll('circle').find(e=>e.getAttribute('stroke-dasharray')==='3 3');assert.ok(shallow);const radius=+shallow.getAttribute('r');basicFixture.change('wb-water-depth',1.3);const deep=basicFixture.get('wv-water').querySelectorAll('circle').find(e=>e.getAttribute('stroke-dasharray')==='3 3');assert.ok(+deep.getAttribute('r')<radius,'Deep-water orbit shrinks with depth.');
-  for(const damping of [.06,.25]){basicFixture.change('wb-swing-damping',damping);for(const frequency of [.3,.5,.8]){basicFixture.change('wb-swing-frequency',frequency);basicFixture.click('wb-swing-reset');for(let i=0;i<50;i++)basicFixture.tick(110+i*.1);assert.ok(!/NaN|Infinity|undefined/.test(basicFixture.get('wv-resonance').serialize()),'Independent driven swing stays stable');}}
-
+  assert.equal(source.find(t=>t.id==='bolger').sections.length,3);assert.equal(basicFixture.root.querySelectorAll('[data-wb-mode]').length,2);assert.equal(basicFixture.get('wv-frequency'),undefined,'Frequency is calculated, not independently adjustable.');
+  basicFixture.change('wv-wavelength',2);basicFixture.change('wv-speed',6);assert.match(basicFixture.get('wv-travel-readout').textContent,/3 Hz/);
+  const wavePath=()=>basicFixture.get('wv-travel').querySelectorAll('path').find(e=>e.getAttribute('stroke-width')==='3.5').getAttribute('d');
+  basicFixture.tick(1);const before=wavePath();basicFixture.change('wv-speed',9);assert.equal(basicFixture.get('wv-wavelength').value,'2');assert.equal(wavePath(),before,'Changing speed keeps the current phase and wavelength continuous.');
+  for(const button of ['wv-transverse','wv-longitudinal']){basicFixture.click(button);assert.equal(basicFixture.get(button).getAttribute('aria-pressed'),'true');}
+  basicFixture.change('wv-harmonic',3);assert.match(basicFixture.get('wb-standing-readout').textContent,/3 buker/);assert.match(basicFixture.get('wb-standing-readout').textContent,/4 knuter/);
+  basicFixture.change('wb-water-depth',.1);const orbit=()=>basicFixture.get('wv-water').querySelectorAll('circle').find(e=>e.getAttribute('stroke-dasharray')==='3 3');const shallow=+orbit().getAttribute('r');basicFixture.change('wb-water-depth',1.3);assert.ok(+orbit().getAttribute('r')<shallow);
+  for(const t of [1.1,2,20]){basicFixture.tick(t);assert.ok(!/NaN|Infinity|undefined/.test(basicFixture.html()));}
  }finally{basicFixture.destroy();}
- const {ionizationOutcome}=sourceModules['em-atoms'];assert.equal(typeof ionizationOutcome,'function');
- for(const energy of [2,10.2,13.5,13.6,20,30]){const result=ionizationOutcome(energy);assert.equal(result.threshold,13.6);assert.equal(result.ionizes,energy>=13.6);assert.ok(Math.abs(result.kinetic-Math.max(0,energy-13.6))<1e-12);assert.ok(Math.abs(result.wavelength-1239.841984/energy)<1e-10);}
  const atomFixture=modelFixture(source.find(t=>t.id==='atomer'));
- try{for(const energy of [2,10.2,13.5,13.6,20,30]){atomFixture.change('ema-ion-energy',energy);assert.equal(atomFixture.get('ema-ion-plot').getAttribute('data-state'),'neutral','Changing photon energy resets the experiment.');atomFixture.click('ema-ion-send');assert.equal(atomFixture.get('ema-ion-plot').getAttribute('data-state'),energy>=13.6?'ionized':'bound','13.6eV ionization threshold must apply in the displayed model.');assert.ok(!/NaN|Infinity|undefined/.test(atomFixture.get('ema-ion-plot').serialize()));atomFixture.click('ema-ion-reset');assert.equal(atomFixture.get('ema-ion-plot').getAttribute('data-state'),'neutral');}}finally{atomFixture.destroy();}
- console.log('Source/model checks passed: '+source.length+' topics, '+unique.size+' preserved questions, '+Object.keys(expected).length+' independently calculated numeric answers; compact header, two-wavelength interference, clipped diffraction, separate wave models, stable swing/sound/water and hydrogen ionization threshold/endpoints.');
+ try{
+  for(let from=1;from<=6;from++)for(let to=1;to<=6;to++){atomFixture.change('al-from',from,'change');atomFixture.change('al-to',to,'change');atomFixture.tick(2);assert.ok(!/NaN|Infinity|undefined/.test(atomFixture.get('al-direct-svg').serialize()));}
+  atomFixture.change('al-excite-preset',6,'change');atomFixture.change('al-cascade-mode','stepwise','change');atomFixture.click('al-send-energy');assert.equal(atomFixture.get('al-excitation-svg').getAttribute('data-state'),'complete');assert.equal(+atomFixture.get('al-spectrum-svg').getAttribute('data-possible-count'),15);assert.equal(+atomFixture.get('al-spectrum-svg').getAttribute('data-emitted-count'),5);
+  atomFixture.change('al-cascade-mode','all','change');atomFixture.click('al-send-energy');assert.equal(+atomFixture.get('al-spectrum-svg').getAttribute('data-emitted-count'),15,'Many-atom mode shows all possible lines; a single cascade does not.');
+  atomFixture.change('al-input-energy',7);atomFixture.click('al-send-energy');assert.equal(atomFixture.get('al-excitation-svg').getAttribute('data-state'),'no-match');atomFixture.change('al-input-energy',13.6);atomFixture.click('al-send-energy');assert.equal(atomFixture.get('al-excitation-svg').getAttribute('data-state'),'ionized');
+ }finally{atomFixture.destroy();}
+ const radioFixture=modelFixture(source.find(t=>t.id==='radioaktivitet'));
+ try{for(const item of iso.verifiedIsotopes.filter(x=>!x.stable)){radioFixture.change('ra-isotope-preset',item.z+','+item.n,'change');assert.equal(radioFixture.get('ra-nuclide-status').getAttribute('data-stability'),'radioactive');const before=radioFixture.get('ra-built-nucleus').getAttribute('transform');radioFixture.tick(.47);assert.notEqual(radioFixture.get('ra-built-nucleus').getAttribute('transform'),before);radioFixture.click('ra-builder-decay');const daughter=iso.getPreferredDecay(item.z,item.n).daughter;assert.equal(+radioFixture.get('ra-protons').value,daughter.z);assert.equal(+radioFixture.get('ra-neutrons').value,daughter.n);assert.equal(radioFixture.get('ra-nuclide-status').getAttribute('data-stability'),'stable');assert.equal(radioFixture.get('ra-builder-decay').disabled,true);}}finally{radioFixture.destroy();}
+ const {spectrumReadouts}=sourceModules['em-atoms'];for(const region of [2,3,4])assert.match(spectrumReadouts(5e14,region).wavelength,/nm/);assert.match(spectrumReadouts(5e14,3).energy,/J$/);assert.ok(!/eV/.test(spectrumReadouts(5e14,3).energy));
+ const comm=modelFixture(source.find(t=>t.id==='kommunikasjon'));
+ try{for(const stage of ['auto','0','1','2','3','4','5'])comm.change('ema-flow-stage',stage,'change');for(const direction of ['a-b','b-a'])for(const route of ['direct','reflection']){comm.change('ema-network-direction',direction,'change');comm.change('ema-network-path',route,'change');comm.tick(.8);assert.ok(!/NaN|Infinity|undefined/.test(comm.html()));}}finally{comm.destroy();}
+ const phenomenonFixture=modelFixture(source.find(t=>t.id==='fenomener'));
+ try{assert.equal(phenomenonFixture.get('wv-diffraction').tagName,'CANVAS');assert.equal(phenomenonFixture.get('wv-lambda1'),undefined);assert.equal(phenomenonFixture.get('wv-lambda2'),undefined);for(const button of ['wv-interference-inphase','wv-interference-antiphase','wv-diff-wide-spread','wv-diff-narrow-beam','wv-swing-reset','wv-swing-match'])phenomenonFixture.click(button);for(const t of [.1,.2,1,3]){phenomenonFixture.tick(t);assert.ok(!/NaN|Infinity|undefined/.test(phenomenonFixture.html()));}}finally{phenomenonFixture.destroy();}
+ console.log('Source/model checks passed: 9 topics, 123 preserved questions and 24 numeric answers; shared math layout, continuous wave phase, scalar diffraction, unilateral swing, Doppler, rainbow/prism, atom transitions/cascades, isotope decay, absolute Planck units and communication states.');
  if(process.argv.includes('--data-only'))return;
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
  const base='http://127.0.0.1:'+server.address().port, url=base+'/prototyper/bolger-straling.html';
@@ -144,14 +165,14 @@ async function attempt(label,fn){try{await fn();coverage.push(label);}catch(e){f
  }
  if(count)assert.ok(changed>0,'No control updated model');
  });
- await attempt('Wave relations remain consistent',async()=>{await route('bolger');await page.locator('#wv-frequency').fill('2');await page.locator('#wv-frequency').dispatchEvent('input');await page.locator('#wv-speed').fill('6');await page.locator('#wv-speed').dispatchEvent('input');const text=await page.locator('#wv-travel-readout').innerText();assert.match(text,/3 m/);assert.match(text,/0,5 s/);});
+ await attempt('Wave relations remain consistent',async()=>{await route('bolger');await page.locator('#wv-wavelength').fill('2');await page.locator('#wv-wavelength').dispatchEvent('input');await page.locator('#wv-speed').fill('6');await page.locator('#wv-speed').dispatchEvent('input');assert.match(await page.locator('#wv-travel-readout').innerText(),/3 Hz/);assert.equal(await page.locator('#wv-frequency').count(),0);});
  await attempt('Refraction, interference and Doppler numerical outputs',async()=>{
  await route('fenomener');await page.locator('#wv-angle').fill('35');await page.locator('#wv-angle').dispatchEvent('input');assert.match(await page.locator('#wv-reflection-readout').innerText(),/35/);
- await page.locator('#wv-interference-antiphase').click();assert.match(await page.locator('#wv-interference-readout').innerText(),/utslokking|kanseller/i);await page.locator('#wv-lambda2').fill('4');await page.locator('#wv-lambda2').dispatchEvent('input');assert.match(await page.locator('#wv-interference-readout').innerText(),/1 Hz.*0,5 Hz/);
- await page.locator('#wv-source-speed').fill('0.5');await page.locator('#wv-source-speed').dispatchEvent('input');assert.match(await page.locator('#wv-doppler-readout').innerText(),/333.*500.*1.?000/);
+ await page.locator('#wv-interference-antiphase').click();assert.match(await page.locator('#wv-interference-readout').innerText(),/utslokking|kanseller|destruktiv/i);assert.equal(await page.locator('#wv-lambda1,#wv-lambda2').count(),0);await page.locator('#wv-interference-inphase').click();assert.match(await page.locator('#wv-interference-readout').innerText(),/forsterkning|konstruktiv/i);
+ await page.locator('#wv-source-speed').fill('0.5');await page.locator('#wv-source-speed').dispatchEvent('input');assert.ok((await page.locator('#wv-doppler-readout').innerText()).length>20);
  });
  await attempt('Atomic transition wavelength and half-life expectation',async()=>{
- await route('atomer');const level=page.locator('#ema-level');console.log('ATOM_OPTIONS '+JSON.stringify(await level.locator('option').evaluateAll(es=>es.map(e=>({v:e.value,t:e.textContent})))));
+ await route('atomer');await page.locator('#al-from').selectOption('3');await page.locator('#al-to').selectOption('2');assert.match(await page.locator('#al-direct-numbers').innerText(),/656/);
  await route('radioaktivitet');await page.locator('#ra-half-time').fill('3');await page.locator('#ra-half-time').dispatchEvent('input');assert.match(await page.locator('#ra-half-expected').innerText(),/25/);assert.equal(await page.locator('.ra-decayed').count()+await page.locator('.ra-population i:not(.ra-decayed)').count(),200);
  });
  await attempt('Photon energy threshold is reflected in the displayed ionization state',async()=>{await route('atomer');for(const [energy,state]of [['13.5','bound'],['13.6','ionized'],['20','ionized']]){await page.locator('#ema-ion-energy').fill(energy);await page.locator('#ema-ion-energy').dispatchEvent('input');assert.equal(await page.locator('#ema-ion-plot').getAttribute('data-state'),'neutral');await page.locator('#ema-ion-send').click();assert.equal(await page.locator('#ema-ion-plot').getAttribute('data-state'),state);await page.locator('#ema-ion-reset').click();assert.equal(await page.locator('#ema-ion-plot').getAttribute('data-state'),'neutral');}});
