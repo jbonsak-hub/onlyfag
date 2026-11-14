@@ -95,6 +95,9 @@ body.dark{color-scheme:dark;--bg:#12251f;--surface:#1a3028;--sidebar:#152a22;--i
 .topic-page .model--split .model-visual{min-width:0;align-self:center}
 .topic-page .model.model--split .model-visual svg{display:block;width:100%;height:auto;max-height:none;min-height:0;margin:0}
 .topic-page .model--split .model-visual svg+svg{margin-top:12px}
+.topic-page .model-visual .ema-values{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.topic-page .model-visual .ema-values strong{font-size:16px}
+.topic-page #wv-water text[y="197"]{fill:#244754}
 .topic-page .model--split .model-panel{display:flex;flex-direction:column;gap:12px;min-width:0;border-left:1px solid var(--line);padding-left:18px;align-self:stretch;justify-content:center}
 .topic-page .model-panel .controls,.topic-page .model-panel .wb-controls,.topic-page .model-panel .wb-controls.wb-two{display:flex;flex-direction:column;align-items:stretch;gap:14px;margin:0;padding:0;border:0}
 .topic-page .model-panel .control,.topic-page .model-panel .controls>label,.topic-page .model-panel .wb-controls>label{display:block;min-width:0;max-width:none;width:100%;flex:none;font-size:12px;line-height:1.5}

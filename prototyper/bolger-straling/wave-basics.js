@@ -85,6 +85,7 @@ const basics={
       let grid='';for(const m of [0,4,8,12,16]){const x=70+m*scale;grid+=line(x,82,x,244,C.grid)+text(x,263,String(m),'text-anchor="middle" class="wb-small"');}
       layers['wv-travel'].innerHTML=`${grid}${line(70,165,690,165,'#9bb0ba')}${line(70,82,70,244)}${path(graph(70,690,y),C.wave,3.5)}${line(341,83,341,244,C.amber,'stroke-dasharray="3 5" opacity=".5"')}<circle cx="341" cy="${y(341)}" r="8" fill="${C.amber}" stroke="white" stroke-width="2"/>${line(45,165-A*64,45,165,C.amber,'stroke-width="2"')}${text(30,169-A*32,'A','text-anchor="middle"')}${line(70,42,70+lambda*scale,42,C.purple,'stroke-width="2"')}${line(70,36,70,48,C.purple)}${line(70+lambda*scale,36,70+lambda*scale,48,C.purple)}${text(70+lambda*scale/2,31,'λ','text-anchor="middle"')}${text(747,263,'x (m)','text-anchor="end" class="wb-small"')}${text(80,155,'Likevekt','class="wb-small"')}${arrow(530,283,678,283)}${text(515,288,'Bølgeretning','text-anchor="end" class="wb-small"')}`;
       for(const [sceneMode,svgId] of [['particles','wv-particles'],['standing','wv-standing'],['sound','wv-sound'],['water','wv-water'],['resonance','wv-resonance']]){
+      const example=q(svgId).closest?.('details.wb-example');if(example&&!example.open&&t>0)continue;
       const mode=sceneMode==='particles'?particleMode:sceneMode;
       let scene='';
       if(mode==='transverse'||mode==='longitudinal'){

@@ -1,8 +1,8 @@
-import {topics as waveTopics} from './waves.js?v=20261114-side-controls1';
-import {topics as basicTopics} from './wave-basics.js?v=20261114-side-controls1';
-import {topics as emTopics} from './em-atoms.js?v=20261114-side-controls1';
-import {topics as radioTopics} from './radioactivity.js?v=20261114-side-controls1';
-import {topics as cosmosTopics} from './cosmos-environment.js?v=20261114-side-controls1';
+import {topics as waveTopics} from './waves.js?v=20261114-side-controls2';
+import {topics as basicTopics} from './wave-basics.js?v=20261114-side-controls2';
+import {topics as emTopics} from './em-atoms.js?v=20261114-side-controls2';
+import {topics as radioTopics} from './radioactivity.js?v=20261114-side-controls2';
+import {topics as cosmosTopics} from './cosmos-environment.js?v=20261114-side-controls2';
 
 const order=['bolger','fenomener','em','atomer','universet','kommunikasjon','radioaktivitet','stralevern','atmosfaeren'];
 const topics=[...basicTopics,...waveTopics,...emTopics,...radioTopics,...cosmosTopics].sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id));
@@ -76,8 +76,8 @@ function arrangeModels(root){
   const panel=document.createElement('aside');panel.className='model-panel';panel.setAttribute('aria-label','Kontroller og avlesning');
   const footer=document.createElement('div');footer.className='model-footer';
   for(const el of children){
-   if(figures.includes(el)||el.tagName==='H3'||el.tagName==='H4')visual.append(el);
-   else if(el.tagName==='DETAILS'||el.classList.contains('model-note')||el.classList.contains('wb-caption'))footer.append(el);
+   if(figures.includes(el)||el.tagName==='H3'||el.tagName==='H4'||el.classList.contains('ema-values'))visual.append(el);
+   else if(el.tagName==='DETAILS'||el.classList.contains('model-note')||el.classList.contains('wb-caption')||el.classList.contains('ema-spectrum-callout'))footer.append(el);
    else if(el.querySelector('input,select,button,textarea')||el.matches('.readout,.ema-values,.ema-atom-readout,.ema-signal-result,.ra-equation,.ra-status,.sv-status,[aria-live],.ema-spectrum-callout'))panel.append(el);
    else footer.append(el);
   }
