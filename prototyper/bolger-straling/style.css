@@ -78,6 +78,13 @@ body.dark{color-scheme:dark;--bg:#12251f;--surface:#1a3028;--sidebar:#152a22;--i
 .topic-page .readout strong{font-size:14px}
 .topic-page .model-note{font-size:10px;line-height:1.5;margin-top:7px}
 .topic-page .wb-mode-buttons button[aria-pressed=true]{color:var(--surface)}
+.topic-page .wb-concept-layout{gap:16px;margin:8px 0 10px}
+.topic-page .wb-relations{padding:8px 12px}
+.topic-page .wb-equations{font-size:16px;line-height:1.3;gap:22px;margin-bottom:4px}
+.topic-page .wb-relations p{font-size:11.5px;line-height:1.4;margin:3px 0}
+.topic-page .wb-relations .wb-example{padding-top:4px;margin-top:5px}
+.topic-page #wv-travel{max-height:190px}
+.topic-page .wb-scope .readout{padding:4px 8px;margin-top:7px}
 .topic-page details{margin:9px 0;font-size:11px}
 .topic-page summary{cursor:pointer;color:var(--green);font-weight:600}
 .topic-page details[open]>summary{margin-bottom:8px}
