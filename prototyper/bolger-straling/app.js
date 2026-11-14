@@ -1,8 +1,9 @@
-import {topics as waveTopics} from './waves.js?v=20261114-side-controls2';
-import {topics as basicTopics} from './wave-basics.js?v=20261114-side-controls2';
-import {topics as emTopics} from './em-atoms.js?v=20261114-side-controls2';
-import {topics as radioTopics} from './radioactivity.js?v=20261114-side-controls2';
-import {topics as cosmosTopics} from './cosmos-environment.js?v=20261114-side-controls2';
+import {solutionHtml} from './math-presentation.js?v=20261114-visual-physics3';
+import {topics as waveTopics} from './waves.js?v=20261114-visual-physics3';
+import {topics as basicTopics} from './wave-basics.js?v=20261114-visual-physics3';
+import {topics as emTopics} from './em-atoms.js?v=20261114-visual-physics3';
+import {topics as radioTopics} from './radioactivity.js?v=20261114-visual-physics3';
+import {topics as cosmosTopics} from './cosmos-environment.js?v=20261114-visual-physics3';
 
 const order=['bolger','fenomener','em','atomer','universet','kommunikasjon','radioaktivitet','stralevern','atmosfaeren'];
 const topics=[...basicTopics,...waveTopics,...emTopics,...radioTopics,...cosmosTopics].sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id));
@@ -70,7 +71,7 @@ function arrangeModels(root){
  for(const model of root.querySelectorAll('.model')){
   if(model.classList.contains('model--split'))continue;
   const children=[...model.children];
-  const figures=children.filter(el=>el.tagName==='svg'||el.tagName==='SVG'||el.querySelector('svg'));
+  const figures=children.filter(el=>el.tagName.toLowerCase()==='svg'||el.tagName==='CANVAS'||el.querySelector('svg,canvas')||el.hasAttribute('data-model-visual'));
   if(!figures.length)continue;
   const visual=document.createElement('div');visual.className='model-visual';
   const panel=document.createElement('aside');panel.className='model-panel';panel.setAttribute('aria-label','Kontroller og avlesning');
@@ -89,7 +90,7 @@ function renderTopic(){
  const t=byId.get(route.id),all=route.id==='alle';
  content.innerHTML=`<div class="page-head"><h1>${all?'Alle oppgaver':escapeHtml(t.title)}</h1></div><div class="viewbar"><div class="view-tabs" aria-label="Velg innhold">${(all?[['oppgaver','Oppgavebank']]:[['fagstoff','Fagstoff'],['oppgaver','Oppgavebank'],['begreper','Begreper']]).map(([view,label])=>`<button class="view-tab ${route.view===view?'active':''}" data-route="${route.id}/${view}" aria-pressed="${route.view===view}">${label}${view==='oppgaver'?` <span>(${all?allQuestions.length:t.questions.length})</span>`:''}</button>`).join('')}</div></div><div id="topic-content"></div>`;
  if(route.view==='fagstoff'){
-   $('#topic-content').innerHTML=`<nav class="section-links" aria-label="På denne siden">${t.sections.map((s,i)=>`<a href="#section-${t.id}-${i}" data-section="section-${t.id}-${i}">${escapeHtml(s.title)}</a>`).join('')}</nav>${t.sections.map((s,i)=>`<section class="content-section" id="section-${t.id}-${i}"><h2><span class="section-index" aria-hidden="true">${i+1}</span>${escapeHtml(s.title)}</h2>${s.body}</section>`).join('')}${resourceHtml(t)}${nextHtml(t)}`;
+   $('#topic-content').innerHTML=`${t.sections.map((s,i)=>`<section class="content-section" id="section-${t.id}-${i}"><h2><span class="section-index" aria-hidden="true">${i+1}</span>${escapeHtml(s.title)}</h2>${s.body}</section>`).join('')}${resourceHtml(t)}`;
    if(t.mount)cleanup=t.mount($('#topic-content'),api);
    arrangeModels($('#topic-content'));
  }else if(route.view==='begreper'){
@@ -97,7 +98,6 @@ function renderTopic(){
  }else renderBank();
 }
 function resourceHtml(t){return t.resources?.length?`<aside class="resource-box"><span>UNDERSØK MER</span>${t.resources.map(r=>`<a href="${escapeHtml(r.url)}" target="_blank" rel="noopener">${escapeHtml(r.label)} ↗</a>`).join('')}</aside>`:'';}
-function nextHtml(t){const next=topics[topics.indexOf(t)+1];return next?`<a class="next-topic" href="#${next.id}/fagstoff"><span><small>Neste undertema</small>${escapeHtml(next.title)}</span><span aria-hidden="true">→</span></a>`:'';}
 
 function renderBank(){
  const all=route.id==='alle';
@@ -117,7 +117,7 @@ function renderQuestions(){
 }
 function questionHtml(q){
  const previous=saved.answers[q.id],solved=previous?.solved,bookmarked=!!saved.bookmarks[q.id],draft=saved.drafts[q.id]||'';
- return `<article class="q-card" data-question="${q.id}"><div class="q-top"><span class="q-number">${String(q.index+1).padStart(2,'0')}</span><span>${escapeHtml(q.level||'Bruk')}</span><span>· ${q.type==='mcq'?'Flervalg':q.type==='number'?'Regn ut':'Forklar og drøft'}</span><span class="q-status" ${solved?'':'hidden'}>✓ Mestret</span><span class="q-topic">${escapeHtml(q.topic.title)}</span><button class="q-bookmark" aria-label="${bookmarked?'Fjern bokmerke':'Merk oppgaven'}" aria-pressed="${bookmarked}" title="Merk oppgaven">${bookmarked?'★':'☆'}</button></div><div class="q-prompt" id="prompt-${q.id}">${q.prompt}</div>${q.type==='mcq'?`<div class="q-choices" role="group" aria-labelledby="prompt-${q.id}">${shuffledChoices(q).map(({choice:c,index},i)=>`<button class="q-choice" data-choice="${index}" aria-pressed="false"><span class="choice-letter">${String.fromCharCode(65+i)}</span><span>${c}</span></button>`).join('')}</div>`:q.type==='number'?`<form class="q-number-form"><label class="sr-only" for="input-${q.id}">Svar ${escapeHtml(q.unit||'')}</label><input id="input-${q.id}" type="text" inputmode="decimal" autocomplete="off" placeholder="Ditt svar" value="${escapeHtml(draft)}"><span>${escapeHtml(q.unit||'')}</span><button type="submit">Sjekk</button></form>`:`<label class="sr-only" for="input-${q.id}">Ditt svar</label><textarea id="input-${q.id}" class="q-open" rows="2" placeholder="Skriv et kort svar, eller forklar muntlig før du ser løsningsforslaget.">${escapeHtml(draft)}</textarea>`}<div class="q-actions"><button class="show-answer">${q.type==='open'?'Vis veiledende svar':'Vis forklaring'}</button>${q.hint?'<button class="hint-button" aria-expanded="false">Et hint</button>':''}</div>${q.hint?`<div class="q-hint" hidden>${q.hint}</div>`:''}<div class="q-answer" hidden><div class="feedback" aria-live="polite"></div><div class="solution">${q.answer}</div>${q.type==='open'?`<div class="self-mark"><button data-self="yes">Dette fikk jeg til</button><button data-self="again" class="secondary">Øv igjen senere</button></div>`:''}</div></article>`;
+ return `<article class="q-card" data-question="${q.id}"><div class="q-top"><span class="q-number">${String(q.index+1).padStart(2,'0')}</span><span>${escapeHtml(q.level||'Bruk')}</span><span>· ${q.type==='mcq'?'Flervalg':q.type==='number'?'Regn ut':'Forklar og drøft'}</span><span class="q-status" ${solved?'':'hidden'}>✓ Mestret</span><span class="q-topic">${escapeHtml(q.topic.title)}</span><button class="q-bookmark" aria-label="${bookmarked?'Fjern bokmerke':'Merk oppgaven'}" aria-pressed="${bookmarked}" title="Merk oppgaven">${bookmarked?'★':'☆'}</button></div><div class="q-prompt" id="prompt-${q.id}">${q.prompt}</div>${q.type==='mcq'?`<div class="q-choices" role="group" aria-labelledby="prompt-${q.id}">${shuffledChoices(q).map(({choice:c,index},i)=>`<button class="q-choice" data-choice="${index}" aria-pressed="false"><span class="choice-letter">${String.fromCharCode(65+i)}</span><span>${c}</span></button>`).join('')}</div>`:q.type==='number'?`<form class="q-number-form"><label class="sr-only" for="input-${q.id}">Svar ${escapeHtml(q.unit||'')}</label><input id="input-${q.id}" type="text" inputmode="decimal" autocomplete="off" placeholder="Ditt svar" value="${escapeHtml(draft)}"><span>${escapeHtml(q.unit||'')}</span><button type="submit">Sjekk</button></form>`:`<label class="sr-only" for="input-${q.id}">Ditt svar</label><textarea id="input-${q.id}" class="q-open" rows="2" placeholder="Skriv et kort svar, eller forklar muntlig før du ser løsningsforslaget.">${escapeHtml(draft)}</textarea>`}<div class="q-actions"><button class="show-answer">${q.type==='open'?'Vis veiledende svar':'Vis forklaring'}</button>${q.hint?'<button class="hint-button" aria-expanded="false">Et hint</button>':''}</div>${q.hint?`<div class="q-hint" hidden>${q.hint}</div>`:''}<div class="q-answer" hidden><div class="feedback" aria-live="polite"></div><div class="solution">${solutionHtml(q)}</div>${q.type==='open'?`<div class="self-mark"><button data-self="yes">Dette fikk jeg til</button><button data-self="again" class="secondary">Øv igjen senere</button></div>`:''}</div></article>`;
 }
 function findQuestion(card){return allQuestions.find(q=>q.id===card.dataset.question);}
 function setSolved(q,card,solved){saved.answers[q.id]={solved};persist();const status=card.querySelector('.q-status');status.hidden=!solved;const questions=visibleQuestions(),n=questions.filter(q=>saved.answers[q.id]?.solved).length;$('#question-summary').textContent=`${questions.length} oppgaver · ${n} markert som mestret. Skriv eller tenk gjennom svaret før du åpner forklaringen.`;}

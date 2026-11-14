@@ -8,6 +8,22 @@ const ceStyles = `<style>
 .ce-widget svg .ce-label{font-size:16px;font-weight:650}
 .ce-widget .ce-value{font-weight:700;color:var(--green,#3369a4)}
 .ce-widget .readout{display:block}
+.ce-widget .ce-readout-row{display:block;margin:6px 0}
+.ce-widget .ce-readout-row>span{display:block;color:var(--muted);font-size:11px}
+.ce-widget .ce-readout-row>strong{display:block;color:var(--green);font-size:14px;font-weight:650}
+.ce-blackbody-model .ce-bb-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ce-blackbody-model .ce-bb-actions button:last-child{grid-column:1/-1}
+.ce-blackbody-model .ce-auto-label{display:flex!important;align-items:center;gap:7px}
+.ce-blackbody-model .ce-auto-label input{width:auto;flex-basis:auto;margin:0}
+.ce-definitions{display:block!important;margin:12px 0}
+.ce-definitions .concept{display:block;background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;box-shadow:none;padding:9px 0}
+.ce-definitions dt{font-size:13px;font-weight:650;color:var(--ink);margin:0 0 3px}
+.ce-definitions dd{font-size:12px;margin:0;line-height:1.65}
+.ce-definitions dd p{margin:0 0 4px}
+.ce-bb-example{font-size:12px}
+.ce-bb-example .calc-lines{margin:12px 0}
+@media(max-width:1100px){.topic-page .ce-blackbody-model .model-panel .readout{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.ce-blackbody-model .ce-bb-actions{grid-template-columns:1fr 1fr 1fr}.ce-blackbody-model .ce-bb-actions button:last-child{grid-column:auto}}
+@media(max-width:520px){.topic-page .ce-blackbody-model .model-panel .readout{grid-template-columns:1fr}.ce-blackbody-model .ce-bb-actions{grid-template-columns:1fr 1fr}.ce-blackbody-model .ce-bb-actions button:last-child{grid-column:1/-1}}
 .ce-widget .controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));align-items:end;gap:8px 16px;margin:8px 0;padding:8px 0}
 .ce-widget .controls>.control{display:flex;flex-wrap:wrap;align-items:center;gap:3px 6px;min-width:0;max-width:none}
 .ce-widget .control input,.ce-widget .control select{flex-basis:100%;margin:2px 0}
@@ -32,23 +48,74 @@ const ceStyles = `<style>
 // Keep model assumptions available without pushing the controls off screen.
 const ceCompactSections = sections => sections.map(section => ({
   ...section,
-  body: section.body.replace(/<p class="model-note">((?:Kurvene|Noen utvalgte|Skjematisk utsnitt|Skjematisk modell|Hele jorda)[\s\S]*?)<\/p>/g, (_, text) => {
-    const summary = text.startsWith('Kurvene') ? 'Normalisert kurve · om modellen'
-      : text.startsWith('Noen utvalgte') ? 'Om spektrallinjene og forskyvningen'
+  body: section.body.replace(/<p class="model-note">((?:Noen utvalgte|Skjematisk utsnitt|Skjematisk modell|Hele jorda)[\s\S]*?)<\/p>/g, (_, text) => {
+    const summary = text.startsWith('Noen utvalgte') ? 'Om spektrallinjene og forskyvningen'
       : text.startsWith('Skjematisk utsnitt') ? 'Forenklinger i universmodellen'
       : text.startsWith('Hele jorda') ? 'Om energimodellen' : 'Skjematisk modell · forutsetninger';
     return `<details class="ce-model-details"><summary>${summary}</summary><p class="model-note">${text}</p></details>`;
-  })
+  }).replace(/<div class="(?:concept-grid|ce-life)">([\s\S]*?)<\/div>/g, (_, inner) => `<dl class="concept-grid ce-definitions">${inner.replace(/<article(?: class="concept")?><h4>([\s\S]*?)<\/h4>([\s\S]*?)<\/article>/g, (match, term, definition) => `<div class="concept"><dt>${term}</dt><dd>${definition}</dd></div>`)}</dl>`)
 }));
+
+const ceFrac = (num, den) => `<span class="frac"><span class="num">${num}</span><span class="den">${den}</span></span>`;
+const ceReadoutRow = (label, value) => `<span class="ce-readout-row"><span>${label}</span><strong>${value}</strong></span>`;
+
+const ceSigma = 5.670374419e-8;
+const ceWien = 2897.771955;
+const ceNiceUpper = value => {
+  const decade = 10 ** Math.floor(Math.log10(value));
+  const relative = value / decade;
+  return (relative <= 1 ? 1 : relative <= 2 ? 2 : relative <= 3 ? 3 : relative <= 5 ? 5 : 10) * decade;
+};
+
+/** Physical surface emission: Mλ = πBλ, in W m⁻² µm⁻¹. */
+export const blackbodyPhysics = Object.freeze({
+  spectralExitance(wavelengthUm, temperature) {
+    if (!(wavelengthUm > 0 && temperature > 0)) return 0;
+    const wavelength = wavelengthUm * 1e-6;
+    const h = 6.62607015e-34, c = 299792458, k = 1.380649e-23;
+    const exponent = h * c / (wavelength * k * temperature);
+    if (exponent > 700) return 0;
+    return 2 * Math.PI * h * c * c / (wavelength ** 5 * Math.expm1(exponent)) * 1e-6;
+  },
+  totalExitance: temperature => ceSigma * temperature ** 4,
+  peakWavelength: temperature => ceWien / temperature,
+  visibleExitance(temperature) {
+    let result = 0;
+    const count = 120, step = .4 / count;
+    for (let i = 0; i <= count; i++) {
+      result += (i === 0 || i === count ? 1 : i % 2 ? 4 : 2) * blackbodyPhysics.spectralExitance(.38 + i * step, temperature);
+    }
+    return result * step / 3;
+  },
+  adaptiveLimits(current, temperature, force = false) {
+    const peak = ceWien / temperature;
+    const height = blackbodyPhysics.spectralExitance(peak, temperature) / 1e6;
+    const xFraction = peak / current.xMax, yFraction = height / current.yMax;
+    return {
+      xMax: force || xFraction < .12 || xFraction > .65 ? ceNiceUpper(peak * 4.2) : current.xMax,
+      yMax: force || yFraction < .2 || yFraction > .86 ? ceNiceUpper(height * 1.4) : current.yMax
+    };
+  },
+  easing(current, target, dt) {
+    const fraction = 1 - Math.exp(-Math.min(.1, Math.max(0, dt)) / .24);
+    return Math.exp(Math.log(current) + (Math.log(target) - Math.log(current)) * fraction);
+  }
+});
+
+const ceBlackbodyModel = `<div class="model ce-widget ce-blackbody-model" id="ce-blackbody-model"><h4>Temperatur endrer både kurvens topp og areal</h4><div id="ce-blackbody"></div><div class="controls"><label class="control" for="ce-temperature">Temperatur: <output id="ce-temperature-value" class="ce-value">5800 K</output><input id="ce-temperature" type="range" min="250" max="15000" value="5800" step="1"></label><label class="control" for="ce-temperature-preset">Sammenlikn kilder<select id="ce-temperature-preset"><option value="">Velg temperatur</option><option value="288">Jordoverflate · 288 K</option><option value="310">Menneskekropp · 310 K</option><option value="2800">Glødetråd · 2800 K</option><option value="5800" selected>Sola · 5800 K</option><option value="9900">Sirius A · 9900 K</option><option value="15000">Varm stjerne · 15 000 K</option></select></label><label class="control ce-auto-label" for="ce-auto-scale"><input id="ce-auto-scale" type="checkbox" checked>Automatisk skala</label><div class="ce-bb-actions"><button type="button" id="ce-bb-zoom-in">Zoom inn</button><button type="button" id="ce-bb-zoom-out">Zoom ut</button><button type="button" id="ce-bb-fit">Tilpass aksene</button></div></div><div id="ce-blackbody-readout" class="readout" aria-live="polite"></div><p id="ce-axes-status" class="model-note"></p><details class="ce-model-details ce-bb-example"><summary>Se beregningen og modellens forutsetninger</summary><div id="ce-blackbody-calculation" class="calc-lines"></div><p>Kurven beregnes med Plancks strålingslov. Den viser spektral utstråling fra en ideell svart overflate, M<sub>λ</sub> = πB<sub>λ</sub>. Arealet under hele kurven er den samlede effekten per overflateareal, σT⁴.</p><p>Kurven er <strong>ikke normalisert</strong>. Automatisk skala flytter aksenes tall; lik høyde på skjermen betyr derfor ikke lik effekt. Slå av automatisk skala for å sammenlikne temperaturer i samme utsnitt.</p><p>Kildene har samme tegnede størrelse. Egenutstrålt synlig lys bestemmer lysstyrken i figuren, med fast komprimering av skjermens store lysområde. Fargen er veiledende. Kalde objekter stråler i IR selv om de ikke gløder synlig; reflektert lys er ikke vist. Presetene er omtrentlige temperaturer, og virkelige overflater er ikke perfekte svarte strålere.</p></details></div>`;
 
 const universeSections = [
   {
+    title: 'Temperatur og strålingskurve',
+    body: `${ceStyles}${ceBlackbodyModel}<p class="key">Varmere overflate gir kortere toppbølgelengde og større samlet utstråling per kvadratmeter. Legg merke til tallene på aksene når skalaen endres.</p>`
+  },
+  {
     title: 'Stjerner: masse bestemmer livsløpet',
-    body: `${ceStyles}<div class="concept-grid"><article class="concept"><h4>En stjerne lager energi ved fusjon</h4><p>I hovedserien smelter hydrogenkjerner sammen til helium. Litt av massen omdannes til energi. Tyngdekraften trekker innover; trykket fra varm gass og stråling virker utover.</p></article><article class="concept"><h4>En galakse er et stjernesystem</h4><p>Sola er én av Melkeveiens hundrevis av milliarder stjerner. Et <strong>lysår er en avstand</strong>: så langt lys går på ett år. Når vi ser langt ut, ser vi også tilbake i tid.</p></article></div><div class="ce-life"><article><h4>Stjerner med masse omtrent som sola</h4><p>Gassky → hovedseriestjerne → rød kjempe → gasslag støtes ut → <strong>hvit dverg</strong>.</p><p>Den hvite dvergen er en varm rest som gradvis kjøles. Sola blir ikke en supernova.</p></article><article><h4>Massive stjerner</h4><p>Gassky → hovedseriestjerne → superkjempe → mange ender i <strong>supernova</strong>.</p><p>Den kollapsede kjernen kan bli en <strong>nøytronstjerne eller et sort hull</strong>. Slutten avhenger blant annet av massen og massetapet.</p></article></div><p class="model-note">Forenklet oversikt. Massive stjerner lever vanligvis kortere fordi de bruker brenselet mye raskere. En rød stjerne kan være svært stor selv om overflaten er kjøligere enn på en blå stjerne.</p>`
+    body: `<div class="concept-grid"><article class="concept"><h4>En stjerne lager energi ved fusjon</h4><p>I hovedserien smelter hydrogenkjerner sammen til helium. Litt av massen omdannes til energi. Tyngdekraften trekker innover; trykket fra varm gass og stråling virker utover.</p></article><article class="concept"><h4>En galakse er et stjernesystem</h4><p>Sola er én av Melkeveiens hundrevis av milliarder stjerner. Et <strong>lysår er en avstand</strong>: så langt lys går på ett år. Når vi ser langt ut, ser vi også tilbake i tid.</p></article></div><div class="ce-life"><article><h4>Stjerner med masse omtrent som sola</h4><p>Gassky → hovedseriestjerne → rød kjempe → gasslag støtes ut → <strong>hvit dverg</strong>.</p><p>Den hvite dvergen er en varm rest som gradvis kjøles. Sola blir ikke en supernova.</p></article><article><h4>Massive stjerner</h4><p>Gassky → hovedseriestjerne → superkjempe → mange ender i <strong>supernova</strong>.</p><p>Den kollapsede kjernen kan bli en <strong>nøytronstjerne eller et sort hull</strong>. Slutten avhenger blant annet av massen og massetapet.</p></article></div><p class="model-note">Forenklet oversikt. Massive stjerner lever vanligvis kortere fordi de bruker brenselet mye raskere. En rød stjerne kan være svært stor selv om overflaten er kjøligere enn på en blå stjerne.</p>`
   },
   {
     title: 'Lys avslører temperatur, grunnstoffer og bevegelse',
-    body: `<div class="concept-grid"><article class="concept"><h4>Kurvens topp → temperatur</h4><p>Varmere overflate gir kortere toppbølgelengde. Blåhvite stjerner er varmere enn røde. Toppbølgelengden alene forteller ikke stjernens størrelse.</p></article><article class="concept"><h4>Linjemønster → grunnstoffer</h4><p>Atomer absorberer og sender ut bestemte bølgelengder. Mørke absorpsjonslinjer i stjernelyset viser hvilke grunnstoffer som finnes i gassen lyset har passert.</p></article><article class="concept"><h4>Linjenes forskyvning → bevegelse</h4><p>Ved lokal bevegelse <strong>fra oss</strong> blir bølgelengdene lengre: rødforskyvning. <strong>Mot oss</strong> gir kortere bølgelengder: blåforskyvning.</p></article></div><div class="model ce-widget"><h4>Utforsk en stjernes temperatur</h4><div id="ce-blackbody"></div><div class="controls"><label class="control" for="ce-temperature">Overflatetemperatur: <output id="ce-temperature-value" class="ce-value">5800 K</output><input id="ce-temperature" type="range" min="2500" max="12000" value="5800" step="100"></label></div><p id="ce-blackbody-readout" class="readout"></p><p class="model-note">Kurvene følger Plancks strålingslov og er normalisert til samme topphøyde for å sammenlikne formen. En varm stjerne sender i virkeligheten også ut mer energi per overflateareal. Fargeprøven er veiledende; stjerner sender ut mange bølgelengder samtidig.</p></div><div class="model ce-widget"><h4>Samme fingeravtrykk, ny plassering</h4><div id="ce-lines"></div><div class="controls"><label class="control" for="ce-element">Grunnstoff<select id="ce-element"><option value="hydrogen">Hydrogen</option><option value="helium">Helium</option></select></label><label class="control" for="ce-shift">Spektral forskyvning z: <output id="ce-shift-value" class="ce-value">0,000</output><input id="ce-shift" type="range" min="-60" max="120" value="0" step="2"></label></div><p id="ce-lines-readout" class="readout"></p><p class="model-note">Noen utvalgte synlige linjer er vist. λ<sub>observert</sub> = (1 + z) · λ<sub>referanse</sub>. Her styrer du forskyvningen direkte, ikke en hastighet. For fjerne galakser skyldes mye av rødforskyvningen at rommet har utvidet seg mens lyset reiste.</p></div>`
+    body: `<div class="concept-grid"><article class="concept"><h4>Kurvens topp → temperatur</h4><p>Varmere overflate gir kortere toppbølgelengde. Blåhvite stjerner er varmere enn røde. Toppbølgelengden alene forteller ikke stjernens størrelse.</p></article><article class="concept"><h4>Linjemønster → grunnstoffer</h4><p>Atomer absorberer og sender ut bestemte bølgelengder. Mørke absorpsjonslinjer i stjernelyset viser hvilke grunnstoffer som finnes i gassen lyset har passert.</p></article><article class="concept"><h4>Linjenes forskyvning → bevegelse</h4><p>Ved lokal bevegelse <strong>fra oss</strong> blir bølgelengdene lengre: rødforskyvning. <strong>Mot oss</strong> gir kortere bølgelengder: blåforskyvning.</p></article></div><div class="model ce-widget"><h4>Samme fingeravtrykk, ny plassering</h4><div id="ce-lines"></div><div class="controls"><label class="control" for="ce-element">Grunnstoff<select id="ce-element"><option value="hydrogen">Hydrogen</option><option value="helium">Helium</option></select></label><label class="control" for="ce-shift">Spektral forskyvning z: <output id="ce-shift-value" class="ce-value">0,000</output><input id="ce-shift" type="range" min="-60" max="120" value="0" step="2"></label></div><p id="ce-lines-readout" class="readout"></p><p class="model-note">Noen utvalgte synlige linjer er vist. λ<sub>observert</sub> = (1 + z) · λ<sub>referanse</sub>. Her styrer du forskyvningen direkte, ikke en hastighet. For fjerne galakser skyldes mye av rødforskyvningen at rommet har utvidet seg mens lyset reiste.</p></div>`
   },
   {
     title: 'Et univers som utvider seg og kjøles ned',
@@ -85,7 +152,7 @@ const universeQuestions = [
   {id:'ce-u-03',type:'mcq',level:'Start',prompt:'Hva er hovedkilden til solas energi nå?',choices:['Forbrenning av hydrogen med oksygen','Kjernespalting av uran','Fusjon der hydrogenkjerner bygger helium','Reflektert lys fra andre stjerner'],correct:2,answer:'Hydrogenkjerner fusjonerer til helium i solas indre. Litt av massen omdannes til energi. Dette er en kjernereaksjon, ikke vanlig forbrenning.'},
   {id:'ce-u-04',type:'open',level:'Bruk',prompt:'En elev sier: «Alle stjerner eksploderer og blir sorte hull.» Rett påstanden og beskriv to ulike hovedforløp.',answer:'Stjerner omtrent som sola blir røde kjemper, støter fra seg ytre lag og etterlater en hvit dverg. Massive stjerner kan ende i supernova og etterlate en nøytronstjerne eller et sort hull. Startmasse og massetap er avgjørende.'},
   {id:'ce-u-05',type:'mcq',level:'Bruk',prompt:'Stjerne A har toppbølgelengde 400 nm; stjerne B har toppbølgelengde 900 nm. Hva kan vi konkludere?',choices:['A har varmere overflate enn B','A er nødvendigvis større enn B','B har varmere overflate enn A','B må være nærmere jorda'],correct:0,answer:'Kortere toppbølgelengde betyr høyere overflatetemperatur. Kurvens topp alene avgjør verken stjernens størrelse eller avstand.'},
-  {id:'ce-u-06',type:'number',level:'Bruk',prompt:'For en tilnærmet svart stråler er λ<sub>topp</sub> · T ≈ 2 898 000 nm·K. En stjerne har T = 6000 K. Finn toppbølgelengden i nm.',value:483,tolerance:2,unit:'nm',hint:'Del konstanten på temperaturen.',answer:'λ<sub>topp</sub> = 2 898 000 / 6000 nm = <strong>483 nm</strong>. Stjernen sender likevel ut mange bølgelengder; fargen er ikke bare fargen ved toppen.'},
+  {id:'ce-u-06',type:'number',level:'Bruk',prompt:'For en tilnærmet svart stråler er λ<sub>topp</sub> · T ≈ 2 898 000 nm·K. En stjerne har T = 6000 K. Finn toppbølgelengden i nm.',value:483,tolerance:2,unit:'nm',hint:'Del konstanten på temperaturen.',answer:`<div class="calc-lines"><div class="calc-row"><span class="calc-lhs">λ<sub>topp</sub></span><span class="calc-eq">=</span><span class="calc-rhs">${ceFrac('2 898 000 nm·K','6000 K')}</span></div><div class="calc-row"><span class="calc-lhs"></span><span class="calc-eq">=</span><span class="calc-rhs"><strong>483 nm</strong></span></div></div>Stjernen sender likevel ut mange bølgelengder; fargen er ikke bare fargen ved toppen.`},
   {id:'ce-u-07',type:'open',level:'Bruk',prompt:'Hvorfor kan mørke linjer i et stjernespekter brukes til å finne grunnstoffer i stjernens atmosfære?',answer:'Atomene i gassen absorberer bestemte fotonenergier som passer til energiforskjellene mellom tillatte nivåer. Det gir mørke linjer ved bestemte bølgelengder. Hvert grunnstoff har et karakteristisk mønster som kan sammenliknes med laboratoriemålinger.'},
   {id:'ce-u-08',type:'mcq',level:'Bruk',prompt:'I et laboratoriemønster ligger en linje ved 486 nm. I et fjernt objekts spekter ligger samme linje ved 510 nm. Hva viser dette?',choices:['Grunnstoffet er blitt et annet grunnstoff','Blåforskyvning','Rødforskyvning','At objektet nødvendigvis er varmere'],correct:2,answer:'510 nm er lengre bølgelengde enn 486 nm: rødforskyvning. Hele linjemønsterets forskyvning brukes til å skille dette fra et annet grunnstoff.'},
   {id:'ce-u-09',type:'number',level:'Bruk',prompt:'Bruk λ<sub>observert</sub> = (1 + z) · λ<sub>referanse</sub>. En hydrogenlinje har referansebølgelengde 656 nm og rødforskyvning z = 0,10. Finn observert bølgelengde.',value:721.6,tolerance:1,unit:'nm',hint:'z = 0,10 betyr at bølgelengden øker med 10 %.',answer:'λ<sub>observert</sub> = 1,10 · 656 nm = <strong>721,6 nm</strong>. Grunnstoffets linjer er flyttet samlet mot lengre bølgelengder.'},
@@ -121,18 +188,66 @@ function mountUniverse(root, api) {
   const scale = $('#ce-scale');
   const lineSets = {hydrogen:[410.2,434.0,486.1,656.3],helium:[402.6,447.1,501.6,587.6,667.8]};
   const fmt = (n,d=0) => Number(n).toLocaleString('nb-NO',{minimumFractionDigits:d,maximumFractionDigits:d});
-  function blackbody() {
-    const T = +temp.value, peak = 2898000/T;
-    const x = nm => 63 + (nm-100)/2400*638;
-    const planck = nm => 1/(Math.pow(nm,5)*Math.expm1(14387770/(nm*T)));
-    const max = planck(peak);
-    let path = '';
-    for(let nm=100;nm<=2500;nm+=5) path += `${nm===100?'M':'L'}${x(nm).toFixed(2)},${(190-140*planck(nm)/max).toFixed(2)} `;
-    const color = T<3500?'#f9a078':T<5000?'#ffd0a4':T<6500?'#fff1d1':T<9000?'#e7ecff':'#c6dcff';
-    const colorName = T<3500?'rødoransje':T<5000?'oransjehvit':T<6500?'gulhvit':T<9000?'hvit':'blåhvit';
-    $('#ce-blackbody').innerHTML = ceSvg('Strålingskurve: temperatur bestemmer toppbølgelengde',`<defs><linearGradient id="ce-visible"><stop stop-color="#8145ba"/><stop offset=".25" stop-color="#3b74d6"/><stop offset=".45" stop-color="#68ae83"/><stop offset=".65" stop-color="#e6cf55"/><stop offset="1" stop-color="#d76d65"/></linearGradient></defs><rect x="${x(380)}" y="34" width="${x(780)-x(380)}" height="156" fill="url(#ce-visible)" opacity=".18"/><text x="${x(580)}" y="22" text-anchor="middle">Synlig</text><text x="${x(220)}" y="22" text-anchor="middle">UV</text><text x="${x(1500)}" y="22" text-anchor="middle">Infrarødt</text><path class="ce-axis" d="M63 38V190H705"/><text class="ce-faint" x="65" y="213">100</text>${[500,1000,1500,2000,2500].map(n=>`<path class="ce-axis" d="M${x(n)} 190v5"/><text class="ce-faint" x="${x(n)}" y="213" text-anchor="middle">${n}</text>`).join('')}<text x="390" y="239" text-anchor="middle">Bølgelengde (nm)</text><text class="ce-faint" x="21" y="115" text-anchor="middle" transform="rotate(-90 21 115)">Relativ intensitet</text><path d="${path}" fill="none" stroke="#5385b6" stroke-width="3.5"/><path d="M${x(peak)} 50V190" stroke="#64788d" stroke-dasharray="4 5"/><circle cx="${x(peak)}" cy="50" r="5" fill="#5385b6"/><circle cx="645" cy="75" r="20" fill="${color}" stroke="#a6b3c3"/><text class="ce-faint" x="645" y="110" text-anchor="middle">Fargeprøve</text>`,250);
-    $('#ce-temperature-value').textContent = `${fmt(T)} K`;
-    $('#ce-blackbody-readout').innerHTML = `Topp: <strong>${fmt(peak)} nm</strong> · Veiledende stjernefarge: <strong>${colorName}</strong>.`;
+  const autoScale = $('#ce-auto-scale'), preset = $('#ce-temperature-preset');
+  const axes = {xMax:3,yMax:100};
+  let axesTarget = {...axes}, lastBlackbodyTime = null, blackbodyDirty = true;
+  const reducedMotion = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const powerText = (value, extra = '') => {
+    const scale = value >= 1e6 ? 1e6 : value >= 1e3 ? 1e3 : 1;
+    const prefix = scale === 1e6 ? 'MW' : scale === 1e3 ? 'kW' : 'W';
+    return `${fmt(value / scale, value / scale < 10 ? 2 : 1)} ${prefix} m<sup>−2</sup>${extra}`;
+  };
+  const superscript = value => String(value).replace(/[0-9-]/g,c=>'⁰¹²³⁴⁵⁶⁷⁸⁹'['0123456789'.indexOf(c)] || '⁻');
+  const axisNumber = value => {
+    if (!value) return '0';
+    if (value < .001 || value >= 10000) {
+      const exponent = Math.floor(Math.log10(value));
+      return `${fmt(value / 10 ** exponent,1)}·10${superscript(exponent)}`;
+    }
+    return fmt(value,value<1?3:value<10?2:1);
+  };
+  const sourceColor = temperature => {
+    const stops = [[1000,[255,18,0]],[2000,[255,92,18]],[3000,[255,145,70]],[4000,[255,188,128]],[5800,[255,235,211]],[7000,[233,239,255]],[10000,[199,218,255]],[15000,[174,201,255]]];
+    const index = stops.findIndex(([t])=>t>=temperature);
+    if(index<=0)return stops[0][1];
+    const [low,lower]=stops[index-1], [high,upper]=stops[index];
+    const fraction=(temperature-low)/(high-low);
+    return lower.map((n,i)=>Math.round(n+(upper[i]-n)*fraction));
+  };
+  const visibleMaximum = blackbodyPhysics.visibleExitance(15000);
+  function updateBlackbodyTarget(force = false) {
+    const T = Math.min(15000,Math.max(250,+temp.value || 5800));
+    temp.value=String(T);
+    if(autoScale.checked)axesTarget=blackbodyPhysics.adaptiveLimits(axesTarget,T,force);
+    blackbodyDirty=true;
+    $('#ce-temperature-value').textContent=`${fmt(T)} K`;
+    const peak=blackbodyPhysics.peakWavelength(T), spectralPeak=blackbodyPhysics.spectralExitance(peak,T), total=blackbodyPhysics.totalExitance(T);
+    $('#ce-blackbody-readout').innerHTML=ceReadoutRow('Toppbølgelengde',`${fmt(peak*1000)} nm`)+ceReadoutRow('Spektral topp',powerText(spectralPeak,' µm<sup>−1</sup>'))+ceReadoutRow('Samlet utstråling',powerText(total));
+    $('#ce-blackbody-calculation').innerHTML=`<div class="calc-row"><span class="calc-lhs">λ<sub>maks</sub></span><span class="calc-eq">=</span><span class="calc-rhs">${ceFrac('2,898 · 10⁶ nm·K',`${fmt(T)} K`)}</span></div><div class="calc-row"><span class="calc-lhs"></span><span class="calc-eq">≈</span><span class="calc-rhs">${fmt(2898000/T)} nm</span></div><div class="calc-row"><span class="calc-lhs">${ceFrac('P','A')}</span><span class="calc-eq">=</span><span class="calc-rhs">σT⁴</span></div><div class="calc-row"><span class="calc-lhs"></span><span class="calc-eq">≈</span><span class="calc-rhs">${powerText(total)}</span></div>`;
+  }
+  function blackbody(t=0) {
+    const dt=lastBlackbodyTime===null?1/30:Math.max(.016,Math.min(.1,t-lastBlackbodyTime));
+    lastBlackbodyTime=t;
+    const moving=Math.abs(Math.log(axes.xMax/axesTarget.xMax))+Math.abs(Math.log(axes.yMax/axesTarget.yMax))>.0005;
+    if(!blackbodyDirty&&!moving)return;
+    if(reducedMotion||!moving){axes.xMax=axesTarget.xMax;axes.yMax=axesTarget.yMax;}
+    else{axes.xMax=blackbodyPhysics.easing(axes.xMax,axesTarget.xMax,dt);axes.yMax=blackbodyPhysics.easing(axes.yMax,axesTarget.yMax,dt);}
+    const T=+temp.value, peak=blackbodyPhysics.peakWavelength(T), peakMW=blackbodyPhysics.spectralExitance(peak,T)/1e6;
+    const left=88,right=716,top=111,bottom=315;
+    const x=value=>left+value/axes.xMax*(right-left);
+    const y=value=>Math.max(-5000,bottom-value/axes.yMax*(bottom-top));
+    const samples=[0,peak,...Array.from({length:521},(_,i)=>axes.xMax*i/520),...Array.from({length:200},(_,i)=>.001*Math.pow(Math.max(1,axes.xMax/.001),i/199))].filter(n=>n<=axes.xMax).sort((a,b)=>a-b);
+    const curve=samples.map((nm,i)=>`${i?'L':'M'}${x(nm).toFixed(2)},${y(blackbodyPhysics.spectralExitance(nm,T)/1e6).toFixed(2)}`).join(' ');
+    const tickX=Array.from({length:6},(_,i)=>axes.xMax*i/5),tickY=Array.from({length:6},(_,i)=>axes.yMax*i/5);
+    const visibleLeft=Math.min(right,x(.38)),visibleRight=Math.min(right,x(.78));
+    const visible=blackbodyPhysics.visibleExitance(T);
+    const brightness=Math.log1p(visible/1000)/Math.log1p(visibleMaximum/1000);
+    const rgb=sourceColor(T).map(n=>Math.round(n*Math.pow(brightness,.58)));
+    const glow=sourceColor(T).join(',');
+    const peakVisible=peak<=axes.xMax&&peakMW<=axes.yMax;
+    $('#ce-blackbody').innerHTML=ceSvg('Fysisk Planck-kurve med absolutte akseskalaer, synlig lysbånd og temperaturavhengig lysstyrke',`<defs><clipPath id="ce-bb-clip"><rect x="${left}" y="${top}" width="${right-left}" height="${bottom-top}"/></clipPath><linearGradient id="ce-visible"><stop stop-color="#8d4bcd"/><stop offset=".23" stop-color="#4977e6"/><stop offset=".44" stop-color="#53bc89"/><stop offset=".65" stop-color="#f4d864"/><stop offset="1" stop-color="#de7467"/></linearGradient><radialGradient id="ce-source-glow"><stop stop-color="rgb(${glow})" stop-opacity="${brightness*.75}"/><stop offset="1" stop-color="rgb(${glow})" stop-opacity="0"/></radialGradient></defs><text class="ce-label" x="88" y="25">En varmere overflate stråler mer</text><text class="ce-faint" x="88" y="49">Absolutt effekt · ${autoScale.checked?'automatisk skala':'låste akser'}</text><text x="88" y="82">Spektral utstråling</text><rect x="550" y="6" width="174" height="90" rx="10" fill="#101a25"/><text x="637" y="22" text-anchor="middle" style="fill:#d7e0e7;font-size:13px">Egenutstrålt lys</text><circle cx="637" cy="53" r="${20+24*brightness}" fill="url(#ce-source-glow)"/><circle cx="637" cy="51" r="17" fill="rgb(${rgb.join(',')})" stroke="#8b9aaa" stroke-width=".7"/><text x="637" y="86" text-anchor="middle" style="fill:#d7e0e7;font-size:12px">${T<1000?'Ingen synlig glød':'Samme tegnede størrelse'}</text><rect x="${left}" y="${top}" width="${right-left}" height="${bottom-top}" fill="#101a25"/><g clip-path="url(#ce-bb-clip)"><rect x="${visibleLeft}" y="${top}" width="${Math.max(0,visibleRight-visibleLeft)}" height="${bottom-top}" fill="url(#ce-visible)" opacity=".22"/>${tickX.map(n=>`<path d="M${x(n)} ${top}V${bottom}" stroke="#506071" stroke-width=".7" opacity=".42"/>`).join('')}${tickY.map(n=>`<path d="M${left} ${y(n)}H${right}" stroke="#506071" stroke-width=".7" opacity=".42"/>`).join('')}<path d="M${left} ${bottom} ${curve.replace(/^M/,'L')} L${right} ${bottom}Z" fill="#e6a15b" fill-opacity=".11"/><path d="${curve}" fill="none" stroke="#eeaa62" stroke-width="3"/><path d="M${x(peak)} ${top}V${bottom}" stroke="#e2d8c9" stroke-dasharray="4 5" opacity=".65"/>${peakVisible?`<circle cx="${x(peak)}" cy="${y(peakMW)}" r="4.5" fill="#ffcc8a"/>`:''}${visibleRight-visibleLeft>45?`<text x="${(visibleLeft+visibleRight)/2}" y="131" text-anchor="middle" style="fill:#e2e8ee;font-size:13px">Synlig</text>`:''}${x(.38)-left>38?`<text x="${(left+visibleLeft)/2}" y="131" text-anchor="middle" style="fill:#bbc8d5;font-size:13px">UV</text>`:''}<text x="${Math.max(visibleRight+45,left+(right-left)*.7)}" y="131" text-anchor="middle" style="fill:#bbc8d5;font-size:13px">IR</text></g><path d="M${left} ${top}V${bottom}H${right}" stroke="#8192a4" fill="none"/>${tickX.map(n=>`<path d="M${x(n)} ${bottom}v5" stroke="#8192a4"/><text class="ce-faint" x="${x(n)}" y="340" text-anchor="middle">${axisNumber(n)}</text>`).join('')}${tickY.map(n=>`<text class="ce-faint" x="77" y="${y(n)+4}" text-anchor="end">${axisNumber(n)}</text>`).join('')}<text x="402" y="367" text-anchor="middle">Bølgelengde (µm)</text><text class="ce-faint" x="24" y="215" text-anchor="middle" transform="rotate(-90 24 215)">MW m⁻² µm⁻¹</text>`,380);
+    $('#ce-axes-status').textContent=`${autoScale.checked?(moving?'Aksene tilpasses mykt. ':'Skalaen tilpasses automatisk. '):'Aksene er låst. '}${peakVisible?'':'Toppen er utenfor utsnittet. '}Endret akseskala betyr ikke samme utstrålte effekt. 1 µm = 1000 nm.`;
+    blackbodyDirty=false;
   }
   function spectra() {
     const z = +shift.value/1000, lines = lineSets[element.value];
@@ -141,14 +256,14 @@ function mountUniverse(root, api) {
     $('#ce-lines').innerHTML = ceSvg('Referanse og observert absorpsjonsspekter med valgfri rødforskyvning',`${gradient}<text class="ce-label" x="70" y="22">Referanse i laboratoriet</text><rect x="70" y="34" width="630" height="38" rx="6" fill="url(#ce-lines-gradient)"/>${lines.map(n=>`<path d="M${x(n)} 34v38" stroke="#183149" stroke-width="3"/>`).join('')}<text class="ce-label" x="70" y="101">Observert spekter</text><rect x="70" y="113" width="630" height="38" rx="6" fill="url(#ce-lines-gradient)"/>${lines.map(n=>`<path d="M${x(n*(1+z))} 113v38" stroke="#183149" stroke-width="3"/>`).join('')}${[350,400,500,600,700,800].map(n=>`<text class="ce-faint" x="${x(n)}" y="176" text-anchor="middle">${n}</text>`).join('')}<text x="390" y="202" text-anchor="middle">Bølgelengde (nm)</text>`,214);
     $('#ce-shift-value').textContent=fmt(z,3);
     const direction = z>0?'Rødforskyvning (lengre bølger)':z<0?'Blåforskyvning (kortere bølger)':'Ingen forskyvning';
-    $('#ce-lines-readout').innerHTML = `<strong>${direction}</strong> · Første linje: ${fmt(lines[0],1)} → ${fmt(lines[0]*(1+z),1)} nm. Samme grunnstoff.`;
+    $('#ce-lines-readout').innerHTML = ceReadoutRow('Forskyvning',direction)+ceReadoutRow('Første linje',`${fmt(lines[0],1)} nm → ${fmt(lines[0]*(1+z),1)} nm`)+ceReadoutRow('Grunnstoff',element.value==='hydrogen'?'Hydrogen':'Helium');
   }
   function expansion(t) {
     const a=+scale.value/10, positions=[[-66,-25],[-20,25],[34,-35],[68,19],[-47,47],[12,57],[0,0]], cx=380, cy=80;
     const wave = Array.from({length:501},(_,i)=>{const x=85+i*1.18; return `${i?'L':'M'}${x.toFixed(1)},${(210+11*Math.sin((x-85)/(17*a)-t*1.5)).toFixed(1)}`;}).join(' ');
     $('#ce-expansion').innerHTML=ceSvg('Skjematisk utvidelse mellom galaksegrupper og strekking av en lysbølge',`<text class="ce-faint" x="24" y="20">Galaksegrupper i et utsnitt av universet</text>${positions.map(([dx,dy],i)=>`<g transform="translate(${cx+dx*a} ${cy+dy*a*.45})"><ellipse rx="${i===6?9:7}" ry="4" fill="${i===6?'#dca65a':'#7096be'}" transform="rotate(${i*27})"/><circle r="2" fill="#f1d7a7"/></g>`).join('')}<path d="M${cx} ${cy}L${cx+68*a} ${cy+19*a*.45}" stroke="#89a0b8" stroke-dasharray="3 4"/><text x="730" y="43" text-anchor="end">Relativ avstand: ${fmt(a,1)}</text><text class="ce-label" x="85" y="184">Lysbølge på reise</text><path d="${wave}" fill="none" stroke="#bd7a6d" stroke-width="2.7"/><text class="ce-faint" x="85" y="242">Start: 500 nm</text><text class="ce-faint" x="675" y="242" text-anchor="end">Nå: ${fmt(500*a)} nm</text>`,253);
     $('#ce-scale-value').textContent=`${fmt(a,1)} ×`;
-    $('#ce-expansion-readout').innerHTML=`Avstand: <strong>${fmt(a,1)} ×</strong> · Lysbølge: 500 → <strong>${fmt(500*a)} nm</strong>. Begge følger skalafaktoren.`;
+    $('#ce-expansion-readout').innerHTML=ceReadoutRow('Relativ avstand',`${fmt(a,1)} × startavstanden`)+ceReadoutRow('Lysbølgens bølgelengde',`500 nm → ${fmt(500*a)} nm`);
   }
   const epochs=[
     ['Første minutter','Universet er varmt og tett, men kjøles under utvidelsen. Protoner og nøytroner bindes til lette atomkjerner, særlig helium. Hydrogenkjerner finnes også. Elektronene er ennå ikke bundet i nøytrale atomer.'],
@@ -159,8 +274,16 @@ function mountUniverse(root, api) {
   ];
   const updateEpoch=i=>{$('#ce-epoch-description').innerHTML=`<strong>${epochs[i][0]}</strong><p>${epochs[i][1]}</p>`;$('#ce-epochs').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.ceEpoch===i)));};
   $('#ce-epochs').addEventListener('click',e=>{const b=e.target.closest('[data-ce-epoch]');if(b)updateEpoch(+b.dataset.ceEpoch);});
-  [temp,shift,element,scale].forEach(el=>el.addEventListener('input',()=>{blackbody();spectra();api.repaint();}));
-  blackbody();spectra();updateEpoch(0);api.onFrame(expansion);
+  temp.addEventListener('input',()=>{preset.value=['288','310','2800','5800','9900','15000'].includes(temp.value)?temp.value:'';updateBlackbodyTarget();api.repaint();});
+  preset.addEventListener('change',()=>{if(preset.value){temp.value=preset.value;updateBlackbodyTarget();api.repaint();}});
+  autoScale.addEventListener('change',()=>{if(autoScale.checked)updateBlackbodyTarget(true);else{axesTarget={...axes};blackbodyDirty=true;}api.repaint();});
+  const zoom=factor=>{autoScale.checked=false;axesTarget={xMax:Math.max(.05,Math.min(500,axes.xMax*factor)),yMax:Math.max(1e-9,Math.min(1e7,axes.yMax*factor))};blackbodyDirty=true;api.repaint();};
+  $('#ce-bb-zoom-in').addEventListener('click',()=>zoom(.5));
+  $('#ce-bb-zoom-out').addEventListener('click',()=>zoom(2));
+  $('#ce-bb-fit').addEventListener('click',()=>{autoScale.checked=true;updateBlackbodyTarget(true);api.repaint();});
+  [shift,element].forEach(el=>el.addEventListener('input',spectra));
+  scale.addEventListener('input',()=>api.repaint());
+  updateBlackbodyTarget();spectra();updateEpoch(0);api.onFrame(blackbody);api.onFrame(expansion);
 }
 
 function mountAtmosphere(root,api){
@@ -177,7 +300,7 @@ function mountAtmosphere(root,api){
     $('#ce-ozone-value').textContent=oz>.8?'Vanlig mengde':oz>.3?'Redusert mengde':'Sterkt redusert mengde';
     $('#ce-greenhouse-value').textContent=gh>.7?'Høy':gh>.3?'Middels':'Lav';
     const uvText=kind==='UVA'?'Det meste av UVA passerer ozonlaget.':kind==='UVC'?'UVC filtreres av oksygen og ozon.':oz>.7?'Mye UVB absorberes av ozonlaget.':'Mindre ozon → mer UVB gjennom.';
-    $('#ce-pathways-readout').innerHTML=`<strong>${uvText}</strong> Mer IR-absorpsjon → mer IR også tilbake mot bakken.`;
+    $('#ce-pathways-readout').innerHTML=ceReadoutRow(kind,uvText)+ceReadoutRow('Infrarød stråling','Mer absorpsjon → mer IR også tilbake mot bakken.');
   }
   function budget(){
     const a=+albedo.value/100,out=+outgoing.value,absorbed=340*(1-a),reflected=340*a,net=absorbed-out;
@@ -186,7 +309,7 @@ function mountAtmosphere(root,api){
     $('#ce-albedo-value').textContent=`${fmt(a*100)} %`;
     $('#ce-outgoing-value').textContent=`${fmt(out)} W/m²`;
     const state=Math.abs(net)<.1?'Balanse: ingen netto energiendring.':net>0?'Energioverskudd → oppvarming.':'Energiunderskudd → avkjøling.';
-    $('#ce-budget-readout').innerHTML=`Netto: <strong>${net>0?'+':''}${fmt(net)} W/m²</strong>. ${state}`;
+    $('#ce-budget-readout').innerHTML=ceReadoutRow('Netto energistrøm',`${net>0?'+':''}${fmt(net)} W m<sup>−2</sup>`)+ceReadoutRow('Temperaturutvikling',state);
   }
   [uv,ozone,greenhouse,albedo,outgoing].forEach(el=>el.addEventListener('input',()=>{budget();api.repaint();}));
   budget();api.onFrame(pathways);

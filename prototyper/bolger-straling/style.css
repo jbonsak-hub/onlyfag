@@ -131,5 +131,27 @@ body.dark{color-scheme:dark;--bg:#12251f;--surface:#1a3028;--sidebar:#152a22;--i
 @media(min-width:801px) and (max-width:1100px){.topic-page .model.model--split{grid-template-columns:minmax(0,1fr) 190px;gap:12px;padding:12px}.topic-page .model--split .model-panel{padding-left:12px}}
 @media(max-width:1100px){.topic-page .model.model--split{grid-template-columns:minmax(0,1fr);gap:12px;padding:12px}.topic-page .model--split .model-panel{border-left:0;border-top:1px solid var(--line);padding:12px 0 0}.topic-page .model-panel .controls,.topic-page .model-panel .wb-controls,.topic-page .model-panel .wb-controls.wb-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.topic-page .model-panel .wv-buttons,.topic-page .model-panel .wb-mode-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}.topic-page .model-panel .ema-values{grid-template-columns:repeat(3,minmax(0,1fr))}.topic-page .model-panel .ema-region-buttons{grid-template-columns:repeat(3,minmax(0,1fr))}.topic-page .model-panel .readout{font-size:12px}.topic-page .model-footer{grid-column:1}}
 @media print{.topic-page .model.model--split{display:block}.topic-page .model-panel{border:0;padding:10px 0}}
+/* Definitions are a reading list; calculations have real fractions and aligned equals. */
+.topic-page .concept-grid,.topic-page .concept-grid:has(>.concept:nth-child(3):last-child),.terms-list{display:block}
+.topic-page .concept{background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;box-shadow:none;padding:12px 0}
+.topic-page .concept h3,.topic-page .concept h4{margin:0 0 4px;font-size:14px}
+.topic-page .concept p{font-size:12px;line-height:1.7;margin:0}
+.term{display:grid;grid-template-columns:170px minmax(0,1fr);gap:18px;background:none;border-radius:0;padding:13px 0}
+.term dt{margin:0}.term dd{line-height:1.7}
+.frac,.mathfrac{display:inline-flex;flex-direction:column;align-items:stretch;vertical-align:middle;text-align:center;line-height:1.25;margin:0 .18em;white-space:nowrap}
+.frac>.num,.mathfrac>.num{display:block;padding:0 .2em .14em;border-bottom:1px solid currentColor}
+.frac>.den,.mathfrac>.den{display:block;padding:.14em .2em 0}
+.calc-lines,.alignedcalc{display:table;border-collapse:separate;border-spacing:0 6px;margin:6px 0;line-height:1.7;font-variant-numeric:tabular-nums}
+.calc-row{display:table-row}.calc-lhs{display:table-cell;text-align:right;vertical-align:middle;white-space:nowrap;padding-right:8px}
+.calc-eq,.calc-equals{display:table-cell;text-align:center;vertical-align:middle;padding-right:9px}
+.calc-rhs{display:table-cell;vertical-align:middle;overflow-wrap:anywhere}
+.topic-page .model-panel .readout>div,.topic-page .model-panel .readout>p,.topic-page .model-panel .ema-atom-readout>div,.topic-page .model-panel .ema-signal-result>div{display:block;margin:4px 0}
+.topic-page .model-panel .readout .calc-lines{display:table;margin:0}
+.topic-page .model-panel .readout .calc-row{display:table-row;margin:0}
+.topic-page .model--split .model-visual canvas{display:block;width:100%;height:auto;max-width:100%;border-radius:10px}
+.topic-page .wb-example>summary{list-style:disclosure-closed}.topic-page .wb-example[open]>summary{list-style:disclosure-open}
+.topic-page .model-visual .ema-rgb-screen{height:auto;min-height:0;max-height:none;overflow:visible;aspect-ratio:auto}
+.topic-page .model--split .ema-rgb-screen svg{width:100%;height:auto;min-height:0;max-height:none;overflow:visible}
+@media(max-width:600px){.term{grid-template-columns:1fr;gap:3px}.calc-lines,.alignedcalc{font-size:12px}.calc-lhs{padding-right:6px}.calc-eq,.calc-equals{padding-right:6px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}.topic-card:hover{transform:none}}
 @media print{.sidebar,.topbar,.viewbar,.section-links,.site-footer,.q-actions,.q-bookmark,.filterbar,.next-topic,.animation-tools,.resource-box,dialog{display:none!important}.workspace{margin:0}main{padding:0;max-width:none}.model,.concept,.q-card{box-shadow:none;break-inside:avoid}.q-answer[hidden]{display:block!important}.q-open{min-height:50px}body{--bg:white;--surface:white;--ink:#111;--muted:#444;--line:#bbb;--green:#19452b;--green-soft:#f4f4f4}.content-section{margin-bottom:20px}.hero{grid-template-columns:1fr 1fr}h1{font-size:25px}.topic-grid{grid-template-columns:repeat(3,1fr)}}

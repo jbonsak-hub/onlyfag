@@ -87,3 +87,17 @@ Jack ønsket tydelige diagrammer nærmere den første versjonen, med litt mindre
 Bølgegrunnlaget er igjen inndelt i egne deler for bølgeegenskaper, tvers/langs, stående bølger og resonans. Bare tvers- og langsbølge deler en velger med to knapper. Lyd og vann er hvert sitt åpne/lukke-eksempel under bølgetypene, med egne figurer og uavhengige kontroller. Stående bølge og huske har hver sin figur. Alle 123 oppgaveidentiteter og eksisterende faglige forbedringer, inkludert ionisering og to justerbare interferensbølgelengder, er beholdt.
 
 Kontrollert etter publisering: figuren og kontrollkolonnen ligger side om side i alle ni undertemaer på desktop, og kontrollene fungerer etter flyttingen. Lyd og vann kan åpnes uavhengig uten å bytte den opprinnelige bølgetypen. Antall buker styres i egen stående-bølgefigur. Ved 390 px legges betjening under, uten horisontal overflyt. Ingen JavaScript-feil er registrert. Datatesten kontrollerer de separate modellene, de 123 oppgavene, de 24 regnesvarene og ioniseringsterskelen.
+
+
+## Visuell og faglig omarbeiding, 14. november 2026
+
+Denne revisjonen erstatter modellvalgene og størrelsesbegrensningene beskrevet i de to foregående historiske avsnittene. Begrepene står som lister, seksjonslenkene øverst og neste-undertema-boksene er fjernet. Regnesvarene presenteres med brøkstreker og likhetstegn under hverandre gjennom en egen presentasjonsmodul; oppgavenes verdier og identiteter er beholdt.
+
+- Bølgegrunnlaget har amplitude, uavhengig bølgelengde og bølgefart. Frekvensen avledes som v/λ. Endring av fart endrer faseutviklingen, ikke bølgelengden. Lyd og vann er fortsatt egne eksempler under tvers/langs. Resonans ligger bare under bølgefenomener.
+- Bølgefenomener viser fast bølgelengde og justerbar fase for konstruktiv/destruktiv interferens, et sammenhengende bølgefelt bak en spalte, en drevet huske og Dopplereffekt med ambulanse og personer. Regnbue og prisme er selvstendige Snell-baserte illustrasjoner; originale PhET-bilder eller animasjoner er ikke kopiert.
+- EM-spekteret oppgir egnede prefikser og standardform; fotonenergi i joule. Formeloversikten har større regneeksempel. RGB-figuren er ikke beskåret. Trådløs kommunikasjon har figurer for signalvei og nettverk/radioveier.
+- atom-lab.js knytter atom og energinivådiagram sammen. Overganger mellom n=1–6 viser absorpsjon/emisjon og UV/synlig/IR. Eksitasjon med ett foton krever passende energi. Én atoms kaskade skilles eksplisitt fra alle mulige linjer for mange atomer.
+- Stjernetemaet starter med absolutt Planck-spekter Mλ=πBλ, termisk effekt σT⁴ og automatisk tilpassing av begge akser. Kurven er ikke normalisert; aksenes tall endres. Visuelt glødelys bruker en fast komprimering av lysstyrkeområdet.
+- isotope-data.js inneholder et avgrenset, kildebelagt utvalg med 44 stabile og 7 radioaktive nuklider. Ukjente kombinasjoner klassifiseres ikke som stabile. Henfallsknappen følger foretrukket gren til datter, og radioaktive kjerner rister skjematisk. Eget nuklidekart og PhETs dateringsspill er lenket.
+
+De nye modellene er opprinnelige SVG-/canvas-illustrasjoner med oppgitte forenklinger. Atomfiguren viser energinivåmarkører, ikke klassiske elektronbaner. Risting er en visuell markør for radioaktivitet og angir ikke et forvarsel om fysisk henfall.
