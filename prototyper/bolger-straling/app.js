@@ -1,8 +1,8 @@
-import {topics as waveTopics} from './waves.js?v=20261114-compact2';
-import {topics as basicTopics} from './wave-basics.js?v=20261114-compact2';
-import {topics as emTopics} from './em-atoms.js?v=20261114-compact2';
-import {topics as radioTopics} from './radioactivity.js?v=20261114-compact2';
-import {topics as cosmosTopics} from './cosmos-environment.js?v=20261114-compact2';
+import {topics as waveTopics} from './waves.js?v=20261114-side-controls1';
+import {topics as basicTopics} from './wave-basics.js?v=20261114-side-controls1';
+import {topics as emTopics} from './em-atoms.js?v=20261114-side-controls1';
+import {topics as radioTopics} from './radioactivity.js?v=20261114-side-controls1';
+import {topics as cosmosTopics} from './cosmos-environment.js?v=20261114-side-controls1';
 
 const order=['bolger','fenomener','em','atomer','universet','kommunikasjon','radioaktivitet','stralevern','atmosfaeren'];
 const topics=[...basicTopics,...waveTopics,...emTopics,...radioTopics,...cosmosTopics].sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id));
@@ -66,12 +66,32 @@ function renderOverview(){
  content.innerHTML=`<div class="hero"><div><p class="eyebrow">NATURFAG · UTFORSK SAMMENHENGENE</p><h1>Bølger og<br>stråling</h1><p>Fra en tone i lufta til lyset fra en fjern stjerne. Se hva som skjer, endre én ting og sett ord på sammenhengen.</p><div class="hero-buttons"><button data-route="bolger/fagstoff">Begynn med bølger <span aria-hidden="true">→</span></button><button class="secondary" data-route="alle/oppgaver">Åpne oppgavebanken</button></div></div>${heroArt()}</div><div class="overview-heading"><h2>Velg et undertema</h2><span>9 temaer · ${allQuestions.length} oppgaver</span></div><div class="topic-grid">${topics.map(t=>`<a class="topic-card" href="#${t.id}/fagstoff"><div class="card-icon-row">${icon(t.id)}<span>${escapeHtml(t.kicker)}</span></div><h3>${escapeHtml(t.title)}</h3><p>${escapeHtml(t.summary)}</p><div class="card-bottom"><span>Fagstoff + ${t.questions.length} oppgaver</span><span aria-hidden="true">↗</span></div></a>`).join('')}</div>`;
  api.onFrame(t=>{const p=$('#hero-wave');if(p){p.setAttribute('d',Array.from({length:171},(_,i)=>`${i?'L':'M'}${28+i} ${153+29*Math.sin(i*.082-t*1.3)}`).join(' '));const e=$('#hero-electron');e.setAttribute('cx',String(37*Math.cos(t*.6)));e.setAttribute('cy',String(13*Math.sin(t*.6)));}});
 }
+function arrangeModels(root){
+ for(const model of root.querySelectorAll('.model')){
+  if(model.classList.contains('model--split'))continue;
+  const children=[...model.children];
+  const figures=children.filter(el=>el.tagName==='svg'||el.tagName==='SVG'||el.querySelector('svg'));
+  if(!figures.length)continue;
+  const visual=document.createElement('div');visual.className='model-visual';
+  const panel=document.createElement('aside');panel.className='model-panel';panel.setAttribute('aria-label','Kontroller og avlesning');
+  const footer=document.createElement('div');footer.className='model-footer';
+  for(const el of children){
+   if(figures.includes(el)||el.tagName==='H3'||el.tagName==='H4')visual.append(el);
+   else if(el.tagName==='DETAILS'||el.classList.contains('model-note')||el.classList.contains('wb-caption'))footer.append(el);
+   else if(el.querySelector('input,select,button,textarea')||el.matches('.readout,.ema-values,.ema-atom-readout,.ema-signal-result,.ra-equation,.ra-status,.sv-status,[aria-live],.ema-spectrum-callout'))panel.append(el);
+   else footer.append(el);
+  }
+  if(!panel.children.length){for(const el of [...visual.children,...footer.children])model.append(el);continue;}
+  model.classList.add('model--split');model.append(visual,panel);if(footer.children.length)model.append(footer);
+ }
+}
 function renderTopic(){
  const t=byId.get(route.id),all=route.id==='alle';
  content.innerHTML=`<div class="page-head"><h1>${all?'Alle oppgaver':escapeHtml(t.title)}</h1></div><div class="viewbar"><div class="view-tabs" aria-label="Velg innhold">${(all?[['oppgaver','Oppgavebank']]:[['fagstoff','Fagstoff'],['oppgaver','Oppgavebank'],['begreper','Begreper']]).map(([view,label])=>`<button class="view-tab ${route.view===view?'active':''}" data-route="${route.id}/${view}" aria-pressed="${route.view===view}">${label}${view==='oppgaver'?` <span>(${all?allQuestions.length:t.questions.length})</span>`:''}</button>`).join('')}</div></div><div id="topic-content"></div>`;
  if(route.view==='fagstoff'){
    $('#topic-content').innerHTML=`<nav class="section-links" aria-label="På denne siden">${t.sections.map((s,i)=>`<a href="#section-${t.id}-${i}" data-section="section-${t.id}-${i}">${escapeHtml(s.title)}</a>`).join('')}</nav>${t.sections.map((s,i)=>`<section class="content-section" id="section-${t.id}-${i}"><h2><span class="section-index" aria-hidden="true">${i+1}</span>${escapeHtml(s.title)}</h2>${s.body}</section>`).join('')}${resourceHtml(t)}${nextHtml(t)}`;
    if(t.mount)cleanup=t.mount($('#topic-content'),api);
+   arrangeModels($('#topic-content'));
  }else if(route.view==='begreper'){
    $('#topic-content').innerHTML=`<p class="question-summary">Begrepene du trenger for å forklare sammenhengene.</p><dl class="terms-list">${t.terms.map(term=>`<div class="term"><dt>${escapeHtml(term.term)}</dt><dd>${term.definition}</dd></div>`).join('')}</dl>${resourceHtml(t)}`;
  }else renderBank();

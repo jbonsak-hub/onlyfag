@@ -1,5 +1,7 @@
 # Module contract
 
+Layout refinement: keep separate teaching models separate. Only transverse/longitudinal share their original two-option selector; sound and water are independently expandable examples, and standing waves/resonance have their own figures. Root `arrangeModels` moves existing diagram nodes and controls into `.model-visual`, `.model-panel` and `.model-footer` after mount; preserve IDs and do not assume controls remain direct children. On desktop, drawings keep their natural aspect ratio and readable height, with controls on the right. Do not shrink every SVG with a low global height cap.
+
 Each content file is an ES module exporting `topics`, an array of topic objects. Only edit the file assigned to you.
 
 Topic: `{id, title, kicker, summary, sections:[{title,body}], terms:[{term,definition}], questions:[...], resources:[{label,url}], mount(root,api)}`.

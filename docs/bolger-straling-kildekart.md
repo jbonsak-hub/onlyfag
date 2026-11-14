@@ -79,3 +79,9 @@ Primærressurser: NASA om EM-spekter, stjerner og universet; DSA om stråling, d
 - De opprinnelige 123 oppgavene og identitetene deres er beholdt. Datatesten kontrollerer også bølgesummer, bøyningsgeometri, alle seks bølgemoduser og ioniseringsterskelen.
 
 Publisert kompaktversjon er kontrollert i nettleser. Ved 1366 × 768 ligger hele første bølgemodell innenfor skjermen (bunn ca. 741 px), med alle tre glidere innenfor 666 px. Alle modellrammer er kontrollert ved 900 × 650 (maksimal høyde ca. 471 px), og alle ni fagstoffsider uten horisontal overflyt ved 390 px. Alle seks bølgemoduser, interferensforvalgene og endring av bølgelengde er kjørt. Fotoionisering viser bundet elektron ved 2 eV og H⁺/fritt elektron ved 30 eV; datatesten kontrollerer også nøyaktig terskel. Ingen JavaScript-feil ble registrert. Ny visuell kontroll av bølgegrunnlag, interferens, bøyning, lyd og ionisering er utført.
+
+## Korrigering: lesbare figurer med kontroller til høyre
+
+Jack ønsket tydelige diagrammer nærmere den første versjonen, med litt mindre horisontal bredde og betjening i den frigjorte plassen. Den lave høydebegrensningen fra kompaktversjonen brukes derfor ikke lenger på modellfigurene. `arrangeModels` i app.js samler figurer til venstre og eksisterende kontroller/avlesninger i en høyrekolonne, uten å bytte ut elementene eller deres hendelser. Ved smalere visning legges kontrollene under for å bevare lesbar figur.
+
+Bølgegrunnlaget er igjen inndelt i egne deler for bølgeegenskaper, tvers/langs, stående bølger og resonans. Bare tvers- og langsbølge deler en velger med to knapper. Lyd og vann er hvert sitt åpne/lukke-eksempel under bølgetypene, med egne figurer og uavhengige kontroller. Stående bølge og huske har hver sin figur. Alle 123 oppgaveidentiteter og eksisterende faglige forbedringer, inkludert ionisering og to justerbare interferensbølgelengder, er beholdt.
