@@ -65,4 +65,6 @@ Inngangssiden og `bolger-straling/app.js` eier navigasjon, animasjonsklokke og o
 
 Kjør `node tests/bolger-straling.cjs --data-only` for dataintegritet og uavhengig kontroll av 24 regnesvar. Nettlesertesten kjører samme fil uten flagg, med `PLAYWRIGHT_MODULE` og eventuelt `BROWSER_EXECUTABLE`. Lokal nettleserstart var blokkert av Windows-miljøet ved opprettelsen; visuell test skal ikke rapporteres som bestått uten faktisk gjennomkjøring.
 
+Etter publisering ble faktisk nettleserkontroll gjennomført på `https://onlyfag.no/prototyper/bolger-straling.html`: alle 27 kombinasjoner av tema/visning ble åpnet, samtlige fagstoff- og oppgavesider passet i 390 px bredde, og alle fagstoffsider passet i 320 px. Det ble kontrollert at modellvalg og glidere oppdaterer figurene, at riktige flervalgs- og desimalsvar gir tilbakemelding, og at mestring, bokmerker og tekstutkast overlever ny innlasting. Skipplenken bevarer valgt tema; mobilmeny åpner/lukker. Skjermbilder av hovedside, mobilside og refleksjonsmodell i mørk visning ble inspisert. Ingen JavaScript-feil ble registrert. Dette supplerer datatesten; den lokale Playwright-testen var fortsatt blokkert før nettleserstart.
+
 Primærressurser: NASA om EM-spekter, stjerner og universet; DSA om stråling, dose og radon; WHO om UV; PhET for videre utforsking. Lenkene står under hvert tema.
