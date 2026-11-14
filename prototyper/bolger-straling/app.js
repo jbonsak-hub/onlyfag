@@ -1,7 +1,7 @@
 import {solutionHtml} from './math-presentation.js?v=20261114-visual-physics3';
-import {topics as waveTopics} from './waves.js?v=20261114-visual-physics3a';
-import {topics as basicTopics} from './wave-basics.js?v=20261114-visual-physics3';
-import {topics as emTopics} from './em-atoms.js?v=20261114-visual-physics3';
+import {topics as waveTopics} from './waves.js?v=20261114-visual-physics3b';
+import {topics as basicTopics} from './wave-basics.js?v=20261114-visual-physics3b';
+import {topics as emTopics} from './em-atoms.js?v=20261114-visual-physics3b';
 import {topics as radioTopics} from './radioactivity.js?v=20261114-visual-physics3';
 import {topics as cosmosTopics} from './cosmos-environment.js?v=20261114-visual-physics3';
 
@@ -71,7 +71,7 @@ function arrangeModels(root){
  for(const model of root.querySelectorAll('.model')){
   if(model.classList.contains('model--split'))continue;
   const children=[...model.children];
-  const figures=children.filter(el=>el.tagName.toLowerCase()==='svg'||el.tagName==='CANVAS'||el.querySelector('svg,canvas')||el.hasAttribute('data-model-visual'));
+  const figures=children.filter(el=>el.tagName.toLowerCase()==='svg'||el.tagName==='CANVAS'||el.querySelector('svg,canvas')||el.hasAttribute('data-model-visual')||el.classList.contains('ra-builder-head'));
   if(!figures.length)continue;
   const visual=document.createElement('div');visual.className='model-visual';
   const panel=document.createElement('aside');panel.className='model-panel';panel.setAttribute('aria-label','Kontroller og avlesning');

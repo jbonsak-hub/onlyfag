@@ -155,3 +155,5 @@ body.dark{color-scheme:dark;--bg:#12251f;--surface:#1a3028;--sidebar:#152a22;--i
 @media(max-width:600px){.term{grid-template-columns:1fr;gap:3px}.calc-lines,.alignedcalc{font-size:12px}.calc-lhs{padding-right:6px}.calc-eq,.calc-equals{padding-right:6px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}.topic-card:hover{transform:none}}
 @media print{.sidebar,.topbar,.viewbar,.section-links,.site-footer,.q-actions,.q-bookmark,.filterbar,.next-topic,.animation-tools,.resource-box,dialog{display:none!important}.workspace{margin:0}main{padding:0;max-width:none}.model,.concept,.q-card{box-shadow:none;break-inside:avoid}.q-answer[hidden]{display:block!important}.q-open{min-height:50px}body{--bg:white;--surface:white;--ink:#111;--muted:#444;--line:#bbb;--green:#19452b;--green-soft:#f4f4f4}.content-section{margin-bottom:20px}.hero{grid-template-columns:1fr 1fr}h1{font-size:25px}.topic-grid{grid-template-columns:repeat(3,1fr)}}
+
+.topic-page .wb-relations .wb-calculation{margin:6px 0 0;border-top:1px solid var(--line);padding-top:7px}

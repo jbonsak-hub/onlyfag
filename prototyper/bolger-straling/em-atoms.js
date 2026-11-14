@@ -149,9 +149,9 @@ function mountIonization(root,api){
     q('#ema-ion-plot').setAttribute('data-state',ionized?'ionized':interacted?'bound':fired?'flight':'neutral');
     q('#ema-ion-energy-value').textContent=fmt(result.energy,1)+' eV';
     const wavelength=`λ ≈ ${fmt(result.wavelength,1)} nm`;
-    if(!fired)q('#ema-ion-readout').innerHTML=`<strong>Valgt foton: ${fmt(result.energy,1)} eV</strong> · ${wavelength}. Trykk «Send foton».`;
-    else if(result.ionizes)q('#ema-ion-readout').innerHTML=`<strong>Fotonet kan ionisere:</strong> ${fmt(result.energy,1)} eV ≥ 13,6 eV. Ved absorpsjon frigjøres elektronet; <strong>E<sub>k</sub> = ${fmt(result.energy,1)} − 13,6 = ${fmt(result.kinetic,1)} eV</strong>. ${wavelength}.`;
-    else q('#ema-ion-readout').innerHTML=`<strong>Ingen ionisering:</strong> ${fmt(result.energy,1)} eV &lt; 13,6 eV. Elektronet kan ikke frigjøres av dette ene fotonet. ${wavelength}.`;
+    if(!fired)q('#ema-ion-readout').innerHTML=`<div><strong>Valgt foton: ${fmt(result.energy,1)} eV</strong></div><div>${wavelength}.</div><div>Trykk «Send foton».</div>`;
+    else if(result.ionizes)q('#ema-ion-readout').innerHTML=`<div><strong>Fotonet kan ionisere.</strong></div><div>${fmt(result.energy,1)} eV ≥ 13,6 eV.</div><div>Ved absorpsjon frigjøres elektronet.</div><div class="calc-lines"><div class="calc-row"><span class="calc-lhs">E<sub>k</sub></span><span class="calc-eq">=</span><span class="calc-rhs">E<sub>foton</sub> − E<sub>binding</sub></span></div><div class="calc-row"><span class="calc-lhs"></span><span class="calc-eq">=</span><span class="calc-rhs">${fmt(result.energy,1)} eV − 13,6 eV</span></div><div class="calc-row"><span class="calc-lhs"></span><span class="calc-eq">=</span><span class="calc-rhs"><strong>${fmt(result.kinetic,1)} eV</strong></span></div></div><div>${wavelength}.</div>`;
+    else q('#ema-ion-readout').innerHTML=`<div><strong>Ingen ionisering.</strong></div><div>${fmt(result.energy,1)} eV &lt; 13,6 eV.</div><div>Elektronet kan ikke frigjøres av dette ene fotonet.</div><div>${wavelength}.</div>`;
   }
   energyControl.addEventListener('input',()=>{fired=false;render(currentTime);});
   q('#ema-ion-send').addEventListener('click',()=>{fired=true;launchedAt=currentTime;render(currentTime);});
