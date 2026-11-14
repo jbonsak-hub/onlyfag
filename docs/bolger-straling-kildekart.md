@@ -16,7 +16,7 @@ Plassering: `/prototyper/bolger-straling.html`. Behold siden under prototyper ti
 | Stråling og strålevern | Skjerming, feltavbøyning, dose, bakgrunn/radon, bruk, fisjon/fusjon | 17 |
 | UV, ozon og klima | UV-typer, ozon, drivhus, albedo, energibalanse | 14 |
 
-Totalt 123 oppgaver. Flervalg, tallkontroll og åpne forklaringer med veiledende svar. Oppgavevalg, egenvurdering, bokmerker og tekstutkast lagres lokalt. Flervalgsrekkefølge blandes deterministisk per oppgave. Modeller kjøres bare for aktivt tema, stopper i skjulte faner, har pause/fart og tar hensyn til redusert bevegelse.
+Totalt 123 oppgaver. Flervalg, tallkontroll og åpne forklaringer med veiledende svar. Oppgavevalg, egenvurdering, bokmerker og tekstutkast lagres lokalt. Flervalgsrekkefølge blandes deterministisk per oppgave. Modeller kjøres bare for aktivt tema, stopper i skjulte faner og tar hensyn til redusert bevegelse.
 
 ## Gjennomgåtte undervisningskilder
 
@@ -68,3 +68,12 @@ Kjør `node tests/bolger-straling.cjs --data-only` for dataintegritet og uavheng
 Etter publisering ble faktisk nettleserkontroll gjennomført på `https://onlyfag.no/prototyper/bolger-straling.html`: alle 27 kombinasjoner av tema/visning ble åpnet, samtlige fagstoff- og oppgavesider passet i 390 px bredde, og alle fagstoffsider passet i 320 px. Det ble kontrollert at modellvalg og glidere oppdaterer figurene, at riktige flervalgs- og desimalsvar gir tilbakemelding, og at mestring, bokmerker og tekstutkast overlever ny innlasting. Skipplenken bevarer valgt tema; mobilmeny åpner/lukker. Skjermbilder av hovedside, mobilside og refleksjonsmodell i mørk visning ble inspisert. Ingen JavaScript-feil ble registrert. Dette supplerer datatesten; den lokale Playwright-testen var fortsatt blokkert før nettleserstart.
 
 Primærressurser: NASA om EM-spekter, stjerner og universet; DSA om stråling, dose og radon; WHO om UV; PhET for videre utforsking. Lenkene står under hvert tema.
+
+## Kompakt visning og nye modeller, 14. november 2026
+
+- Temasider har bare hovedtittel; de ekstra overskriftslinjene og ingressene er fjernet. Animasjonsfart og pauseknapp er fjernet etter ønske. Nettleserens preferanse for redusert bevegelse respekteres fortsatt.
+- Diagrammer har kortere viewBox og strammere geometri, begrenset visningshøyde og samlede kontroller. Lange modellmerknader og det store kjernefeltet i halveringsmodellen ligger i åpne/lukke-felt. Temafaner følger med ved rulling.
+- `wave-basics.js` eier bølgegrunnlaget. Begreper står i rader ved siden av formler, forklaring og regneeksempel. Modusvelgeren viser tversbølge, langsbølge, stående bølge, drevet/dempet huske, lyd fra membran til trommehinne og vannpartikkelbaner som avtar med dybden.
+- `waves.js` eier bølgefenomener. Interferens har to uavhengige bølgelengder, startfase og tydelige enkeltbølger/sum. Med felles fart gir ulike bølgelengder ulike frekvenser og svevning. Bøyning har sammenhengende fronter med adskilte klippeområder ved spalten; figuren er en kvalitativ Huygens-modell.
+- Nederst i atomtemaet finnes en modell av fotoionisering av hydrogen i grunntilstanden. Velg fotonenergi og send fotonet. Ionisering krever minst 13,6 eV; overskuddet vises som kinetisk energi. Andre eksitasjons-/spredningsprosesser og absorpsjonssannsynlighet er avgrenset eksplisitt.
+- De opprinnelige 123 oppgavene og identitetene deres er beholdt. Datatesten kontrollerer også bølgesummer, bøyningsgeometri, alle seks bølgemoduser og ioniseringsterskelen.

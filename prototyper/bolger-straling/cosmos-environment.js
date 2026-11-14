@@ -2,13 +2,18 @@ const ceSvg = (label, contents, height = 300) => `<svg viewBox="0 0 760 ${height
 
 const ceStyles = `<style>
 .ce-widget svg{display:block;width:100%;height:auto;overflow:visible;background:var(--bg,#f6f8fb);border-radius:14px}
-.ce-widget svg text{font-family:inherit;fill:var(--ink,#172b43);font-size:13px}
+.ce-widget svg text{font-family:inherit;fill:var(--ink,#172b43);font-size:15px}
 .ce-widget svg .ce-axis{stroke:#8b9aac;stroke-width:1}
-.ce-widget svg .ce-faint{fill:var(--muted,#5d6e81);font-size:11px}
-.ce-widget svg .ce-label{font-size:14px;font-weight:650}
+.ce-widget svg .ce-faint{fill:var(--muted,#5d6e81);font-size:13px}
+.ce-widget svg .ce-label{font-size:16px;font-weight:650}
 .ce-widget .ce-value{font-weight:700;color:var(--green,#3369a4)}
 .ce-widget .readout{display:block}
-.ce-widget .controls{margin-top:1rem}
+.ce-widget .controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));align-items:end;gap:8px 16px;margin:8px 0;padding:8px 0}
+.ce-widget .controls>.control{display:flex;flex-wrap:wrap;align-items:center;gap:3px 6px;min-width:0;max-width:none}
+.ce-widget .control input,.ce-widget .control select{flex-basis:100%;margin:2px 0}
+.ce-model-details{margin-top:8px;color:var(--muted,#5d6e81);font-size:11px}
+.ce-model-details summary{cursor:pointer;width:fit-content;color:var(--green,#3369a4)}
+.ce-model-details .model-note{margin:7px 0 0}
 .ce-choice-row{display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0}
 .ce-choice-row button{font:inherit;padding:.5rem .75rem;border:1px solid var(--line,#bacbd9);border-radius:9px;background:transparent;color:inherit;cursor:pointer}
 .ce-choice-row button[aria-pressed="true"]{background:var(--green-soft,#e0edf8);border-color:var(--green,#4f81ad);color:var(--green,#183b62)}
@@ -21,8 +26,20 @@ const ceStyles = `<style>
 .ce-life h4{margin:0 0 .5rem}
 .ce-life p{margin:.35rem 0}
 .ce-keyline{font-size:1.05rem;margin:.75rem 0}
-@media(max-width:600px){.ce-life,.ce-star-stages{grid-template-columns:1fr}.ce-widget svg text{font-size:14px}}
+@media(max-width:600px){.ce-life,.ce-star-stages{grid-template-columns:1fr}.ce-widget svg text{font-size:16px}.ce-widget svg .ce-faint{font-size:14px}}
 </style>`;
+
+// Keep model assumptions available without pushing the controls off screen.
+const ceCompactSections = sections => sections.map(section => ({
+  ...section,
+  body: section.body.replace(/<p class="model-note">((?:Kurvene|Noen utvalgte|Skjematisk utsnitt|Skjematisk modell|Hele jorda)[\s\S]*?)<\/p>/g, (_, text) => {
+    const summary = text.startsWith('Kurvene') ? 'Normalisert kurve · om modellen'
+      : text.startsWith('Noen utvalgte') ? 'Om spektrallinjene og forskyvningen'
+      : text.startsWith('Skjematisk utsnitt') ? 'Forenklinger i universmodellen'
+      : text.startsWith('Hele jorda') ? 'Om energimodellen' : 'Skjematisk modell · forutsetninger';
+    return `<details class="ce-model-details"><summary>${summary}</summary><p class="model-note">${text}</p></details>`;
+  })
+}));
 
 const universeSections = [
   {
@@ -110,28 +127,28 @@ function mountUniverse(root, api) {
     const planck = nm => 1/(Math.pow(nm,5)*Math.expm1(14387770/(nm*T)));
     const max = planck(peak);
     let path = '';
-    for(let nm=100;nm<=2500;nm+=5) path += `${nm===100?'M':'L'}${x(nm).toFixed(2)},${(230-175*planck(nm)/max).toFixed(2)} `;
+    for(let nm=100;nm<=2500;nm+=5) path += `${nm===100?'M':'L'}${x(nm).toFixed(2)},${(190-140*planck(nm)/max).toFixed(2)} `;
     const color = T<3500?'#f9a078':T<5000?'#ffd0a4':T<6500?'#fff1d1':T<9000?'#e7ecff':'#c6dcff';
     const colorName = T<3500?'rødoransje':T<5000?'oransjehvit':T<6500?'gulhvit':T<9000?'hvit':'blåhvit';
-    $('#ce-blackbody').innerHTML = ceSvg('Strålingskurve: temperatur bestemmer toppbølgelengde',`<defs><linearGradient id="ce-visible"><stop stop-color="#8145ba"/><stop offset=".25" stop-color="#3b74d6"/><stop offset=".45" stop-color="#68ae83"/><stop offset=".65" stop-color="#e6cf55"/><stop offset="1" stop-color="#d76d65"/></linearGradient></defs><rect x="${x(380)}" y="40" width="${x(780)-x(380)}" height="190" fill="url(#ce-visible)" opacity=".18"/><text x="${x(580)}" y="29" text-anchor="middle">Synlig</text><text x="${x(220)}" y="29" text-anchor="middle">UV</text><text x="${x(1500)}" y="29" text-anchor="middle">Infrarødt</text><path class="ce-axis" d="M63 45V230H705"/><text class="ce-faint" x="65" y="256">100</text>${[500,1000,1500,2000,2500].map(n=>`<path class="ce-axis" d="M${x(n)} 230v5"/><text class="ce-faint" x="${x(n)}" y="256" text-anchor="middle">${n}</text>`).join('')}<text x="390" y="283" text-anchor="middle">Bølgelengde (nm)</text><text class="ce-faint" x="21" y="145" text-anchor="middle" transform="rotate(-90 21 145)">Relativ intensitet</text><path d="${path}" fill="none" stroke="#5385b6" stroke-width="3.5"/><path d="M${x(peak)} 55V230" stroke="#64788d" stroke-dasharray="4 5"/><circle cx="${x(peak)}" cy="55" r="5" fill="#5385b6"/><circle cx="645" cy="85" r="25" fill="${color}" stroke="#a6b3c3"/><text class="ce-faint" x="645" y="126" text-anchor="middle">Fargeprøve</text>`);
+    $('#ce-blackbody').innerHTML = ceSvg('Strålingskurve: temperatur bestemmer toppbølgelengde',`<defs><linearGradient id="ce-visible"><stop stop-color="#8145ba"/><stop offset=".25" stop-color="#3b74d6"/><stop offset=".45" stop-color="#68ae83"/><stop offset=".65" stop-color="#e6cf55"/><stop offset="1" stop-color="#d76d65"/></linearGradient></defs><rect x="${x(380)}" y="34" width="${x(780)-x(380)}" height="156" fill="url(#ce-visible)" opacity=".18"/><text x="${x(580)}" y="22" text-anchor="middle">Synlig</text><text x="${x(220)}" y="22" text-anchor="middle">UV</text><text x="${x(1500)}" y="22" text-anchor="middle">Infrarødt</text><path class="ce-axis" d="M63 38V190H705"/><text class="ce-faint" x="65" y="213">100</text>${[500,1000,1500,2000,2500].map(n=>`<path class="ce-axis" d="M${x(n)} 190v5"/><text class="ce-faint" x="${x(n)}" y="213" text-anchor="middle">${n}</text>`).join('')}<text x="390" y="239" text-anchor="middle">Bølgelengde (nm)</text><text class="ce-faint" x="21" y="115" text-anchor="middle" transform="rotate(-90 21 115)">Relativ intensitet</text><path d="${path}" fill="none" stroke="#5385b6" stroke-width="3.5"/><path d="M${x(peak)} 50V190" stroke="#64788d" stroke-dasharray="4 5"/><circle cx="${x(peak)}" cy="50" r="5" fill="#5385b6"/><circle cx="645" cy="75" r="20" fill="${color}" stroke="#a6b3c3"/><text class="ce-faint" x="645" y="110" text-anchor="middle">Fargeprøve</text>`,250);
     $('#ce-temperature-value').textContent = `${fmt(T)} K`;
-    $('#ce-blackbody-readout').innerHTML = `Topp ved <strong>${fmt(peak)} nm</strong> · Veiledende stjernefarge: <strong>${colorName}</strong>. Flytt temperaturen og følg toppen.`;
+    $('#ce-blackbody-readout').innerHTML = `Topp: <strong>${fmt(peak)} nm</strong> · Veiledende stjernefarge: <strong>${colorName}</strong>.`;
   }
   function spectra() {
     const z = +shift.value/1000, lines = lineSets[element.value];
     const x = nm => 70+(nm-350)/450*630;
     const gradient = `<defs><linearGradient id="ce-lines-gradient"><stop stop-color="#93a6b9"/><stop offset=".066" stop-color="#93a6b9"/><stop offset=".067" stop-color="#9a5db5"/><stop offset=".222" stop-color="#5282c5"/><stop offset=".333" stop-color="#65ac95"/><stop offset=".511" stop-color="#e9cf74"/><stop offset=".6" stop-color="#df9b74"/><stop offset=".955" stop-color="#c06b70"/><stop offset=".956" stop-color="#93a6b9"/><stop offset="1" stop-color="#93a6b9"/></linearGradient></defs>`;
-    $('#ce-lines').innerHTML = ceSvg('Referanse og observert absorpsjonsspekter med valgfri rødforskyvning',`${gradient}<text class="ce-label" x="70" y="29">Referanse i laboratoriet</text><rect x="70" y="43" width="630" height="45" rx="6" fill="url(#ce-lines-gradient)"/>${lines.map(n=>`<path d="M${x(n)} 43v45" stroke="#183149" stroke-width="3"/>`).join('')}<text class="ce-label" x="70" y="125">Observert spekter</text><rect x="70" y="139" width="630" height="45" rx="6" fill="url(#ce-lines-gradient)"/>${lines.map(n=>`<path d="M${x(n*(1+z))} 139v45" stroke="#183149" stroke-width="3"/><path d="M${x(n)} 93L${x(n*(1+z))} 132" stroke="#899aac" stroke-dasharray="3 4"/>`).join('')}${[350,400,500,600,700,800].map(n=>`<text class="ce-faint" x="${x(n)}" y="210" text-anchor="middle">${n}</text>`).join('')}<text x="390" y="237" text-anchor="middle">Bølgelengde (nm) — utsnitt rundt det synlige området</text>`,250);
+    $('#ce-lines').innerHTML = ceSvg('Referanse og observert absorpsjonsspekter med valgfri rødforskyvning',`${gradient}<text class="ce-label" x="70" y="22">Referanse i laboratoriet</text><rect x="70" y="34" width="630" height="38" rx="6" fill="url(#ce-lines-gradient)"/>${lines.map(n=>`<path d="M${x(n)} 34v38" stroke="#183149" stroke-width="3"/>`).join('')}<text class="ce-label" x="70" y="101">Observert spekter</text><rect x="70" y="113" width="630" height="38" rx="6" fill="url(#ce-lines-gradient)"/>${lines.map(n=>`<path d="M${x(n*(1+z))} 113v38" stroke="#183149" stroke-width="3"/>`).join('')}${[350,400,500,600,700,800].map(n=>`<text class="ce-faint" x="${x(n)}" y="176" text-anchor="middle">${n}</text>`).join('')}<text x="390" y="202" text-anchor="middle">Bølgelengde (nm)</text>`,214);
     $('#ce-shift-value').textContent=fmt(z,3);
-    const direction = z>0?'Rødforskyvning: linjene flyttes mot lengre bølgelengder.':z<0?'Blåforskyvning: linjene flyttes mot kortere bølgelengder.':'Ingen forskyvning: linjene faller sammen med referansen.';
-    $('#ce-lines-readout').innerHTML = `<strong>${direction}</strong> Første linje: ${fmt(lines[0],1)} → ${fmt(lines[0]*(1+z),1)} nm. Mønsteret identifiserer fortsatt samme grunnstoff.`;
+    const direction = z>0?'Rødforskyvning (lengre bølger)':z<0?'Blåforskyvning (kortere bølger)':'Ingen forskyvning';
+    $('#ce-lines-readout').innerHTML = `<strong>${direction}</strong> · Første linje: ${fmt(lines[0],1)} → ${fmt(lines[0]*(1+z),1)} nm. Samme grunnstoff.`;
   }
   function expansion(t) {
-    const a=+scale.value/10, positions=[[-66,-25],[-20,25],[34,-35],[68,19],[-47,47],[12,57],[0,0]], cx=380, cy=91;
-    const wave = Array.from({length:501},(_,i)=>{const x=85+i*1.18; return `${i?'L':'M'}${x.toFixed(1)},${(233+12*Math.sin((x-85)/(17*a)-t*1.5)).toFixed(1)}`;}).join(' ');
-    $('#ce-expansion').innerHTML=ceSvg('Skjematisk utvidelse mellom galaksegrupper og strekking av en lysbølge',`<text class="ce-faint" x="24" y="25">Galaksegrupper i et utsnitt av universet</text>${positions.map(([dx,dy],i)=>`<g transform="translate(${cx+dx*a} ${cy+dy*a*.58})"><ellipse rx="${i===6?9:7}" ry="4" fill="${i===6?'#dca65a':'#7096be'}" transform="rotate(${i*27})"/><circle r="2" fill="#f1d7a7"/></g>`).join('')}<path d="M${cx} ${cy+15}H${cx+68*a}" stroke="#89a0b8"/><path d="M${cx} ${cy+10}v10M${cx+68*a} ${cy+10}v10" stroke="#89a0b8"/><text x="${cx+34*a}" y="${cy+36}" text-anchor="middle">Relativ avstand: ${fmt(a,1)}</text><text class="ce-label" x="85" y="199">Lysbølge på reise</text><path d="${wave}" fill="none" stroke="#bd7a6d" stroke-width="2.7"/><text class="ce-faint" x="85" y="278">Start: 500 nm</text><text class="ce-faint" x="675" y="278" text-anchor="end">Nå: ${fmt(500*a)} nm</text>`,294);
+    const a=+scale.value/10, positions=[[-66,-25],[-20,25],[34,-35],[68,19],[-47,47],[12,57],[0,0]], cx=380, cy=80;
+    const wave = Array.from({length:501},(_,i)=>{const x=85+i*1.18; return `${i?'L':'M'}${x.toFixed(1)},${(210+11*Math.sin((x-85)/(17*a)-t*1.5)).toFixed(1)}`;}).join(' ');
+    $('#ce-expansion').innerHTML=ceSvg('Skjematisk utvidelse mellom galaksegrupper og strekking av en lysbølge',`<text class="ce-faint" x="24" y="20">Galaksegrupper i et utsnitt av universet</text>${positions.map(([dx,dy],i)=>`<g transform="translate(${cx+dx*a} ${cy+dy*a*.45})"><ellipse rx="${i===6?9:7}" ry="4" fill="${i===6?'#dca65a':'#7096be'}" transform="rotate(${i*27})"/><circle r="2" fill="#f1d7a7"/></g>`).join('')}<path d="M${cx} ${cy}L${cx+68*a} ${cy+19*a*.45}" stroke="#89a0b8" stroke-dasharray="3 4"/><text x="730" y="43" text-anchor="end">Relativ avstand: ${fmt(a,1)}</text><text class="ce-label" x="85" y="184">Lysbølge på reise</text><path d="${wave}" fill="none" stroke="#bd7a6d" stroke-width="2.7"/><text class="ce-faint" x="85" y="242">Start: 500 nm</text><text class="ce-faint" x="675" y="242" text-anchor="end">Nå: ${fmt(500*a)} nm</text>`,253);
     $('#ce-scale-value').textContent=`${fmt(a,1)} ×`;
-    $('#ce-expansion-readout').innerHTML=`Avstander mellom ubundne galaksegrupper er <strong>${fmt(a,1)} ganger</strong> startavstanden. En lysbølge som startet med 500 nm, har her blitt strukket til <strong>${fmt(500*a)} nm</strong>.`;
+    $('#ce-expansion-readout').innerHTML=`Avstand: <strong>${fmt(a,1)} ×</strong> · Lysbølge: 500 → <strong>${fmt(500*a)} nm</strong>. Begge følger skalafaktoren.`;
   }
   const epochs=[
     ['Første minutter','Universet er varmt og tett, men kjøles under utvidelsen. Protoner og nøytroner bindes til lette atomkjerner, særlig helium. Hydrogenkjerner finnes også. Elektronene er ennå ikke bundet i nøytrale atomer.'],
@@ -153,22 +170,22 @@ function mountAtmosphere(root,api){
     const kind=uv.value,oz=+ozone.value/100,gh=+greenhouse.value/100;
     const passing=kind==='UVA'?7:kind==='UVC'?0:Math.round(7-6*oz);
     const uvX=i=>65+i*34;
-    const photons=Array.from({length:8},(_,i)=>{const y=66+((t*32+i*25)%182),stopped=i>=passing;return y<133||!stopped?`<circle cx="${uvX(i)}" cy="${y}" r="3.5" fill="#9c76bd" opacity=".85"/>`:`<circle cx="${uvX(i)}" cy="${137+(i%2)*5}" r="${3+Math.sin(t*4+i)}" fill="#9c76bd" opacity=".3"/>`;}).join('');
-    const irDots=Array.from({length:7},(_,i)=>{const absorbed=i<Math.round(gh*7),phase=(t*.3+i/7)%1;const x=470+i*26;let y=253-phase*187;if(absorbed&&y<137&&i%2===0)y=137+(137-y);return `<circle cx="${x}" cy="${y}" r="3.6" fill="#ce8069"/>`;}).join('');
+    const photons=Array.from({length:8},(_,i)=>{const y=52+((t*32+i*21)%156),stopped=i>=passing;return y<112||!stopped?`<circle cx="${uvX(i)}" cy="${y}" r="3.5" fill="#9c76bd" opacity=".85"/>`:`<circle cx="${uvX(i)}" cy="${116+(i%2)*5}" r="${3+Math.sin(t*4+i)}" fill="#9c76bd" opacity=".3"/>`;}).join('');
+    const irDots=Array.from({length:7},(_,i)=>{const absorbed=i<Math.round(gh*7),phase=(t*.3+i/7)%1;const x=470+i*26;let y=212-phase*158;if(absorbed&&y<118&&i%2===0)y=118+(118-y);return `<circle cx="${x}" cy="${y}" r="3.6" fill="#ce8069"/>`;}).join('');
     const arrow='<path d="M-5 5L0 0L5 5" fill="none" stroke="currentColor" stroke-width="2"/>';
-    $('#ce-pathways').innerHTML=ceSvg('Sammenlikning: UV filtreres av oksygen og ozon, mens drivhusgasser absorberer jordas infrarøde stråling',`<path d="M380 22V303" stroke="#c9d6e2" stroke-dasharray="4 6"/><text class="ce-label" x="190" y="30" text-anchor="middle">Inn fra sola: ${kind}</text><text class="ce-label" x="570" y="30" text-anchor="middle">Ut fra jorda: infrarødt</text><rect x="33" y="125" width="314" height="30" rx="15" fill="#9d83bc" opacity="${.1+.2*oz}"/><rect x="414" y="125" width="314" height="30" rx="15" fill="#d29a78" opacity="${.08+.22*gh}"/><text x="190" y="117" text-anchor="middle">O₂ + O₃ i atmosfæren</text><text x="570" y="117" text-anchor="middle">Drivhusgasser</text><path d="M33 259H347M414 259H728" stroke="#879d91" stroke-width="9"/><text x="190" y="289" text-anchor="middle">Jordoverflaten</text><text x="570" y="289" text-anchor="middle">Jordoverflaten</text>${Array.from({length:8},(_,i)=>`<path d="M${uvX(i)} 62V${i<passing?247:128}" stroke="#a886c4" opacity=".3" stroke-width="2"/>`).join('')}${photons}<path d="M460 58V245" stroke="#d4ac53" stroke-width="3" opacity=".7"/><text class="ce-faint" x="431" y="80" text-anchor="middle">Sollys</text><path d="M479 246V65M635 246V65" stroke="#ce8069" stroke-width="2" opacity="${1-gh*.7}"/><path d="M558 245V142Q594 139 594 235" fill="none" stroke="#ce8069" stroke-width="3" opacity="${.1+gh*.8}"/>${irDots}<g transform="translate(479 62)" style="color:#ce8069">${arrow}</g><g transform="translate(594 239) rotate(180)" style="color:#ce8069;opacity:${gh}">${arrow}</g><text class="ce-faint" x="700" y="184" text-anchor="end">IR sendes også</text><text class="ce-faint" x="700" y="201" text-anchor="end">tilbake ned</text>`,315);
+    $('#ce-pathways').innerHTML=ceSvg('Sammenlikning: UV filtreres av oksygen og ozon, mens drivhusgasser absorberer jordas infrarøde stråling',`<path d="M380 18V249" stroke="#c9d6e2" stroke-dasharray="4 6"/><text class="ce-label" x="190" y="25" text-anchor="middle">Inn fra sola: ${kind}</text><text class="ce-label" x="570" y="25" text-anchor="middle">Ut fra jorda: infrarødt</text><rect x="33" y="105" width="314" height="26" rx="13" fill="#9d83bc" opacity="${.1+.2*oz}"/><rect x="414" y="105" width="314" height="26" rx="13" fill="#d29a78" opacity="${.08+.22*gh}"/><text x="190" y="97" text-anchor="middle">O₂ + O₃ i atmosfæren</text><text x="570" y="97" text-anchor="middle">Drivhusgasser</text><path d="M33 218H347M414 218H728" stroke="#879d91" stroke-width="9"/><text x="190" y="244" text-anchor="middle">Jordoverflaten</text><text x="570" y="244" text-anchor="middle">Jordoverflaten</text>${Array.from({length:8},(_,i)=>`<path d="M${uvX(i)} 51V${i<passing?208:108}" stroke="#a886c4" opacity=".3" stroke-width="2"/>`).join('')}${photons}<path d="M450 49V207" stroke="#d4ac53" stroke-width="3" opacity=".7"/><text class="ce-faint" x="423" y="66" text-anchor="middle">Sollys</text><path d="M479 208V55M635 208V55" stroke="#ce8069" stroke-width="2" opacity="${1-gh*.7}"/><path d="M558 207V121Q594 118 594 200" fill="none" stroke="#ce8069" stroke-width="3" opacity="${.1+gh*.8}"/>${irDots}<g transform="translate(479 52)" style="color:#ce8069">${arrow}</g><g transform="translate(594 204) rotate(180)" style="color:#ce8069;opacity:${gh}">${arrow}</g><path d="M630 170H660" stroke="#ac978e"/><text class="ce-faint" x="668" y="165">IR også</text><text class="ce-faint" x="668" y="183">nedover</text>`,258);
     $('#ce-ozone-value').textContent=oz>.8?'Vanlig mengde':oz>.3?'Redusert mengde':'Sterkt redusert mengde';
     $('#ce-greenhouse-value').textContent=gh>.7?'Høy':gh>.3?'Middels':'Lav';
-    const uvText=kind==='UVA'?'Det meste av UVA passerer ozonlaget.':kind==='UVC'?'UVC stoppes høyt i atmosfæren av oksygen og ozon, også når ozonmengden endres her.':oz>.7?'Mye UVB absorberes av ozonlaget.':'Mindre ozon lar mer UVB slippe gjennom i modellen.';
-    $('#ce-pathways-readout').innerHTML=`<strong>${uvText}</strong> Mer IR-absorpsjon gir mer emisjon også tilbake mot bakken, ved samme overflatetemperatur.`;
+    const uvText=kind==='UVA'?'Det meste av UVA passerer ozonlaget.':kind==='UVC'?'UVC filtreres av oksygen og ozon.':oz>.7?'Mye UVB absorberes av ozonlaget.':'Mindre ozon → mer UVB gjennom.';
+    $('#ce-pathways-readout').innerHTML=`<strong>${uvText}</strong> Mer IR-absorpsjon → mer IR også tilbake mot bakken.`;
   }
   function budget(){
     const a=+albedo.value/100,out=+outgoing.value,absorbed=340*(1-a),reflected=340*a,net=absorbed-out;
     const bars=[['Solstråling inn',340,'#d8b35c'],['Reflektert',reflected,'#93a6b9'],['Absorbert',absorbed,'#6e9fb0'],['Varmestråling ut',out,'#cc8d79']];
-    $('#ce-budget').innerHTML=ceSvg('Global strålingsbalanse: innkommende, reflektert, absorbert og utgående energi',`${bars.map(([label,v,c],i)=>`<text x="25" y="${46+i*56}" class="ce-label">${label}</text><rect x="205" y="${28+i*56}" width="${v/340*410}" height="25" rx="6" fill="${c}"/><text x="${Math.max(255,220+v/340*410)}" y="${46+i*56}">${fmt(v)} W/m²</text>`).join('')}<text class="ce-faint" x="205" y="269">Absorbert = innkommende · (1 − albedo)</text>`,285);
+    $('#ce-budget').innerHTML=ceSvg('Global strålingsbalanse: innkommende, reflektert, absorbert og utgående energi',`${bars.map(([label,v,c],i)=>`<text x="25" y="${42+i*42}" class="ce-label">${label}</text><rect x="205" y="${24+i*42}" width="${v/340*410}" height="25" rx="6" fill="${c}"/><text x="${Math.max(255,220+v/340*410)}" y="${42+i*42}">${fmt(v)} W/m²</text>`).join('')}<text class="ce-faint" x="205" y="208">Absorbert = innkommende · (1 − albedo)</text>`,221);
     $('#ce-albedo-value').textContent=`${fmt(a*100)} %`;
     $('#ce-outgoing-value').textContent=`${fmt(out)} W/m²`;
-    const state=Math.abs(net)<.1?'Balanse: ingen netto energiendring i modellen.':net>0?'Energioverskudd: jordsystemet får energi og vil varmes.':'Energiunderskudd: jordsystemet mister energi og vil kjøles.';
+    const state=Math.abs(net)<.1?'Balanse: ingen netto energiendring.':net>0?'Energioverskudd → oppvarming.':'Energiunderskudd → avkjøling.';
     $('#ce-budget-readout').innerHTML=`Netto: <strong>${net>0?'+':''}${fmt(net)} W/m²</strong>. ${state}`;
   }
   [uv,ozone,greenhouse,albedo,outgoing].forEach(el=>el.addEventListener('input',()=>{budget();api.repaint();}));
@@ -176,7 +193,7 @@ function mountAtmosphere(root,api){
 }
 
 export const topics=[
-  {id:'universet',title:'Stjerner og universet',kicker:'Lys som budbringer',summary:'Les stjernelys: temperatur, grunnstoffer og bevegelse. Følg stjerneliv og sporene etter et varmt, ungt univers.',sections:universeSections,terms:[
+  {id:'universet',title:'Stjerner og universet',kicker:'Lys som budbringer',summary:'Les stjernelys: temperatur, grunnstoffer og bevegelse. Følg stjerneliv og sporene etter et varmt, ungt univers.',sections:ceCompactSections(universeSections),terms:[
     {term:'Fusjon',definition:'Lette atomkjerner bindes sammen til tyngre kjerner. I stjerner kan dette frigjøre energi.'},
     {term:'Lysår',definition:'Avstanden lys tilbakelegger på ett år, omtrent 9,46 billioner kilometer.'},
     {term:'Galakse',definition:'Et gravitasjonsbundet system av stjerner, gass, støv og mørk materie.'},
@@ -188,7 +205,7 @@ export const topics=[
     {term:'Rødforskyvning',definition:'At et kjent linjemønster observeres ved lengre bølgelengder. Kan blant annet skyldes bevegelse fra oss eller universets utvidelse.'},
     {term:'Kosmisk bakgrunnsstråling',definition:'Gammelt lys fra da universet ble gjennomsiktig omtrent 380 000 år etter Big Bang. Observeres nå hovedsakelig som mikrobølger.'}
   ],questions:universeQuestions,resources:[{label:'NASA: stjerner og stjerneliv',url:'https://science.nasa.gov/universe/stars/types/'},{label:'NASA: universets utvikling',url:'https://science.nasa.gov/universe/overview/'},{label:'PhET: utforsk strålingskurver',url:'https://phet.colorado.edu/en/simulations/blackbody-spectrum'}],mount:mountUniverse},
-  {id:'atmosfaeren',title:'UV, ozon og drivhuseffekt',kicker:'Stråling møter atmosfæren',summary:'Skill ozonbeskyttelse fra drivhuseffekt, følg stråling gjennom atmosfæren og utforsk jordas energibalanse.',sections:atmosphereSections,terms:[
+  {id:'atmosfaeren',title:'UV, ozon og drivhuseffekt',kicker:'Stråling møter atmosfæren',summary:'Skill ozonbeskyttelse fra drivhuseffekt, følg stråling gjennom atmosfæren og utforsk jordas energibalanse.',sections:ceCompactSections(atmosphereSections),terms:[
     {term:'UV-stråling',definition:'Elektromagnetisk stråling med kortere bølgelengder enn synlig fiolett lys. Deles gjerne i UVA, UVB og UVC.'},
     {term:'Ozon',definition:'O₃, et molekyl med tre oksygenatomer. Ozon i stratosfæren absorberer mye skadelig UV.'},
     {term:'Ozonhull',definition:'Kraftig, sesongvis reduksjon av ozonmengden i stratosfæren; særlig over Antarktis.'},

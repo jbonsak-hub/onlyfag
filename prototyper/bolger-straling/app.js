@@ -1,10 +1,11 @@
-import {topics as waveTopics} from './waves.js';
-import {topics as emTopics} from './em-atoms.js';
-import {topics as radioTopics} from './radioactivity.js';
-import {topics as cosmosTopics} from './cosmos-environment.js';
+import {topics as waveTopics} from './waves.js?v=20261114-compact1';
+import {topics as basicTopics} from './wave-basics.js?v=20261114-compact1';
+import {topics as emTopics} from './em-atoms.js?v=20261114-compact1';
+import {topics as radioTopics} from './radioactivity.js?v=20261114-compact1';
+import {topics as cosmosTopics} from './cosmos-environment.js?v=20261114-compact1';
 
 const order=['bolger','fenomener','em','atomer','universet','kommunikasjon','radioaktivitet','stralevern','atmosfaeren'];
-const topics=[...waveTopics,...emTopics,...radioTopics,...cosmosTopics].sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id));
+const topics=[...basicTopics,...waveTopics,...emTopics,...radioTopics,...cosmosTopics].sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id));
 const allQuestions=topics.flatMap(topic=>topic.questions.map((q,index)=>({...q,topic,index})));
 const byId=new Map(topics.map(t=>[t.id,t]));
 const icons={
@@ -36,15 +37,15 @@ for(const k of ['answers','bookmarks','drafts'])if(!saved[k]||typeof saved[k]!==
 const persist=()=>{try{localStorage.setItem(key,JSON.stringify(saved));}catch{}};
 let route={id:'oversikt',view:'fagstoff'},filters={query:'',type:'',level:'',topic:'',bookmarked:false};
 let frameFunctions=[],cleanup,frameId=0,time=0,last=0;
-let paused=matchMedia('(prefers-reduced-motion: reduce)').matches,speed=1;
+let paused=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function announce(text){$('#announcer').textContent=text;}
-function tick(now){frameId=0;if(paused||document.hidden||!frameFunctions.length)return;if(last&&now-last<32){frameId=requestAnimationFrame(tick);return;}if(last)time+=Math.min((now-last)/1000,.1)*speed;last=now;frameFunctions.forEach(fn=>fn(time));frameId=requestAnimationFrame(tick);}
+function tick(now){frameId=0;if(paused||document.hidden||!frameFunctions.length)return;if(last&&now-last<32){frameId=requestAnimationFrame(tick);return;}if(last)time+=Math.min((now-last)/1000,.1);last=now;frameFunctions.forEach(fn=>fn(time));frameId=requestAnimationFrame(tick);}
 function startFrames(){if(!frameId&&!paused&&!document.hidden&&frameFunctions.length){last=0;frameId=requestAnimationFrame(tick);}}
 function repaint(){frameFunctions.forEach(fn=>fn(time));}
 function clearFrames(){cancelAnimationFrame(frameId);frameId=0;frameFunctions=[];time=0;last=0;if(typeof cleanup==='function')cleanup();cleanup=null;}
 const api={onFrame(fn){frameFunctions.push(fn);fn(time);},repaint};
 document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(frameId);frameId=0;last=0;}else startFrames();});
-matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',e=>{if(e.matches){paused=true;cancelAnimationFrame(frameId);frameId=0;updatePauseButton();}});
+matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',e=>{paused=e.matches;if(paused){cancelAnimationFrame(frameId);frameId=0;}else startFrames();});
 
 function closeNav(){document.body.classList.remove('sidebar-open');$('#nav-scrim').hidden=true;$('#menu-button').setAttribute('aria-expanded','false');}
 function buildNav(){
@@ -52,11 +53,10 @@ function buildNav(){
   $('#total-questions').textContent=allQuestions.length;
 }
 function applyTheme(){document.body.classList.toggle('dark',saved.theme==='dark');$('#theme-button').setAttribute('aria-label',saved.theme==='dark'?'Bytt til lys visning':'Bytt til mørk visning');repaint();}
-function updatePauseButton(){const b=$('#pause-button');if(b){b.textContent=paused?'▶ Spill av':'Ⅱ Pause';b.setAttribute('aria-pressed',String(paused));}}
 function navigate(value){if(location.hash.slice(1)===value){render();return;}location.hash=value;}
 function parseRoute(){let [id,view='fagstoff']=decodeURIComponent(location.hash.slice(1)).split('/');if(!id||(!byId.has(id)&&id!=='alle'))id='oversikt';if(!['fagstoff','oppgaver','begreper'].includes(view))view='fagstoff';if(id==='alle')view='oppgaver';return {id,view};}
 function render(){
-  clearFrames();route=parseRoute();closeNav();buildNav();document.title=`${route.id==='oversikt'?'Bølger og stråling':route.id==='alle'?'Alle oppgaver':byId.get(route.id).title} – OnlyFag`;
+  clearFrames();route=parseRoute();document.body.classList.toggle('topic-page',route.id!=='oversikt');closeNav();buildNav();document.title=`${route.id==='oversikt'?'Bølger og stråling':route.id==='alle'?'Alle oppgaver':byId.get(route.id).title} – OnlyFag`;
   if(route.id==='oversikt')renderOverview();else renderTopic();
   startFrames();window.scrollTo({top:0,behavior:'instant'});
 }
@@ -64,19 +64,14 @@ function render(){
 function heroArt(){return `<div class="hero-art"><svg viewBox="0 0 450 300" role="img" aria-label="Én sammenheng: en bølge, lys gjennom et prisme og lys fra et atom"><defs><linearGradient id="hero-spectrum"><stop stop-color="#b184c3"/><stop offset=".22" stop-color="#698cbd"/><stop offset=".43" stop-color="#65aea5"/><stop offset=".65" stop-color="#c9c57f"/><stop offset="1" stop-color="#d98c75"/></linearGradient><linearGradient id="hero-wash" x2="1" y2="1"><stop stop-color="#e3eee6"/><stop offset="1" stop-color="#eff3ec"/></linearGradient></defs><circle cx="230" cy="148" r="133" fill="url(#hero-wash)" opacity=".65"/><g stroke="#afc6b5" opacity=".35"><path d="M62 100h330M62 148h330M62 196h330"/><path d="M111 55v190M171 30v230M231 22v252M291 36v230M351 65v180"/></g><path id="hero-wave" d="M28 153q17-62 34 0t34 0 34 0 34 0 34 0" fill="none" stroke="#3e8e75" stroke-width="2.3"/><path d="m226 102-40 93h80Z" fill="#eff8f6" fill-opacity=".8" stroke="#59958c" stroke-width="1.5"/><path d="m197 151 160-47m-160 47 162-24m-162 24 165 0m-165 0 162 25m-162-25 160 49" stroke="url(#hero-spectrum)" stroke-width="2.8" opacity=".8"/><g transform="translate(335 105)" stroke="#689a88" fill="none" opacity=".7"><ellipse rx="37" ry="13" transform="rotate(60)"/><ellipse rx="37" ry="13" transform="rotate(-60)"/><ellipse rx="37" ry="13"/><circle r="5" fill="#528776"/><circle id="hero-electron" cx="37" r="3" fill="#b37b4c" stroke="none"/></g><text x="38" y="231" font-size="10" fill="#668572">BØLGER</text><text x="204" y="231" font-size="10" fill="#668572">LYS</text><text x="316" y="231" font-size="10" fill="#668572">ATOMER</text></svg><p class="art-caption">Fra svingninger til signaler fra universet</p></div>`;}
 function renderOverview(){
  content.innerHTML=`<div class="hero"><div><p class="eyebrow">NATURFAG · UTFORSK SAMMENHENGENE</p><h1>Bølger og<br>stråling</h1><p>Fra en tone i lufta til lyset fra en fjern stjerne. Se hva som skjer, endre én ting og sett ord på sammenhengen.</p><div class="hero-buttons"><button data-route="bolger/fagstoff">Begynn med bølger <span aria-hidden="true">→</span></button><button class="secondary" data-route="alle/oppgaver">Åpne oppgavebanken</button></div></div>${heroArt()}</div><div class="overview-heading"><h2>Velg et undertema</h2><span>9 temaer · ${allQuestions.length} oppgaver</span></div><div class="topic-grid">${topics.map(t=>`<a class="topic-card" href="#${t.id}/fagstoff"><div class="card-icon-row">${icon(t.id)}<span>${escapeHtml(t.kicker)}</span></div><h3>${escapeHtml(t.title)}</h3><p>${escapeHtml(t.summary)}</p><div class="card-bottom"><span>Fagstoff + ${t.questions.length} oppgaver</span><span aria-hidden="true">↗</span></div></a>`).join('')}</div>`;
- const heroToggle=document.createElement('button');heroToggle.className='text-button';heroToggle.type='button';heroToggle.textContent=paused?'Animer figuren':'Sett figuren på pause';$('.hero-art').append(heroToggle);
- heroToggle.addEventListener('click',()=>{paused=!paused;heroToggle.textContent=paused?'Animer figuren':'Sett figuren på pause';if(paused){cancelAnimationFrame(frameId);frameId=0;last=0;}else startFrames();});
  api.onFrame(t=>{const p=$('#hero-wave');if(p){p.setAttribute('d',Array.from({length:171},(_,i)=>`${i?'L':'M'}${28+i} ${153+29*Math.sin(i*.082-t*1.3)}`).join(' '));const e=$('#hero-electron');e.setAttribute('cx',String(37*Math.cos(t*.6)));e.setAttribute('cy',String(13*Math.sin(t*.6)));}});
 }
 function renderTopic(){
  const t=byId.get(route.id),all=route.id==='alle';
- content.innerHTML=`<div class="page-head"><div><p class="eyebrow">${all?'OPPGAVEBANK · ALLE TEMAER':escapeHtml(t.kicker)}</p><h1>${all?'Alle oppgaver':escapeHtml(t.title)}</h1><p class="intro">${all?'Velg tema, søk etter et begrep eller finn tilbake til oppgavene du har merket.':escapeHtml(t.summary)}</p></div><div class="head-icon">${icon(all?'bolger':t.id)}</div></div><div class="viewbar"><div class="view-tabs" aria-label="Velg innhold">${(all?[['oppgaver','Oppgavebank']]:[['fagstoff','Fagstoff'],['oppgaver','Oppgavebank'],['begreper','Begreper']]).map(([view,label])=>`<button class="view-tab ${route.view===view?'active':''}" data-route="${route.id}/${view}" aria-pressed="${route.view===view}">${label}${view==='oppgaver'?` <span>(${all?allQuestions.length:t.questions.length})</span>`:''}</button>`).join('')}</div>${route.view==='fagstoff'?`<div class="animation-tools"><button id="pause-button" aria-pressed="${paused}">${paused?'▶ Spill av':'Ⅱ Pause'}</button><label for="animation-speed">Animasjon</label><select id="animation-speed" aria-label="Animasjonsfart"><option value="0.5">0,5×</option><option value="1" ${speed===1?'selected':''}>1×</option><option value="2" ${speed===2?'selected':''}>2×</option></select></div>`:''}</div><div id="topic-content"></div>`;
+ content.innerHTML=`<div class="page-head"><h1>${all?'Alle oppgaver':escapeHtml(t.title)}</h1></div><div class="viewbar"><div class="view-tabs" aria-label="Velg innhold">${(all?[['oppgaver','Oppgavebank']]:[['fagstoff','Fagstoff'],['oppgaver','Oppgavebank'],['begreper','Begreper']]).map(([view,label])=>`<button class="view-tab ${route.view===view?'active':''}" data-route="${route.id}/${view}" aria-pressed="${route.view===view}">${label}${view==='oppgaver'?` <span>(${all?allQuestions.length:t.questions.length})</span>`:''}</button>`).join('')}</div></div><div id="topic-content"></div>`;
  if(route.view==='fagstoff'){
    $('#topic-content').innerHTML=`<nav class="section-links" aria-label="På denne siden">${t.sections.map((s,i)=>`<a href="#section-${t.id}-${i}" data-section="section-${t.id}-${i}">${escapeHtml(s.title)}</a>`).join('')}</nav>${t.sections.map((s,i)=>`<section class="content-section" id="section-${t.id}-${i}"><h2><span class="section-index" aria-hidden="true">${i+1}</span>${escapeHtml(s.title)}</h2>${s.body}</section>`).join('')}${resourceHtml(t)}${nextHtml(t)}`;
    if(t.mount)cleanup=t.mount($('#topic-content'),api);
-   $('#animation-speed').value=String(speed);
-   $('#animation-speed').addEventListener('change',e=>{speed=Number(e.target.value);});
-   $('#pause-button').addEventListener('click',()=>{paused=!paused;updatePauseButton();if(paused){cancelAnimationFrame(frameId);frameId=0;last=0;}else startFrames();});
  }else if(route.view==='begreper'){
    $('#topic-content').innerHTML=`<p class="question-summary">Begrepene du trenger for å forklare sammenhengene.</p><dl class="terms-list">${t.terms.map(term=>`<div class="term"><dt>${escapeHtml(term.term)}</dt><dd>${term.definition}</dd></div>`).join('')}</dl>${resourceHtml(t)}`;
  }else renderBank();
