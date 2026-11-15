@@ -189,6 +189,7 @@ function mountUniverse(root, api) {
   const lineSets = {hydrogen:[410.2,434.0,486.1,656.3],helium:[402.6,447.1,501.6,587.6,667.8]};
   const fmt = (n,d=0) => Number(n).toLocaleString('nb-NO',{minimumFractionDigits:d,maximumFractionDigits:d});
   const autoScale = $('#ce-auto-scale'), preset = $('#ce-temperature-preset');
+  const blackbodyScope='#ce-blackbody', expansionScope='#ce-expansion';
   const axes = {xMax:3,yMax:100};
   let axesTarget = {...axes}, lastBlackbodyTime = null, blackbodyDirty = true;
   const reducedMotion = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -219,6 +220,7 @@ function mountUniverse(root, api) {
     const T = Math.min(15000,Math.max(250,+temp.value || 5800));
     temp.value=String(T);
     if(autoScale.checked)axesTarget=blackbodyPhysics.adaptiveLimits(axesTarget,T,force);
+    if(api.isPaused(blackbodyScope)){axes.xMax=axesTarget.xMax;axes.yMax=axesTarget.yMax;}
     blackbodyDirty=true;
     $('#ce-temperature-value').textContent=`${fmt(T)} K`;
     const peak=blackbodyPhysics.peakWavelength(T), spectralPeak=blackbodyPhysics.spectralExitance(peak,T), total=blackbodyPhysics.totalExitance(T);
@@ -226,7 +228,7 @@ function mountUniverse(root, api) {
     $('#ce-blackbody-calculation').innerHTML=`<div class="calc-row"><span class="calc-lhs">λ<sub>maks</sub></span><span class="calc-eq">=</span><span class="calc-rhs">${ceFrac('2,898 · 10⁶ nm·K',`${fmt(T)} K`)}</span></div><div class="calc-row"><span class="calc-lhs"></span><span class="calc-eq">≈</span><span class="calc-rhs">${fmt(2898000/T)} nm</span></div><div class="calc-row"><span class="calc-lhs">${ceFrac('P','A')}</span><span class="calc-eq">=</span><span class="calc-rhs">σT⁴</span></div><div class="calc-row"><span class="calc-lhs"></span><span class="calc-eq">≈</span><span class="calc-rhs">${powerText(total)}</span></div>`;
   }
   function blackbody(t=0) {
-    const dt=lastBlackbodyTime===null?1/30:Math.max(.016,Math.min(.1,t-lastBlackbodyTime));
+    const dt=lastBlackbodyTime===null||api.isPaused(blackbodyScope)?0:Math.max(0,Math.min(.1,t-lastBlackbodyTime));
     lastBlackbodyTime=t;
     const moving=Math.abs(Math.log(axes.xMax/axesTarget.xMax))+Math.abs(Math.log(axes.yMax/axesTarget.yMax))>.0005;
     if(!blackbodyDirty&&!moving)return;
@@ -274,20 +276,21 @@ function mountUniverse(root, api) {
   ];
   const updateEpoch=i=>{$('#ce-epoch-description').innerHTML=`<strong>${epochs[i][0]}</strong><p>${epochs[i][1]}</p>`;$('#ce-epochs').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.ceEpoch===i)));};
   $('#ce-epochs').addEventListener('click',e=>{const b=e.target.closest('[data-ce-epoch]');if(b)updateEpoch(+b.dataset.ceEpoch);});
-  temp.addEventListener('input',()=>{preset.value=['288','310','2800','5800','9900','15000'].includes(temp.value)?temp.value:'';updateBlackbodyTarget();api.repaint();});
-  preset.addEventListener('change',()=>{if(preset.value){temp.value=preset.value;updateBlackbodyTarget();api.repaint();}});
-  autoScale.addEventListener('change',()=>{if(autoScale.checked)updateBlackbodyTarget(true);else{axesTarget={...axes};blackbodyDirty=true;}api.repaint();});
-  const zoom=factor=>{autoScale.checked=false;axesTarget={xMax:Math.max(.05,Math.min(500,axes.xMax*factor)),yMax:Math.max(1e-9,Math.min(1e7,axes.yMax*factor))};blackbodyDirty=true;api.repaint();};
+  temp.addEventListener('input',()=>{preset.value=['288','310','2800','5800','9900','15000'].includes(temp.value)?temp.value:'';updateBlackbodyTarget();api.repaint(blackbodyScope);});
+  preset.addEventListener('change',()=>{if(preset.value){temp.value=preset.value;updateBlackbodyTarget();api.repaint(blackbodyScope);}});
+  autoScale.addEventListener('change',()=>{if(autoScale.checked)updateBlackbodyTarget(true);else{axesTarget={...axes};blackbodyDirty=true;}api.repaint(blackbodyScope);});
+  const zoom=factor=>{autoScale.checked=false;axesTarget={xMax:Math.max(.05,Math.min(500,axes.xMax*factor)),yMax:Math.max(1e-9,Math.min(1e7,axes.yMax*factor))};if(api.isPaused(blackbodyScope)){axes.xMax=axesTarget.xMax;axes.yMax=axesTarget.yMax;}blackbodyDirty=true;api.repaint(blackbodyScope);};
   $('#ce-bb-zoom-in').addEventListener('click',()=>zoom(.5));
   $('#ce-bb-zoom-out').addEventListener('click',()=>zoom(2));
-  $('#ce-bb-fit').addEventListener('click',()=>{autoScale.checked=true;updateBlackbodyTarget(true);api.repaint();});
+  $('#ce-bb-fit').addEventListener('click',()=>{autoScale.checked=true;updateBlackbodyTarget(true);api.repaint(blackbodyScope);});
   [shift,element].forEach(el=>el.addEventListener('input',spectra));
-  scale.addEventListener('input',()=>api.repaint());
-  updateBlackbodyTarget();spectra();updateEpoch(0);api.onFrame(blackbody);api.onFrame(expansion);
+  scale.addEventListener('input',()=>api.repaint(expansionScope));
+  updateBlackbodyTarget();spectra();updateEpoch(0);api.onFrame(blackbody,blackbodyScope);api.onFrame(expansion,expansionScope);
 }
 
 function mountAtmosphere(root,api){
   const $=s=>root.querySelector(s), uv=$('#ce-uv'),ozone=$('#ce-ozone'),greenhouse=$('#ce-greenhouse'),albedo=$('#ce-albedo'),outgoing=$('#ce-outgoing');
+  const pathwaysScope='#ce-pathways';
   const fmt=n=>Number(n).toLocaleString('nb-NO',{maximumFractionDigits:1});
   function pathways(t){
     const kind=uv.value,oz=+ozone.value/100,gh=+greenhouse.value/100;
@@ -311,8 +314,9 @@ function mountAtmosphere(root,api){
     const state=Math.abs(net)<.1?'Balanse: ingen netto energiendring.':net>0?'Energioverskudd → oppvarming.':'Energiunderskudd → avkjøling.';
     $('#ce-budget-readout').innerHTML=ceReadoutRow('Netto energistrøm',`${net>0?'+':''}${fmt(net)} W m<sup>−2</sup>`)+ceReadoutRow('Temperaturutvikling',state);
   }
-  [uv,ozone,greenhouse,albedo,outgoing].forEach(el=>el.addEventListener('input',()=>{budget();api.repaint();}));
-  budget();api.onFrame(pathways);
+  [uv,ozone,greenhouse].forEach(el=>el.addEventListener('input',()=>api.repaint(pathwaysScope)));
+  [albedo,outgoing].forEach(el=>el.addEventListener('input',budget));
+  budget();api.onFrame(pathways,pathwaysScope);
 }
 
 export const topics=[

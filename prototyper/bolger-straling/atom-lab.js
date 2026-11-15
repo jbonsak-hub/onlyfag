@@ -66,7 +66,7 @@ export const atomLabSection={
  <div class="controls al-lab-controls"><label class="control" for="al-from">Startnivå<select id="al-from">${levelOptions(3)}</select></label><label class="control" for="al-to">Sluttnivå<select id="al-to">${levelOptions(2)}</select></label><button id="al-direct-replay" type="button">Vis overgangen på nytt</button></div>
  <div id="al-direct-numbers" class="al-readout" aria-live="polite"></div>
  <p id="al-direct-phase" class="al-phase" aria-live="polite"></p>
- <p class="model-note">Venstre: skjematisk atom. Høyre: samme elektron vist etter energi. Sirklene er nivåmarkører, ikke virkelige elektronbaner. Nivåavstandene er strukket for lesbarhet; energitallene gjelder hydrogen.</p>
+ <details><summary>Om atomtegningen</summary><p>Sirklene markerer energinivåer, ikke virkelige elektronbaner. Atomtegningen og energidiagrammet følger det samme elektronet. Energitallene gjelder hydrogen.</p></details>
 </div>
 <h3>Eksiter atomet – og undersøk lyset det kan sende ut</h3>
 <div class="al-steps"><div><b>1.</b> Send inn en passende fotonenergi.</div><div><b>2.</b> Elektronet løftes til et høyere nivå.</div><div><b>3.</b> Elektronet går ned igjen og sender ut fotoner.</div></div>
@@ -81,6 +81,8 @@ export const atomLabSection={
  </div>
  <div id="al-excitation-status" class="al-readout" aria-live="polite"></div>
  <p id="al-excitation-phase" class="al-phase" aria-live="polite"></p>
+</div>
+<div class="al-model-notes">
  <p class="al-key"><strong>Én elektron følger én vei ned.</strong> Alle de mulige linjene gjelder mange atomer som deeksiterer på ulike måter. De markerte linjene er bare fotonene som faktisk ble sendt ut i dette forsøket.</p>
  <details><summary>Se alle mulige overganger og bølgelengder</summary><div class="table-wrap"><table class="al-line-table"><thead><tr><th>Overgang</th><th>Område</th><th>Bølgelengde</th><th>Fotonenergi</th></tr></thead><tbody id="al-transition-table"></tbody></table></div></details>
  <details><summary>Om energitreff, toleranse og modellen</summary><p class="model-note">Her vises nivåene n = 1–6. Ett foton absorberes bare dersom det passer til en tillatt energiforskjell. Inndata godtas innen 0,025 eV som avrunding til riktig nivå; dette er en pedagogisk inndatatoleranse, ikke en fysisk linjebredde. Andre energier kan passere uten eksitasjon. Hydrogen har også høyere nivåer enn dem som vises. Fra grunntilstanden kan minst 13,6 eV frigjøre elektronet; se også ioniseringsmodellen nedenfor. De viste veiene er mulige illustrasjoner, ikke en beregning av overgangssannsynligheter eller atomets levetid.</p></details>
@@ -123,14 +125,14 @@ function spectrumGraphic(possible,emitted){
 export function mountAtomLab(root,api){
  const q=id=>root.querySelector('#'+id),num=id=>Number(q(id).value),say=(id,value)=>{if(q(id).innerHTML!==value)q(id).innerHTML=value;};
  if(!q('al-direct-svg'))return;
- let now=0,directStart=0,directRunning=true,energyStart=0,experiment=null,selectedResult=excitationForEnergy(12.75);
+ let directNow=0,energyNow=0,directStart=0,directRunning=true,energyStart=0,experiment=null,selectedResult=excitationForEnergy(12.75);
  const reduced=()=>typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
- const elapsedProgress=(start,duration)=>reduced()?1:clamp((now-start)/duration);
+ const elapsedProgress=(time,start,duration)=>reduced()?1:clamp((time-start)/duration);
  function directNumbers(){
   const t=transition(num('al-from'),num('al-to'));
   say('al-direct-numbers',`<div><strong>${t.type==='absorption'?'Absorpsjon: energi inn':t.type==='emission'?'Emisjon: energi ut':'Ingen overgang'}</strong></div>${numberRows(t)}`);
  }
- function chooseDirect(){directStart=now;directRunning=true;directNumbers();api.repaint();}
+ function chooseDirect(){directStart=api.now?api.now(q('al-direct-svg')):directNow;directRunning=true;directNumbers();api.repaint();}
  function getPossible(){return selectedResult.kind==='excitation'?possibleTransitions(selectedResult.level):[];}
  function updateTable(){const all=getPossible();q('al-transition-table').innerHTML=all.length?all.map(t=>`<tr><td>n = ${t.from} → ${t.to}</td><td>${t.region}</td><td>${fmt(t.wavelengthNM,1)} nm</td><td>${sci(t.energyJ)} J</td></tr>`).join(''):'<tr><td colspan="4">Velg energi som passer til et av de viste nivåene.</td></tr>';}
  function describeEnergy(){
@@ -146,19 +148,22 @@ export function mountAtomLab(root,api){
  q('al-excite-preset').addEventListener('change',()=>{if(q('al-excite-preset').value!=='custom')q('al-input-energy').value=String(transition(1,num('al-excite-preset')).energyEV);describeEnergy();});
  q('al-input-energy').addEventListener('input',describeEnergy);q('al-cascade-mode').addEventListener('change',describeEnergy);q('al-excite-reset').addEventListener('click',describeEnergy);
  q('al-send-energy').addEventListener('click',()=>{
-  selectedResult=excitationForEnergy(num('al-input-energy'));energyStart=now;
+  selectedResult=excitationForEnergy(num('al-input-energy'));energyStart=api.now?api.now(q('al-excitation-svg')):energyNow;
   experiment={result:selectedResult,levels:selectedResult.kind==='excitation'?cascadeLevels(selectedResult.level,q('al-cascade-mode').value):[1],all:selectedResult.kind==='excitation'&&q('al-cascade-mode').value==='all'?possibleTransitions(selectedResult.level):null};
   updateTable();api.repaint();
  });
  api.onFrame(t=>{
-  now=t;const direct=transition(num('al-from'),num('al-to')),p=directRunning?elapsedProgress(directStart,3.3):1;
+  directNow=t;const direct=transition(num('al-from'),num('al-to')),p=directRunning?elapsedProgress(directNow,directStart,3.3):1;
   q('al-direct-svg').innerHTML=atomAndLevels({id:'direct',from:direct.from,to:direct.to,progress:p,kind:direct.type,caption:'Valgt elektronovergang'});
   const phase=direct.type==='none'?'Samme nivå: ingen energi overføres.':direct.type==='absorption'?(p<.32?'1. Et foton med riktig energi nærmer seg.':p<.73?'2. Fotonet absorberes; elektronet får energi.':'3. Elektronet er eksitert på et høyere nivå.'):(p<.48?'1. Elektronet går til lavere energi.':p<.96?'2. Energiforskjellen sendes ut som ett foton.':'3. Atomet har mistet akkurat fotonets energi.');
   say('al-direct-phase',phase);
+ },q('al-direct-svg'));
+ api.onFrame(t=>{
+  energyNow=t;
   let from=1,to=1,kind='none',progress=1,emitted=[],phaseText='Klar: elektronet starter i grunntilstanden n = 1.',ionized=false,finished=false;
   const r=experiment?.result||selectedResult,possible=r.kind==='excitation'?possibleTransitions(r.level):[];
   if(experiment){
-   const interval=experiment.all?1:1.5,count=experiment.all?experiment.all.length:experiment.levels.length-1,duration=2.1+count*interval,age=reduced()?duration+.1:Math.max(0,now-energyStart);
+   const interval=experiment.all?1:1.5,count=experiment.all?experiment.all.length:experiment.levels.length-1,duration=2.1+count*interval,age=reduced()?duration+.1:Math.max(0,energyNow-energyStart);
    if(r.kind==='excitation'){
     finished=age>=duration;
     if(age<2.1){from=1;to=r.level;kind='absorption';progress=clamp(age/1.8);phaseText=age<.6?'1. Fotonet nærmer seg.':age<1.35?'2. Riktig energi absorberes; elektronet løftes.':`3. Atomet er eksitert: n = ${r.level}.`;
@@ -177,6 +182,6 @@ export function mountAtomLab(root,api){
   q('al-spectrum-svg').setAttribute('data-possible-count',String(possible.length));q('al-spectrum-svg').setAttribute('data-emitted-count',String(emitted.length));
   q('al-excitation-svg').setAttribute('data-state',ionized?'ionized':!experiment?'ready':r.kind==='excitation'?(finished?'complete':'running'):r.kind==='no-match'?'no-match':r.kind);
   say('al-excitation-phase',phaseText);
- });
+ },q('al-excitation-svg'));
  directNumbers();describeEnergy();
 }

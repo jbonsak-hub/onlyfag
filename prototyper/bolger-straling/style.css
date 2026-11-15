@@ -54,14 +54,14 @@ body.dark{color-scheme:dark;--bg:#12251f;--surface:#1a3028;--sidebar:#152a22;--i
 /* Compact classroom view: the complete model, controls and readout stay together. */
 .topic-page .topbar{height:52px}
 .topic-page main{padding:18px 28px 35px}
-.topic-page .page-head{display:block}
+.topic-page .page-head{display:block;margin-bottom:28px}
 .topic-page .page-head h1{font-size:25px;line-height:1.2;margin:0;letter-spacing:-.7px}
 .topic-page .viewbar{position:sticky;top:52px;z-index:18;background:var(--bg);margin:10px 0 12px;min-height:42px;gap:12px;flex-wrap:nowrap}
 .topic-page .view-tabs{gap:22px}
 .topic-page .view-tab{padding:8px 0 10px}
 .topic-page .animation-tools{width:auto;margin:0;padding:0;flex-shrink:0}
 .topic-page .section-links{margin-bottom:16px;gap:5px}
-.topic-page .content-section{scroll-margin-top:109px;margin-bottom:24px}
+.topic-page .content-section{scroll-margin-top:76px;margin-bottom:48px}
 .topic-page .content-section>h2{font-size:16px;margin-bottom:8px}
 .topic-page .content-section>p{line-height:1.65;margin-bottom:10px}
 .topic-page .concept-grid{gap:10px;margin:10px 0}
@@ -78,17 +78,17 @@ body.dark{color-scheme:dark;--bg:#12251f;--surface:#1a3028;--sidebar:#152a22;--i
 .topic-page .readout strong{font-size:14px}
 .topic-page .model-note{font-size:10px;line-height:1.5;margin-top:7px}
 .topic-page .wb-mode-buttons button[aria-pressed=true]{color:var(--surface)}
-.topic-page .wb-concept-layout{gap:16px;margin:8px 0 10px}
-.topic-page .wb-relations{padding:8px 12px}
-.topic-page .wb-equations{font-size:16px;line-height:1.3;gap:22px;margin-bottom:4px}
-.topic-page .wb-relations p{font-size:11.5px;line-height:1.4;margin:3px 0}
+.topic-page .wb-concept-layout{gap:20px;margin:14px 0 20px;align-items:start}
+.topic-page .wb-relations{padding:14px 18px}
+.topic-page .wb-equations{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:0;font-size:19px;line-height:1.3;margin:0 0 12px;min-height:48px}.topic-page .wb-equations>div{display:flex;align-items:center;justify-content:center;min-height:48px}.topic-page .wb-equations>div+div{border-left:1px solid var(--line)}
+.topic-page .wb-relations p{font-size:12px;line-height:1.6;margin:6px 0 10px}
 .topic-page .wb-relations .wb-example{padding-top:4px;margin-top:5px}
 .topic-page .wb-scope .readout{padding:4px 8px;margin-top:7px}
 .topic-page details{margin:9px 0;font-size:11px}
 .topic-page summary{cursor:pointer;color:var(--green);font-weight:600}
 .topic-page details[open]>summary{margin-bottom:8px}
 @media(max-width:800px){.topic-page main{padding:16px 18px 28px}.topic-page .viewbar{top:52px}.topic-page .page-head h1{font-size:23px}.topic-page .model{padding:10px 12px}.topic-page .model svg{max-height:225px}}
-@media(max-width:520px){.topic-page main{padding:16px 13px 28px}.topic-page .viewbar{gap:7px}.topic-page .view-tabs{gap:15px}.topic-page .view-tab{font-size:10px}.topic-page .animation-tools button{font-size:10px;padding:5px 7px}.topic-page .model{padding:10px}.topic-page .model svg{max-height:210px;min-height:0}.topic-page .content-section{scroll-margin-top:106px}.topic-page .control,.topic-page .controls>label{min-width:110px;max-width:none;flex-basis:calc(50% - 12px)}.topic-page .concept{padding:12px}.topic-page .concept p{font-size:12px}.topic-page .concept-grid:has(>.concept:nth-child(3):last-child){grid-template-columns:1fr}}
+@media(max-width:520px){.topic-page main{padding:16px 13px 28px}.topic-page .viewbar{gap:7px}.topic-page .view-tabs{gap:15px}.topic-page .view-tab{font-size:10px}.topic-page .animation-tools button{font-size:10px;padding:5px 7px}.topic-page .model{padding:10px}.topic-page .model svg{max-height:210px;min-height:0}.topic-page .content-section{scroll-margin-top:76px}.topic-page .control,.topic-page .controls>label{min-width:110px;max-width:none;flex-basis:calc(50% - 12px)}.topic-page .concept{padding:12px}.topic-page .concept p{font-size:12px}.topic-page .concept-grid:has(>.concept:nth-child(3):last-child){grid-template-columns:1fr}}
 @media(max-height:690px) and (min-width:801px){.topic-page .model svg{max-height:190px}.topic-page .model{padding:10px 14px}.topic-page .concept{padding:10px 13px}.topic-page .controls{padding:7px 0}}
 /* Keep the drawing readable; use horizontal space for the controls. */
 .topic-page .model.model--split{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:14px 20px;width:100%;max-width:none;padding:16px;margin:14px 0;align-items:start}
@@ -157,3 +157,15 @@ body.dark{color-scheme:dark;--bg:#12251f;--surface:#1a3028;--sidebar:#152a22;--i
 @media print{.sidebar,.topbar,.viewbar,.section-links,.site-footer,.q-actions,.q-bookmark,.filterbar,.next-topic,.animation-tools,.resource-box,dialog{display:none!important}.workspace{margin:0}main{padding:0;max-width:none}.model,.concept,.q-card{box-shadow:none;break-inside:avoid}.q-answer[hidden]{display:block!important}.q-open{min-height:50px}body{--bg:white;--surface:white;--ink:#111;--muted:#444;--line:#bbb;--green:#19452b;--green-soft:#f4f4f4}.content-section{margin-bottom:20px}.hero{grid-template-columns:1fr 1fr}h1{font-size:25px}.topic-grid{grid-template-columns:repeat(3,1fr)}}
 
 .topic-page .wb-relations .wb-calculation{margin:6px 0 0;border-top:1px solid var(--line);padding-top:7px}
+
+/* Classroom controls and deliberately spaced content sections. */
+.topic-page .wb-definitions>div{padding:9px 0;grid-template-columns:134px minmax(0,1fr);align-items:baseline;border-bottom:1px solid var(--line)}
+.topic-page .wb-definitions dt{font-size:13px}.topic-page .wb-definitions dd{font-size:12px;line-height:1.55}
+.wb-worked-columns{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px;padding-top:9px}.wb-worked-columns>.calc-lines{margin:0;font-size:12px}
+.topic-page .animation-toolbar{display:flex;justify-content:flex-end;align-items:center;min-height:28px;margin:0 0 6px}
+.topic-page .model .animation-toggle{display:inline-flex;align-items:center;justify-content:center;flex:none;width:30px;height:28px;min-height:28px;padding:5px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--green);cursor:pointer}
+.topic-page .model .animation-toggle svg{display:block;width:16px!important;height:16px!important;min-height:16px!important;max-height:16px!important;margin:0;background:none;border-radius:0}
+.topic-page .animation-toggle[aria-pressed=true]{background:var(--green-soft);border-color:var(--green)}.animation-toggle:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+.topic-page .model--split .model-header{grid-column:1/-1;min-width:0}
+@media(max-width:600px){.topic-page .page-head{margin-bottom:24px}.topic-page .content-section{margin-bottom:38px}.topic-page .wb-concept-layout{gap:16px}.topic-page .wb-relations{padding:13px 15px}.topic-page .wb-equations{font-size:18px}.wb-worked-columns{gap:14px}.wb-worked-columns>.calc-lines{font-size:11px}.topic-page .wb-definitions>div{grid-template-columns:120px minmax(0,1fr)}}
+@media print{.animation-toolbar{display:none!important}}

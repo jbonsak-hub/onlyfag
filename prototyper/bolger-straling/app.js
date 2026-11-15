@@ -1,9 +1,10 @@
-import {solutionHtml} from './math-presentation.js?v=20261114-visual-physics3';
-import {topics as waveTopics} from './waves.js?v=20261114-visual-physics3b';
-import {topics as basicTopics} from './wave-basics.js?v=20261114-visual-physics3b';
-import {topics as emTopics} from './em-atoms.js?v=20261114-visual-physics3b';
-import {topics as radioTopics} from './radioactivity.js?v=20261114-visual-physics3';
-import {topics as cosmosTopics} from './cosmos-environment.js?v=20261114-visual-physics3';
+import {solutionHtml} from './math-presentation.js?v=20261115-layout-pause1';
+import {createAnimationClock} from './animation-clock.js?v=20261115-layout-pause1';
+import {topics as waveTopics} from './waves.js?v=20261115-layout-pause1';
+import {topics as basicTopics} from './wave-basics.js?v=20261115-layout-pause1';
+import {topics as emTopics} from './em-atoms.js?v=20261115-layout-pause1';
+import {topics as radioTopics} from './radioactivity.js?v=20261115-layout-pause1';
+import {topics as cosmosTopics} from './cosmos-environment.js?v=20261115-layout-pause1';
 
 const order=['bolger','fenomener','em','atomer','universet','kommunikasjon','radioaktivitet','stralevern','atmosfaeren'];
 const topics=[...basicTopics,...waveTopics,...emTopics,...radioTopics,...cosmosTopics].sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id));
@@ -37,16 +38,64 @@ try{const data=JSON.parse(localStorage.getItem(key)||'null');if(data&&typeof dat
 for(const k of ['answers','bookmarks','drafts'])if(!saved[k]||typeof saved[k]!=='object'||Array.isArray(saved[k]))saved[k]={};
 const persist=()=>{try{localStorage.setItem(key,JSON.stringify(saved));}catch{}};
 let route={id:'oversikt',view:'fagstoff'},filters={query:'',type:'',level:'',topic:'',bookmarked:false};
-let frameFunctions=[],cleanup,frameId=0,time=0,last=0;
-let paused=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let cleanup,frameId=0,last=0;
+const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
+const animationClock=createAnimationClock({reducedMotion:reducedMotion.matches});
+const overviewScope=Symbol('overview');
+const animationButtons=new Map();
 function announce(text){$('#announcer').textContent=text;}
-function tick(now){frameId=0;if(paused||document.hidden||!frameFunctions.length)return;if(last&&now-last<32){frameId=requestAnimationFrame(tick);return;}if(last)time+=Math.min((now-last)/1000,.1);last=now;frameFunctions.forEach(fn=>fn(time));frameId=requestAnimationFrame(tick);}
-function startFrames(){if(!frameId&&!paused&&!document.hidden&&frameFunctions.length){last=0;frameId=requestAnimationFrame(tick);}}
-function repaint(){frameFunctions.forEach(fn=>fn(time));}
-function clearFrames(){cancelAnimationFrame(frameId);frameId=0;frameFunctions=[];time=0;last=0;if(typeof cleanup==='function')cleanup();cleanup=null;}
-const api={onFrame(fn){frameFunctions.push(fn);fn(time);},repaint};
+function animationScope(target){
+ if(!target)return overviewScope;
+ const element=typeof target==='string'?document.querySelector(target):target;
+ if(!element)throw new Error(`Animation target not found: ${target}`);
+ return element.closest('.model')||element;
+}
+function animationActive(scope){
+ if(scope===overviewScope)return true;
+ if(!scope.isConnected||scope.closest('[hidden]'))return false;
+ for(let parent=scope;parent;parent=parent.parentElement){
+  if(parent.tagName==='DIALOG'&&!parent.open)return false;
+  if(parent.tagName==='DETAILS'&&!parent.open)return false;
+ }
+ return true;
+}
+function tick(now){
+ frameId=0;
+ if(document.hidden||!animationClock.hasRunning()){last=0;return;}
+ if(last&&now-last<32){frameId=requestAnimationFrame(tick);return;}
+ const dt=last?Math.min((now-last)/1000,.1):0;
+ last=now;animationClock.advance(dt);
+ if(animationClock.hasRunning())frameId=requestAnimationFrame(tick);else last=0;
+}
+function startFrames(){if(!frameId&&!document.hidden&&animationClock.hasRunning()){last=0;frameId=requestAnimationFrame(tick);}}
+function repaint(target){if(arguments.length)animationClock.repaint(animationScope(target));else animationClock.repaint();startFrames();}
+function clearFrames(){cancelAnimationFrame(frameId);frameId=0;animationClock.clear();animationButtons.clear();last=0;if(typeof cleanup==='function')cleanup();cleanup=null;}
+const api={
+ onFrame(fn,target){const scope=animationScope(target);return animationClock.onFrame(fn,scope,{isActive:()=>animationActive(scope)});},
+ repaint,
+ now:target=>animationClock.now(animationScope(target)),
+ isPaused:target=>animationClock.isPaused(animationScope(target))
+};
+function syncAnimationButton(scope,button){
+ const paused=animationClock.isPaused(scope),label=paused?'Fortsett animasjonen':'Pause animasjonen';
+ button.setAttribute('aria-label',label);button.setAttribute('title',label);button.setAttribute('aria-pressed',String(paused));
+ button.innerHTML=paused?'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 3.5 16 10 6 16.5Z" fill="currentColor"/></svg>':'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3.5H8.5V16.5H5ZM11.5 3.5H15V16.5H11.5Z" fill="currentColor"/></svg>';
+ scope.dataset.animationPaused=String(paused);
+}
+function installAnimationControls(){
+ for(const scope of animationClock.scopes()){
+  if(scope===overviewScope||!scope.classList.contains('model')||animationButtons.has(scope))continue;
+  const toolbar=document.createElement('div');toolbar.className='animation-toolbar';
+  const button=document.createElement('button');button.type='button';button.className='animation-toggle';
+  toolbar.append(button);(scope.querySelector('.model-visual')||scope).prepend(toolbar);
+  animationButtons.set(scope,button);syncAnimationButton(scope,button);
+  button.addEventListener('click',()=>{animationClock.toggle(scope);syncAnimationButton(scope,button);animationClock.repaint(scope);startFrames();});
+ }
+}
 document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(frameId);frameId=0;last=0;}else startFrames();});
-matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',e=>{paused=e.matches;if(paused){cancelAnimationFrame(frameId);frameId=0;}else startFrames();});
+reducedMotion.addEventListener('change',e=>{animationClock.setReducedMotion(e.matches);for(const [scope,button]of animationButtons)syncAnimationButton(scope,button);if(!animationClock.hasRunning()){cancelAnimationFrame(frameId);frameId=0;last=0;}else startFrames();});
+document.addEventListener('toggle',startFrames,true);
+document.addEventListener('click',()=>queueMicrotask(startFrames));
 
 function closeNav(){document.body.classList.remove('sidebar-open');$('#nav-scrim').hidden=true;$('#menu-button').setAttribute('aria-expanded','false');}
 function buildNav(){
@@ -69,30 +118,34 @@ function renderOverview(){
 }
 function arrangeModels(root){
  for(const model of root.querySelectorAll('.model')){
-  if(model.classList.contains('model--split'))continue;
+  if(model.classList.contains('model--split')||model.dataset.modelLayout==='custom')continue;
   const children=[...model.children];
-  const figures=children.filter(el=>el.tagName.toLowerCase()==='svg'||el.tagName==='CANVAS'||el.querySelector('svg,canvas')||el.hasAttribute('data-model-visual')||el.classList.contains('ra-builder-head'));
+  const fullWidth=children.filter(el=>el.hasAttribute('data-model-full-width'));
+  const figures=children.filter(el=>!fullWidth.includes(el)&&(el.tagName.toLowerCase()==='svg'||el.tagName==='CANVAS'||el.querySelector('svg,canvas')||el.hasAttribute('data-model-visual')||el.classList.contains('ra-builder-head')));
   if(!figures.length)continue;
   const visual=document.createElement('div');visual.className='model-visual';
   const panel=document.createElement('aside');panel.className='model-panel';panel.setAttribute('aria-label','Kontroller og avlesning');
   const footer=document.createElement('div');footer.className='model-footer';
+  const header=document.createElement('div');header.className='model-header';
   for(const el of children){
-   if(figures.includes(el)||el.tagName==='H3'||el.tagName==='H4'||el.classList.contains('ema-values'))visual.append(el);
+   if(fullWidth.includes(el))header.append(el);
+   else if(figures.includes(el)||el.tagName==='H3'||el.tagName==='H4'||el.classList.contains('ema-values'))visual.append(el);
    else if(el.tagName==='DETAILS'||el.classList.contains('model-note')||el.classList.contains('wb-caption')||el.classList.contains('ema-spectrum-callout'))footer.append(el);
    else if(el.querySelector('input,select,button,textarea')||el.matches('.readout,.ema-values,.ema-atom-readout,.ema-signal-result,.ra-equation,.ra-status,.sv-status,[aria-live],.ema-spectrum-callout'))panel.append(el);
    else footer.append(el);
   }
-  if(!panel.children.length){for(const el of [...visual.children,...footer.children])model.append(el);continue;}
-  model.classList.add('model--split');model.append(visual,panel);if(footer.children.length)model.append(footer);
+  if(!panel.children.length){for(const el of [...header.children,...visual.children,...footer.children])model.append(el);continue;}
+  model.classList.add('model--split');if(header.children.length)model.append(header);model.append(visual,panel);if(footer.children.length)model.append(footer);
  }
 }
 function renderTopic(){
  const t=byId.get(route.id),all=route.id==='alle';
- content.innerHTML=`<div class="page-head"><h1>${all?'Alle oppgaver':escapeHtml(t.title)}</h1></div><div class="viewbar"><div class="view-tabs" aria-label="Velg innhold">${(all?[['oppgaver','Oppgavebank']]:[['fagstoff','Fagstoff'],['oppgaver','Oppgavebank'],['begreper','Begreper']]).map(([view,label])=>`<button class="view-tab ${route.view===view?'active':''}" data-route="${route.id}/${view}" aria-pressed="${route.view===view}">${label}${view==='oppgaver'?` <span>(${all?allQuestions.length:t.questions.length})</span>`:''}</button>`).join('')}</div></div><div id="topic-content"></div>`;
+ content.innerHTML=`<div class="page-head"><h1>${all?'Alle oppgaver':escapeHtml(t.title)}</h1></div><div id="topic-content"></div>`;
  if(route.view==='fagstoff'){
    $('#topic-content').innerHTML=`${t.sections.map((s,i)=>`<section class="content-section" id="section-${t.id}-${i}"><h2><span class="section-index" aria-hidden="true">${i+1}</span>${escapeHtml(s.title)}</h2>${s.body}</section>`).join('')}${resourceHtml(t)}`;
    if(t.mount)cleanup=t.mount($('#topic-content'),api);
    arrangeModels($('#topic-content'));
+   installAnimationControls();
  }else if(route.view==='begreper'){
    $('#topic-content').innerHTML=`<p class="question-summary">Begrepene du trenger for å forklare sammenhengene.</p><dl class="terms-list">${t.terms.map(term=>`<div class="term"><dt>${escapeHtml(term.term)}</dt><dd>${term.definition}</dd></div>`).join('')}</dl>${resourceHtml(t)}`;
  }else renderBank();

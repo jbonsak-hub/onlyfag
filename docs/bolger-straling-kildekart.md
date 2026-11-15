@@ -104,3 +104,19 @@ De nye modellene er opprinnelige SVG-/canvas-illustrasjoner med oppgitte forenkl
 
 
 Kontroll i faktisk nettleser: alle ni fagstoffsider ved 1366 × 768 og alle 27 tema/visning-kombinasjoner ved 390 px er åpnet uten JavaScript-feil eller vannrett side-overflyt. Det er kontrollert at fart beholder bølgelengden, at lysmodellene viser hele figuren, at temperaturpreseter tilpasser aksene, at ett-atom/mange-atomer-modus gir forskjellige forløp, at feil fotonenergi ikke eksiterer, og at C-14-knappen gir stabilt N-14. Bøyning ved to yttertilfeller, destruktiv interferens, huskas oppbygging av utslag, ambulansemottakere, regnbue/prisme og kommunikasjonsvalg er inspisert visuelt. Etter denne runden ble noen tettstilte etiketter og grønne avlesninger ryddet opp; bølgeeksempelet kan åpnes for å bevare kompakt førsteside, og nuklidesymbolet følger kjernefiguren.
+
+
+## Layout, lokale pauser og optikk, 15. november 2026
+
+Denne revisjonen følger nye ønsker om en liten pauseknapp per animasjon. animation-clock.js gir hver modell egen lokal tid. Pause, gjenopptak, parameterendringer under pause og hendelsesstart bruker samme lokale klokke, slik at ingen modell hopper frem når den fortsetter. Statiske refleksjons-, absorpsjons-, brytnings- og RGB-figurer har ingen meningsløs pauseknapp. Lukkede detaljfelt/dialoger og skjulte faner stanser tidsutviklingen.
+
+- Toppfanene er fjernet; venstremenyen eier visningsvalgene. Delene har større avstand. Bølgeegenskaper har fem adskilte definisjonsrader, to sentrerte formler og et regneeksempel med to kolonner. Duplisert mekanisk/EM-forklaring står nå først i EM-temaet. Etterspurte modellmerknader er fjernet.
+- Spektrumbåndet fyller hele modellbredden. Under ligger bølge og avlesninger til venstre, betjening til høyre. RGB er tegnet om til en lav, bred figur med alle sirklene synlige. Atomlabens tilleggsforklaringer ligger utenfor selve animasjonsrammen.
+- Huskeillustrasjonen bruker samme kontaktpunkt og kontaktstatus som kraftberegningen. Armen består av to deler med begrenset rekkevidde. Kontaktavlesningen oppdateres umiddelbart sammen med hånden og teksten i figuren.
+- Brytning bruker valg av mediepar og retning, uten synlige brytningsindekser. Totalrefleksjon vises bare fra vann/glass mot luft, med vinkel opp til 90 grader. Fysikken tillater ikke totalrefleksjon i motsatt retning.
+- Prisme og regnbue åpnes som ett modalvindu med én figur om gangen. Hele hovedregnbuen og sekundærregnbuen vises med riktig omvendt fargerekkefølge; én/to reflekterende strålevei og omtrentlige vinkler 40–42°/51–54° kan sammenlignes.
+- Doppler beregner mottatt frekvens fra det forsinkede utsendelsespunktet. Sirenen og kildefarten er konstante; hastighetskomponenten mot mottakeren endres når kilden passerer. Lydens reisetid tas med.
+
+Regresjoner: tests/bolger-straling.cjs --data-only og tests/bolger-straling-clock.cjs kontrollerer de 123 oppgave-ID-ene, 24 regnesvarene, selvstendige klokker, armrekkevidde, brytningsgrenser, forsinket Doppler og begge regnbuene. Faktisk nettleserkontroll brukes i tillegg for størrelse, lesbarhet, overlapping, modalvalg og kontrollplassering.
+
+Faktisk visuell kontroll i denne revisjonen: alle ni fagstoffsider er åpnet ved 1366 × 650 og 390 px bredde uten JavaScript-feil eller vannrett side-overflyt. Pause av bølgefiguren er kontrollert mens partikkelfiguren fortsetter. Regneeksemplets to kolonner, komplett RGB (ca. 250 px høy modell), spekterets fulle innholdsbredde, eksitasjonsrammen (ca. 520 px), huskas håndkontakt, retning/totalrefleksjon og modalens primære/sekundære regnbue er inspisert. Diagrametiketter som overlappet kurver, er flyttet. Dialogen kan åpnes, bytte visning og lukkes på mobil.

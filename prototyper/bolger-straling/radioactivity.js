@@ -1,4 +1,4 @@
-import {elements, getIsotope, getPreferredDecay, isotopePresets} from './isotope-data.js?v=20261114-visual-physics3';
+import {elements, getIsotope, getPreferredDecay, isotopePresets} from './isotope-data.js?v=20261115-layout-pause1';
 
 const style = `<style>
 .ra-graphic,.sv-graphic{display:block;width:100%;height:auto;color:var(--ink,#17233b)}
@@ -39,7 +39,7 @@ const nucleusDots = (count,cx,cy,radius,color,offset=0) => Array.from({length:Ma
 }).join('');
 
 function mountRadioactivity(root,api){
-  let lastTime=0;
+  const builderScope='#ra-built-nucleus',decayScope='#ra-emission',halfScope='#ra-half-time';
   let currentIsotope=null;
   const pInput=q(root,'ra-protons'),nInput=q(root,'ra-neutrons'),preset=q(root,'ra-isotope-preset');
   const isotopePaint=()=>{
@@ -64,9 +64,9 @@ function mountRadioactivity(root,api){
     q(root,'ra-built-title').textContent=`Modell av ${elementNames[p]}-${p+n}, ${p} protoner og ${n} nøytroner`;
   };
   const clearBuilderReaction=()=>{q(root,'ra-builder-reaction').innerHTML='';};
-  pInput.addEventListener('input',()=>{preset.value='egen';clearBuilderReaction();isotopePaint();});
-  nInput.addEventListener('input',()=>{preset.value='egen';clearBuilderReaction();isotopePaint();});
-  preset.addEventListener('change',()=>{if(preset.value==='egen')return;const [p,n]=preset.value.split(',');pInput.value=p;nInput.value=n;clearBuilderReaction();isotopePaint();});
+  pInput.addEventListener('input',()=>{preset.value='egen';clearBuilderReaction();isotopePaint();api.repaint(builderScope);});
+  nInput.addEventListener('input',()=>{preset.value='egen';clearBuilderReaction();isotopePaint();api.repaint(builderScope);});
+  preset.addEventListener('change',()=>{if(preset.value==='egen')return;const [p,n]=preset.value.split(',');pInput.value=p;nInput.value=n;clearBuilderReaction();isotopePaint();api.repaint(builderScope);});
   q(root,'ra-builder-decay').addEventListener('click',()=>{
     const decay=getPreferredDecay(Number(pInput.value),Number(nInput.value));if(!decay)return;
     const {parent,daughter,mode,gammaAfter}=decay;
@@ -77,7 +77,7 @@ function mountRadioactivity(root,api){
     const nextPreset=`${daughter.z},${daughter.n}`;preset.value=isotopePresets.some(([z,n])=>`${z},${n}`===nextPreset)?nextPreset:'egen';
     isotopePaint();q(root,'ra-builder-reaction').innerHTML=reaction;
     q(root,'ra-builder-note').textContent=`${parent.name}-${parent.a} har blitt ${daughter.name}-${daughter.a}. ${parent.note||'Et nøytron er omdannet til et proton; nukleontallet er bevart.'}`;
-    api.repaint();
+    api.repaint(builderScope);
   });
   isotopePaint();
 
@@ -86,8 +86,8 @@ function mountRadioactivity(root,api){
     beta:{parent:[32,15,'P'],daughter:[32,16,'S'],particle:'β⁻',a:0,z:'−1',name:'e',before:'Fosfor-32',after:'Svovel-32',explanation:'Et nøytron omdannes til et proton. Et elektron (β⁻) og et antinøytrino sendes ut. Nukleontallet er uendret, protontallet øker med én.'},
     gamma:{parent:[202,79,'Au*'],daughter:[202,79,'Au'],particle:'γ',before:'Eksitert gull-202',after:'Gull-202',explanation:'En eksitert kjerne kvitter seg med energi som et gammafoton. Antall protoner og nøytroner er uendret. Stjernen (*) betyr ekstra energi.'}
   };
-  const decaySelect=q(root,'ra-decay-type');let decayStart=0;
-  const decayPaint=(t=lastTime)=>{
+  const decaySelect=q(root,'ra-decay-type');let decayStart=api.now(decayScope);
+  const decayPaint=(t=api.now(decayScope))=>{
     const d=decays[decaySelect.value];
     q(root,'ra-decay-equation').innerHTML=`${nuclide(...d.parent)}<span>→</span>${nuclide(...d.daughter)}<span>+</span>${d.particle==='γ'?'<b>γ</b>':nuclide(d.a,d.z,d.name)}${d.particle==='β⁻'?'<span class="ra-inline-note">+ antinøytrino</span>':''}`;
     q(root,'ra-decay-explanation').textContent=d.explanation;
@@ -98,8 +98,8 @@ function mountRadioactivity(root,api){
     q(root,'ra-emission').innerHTML=d.particle==='α'?'<circle cx="-6" cy="-6" r="6" fill="#e68956"/><circle cx="6" cy="-6" r="6" fill="#448bc5"/><circle cx="-6" cy="6" r="6" fill="#448bc5"/><circle cx="6" cy="6" r="6" fill="#e68956"/>':d.particle==='β⁻'?'<circle r="7" fill="#7459c8"/><text text-anchor="middle" y="-17">β⁻</text>':'<path d="M-18 0 Q-12 -18 -6 0 T6 0 T18 0" fill="none" stroke="#bf8b22" stroke-width="4"/>';
     q(root,'ra-decay-a').textContent=`A: ${d.parent[0]} → ${d.daughter[0]}`;q(root,'ra-decay-z').textContent=`Z: ${d.parent[1]} → ${d.daughter[1]}`;
   };
-  decaySelect.addEventListener('change',()=>{decayStart=lastTime;decayPaint();api.repaint();});
-  q(root,'ra-decay-again').addEventListener('click',()=>{decayStart=lastTime;decayPaint();api.repaint();});
+  decaySelect.addEventListener('change',()=>{decayStart=api.now(decayScope);api.repaint(decayScope);});
+  q(root,'ra-decay-again').addEventListener('click',()=>{decayStart=api.now(decayScope);api.repaint(decayScope);});
 
   const timeInput=q(root,'ra-half-time'),halfPreset=q(root,'ra-half-preset'),run=q(root,'ra-half-run');
   let thresholds=[],halfTime=Number(timeInput.value),previousTime=null;
@@ -130,22 +130,25 @@ function mountRadioactivity(root,api){
   q(root,'ra-half-resample').addEventListener('click',()=>{sample();halfPaint();});
   q(root,'ra-half-next').addEventListener('click',()=>{halfTime=Math.min(6,Math.floor(halfTime+.001)+1);timeInput.value=halfTime;halfPaint();});
   q(root,'ra-half-reset').addEventListener('click',()=>{halfTime=0;timeInput.value=0;run.checked=false;halfPaint();});
-  run.addEventListener('change',()=>{previousTime=lastTime;});
+  run.addEventListener('change',()=>{previousTime=api.now(halfScope);});
   halfPaint();
   api.onFrame(t=>{
     if(previousTime!==null&&run.checked){halfTime=Math.min(6,halfTime+Math.max(0,Math.min(1,t-previousTime))*.18);timeInput.value=halfTime;halfPaint();if(halfTime===6)run.checked=false;}
-    previousTime=t;lastTime=t;decayPaint(t);
+    previousTime=t;
+  },halfScope);
+  api.onFrame(decayPaint,decayScope);
+  api.onFrame(t=>{
     const radioactive=currentIsotope?.stable===false;
     q(root,'ra-built-nucleus').setAttribute('transform',radioactive?`translate(${(.9*Math.sin(t*15)).toFixed(2)},${(.65*Math.sin(t*19)).toFixed(2)})`:'translate(0,0)');
-  });
+  },builderScope);
 }
 
 function mountProtection(root,api){
-  let lastTime=0;
+  const shieldScope='#sv-rays',fieldScope='#sv-alpha-dot';
   const type=q(root,'sv-radiation'),material=q(root,'sv-material'),inside=q(root,'sv-location'),thickness=q(root,'sv-thickness');
   let transmission=1,isInternal=false;
   const labels={alpha:'α',beta:'β⁻',gamma:'γ'};const colors={alpha:'#d67c3e',beta:'#785ec3',gamma:'#207eaa'};
-  const paintShield=(t=lastTime)=>{
+  const paintShield=(t=api.now(shieldScope))=>{
     const k=type.value,m=material.value;isInternal=inside.value==='internal';
     const cm=Number(thickness.value);q(root,'sv-thickness-out').textContent=`${format(cm,1)} cm`;
     thickness.disabled=m!=='lead';
@@ -176,9 +179,9 @@ function mountProtection(root,api){
     q(root,'sv-transmission').textContent=isInternal?'Utvendig skjerm er ikke mellom kilden og vevet':noShield?'Ingen skjerm mellom kilde og kropp':k==='gamma'&&m==='lead'?`Illustrasjon: ${format(transmission*100,1)} % passerer skjermen`:transmission===0?'Partiklene stanses av skjermen':'Noe eller mye stråling passerer';
     q(root,'sv-shield-desc').textContent=`${labels[k]}-stråling, ${isInternal?'intern':'ekstern'} kilde, ${q(root,'sv-shield-label').textContent}. ${captions[k]}`;
   };
-  [type,material,inside,thickness].forEach(el=>el.addEventListener('input',()=>{paintShield();api.repaint();}));
+  [type,material,inside,thickness].forEach(el=>el.addEventListener('input',()=>api.repaint(shieldScope)));
   let polarity=1;const field=q(root,'sv-field-strength');
-  const fieldPaint=(t=lastTime)=>{
+  const fieldPaint=(t=api.now(fieldScope))=>{
     const s=Number(field.value)/100;q(root,'sv-field-out').textContent=`${field.value} %`;
     q(root,'sv-top-charge').textContent=polarity===1?'+ + + + + + + + + +':'− − − − − − − − − −';
     q(root,'sv-bottom-charge').textContent=polarity===1?'− − − − − − − − − −':'+ + + + + + + + + +';
@@ -191,9 +194,9 @@ function mountProtection(root,api){
     q(root,'sv-beta-label').setAttribute('y',polarity===1?Math.max(65,Math.min(124,betaY-12)):Math.min(238,Math.max(192,betaY+18)));
     q(root,'sv-field-caption').textContent=s===0?'Uten elektrisk felt går alle tre rett frem i modellen.':`Den positive alfapartikkelen bøyes mot ${polarity===1?'nederste':'øverste'} negative plate. Det negative betaelektronet bøyes motsatt vei. Gamma har ingen ladning og fortsetter rett frem.`;
   };
-  field.addEventListener('input',()=>{fieldPaint();api.repaint();});
-  q(root,'sv-reverse-field').addEventListener('click',()=>{polarity*=-1;fieldPaint();api.repaint();});
-  paintShield();fieldPaint();api.onFrame(t=>{lastTime=t;paintShield(t);fieldPaint(t);});
+  field.addEventListener('input',()=>api.repaint(fieldScope));
+  q(root,'sv-reverse-field').addEventListener('click',()=>{polarity*=-1;api.repaint(fieldScope);});
+  api.onFrame(paintShield,shieldScope);api.onFrame(fieldPaint,fieldScope);
 }
 
 export const topics=[{
