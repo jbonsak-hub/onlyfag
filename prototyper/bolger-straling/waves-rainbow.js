@@ -94,12 +94,10 @@ dialog.wvr-dialog{box-sizing:border-box;width:min(1140px,calc(100vw - 32px));max
 body.dark .wvr-model .model-visual svg{background:#182c2e}body.dark .wvr-model svg .wvr-sky{fill:#21383b}body.dark .wvr-model svg .wvr-ground{fill:#29473c}
 </style>`;
 
-export const rainbowSectionHtml=`${styles}<button type="button" class="wvr-launch" id="wvr-open" aria-haspopup="dialog"><span>Utforsk videre: hvordan spres hvitt lys? Vi ser på prisme og regnbue.</span><span aria-hidden="true">↗</span></button>
-<dialog class="wvr-dialog" id="wvr-dialog" aria-labelledby="wvr-title"><div class="wvr-dialog-heading"><h2 id="wvr-title">Hvordan spres hvitt lys?</h2><button class="wvr-close" id="wvr-close" type="button" aria-label="Lukk lysforsøket">×</button></div>
- <div class="model model--split wvr-model"><div class="model-visual"><svg id="wvr-scene" viewBox="0 0 860 470" role="img" aria-label="Hvitt lys deles opp i farger i et prisme"></svg></div>
- <aside class="model-panel" aria-label="Velg lysfenomen"><div class="wvr-mode-tabs" role="group" aria-label="Velg figur"><button type="button" id="wvr-mode-prism" aria-pressed="true">Prisme</button><button type="button" id="wvr-mode-rainbow" aria-pressed="false">Regnbue</button></div>
- <p class="wvr-description" id="wvr-description"></p><label id="wvr-reflections-label" for="wvr-reflections" hidden>Lysveien i dråpen<select id="wvr-reflections"><option value="1">Én refleksjon: hovedregnbuen</option><option value="2">To refleksjoner: regnbue nr. 2</option></select></label>
- <div id="wvr-readout" class="wvr-readout" aria-live="polite"></div><a class="wvr-source" href="https://www.weather.gov/fgz/Rainbow" target="_blank" rel="noopener">NOAA: hvordan regnbuer oppstår ↗</a></aside></div></dialog>`;
+export const rainbowExampleHtml=`${styles}<div class="model model--split wvr-model"><div class="model-visual"><svg id="wvr-scene" viewBox="0 0 860 470" role="img" aria-label="Hvitt lys deles opp i farger i et prisme"></svg></div>
+ <aside class="model-panel" aria-label="Velg lysfenomen">
+ <p class="wvr-description" id="wvr-description"></p><label id="wvr-reflections-label" for="wvr-reflections" hidden>Lysveien i dråpen<select id="wvr-reflections"><option value="1">Én refleksjon</option><option value="2">To refleksjoner</option></select></label>
+ <div id="wvr-readout" class="wvr-readout" aria-live="polite"></div><a class="wvr-source" href="https://www.weather.gov/fgz/Rainbow" target="_blank" rel="noopener">NOAA: hvordan regnbuer oppstår ↗</a></aside></div>`;
 
 function prismScene(){
  const map=p=>add([302,203],mul(rotate(p,-30*DEG),103));
@@ -124,67 +122,101 @@ function prismScene(){
 }
 
 function rainbowScene(reflections){
- const cx=263,cy=335,angleScale=4.25;
- let out=`<title>En dobbel regnbue og lysveien i en regndråpe</title><desc>Hele hovedregnbuen vises sammen med en svakere ytre regnbue med motsatt fargerekkefølge. Den forstørrede dråpen viser ${reflections===1?'én':'to'} indre refleksjon${reflections===1?'':'er'} og vinkelen tilbake til observatøren.</desc>`;
- out+=`<rect x="12" y="14" width="510" height="422" rx="12" fill="#e6f0f3" class="wvr-sky"/><path d="M12 335Q138 319 263 335T522 335V436H12Z" fill="#d2e3d5" class="wvr-ground"/>`;
- // Arcs cover a full semicircle, with endpoints inside the picture rather than clipped.
- for(const order of [2,1])for(const c of [...colors].sort((a,b)=>rainbowAngles(b.water,order).rainbowDeg-rainbowAngles(a.water,order).rainbowDeg)){
-  const radius=rainbowAngles(c.water,order).rainbowDeg*angleScale;
-  out+=`<path d="M${cx-radius},${cy}A${radius},${radius} 0 0 1 ${cx+radius},${cy}" fill="none" stroke="${c.color}" stroke-width="3" opacity="${order===2?(reflections===2?.65:.4):reflections===1?.96:.6}"/>`;
+ const centre=[300,226],radius=170,map=p=>add(centre,mul(p,radius));
+ const traces=colors.map(c=>{const traced=traceRainbow(c.water,rainbowAngles(c.water,reflections).impact,reflections);return {c,traced};});
+ const first=traces[0].traced,entry=map(first.entry),exit=map(first.exit),incomingStart=[24,entry[1]];
+ let out=`<title>Lys brytes og reflekteres i en regndråpe</title><desc>En stor vanndråpe viser hvitt lys som kommer fra venstre. Lyset brytes inn, reflekteres ${reflections===1?'én gang':'to ganger'} og brytes ut i farger. Strålene følger brytningsloven. Vinkelen er mellom sollysets retning og retningen lyset kommer tilbake fra. En egen oversikt viser begge hele regnbuene; fargebåndene der er skjematisk forstørret.</desc><defs><radialGradient id="wvr-drop-fill" cx=".34" cy=".3" r=".85"><stop stop-color="#edfaff"/><stop offset="1" stop-color="#bfdfed"/></radialGradient><clipPath id="wvr-drop-rays"><rect x="12" y="45" width="836" height="411"/></clipPath></defs>`;
+ out+=text(300,35,'Regndråpe','text-anchor="middle" font-weight="650"');
+ out+=`<circle cx="300" cy="226" r="170" fill="url(#wvr-drop-fill)" stroke="#88aebf" stroke-width="1.7"/>`;
+ out+=`<g clip-path="url(#wvr-drop-rays)"><path d="${path([incomingStart,entry])}" fill="none" stroke="#a7b4b9" stroke-width="10"/><path d="${path([incomingStart,entry])}" fill="none" stroke="#fffdef" stroke-width="7"/>`;
+ const rays=[];
+ for(const {c,traced} of [...traces].reverse()){
+  const p1=map(traced.entry),internal=[p1,...traced.reflectionPoints.map(map),map(traced.exit)],last=internal.at(-1),d=traced.outgoing;
+  const hits=[d[0]<0?(24-last[0])/d[0]:(836-last[0])/d[0],d[1]<0?(47-last[1])/d[1]:(453-last[1])/d[1]].filter(t=>t>0);
+  const end=add(last,mul(d,Math.min(...hits)));
+  const points=[[24,p1[1]],...internal,end];
+  out+=`<path d="${path(internal.concat([end]))}" fill="none" stroke="${c.color}" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>`;
+  rays.unshift({color:c.color,points});
  }
- out+=text(31,43,'Hele regnbuen sett mot regnet','font-weight="650"')+text(37,70,'Sola er bak deg.','class="wvr-small"');
- out+=text(263,230,'Hovedregnbuen','font-weight="650" text-anchor="middle"')+text(263,252,'Én refleksjon','class="wvr-small" text-anchor="middle"');
- out+=text(263,285,'Regnbue nr. 2','font-weight="650" text-anchor="middle"')+text(263,307,'To refleksjoner · omvendte farger','class="wvr-small" text-anchor="middle"');
- out+=`<path d="M263 335V359" stroke="#7c978d" stroke-dasharray="4 5"/><circle cx="263" cy="379" r="10" fill="#ddb48f"/><path d="M247 414L251 391Q263 385 275 391L280 414" fill="#5a8f7c"/><path d="M255 414L251 429M272 414L277 429" fill="none" stroke="#445665" stroke-width="5" stroke-linecap="round"/>`;
- out+=text(285,391,'Du ser bort fra sola','class="wvr-small"');
-
- const dropCentre=[692,182],radius=87,map=p=>add(dropCentre,mul(p,radius));
- out+=`<rect x="538" y="14" width="310" height="422" rx="12" fill="var(--surface,#fff)" stroke="var(--line,#d7e2dc)"/>`;
- out+=text(558,43,'Inne i én regndråpe','font-weight="650"')+text(558,68,reflections===1?'To brytninger + én refleksjon':'To brytninger + to refleksjoner','class="wvr-small"');
- out+=`<circle cx="${dropCentre[0]}" cy="${dropCentre[1]}" r="${radius}" fill="#c7e6f0" fill-opacity=".65" stroke="#83b3c1" stroke-width="1.8"/>`;
- const rayColors=[colors[0],colors.at(-1)],rays=[];
- for(const c of [...rayColors].reverse()){
-  const optimum=rainbowAngles(c.water,reflections),impact=optimum.impact*(reflections===2?-1:1),trace=traceRainbow(c.water,impact,reflections);
-  const p1=map(trace.entry),internal=[p1,...trace.reflectionPoints.map(map),map(trace.exit)],outgoing=trace.outgoing;
-  const end=add(internal.at(-1),mul(outgoing,Math.min((internal.at(-1)[0]-560)/Math.max(.01,-outgoing[0]),(366-internal.at(-1)[1])/Math.max(.01,outgoing[1]))));
-  const start=[553,p1[1]],points=[start,...internal,end];
-  out+=`<path d="${path([start,p1])}" stroke="#fff7c7" stroke-width="5" fill="none"/><path d="${path(internal.concat([end]))}" fill="none" stroke="${c.color}" stroke-width="2.7" stroke-linejoin="round"/>`;
-  trace.reflectionPoints.map(map).forEach((p,i)=>{out+=`<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="${c.color}"/>`;if(c.name==='Rødt')out+=text(p[0]+(p[0]>dropCentre[0]?11:-11),p[1]+5,String(i+1),`font-weight="650" text-anchor="${p[0]>dropCentre[0]?'start':'end'}"`);});
-  rays.push({color:c.color,points});
+ // Direction arrows are placed on the exact red path, away from the labels.
+ const redPoints=[entry,...first.reflectionPoints.map(map),exit];
+ for(let i=0;i<redPoints.length-1;i++){
+  const a=redPoints[i],b=redPoints[i+1],delta=add(b,mul(a,-1));
+  out+=arrow(add(a,mul(delta,.44)),add(a,mul(delta,.56)),colors[0].color,1.8);
  }
- const shown=traceRainbow(colors[0].water,rainbowAngles(colors[0].water,reflections).impact*(reflections===2?-1:1),reflections),exit=map(shown.exit),back=add(exit,[-50,0]),arcEnd=add(exit,mul(shown.outgoing,38));
- out+=`<path d="${path([exit,back])}" stroke="#9dafa9" stroke-dasharray="3 4" fill="none"/><path d="M${exit[0]-38},${exit[1]}A38 38 0 0 0 ${point(arcEnd)}" stroke="#d98560" fill="none" stroke-width="1.3"/>`;
- out+=text(558,389,'Lyset kommer tilbake mot deg','class="wvr-small"')+text(558,414,reflections===1?'Omtrent 40°–42° fra retningen bort fra sola':'Omtrent 51°–54° fra retningen bort fra sola','class="wvr-tiny"');
+ out+='</g>';
+ out+=text(25,entry[1]+27,'Hvitt lys','class="wvr-small"');
+ out+=arrow([79,entry[1]],[114,entry[1]],'#7c8b91',1.6);
+ if(reflections===1){
+  // Extend the incoming ray horizontally. Back-project the emerging red ray;
+  // the outside intersection gives the actual antisolar rainbow angle.
+  const back=mul(first.outgoing,-1),travel=(entry[1]-exit[1])/back[1],intersection=add(exit,mul(back,travel));
+  const outsideDistance=Math.max(0,-2*dot(first.exit,back)*radius)+9;
+  const backStart=add(exit,mul(back,outsideDistance)),backEnd=add(intersection,mul(back,39));
+  out+=`<path d="${path([entry,[829,entry[1]]])}" fill="none" stroke="#7f9097" stroke-width="1.35" stroke-dasharray="6 5"/><path d="${path([backStart,backEnd])}" fill="none" stroke="#7f9097" stroke-width="1.35" stroke-dasharray="6 5"/>`;
+  const angle=first.angleDeg*DEG,r=47,arcA=add(intersection,[-r,0]),arcB=add(intersection,mul(first.outgoing,r));
+  out+=`<path d="M${point(arcA)}A${r} ${r} 0 0 0 ${point(arcB)}" fill="none" stroke="#dd9b3c" stroke-width="2.7"/>`;
+  out+=text(intersection[0]-80*Math.cos(angle/2),intersection[1]+80*Math.sin(angle/2)+6,'≈'+Math.round(first.angleDeg)+'°','text-anchor="middle" font-size="19" font-weight="650"');
+  out+=text(552,36,'Vinkel tilbake mot observatøren','class="wvr-small"');
+  out+=text(113,124,'1. Brytning','class="wvr-small"');
+  out+=`<path d="M203 118L${point(add(entry,[-4,5]))}" fill="none" stroke="#8da4ad" stroke-width="1"/>`;
+  const reflection=map(first.reflectionPoints[0]);
+  out+=text(483,204,'2. Refleksjon','class="wvr-small"');
+  out+=`<path d="M483 189L${point(add(reflection,[5,4]))}" fill="none" stroke="#8da4ad" stroke-width="1"/>`;
+  out+=text(357,427,'3. Brytning','class="wvr-small"');
+  out+=`<path d="M355 411L${point(add(exit,[5,5]))}" fill="none" stroke="#8da4ad" stroke-width="1"/>`;
+ }else{
+  // For two reflections the emergent direction points upwards in this view.
+  // Compare parallel-shifted directions in a separate, explicit angle sketch.
+  const base=[616,91],back=mul(first.outgoing,-1),a=first.angleDeg*DEG,r=43;
+  out+=text(552,36,'Retningene sammenliknet','class="wvr-small"');
+  out+=`<path d="M552 91H818M${point(base)}L${point(add(base,mul(back,138)))}" fill="none" stroke="#7f9097" stroke-width="1.35" stroke-dasharray="6 5"/><path d="M${base[0]+r} ${base[1]}A${r} ${r} 0 0 1 ${point(add(base,mul(back,r)))}" fill="none" stroke="#dd9b3c" stroke-width="2.7"/>`;
+  out+=text(base[0]+81*Math.cos(a/2),base[1]+81*Math.sin(a/2)+6,'≈'+Math.round(first.angleDeg)+'°','text-anchor="middle" font-size="19" font-weight="650"');
+  out+=text(552,219,'Parallelle hjelpelinjer','class="wvr-tiny"');
+  out+=text(128,116,'1. Brytning','class="wvr-small"');
+  out+=text(483,203,'2. Refleksjon','class="wvr-small"');
+  out+=text(390,423,'3. Refleksjon','class="wvr-small"');
+  out+=text(28,333,'4. Brytning','class="wvr-small"');
+ }
+ // A separate overview keeps the full primary and secondary arcs visible.
+ const sky=[550,253,294,203],cx=697,cy=414;
+ out+=`<rect x="${sky[0]}" y="${sky[1]}" width="${sky[2]}" height="${sky[3]}" rx="11" fill="#e8f2f5" stroke="#d7e3e6"/><path d="M551 414H843V455H551Z" fill="#d8e7db"/>`;
+ out+=text(566,273,'Begge buene sett fra bakken','class="wvr-small" font-weight="650" style="fill:#294b55"');
+ out+=text(566,291,'Ytterbuen har omvendte farger','class="wvr-tiny" style="fill:#48626a"');
+ for(const order of [2,1])for(let i=0;i<colors.length;i++){
+  const r=order===1?81-i*2.25:104+i*2.25;
+  out+=`<path d="M${cx-r} ${cy}A${r} ${r} 0 0 1 ${cx+r} ${cy}" fill="none" stroke="${colors[i].color}" stroke-width="2.5" opacity="${order===reflections?.96:.34}"/>`;
+ }
+ out+=`<circle cx="697" cy="426" r="4.5" fill="#ddb48f"/><path d="M691 444L693 434Q697 431 701 434L703 444M694 444L692 452M700 444L703 452" fill="none" stroke="#5d8a79" stroke-width="3.4" stroke-linecap="round"/>`;
+ out+=text(718,443,'Sola er bak deg','class="wvr-tiny" style="fill:#48626a"');
  return {markup:out,rays};
 }
 
-export function mountRainbow(root,api){
- const q=id=>root.querySelector('#'+id),dialog=q('wvr-dialog'),scene=q('wvr-scene');
- if(!dialog||!scene)return ()=>{};
- const open=q('wvr-open'),close=q('wvr-close'),prism=q('wvr-mode-prism'),rainbow=q('wvr-mode-rainbow'),reflections=q('wvr-reflections');
+
+export function mountRainbowExample(root,api){
+ const q=id=>root.querySelector('#'+id),scene=q('wvr-scene');
+ if(!scene)return ()=>{};
+ const reflections=q('wvr-reflections');
  let mode='prism',prepared=null,previous='',lastTime=0;
  function prepare(){
   const key=mode+'|'+reflections.value;if(key===previous)return;previous=key;
   prepared=mode==='prism'?prismScene():rainbowScene(Number(reflections.value));
-  prism.setAttribute('aria-pressed',String(mode==='prism'));rainbow.setAttribute('aria-pressed',String(mode==='rainbow'));
   q('wvr-reflections-label').hidden=mode!=='rainbow';
   scene.setAttribute('data-mode',mode);scene.setAttribute('data-reflections',mode==='rainbow'?reflections.value:'0');
   scene.setAttribute('aria-label',mode==='prism'?'Hvitt lys brytes og deles i farger i et prisme':'Hele hovedregnbuen og den ytre regnbuen med valgt lysvei i en dråpe');
-  q('wvr-description').textContent=mode==='prism'?'Hvitt lys består av mange bølgelengder. Fargene brytes forskjellig når lyset går inn i og ut av prismet.': 'Lys fra mange regndråper danner buene. Den svakere regnbuen ytterst har omvendt fargerekkefølge. Se forskjellen mellom én og to refleksjoner inne i dråpen.';
+  q('wvr-description').textContent=mode==='prism'?'Hvitt lys består av mange bølgelengder. Fargene brytes forskjellig når lyset går inn i og ut av prismet.':'Lys fra mange regndråper danner buene. Den svakere regnbuen ytterst har omvendt fargerekkefølge. Se forskjellen mellom én og to refleksjoner inne i dråpen.';
   q('wvr-readout').innerHTML=mode==='prism'?'<div><strong>Rødt</strong>Bøyes minst.</div><div><strong>Fiolett</strong>Bøyes mest.</div>':Number(reflections.value)===1?'<div><strong>Hovedregnbuen</strong>Én indre refleksjon.</div><div><strong>Omtrent 40°–42°</strong>Rødt ytterst, fiolett innerst.</div>':'<div><strong>Regnbue nr. 2</strong>To indre refleksjoner.</div><div><strong>Omtrent 51°–54°</strong>Fiolett ytterst, rødt innerst.</div>';
  }
  function draw(t){
-  lastTime=t;prepare();
-  const phase=(t*.2)%1;
-  const moving=prepared.rays.map((ray,i)=>{const p=photon(ray.points,(phase+i*.018)%1);return `<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="${ray.color}" stroke="white" stroke-width="1.2"/>`;}).join('');
+  lastTime=t;prepare();const phase=(t*.2)%1;
+  const moving=prepared.rays.map((ray,i)=>{const p=photon(ray.points,(phase+i*.018)%1);return '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="'+ray.color+'" stroke="white" stroke-width="1.2"/>';}).join('');
   scene.innerHTML=prepared.markup+moving;
  }
- function repaint(){prepare();api.repaint(scene);draw(lastTime);}
- open.addEventListener('click',()=>{mode='prism';reflections.value='1';previous='';dialog.showModal();repaint();close.focus();});
- close.addEventListener('click',()=>dialog.close());
- dialog.addEventListener('close',()=>open.focus());
- dialog.addEventListener('click',e=>{if(e.target!==dialog)return;const b=dialog.getBoundingClientRect();if(e.clientX<b.left||e.clientX>b.right||e.clientY<b.top||e.clientY>b.bottom)dialog.close();});
- prism.addEventListener('click',()=>{mode='prism';repaint();});rainbow.addEventListener('click',()=>{mode='rainbow';repaint();});reflections.addEventListener('change',repaint);
- api.onFrame(draw,scene);
- return ()=>{if(dialog.open)dialog.close();};
+ function repaint(){prepare();api.repaint(scene);}
+ function selectMode(next){mode=next==='rainbow'?'rainbow':'prism';repaint();}
+ reflections.addEventListener('change',repaint);
+ const removeFrame=api.onFrame(draw,scene);
+ const dispose=()=>{reflections.removeEventListener('change',repaint);removeFrame?.();};
+ dispose.selectMode=selectMode;
+ return dispose;
 }

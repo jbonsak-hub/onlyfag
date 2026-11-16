@@ -69,10 +69,8 @@ async function runRevisionChecks({modelFixture,topics}={}){
  // Arm lengths remain anatomical; phase changes and the cartoon departure do not teleport the wrist.
  const g=swing.swingGeometry;
  for(let theta=-.7;theta<.7;theta+=.01){const back=swing.swingBackPoint(theta),arm=swing.solveSwingArm(back.x,back.y);near(Math.hypot(arm.elbowX-g.shoulderX,arm.elbowY-g.shoulderY),g.upperArm,1e-9);near(Math.hypot(arm.handX-arm.elbowX,arm.handY-arm.elbowY),g.forearm,1e-9);}
- const run=(frequency,{cartoon=true,enabled=true}={})=>{const state=swing.createSwingState();let arm=null,maxJump=0,launched=false;for(let i=0;i<60*24;i++){swing.stepSwingScene(state,1/60,{pushFrequency:frequency,cartoon,enabled});const drive=swing.swingDriveAt(state.time,state.theta,state.omega,frequency,state.drivePhase),next=swing.swingSceneArm(state,drive.targetAngle,enabled);if(arm)maxJump=Math.max(maxJump,Math.hypot(next.handX-arm.handX,next.handY-arm.handY));arm=next;if(state.contact){const back=swing.swingBackPoint(state.theta);near(Math.hypot(next.handX-back.x,next.handY-back.y),0,1e-8);}if(state.ejection)launched=true;assert.ok(Number.isFinite(next.handX)&&Number.isFinite(next.handY));}return {state,maxJump,launched};};
- const matched=run(.35),wrong=run(.5),ordinary=run(.35,{cartoon:false}),disabled=run(.35,{enabled:false});
- assert.equal(matched.launched,true);assert.equal(wrong.launched,false);assert.equal(ordinary.launched,false);assert.equal(disabled.launched,false);assert.ok(matched.maxJump<12,'Even the cartoon launch keeps the wrist continuous.');assert.ok(ordinary.state.maxAmplitude>2*wrong.state.maxAmplitude);
- groups.push('continuous arm reach and a cartoon launch gated by correct driving');
+ await require('./bolger-straling-resonance.cjs').runResonanceChecks();
+ groups.push('continuous arm reach, bounded damped motion and delayed undamped rope break');
 
  // Atom energies use aJ throughout. Hydrogen stays fixed; the model atom is explicitly editable.
  const H=6.62607015e-34,C=299792458;

@@ -1,5 +1,5 @@
-import {universeTimelineHtml, mountUniverseTimeline} from './cosmology-timeline.js?v=20261116-bigbang1';
-import {bigBangEvidenceHtml, mountBigBangEvidence} from './bigbang-evidence.js?v=20261116-bigbang3';
+import {universeTimelineHtml, mountUniverseTimeline} from './cosmology-timeline.js?v=20261116-layout2';
+import {bigBangEvidenceHtml, mountBigBangEvidence} from './bigbang-evidence.js?v=20261116-layout2';
 
 const ceSvg = (label, contents, height = 300) => `<svg viewBox="0 0 760 ${height}" role="img" aria-label="${label}" xmlns="http://www.w3.org/2000/svg">${contents}</svg>`;
 

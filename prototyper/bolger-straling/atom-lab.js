@@ -1,4 +1,4 @@
-import {elementSpectraHtml,mountElementSpectra} from './element-spectra.js?v=20261116-bigbang1';
+import {elementSpectraHtml,mountElementSpectra} from './element-spectra.js?v=20261116-layout2';
 
 const C=299792458,HC_AJ_NM=198.64458571489286;
 export const HYDROGEN_GROUND_AJ=-2.17896022224;
@@ -33,9 +33,14 @@ const levelLabel=n=>`n = ${n} · ${fmt(hydrogenEnergy(n),3)} aJ`;
 const HY=[0,286,228,183,144,109,75];
 const CY_LOW=282,CY_HIGH=92;
 const customY=e=>CY_LOW-(CY_LOW-CY_HIGH)*e/LEVEL_MAX_AJ;
-const options=(n,min=1,max=6)=>Array.from({length:max-min+1},(_,i)=>`<option value="${i+min}" ${n===i+min?'selected':''}>${levelLabel(i+min)}</option>`).join('');
+const options=(n,min=1,max=6)=>Array.from({length:max-min+1},(_,i)=>`<option value="${i+min}" ${n===i+min?'selected':''}>n = ${i+min}</option>`).join('');
 const styles=`<style>
 .al-model[data-model-layout=custom]{display:grid!important;grid-template-columns:minmax(0,1fr) 215px;gap:10px 18px;align-items:start;max-width:none!important;padding:13px!important}
+#al-hydrogen-model[data-model-layout=custom]{grid-template-columns:minmax(0,1fr) 178px;column-gap:14px}#al-hydrogen-model .al-model-panel{padding-left:12px}#al-hydrogen-model .control{flex:0 0 auto}
+.al-energy-toggle{display:flex!important;align-items:center;gap:7px;font-size:11px;line-height:1.4;color:var(--muted,#60736b);cursor:pointer}.al-energy-toggle input{width:auto!important;flex:none;margin:0;accent-color:var(--green,#236448)}
+.al-energy-example{display:inline;padding:0!important;border:0!important;border-radius:0!important;background:none!important;color:var(--green,#236448)!important;font:inherit;font-weight:650;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.al-energy-example:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+.al-calculation-dialog{width:min(610px,94vw);max-height:88vh;max-height:88dvh;margin:auto;padding:18px 21px;border:1px solid var(--line,#dce5de);border-radius:12px;box-sizing:border-box;background:var(--surface,#fff);color:var(--ink,#20352e);overflow:auto;box-shadow:0 20px 70px #0005}.al-calculation-dialog::backdrop{background:#13262099;backdrop-filter:blur(3px)}.al-calculation-header{display:flex;align-items:center;justify-content:space-between;gap:12px}.al-calculation-header h3{margin:0;font-size:17px;line-height:1.3}.al-calculation-header button{flex:none;padding:5px 9px;font-size:12px}.al-calculation-dialog p{font-size:12px;line-height:1.65;margin:12px 0}.al-calculation-columns{display:grid;grid-template-columns:1fr 1.2fr;gap:18px;margin:14px 0}.al-calculation-columns h4{font-size:12px;margin:0 0 9px}.al-calculation-columns .calc-lines{font-size:12px;margin:0;gap:7px}.al-calculation-columns .calc-row{grid-template-columns:32px 12px minmax(0,1fr);column-gap:4px}.al-calculation-dialog .al-calculation-constants{border-top:1px solid var(--line,#dce5de);padding-top:10px;font-size:11px;color:var(--muted,#60736b)}
+@media(max-width:580px){.al-calculation-dialog{padding:15px}.al-calculation-columns{grid-template-columns:1fr;gap:19px}.al-calculation-header h3{font-size:15px}}
 .al-model-header{grid-column:1/-1;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0!important;font-size:17px!important;line-height:1.35}
 .al-model-main{min-width:0}.al-stage{position:relative;min-width:0;line-height:0}
 .al-figure,.al-spectrum{display:block;width:100%;height:auto;max-height:none!important;min-height:0!important;background:var(--surface,#fff);border-radius:9px}
@@ -48,7 +53,7 @@ const styles=`<style>
 .al-level-handle[data-endpoint=lower]{background:#d18a25;color:#d18a25}.al-level-handle::after{content:'↕';color:white;position:absolute;inset:1px 0;display:grid;place-items:center}.al-level-handle:focus-visible{outline:3px solid var(--blue,#2677a0);outline-offset:3px}.al-custom-handles .al-level-handle{background:#438f89;color:#438f89}.al-custom-handles .al-level-handle[data-target=true]{background:#d18a25;color:#d18a25}
 .al-model-note{font-size:11px;line-height:1.6;color:var(--muted,#60736b);margin:8px 0 20px}.al-led{display:inline-block;width:7px;height:7px;border-radius:50%;background:#8a9a91;margin-right:5px}.al-stream-on .al-led{background:#53ab7a;box-shadow:0 0 5px #53ab7a80}
 .al-note-strip{font-size:11px;line-height:1.5;margin:5px 0 0;color:var(--muted,#60736b)}.al-custom-name{font-size:11px;color:var(--muted,#60736b)}
-@media(max-width:1100px){.al-model[data-model-layout=custom]{grid-template-columns:minmax(0,1fr)!important}.al-model-panel{border-left:0;border-top:1px solid var(--line,#dce5de);padding:11px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:10px}.al-model-panel .al-readout,.al-model-panel .al-phase{grid-column:1/-1}.al-model-header{font-size:16px!important}}
+@media(max-width:1100px){.al-model[data-model-layout=custom]{grid-template-columns:minmax(0,1fr)!important}.al-model-panel{border-left:0;border-top:1px solid var(--line,#dce5de);padding:11px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:10px}.al-model-panel .al-readout,.al-model-panel .al-phase{grid-column:1/-1}.al-model-header{font-size:16px!important}#al-hydrogen-model .al-model-panel{padding-left:0}}
 @media(max-width:520px){.al-model-panel{grid-template-columns:1fr 1fr}.al-model-panel>.al-readout,.al-model-panel>.al-phase{grid-column:1/-1}.al-level-handle{width:20px;height:20px;min-width:20px}.al-figure text{font-size:18px}.al-figure .al-small{font-size:15px}}
 </style>`;
 
@@ -56,7 +61,7 @@ export const atomLabSection={title:'Atom og lys',body:`${styles}
 <div class="model al-model" data-model-layout="custom" id="al-hydrogen-model">
  <h3 class="al-model-header" data-model-full-width>Hydrogenatomet – Bohrs atommodell</h3>
  <div class="al-model-main"><div class="al-stage" id="al-h-stage"><svg id="al-hydrogen-svg" class="al-figure" viewBox="0 0 760 320" role="img" aria-label="Hydrogenatom og seks faste energinivåer"></svg><button type="button" id="al-h-upper-handle" class="al-level-handle" data-endpoint="upper" role="slider" aria-label="Øvre nivå" aria-valuemin="2" aria-valuemax="6" aria-valuenow="3"></button><button type="button" id="al-h-lower-handle" class="al-level-handle" data-endpoint="lower" role="slider" aria-label="Nedre nivå" aria-valuemin="1" aria-valuemax="5" aria-valuenow="2"></button></div><svg id="al-hydrogen-spectrum" class="al-spectrum" viewBox="0 0 760 126" role="img" aria-label="Hydrogenets mulige spektrallinjer med valgt overgang markert"></svg></div>
- <div class="al-model-panel"><label class="control" for="al-h-upper">Øvre nivå<select id="al-h-upper">${options(3)}</select></label><label class="control" for="al-h-lower">Nedre nivå<select id="al-h-lower">${options(2)}</select></label><div class="al-direction" role="group" aria-label="Velg retning på overgangen"><button type="button" id="al-h-excitation" aria-pressed="false">Eksitasjon</button><button type="button" id="al-h-emission" aria-pressed="true">Emisjon</button></div><button type="button" id="al-h-show">Vis overgang</button><div id="al-h-readout" class="al-readout" aria-live="polite"></div><p id="al-h-phase" class="al-phase" aria-live="polite"></p></div>
+ <div class="al-model-panel"><label class="control" for="al-h-upper">Øvre nivå<select id="al-h-upper">${options(3)}</select></label><label class="control" for="al-h-lower">Nedre nivå<select id="al-h-lower">${options(2)}</select></label><div class="al-direction" role="group" aria-label="Velg retning på overgangen"><button type="button" id="al-h-excitation" aria-pressed="false">Eksitasjon</button><button type="button" id="al-h-emission" aria-pressed="true">Emisjon</button></div><label class="al-energy-toggle" for="al-h-show-energy"><input type="checkbox" id="al-h-show-energy">Vis energi i aJ</label><button type="button" id="al-h-show">Vis overgang</button><div id="al-h-readout" class="al-readout" aria-live="polite"></div><p id="al-h-phase" class="al-phase" aria-live="polite"></p></div>
 </div>
 <p class="al-model-note">Hydrogennivåene er <strong>faste</strong>; dra håndtakene eller bruk menyene for å velge dem. Her tilsvarer 0 aJ et fritt elektron. <strong>1 aJ = 10⁻¹⁸ J.</strong> UV og IR er usynlig lys.</p>
 <div class="model al-model" data-model-layout="custom" id="al-custom-model">
@@ -65,12 +70,20 @@ export const atomLabSection={title:'Atom og lys',body:`${styles}
  <div class="al-model-panel"><label class="control" for="al-custom-preset">Sammenlikn nivåer<select id="al-custom-preset"><option value="hydrogen">Hydrogen · nivå 1–4</option><option value="modelA" selected>Modellatom A</option><option value="modelB">Modellatom B</option><option value="custom">Tilpasset atom</option></select></label><label class="control" for="al-custom-target">Fotonet eksiterer til<select id="al-custom-target"></select></label><div id="al-custom-energy" class="al-readout" aria-live="polite"></div><button type="button" id="al-stream-toggle" aria-pressed="false"><span class="al-led" aria-hidden="true"></span>Start fotonstrøm</button><p id="al-custom-name" class="al-custom-name"></p><p id="al-custom-phase" class="al-phase" aria-live="polite"></p><div id="al-custom-lines" class="al-readout" aria-live="polite"></div></div>
 </div>
 <p class="al-model-note">Her kan du endre <strong>modellatomet</strong> ved å dra nivåene. Her velger vi grunntilstanden som 0 aJ; det er <strong>forskjellene</strong> mellom nivåene som bestemmer lyset. Fotonenergien følger det valgte målnivået. Ett elektron følger én vei ned; fotonstrømmen gjentar ulike veier med mange atomer, slik at alle mulige linjer under målnivået etter hvert kan lyse opp. Like energiforskjeller gir samme spektrallinje. Presetet hydrogen har riktige energiforskjeller; når du flytter et nivå, blir det et tilpasset modellatom. Atom A og B er oppdiktede modeller.</p>
+<dialog id="al-h-calculation-dialog" class="al-calculation-dialog" aria-labelledby="al-h-calculation-title"><header class="al-calculation-header"><h3 id="al-h-calculation-title">Regneeksempel: valgt overgang</h3><button type="button" id="al-h-calculation-close" aria-label="Lukk regneeksempelet">Lukk ×</button></header><div id="al-h-calculation-body"></div></dialog>
 ${elementSpectraHtml}`};
 
 function line(x1,y1,x2,y2,color='var(--line,#cfdbd4)',more=''){return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" ${more}/>`;}
 function arrow(x1,y1,x2,y2,color,width=3){const a=Math.atan2(y2-y1,x2-x1),r=8;return line(x1,y1,x2,y2,color,`stroke-width="${width}"`)+`<path d="M${x2-r*Math.cos(a-.5)} ${y2-r*Math.sin(a-.5)}L${x2} ${y2}L${x2-r*Math.cos(a+.5)} ${y2-r*Math.sin(a+.5)}" fill="none" stroke="${color}" stroke-width="${width}"/>`;}
 function packet(x,y,color,phase=0){let d='';for(let i=0;i<=42;i++)d+=`${i?'L':'M'}${x+i} ${y+6*Math.sin(i*.8+phase)*Math.sin(Math.PI*i/42)}`;return `<path d="${d}" fill="none" stroke="${color}" stroke-width="3"/>`;}
 const ringR=n=>25+12*n;
+const alFraction=(numerator,denominator)=>`<span class="frac"><span class="num">${numerator}</span><span class="den">${denominator}</span></span>`;
+const alPower=(value,digits=3)=>{const exponent=Math.floor(Math.log10(Math.abs(value)));return `${fmt(value/10**exponent,digits)} · 10<sup>${String(exponent).replace('-','−')}</sup>`;};
+const alCalcRow=(lhs,eq,rhs)=>`<div class="calc-row"><span class="calc-lhs">${lhs}</span><span class="calc-eq">${eq}</span><span class="calc-rhs">${rhs}</span></div>`;
+function hydrogenCalculation(lower,upper,mode){
+ const tr=transition(upper,lower),from=mode==='emission'?upper:lower,to=mode==='emission'?lower:upper;
+ return `<p>Elektronet går fra <strong>n = ${from}</strong> til <strong>n = ${to}</strong> og ${mode==='emission'?'sender ut':'tar opp'} ett foton. <strong>Hvor mye energi har fotonet, og hvilken bølgelengde har det?</strong></p><p>Fotonenergien er den positive energiforskjellen ΔE mellom nivåene.</p><div class="al-calculation-columns"><section><h4>1. Finn fotonenergien</h4><div class="calc-lines">${alCalcRow('ΔE','=','E<sub>øvre</sub> − E<sub>nedre</sub>')}${alCalcRow('','≈',`(${fmt(hydrogenEnergy(upper),4)} aJ) − (${fmt(hydrogenEnergy(lower),4)} aJ)`)}${alCalcRow('','≈',`<strong>${fmt(tr.energyAJ,4)} aJ</strong>`)}${alCalcRow('','≈',`${alPower(tr.energyJ)} J`)}</div></section><section><h4>2. Finn bølgelengden</h4><div class="calc-lines">${alCalcRow('λ','=',alFraction('h · c','ΔE'))}${alCalcRow('','≈',alFraction('6,626 · 10<sup>−34</sup> J s · 2,998 · 10<sup>8</sup> m/s',`${alPower(tr.energyJ)} J`))}${alCalcRow('','≈',`${alPower(tr.wavelengthNM*1e-9)} m`)}${alCalcRow('','≈',`<strong>${fmt(tr.wavelengthNM,1)} nm</strong> · ${regionText(tr)}`)}</div></section></div><p class="al-calculation-constants"><strong>1 aJ = 10<sup>−18</sup> J.</strong> h er Plancks konstant, og c er lysfarten. Ved emisjon mister atomet fotonenergien; ved eksitasjon tar det opp den samme energimengden.</p>`;
+}
 function atomGraphic({level=1,from=1,to=1,progress=0,type='none',photon=null,label='Hydrogen',stream=false}){
  const p=clamp(progress),motion=type==='absorption'?smooth((p-.3)/.4):type==='emission'?smooth(p/.48):0,r=ringR(from)+(ringR(to)-ringR(from))*motion;
  let s=`<text x="155" y="27" text-anchor="middle">${label}</text>`;
@@ -81,11 +94,11 @@ function atomGraphic({level=1,from=1,to=1,progress=0,type='none',photon=null,lab
  if(stream&&type==='none')s+=packet(24,150,'#b88c40',p*8);
  return s;
 }
-function hGraphic(lower,upper,mode,p,running){
+function hGraphic(lower,upper,mode,p,running,showEnergies=false){
  const from=mode==='emission'?upper:lower,to=mode==='emission'?lower:upper,tr=transition(from,to),motion=mode==='emission'?smooth(p/.48):smooth((p-.3)/.4),yy=HY[from]+(HY[to]-HY[from])*motion;
  let s=atomGraphic({level:6,from,to,progress:running?p:0,type:running?tr.type:'none',photon:tr,label:'Hydrogenatom'});
  s+=`<text x="491" y="27" text-anchor="middle">Faste energinivåer</text><text x="155" y="288" text-anchor="middle">n = ${from} → n = ${to}</text><text x="155" y="310" text-anchor="middle" class="al-small">${regionText(tr)} · ${fmt(tr.wavelengthNM,1)} nm</text>`;
- for(let n=1;n<=6;n++)s+=`<g data-h-level="${n}" role="button" aria-label="Velg nivå ${n}">${line(347,HY[n],573,HY[n],n===lower||n===upper?'#438f89':'var(--line,#cfdbd4)',`stroke-width="${n===lower||n===upper?3:1.6}"`)}<text x="606" y="${HY[n]+5}" class="al-small">n=${n}</text><text x="650" y="${HY[n]+5}" class="al-small">${fmt(hydrogenEnergy(n),3)} aJ</text><line x1="345" x2="745" y1="${HY[n]}" y2="${HY[n]}" stroke="transparent" stroke-width="20"/></g>`;
+ for(let n=1;n<=6;n++)s+=`<g data-h-level="${n}" role="button" aria-label="Velg nivå ${n}">${line(347,HY[n],573,HY[n],n===lower||n===upper?'#438f89':'var(--line,#cfdbd4)',`stroke-width="${n===lower||n===upper?3:1.6}"`)}<text x="606" y="${HY[n]+5}" class="al-small">n=${n}</text>${showEnergies?`<text x="650" y="${HY[n]+5}" class="al-small" data-h-energy-value>${fmt(hydrogenEnergy(n),3)} aJ</text>`:''}<line x1="345" x2="745" y1="${HY[n]}" y2="${HY[n]}" stroke="transparent" stroke-width="20"/></g>`;
  s+=arrow(480,HY[from],480,HY[to],tr.color,3.3)+`<circle cx="367" cy="${running?yy:HY[from]}" r="7" fill="#288fa7"/><text x="347" y="310" class="al-small">Energi ↑ · nivåavstand skjematisk</text>`;
  return s;
 }
@@ -111,16 +124,18 @@ function spectrum(all,selected=[],glow=new Set(),seen=new Set()){
 export function mountAtomLab(root,api){
  const q=id=>root.querySelector('#'+id);if(!q('al-hydrogen-svg'))return ()=>{};
  const disposers=[],listen=(el,type,fn,options)=>{el.addEventListener(type,fn,options);disposers.push(()=>el.removeEventListener(type,fn,options));};
- const hTarget=q('al-hydrogen-svg'),cTarget=q('al-custom-svg');let hTime=0,cTime=0,lower=2,upper=3,mode='emission',hStart=0,hRunning=false,activeHandle='upper';
+ const hTarget=q('al-hydrogen-svg'),cTarget=q('al-custom-svg');let hTime=0,cTime=0,lower=2,upper=3,mode='emission',hStart=0,hRunning=false,activeHandle='upper',showEnergies=false;
+ const calculationDialog=q('al-h-calculation-dialog');let calculationReturnFocus=null;
  let levels=[...CUSTOM_LEVEL_PRESETS.modelA.levels],preset='modelA',target=3,stream=false,cycleStart=0,pathIndex=0,lastStepKey='',seen=new Set(),lastFlash=new Map(),drag=null;
  const clock=(which)=>typeof api.now==='function'?api.now(which==='h'?hTarget:cTarget):(which==='h'?hTime:cTime);
  const repaint=(which)=>api.repaint(which==='h'?hTarget:cTarget);
  const say=(id,s)=>{if(q(id).innerHTML!==s)q(id).innerHTML=s;};
  function syncH(){
   q('al-h-upper').innerHTML=options(upper,lower+1,6);q('al-h-lower').innerHTML=options(lower,1,upper-1);q('al-h-upper').value=String(upper);q('al-h-lower').value=String(lower);q('al-h-emission').setAttribute('aria-pressed',String(mode==='emission'));q('al-h-excitation').setAttribute('aria-pressed',String(mode==='absorption'));
-  for(const endpoint of ['upper','lower']){const n=endpoint==='upper'?upper:lower,handle=q('al-h-'+endpoint+'-handle');handle.style.top=HY[n]/320*100+'%';handle.setAttribute('aria-valuenow',String(n));handle.setAttribute('aria-valuetext',levelLabel(n));handle.setAttribute('title',`${endpoint==='upper'?'Øvre':'Nedre'} nivå: ${levelLabel(n)}. Dra eller bruk piltastene.`);handle.setAttribute('aria-valuemin',String(endpoint==='upper'?lower+1:1));handle.setAttribute('aria-valuemax',String(endpoint==='upper'?6:upper-1));}
+  for(const endpoint of ['upper','lower']){const n=endpoint==='upper'?upper:lower,handle=q('al-h-'+endpoint+'-handle'),label=showEnergies?levelLabel(n):`n = ${n}`;handle.style.top=HY[n]/320*100+'%';handle.setAttribute('aria-valuenow',String(n));handle.setAttribute('aria-valuetext',label);handle.setAttribute('title',`${endpoint==='upper'?'Øvre':'Nedre'} nivå: ${label}. Dra eller bruk piltastene.`);handle.setAttribute('aria-valuemin',String(endpoint==='upper'?lower+1:1));handle.setAttribute('aria-valuemax',String(endpoint==='upper'?6:upper-1));}
   const tr=transition(mode==='emission'?upper:lower,mode==='emission'?lower:upper);
-  say('al-h-readout',`<div><strong>${mode==='emission'?'Emisjon: energi ut':'Eksitasjon: energi inn'}</strong></div><div>ΔE = <strong>${fmt(tr.energyAJ,4)} aJ</strong></div><div>λ = <strong>${fmt(tr.wavelengthNM,1)} nm</strong></div><div><strong>${regionText(tr)}</strong></div>`);
+  say('al-h-readout',`<div><strong>${mode==='emission'?'Emisjon: energi ut':'Eksitasjon: energi inn'}</strong></div><div><button type="button" class="al-energy-example" data-al-energy-example aria-haspopup="dialog" aria-controls="al-h-calculation-dialog" aria-expanded="${String(!!calculationDialog.open)}" aria-label="Vis utregning av energiforskjellen og bølgelengden">ΔE</button> = <strong>${fmt(tr.energyAJ,4)} aJ</strong></div><div>λ = <strong>${fmt(tr.wavelengthNM,1)} nm</strong></div><div><strong>${regionText(tr)}</strong></div>`);
+  if(calculationDialog.open)q('al-h-calculation-body').innerHTML=hydrogenCalculation(lower,upper,mode);
  }
  function setH(endpoint,n){activeHandle=endpoint;if(endpoint==='upper')upper=clamp(Math.round(n),lower+1,6);else lower=clamp(Math.round(n),1,upper-1);hRunning=false;syncH();repaint('h');}
  function syncCustom(rebuild=false){
@@ -135,6 +150,11 @@ export function mountAtomLab(root,api){
  function restartCustom(){cycleStart=clock('c');pathIndex=0;lastStepKey='';seen.clear();lastFlash.clear();}
  function setCustom(index,value){levels=moveCustomLevel(levels,index,value);preset='custom';restartCustom();syncCustom();repaint('c');}
  function startH(){hStart=clock('h');hRunning=true;repaint('h');}
+ function closeCalculation(){if(typeof calculationDialog.close==='function')calculationDialog.close();else{calculationDialog.removeAttribute('open');calculationClosed();}}
+ function calculationClosed(){const button=q('al-h-readout').querySelector('[data-al-energy-example]');button?.setAttribute('aria-expanded','false');const focusTarget=calculationReturnFocus?.isConnected!==false?calculationReturnFocus:button;focusTarget?.focus?.();calculationReturnFocus=null;}
+ listen(q('al-h-readout'),'click',event=>{const button=event.target.closest?.('[data-al-energy-example]');if(!button)return;calculationReturnFocus=button;q('al-h-calculation-body').innerHTML=hydrogenCalculation(lower,upper,mode);if(!calculationDialog.open){if(typeof calculationDialog.showModal==='function')calculationDialog.showModal();else calculationDialog.setAttribute('open','');}button.setAttribute('aria-expanded','true');q('al-h-calculation-close').focus();});
+ listen(q('al-h-calculation-close'),'click',closeCalculation);listen(calculationDialog,'close',calculationClosed);listen(calculationDialog,'cancel',event=>{event.preventDefault();closeCalculation();});listen(calculationDialog,'click',event=>{if(event.target!==calculationDialog)return;const rect=calculationDialog.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)closeCalculation();});
+ listen(q('al-h-show-energy'),'change',()=>{showEnergies=q('al-h-show-energy').checked;syncH();repaint('h');});
  listen(q('al-h-upper'),'change',()=>setH('upper',Number(q('al-h-upper').value)));listen(q('al-h-lower'),'change',()=>setH('lower',Number(q('al-h-lower').value)));
  listen(q('al-h-excitation'),'click',()=>{mode='absorption';hRunning=false;syncH();repaint('h');});listen(q('al-h-emission'),'click',()=>{mode='emission';hRunning=false;syncH();repaint('h');});listen(q('al-h-show'),'click',startH);
  listen(q('al-custom-preset'),'change',()=>{const key=q('al-custom-preset').value;if(key!=='custom'){preset=key;levels=[...CUSTOM_LEVEL_PRESETS[key].levels];target=Math.min(3,levels.length-1);}else preset='custom';restartCustom();syncCustom(true);repaint('c');});
@@ -149,7 +169,7 @@ export function mountAtomLab(root,api){
  const release=()=>{if(drag){try{q(drag.kind==='h'?'al-h-stage':'al-c-stage').releasePointerCapture(drag.pointerId);}catch{}drag=null;}};listen(document,'pointerup',release);listen(document,'pointercancel',release);
  api.onFrame(t=>{
   hTime=t;const elapsed=clock('h')-hStart,p=hRunning?clamp(elapsed/2.8):0,tr=transition(mode==='emission'?upper:lower,mode==='emission'?lower:upper);
-  hTarget.innerHTML=hGraphic(lower,upper,mode,p,hRunning);q('al-hydrogen-spectrum').innerHTML=spectrum(possibleTransitions(6),[transition(upper,lower)],hRunning&&p>.5&&p<1?new Set([`${upper}-${lower}`]):new Set());
+  hTarget.innerHTML=hGraphic(lower,upper,mode,p,hRunning,showEnergies);q('al-hydrogen-spectrum').innerHTML=spectrum(possibleTransitions(6),[transition(upper,lower)],hRunning&&p>.5&&p<1?new Set([`${upper}-${lower}`]):new Set());
   const phase=!hRunning?'Velg nivåer. Trykk «Vis overgang».':mode==='absorption'?(p<.3?'Fotonet nærmer seg.':p<.72?'Fotonet absorberes: elektronet får energi.':'Elektronet er på det høyere nivået.'):(p<.48?'Elektronet går til lavere energi.':p<.98?`${regionText(tr)} sendes ut.`:'Atomet har avgitt fotonets energi.');say('al-h-phase',phase);
  },hTarget);
  api.onFrame(t=>{
@@ -161,5 +181,5 @@ export function mountAtomLab(root,api){
   cTarget.innerHTML=customGraphic(levels,target,from,to,p,type,stream,preset);const all=customTransitions(levels,target),glow=new Set([...lastFlash].filter(([,time])=>clock('c')-time<1.4).map(([key])=>key));q('al-custom-spectrum').innerHTML=spectrum(all,[],glow,seen);q('al-custom-spectrum').setAttribute('data-possible-count',String(all.length));q('al-custom-spectrum').setAttribute('data-seen-count',String(seen.size));q('al-custom-svg').setAttribute('data-stream',String(stream));say('al-custom-phase',phase);say('al-custom-lines',`<div>Mulige overganger under L${target+1}: <strong>${all.length}</strong></div><div>Vist i strømmen: <strong>${seen.size}</strong></div>`);
  },cTarget);
  syncH();syncCustom(true);repaint('h');repaint('c');const modalCleanup=mountElementSpectra(root,api);
- return()=>{stream=false;release();for(const dispose of disposers)dispose();if(typeof modalCleanup==='function')modalCleanup();};
+ return()=>{stream=false;release();if(calculationDialog.open)closeCalculation();for(const dispose of disposers)dispose();if(typeof modalCleanup==='function')modalCleanup();};
 }
