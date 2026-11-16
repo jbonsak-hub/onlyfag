@@ -135,6 +135,24 @@ async function runRevisionChecks({modelFixture,topics}={}){
   }finally{af.destroy();}
   groups.push('mounted media, Mach 1 controls, fixed/draggable levels and independent atom clocks');
  }
+
+ // The pause button must survive models that replace their whole SVG on redraw.
+ if(modelFixture){
+  let frameApi;
+  const pf=modelFixture({sections:[{body:'<div class="model"><div class="model-visual"><div id="pause-dynamic"></div></div></div>'}],mount(root,api){frameApi=api;return api.onFrame(t=>{root.querySelector('#pause-dynamic').innerHTML='<svg viewBox="0 0 760 300"><text>'+t+'</text></svg>';},'#pause-dynamic');}});
+  try{
+   const scope=pf.get('pause-dynamic').closest('.model'),buttons=new Map();
+   const clock={scopes:()=>[scope],isPaused:s=>frameApi.isPaused(s),toggle:s=>pf.pause(s,!frameApi.isPaused(s)),repaint:s=>frameApi.repaint(s)};
+   const source=app.slice(app.indexOf('function syncAnimationButton('),app.indexOf("document.addEventListener('visibilitychange'"));
+   const install=new Function('animationClock','animationButtons','document','overviewScope','startFrames',source+';return installAnimationControls;')(clock,buttons,globalThis.document,{},()=>{});
+   install();const button=scope.querySelector('.animation-toggle');assert.ok(button);
+   pf.tick(.1);assert.ok(scope.contains(button),'A frame redraw must not remove its pause button.');
+   button.dispatch('click');const frozen=pf.get('pause-dynamic').serialize();pf.tick(.2);assert.equal(pf.get('pause-dynamic').serialize(),frozen);
+   button.dispatch('click');pf.tick(.3);assert.notEqual(pf.get('pause-dynamic').serialize(),frozen);
+  }finally{pf.destroy();}
+  groups.push('pause toolbar survives complete SVG replacement and still pauses/resumes');
+ }
+
  // The cosmic timeline preserves causality; expansion stretches the same photons.
  const timeline=modules['cosmology-timeline'],evidence=modules['bigbang-evidence'].bigBangEvidencePhysics;
  assert.equal(timeline.universeEpochs.length,8);

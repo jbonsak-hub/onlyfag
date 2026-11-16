@@ -90,7 +90,13 @@ function installAnimationControls(){
   toolbar.append(button);
   const visual=scope.querySelector('.model-visual')||scope;
   const drawing=visual.querySelector('svg,canvas');
-  if(drawing){const surface=document.createElement('div');surface.className='animation-surface';drawing.before(surface);surface.append(drawing,toolbar);}else visual.prepend(toolbar);
+  if(drawing){
+   // Keep the toolbar outside any container whose SVG is replaced on a frame.
+   let host=drawing;
+   while(host.parentElement&&host.parentElement!==visual&&!host.parentElement.querySelector('input,select,button,textarea'))host=host.parentElement;
+   const surface=document.createElement('div');surface.className='animation-surface';
+   host.before(surface);surface.append(host,toolbar);
+  }else visual.prepend(toolbar);
   animationButtons.set(scope,button);syncAnimationButton(scope,button);
   button.addEventListener('click',()=>{animationClock.toggle(scope);syncAnimationButton(scope,button);animationClock.repaint(scope);startFrames();});
  }

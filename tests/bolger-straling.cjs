@@ -43,7 +43,8 @@ function modelFixture(topic){
   getBoundingClientRect(){const box=(this.attributes.viewBox||'0 0 760 320').split(/\s+/).map(Number);return {left:0,top:0,right:box[2],bottom:box[3],width:box[2],height:box[3]};}
   setPointerCapture(){}
   releasePointerCapture(){}
-  append(...nodes){for(const e of nodes){e.parent=this;this.children.push(e);}this._html='';}
+  append(...nodes){for(const e of nodes){if(e.parent){const at=e.parent.children.indexOf(e);if(at>=0)e.parent.children.splice(at,1);}e.parent=this;this.children.push(e);}this._html='';}
+  before(node){const parent=this.parent;if(!parent)return;if(node.parent){const at=node.parent.children.indexOf(node);if(at>=0)node.parent.children.splice(at,1);}node.parent=parent;parent.children.splice(parent.children.indexOf(this),0,node);parent._html='';}
   appendChild(e){this.append(e);return e;}
   contains(e){for(;e;e=e.parent)if(e===this)return true;return false;}
   querySelectorAll(s){return elements.filter(e=>e!==this&&this.contains(e)&&s.split(',').some(sel=>matches(e,sel)));}
