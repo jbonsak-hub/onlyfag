@@ -1,4 +1,4 @@
-import {elements, getIsotope, getPreferredDecay, isotopePresets} from './isotope-data.js?v=20261115-layout-pause1';
+import {elements, getIsotope, getPreferredDecay, isotopePresets} from './isotope-data.js?v=20261116-flight-atoms1';
 
 const style = `<style>
 .ra-graphic,.sv-graphic{display:block;width:100%;height:auto;color:var(--ink,#17233b)}

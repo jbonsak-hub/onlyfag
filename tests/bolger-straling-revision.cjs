@@ -1,0 +1,142 @@
+const assert=require('node:assert/strict'),path=require('node:path'),fs=require('node:fs');
+const {pathToFileURL}=require('node:url');
+const root=path.resolve(__dirname,'..'),base=path.join(root,'prototyper/bolger-straling');
+const near=(actual,expected,tolerance=1e-9,message='')=>assert.ok(Math.abs(actual-expected)<=tolerance*Math.max(1,Math.abs(expected)),message||`${actual} differs from ${expected}`);
+const plain=html=>String(html).replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,'').replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<[^>]*>/g,' ');
+
+async function runRevisionChecks({modelFixture,topics}={}){
+ const names=['flight-doppler','refraction-lab','refraction-examples','diffraction-lab','resonance-swing','atom-lab','element-spectra','element-spectra-data','animation-clock','waves-rainbow','math-presentation'];
+ const modules={};for(const name of names)modules[name]=await import(pathToFileURL(path.join(base,name+'.js')).href);
+ const flight=modules['flight-doppler'],optics=modules['refraction-lab'],diff=modules['diffraction-lab'],swing=modules['resonance-swing'],atom=modules['atom-lab'],elements=modules['element-spectra'],data=modules['element-spectra-data'],examples=modules['refraction-examples'];
+ const groups=[];
+
+ // Arrival and heard pitch are derived from the same retarded emission event.
+ for(const mach of [.05,.45,.9,.99,1])for(const height of [20,100,300])for(const sourceX of [-260,-100,0,30,100,400]){
+  const r=flight.retardedFlight({sourceX,height,mach});
+  assert.ok(Number.isFinite(r.frequency)&&r.frequency>=0);
+  if(!r.arrived){assert.equal(r.frequency,0);continue;}
+  near(Math.hypot(r.emissionX,height),flight.FLIGHT_SOUND_SPEED*r.delay,1e-9);
+  near(r.emissionTime+r.delay,r.passTime,1e-9);assert.ok(r.emissionTime>=0);
+  const epsilon=1e-5,v=mach*flight.FLIGHT_SOUND_SPEED;
+  const before=flight.retardedFlight({sourceX:sourceX-v*epsilon,height,mach}),after=flight.retardedFlight({sourceX:sourceX+v*epsilon,height,mach});
+  if(before.arrived&&after.arrived)near(r.frequency,flight.FLIGHT_SOURCE_HZ*(after.emissionTime-before.emissionTime)/(2*epsilon),2e-6);
+ }
+ const arrivalX=Math.hypot(flight.FLIGHT_EMISSION_START_X,100)+flight.FLIGHT_EMISSION_START_X;
+ assert.equal(flight.retardedFlight({sourceX:0,height:100,mach:1}).arrived,false,'At Mach 1 the first finite-history front has not reached the observer at overflight.');
+ assert.equal(flight.retardedFlight({sourceX:arrivalX-1e-5,height:100,mach:1}).arrived,false);
+ assert.equal(flight.retardedFlight({sourceX:arrivalX+1e-5,height:100,mach:1}).arrived,true);
+ assert.ok(flight.retardedFlight({sourceX:0,height:100,mach:.45}).frequency>flight.FLIGHT_SOURCE_HZ,'Arrival delay preserves the approaching tone briefly after geometric overflight.');
+ const p=flight.flightPosition(1,{mach:.45,height:100}),fronts=flight.flightWavefronts(p);
+ for(const front of fronts){near(front.x,flight.FLIGHT_EMISSION_START_X+p.velocity*front.emissionTime);near(front.radius,flight.FLIGHT_SOUND_SPEED*(p.passTime-front.emissionTime));assert.ok(front.radius>=0);}
+ assert.match(flight.flightSection.body,/id="fd-audio"[^>]*aria-pressed="false"/);assert.match(flight.flightSection.body,/Lyd av/);
+ assert.equal(flight.playbackFrequencyAllowed(0),false);assert.equal(flight.playbackFrequencyAllowed(25000),false);assert.equal(flight.playbackFrequencyAllowed(243.17),true);
+ let contexts=0,oscillators=[];
+ class Param{constructor(){this.value=0;}cancelScheduledValues(){}setTargetAtTime(v){this.value=v;}setValueAtTime(v){this.value=v;}}
+ class AudioNode{constructor(){for(const key of ['gain','frequency','Q','threshold','knee','ratio','attack','release'])this[key]=new Param();}connect(){}disconnect(){}start(){}stop(){}setPeriodicWave(){}}
+ class AudioContext{constructor(){contexts++;this.currentTime=0;this.sampleRate=48000;this.state='suspended';this.destination={};}createGain(){return new AudioNode();}createOscillator(){const node=new AudioNode();oscillators.push(node);return node;}createBiquadFilter(){return new AudioNode();}createDynamicsCompressor(){return new AudioNode();}createBufferSource(){return new AudioNode();}createPeriodicWave(){return {};}createBuffer(_,length){return {getChannelData:()=>new Float32Array(length)};}resume(){this.state='running';return Promise.resolve();}suspend(){this.state='suspended';return Promise.resolve();}close(){this.state='closed';return Promise.resolve();}}
+ const engine=flight.createEngineAudio(AudioContext);assert.equal(contexts,0);assert.deepEqual(engine.snapshot().enabled,false);engine.update({frequency:300,arrived:true});assert.equal(contexts,0,'Audio remains unallocated and silent until explicitly enabled.');
+ await engine.enable();engine.update({frequency:243.17,arrived:true,distance:100});near(oscillators[0].frequency.value,243.17);assert.equal(engine.snapshot().playing,true);
+ engine.update({frequency:243.17,arrived:true,paused:true});assert.equal(engine.snapshot().playing,false);assert.equal(engine.snapshot().contextState,'suspended');engine.disable();assert.equal(engine.snapshot().enabled,false);engine.dispose();
+ groups.push('finite-history Mach 1 arrival, retarded pitch and default-muted audio');
+
+ // Independent Fresnel power checks, including equal-media and total-reflection limits.
+ for(const upper of ['air','water','glass'])for(const lower of ['air','water','glass'])for(const angle of [0,15,45,65,80,89.99]){
+  const first=optics.materialIndex(upper,550),second=optics.materialIndex(lower,550),r=optics.fresnelPower(first,second,angle);
+  near(r.R+r.T,1,1e-12);assert.ok(r.R>=0&&r.T>=0&&r.R<=1&&r.T<=1);
+  if(upper===lower){assert.equal(r.R,0);assert.equal(r.T,1);near(r.transmittedAngle,angle);}
+  else if(r.totalReflection){assert.equal(r.R,1);assert.equal(r.T,0);assert.equal(r.transmittedAngle,null);assert.ok(first>second);}
+  else near(first*Math.sin(angle*Math.PI/180),second*Math.sin(r.transmittedAngle*Math.PI/180),1e-9);
+ }
+ const normal=optics.fresnelPower(1,1.5,0);near(normal.R,.04,1e-12);near(normal.T,.96,1e-12);
+ assert.equal(optics.fresnelPower(1,1.5,80).totalReflection,false);assert.equal(optics.fresnelPower(1.5,1,60).totalReflection,true);
+ const white=optics.refractionLabState({upper:'air',lower:'glass',white:true,angleDegrees:60});assert.ok(white.rays.length>2&&white.minAngle<white.maxAngle);near(white.R+white.T,1);
+ assert.ok(!/brytningsindeks|\bn\s*=/.test(plain(optics.refractionSectionHtml)),'The pupil interface does not introduce refractive index.');
+ groups.push('Fresnel power, equal media, dispersion and total reflection');
+
+ // The two-aperture solution must be a coherent sum, not two masked single-slit pictures.
+ const single=diff.buildApertureField({aperture:.4,wavelength:.8,openings:1,width:96,height:96});
+ const double=diff.buildApertureField({aperture:.4,wavelength:.8,openings:2,separation:2,width:96,height:96});
+ assert.equal(double.intervals.length,2);assert.equal(double.sourceCount,2*single.sourceCount);
+ const shift=Math.round(1/single.unit);
+ for(const x of [40,60,90])for(const y of [20,35,48,65,75])for(const part of ['real','imag'])near(double[part][y*96+x],single[part][(y-shift)*96+x]+single[part][(y+shift)*96+x],2e-5);
+ const fringes=diff.buildApertureField({aperture:.35,wavelength:.8,openings:2,separation:3,width:128,height:64}),x=127;
+ const intensity=y=>fringes.real[y*128+x]**2+fringes.imag[y*128+x]**2,central=Math.max(intensity(31),intensity(32));
+ assert.ok(intensity(43)<.01*central,'A genuine dark interference fringe lies between adjacent bright bands.');assert.ok(intensity(55)>.5*central);
+ assert.throws(()=>diff.buildApertureField({openings:2,aperture:2,separation:1}),RangeError);
+ for(const time of [0,.13,3])near(diff.scalarWaveValue(double,80,48,time),diff.scalarWaveValue(double,80,48,time+.4),1e-5);
+ groups.push('coherent two-slit superposition and resolved dark fringes');
+
+ // Arm lengths remain anatomical; phase changes and the cartoon departure do not teleport the wrist.
+ const g=swing.swingGeometry;
+ for(let theta=-.7;theta<.7;theta+=.01){const back=swing.swingBackPoint(theta),arm=swing.solveSwingArm(back.x,back.y);near(Math.hypot(arm.elbowX-g.shoulderX,arm.elbowY-g.shoulderY),g.upperArm,1e-9);near(Math.hypot(arm.handX-arm.elbowX,arm.handY-arm.elbowY),g.forearm,1e-9);}
+ const run=(frequency,{cartoon=true,enabled=true}={})=>{const state=swing.createSwingState();let arm=null,maxJump=0,launched=false;for(let i=0;i<60*24;i++){swing.stepSwingScene(state,1/60,{pushFrequency:frequency,cartoon,enabled});const drive=swing.swingDriveAt(state.time,state.theta,state.omega,frequency,state.drivePhase),next=swing.swingSceneArm(state,drive.targetAngle,enabled);if(arm)maxJump=Math.max(maxJump,Math.hypot(next.handX-arm.handX,next.handY-arm.handY));arm=next;if(state.contact){const back=swing.swingBackPoint(state.theta);near(Math.hypot(next.handX-back.x,next.handY-back.y),0,1e-8);}if(state.ejection)launched=true;assert.ok(Number.isFinite(next.handX)&&Number.isFinite(next.handY));}return {state,maxJump,launched};};
+ const matched=run(.35),wrong=run(.5),ordinary=run(.35,{cartoon:false}),disabled=run(.35,{enabled:false});
+ assert.equal(matched.launched,true);assert.equal(wrong.launched,false);assert.equal(ordinary.launched,false);assert.equal(disabled.launched,false);assert.ok(matched.maxJump<12,'Even the cartoon launch keeps the wrist continuous.');assert.ok(ordinary.state.maxAmplitude>2*wrong.state.maxAmplitude);
+ groups.push('continuous arm reach and a cartoon launch gated by correct driving');
+
+ // Atom energies use aJ throughout. Hydrogen stays fixed; the model atom is explicitly editable.
+ const H=6.62607015e-34,C=299792458;
+ near(atom.hydrogenEnergy(1),-2.17896022224,1e-12);near(atom.hydrogenEnergy(2),atom.hydrogenEnergy(1)/4,1e-12);assert.throws(()=>atom.hydrogenEnergy(0),RangeError);
+ for(let upper=1;upper<=6;upper++){
+  assert.equal(atom.possibleTransitions(upper).length,upper*(upper-1)/2);
+  for(let lower=1;lower<=6;lower++){const transition=atom.transition(upper,lower);near(transition.energyJ,transition.energyAJ*1e-18,1e-30);if(upper===lower){assert.equal(transition.type,'none');continue;}near(transition.energyJ,H*C/(transition.wavelengthNM*1e-9),1e-25);assert.equal(transition.type,upper>lower?'emission':'absorption');}
+  if(upper>1)assert.equal(atom.excitationForEnergy(atom.transition(1,upper).energyAJ).level,upper);
+ }
+ for(const [n,nm]of [[3,656],[4,486],[5,434],[6,410]])assert.ok(Math.abs(atom.transition(n,2).wavelengthNM-nm)<1);
+ assert.equal(atom.transition(2,1).region,'UV');assert.equal(atom.transition(4,3).region,'IR');assert.equal(atom.excitationForEnergy(.5).kind,'no-match');assert.equal(atom.excitationForEnergy(2.3).kind,'ionization');
+ for(const preset of Object.values(atom.CUSTOM_LEVEL_PRESETS))for(let target=1;target<preset.levels.length;target++){
+  const paths=atom.customCascadePaths(target),transitions=atom.customTransitions(preset.levels,target),seen=new Set();assert.equal(paths.length,2**(target-1));assert.equal(transitions.length,target*(target+1)/2);
+  for(const cascade of paths){assert.equal(cascade[0],target);assert.equal(cascade.at(-1),0);let energy=0;for(let i=1;i<cascade.length;i++){assert.ok(cascade[i]<cascade[i-1]);energy+=preset.levels[cascade[i-1]]-preset.levels[cascade[i]];seen.add(cascade[i-1]+'-'+cascade[i]);}near(energy,preset.levels[target]);}assert.equal(seen.size,transitions.length);
+ }
+ const original=[0,.4,.9,1.5],moved=atom.moveCustomLevel(original,1,10);assert.deepEqual(original,[0,.4,.9,1.5]);assert.ok(moved[1]<=moved[2]-atom.MIN_LEVEL_GAP_AJ);assert.equal(atom.moveCustomLevel(original,0,1)[0],0);
+ assert.match(atom.atomLabSection.body,/id="al-h-upper"/);assert.match(atom.atomLabSection.body,/id="al-h-lower"/);assert.match(atom.atomLabSection.body,/data-endpoint="upper"/);assert.match(atom.atomLabSection.body,/data-custom-index|al-custom-handles/);
+ groups.push('hydrogen aJ values, fixed level choices, editable levels and all cascade paths');
+
+ // The UI has 118 elements. Missing NIST data remains empty, never generated by a placeholder formula.
+ assert.equal(elements.spectralElements.length,118);assert.equal(new Set(elements.spectralElements.map(e=>`${e.row}:${e.col}`)).size,118);
+ assert.equal((elements.elementSpectraHtml.match(/data-es-z=/g)||[]).length,118);
+ assert.ok(data.elementSpectraData.length>=99&&data.elementSpectraData.length<=118);assert.deepEqual(data.elementSpectraMeta.failed,[]);
+ for(const row of data.elementSpectraData){assert.ok(row.z>=1&&row.z<=118);assert.match(row.source,/^https:\/\/physics\.nist\.gov\//);for(const [stage,key]of [['I','n'],['II','i']]){assert.strictEqual(data.getElementEmissionLines(row.z,stage),row[key]);assert.ok(row[key].length<=data.elementSpectraMeta.maxLinesPerStage);for(const [nm,intensity,medium]of row[key])assert.ok(nm>=380&&nm<=780&&intensity>0&&Number.isFinite(intensity)&&[0,1].includes(medium));}}
+ for(const [z,nm]of [[1,656.28],[1,486.13],[11,589]])assert.ok(data.getElementEmissionLines(z,'I').some(line=>Math.abs(line[0]-nm)<.2));
+ assert.deepEqual(data.getElementEmissionLines(118,'I'),[]);assert.deepEqual(data.getElementEmissionLines(0,'I'),[]);assert.deepEqual(data.getElementEmissionLines(1,'combined'),[]);assert.ok(!/<line\b/.test(elements.renderEmissionSpectrum([])));
+ assert.match(elements.elementSpectraHtml,/value="I"/);assert.match(elements.elementSpectraHtml,/value="II"/);
+ groups.push('118 periodic positions, traceable NIST lines and separate neutral/ion stages');
+
+ // The practical analogies are tested against direction, contacts and continuity.
+ for(const angleDeg of [15,40,60])for(const slowRatio of [.35,.75]){
+  const field=examples.createShoreField(angleDeg,slowRatio),plan=examples.toyCarPlan({angleDeg,slowRatio}),state=examples.toyCarState(plan.firstTime+plan.turnTime/2,{angleDeg,slowRatio});
+  assert.ok(field.finalAngleDeg<angleDeg);assert.notEqual(state.positiveSlow,state.negativeSlow);near(plan.finalAngleDeg,field.finalAngleDeg);assert.ok(examples.shoreWavefronts(field,.3).length>2);
+  for(const boundary of [plan.firstTime,plan.firstTime+plan.turnTime]){const a=examples.toyCarState(boundary-1e-7,{angleDeg,slowRatio}),b=examples.toyCarState(boundary+1e-7,{angleDeg,slowRatio});assert.ok(Math.hypot(a.x-b.x,a.y-b.y)<1e-4);}
+ }
+ groups.push('coastal refraction and continuous differential-wheel motion');
+
+ if(!topics){topics=[];for(const name of ['wave-basics','waves','em-atoms','radioactivity','cosmos-environment'])topics.push(...(await import(pathToFileURL(path.join(base,name+'.js')).href)).topics);}
+ const visible=topics.flatMap(topic=>[...topic.sections.map(s=>s.body),...topic.terms.map(t=>`${t.term} ${t.definition}`),...topic.questions.map(q=>`${q.prompt} ${q.answer} ${modules['math-presentation'].solutionHtml(q)} ${q.hint||''} ${(q.choices||[]).join(' ')} ${q.unit||''}`)]).map(plain).join('\n');
+ assert.ok(!/\beV\b/.test(visible),'Visible topic content uses joules/prefixes rather than standalone eV.');
+ const numeric=topics.flatMap(t=>t.questions).find(q=>q.id==='atom-05');assert.equal(numeric.unit,'aJ');near(numeric.value,-.24-(-.54));
+ const app=fs.readFileSync(path.join(base,'app.js'),'utf8');assert.ok(!/class="viewbar"|class="view-tabs"/.test(app));
+
+ if(modelFixture){
+  const rf=modelFixture({sections:[{body:optics.refractionSectionHtml}],mount:optics.mountRefraction});
+  try{for(const medium of ['air','water','glass']){rf.change('rf-medium-top',medium);rf.change('rf-medium-bottom',medium);assert.match(rf.get('rf-reflected-value').textContent,/0\s*%/);}rf.change('rf-medium-top','water');rf.change('rf-medium-bottom','air');rf.change('rf-angle',65);assert.match(rf.get('rf-status').textContent,/totalrefleksjon/i);rf.get('rf-white').checked=true;rf.change('rf-white','on');assert.ok(!/NaN|Infinity/.test(rf.html()));}finally{rf.destroy();}
+  const previousAudioContext=globalThis.AudioContext,oscillatorStart=oscillators.length;globalThis.AudioContext=AudioContext;
+  const f=modelFixture({sections:[flight.flightSection],mount:flight.mountFlight});
+  try{assert.equal(f.get('fd-audio').getAttribute('aria-pressed'),'false');f.change('fd-mach',1);f.click('fd-audio');await Promise.resolve();await Promise.resolve();for(let i=1;i<=7;i++)f.tick(i/10);assert.equal(f.get('fd-scene').closest('.model').dataset.flightPhase,'waiting');f.tick(.8);assert.notEqual(f.get('fd-scene').closest('.model').dataset.flightPhase,'waiting');near(oscillators[oscillatorStart].frequency.value,Number(f.get('fd-scene').closest('.model').dataset.observedFrequency));f.pause('#fd-scene');const before=f.get('fd-scene').serialize();f.tick(.9);assert.equal(f.get('fd-scene').serialize(),before);}finally{f.destroy();globalThis.AudioContext=previousAudioContext;}
+  const af=modelFixture(topics.find(t=>t.id==='atomer'));
+  try{
+   assert.equal(af.get('al-h-upper').value,'3');assert.equal(af.get('al-h-lower').value,'2');assert.match(af.get('al-h-readout').textContent,/656/);
+   af.get('al-h-upper-handle').dispatch('keydown',{key:'End'});assert.equal(af.get('al-h-upper').value,'6');
+   af.get('al-h-stage').dispatch('pointerdown',{target:af.get('al-h-upper-handle'),pointerId:1});af.dispatchDocument('pointermove',{clientY:183,pointerId:1});af.dispatchDocument('pointerup',{pointerId:1});assert.equal(af.get('al-h-upper').value,'3');
+   af.change('al-custom-target',1,'change');assert.equal(af.get('al-custom-spectrum').getAttribute('data-possible-count'),'1');af.change('al-custom-target',4,'change');assert.equal(af.get('al-custom-spectrum').getAttribute('data-possible-count'),'10');
+   const handles=af.get('al-custom-handles'),handle=handles.querySelector('[data-custom-index="1"]'),old=Number(handle.getAttribute('aria-valuenow'));handles.dispatch('keydown',{target:handle,key:'ArrowUp'});assert.ok(Number(handle.getAttribute('aria-valuenow'))>old);
+   handles.dispatch('pointerdown',{target:handle,clientY:160,pointerId:2});af.dispatchDocument('pointermove',{clientY:145,pointerId:2});af.dispatchDocument('pointerup',{pointerId:2});assert.ok(Number(handle.getAttribute('aria-valuenow'))>old+.02);
+   af.click('al-h-show');af.click('al-stream-toggle');af.tick(.1);af.pause('#al-hydrogen-svg');const h=af.get('al-hydrogen-svg').serialize(),c=af.get('al-custom-svg').serialize();af.tick(.2);assert.equal(af.get('al-hydrogen-svg').serialize(),h);assert.notEqual(af.get('al-custom-svg').serialize(),c);
+   af.click('es-open');assert.equal(af.get('es-dialog').open,true);af.change('es-stage','II','change');assert.equal(af.get('es-periodic').querySelectorAll('[data-es-z]').length,118);const tile=af.get('es-periodic').querySelector('[data-es-z="118"]');af.get('es-periodic').dispatch('click',{target:tile});assert.match(af.get('es-status').textContent,/Ingen registrerte/);af.click('es-close');assert.equal(af.get('es-dialog').open,false);
+  }finally{af.destroy();}
+  groups.push('mounted media, Mach 1 controls, fixed/draggable levels and independent atom clocks');
+ }
+ return groups;
+}
+
+module.exports={runRevisionChecks};
+if(require.main===module)runRevisionChecks().then(groups=>console.log('Revision checks passed: '+groups.join('; ')+'.')).catch(error=>{console.error(error);process.exitCode=1;});

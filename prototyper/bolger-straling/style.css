@@ -169,3 +169,7 @@ body.dark{color-scheme:dark;--bg:#12251f;--surface:#1a3028;--sidebar:#152a22;--i
 .topic-page .model--split .model-header{grid-column:1/-1;min-width:0}
 @media(max-width:600px){.topic-page .page-head{margin-bottom:24px}.topic-page .content-section{margin-bottom:38px}.topic-page .wb-concept-layout{gap:16px}.topic-page .wb-relations{padding:13px 15px}.topic-page .wb-equations{font-size:18px}.wb-worked-columns{gap:14px}.wb-worked-columns>.calc-lines{font-size:11px}.topic-page .wb-definitions>div{grid-template-columns:120px minmax(0,1fr)}}
 @media print{.animation-toolbar{display:none!important}}
+
+/* Pause sits on the drawing and adds no row to its layout. */
+.animation-surface{position:relative;min-width:0}.topic-page .animation-surface>.animation-toolbar{position:absolute;top:8px;right:8px;z-index:3;display:flex;min-height:0;margin:0}.animation-surface+svg{margin-top:12px!important}
+.topic-page .wb-equations>div{flex-direction:column;gap:7px}.topic-page .wb-equations .wb-words{font-size:11px;font-weight:500;line-height:1.5;text-align:center}.topic-page .wb-equations strong{font-size:19px;font-weight:700}

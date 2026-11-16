@@ -1,10 +1,10 @@
-import {solutionHtml} from './math-presentation.js?v=20261115-layout-pause1';
-import {createAnimationClock} from './animation-clock.js?v=20261115-layout-pause1';
-import {topics as waveTopics} from './waves.js?v=20261115-layout-pause1';
-import {topics as basicTopics} from './wave-basics.js?v=20261115-layout-pause1';
-import {topics as emTopics} from './em-atoms.js?v=20261115-layout-pause1';
-import {topics as radioTopics} from './radioactivity.js?v=20261115-layout-pause1';
-import {topics as cosmosTopics} from './cosmos-environment.js?v=20261115-layout-pause1';
+import {solutionHtml} from './math-presentation.js?v=20261116-flight-atoms1';
+import {createAnimationClock} from './animation-clock.js?v=20261116-flight-atoms1';
+import {topics as waveTopics} from './waves.js?v=20261116-flight-atoms1';
+import {topics as basicTopics} from './wave-basics.js?v=20261116-flight-atoms1';
+import {topics as emTopics} from './em-atoms.js?v=20261116-flight-atoms1';
+import {topics as radioTopics} from './radioactivity.js?v=20261116-flight-atoms1';
+import {topics as cosmosTopics} from './cosmos-environment.js?v=20261116-flight-atoms1';
 
 const order=['bolger','fenomener','em','atomer','universet','kommunikasjon','radioaktivitet','stralevern','atmosfaeren'];
 const topics=[...basicTopics,...waveTopics,...emTopics,...radioTopics,...cosmosTopics].sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id));
@@ -87,7 +87,10 @@ function installAnimationControls(){
   if(scope===overviewScope||!scope.classList.contains('model')||animationButtons.has(scope))continue;
   const toolbar=document.createElement('div');toolbar.className='animation-toolbar';
   const button=document.createElement('button');button.type='button';button.className='animation-toggle';
-  toolbar.append(button);(scope.querySelector('.model-visual')||scope).prepend(toolbar);
+  toolbar.append(button);
+  const visual=scope.querySelector('.model-visual')||scope;
+  const drawing=visual.querySelector('svg,canvas');
+  if(drawing){const surface=document.createElement('div');surface.className='animation-surface';drawing.before(surface);surface.append(drawing,toolbar);}else visual.prepend(toolbar);
   animationButtons.set(scope,button);syncAnimationButton(scope,button);
   button.addEventListener('click',()=>{animationClock.toggle(scope);syncAnimationButton(scope,button);animationClock.repaint(scope);startFrames();});
  }
