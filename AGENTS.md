@@ -31,13 +31,13 @@ Latest Ernæring og helse requirements:
 - Use original, clear food illustrations with names underneath for food-content practice; they replace the earlier photographs and use half their display size. Prefer visual versions of existing food questions where useful. Nutrient checkboxes must not mark small but real amounts as absent; select unambiguous alternatives. External lookup exercises should open the named source in a new tab and keep the values being looked up out of the prompt.
 
 Shared Naturfag modules and progress:
-- Naturfag has two collapsible sidebar groups: Kjemi and Næringsstoffer og fordøyelsen. Figure questions stay in their academic topic, and nutrition topic order is Karbohydrater, Proteiner, Fett, Vitaminer/mineraler/vann, Fordøyelsen, Energi og blodsukker, Blandet øving.
+- Naturfag has three collapsible sidebar groups: Kjemi, Næringsstoffer og fordøyelsen, and Bølger og stråling. The waves group currently publishes only Bølger og svingninger and Bølgefenomener, with Fagstoff, Oppgavebank and Begreper for each. Figure questions stay in their academic topic, and nutrition topic order is Karbohydrater, Proteiner, Fett, Vitaminer/mineraler/vann, Fordøyelsen, Energi og blodsukker, Blandet øving.
 - Show each topic's correct-answer percentage over its latest 20 answered automatic exercises. Count only the first submitted result per presentation; corrections do not replace the first result. Hints/fasit are supported practice. Writing and self-assessment are excluded. Do not manufacture an attempt sequence from older mastery records.
 - Public sources/help must be concise and professional for a general student audience. Do not refer to personal presentations, lessons, uploaded attachments or old exams. Internal evidence and curriculum logs may retain these references for maintenance; student-facing sources cite external references directly.
 - Embedded modules share the Naturfag navigation: avoid duplicate sidebars, mobile menu buttons and stacked headers. Preserve chemistry history and native behavior. Validate same-origin iframe messages, routes/back-forward, keyboard/mobile menu use, shared theme and compact layout at real viewport widths.
 
 Naturfag entry-page and typography preferences:
-- The canonical Naturfag page opens a subject chooser with two illustrated, clickable cards: Kjemi and Næringsstoffer og fordøyelsen. Keep explicit module deep links intact; the Naturfag title links back to the chooser, without a separate Start item in either menu. This requested subject chooser is separate from the compact, direct exercise views.
+- The canonical Naturfag page opens a subject chooser with three illustrated, clickable cards: Kjemi, Næringsstoffer og fordøyelsen, and Bølger og stråling. Keep explicit module deep links intact; the Naturfag title links back to the chooser, without a separate Start item in either menu. This requested subject chooser is separate from the compact, direct exercise views.
 - Use the same bold submenu typography in both modules (13px, weight 700); question text is aligned at 17px/700 on desktop and 16px/700 on narrow screens.
 - There is no nutrition Filter control or settings panel. Select subjects directly and keep only useful bank search. Do not reintroduce filtering options as hidden or optional controls.
 
@@ -64,3 +64,6 @@ Content-addressed asset directories such as `assets/astronomy-prototypes/` have
 their own names and must not be renamed as part of page-path maintenance.
 
 When the owner asks to promote a prototype to the ordinary site, remove its prototype copy and entry automatically after updating dependent embeds, links, build scripts and tests. Finished modules belong at their canonical subject paths; preserve their functioning main-site entry points.
+
+
+Partial waves promotion (16 November 2026): completed wave topics and shared renderer live in `naturfag/bolger-straling/`, embedded through `naturfag/bolger-straling.html`. The full prototype remains under `/prototyper/bolger-straling.html` for the seven unpublished topics and imports the canonical wave sources. Do not duplicate the promoted source files or expose the unfinished topics in the main Naturfag menu.

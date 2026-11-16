@@ -3,6 +3,7 @@ let pw;if(!process.argv.includes('--data-only')){for(const candidate of [process
 const root=path.resolve(__dirname,'..'),shots=path.resolve(root,'../research/bolger-straling-qa');
 const ids=['bolger','fenomener','em','atomer','universet','kommunikasjon','radioaktivitet','stralevern','atmosfaeren'];
 const moduleNames=['wave-basics','waves','em-atoms','radioactivity','cosmos-environment'];
+const {publishedIds,modulePath,moduleUrl,browserModuleUrl,rendererPath}=require('./bolger-straling-paths.cjs');
 const errors=[],failures=[],warnings=[],coverage=[];
 let fixtureClockFactory;
 // A limited DOM fixture for running the actual model controllers and examining
@@ -68,8 +69,7 @@ function modelFixture(topic){
 const server=http.createServer((req,res)=>{try{let file=path.join(root,decodeURIComponent(new URL(req.url,'http://localhost').pathname));if(fs.statSync(file).isDirectory())file=path.join(file,'index.html');res.setHeader('Content-Type',file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.js')?'text/javascript; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':'application/octet-stream');res.end(fs.readFileSync(file));}catch{res.writeHead(404);res.end('missing');}});
 async function attempt(label,fn){try{await fn();coverage.push(label);}catch(e){failures.push(label+': '+e.message);console.error('FAIL '+label+': '+e.message);}}
 (async()=>{
- const {pathToFileURL}=require('node:url');
- const source=[],sourceModules={};for(const file of moduleNames){sourceModules[file]=await import(pathToFileURL(path.join(root,'prototyper/bolger-straling',file+'.js')).href);source.push(...sourceModules[file].topics);}
+ const source=[],sourceModules={};for(const file of moduleNames){sourceModules[file]=await import(moduleUrl(file));source.push(...sourceModules[file].topics);}
  assert.deepEqual(source.map(t=>t.id).sort(),ids.slice().sort());
  const unique=new Set(),numeric=new Map();
  for(const t of source){assert.ok(t.sections.length&&t.terms.length&&t.questions.length>=10,t.id);for(const q of t.questions){assert.ok(!unique.has(q.id)&&q.prompt&&q.answer,q.id);unique.add(q.id);assert.ok(['mcq','number','open'].includes(q.type),q.id);if(q.type==='mcq')assert.ok(Number.isInteger(q.correct)&&q.correct>=0&&q.correct<q.choices.length,q.id);if(q.type==='number'){assert.ok(Number.isFinite(q.value),q.id);numeric.set(q.id,q);}}}
@@ -77,12 +77,25 @@ async function attempt(label,fn){try{await fn();coverage.push(label);}catch(e){f
  for(const [id,value]of Object.entries(expected)){const q=numeric.get(id);assert.ok(q,id);assert.ok(Math.abs(q.value-value)<1e-8*Math.max(1,Math.abs(value)),id+' incorrect answer');}
  const originalIds=[...Array.from({length:12},(_,i)=>'wv-b'+(i+1)),...Array.from({length:14},(_,i)=>'wv-f'+(i+1)),...['em','atom','com'].flatMap(p=>Array.from({length:12},(_,i)=>p+'-'+String(i+1).padStart(2,'0'))),...Array.from({length:16},(_,i)=>'ra-q'+(i+1)),...Array.from({length:17},(_,i)=>'sv-q'+(i+1)),...['ce-u','ce-a'].flatMap(p=>Array.from({length:14},(_,i)=>p+'-'+String(i+1).padStart(2,'0')))];
  assert.deepEqual([...unique].sort(),originalIds.sort(),'The compact redesign must preserve every existing question.');
- const appSource=fs.readFileSync(path.join(root,'prototyper/bolger-straling/app.js'),'utf8');
+ assert.equal(unique.size,123,'The complete prototype retains all 123 questions after topical moves.');
+ const publicTopics=source.filter(t=>publishedIds.includes(t.id));
+ assert.deepEqual(publicTopics.map(t=>t.id),publishedIds);
+ assert.deepEqual(publicTopics.map(t=>t.questions.length),[11,12]);
+ assert.equal(publicTopics.flatMap(t=>t.questions).length,23,'Only 23 questions belong to the first published subtopics.');
+ for(const topic of publicTopics)assert.ok(!topic.terms.some(t=>/knut|\bbuk/i.test(t.term)),'Buk and knute are excluded from the published concept lists.');
+ for(const [questionId,topicId] of [['wv-b8','em'],['wv-f3','em'],['wv-f13','universet']])assert.equal(source.find(t=>t.questions.some(q=>q.id===questionId))?.id,topicId,'Moved question belongs to its current teaching topic: '+questionId);
+ const standingTask=publicTopics[0].questions.find(q=>q.id==='wv-b11');assert.ok(standingTask&&!/knut|\bbuk/i.test(standingTask.prompt+' '+standingTask.answer),'Standing-wave reasoning does not require the excluded glossary terms.');
+ const publicEntry=fs.readFileSync(path.join(root,'naturfag/bolger-straling/entry.js'),'utf8');
+ assert.deepEqual([...publicEntry.matchAll(/import \{topics as (\w+)\} from ['"]([^'"]+)['"]/g)].map(m=>m[2].split('?')[0]).sort(),['./wave-basics.js','./waves.js'],'The published entry imports exactly the two released topic modules.');
+ const prototypeEntry=fs.readFileSync(path.join(root,'prototyper/bolger-straling/app.js'),'utf8');
+ assert.match(prototypeEntry,/naturfag\/bolger-straling\/wave-basics\.js/);assert.match(prototypeEntry,/naturfag\/bolger-straling\/waves\.js/);
+ assert.ok(!fs.existsSync(path.join(root,'prototyper/bolger-straling/wave-basics.js'))&&!fs.existsSync(path.join(root,'prototyper/bolger-straling/waves.js')),'Published modules have one canonical source.');
+ const appSource=fs.readFileSync(rendererPath,'utf8');
  assert.ok(!appSource.includes('animation-speed'),'The global animation-speed control was removed.');
  assert.ok(!appSource.includes('id="pause-button"'),'The global pause control was removed.');
  const topicRender=appSource.match(/function renderTopic\(\)\{([\s\S]*?)\nfunction resourceHtml/)[1];
  assert.ok(!/t\.(kicker|summary)/.test(topicRender),'Topic content should not repeat its overview kicker or summary.');
- const helperModules={};for(const name of ['atom-lab','waves-rainbow','isotope-data','math-presentation','animation-clock'])helperModules[name]=await import(pathToFileURL(path.join(root,'prototyper/bolger-straling',name+'.js')).href);
+ const helperModules={};for(const name of ['atom-lab','waves-rainbow','isotope-data','math-presentation','animation-clock'])helperModules[name]=await import(moduleUrl(name));
  fixtureClockFactory=helperModules['animation-clock'].createAnimationClock;
  const {solutionHtml}=helperModules['math-presentation'];
  assert.equal(numeric.size,24,'Exactly 24 numeric questions receive the shared solution format.');
@@ -129,7 +142,7 @@ async function attempt(label,fn){try{await fn();coverage.push(label);}catch(e){f
  }finally{comm.destroy();}
  const revisionGroups=await require('./bolger-straling-revision.cjs').runRevisionChecks({modelFixture,topics:source});
  assert.ok(revisionGroups.length>=8);
- console.log('Source/model checks passed: 9 topics, 123 preserved questions and 24 numeric answers; independent model pause/repaint, Snell constraints, retarded Doppler, arm reach, primary/secondary rainbow, atom cascades, isotope decay and absolute Planck units.');
+ console.log('Source/model checks passed: 9 prototype topics, 123 preserved questions; 2 published topics, 23 questions; 24 numeric answers; independent model pause/repaint, Snell constraints, retarded Doppler, arm reach, primary/secondary rainbow, atom cascades, isotope decay and absolute Planck units.');
  if(process.argv.includes('--data-only'))return;
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
  const base='http://127.0.0.1:'+server.address().port, url=base+'/prototyper/bolger-straling.html';
@@ -143,7 +156,7 @@ async function attempt(label,fn){try{await fn();coverage.push(label);}catch(e){f
  const page=await context.newPage();page.setDefaultTimeout(7000);
  page.on('pageerror',e=>errors.push(e.stack||e.message));
  await page.goto(url);await page.locator('.topic-card').first().waitFor();
- const data=await page.evaluate(async names=>{const modules=await Promise.all(names.map(m=>import('./bolger-straling/'+m+'.js')));return modules.flatMap(m=>m.topics).map(t=>({id:t.id,title:t.title,sections:t.sections.length,questions:t.questions,terms:t.terms.length}));},moduleNames);
+ const data=await page.evaluate(async urls=>{const modules=await Promise.all(urls.map(url=>import(url)));return modules.flatMap(m=>m.topics).map(t=>({id:t.id,title:t.title,sections:t.sections.length,questions:t.questions,terms:t.terms.length}));},moduleNames.map(browserModuleUrl));
  await attempt('Complete, distinct, well-formed question data',async()=>{
  assert.equal(data.length,9);const seen=new Set();for(const t of data){assert.ok(t.sections>0&&t.terms>0);assert.ok(t.questions.length>=10,t.id);for(const q of t.questions){assert.ok(!seen.has(q.id),'duplicate '+q.id);seen.add(q.id);assert.ok(q.prompt&&q.answer,q.id);assert.ok(['mcq','number','open'].includes(q.type),q.id);if(q.type==='mcq')assert.ok(Number.isInteger(q.correct)&&q.correct>=0&&q.correct<q.choices.length,q.id);if(q.type==='number')assert.ok(Number.isFinite(q.value)&&(q.tolerance===undefined||q.tolerance>=0),q.id);}}});
  async function route(id,view='fagstoff'){await page.goto(url+'#'+id+'/'+view);await page.locator('#topic-content').waitFor();await page.waitForTimeout(70);}

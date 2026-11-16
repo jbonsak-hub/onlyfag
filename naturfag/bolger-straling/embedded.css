@@ -1,0 +1,21 @@
+/* Shared Naturfag navigation surrounds the embedded course. */
+body.embedded{min-width:0}
+.embedded>.sidebar,.embedded>.nav-scrim,.embedded .topbar,.embedded .site-footer,.embedded>.skip{display:none!important}
+.embedded .workspace{margin-left:0}
+.embedded main{width:100%;max-width:1400px;margin:auto;padding:28px 28px 50px}
+.embedded .page-head{margin-bottom:30px}
+.embedded .page-head h1{font-size:27px;line-height:1.25}
+.embedded .q-prompt{font-size:17px;font-weight:700;line-height:1.55}
+@media(min-width:780px){
+ .embedded.topic-page .model.model--split{grid-template-columns:minmax(0,1fr) 210px;gap:16px;padding:16px}
+ .embedded.topic-page .model--split .model-panel{border-top:0;border-left:1px solid var(--line);padding:0 0 0 16px}
+ .embedded.topic-page .model-panel .controls,.embedded.topic-page .model-panel .wb-controls,.embedded.topic-page .model-panel .wb-controls.wb-two{display:flex;flex-direction:column;gap:14px}
+ .embedded.topic-page .model-panel .wv-buttons,.embedded.topic-page .model-panel .wb-mode-buttons{grid-template-columns:1fr}
+}
+@media(max-width:779px){
+ .embedded main,.embedded.topic-page main{padding:14px 14px 35px}
+ .embedded .page-head{min-height:30px;margin:0 0 26px;padding-left:40px}
+ .embedded .page-head h1{font-size:23px}
+ .embedded .q-prompt{font-size:16px}
+}
+@media print{.embedded main{max-width:none;padding:0}}

@@ -1,5 +1,5 @@
-import {rainbowExampleHtml,mountRainbowExample} from './waves-rainbow.js?v=20261116-layout2';
-import {refractionExampleHtml,mountRefractionExample} from './refraction-examples.js?v=20261116-layout2';
+import {rainbowExampleHtml,mountRainbowExample} from './waves-rainbow.js?v=20261116-naturfag1';
+import {refractionExampleHtml,mountRefractionExample} from './refraction-examples.js?v=20261116-naturfag1';
 
 const styles=`<style>
 .ex-launch{display:flex;justify-content:space-between;align-items:center;width:100%;gap:16px;margin:14px 0 0;padding:12px 15px;border:1px solid var(--line,#d9e3dc);border-radius:10px;background:var(--surface,#fff);color:var(--green,#236448);font:inherit;font-size:13px;font-weight:650;text-align:left;cursor:pointer}.ex-launch:hover{border-color:var(--green,#236448)}.ex-launch>span:last-child{font-size:19px}

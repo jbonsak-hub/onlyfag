@@ -1,10 +1,10 @@
-import {practicalExamplesDialogHtml,mountPracticalExamplesDialog} from './examples-dialog.js?v=20261116-layout2';
-import {refractionSection,mountRefraction} from './refraction-lab.js?v=20261116-layout2';
-import {diffractionSection,mountDiffraction} from './diffraction-lab.js?v=20261116-layout2';
-import {resonanceSection,mountResonance} from './resonance-swing.js?v=20261116-layout2';
-import {flightSection,mountFlight} from './flight-doppler.js?v=20261116-layout2';
-export {buildApertureField,scalarWaveValue,diffractionEnvelope} from './diffraction-lab.js?v=20261116-layout2';
-export {createSwingState,swingGeometry,swingBackPoint,solveSwingArm,swingDriveAt,stepDrivenSwing,swingArmPose,stepSwingScene} from './resonance-swing.js?v=20261116-layout2';
+import {practicalExamplesDialogHtml,mountPracticalExamplesDialog} from './examples-dialog.js?v=20261116-naturfag1';
+import {refractionSection,mountRefraction} from './refraction-lab.js?v=20261116-naturfag1';
+import {diffractionSection,mountDiffraction} from './diffraction-lab.js?v=20261116-naturfag1';
+import {resonanceSection,mountResonance} from './resonance-swing.js?v=20261116-naturfag1';
+import {flightSection,mountFlight} from './flight-doppler.js?v=20261116-naturfag1';
+export {buildApertureField,scalarWaveValue,diffractionEnvelope} from './diffraction-lab.js?v=20261116-naturfag1';
+export {createSwingState,swingGeometry,swingBackPoint,solveSwingArm,swingDriveAt,stepDrivenSwing,swingArmPose,stepSwingScene} from './resonance-swing.js?v=20261116-naturfag1';
 const svg = (id, title, desc, inside, height = 300) => `<svg id="${id}" viewBox="0 0 760 ${height}" role="img" aria-labelledby="${id}-title ${id}-desc"><title id="${id}-title">${title}</title><desc id="${id}-desc">${desc}</desc>${inside}</svg>`;
 const path = (d, color, width=3, extra='') => `<path d="${d}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" ${extra}/>`;
 const txt = (x,y,text,extra='') => `<text x="${x}" y="${y}" ${extra}>${text}</text>`;
@@ -45,28 +45,60 @@ const phenomena={...{
       "definition": "En bølge sendes tilbake fra en flate."
     },
     {
+      "term": "Innfallslodd",
+      "definition": "En tenkt linje vinkelrett på flaten i treffpunktet."
+    },
+    {
+      "term": "Innfallsvinkel",
+      "definition": "Vinkelen mellom den innkommende strålen og innfallsloddet."
+    },
+    {
+      "term": "Refleksjonsvinkel",
+      "definition": "Vinkelen mellom den reflekterte strålen og innfallsloddet."
+    },
+    {
       "term": "Brytning",
-      "definition": "Retningsendring når en bølge får ny fart i et annet medium."
+      "definition": "Retningsendring når en bølge får ny fart i overgangen mellom to medier."
+    },
+    {
+      "term": "Totalrefleksjon",
+      "definition": "Alt lyset reflekteres tilbake ved stor nok innfallsvinkel fra et medium der lyset går saktere, til et der det går fortere."
+    },
+    {
+      "term": "Fargespredning",
+      "definition": "Hvitt lys deles i farger fordi ulike bølgelengder brytes ulikt. Kalles også dispersjon."
     },
     {
       "term": "Interferens",
       "definition": "Bølger overlapper, og utslagene legges sammen."
     },
     {
+      "term": "Konstruktiv interferens",
+      "definition": "Bølger forsterker hverandre når utslagene peker samme vei."
+    },
+    {
+      "term": "Destruktiv interferens",
+      "definition": "Bølger svekker eller slokker hverandre når utslagene peker motsatt vei."
+    },
+    {
       "term": "Bøyning",
       "definition": "Bølger sprer seg bak åpninger og kanter."
+    },
+    {
+      "term": "Egenfrekvens",
+      "definition": "Frekvensen et system svinger med når det får svinge fritt."
     },
     {
       "term": "Resonans",
       "definition": "Stor svingeamplitude ved gjentatt påvirkning nær egenfrekvensen."
     },
     {
-      "term": "Dopplereffekt",
-      "definition": "Mottatt frekvens endres ved relativ bevegelse mellom bølgekilde og mottaker."
+      "term": "Demping",
+      "definition": "Svingninger avtar fordi energi overføres til omgivelsene, for eksempel gjennom friksjon og luftmotstand."
     },
     {
-      "term": "Innfallslodd",
-      "definition": "Linje vinkelrett på flaten i treffpunktet."
+      "term": "Dopplereffekt",
+      "definition": "Mottatt frekvens endres når bølgekilden og mottakeren beveger seg mot eller fra hverandre."
     }
   ],
   "questions": [
@@ -176,13 +208,6 @@ const phenomena={...{
       ],
       "correct": 2,
       "answer": "Kilden flytter seg nærmere mellom hver utsendte bølgetopp. Avstanden mellom toppene foran ambulansen blir mindre, så mottatt frekvens øker."
-    },
-    {
-      "id": "wv-f13",
-      "type": "open",
-      "level": "Bruk",
-      "prompt": "Absorpsjonslinjene i lyset fra en stjerne er flyttet mot lengre bølgelengder sammenlignet med samme grunnstoff målt i laboratoriet. Hva kaller vi dette, og hva kan det fortelle om bevegelsen?",
-      "answer": "Det er <strong>rødforskyvning</strong>. For en stjerne kan det skyldes at stjernen beveger seg fra oss langs synslinjen. For fjerne galakser må universets utvidelse også tas med i forklaringen."
     },
     {
       "id": "wv-f14",

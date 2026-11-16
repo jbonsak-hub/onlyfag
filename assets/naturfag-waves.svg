@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" fill="none">
+  <title>Bølger og stråling</title>
+  <desc>En bølge brer seg mot et glassprisme. Hvitt lys brytes og spres i et spekter av farger.</desc>
+  <rect width="640" height="360" fill="#edf4f2"/>
+  <ellipse cx="329" cy="188" rx="251" ry="138" fill="#e0ece7"/>
+  <path d="M65 107c28-35 65-45 108-37M459 319c43 5 83-9 112-34" stroke="#cadfd5" stroke-width="2" stroke-linecap="round"/>
+  <path d="M51 174h268" stroke="#a9c8c0" stroke-width="2" stroke-dasharray="5 7"/>
+  <path d="M51 174c18-54 36-54 54 0s36 54 54 0 36-54 54 0 36 54 54 0 31-43 47 0" stroke="#237f8d" stroke-width="6" stroke-linecap="round"/>
+  <path d="M105 174c18 54 36 54 54 0s36-54 54 0 36 54 54 0" stroke="#80b8bb" stroke-width="2" stroke-linecap="round" opacity=".4" transform="translate(0 59)"/>
+  <circle cx="78" cy="133.5" r="6" fill="#edf4f2" stroke="#237f8d" stroke-width="3"/>
+  <path d="m354 67-90 228h235Z" fill="#f9fcf7" fill-opacity=".72" stroke="#6e9486" stroke-width="3" stroke-linejoin="round"/>
+  <path d="m354 81-81 205h210" stroke="#c8dfd5" stroke-width="2" stroke-linejoin="round"/>
+  <path d="m313 174 120 16" stroke="#d6c69c" stroke-width="12" stroke-linecap="round" opacity=".55"/>
+  <path d="m313 174 120 16" stroke="#fffdf2" stroke-width="7" stroke-linecap="round"/>
+  <g stroke-width="5" stroke-linecap="round">
+    <path d="m433 188 161 94" stroke="#bf7669"/>
+    <path d="m433 189 156 101" stroke="#cf9b61"/>
+    <path d="m433 190 150 108" stroke="#c8b85b"/>
+    <path d="m433 191 144 115" stroke="#6b9b77"/>
+    <path d="m433 192 138 122" stroke="#518fa7"/>
+    <path d="m433 193 132 129" stroke="#8b82aa"/>
+  </g>
+  <path d="m354 67 145 228" stroke="#6e9486" stroke-width="3" stroke-linecap="round"/>
+  <path d="M307 102h14m-7-7v14M191 285h12m-6-6v12" stroke="#adc8b9" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="540" cy="99" r="6" fill="#d5bb8e"/>
+  <circle cx="86" cy="274" r="5" fill="#8ab09b"/>
+</svg>

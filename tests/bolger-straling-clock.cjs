@@ -1,9 +1,8 @@
 const assert=require('node:assert/strict');
-const path=require('node:path');
-const {pathToFileURL}=require('node:url');
+const {moduleUrl}=require('./bolger-straling-paths.cjs');
 
 (async()=>{
- const {createAnimationClock}=await import(pathToFileURL(path.resolve(__dirname,'../prototyper/bolger-straling/animation-clock.js')).href);
+ const {createAnimationClock}=await import(moduleUrl('animation-clock'));
  const clock=createAnimationClock(),a=[],b=[];let visible=true;
  const stopA=clock.onFrame(t=>a.push(t),'A',{isActive:()=>visible});
  clock.onFrame(t=>b.push(t),'B');

@@ -38,7 +38,56 @@ const basics={
 </div>`},
     {title:'Stående bølger',body:`<div class="wb-scope"><p>${descriptions.standing}</p><div class="model">${diagram('wv-standing','Stående bølge på en streng','To bølger i motsatt retning gir knuter og buker.')}<div id="wb-standing-controls" class="wb-controls">${slider('wv-harmonic','Antall buker',1,4,2,1)}</div><div id="wb-standing-readout" class="readout" aria-live="polite"></div><p class="model-note">${modelNotes.standing}</p></div></div>`},
   ],
-  terms:[{term:'Amplitude',definition:'Største utslag fra likevektsstillingen.'},{term:'Bølgelengde',definition:'Avstanden mellom to nabopunkter i samme svingefase.'},{term:'Frekvens',definition:'Antall svingninger per sekund, målt i hertz (Hz).'},{term:'Periode',definition:'Tiden for én hel svingning.'},{term:'Bølgefart',definition:'Farten bølgemønsteret brer seg med.'},{term:'Knute',definition:'Punkt uten utslag i en stående bølge.'},{term:'Buk',definition:'Sted med størst utslag i en stående bølge.'}],
+  terms:[
+    {
+      "term": "Bølge",
+      "definition": "Svingninger som brer seg og overfører energi."
+    },
+    {
+      "term": "Svingning",
+      "definition": "En bevegelse som gjentas fram og tilbake omkring en likevektsstilling."
+    },
+    {
+      "term": "Likevektsstilling",
+      "definition": "Stillingen et punkt svinger omkring."
+    },
+    {
+      "term": "Amplitude",
+      "definition": "Største utslag fra likevektsstillingen."
+    },
+    {
+      "term": "Bølgelengde",
+      "definition": "Avstanden mellom to nabotopper eller to nabofortetninger i en langsbølge."
+    },
+    {
+      "term": "Frekvens",
+      "definition": "Antall svingninger per sekund, målt i hertz (Hz)."
+    },
+    {
+      "term": "Periode",
+      "definition": "Tiden for én hel svingning."
+    },
+    {
+      "term": "Bølgefart",
+      "definition": "Farten bølgemønsteret brer seg med."
+    },
+    {
+      "term": "Tversbølge",
+      "definition": "En bølge der partiklene svinger vinkelrett på bølgeretningen."
+    },
+    {
+      "term": "Langsbølge",
+      "definition": "En bølge der partiklene svinger parallelt med bølgeretningen."
+    },
+    {
+      "term": "Overflatebølge",
+      "definition": "En bølge langs vannoverflaten. Vannpartiklene kan bevege seg både på tvers av og langs bølgeretningen."
+    },
+    {
+      "term": "Stående bølge",
+      "definition": "Et svingemønster som blir på samme sted når to like bølger møtes i motsatt retning."
+    }
+  ],
   questions:[
     {id:'wv-b1',type:'mcq',level:'Start',prompt:'En lydbølge går gjennom luft. Hva gjør luftpartiklene?',choices:['Følger lyden hele veien fra høyttaleren til øret.','Svinger fram og tilbake omkring sine egne likevektsstillinger.','Står helt stille mens energien passerer.'],correct:1,answer:'Luftpartiklene svinger lokalt. Det er trykkvariasjonen og energien som brer seg gjennom lufta.'},
     {id:'wv-b2',type:'open',level:'Start',prompt:'Tegn en bølge. Marker likevektslinje, bølgetopp, bølgebunn, amplitude og bølgelengde.',answer:'Amplitude måles fra likevektslinjen til en topp eller bunn. Bølgelengden måles mellom to nabotopper eller to nabobunner. Avstanden fra bunn til topp er 2A.'},
@@ -47,10 +96,9 @@ const basics={
     {id:'wv-b5',type:'number',level:'Bruk',prompt:'En A-tone har frekvens 440 Hz. Lydfarten er 345 m/s. Finn bølgelengden.',value:345/440,tolerance:.01,unit:'m',answer:'λ = v / f = 345 / 440 m ≈ <strong>0,784 m</strong>.'},
     {id:'wv-b6',type:'number',level:'Bruk',prompt:'Du står på stranda. Bølgene går med fart 4 m/s, og to bølgetopper passerer deg hvert sekund. Hvor langt er det mellom nabotoppene?',value:2,tolerance:.02,unit:'m',answer:'f = 2 Hz. λ = v / f = 4 / 2 m = <strong>2 m</strong>.'},
     {id:'wv-b7',type:'mcq',level:'Start',prompt:'Hva kjennetegner en langsbølge?',choices:['Partiklene svinger vinkelrett på retningen bølgen brer seg.','Partiklene svinger parallelt med retningen bølgen brer seg.','Bølgelengden er alltid større enn én meter.'],correct:1,answer:'I en langsbølge svinger partiklene langs bølgeretningen. Lyd i luft er et eksempel.'},
-    {id:'wv-b8',type:'open',level:'Bruk',prompt:'En film viser en eksplosjon langt ute i verdensrommet. Kan astronauten se den? Kan astronauten høre den gjennom vakuum? Forklar.',answer:'Lys er elektromagnetisk stråling og kan gå gjennom vakuum, så eksplosjonen kan sees. Lyd er en mekanisk bølge og trenger et stoff. Den kan derfor ikke høres gjennom vakuum.'},
     {id:'wv-b9',type:'number',level:'Bruk',prompt:'Det går 3,0 s fra du ser et lyn til du hører tordenen. Regn med lydfart 340 m/s og se bort fra lysets reisetid. Hvor langt unna er lynet?',value:1020,tolerance:10,unit:'m',answer:'s = v · t = 340 m/s · 3,0 s = <strong>1020 m</strong>, omtrent 1 km.'},
     {id:'wv-b10',type:'mcq',level:'Bruk',prompt:'Frekvensen dobles mens bølgefarten holdes uendret. Hva skjer med bølgelengden?',choices:['Den dobles.','Den halveres.','Den er uendret.'],correct:1,answer:'λ = v / f. Når frekvensen dobles ved samme bølgefart, halveres bølgelengden.'},
-    {id:'wv-b11',type:'open',level:'Bruk',prompt:'Lag to stående bølger på en 2 m lang streng med faste ender: én med én buk og én med to buker. Finn bølgelengden i hvert tilfelle.',answer:'Én buk er en halv bølgelengde: λ = 2L = <strong>4 m</strong>. To buker er én hel bølgelengde: λ = L = <strong>2 m</strong>. Endene er knuter.'},
+    {"id":"wv-b11","type":"open","level":"Bruk","prompt":"To like bølger går i motsatt retning på en streng og danner en stående bølge. En elev sier: «Stående bølge betyr at hele strengen står stille.» Har eleven rett? Forklar hva som står stille, og hva som beveger seg.","answer":"Nei. Selve svingemønsteret blir på samme sted, men de fleste punktene på strengen svinger opp og ned. Enkelte punkter står stille fordi bølgene hele tiden har motsatt utslag der."},
     {id:'wv-b12',type:'open',level:'Utfordring',prompt:'En elev sier: «Når vi sender mer energi inn i en fjær, må bølgelengden bli kortere.» Vurder påstanden.',answer:'Ikke nødvendigvis. Mer energi kan gi større amplitude. Bølgelengden bestemmes av bølgefart og frekvens gjennom λ = v/f. Holder vi disse uendret, er bølgelengden uendret.'}
   ],
   resources:[{label:'PhET: Bølge på en snor',url:'https://phet.colorado.edu/sims/html/wave-on-a-string/latest/wave-on-a-string_all.html'}],

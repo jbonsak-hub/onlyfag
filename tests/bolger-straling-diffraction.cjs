@@ -1,7 +1,7 @@
-const assert=require('node:assert/strict'),path=require('node:path');
-const {pathToFileURL}=require('node:url');
+const assert=require('node:assert/strict');
+const {moduleUrl}=require('./bolger-straling-paths.cjs');
 (async()=>{
- const m=await import(pathToFileURL(path.resolve(__dirname,'../prototyper/bolger-straling/diffraction-lab.js')).href);
+ const m=await import(moduleUrl('diffraction-lab'));
  const field=m.buildApertureField({aperture:.3,wavelength:.8,openings:2,separation:3.5,width:240,height:160,domainWidth:48,wallX:1});
  const x=field.width-1,profile=Array.from({length:field.height},(_,y)=>m.diffractionRelativeIntensity(field,x,y)),center=Math.max(profile[79],profile[80]);
  const firstMinimum=Math.min(...profile.slice(101,113)),nextMaximum=Math.max(...profile.slice(127,145));

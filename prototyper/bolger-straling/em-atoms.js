@@ -296,6 +296,7 @@ export const topics = [
     ],
     questions:[
       absorptionQuestion,
+      {id:'wv-b8',type:'open',level:'Bruk',prompt:'En film viser en eksplosjon langt ute i verdensrommet. Kan astronauten se den? Kan astronauten høre den gjennom vakuum? Forklar.',answer:'Lys er elektromagnetisk stråling og kan gå gjennom vakuum, så eksplosjonen kan sees. Lyd er en mekanisk bølge og trenger et stoff. Den kan derfor ikke høres gjennom vakuum.'},
       {id:'em-01',type:'mcq',level:'Start',prompt:'Hvilken type stråling har størst energi per foton?',choices:['Radiobølger','Infrarødt','Synlig rødt lys','Gammastråling'],correct:3,answer:'Gammastråling har vanligvis høyest frekvens av disse. <strong>E = hf</strong> gir størst energi per foton.'},
       {id:'em-02',type:'open',level:'Start',prompt:'Sorter fra lengst til kortest bølgelengde: gamma, synlig lys, radio, UV, mikrobølger, røntgen, infrarødt.',answer:'<strong>Radio → mikrobølger → infrarødt → synlig lys → UV → røntgen → gamma.</strong> Mikrobølger er en del av radiobølgeområdet, men skilles ofte ut i denne oversikten.'},
       {id:'em-03',type:'number',level:'Bruk',prompt:'En radiobølge har frekvens 100 MHz. Finn bølgelengden i vakuum. Bruk c = 3,00 · 10⁸ m/s.',value:3,tolerance:.03,unit:'m',hint:'100 MHz = 100 · 10⁶ Hz. Bruk λ = c/f.',answer:'λ = c/f = (3,00 · 10<sup>8</sup>)/(100 · 10<sup>6</sup>) m = <strong>3,00 m</strong>.'},

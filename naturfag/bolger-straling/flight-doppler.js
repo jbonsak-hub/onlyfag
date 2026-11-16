@@ -227,3 +227,4 @@ export function mountFlight(root,api){
     audioButton.removeEventListener('click',toggleAudio);
   };
 }
+

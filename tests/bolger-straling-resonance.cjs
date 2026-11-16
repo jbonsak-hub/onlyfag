@@ -1,9 +1,8 @@
 const assert=require('node:assert/strict');
-const path=require('node:path');
-const {pathToFileURL}=require('node:url');
+const {moduleUrl}=require('./bolger-straling-paths.cjs');
 
 async function runResonanceChecks(){
- const m=await import(pathToFileURL(path.resolve(__dirname,'../prototyper/bolger-straling/resonance-swing.js')).href);
+ const m=await import(moduleUrl('resonance-swing'));
  const near=(a,b,tolerance=1e-8)=>assert.ok(Math.abs(a-b)<=tolerance,`${a} differs from ${b}`);
  const run=(frequency,damping,duration=90)=>{
   const state=m.createSwingState();let lastArm=null,maxJump=0,firstLaunch=null,launchPushes=0,largestLaunchStep=0;

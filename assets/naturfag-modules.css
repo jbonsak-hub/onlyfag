@@ -1,4 +1,4 @@
-/* The two subject groups share the original Naturfag sidebar. */
+/* Subject modules share the original Naturfag sidebar. */
 .nf-module-group{border:0;margin:0;padding:0}
 .nf-module-heading{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:9px 16px;font-size:14px;font-weight:750;line-height:1.3;color:var(--text);border-bottom:1px solid var(--line);min-height:38px}
 .nf-module-heading::-webkit-details-marker{display:none}
@@ -16,44 +16,53 @@
 .nf-topic-score{margin-left:auto;flex:none;min-width:34px;font-size:10px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
 .nf-module-secondary{display:flex;flex-wrap:wrap;gap:0 12px;border-top:1px solid var(--line);margin:7px 14px 0 30px;padding-top:6px}
 .nf-nutrition-action{border:0;background:transparent;color:var(--muted);font:inherit;font-size:11px;cursor:pointer;padding:5px 0;border-radius:3px}
-.nf-module-heading:focus-visible,.nf-nutrition-topic:focus-visible,.nf-nutrition-action:focus-visible,#nfModulesMenu:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
-body.nf-nutrition-active{height:100dvh;overflow:hidden}
-body.nf-nutrition-active>.main{height:100dvh;overflow:hidden;min-width:0}
-body.nf-nutrition-active>.main>.topbar{display:none!important}
-body.nf-nutrition-active>.main>.content{margin:0!important;padding:0!important;max-width:none!important;width:100%;height:100dvh;overflow:hidden}
-#page-nutrition{height:100dvh;width:100%;overflow:hidden}
-#nutrition-module-frame{width:100%;height:100%;display:block;border:0;background:var(--bg)}
+.nf-waves-topic{display:flex;align-items:center;gap:8px;width:100%;min-height:36px;padding:8px 16px 8px 30px;border:0;background:transparent;color:var(--text);font:inherit;font-size:13px;font-weight:700;line-height:1.3;text-align:left;cursor:pointer}
+.nf-waves-topic::after{content:'›';margin-left:auto;color:var(--muted);font-size:17px;line-height:1;transform:rotate(0deg)}
+.nf-waves-topic[aria-expanded="true"]::after{transform:rotate(90deg)}
+.nf-waves-topic:hover,.nf-waves-topic.active,.nf-waves-view:hover,.nf-waves-view.active{background:var(--soft);color:var(--accent2)}
+.nf-waves-views{margin:0 14px 6px 36px;border-left:1px solid var(--line);padding:3px 0}
+.nf-waves-views[hidden]{display:none}
+.nf-waves-view{display:block;width:100%;min-height:31px;padding:6px 12px;border:0;border-radius:0;background:transparent;color:var(--muted);font:inherit;font-size:12px;line-height:1.3;text-align:left;cursor:pointer}
+.nf-waves-view.active{font-weight:700}
+.nf-module-heading:focus-visible,.nf-nutrition-topic:focus-visible,.nf-nutrition-action:focus-visible,.nf-waves-topic:focus-visible,.nf-waves-view:focus-visible,#nfModulesMenu:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+body:is(.nf-nutrition-active,.nf-waves-active){height:100dvh;overflow:hidden}
+body:is(.nf-nutrition-active,.nf-waves-active)>.main{height:100dvh;overflow:hidden;min-width:0}
+body:is(.nf-nutrition-active,.nf-waves-active)>.main>.topbar{display:none!important}
+body:is(.nf-nutrition-active,.nf-waves-active)>.main>.content{margin:0!important;padding:0!important;max-width:none!important;width:100%;height:100dvh;overflow:hidden}
+#page-nutrition,#page-waves{height:100dvh;width:100%;overflow:hidden}
+#nutrition-module-frame,#waves-module-frame{width:100%;height:100%;display:block;border:0;background:var(--bg)}
 #nfModulesMenu,#nfModulesBackdrop{display:none}
 @media(max-width:860px){
  #nfModulesMenu{display:flex;align-items:center;justify-content:center;position:fixed;z-index:4500;top:4px;left:8px;width:36px;height:36px;padding:0;border:0;border-radius:4px;background:var(--panel);color:var(--accent2);font-size:20px;cursor:pointer;box-shadow:none}
- body:not(.nf-nutrition-active)>.main>.topbar{padding-left:52px!important}
+ body:not(.nf-nutrition-active):not(.nf-waves-active)>.main>.topbar{padding-left:52px!important}
  #nfModulesBackdrop:not([hidden]){display:block;position:fixed;inset:0;z-index:4300;border:0;background:#182e2670}
  body.mobile-open #nfModulesMenu{left:min(calc(88vw - 48px),262px);background:var(--panel2)}
  .sidebar{overflow:auto!important}
  body.mobile-open .sidebar{z-index:4400!important}
  .nf-module-heading{padding-right:24px}
- .nf-module-submenu .nav-btn,.nf-nutrition-topic{min-height:36px}
+ .nf-module-submenu .nav-btn,.nf-nutrition-topic,.nf-waves-view{min-height:36px}
  .nf-nutrition-action{min-height:34px}
 }
-@media print{#nfModulesMenu,#nfModulesBackdrop{display:none!important}body.nf-nutrition-active{height:auto;overflow:visible}body.nf-nutrition-active>.main,body.nf-nutrition-active>.main>.content,#page-nutrition{height:auto;overflow:visible}#nutrition-module-frame{min-height:95vh}}
+@media print{#nfModulesMenu,#nfModulesBackdrop{display:none!important}body:is(.nf-nutrition-active,.nf-waves-active){height:auto;overflow:visible}body:is(.nf-nutrition-active,.nf-waves-active)>.main,body:is(.nf-nutrition-active,.nf-waves-active)>.main>.content,#page-nutrition,#page-waves{height:auto;overflow:visible}#nutrition-module-frame,#waves-module-frame{min-height:95vh}}
 
 /* The established desktop collapse hides the sidebar completely. Hidden menus
    should not expose overflowing labels or keyboard stops. */
 @media(min-width:861px){body.side-collapsed .sidebar .nf-module-group{display:none!important}}
 
-/* The public entry view presents the two subjects before exercise selection. */
+/* The public entry view presents the subjects before exercise selection. */
 #nfSubjectsHome{color:inherit;text-decoration:none}
 #nfSubjectsHome:focus-visible{outline:3px solid var(--accent);outline-offset:4px;border-radius:3px}
 body.nf-subjects-active>.main>.topbar{display:none!important}
 body.nf-subjects-active>.main>.content{max-width:none!important;height:100dvh;padding:30px!important}
 #page-subjects.active{display:flex;align-items:center;justify-content:center;min-height:100%}
 .nf-subjects-heading{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-.nf-subject-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;width:100%;max-width:512px;margin:auto}
+.nf-subject-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;width:100%;max-width:900px;margin:auto}
 .nf-subject-card{display:flex;flex-direction:column;min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--text);text-decoration:none;box-shadow:0 3px 14px #193b2b05;transition:border-color .15s,background .15s}
 .nf-subject-card:hover{border-color:var(--accent);background:var(--panel2)}
 .nf-subject-card:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
 .nf-subject-card img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#edf4f0}
 .nf-subject-card[data-subject="nutrition"] img{background:#f3f3e9}
+.nf-subject-card[data-subject="waves"] img{background:#edf4f0}
 .nf-subject-card-label{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;min-height:76px}
 .nf-subject-card strong{font-size:17px;line-height:1.3;font-weight:700;max-width:90%}
 .nf-subject-card-label>span{font-size:22px;line-height:1;color:var(--accent2)}
@@ -61,6 +70,7 @@ body.nf-subjects-active>.main>.content{max-width:none!important;height:100dvh;pa
 .nf-module-submenu .nav-btn .nav-txt{font-size:13px!important;font-weight:700!important;line-height:1.3!important}
 .nf-nutrition-topic,.nf-nutrition-topic>span:first-child{font-size:13px;font-weight:700}
 .page .question,.page .quiz-big{font-size:17px!important;font-weight:700!important;line-height:1.45}
+@media(min-width:861px) and (max-width:1120px){.nf-subject-cards{grid-template-columns:repeat(2,minmax(0,1fr));max-width:560px}.nf-subject-card:last-child{grid-column:1/-1;width:calc((100% - 20px)/2);justify-self:center}}
 @media(max-width:860px){
  body.nf-subjects-active>.main>.content{padding:58px 16px 20px!important}
  .nf-subject-cards{grid-template-columns:1fr;gap:14px;max-width:244px}
@@ -86,3 +96,4 @@ body.dark #page-elementquiz.quiz-pt-color .pt-cell :is(.num,.nm,.sym){color:inhe
 body.dark #page-elementquiz.quiz-pt-color .pt-cell.selected{background:var(--soft)!important;color:var(--text)!important}
 body.dark #page-elementquiz.quiz-pt-color .pt-cell:is(.miss,.ish-click){background:var(--badbg)!important;color:var(--text)!important}
 body.dark #page-elementquiz.quiz-pt-color .pt-cell:is(.solved,.ish-target){background:var(--goodbg)!important;color:var(--text)!important}
+

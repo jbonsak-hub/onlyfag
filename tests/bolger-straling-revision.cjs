@@ -1,12 +1,11 @@
-const assert=require('node:assert/strict'),path=require('node:path'),fs=require('node:fs');
-const {pathToFileURL}=require('node:url');
-const root=path.resolve(__dirname,'..'),base=path.join(root,'prototyper/bolger-straling');
+const assert=require('node:assert/strict'),fs=require('node:fs');
+const {moduleUrl,rendererPath}=require('./bolger-straling-paths.cjs');
 const near=(actual,expected,tolerance=1e-9,message='')=>assert.ok(Math.abs(actual-expected)<=tolerance*Math.max(1,Math.abs(expected)),message||`${actual} differs from ${expected}`);
 const plain=html=>String(html).replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,'').replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<[^>]*>/g,' ');
 
 async function runRevisionChecks({modelFixture,topics}={}){
  const names=['flight-doppler','refraction-lab','refraction-examples','diffraction-lab','resonance-swing','atom-lab','element-spectra','element-spectra-data','animation-clock','waves-rainbow','math-presentation','cosmology-timeline','bigbang-evidence'];
- const modules={};for(const name of names)modules[name]=await import(pathToFileURL(path.join(base,name+'.js')).href);
+ const modules={};for(const name of names)modules[name]=await import(moduleUrl(name));
  const flight=modules['flight-doppler'],optics=modules['refraction-lab'],diff=modules['diffraction-lab'],swing=modules['resonance-swing'],atom=modules['atom-lab'],elements=modules['element-spectra'],data=modules['element-spectra-data'],examples=modules['refraction-examples'];
  const groups=[];
 
@@ -108,11 +107,11 @@ async function runRevisionChecks({modelFixture,topics}={}){
  }
  groups.push('coastal refraction and continuous differential-wheel motion');
 
- if(!topics){topics=[];for(const name of ['wave-basics','waves','em-atoms','radioactivity','cosmos-environment'])topics.push(...(await import(pathToFileURL(path.join(base,name+'.js')).href)).topics);}
+ if(!topics){topics=[];for(const name of ['wave-basics','waves','em-atoms','radioactivity','cosmos-environment'])topics.push(...(await import(moduleUrl(name))).topics);}
  const visible=topics.flatMap(topic=>[...topic.sections.map(s=>s.body),...topic.terms.map(t=>`${t.term} ${t.definition}`),...topic.questions.map(q=>`${q.prompt} ${q.answer} ${modules['math-presentation'].solutionHtml(q)} ${q.hint||''} ${(q.choices||[]).join(' ')} ${q.unit||''}`)]).map(plain).join('\n');
  assert.ok(!/\beV\b/.test(visible),'Visible topic content uses joules/prefixes rather than standalone eV.');
  const numeric=topics.flatMap(t=>t.questions).find(q=>q.id==='atom-05');assert.equal(numeric.unit,'aJ');near(numeric.value,-.24-(-.54));
- const app=fs.readFileSync(path.join(base,'app.js'),'utf8');assert.ok(!/class="viewbar"|class="view-tabs"/.test(app));
+ const app=fs.readFileSync(rendererPath,'utf8');assert.ok(!/class="viewbar"|class="view-tabs"/.test(app));
 
  if(modelFixture){
   const rf=modelFixture({sections:[{body:optics.refractionSectionHtml}],mount:optics.mountRefraction});
