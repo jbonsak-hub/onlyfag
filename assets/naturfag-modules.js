@@ -19,6 +19,15 @@
  const wavesGroup=document.createElement('details');wavesGroup.id='nf-waves-group';wavesGroup.className='nf-module-group';
  wavesGroup.innerHTML='<summary class="nf-module-heading">Bølger og stråling</summary><div class="nf-module-submenu">'+waveEntries.map(([topic,label])=>'<div class="nf-waves-topic-group"><button class="nf-waves-topic" type="button" data-waves-toggle="'+topic+'" aria-expanded="false" aria-controls="nf-waves-views-'+topic+'">'+label+'</button><div class="nf-waves-views" id="nf-waves-views-'+topic+'" hidden>'+waveViews.map(([view,title])=>'<button class="nf-waves-view" type="button" data-waves-topic="'+topic+'" data-waves-view="'+view+'" aria-pressed="false">'+title+'</button>').join('')+'</div></div>').join('')+'</div>';
  scroll.append(chemistryGroup,nutritionGroup,wavesGroup);
+ const moduleIcons={
+  chemistry:'<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.75 3h10.5A2 2 0 0 0 19 18l-5-9V3"/><path d="M8 14h8l3 4a2 2 0 0 1-1.75 3H6.75A2 2 0 0 1 5 18Z" fill="currentColor" fill-opacity=".14" stroke="none"/><path d="M8 14h8"/><circle cx="10" cy="17" r=".8" fill="currentColor" stroke="none"/><circle cx="14" cy="18.5" r=".8" fill="currentColor" stroke="none"/>',
+  nutrition:'<path d="M20 4C11 3 4 7 4 14a6 6 0 0 0 6 6c7 0 11-7 10-16Z" fill="currentColor" fill-opacity=".12"/><path d="M3 22c1-5 5-10 12-13M8 14l-1-5M11 11l5 1"/>',
+  waves:'<path d="M2 12c2.5-9 5-9 7.5 0s5 9 7.5 0 3.75-6 5-3"/><path d="M2 19h20" opacity=".32"/>'
+ };
+ for(const [group,key] of [[chemistryGroup,'chemistry'],[nutritionGroup,'nutrition'],[wavesGroup,'waves']]){
+  const summary=group.querySelector('summary'),label=document.createElement('span');label.className='nf-module-label';label.textContent=summary.textContent;
+  summary.innerHTML='<svg class="nf-module-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+moduleIcons[key]+'</svg>';summary.append(label);
+ }
  const subjectsHome=document.createElement('a');subjectsHome.id='nfSubjectsHome';subjectsHome.href='#subjects';subjectsHome.textContent='Naturfag';subjectsHome.setAttribute('aria-label','Velg hovedtema i naturfag');
  sidebar.querySelector('.nf-sidebar-title-row h1')?.replaceChildren(subjectsHome);
  sidebar.setAttribute('aria-label','Temaer i naturfag');
@@ -55,7 +64,7 @@
  function ensureWavesFrame(){
   if(wavesStarted){sendWavesDesired();sendWavesVisibility();return;}
   wavesStarted=true;
-  wavesFrame.src='naturfag/bolger-straling.html?embedded=1&topic='+encodeURIComponent(wavesDesired.topic)+'&view='+encodeURIComponent(wavesDesired.view)+'&v=20261116-naturfag1';
+  wavesFrame.src='naturfag/bolger-straling.html?embedded=1&topic='+encodeURIComponent(wavesDesired.topic)+'&view='+encodeURIComponent(wavesDesired.view)+'&v=20261116-naturfag2';
  }
  wavesFrame.addEventListener('load',()=>{if(!wavesStarted)return;wavesReady=true;sendTheme();sendHostLayout();sendWavesDesired();sendWavesVisibility();});
  document.addEventListener('visibilitychange',sendWavesVisibility);
