@@ -1,4 +1,4 @@
-import {atomLabSection,mountAtomLab} from './atom-lab.js?v=20261116-flight-atoms2';
+import {atomLabSection,mountAtomLab} from './atom-lab.js?v=20261116-bigbang1';
 // Self-contained teaching models. Physical quantities use SI units internally.
 const C = 299792458, H = 6.62607015e-34, AJ = 1e-18;
 const fmt = (x, digits = 2) => x.toLocaleString('nb-NO', {maximumFractionDigits: digits});

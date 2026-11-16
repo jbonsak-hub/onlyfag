@@ -1,10 +1,10 @@
 import {solutionHtml} from './math-presentation.js?v=20261116-flight-atoms2';
 import {createAnimationClock} from './animation-clock.js?v=20261116-flight-atoms2';
-import {topics as waveTopics} from './waves.js?v=20261116-flight-atoms2';
+import {topics as waveTopics} from './waves.js?v=20261116-bigbang1';
 import {topics as basicTopics} from './wave-basics.js?v=20261116-flight-atoms2';
-import {topics as emTopics} from './em-atoms.js?v=20261116-flight-atoms2';
+import {topics as emTopics} from './em-atoms.js?v=20261116-bigbang1';
 import {topics as radioTopics} from './radioactivity.js?v=20261116-flight-atoms2';
-import {topics as cosmosTopics} from './cosmos-environment.js?v=20261116-flight-atoms2';
+import {topics as cosmosTopics} from './cosmos-environment.js?v=20261116-bigbang1';
 
 const order=['bolger','fenomener','em','atomer','universet','kommunikasjon','radioaktivitet','stralevern','atmosfaeren'];
 const topics=[...basicTopics,...waveTopics,...emTopics,...radioTopics,...cosmosTopics].sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id));

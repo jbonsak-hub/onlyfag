@@ -3,7 +3,7 @@ import {refractionSection,mountRefraction} from './refraction-lab.js?v=20261116-
 import {practicalExamplesHtml,mountPracticalExamples} from './refraction-examples.js?v=20261116-flight-atoms2';
 import {diffractionSection,mountDiffraction} from './diffraction-lab.js?v=20261116-flight-atoms2';
 import {resonanceSection,mountResonance} from './resonance-swing.js?v=20261116-flight-atoms2';
-import {flightSection,mountFlight} from './flight-doppler.js?v=20261116-flight-atoms2';
+import {flightSection,mountFlight} from './flight-doppler.js?v=20261116-bigbang1';
 export {buildApertureField,scalarWaveValue,diffractionEnvelope} from './diffraction-lab.js?v=20261116-flight-atoms2';
 export {createSwingState,swingGeometry,swingBackPoint,solveSwingArm,swingDriveAt,stepDrivenSwing,swingArmPose,stepSwingScene} from './resonance-swing.js?v=20261116-flight-atoms2';
 const svg = (id, title, desc, inside, height = 300) => `<svg id="${id}" viewBox="0 0 760 ${height}" role="img" aria-labelledby="${id}-title ${id}-desc"><title id="${id}-title">${title}</title><desc id="${id}-desc">${desc}</desc>${inside}</svg>`;

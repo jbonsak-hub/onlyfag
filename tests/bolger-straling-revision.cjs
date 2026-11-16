@@ -5,7 +5,7 @@ const near=(actual,expected,tolerance=1e-9,message='')=>assert.ok(Math.abs(actua
 const plain=html=>String(html).replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,'').replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<[^>]*>/g,' ');
 
 async function runRevisionChecks({modelFixture,topics}={}){
- const names=['flight-doppler','refraction-lab','refraction-examples','diffraction-lab','resonance-swing','atom-lab','element-spectra','element-spectra-data','animation-clock','waves-rainbow','math-presentation'];
+ const names=['flight-doppler','refraction-lab','refraction-examples','diffraction-lab','resonance-swing','atom-lab','element-spectra','element-spectra-data','animation-clock','waves-rainbow','math-presentation','cosmology-timeline','bigbang-evidence'];
  const modules={};for(const name of names)modules[name]=await import(pathToFileURL(path.join(base,name+'.js')).href);
  const flight=modules['flight-doppler'],optics=modules['refraction-lab'],diff=modules['diffraction-lab'],swing=modules['resonance-swing'],atom=modules['atom-lab'],elements=modules['element-spectra'],data=modules['element-spectra-data'],examples=modules['refraction-examples'];
  const groups=[];
@@ -121,7 +121,7 @@ async function runRevisionChecks({modelFixture,topics}={}){
   try{for(const medium of ['air','water','glass']){rf.change('rf-medium-top',medium);rf.change('rf-medium-bottom',medium);assert.match(rf.get('rf-reflected-value').textContent,/0\s*%/);}rf.change('rf-medium-top','water');rf.change('rf-medium-bottom','air');rf.change('rf-angle',65);assert.match(rf.get('rf-status').textContent,/totalrefleksjon/i);rf.get('rf-white').checked=true;rf.change('rf-white','on');assert.ok(!/NaN|Infinity/.test(rf.html()));}finally{rf.destroy();}
   const previousAudioContext=globalThis.AudioContext,oscillatorStart=oscillators.length;globalThis.AudioContext=AudioContext;
   const f=modelFixture({sections:[flight.flightSection],mount:flight.mountFlight});
-  try{assert.equal(f.get('fd-audio').getAttribute('aria-pressed'),'false');f.change('fd-mach',1);f.click('fd-audio');await Promise.resolve();await Promise.resolve();for(let i=1;i<=7;i++)f.tick(i/10);assert.equal(f.get('fd-scene').closest('.model').dataset.flightPhase,'waiting');f.tick(.8);assert.notEqual(f.get('fd-scene').closest('.model').dataset.flightPhase,'waiting');near(oscillators[oscillatorStart].frequency.value,Number(f.get('fd-scene').closest('.model').dataset.observedFrequency));f.pause('#fd-scene');const before=f.get('fd-scene').serialize();f.tick(.9);assert.equal(f.get('fd-scene').serialize(),before);}finally{f.destroy();globalThis.AudioContext=previousAudioContext;}
+  try{assert.equal(f.get('fd-audio').getAttribute('aria-pressed'),'false');f.change('fd-mach',1);f.click('fd-audio');await Promise.resolve();await Promise.resolve();const beforeSteps=Math.floor(7/flight.FLIGHT_VISUAL_TIME_SCALE),afterSteps=Math.ceil(8/flight.FLIGHT_VISUAL_TIME_SCALE);for(let i=1;i<=beforeSteps;i++)f.tick(i/10);assert.equal(f.get('fd-scene').closest('.model').dataset.flightPhase,'waiting');for(let i=beforeSteps+1;i<=afterSteps;i++)f.tick(i/10);assert.notEqual(f.get('fd-scene').closest('.model').dataset.flightPhase,'waiting');near(oscillators[oscillatorStart].frequency.value,Number(f.get('fd-scene').closest('.model').dataset.observedFrequency));f.pause('#fd-scene');const before=f.get('fd-scene').serialize();f.tick((afterSteps+1)/10);assert.equal(f.get('fd-scene').serialize(),before);}finally{f.destroy();globalThis.AudioContext=previousAudioContext;}
   const af=modelFixture(topics.find(t=>t.id==='atomer'));
   try{
    assert.equal(af.get('al-h-upper').value,'3');assert.equal(af.get('al-h-lower').value,'2');assert.match(af.get('al-h-readout').textContent,/656/);
@@ -131,10 +131,45 @@ async function runRevisionChecks({modelFixture,topics}={}){
    const handles=af.get('al-custom-handles'),handle=handles.querySelector('[data-custom-index="1"]'),old=Number(handle.getAttribute('aria-valuenow'));handles.dispatch('keydown',{target:handle,key:'ArrowUp'});assert.ok(Number(handle.getAttribute('aria-valuenow'))>old);
    handles.dispatch('pointerdown',{target:handle,clientY:160,pointerId:2});af.dispatchDocument('pointermove',{clientY:145,pointerId:2});af.dispatchDocument('pointerup',{pointerId:2});assert.ok(Number(handle.getAttribute('aria-valuenow'))>old+.02);
    af.click('al-h-show');af.click('al-stream-toggle');af.tick(.1);af.pause('#al-hydrogen-svg');const h=af.get('al-hydrogen-svg').serialize(),c=af.get('al-custom-svg').serialize();af.tick(.2);assert.equal(af.get('al-hydrogen-svg').serialize(),h);assert.notEqual(af.get('al-custom-svg').serialize(),c);
-   af.click('es-open');assert.equal(af.get('es-dialog').open,true);af.change('es-stage','II','change');assert.equal(af.get('es-periodic').querySelectorAll('[data-es-z]').length,118);const tile=af.get('es-periodic').querySelector('[data-es-z="118"]');af.get('es-periodic').dispatch('click',{target:tile});assert.match(af.get('es-status').textContent,/ingen tabell.*ikke.*mangler spektrallinjer/i);af.click('es-close');assert.equal(af.get('es-dialog').open,false);
+   af.click('es-open');assert.equal(af.get('es-dialog').open,true);af.change('es-stage','II','change');assert.equal(af.get('es-periodic').querySelectorAll('[data-es-z]').length,118);const tile=af.get('es-periodic').querySelector('[data-es-z="118"]');af.get('es-periodic').dispatch('click',{target:tile});assert.match(af.get('es-status').textContent,/ingen tabell.*ikke.*mangler spektrallinjer/i);af.click('es-info-open');assert.equal(af.get('es-info-dialog').open,true);af.click('es-info-close');assert.equal(af.get('es-info-dialog').open,false);assert.equal(af.get('es-dialog').open,true);af.click('es-close');assert.equal(af.get('es-dialog').open,false);
   }finally{af.destroy();}
   groups.push('mounted media, Mach 1 controls, fixed/draggable levels and independent atom clocks');
  }
+ // The cosmic timeline preserves causality; expansion stretches the same photons.
+ const timeline=modules['cosmology-timeline'],evidence=modules['bigbang-evidence'].bigBangEvidencePhysics;
+ assert.equal(timeline.universeEpochs.length,8);
+ for(let i=0;i<timeline.universeEpochs.length;i++){
+  const e=timeline.universeEpochs[i];assert.ok(e.seconds>0&&e.temperature>0);
+  if(i){assert.ok(e.seconds>timeline.universeEpochs[i-1].seconds);assert.ok(e.temperature<timeline.universeEpochs[i-1].temperature);}
+ }
+ assert.equal(timeline.getUniverseEpoch(-100),timeline.universeEpochs[0]);
+ assert.equal(timeline.getUniverseEpoch(100),timeline.universeEpochs.at(-1));
+ for(const scale of [1,1.5,2.6]){const red=evidence.redshift(scale);near(red.wavelength/486.13,scale);near(red.z,scale-1);}
+ near(evidence.cmb(0).temperature,3000);near(evidence.cmb(1).temperature,2.725);
+ for(const p of [0,.01,.3,.6,1]){const cmb=evidence.cmb(p);near(cmb.temperature*cmb.wavelengthUm,3000);near(cmb.temperature*cmb.scale,3000);}
+ near(evidence.abundance('mass').hydrogen,.75);near(evidence.abundance('mass').helium,.25);
+ near(evidence.abundance('count').helium,1/13);near(evidence.abundance('count').hydrogen,12/13);
+ for(const mode of ['mass','count']){const a=evidence.abundance(mode);near(a.hydrogen+a.helium,1);}
+ groups.push('ordered cosmic eras, expansion/redshift, CMB cooling and mass/count abundance');
+
+ if(modelFixture){
+  const uf=modelFixture(topics.find(t=>t.id==='universet'));
+  try{
+   for(let i=0;i<timeline.universeEpochs.length;i++){uf.change('ct-epoch',i);assert.equal(uf.get('ct-age').textContent,timeline.universeEpochs[i].age);uf.tick((i+1)/10);assert.ok(!/NaN|Infinity|undefined/.test(uf.html()));}
+   uf.click('ct-previous');assert.equal(uf.get('ct-epoch').value,'6');uf.click('ct-next');assert.equal(uf.get('ct-epoch').value,'7');
+   for(const scale of [1,1.6,2.6]){uf.change('bb-redshift-scale',scale);for(const observer of ['0','1','2'])uf.change('bb-observer',observer,'change');assert.ok(!/NaN|Infinity|undefined/.test(uf.html()));}
+   for(const p of [0,1,300,1000]){uf.change('bb-cmb-time',p);assert.ok(!/NaN|Infinity|undefined/.test(uf.html()));}
+   assert.match(uf.get('bb-cmb-readout').textContent,/2,725/);
+   for(const p of [0,50,100])uf.change('bb-nuclei-progress',p);
+   uf.click('bb-by-count');assert.match(uf.get('bb-abundance-readout').textContent,/92 % H/);
+   uf.click('bb-by-mass');assert.match(uf.get('bb-abundance-readout').textContent,/75 % H/);
+   const frozen=uf.get('bb-redshift-scene'),moving=uf.get('ct-scene'),beforeFrozen=frozen.serialize(),beforeMoving=moving.serialize();
+   uf.pause('#bb-redshift-scene');uf.tick(.9);assert.equal(frozen.serialize(),beforeFrozen);assert.notEqual(moving.serialize(),beforeMoving);
+   uf.change('bb-redshift-scale',2);assert.notEqual(frozen.serialize(),beforeFrozen,'A paused model still redraws input changes.');
+  }finally{uf.destroy();}
+  groups.push('mounted cosmic controls, all eras and separate evidence pause clocks');
+ }
+
  return groups;
 }
 

@@ -1,3 +1,6 @@
+import {universeTimelineHtml, mountUniverseTimeline} from './cosmology-timeline.js?v=20261116-bigbang1';
+import {bigBangEvidenceHtml, mountBigBangEvidence} from './bigbang-evidence.js?v=20261116-bigbang1';
+
 const ceSvg = (label, contents, height = 300) => `<svg viewBox="0 0 760 ${height}" role="img" aria-label="${label}" xmlns="http://www.w3.org/2000/svg">${contents}</svg>`;
 
 const ceStyles = `<style>
@@ -119,11 +122,11 @@ const universeSections = [
   },
   {
     title: 'Et univers som utvider seg og kjøles ned',
-    body: `<p class="key">Big Bang beskriver et tidlig, varmt og tett univers som har utvidet seg. Det var ingen eksplosjon fra ett punkt ut i et tomt rom.</p><div class="model ce-widget"><h4>Avstander og lysbølger strekkes</h4><div id="ce-expansion"></div><div class="controls"><label class="control" for="ce-scale">Relativ størrelse på universet: <output id="ce-scale-value" class="ce-value">1,0</output><input id="ce-scale" type="range" min="10" max="35" value="16" step="1"></label></div><p id="ce-expansion-readout" class="readout"></p><p class="model-note">Skjematisk utsnitt uten sentrum eller kant. Prikkene er galaksegrupper; bundne systemer som solsystemet og Melkeveien vokser ikke med denne skalaen. Slideren viser et forhold mellom to tidspunkter, ikke en lineær tidsakse.</p></div><div class="ce-widget"><h4>Stopp langs tidslinjen</h4><div class="ce-choice-row" id="ce-epochs"><button type="button" data-ce-epoch="0" aria-pressed="true">Første minutter</button><button type="button" data-ce-epoch="1" aria-pressed="false">380 000 år</button><button type="button" data-ce-epoch="2" aria-pressed="false">Første stjerner</button><button type="button" data-ce-epoch="3" aria-pressed="false">Solsystemet</button><button type="button" data-ce-epoch="4" aria-pressed="false">I dag</button></div><div id="ce-epoch-description" class="ce-timeline-description" aria-live="polite"></div></div>`
+    body: `<p class="key">Big Bang-modellen beskriver hvordan et tidlig, varmt og tett univers utvider seg og kjøles ned. Følg hvordan nye partikler og systemer kan dannes når forholdene endrer seg.</p>${universeTimelineHtml}`
   },
   {
     title: 'Tre spor etter Big Bang',
-    body: `<div class="concept-grid"><article class="concept"><h4>1. Galaksenes rødforskyvning</h4><p>På store avstander viser observasjonene at universet utvider seg. Lyset strekkes underveis. Lokale galakser kan likevel bevege seg mot hverandre.</p></article><article class="concept"><h4>2. Kosmisk bakgrunnsstråling</h4><p>Gammelt lys fra da universet ble gjennomsiktig, omtrent 380 000 år etter Big Bang. Utvidelsen har strukket lyset til mikrobølgelengder. Spekteret svarer i dag til omtrent <strong>2,7 K</strong>.</p></article><article class="concept"><h4>3. Fordelingen av lette grunnstoffer</h4><p>Modellen forklarer at det tidlige universet inneholdt mye hydrogen og helium, med små spor av andre lette kjerner. Stjerner og andre energirike prosesser lager tyngre grunnstoffer senere.</p></article></div><p class="model-note">Universet er omtrent 13,8 milliarder år gammelt. Utvidelsen akselererer; «mørk energi» er navnet på den ukjente forklaringen i den vanligste kosmologiske modellen.</p>`
+    body: bigBangEvidenceHtml
   }
 ];
 
@@ -185,11 +188,10 @@ function mountUniverse(root, api) {
   const temp = $('#ce-temperature');
   const shift = $('#ce-shift');
   const element = $('#ce-element');
-  const scale = $('#ce-scale');
   const lineSets = {hydrogen:[410.2,434.0,486.1,656.3],helium:[402.6,447.1,501.6,587.6,667.8]};
   const fmt = (n,d=0) => Number(n).toLocaleString('nb-NO',{minimumFractionDigits:d,maximumFractionDigits:d});
   const autoScale = $('#ce-auto-scale'), preset = $('#ce-temperature-preset');
-  const blackbodyScope='#ce-blackbody', expansionScope='#ce-expansion';
+  const blackbodyScope='#ce-blackbody';
   const axes = {xMax:3,yMax:100};
   let axesTarget = {...axes}, lastBlackbodyTime = null, blackbodyDirty = true;
   const reducedMotion = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -265,22 +267,6 @@ function mountUniverse(root, api) {
     const direction = z>0?'Rødforskyvning (lengre bølger)':z<0?'Blåforskyvning (kortere bølger)':'Ingen forskyvning';
     $('#ce-lines-readout').innerHTML = ceReadoutRow('Forskyvning',direction)+ceReadoutRow('Første linje',`${fmt(lines[0],1)} nm → ${fmt(lines[0]*(1+z),1)} nm`)+ceReadoutRow('Grunnstoff',element.value==='hydrogen'?'Hydrogen':'Helium');
   }
-  function expansion(t) {
-    const a=+scale.value/10, positions=[[-66,-25],[-20,25],[34,-35],[68,19],[-47,47],[12,57],[0,0]], cx=380, cy=80;
-    const wave = Array.from({length:501},(_,i)=>{const x=85+i*1.18; return `${i?'L':'M'}${x.toFixed(1)},${(210+11*Math.sin((x-85)/(17*a)-t*1.5)).toFixed(1)}`;}).join(' ');
-    $('#ce-expansion').innerHTML=ceSvg('Skjematisk utvidelse mellom galaksegrupper og strekking av en lysbølge',`<text class="ce-faint" x="24" y="20">Galaksegrupper i et utsnitt av universet</text>${positions.map(([dx,dy],i)=>`<g transform="translate(${cx+dx*a} ${cy+dy*a*.45})"><ellipse rx="${i===6?9:7}" ry="4" fill="${i===6?'#dca65a':'#7096be'}" transform="rotate(${i*27})"/><circle r="2" fill="#f1d7a7"/></g>`).join('')}<path d="M${cx} ${cy}L${cx+68*a} ${cy+19*a*.45}" stroke="#89a0b8" stroke-dasharray="3 4"/><text x="730" y="43" text-anchor="end">Relativ avstand: ${fmt(a,1)}</text><text class="ce-label" x="85" y="184">Lysbølge på reise</text><path d="${wave}" fill="none" stroke="#bd7a6d" stroke-width="2.7"/><text class="ce-faint" x="85" y="242">Start: 500 nm</text><text class="ce-faint" x="675" y="242" text-anchor="end">Nå: ${fmt(500*a)} nm</text>`,253);
-    $('#ce-scale-value').textContent=`${fmt(a,1)} ×`;
-    $('#ce-expansion-readout').innerHTML=ceReadoutRow('Relativ avstand',`${fmt(a,1)} × startavstanden`)+ceReadoutRow('Lysbølgens bølgelengde',`500 nm → ${fmt(500*a)} nm`);
-  }
-  const epochs=[
-    ['Første minutter','Universet er varmt og tett, men kjøles under utvidelsen. Protoner og nøytroner bindes til lette atomkjerner, særlig helium. Hydrogenkjerner finnes også. Elektronene er ennå ikke bundet i nøytrale atomer.'],
-    ['Omtrent 380 000 år','Ved omtrent 3000 K kan elektroner bindes til kjerner. Lyset spres langt mindre når frie elektroner blir færre. Universet blir gjennomsiktig. Dette gamle lyset observeres i dag som kosmisk bakgrunnsstråling.'],
-    ['De første hundre millioner årene','Tyngdekraften får stoff til å samle seg. De første stjernene tennes, og galakser vokser fram. Fusjon og senere stjerneprosesser begynner å berike universet med tyngre grunnstoffer.'],
-    ['For omtrent 4,6 milliarder år siden','Sola og solsystemet dannes av gass og støv som også inneholder materiale fra tidligere stjernegenerasjoner. Universet er da allerede omtrent 9 milliarder år gammelt.'],
-    ['Universet i dag','Universet er omtrent 13,8 milliarder år gammelt og utvider seg stadig. Bakgrunnsstrålingen har et spekter som tilsvarer omtrent 2,7 K. På store skalaer akselererer utvidelsen.']
-  ];
-  const updateEpoch=i=>{$('#ce-epoch-description').innerHTML=`<strong>${epochs[i][0]}</strong><p>${epochs[i][1]}</p>`;$('#ce-epochs').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.ceEpoch===i)));};
-  $('#ce-epochs').addEventListener('click',e=>{const b=e.target.closest('[data-ce-epoch]');if(b)updateEpoch(+b.dataset.ceEpoch);});
   temp.addEventListener('input',()=>{preset.value=['288','310','2800','5800','9900','15000'].includes(temp.value)?temp.value:'';updateBlackbodyTarget();api.repaint(blackbodyScope);});
   preset.addEventListener('change',()=>{if(preset.value){temp.value=preset.value;updateBlackbodyTarget();api.repaint(blackbodyScope);}});
   autoScale.addEventListener('change',()=>{if(autoScale.checked)updateBlackbodyTarget(true);else{axesTarget={...axes};blackbodyDirty=true;}api.repaint(blackbodyScope);});
@@ -289,8 +275,11 @@ function mountUniverse(root, api) {
   $('#ce-bb-zoom-out').addEventListener('click',()=>zoom(2));
   $('#ce-bb-fit').addEventListener('click',()=>{autoScale.checked=true;updateBlackbodyTarget(true);api.repaint(blackbodyScope);});
   [shift,element].forEach(el=>el.addEventListener('input',spectra));
-  scale.addEventListener('input',()=>api.repaint(expansionScope));
-  updateBlackbodyTarget();spectra();updateEpoch(0);api.onFrame(blackbody,blackbodyScope);api.onFrame(expansion,expansionScope);
+  updateBlackbodyTarget();spectra();
+  const disposeBlackbody=api.onFrame(blackbody,blackbodyScope);
+  const disposeTimeline=mountUniverseTimeline(root,api);
+  const disposeEvidence=mountBigBangEvidence(root,api);
+  return ()=>{disposeBlackbody?.();disposeTimeline?.();disposeEvidence?.();};
 }
 
 function mountAtmosphere(root,api){

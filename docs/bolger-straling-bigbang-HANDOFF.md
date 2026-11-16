@@ -25,3 +25,11 @@ prototyper/bolger-straling.html (cacheversjon)
 tests/bolger-straling*.cjs (eksisterende relevante kontroller)
 
 Følg CONTRACT.md. Bruk etterprøvbare primærkilder til kosmologi og ekte bakgrunnsstrålingskart. Sjekk at eventuelle nye kildefiler er koblet inn i siden og eventuelle sjekkskript. Ikke publiser lokale samtale-/gjenfinningsdata eller logger.
+
+## Implementering klargjort i skyen
+
+Alle punktene over er implementert i denne arbeidsgrenen. Nye hjelpemoduler: cosmology-timeline.js og bigbang-evidence.js. Tidligere ce-expansion/ce-epochs er erstattet; rødforskyvning ligger som eget spor.
+
+Kontroll: de eksisterende revisjonskontrollene samt nye kosmologikontroller er kjørt som V8-JavaScript med prosjektets faktiske DOM-fixture og tilpasset modulinnlasting, siden lokal Node/Playwright ble utilgjengelig da PC-en ble slått av. Ti kontrollgrupper bestod. Dette er kontroll av fysikk, kontroller og uavhengige klokker, ikke visuell nettleserkontroll.
+
+Visuell kontroll av spekterdialog og de nye universmodellene gjenstår før arbeidet kan regnes som ferdig. Planck-kartet peker til ESAs ekte bildefil og har kreditering/kildelenke; bildet er ikke vendret lokalt fordi nedlastingen ble avbrutt ved frakobling. Cacheversjon: 20261116-bigbang1.
