@@ -12,7 +12,7 @@ const bbWave=(left,right,cy,period,phase=0,amplitude=9)=>{
 const bbGalaxy=(x,y,color,angle=0)=>'<g transform="translate('+x.toFixed(2)+' '+y.toFixed(2)+') rotate('+angle+')"><ellipse rx="11" ry="4.5" fill="'+color+'" opacity=".38"/><ellipse rx="7" ry="2" fill="'+color+'"/><circle r="2" fill="#fff1cf"/></g>';
 const bbPhoton=(x,y,color='#e4b85c')=>'<g transform="translate('+x.toFixed(2)+' '+y.toFixed(2)+')"><path d="M-10 0l3-4 3 8 3-8 3 8 3-4h4" fill="none" stroke="'+color+'" stroke-width="2.3" stroke-linejoin="round"/></g>';
 export const cmbMapSource=Object.freeze({
-  image:'https://media.esa.int/legacy/web/images/esa_multimedia/images/2013/03/planck_cmb/12583930-4-eng-GB/Planck_CMB.jpg?dl',
+  image:'https://media.esa.int/legacy/web/images/esa_multimedia/images/2013/03/planck_cmb/12583930-4-eng-GB/148467/image-thumb__148467__fit_large/Planck_CMB.8cba2c63.webp',
   page:'https://www.esa.int/media/planck-cmb-en-374995',
   credit:'ESA og Planck-samarbeidet',
   license:'CC BY-SA 3.0 IGO / ESA Standard Licence'
@@ -123,7 +123,7 @@ function mountCmb(root,api){
   const find=id=>root.querySelector('#'+id),scene=find('bb-cmb-scene'),input=find('bb-cmb-time');
   if(!scene)return ()=>{};
   const presets=[...root.querySelectorAll('[data-bb-cmb]')];
-  let before=false,progress=1,disposed=false;
+  let before=false,progress=1,disposed=false,dynamic=null;
   const state=()=>bigBangEvidencePhysics.cmb(progress);
   const draw=t=>{
     if(disposed)return;
@@ -140,13 +140,12 @@ function mountCmb(root,api){
     const p0=route[segment],p1=route[segment+1];
     const photon=bbPhoton(bbMix(p0[0],p1[0],fraction),bbMix(p0[1],p1[1],fraction),'#f1cd6f');
     const currentPeriod=20*Math.sqrt(scale),wavePhase=t*1.2;
-    scene.innerHTML=bbSvg('Fra varmt plasma til fritt lys og dagens mikrobølgestråling. Det virkelige Planck-kartet viser temperaturforskjeller over hele himmelen.',
+    const contents=
       '<text x="24" y="25" class="bb-title">'+(before?'Før nøytrale atomer':'Etter at universet ble gjennomsiktig')+'</text>'+
       '<rect x="22" y="43" width="322" height="159" rx="9" fill="#102b38"/>'+particles+
       '<path d="'+route.map((p,i)=>(i?'L':'M')+p[0]+' '+p[1]).join(' ')+'" fill="none" stroke="#e4c672" stroke-opacity=".35" stroke-width="1.5" stroke-dasharray="4 5"/>'+photon+
       '<text x="183" y="226" text-anchor="middle" class="bb-small">'+(before?'Frie elektroner sprer lyset igjen og igjen.':'Da elektroner ble bundet, kunne lyset reise langt.')+'</text>'+
       '<text x="548" y="57" text-anchor="middle" class="bb-title">Målt over hele himmelen i dag</text>'+
-      '<image href="'+cmbMapSource.image.replace(/&/g,'&amp;')+'" x="385" y="73" width="342" height="153" preserveAspectRatio="xMidYMid meet"><title>Plancks målte kart over den kosmiske bakgrunnsstrålingen. ESA og Planck-samarbeidet.</title></image>'+
       '<text x="549" y="243" text-anchor="middle" class="bb-small">Rødt: litt varmere · blått: litt kaldere</text>'+
       '<path d="M357 127h15m-5-5 5 5-5 5" fill="none" stroke="#6d8d80" stroke-width="2"/>'+
       '<text x="24" y="276" class="bb-small">Da lyset slapp fri · omtrent 3000 K</text>'+
@@ -155,7 +154,12 @@ function mountCmb(root,api){
       '<path d="'+bbWave(34,326,315,20,wavePhase,9)+'" fill="none" stroke="#a1799d" stroke-width="2.5"/>'+
       '<path d="'+bbWave(406,715,315,currentPeriod,wavePhase,9)+'" fill="none" stroke="#308a9d" stroke-width="2.5"/>'+
       '<text x="180" y="368" text-anchor="middle" class="bb-small">Kortere bølgelengde · rundt 1 µm</text>'+
-      '<text x="560" y="368" text-anchor="middle" class="bb-small">'+(scale>=1000?'Mikrobølger · rundt 1,1 mm':'Bølgelengden blir lengre')+'</text>',390);
+      '<text x="560" y="368" text-anchor="middle" class="bb-small">'+(scale>=1000?'Mikrobølger · rundt 1,1 mm':'Bølgelengden blir lengre')+'</text>';
+    // Keep the measured sky map mounted while only the teaching scene redraws.
+    if(!dynamic){
+      scene.innerHTML=bbSvg('Fra varmt plasma til fritt lys og dagens mikrobølgestråling. Det virkelige Planck-kartet viser temperaturforskjeller over hele himmelen.','<g id="bb-cmb-dynamic">'+contents+'</g>'+'<image href="'+cmbMapSource.image.replace(/&/g,'&amp;')+'" x="385" y="73" width="342" height="153" preserveAspectRatio="xMidYMid meet"><title>Plancks målte kart over den kosmiske bakgrunnsstrålingen. ESA og Planck-samarbeidet.</title></image>',390);
+      dynamic=scene.querySelector('#bb-cmb-dynamic');
+    }else dynamic.innerHTML=contents;
   };
   const update=()=>{
     before=+input.value===0;progress=before?0:(+input.value-1)/999;

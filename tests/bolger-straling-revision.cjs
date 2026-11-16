@@ -178,6 +178,7 @@ async function runRevisionChecks({modelFixture,topics}={}){
    for(const scale of [1,1.6,2.6]){uf.change('bb-redshift-scale',scale);for(const observer of ['0','1','2'])uf.change('bb-observer',observer,'change');assert.ok(!/NaN|Infinity|undefined/.test(uf.html()));}
    for(const p of [0,1,300,1000]){uf.change('bb-cmb-time',p);assert.ok(!/NaN|Infinity|undefined/.test(uf.html()));}
    assert.match(uf.get('bb-cmb-readout').textContent,/2,725/);
+   const map=uf.get('bb-cmb-scene').querySelector('image');assert.ok(map);uf.tick(.85);assert.strictEqual(uf.get('bb-cmb-scene').querySelector('image'),map,'The real CMB map stays mounted across animation frames.');
    for(const p of [0,50,100])uf.change('bb-nuclei-progress',p);
    uf.click('bb-by-count');assert.match(uf.get('bb-abundance-readout').textContent,/92 % H/);
    uf.click('bb-by-mass');assert.match(uf.get('bb-abundance-readout').textContent,/75 % H/);

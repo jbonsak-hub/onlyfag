@@ -32,4 +32,15 @@ Alle punktene over er implementert i denne arbeidsgrenen. Nye hjelpemoduler: cos
 
 Kontroll: de eksisterende revisjonskontrollene samt nye kosmologikontroller er kjørt som V8-JavaScript med prosjektets faktiske DOM-fixture og tilpasset modulinnlasting, siden lokal Node/Playwright ble utilgjengelig da PC-en ble slått av. Elleve kontrollgrupper bestod, inkludert at pauseknappen overlever full utskifting av SVG-innhold. Dette er kontroll av fysikk, kontroller og uavhengige klokker, ikke visuell nettleserkontroll.
 
-Visuell kontroll av spekterdialog og de nye universmodellene gjenstår før arbeidet kan regnes som ferdig. Planck-kartet peker til ESAs ekte bildefil og har kreditering/kildelenke; bildet er ikke lagret lokalt fordi nedlastingen ble avbrutt ved frakobling. Cacheversjon: app 20261116-bigbang2; hjelpemoduler 20261116-bigbang1. Første nettlesersjekk traff gammel versjon under publisering og var ikke gyldig kontroll av de nye modellene. Ny kontroll kjøres når siste versjon er publisert.
+
+## Kontroll og siste status
+
+Elleve kontrollgrupper har bestått. De omfatter styring, fysikk, uavhengig pause, pauseknapp som tåler full SVG-opptegning, og at CMB-kartets bildeelement ikke byttes ut for hver ramme.
+
+Publisert under /prototyper/bolger-straling.html. Cacheversjon app/cosmos/bigbang-evidence 20261116-bigbang3; øvrige nye hjelpemoduler 20261116-bigbang1.
+
+Den andre nettlesersjekken bekreftet ny tidslinje og alle tre spor i DOM, samt at spekteroversikten med 118 grunnstoffer og valgte linjer fikk plass uten scrolling i det tilgjengelige vinduet (omtrent1173×786). Grunnstoffvalg og spektraldata ble kontrollert i nettleseren. Nettleserverktøyet leverte ikke faktiske skjermbilder og ga utilstrekkelig bekreftelse av enkelte animerte tilstander. Full visuell QA ved1366×768/1280×720 gjenstår; ikke presenter DOM-kontrollene som en fullstendig visuell godkjenning.
+
+Planck-kartet bruker en ekte, kildeverifisert ESA WebP-bildefil med kreditering og lenke til originalen. Bildeelementet holdes nå stabilt mens resten av CMB-modellen animeres. Det eksterne bildet er ikke lagret lokalt; bytt eventuelt til lokal kopi senere når vanlig kjøremiljø er tilgjengelig.
+
+Ingen videre brukeravklaring trengs for kravene her. Fortsett visuell kontroll og forbedringer når et fullverdig nettlesermiljø er tilgjengelig. Siden skal fortsatt bli under prototyper.
