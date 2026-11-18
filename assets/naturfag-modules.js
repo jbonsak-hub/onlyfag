@@ -64,7 +64,7 @@
  function ensureWavesFrame(){
   if(wavesStarted){sendWavesDesired();sendWavesVisibility();return;}
   wavesStarted=true;
-  wavesFrame.src='naturfag/bolger-straling.html?embedded=1&topic='+encodeURIComponent(wavesDesired.topic)+'&view='+encodeURIComponent(wavesDesired.view)+'&v=20261116-naturfag2';
+  wavesFrame.src='naturfag/bolger-straling.html?embedded=1&topic='+encodeURIComponent(wavesDesired.topic)+'&view='+encodeURIComponent(wavesDesired.view)+'&v=20261118-resonans1';
  }
  wavesFrame.addEventListener('load',()=>{if(!wavesStarted)return;wavesReady=true;sendTheme();sendHostLayout();sendWavesDesired();sendWavesVisibility();});
  document.addEventListener('visibilitychange',sendWavesVisibility);

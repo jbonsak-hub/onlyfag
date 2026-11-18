@@ -172,4 +172,35 @@ body.dark{color-scheme:dark;--bg:#12251f;--surface:#1a3028;--sidebar:#152a22;--i
 
 /* Pause sits on the drawing and adds no row to its layout. */
 .animation-surface{position:relative;min-width:0}.topic-page .animation-surface>.animation-toolbar{position:absolute;top:8px;right:8px;z-index:3;display:flex;min-height:0;margin:0}.animation-surface+svg{margin-top:12px!important}
+
+.wv-swing-modes{display:flex;gap:8px;flex-wrap:wrap}
+.wv-swing-modes button{padding:8px 14px;font-size:13px}
+.wv-swing-modes button[aria-pressed=false]{background:var(--surface);color:var(--ink);border-color:var(--line)}
+.wv-swing-stage{width:100%;min-width:0}
+.wv-swing-manual{display:flex;justify-content:center;padding-top:10px}
+.wv-swing-manual button{min-width:112px;min-height:44px;font-size:15px}
+.wv-swing-manual button:disabled{opacity:.55;cursor:default}
+.wv-swing-model .wv-swing-slider,.wv-swing-model .wv-check{min-width:0;max-width:none}
+.wv-swing-slider input[type=range]{display:block;width:100%;margin:7px 0 0}
+.wv-swing-scale{position:relative;display:flex;justify-content:space-between;min-height:43px;padding-top:4px;color:var(--muted);font-size:11px}
+#wv-swing-frequency-mark{position:absolute;left:calc(33.333% + 2px);transform:translateX(-50%);text-align:center;line-height:1.25}
+#wv-swing-frequency-mark::before{display:block;width:1px;height:5px;margin:-3px auto 2px;background:var(--green);content:""}
+#wv-swing-frequency-mark strong{color:var(--green)}
+.wv-swing-settings{display:grid;gap:9px;justify-items:start}
+.wv-swing-settings button{padding:6px 10px;font-size:12px}
+.wv-swing-model #wv-swing-readout,.wv-swing-model #wv-swing-frequency-readout{display:grid;gap:4px}
+.wv-swing-model #wv-swing-your-frequency{font-size:14px;font-weight:750;color:var(--ink)}
+
+.q-number-form--multi{display:grid;justify-items:start;gap:8px}
+.q-number-field{display:grid;grid-template-columns:minmax(90px,9.5rem) minmax(55px,6.5rem) 2rem minmax(75px,1fr);align-items:center;gap:7px;width:min(100%,25rem)}
+.q-number-field label,.q-number-result{font-size:12px}
+.q-number-form .q-number-field input{width:100%;min-width:0;max-width:none}
+.q-number-result{color:var(--muted)}
+.q-number-result[data-correct=true]{color:var(--green);font-weight:700}
+.q-number-field input[aria-invalid=true]{border-color:var(--orange)}
+.q-wave-figure{display:block;max-width:500px;height:auto;margin:10px 0 4px;color:var(--muted)}
+.q-wave-figure text{font:15px system-ui,sans-serif;fill:currentColor}
+@media(max-width:450px){
+ .q-number-field{grid-template-columns:minmax(84px,1fr) minmax(48px,68px) 1.6rem minmax(55px,.8fr);gap:5px}
+}
 .topic-page .wb-equations>div{flex-direction:column;gap:7px}.topic-page .wb-equations .wb-words{font-size:11px;font-weight:500;line-height:1.5;text-align:center}.topic-page .wb-equations strong{font-size:19px;font-weight:700}

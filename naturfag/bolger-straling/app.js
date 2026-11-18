@@ -1,4 +1,4 @@
-import {solutionHtml} from './math-presentation.js?v=20261116-naturfag1';
+import {solutionHtml} from './math-presentation.js?v=20261118-resonans1';
 import {createAnimationClock} from './animation-clock.js?v=20261116-naturfag1';
 
 export function startCourse(topicList,{prototype=false,embedded=false}={}){
@@ -166,7 +166,7 @@ function resourceHtml(t){return t.resources?.length?`<aside class="resource-box"
 
 function renderBank(){
  const all=route.id==='alle';
- $('#topic-content').innerHTML=`<div class="filterbar"><input id="question-search" type="search" placeholder="Søk i oppgavene …" aria-label="Søk i oppgavene" value="${escapeHtml(filters.query)}">${all?`<select id="question-topic" aria-label="Velg oppgavetema"><option value="">Alle temaer</option>${topics.map(t=>`<option value="${t.id}" ${filters.topic===t.id?'selected':''}>${escapeHtml(t.title)}</option>`).join('')}</select>`:''}<select id="question-type" aria-label="Velg oppgavetype"><option value="">Alle typer</option><option value="mcq">Flervalg</option><option value="number">Regn ut</option><option value="open">Forklar og drøft</option></select><select id="question-level" aria-label="Velg oppgavenivå"><option value="">Alle nivåer</option><option>Start</option><option>Bruk</option><option>Utfordring</option></select><button id="bookmark-filter" class="bookmark-filter" aria-pressed="${filters.bookmarked}">☆ Mine bokmerker</button></div><p id="question-summary" class="question-summary"></p><div id="question-list" class="question-list"></div>`;
+ $('#topic-content').innerHTML=`<div class="filterbar"><input id="question-search" type="search" placeholder="Søk i oppgavene …" aria-label="Søk i oppgavene" value="${escapeHtml(filters.query)}">${all?`<select id="question-topic" aria-label="Velg oppgavetema"><option value="">Alle temaer</option>${topics.map(t=>`<option value="${t.id}" ${filters.topic===t.id?'selected':''}>${escapeHtml(t.title)}</option>`).join('')}</select>`:''}<select id="question-type" aria-label="Velg oppgavetype"><option value="">Alle typer</option><option value="mcq">Flervalg</option><option value="number">Regn ut</option><option value="open">Forklar og drøft</option></select><select id="question-level" aria-label="Velg oppgavenivå"><option value="">Alle nivåer</option><option>Start</option><option>Bruk</option><option>Utfordring</option></select><button id="bookmark-filter" class="bookmark-filter" aria-pressed="${filters.bookmarked}">☆ Mine bokmerker</button></div><div id="question-list" class="question-list"></div>`;
  $('#question-type').value=filters.type;$('#question-level').value=filters.level;
  $('#question-search').addEventListener('input',e=>{filters.query=e.target.value;renderQuestions();});
  for(const [selector,prop]of [['#question-type','type'],['#question-level','level'],['#question-topic','topic']])$(selector)?.addEventListener('change',e=>{filters[prop]=e.target.value;renderQuestions();});
@@ -176,17 +176,61 @@ function renderBank(){
 function visibleQuestions(){return allQuestions.filter(q=>(route.id==='alle'?(!filters.topic||q.topic.id===filters.topic):q.topic.id===route.id)&&(!filters.type||q.type===filters.type)&&(!filters.level||(q.level||'Bruk')===filters.level)&&(!filters.bookmarked||saved.bookmarks[q.id])&&(!filters.query||`${plain(q.prompt)} ${q.topic.title}`.toLocaleLowerCase('nb').includes(filters.query.toLocaleLowerCase('nb'))));}
 function renderQuestions(){
  const questions=visibleQuestions();
- const solved=questions.filter(q=>saved.answers[q.id]?.solved).length;
- $('#question-summary').textContent=`${questions.length} ${questions.length===1?'oppgave':'oppgaver'} · ${solved} markert som mestret. Skriv eller tenk gjennom svaret før du åpner forklaringen.`;
  $('#question-list').innerHTML=questions.length?questions.map(q=>questionHtml(q)).join(''):`<div class="empty-state">Ingen oppgaver passer til valgene dine. Prøv et annet søk eller fjern et filter.</div>`;
+}
+function numberFormHtml(q,draft){
+ if(!q.fields)return `<form class="q-number-form"><label class="sr-only" for="input-${q.id}">Svar ${escapeHtml(q.unit||'')}</label><input id="input-${q.id}" type="text" inputmode="decimal" autocomplete="off" placeholder="Ditt svar" value="${escapeHtml(draft)}"><span>${escapeHtml(q.unit||'')}</span><button type="submit">Sjekk</button></form>`;
+ const values=Array.isArray(draft)?draft:[];
+ const fields=q.fields.map((field,index)=>{
+  const id=`input-${q.id}-${index}`;
+  return `<div class="q-number-field">
+   <label for="${id}">${escapeHtml(field.label)}</label>
+   <input id="${id}" type="text" inputmode="decimal" autocomplete="off" aria-describedby="${id}-unit ${id}-result" value="${escapeHtml(values[index])}">
+   <span id="${id}-unit">${escapeHtml(field.unit)}</span>
+   <output class="q-number-result" id="${id}-result" for="${id}"></output>
+  </div>`;
+ }).join('');
+ return `<form class="q-number-form q-number-form--multi">${fields}<button type="submit">Sjekk</button></form>`;
 }
 function questionHtml(q){
  const previous=saved.answers[q.id],solved=previous?.solved,bookmarked=!!saved.bookmarks[q.id],draft=saved.drafts[q.id]||'';
- return `<article class="q-card" data-question="${q.id}"><div class="q-top"><span class="q-number">${String(q.index+1).padStart(2,'0')}</span><span>${escapeHtml(q.level||'Bruk')}</span><span>· ${q.type==='mcq'?'Flervalg':q.type==='number'?'Regn ut':'Forklar og drøft'}</span><span class="q-status" ${solved?'':'hidden'}>✓ Mestret</span><span class="q-topic">${escapeHtml(q.topic.title)}</span><button class="q-bookmark" aria-label="${bookmarked?'Fjern bokmerke':'Merk oppgaven'}" aria-pressed="${bookmarked}" title="Merk oppgaven">${bookmarked?'★':'☆'}</button></div><div class="q-prompt" id="prompt-${q.id}">${q.prompt}</div>${q.type==='mcq'?`<div class="q-choices" role="group" aria-labelledby="prompt-${q.id}">${shuffledChoices(q).map(({choice:c,index},i)=>`<button class="q-choice" data-choice="${index}" aria-pressed="false"><span class="choice-letter">${String.fromCharCode(65+i)}</span><span>${c}</span></button>`).join('')}</div>`:q.type==='number'?`<form class="q-number-form"><label class="sr-only" for="input-${q.id}">Svar ${escapeHtml(q.unit||'')}</label><input id="input-${q.id}" type="text" inputmode="decimal" autocomplete="off" placeholder="Ditt svar" value="${escapeHtml(draft)}"><span>${escapeHtml(q.unit||'')}</span><button type="submit">Sjekk</button></form>`:`<label class="sr-only" for="input-${q.id}">Ditt svar</label><textarea id="input-${q.id}" class="q-open" rows="2" placeholder="Skriv et kort svar, eller forklar muntlig før du ser løsningsforslaget.">${escapeHtml(draft)}</textarea>`}<div class="q-actions"><button class="show-answer">${q.type==='open'?'Vis veiledende svar':'Vis forklaring'}</button>${q.hint?'<button class="hint-button" aria-expanded="false">Et hint</button>':''}</div>${q.hint?`<div class="q-hint" hidden>${q.hint}</div>`:''}<div class="q-answer" hidden><div class="feedback" aria-live="polite"></div><div class="solution">${solutionHtml(q)}</div>${q.type==='open'?`<div class="self-mark"><button data-self="yes">Dette fikk jeg til</button><button data-self="again" class="secondary">Øv igjen senere</button></div>`:''}</div></article>`;
+ return `<article class="q-card" data-question="${q.id}"><div class="q-top"><span class="q-number">${String(q.index+1).padStart(2,'0')}</span><span>${escapeHtml(q.level||'Bruk')}</span><span>· ${q.type==='mcq'?'Flervalg':q.type==='number'?'Regn ut':'Forklar og drøft'}</span><span class="q-status" ${solved?'':'hidden'}>✓ Mestret</span><span class="q-topic">${escapeHtml(q.topic.title)}</span><button class="q-bookmark" aria-label="${bookmarked?'Fjern bokmerke':'Merk oppgaven'}" aria-pressed="${bookmarked}" title="Merk oppgaven">${bookmarked?'★':'☆'}</button></div><div class="q-prompt" id="prompt-${q.id}">${q.prompt}</div>${q.type==='mcq'?`<div class="q-choices" role="group" aria-labelledby="prompt-${q.id}">${shuffledChoices(q).map(({choice:c,index},i)=>`<button class="q-choice" data-choice="${index}" aria-pressed="false"><span class="choice-letter">${String.fromCharCode(65+i)}</span><span>${c}</span></button>`).join('')}</div>`:q.type==='number'?numberFormHtml(q,draft):`<label class="sr-only" for="input-${q.id}">Ditt svar</label><textarea id="input-${q.id}" class="q-open" rows="2" placeholder="Skriv et kort svar, eller forklar muntlig før du ser løsningsforslaget.">${escapeHtml(draft)}</textarea>`}<div class="q-actions"><button class="show-answer">${q.type==='open'?'Vis veiledende svar':'Vis forklaring'}</button>${q.hint?'<button class="hint-button" aria-expanded="false">Et hint</button>':''}</div>${q.hint?`<div class="q-hint" hidden>${q.hint}</div>`:''}<div class="q-answer" hidden><div class="feedback" aria-live="polite"></div><div class="solution">${solutionHtml(q)}</div>${q.type==='open'?`<div class="self-mark"><button data-self="yes">Dette fikk jeg til</button><button data-self="again" class="secondary">Øv igjen senere</button></div>`:''}</div></article>`;
 }
 function findQuestion(card){return allQuestions.find(q=>q.id===card.dataset.question);}
-function setSolved(q,card,solved){saved.answers[q.id]={solved};persist();const status=card.querySelector('.q-status');status.hidden=!solved;const questions=visibleQuestions(),n=questions.filter(q=>saved.answers[q.id]?.solved).length;$('#question-summary').textContent=`${questions.length} oppgaver · ${n} markert som mestret. Skriv eller tenk gjennom svaret før du åpner forklaringen.`;}
-function checkNumber(card){const q=findQuestion(card),input=card.querySelector('input');const value=Number(input.value.trim().replace(/\s/g,'').replace(',','.').replace('−','-'));const answer=card.querySelector('.q-answer'),feedback=answer.querySelector('.feedback');answer.hidden=false;if(!input.value.trim()||!Number.isFinite(value)){feedback.textContent='Skriv inn et tall. Du kan bruke komma som desimaltegn.';answer.querySelector('.solution').hidden=true;return;}const ok=Math.abs(value-q.value)<=(q.tolerance??Math.max(1e-9,Math.abs(q.value)*.005));feedback.textContent=ok?'Riktig!':'Se på sammenhengen og prøv igjen.';answer.querySelector('.solution').hidden=false;setSolved(q,card,ok);}
+function setSolved(q,card,solved){
+ saved.answers[q.id]={solved};
+ persist();
+ card.querySelector('.q-status').hidden=!solved;
+}
+function checkNumber(card){
+ const q=findQuestion(card),inputs=[...card.querySelectorAll('.q-number-form input')];
+ const results=(q.fields??[q]).map((field,index)=>{
+  const raw=inputs[index].value.trim();
+  const value=Number(raw.replace(/\s/g,'').replace(',','.').replace('−','-'));
+  if(!raw||!Number.isFinite(value))return null;
+  return Math.abs(value-field.value)<=(field.tolerance??Math.max(1e-9,Math.abs(field.value)*.005));
+ });
+ const answer=card.querySelector('.q-answer'),feedback=answer.querySelector('.feedback'),solution=answer.querySelector('.solution');
+ const ok=results.every(result=>result===true);
+ const complete=results.every(result=>result!==null);
+ if(q.fields){
+  inputs.forEach((input,index)=>{
+   const result=results[index],output=input.parentElement.querySelector('.q-number-result');
+   output.textContent=result===null?'Skriv et tall':result?'Riktig':'Prøv igjen';
+   output.dataset.correct=String(result===true);
+   input.setAttribute('aria-invalid',String(result!==true));
+  });
+  answer.hidden=!ok;
+  solution.hidden=!ok;
+  feedback.textContent=ok?'Riktig!':'';
+  card.querySelector('.show-answer').textContent=ok?'Skjul forklaring':'Vis forklaring';
+ }else{
+  answer.hidden=false;
+  solution.hidden=!complete;
+  feedback.textContent=!complete?'Skriv inn et tall. Du kan bruke komma som desimaltegn.':ok?'Riktig!':'Se på sammenhengen og prøv igjen.';
+ }
+ if(complete)setSolved(q,card,ok);
+}
 
 document.addEventListener('click',e=>{
  if(e.target.closest('.skip')){e.preventDefault();$('#main').focus();return;}
@@ -201,7 +245,17 @@ document.addEventListener('click',e=>{
  const self=e.target.closest('[data-self]');if(self){setSolved(q,card,self.dataset.self==='yes');card.querySelectorAll('[data-self]').forEach(b=>b.classList.toggle('selected',b===self));if(self.dataset.self==='again'){saved.bookmarks[q.id]=true;persist();const b=card.querySelector('.q-bookmark');b.textContent='★';b.setAttribute('aria-pressed','true');b.setAttribute('aria-label','Fjern bokmerke');}announce(self.dataset.self==='yes'?'Oppgaven er markert som mestret.':'Oppgaven er bokmerket til neste gang.');}
 });
 document.addEventListener('submit',e=>{if(e.target.matches('.q-number-form')){e.preventDefault();checkNumber(e.target.closest('.q-card'));}});
-document.addEventListener('input',e=>{const card=e.target.closest('.q-card');if(card&&e.target.matches('textarea,input')){saved.drafts[card.dataset.question]=e.target.value;persist();}});
+document.addEventListener('input',e=>{
+ const card=e.target.closest('.q-card');
+ if(!card||!e.target.matches('textarea,input'))return;
+ const form=e.target.closest('.q-number-form--multi');
+ saved.drafts[card.dataset.question]=form?[...form.querySelectorAll('input')].map(input=>input.value):e.target.value;
+ if(form){
+  e.target.removeAttribute('aria-invalid');
+  e.target.parentElement.querySelector('.q-number-result').textContent='';
+ }
+ persist();
+});
 $('#menu-button').addEventListener('click',()=>{if(matchMedia('(max-width:800px)').matches){const open=document.body.classList.toggle('sidebar-open');$('#nav-scrim').hidden=!open;$('#menu-button').setAttribute('aria-expanded',String(open));}else{const collapsed=document.body.classList.toggle('sidebar-collapsed');$('#menu-button').setAttribute('aria-label',collapsed?'Vis temamenyen':'Minimer temamenyen');$('#menu-button').setAttribute('aria-expanded',String(!collapsed));}});
 $('#nav-scrim').addEventListener('click',closeNav);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeNav();});

@@ -6,6 +6,17 @@ const worked={
  'wv-b5':()=>rows('λ',[frac('v','f'),frac('345 m/s','440 Hz'),'<strong>0,784 m</strong> (avrundet)']),
  'wv-b6':()=>'<p>To bølgetopper per sekund gir f = 2 Hz.</p>'+rows('λ',[frac('v','f'),frac('4 m/s','2 Hz'),'<strong>2 m</strong>']),
  'wv-b9':()=>rows('s',['v · t','340 m/s · 3,0 s','<strong>1020 m</strong> ≈ 1 km']),
+ 'wv-b13':()=>'<p>Del tida på antallet svingninger for å finne tida for én svingning.</p>'
+  +rows('T',[frac('10 s','15'),'<strong>0,67 s</strong> (avrundet)'])
+  +'<p>Del antallet svingninger på tida for å finne frekvensen i hertz.</p>'
+  +rows('f',[frac('15','10 s'),'<strong>1,5 Hz</strong>']),
+ 'wv-b14':()=>'<p>Fra en topp til nærmeste bunn er det en halv bølgelengde.</p>'
+  +rows('λ',['2 · 1 m','<strong>2 m</strong>'])
+  +'<p>Amplituden er utslaget fra likevektslinja opp til en topp.</p>'
+  +rows('A',['<strong>3 m</strong>'])
+  +rows('T',[frac('16 s',4),'<strong>4 s</strong>'])
+  +rows('f',[frac(4,'16 s'),'<strong>0,25 Hz</strong>'])
+  +rows('v',['f · λ','0,25 Hz · 2 m','<strong>0,50 m/s</strong>']),
  'wv-f1':()=>rows('Refleksjonsvinkel',['Innfallsvinkel','<strong>35°</strong>']),
  'wv-f6':()=>rows('A<sub>sum</sub>',['A₁ + A₂','3 cm + 3 cm','<strong>6 cm</strong>']),
  'em-03':()=>rows('λ',[frac('c','f'),frac('3,00 · 10<sup>8</sup> m/s','100 · 10<sup>6</sup> Hz'),'<strong>3,00 m</strong>']),

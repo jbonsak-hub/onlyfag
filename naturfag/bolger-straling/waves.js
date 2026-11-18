@@ -1,10 +1,10 @@
 import {practicalExamplesDialogHtml,mountPracticalExamplesDialog} from './examples-dialog.js?v=20261116-naturfag1';
 import {refractionSection,mountRefraction} from './refraction-lab.js?v=20261116-naturfag1';
 import {diffractionSection,mountDiffraction} from './diffraction-lab.js?v=20261116-naturfag1';
-import {resonanceSection,mountResonance} from './resonance-swing.js?v=20261116-naturfag1';
+import {resonanceSection,mountResonance} from './resonance-swing.js?v=20261118-resonans1';
 import {flightSection,mountFlight} from './flight-doppler.js?v=20261116-naturfag1';
 export {buildApertureField,scalarWaveValue,diffractionEnvelope} from './diffraction-lab.js?v=20261116-naturfag1';
-export {createSwingState,swingGeometry,swingBackPoint,solveSwingArm,swingDriveAt,stepDrivenSwing,swingArmPose,stepSwingScene} from './resonance-swing.js?v=20261116-naturfag1';
+export {createSwingState,swingGeometry,swingBackPoint,solveSwingArm,swingDriveAt,stepDrivenSwing,swingArmPose,stepSwingScene} from './resonance-swing.js?v=20261118-resonans1';
 const svg = (id, title, desc, inside, height = 300) => `<svg id="${id}" viewBox="0 0 760 ${height}" role="img" aria-labelledby="${id}-title ${id}-desc"><title id="${id}-title">${title}</title><desc id="${id}-desc">${desc}</desc>${inside}</svg>`;
 const path = (d, color, width=3, extra='') => `<path d="${d}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" ${extra}/>`;
 const txt = (x,y,text,extra='') => `<text x="${x}" y="${y}" ${extra}>${text}</text>`;
