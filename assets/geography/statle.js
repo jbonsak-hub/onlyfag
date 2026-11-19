@@ -1,4 +1,4 @@
-/* Shared click-map game for Statle, Norwegian counties and continent maps. */
+/* Shared click-map game for Statle, administrative regions and physical geography. */
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
