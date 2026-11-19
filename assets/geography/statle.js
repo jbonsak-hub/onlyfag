@@ -18,7 +18,7 @@
   let largestCities=null, stateCapitals=null;
   let cityData = null, citiesMode = false, basemap=null, osloLayers=null, osloQuestionSymbols={}, regionalCapitals=null, municipalityCentres=null, cityMarkerScale='';
   const cityPoints = new Map(), stateTransforms = new Map();
-  const showNames = () => enhanced() && !!namesInput()?.checked;
+  const showNames = () => (enhanced() || physical) && !!namesInput()?.checked;
   const answerName = name => citiesMode ? displayCityName(states.find(state=>state.n===name)) + ' · ' + (window.QuizLanguage?.translate(name)||name) : name;
   const displayCityName=state=>statle?StatleLabelLayout.cityName(state,cityData):(window.QuizLanguage?.language==='en'?cityData[state.n].en||cityData[state.n].name:cityData[state.n].name);
   const questionName = state => citiesMode ? municipalities?cityData[state.n].promptName||displayCityName(state):displayCityName(state) : state.n;
@@ -252,6 +252,7 @@
         const b=path.getBBox();centers.set(state.n,{x:state.c[0],y:state.c[1],radius:Math.max(b.width,b.height)/2+10});
         if(state.marker){const marker=svgNode('g',{class:'small-marker physical-marker '+state.kind,role:'button',tabindex:'0','aria-label':'Ekstra treffelt for et lite sted'});marker.dataset.state=state.n;marker.append(svgNode('circle',{cx:state.c[0],cy:state.c[1],r:11,class:'hit'}),svgNode('circle',{cx:state.c[0],cy:state.c[1],r:4.5,class:'visible'}));$('smallStates').append(marker);markers.set(state.n,marker);}
       }
+      $('hintLayer').before(svgNode('g',{id:'statle-study-names','aria-hidden':'true','pointer-events':'none'}));
       return;
     }
     if (kart && !counties) {
@@ -490,7 +491,7 @@
     if(!names)for (let i = queue.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [queue[i],queue[j]] = [queue[j],queue[i]]; }
     if(continentPractice)queue.sort((a,b)=>continentOrder.indexOf(a.continent)-continentOrder.indexOf(b.continent));
     ($('total-count')||$('completed').parentElement.querySelector('small')).textContent=' / '+queue.length;
-    setPhase('playing'); $('overlay').hidden = true;if(enhanced())drawStudyNames();if($('water-options'))$('water-options').hidden=true;
+    setPhase('playing'); $('overlay').hidden = true;drawStudyNames();if($('water-options'))$('water-options').hidden=true;
     if($('continent-practice-option'))$('continent-practice-option').hidden=true;
     $('mapViewport').scrollTo({left:0,top:0});
     prompt();
@@ -585,11 +586,55 @@
   }
   $('restart').addEventListener('click',()=>phase==='finished'||!enhanced()?start():cancelStatle());
   const studyLayouts=new Map();
-  let localPreviewTimer=0;
+  let previewTimer=0;
+  function drawPhysicalStudyNames(layer) {
+    const matrix=$('map').getScreenCTM();
+    if(!matrix?.a||!matrix.d)return;
+    const viewport=$('mapViewport').getBoundingClientRect();
+    // Lay out in screen pixels so the labels stay readable when the world map is stretched or zoomed.
+    const screen=svgNode('g',{transform:`scale(${1/matrix.a} ${1/matrix.d})`});
+    const points=states.map(state=>{
+      const [x,y]=state.c;
+      return {state,x:x*matrix.a,y:y*matrix.d};
+    }).filter(({x,y})=>x+matrix.e>=viewport.left&&x+matrix.e<=viewport.right&&y+matrix.f>=viewport.top&&y+matrix.f<=viewport.bottom);
+    const bounds={
+      left:viewport.left-matrix.e+4,right:viewport.right-matrix.e-4,
+      top:viewport.top-matrix.f+4,bottom:viewport.bottom-matrix.f-4
+    };
+    const context=document.createElement('canvas').getContext('2d');
+    const fontSize=11, height=15;
+    context.font='700 11px Inter,"Segoe UI",sans-serif';
+    const occupied=[];
+    const directions=[[0,-1],[1,0],[-1,0],[0,1],[1,-1],[-1,-1],[1,1],[-1,1]];
+    for(const point of points){
+      const {state,x,y}=point;
+      const name=window.QuizLanguage?.language==='en'?state.en||state.n:state.n;
+      const width=context.measureText(name).width+4;
+      let position;
+      search:for(const gap of [5,10,18,28,40,55])for(const [dx,dy] of directions){
+        const cx=x+dx*(width/2+gap),cy=y+dy*(height/2+gap);
+        const box={x:cx-width/2,y:cy-height/2,w:width,h:height};
+        if(box.x<bounds.left||box.y<bounds.top||box.x+width>bounds.right||box.y+height>bounds.bottom)continue;
+        if(occupied.some(other=>StatleLabelLayout.intersects(box,other,2)))continue;
+        if(points.some(other=>other!==point&&StatleLabelLayout.pointBox(other,box)<3))continue;
+        position={cx,cy,box};break search;
+      }
+      // A crowded area reveals more labels as the learner zooms in.
+      if(!position)continue;
+      const {cx,cy,box}=position;
+      occupied.push(box);
+      const endX=Math.max(box.x,Math.min(box.x+width,x)),endY=Math.max(box.y,Math.min(box.y+height,y));
+      const leader=`M${x} ${y}L${endX} ${endY}`;
+      screen.append(svgNode('path',{d:leader,class:'study-city-leader-halo'}),svgNode('path',{d:leader,class:'study-state-leader'}));
+      const label=svgNode('text',{x:cx,y:cy+4,class:'study-name study-state','text-anchor':'middle','font-size':fontSize,'data-label-state':state.n,'data-no-translate':''});
+      label.textContent=name;screen.append(label);
+    }
+    layer.append(screen);
+  }
   function drawStudyNames() {
-    if(!enhanced())return;
     const layer=$('statle-study-names');if(!layer)return;layer.replaceChildren();
     if(phase!=='ready'||!showNames())return;
+    if(physical){drawPhysicalStudyNames(layer);return;}
     const view=$('map').viewBox.baseVal,matrix=$('map').getScreenCTM(),rect=$('map').getBoundingClientRect(),localFont=10/(matrix?.a||1);
     let localView=[view.x,view.y,view.width,view.height];
     if(localMap&&matrix&&rect.width&&rect.height){
@@ -666,13 +711,14 @@
     if(!statle)for(const point of $('statle-city-points')?.children||[])point.setAttribute('tabindex',citiesMode?'0':'-1');
     drawStudyNames();
   }
-  for(const input of [...advancedInputs(),namesInput()])input?.addEventListener('change',()=>{if(statle&&input.checked&&advancedInputs().includes(input))advancedInputs().forEach(other=>{if(other!==input)other.checked=false;});window.GeoOnline?.resetStatle();updateStatleOptions();});
-  if(localMap)window.ClickMapZoom?.subscribe(()=>{
+  for(const input of [...advancedInputs(),namesInput()])input?.addEventListener('change',()=>{if(statle&&input.checked&&advancedInputs().includes(input))advancedInputs().forEach(other=>{if(other!==input)other.checked=false;});window.GeoOnline?.resetStatle();if(physical)drawStudyNames();else updateStatleOptions();});
+  if(localMap||kart)window.ClickMapZoom?.subscribe(()=>{
+    if(!localMap&&!physical)return;
     scaleLocalCityPoints();
-    clearTimeout(localPreviewTimer);
-    if(phase==='ready'&&showNames())localPreviewTimer=setTimeout(drawStudyNames,125);
+    clearTimeout(previewTimer);
+    if(phase==='ready'&&showNames())previewTimer=setTimeout(drawStudyNames,125);
   });
-  addEventListener('quiz-language-change',()=>{if(boroughs)updateOsloBasemapButtons();if(enhanced()){drawStudyNames();if(phase==='ready')setFeedback('');const button=$('statle-basemap');if(button&&!boroughs){const label=window.QuizLanguage.translate(document.body.dataset.statleBasemap==='physical'?'Vis originalkart':'Vis fysisk kart');button.title=label;button.setAttribute('aria-label',label);}}});
+  addEventListener('quiz-language-change',()=>{if(boroughs)updateOsloBasemapButtons();if(physical)drawStudyNames();if(enhanced()){drawStudyNames();if(phase==='ready')setFeedback('');const button=$('statle-basemap');if(button&&!boroughs){const label=window.QuizLanguage.translate(document.body.dataset.statleBasemap==='physical'?'Vis originalkart':'Vis fysisk kart');button.title=label;button.setAttribute('aria-label',label);}}});
   const menu = $('geoMenu'), menuButton = $('geoMenuButton');
   let menuOpener=menuButton;
   function openMenu(button){menuOpener=button;menu.showModal();button.setAttribute('aria-expanded','true');}
@@ -696,7 +742,7 @@
     if (event.target === menu && (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom)) menu.close();
   });
   function resetMap() {
-    clearTimeout(localPreviewTimer);
+    clearTimeout(previewTimer);
     basemap?.clear();osloLayers?.clear();document.body.dataset.osloBasemap='original';document.body.dataset.statleBasemap='original';document.querySelector('.statle-basemap-tools')?.remove();
     $('statle-city-points')?.remove();$('statle-study-names')?.remove();cityPoints.clear();stateTransforms.clear();studyLayouts.clear();
     citiesMode=false;cityData=null;cityMarkerScale='';delete document.body.dataset.kartVariant;delete document.body.dataset.riverVariant;delete document.body.dataset.municipalityQuestionMode;
@@ -791,13 +837,17 @@
   async function selectMap(region) {
     const titles={fylker:'Norske fylker',europe:'Europa',asia:'Asia',northAmerica:'Nord- og Mellom-Amerika',southAmerica:'Sør-Amerika',africa:'Afrika',oceania:'Oseania',rivers:'Verdens elver',lakes:'Innsjøer',seas:'Havområder, bukter og stred',mountains:'Fjellkjeder og høyland'};
     if(!Object.hasOwn(titles,region))return;
-    if(document.body.dataset.region!==region&&$('continent-practice'))$('continent-practice').checked=false;
+    if(document.body.dataset.region!==region){
+      if($('continent-practice'))$('continent-practice').checked=false;
+      namesInput().checked=false;
+    }
     practice=!!$('continent-practice')?.checked;document.body.dataset.practice=String(practice);if($('target-continent'))$('target-continent').hidden=true;
     panel.style.removeProperty('top');panel.style.removeProperty('left');panel.style.removeProperty('bottom');const token=++mapGeneration;window.GeoOnline?.resetStatle();resetMap();document.body.dataset.region=region;counties=region==='fylker';physical=['rivers','lakes','seas','mountains'].includes(region);document.body.dataset.physical=String(physical);document.body.dataset.countryRegion=String(countryRegions.has(region));shapeLabel=physical?'Sted på kartet':counties?'Fylke på kartet':'Land på kartet';
     $('kart-selection').hidden=true;$('kart-game').hidden=false;$('targetName').textContent=titles[region];$('targetVerb').textContent=countryRegion()?'Kan du plassere alle?':'Klar for en runde?';$('start').textContent='Laster kart …';setFeedback('Laster kart …');
-    for(const id of ['region-capital-option','region-names-option'])$(id).hidden=!countryRegion();
-
-    if(countryRegion()){advancedInput().disabled=true;namesInput().disabled=true;}
+    $('region-capital-option').hidden=!countryRegion();
+    $('region-names-option').hidden=!countryRegion()&&!physical;
+    namesInput().disabled=true;
+    if(countryRegion())advancedInput().disabled=true;
     const url=new URL(location.href);url.searchParams.set('region',region);history.replaceState(null,'',url);
     try {
       if(counties){countyMap||=readMap('../assets/geography/norway-counties.json').catch(error=>{countyMap=null;throw error;});const data=await countyMap;if(token!==mapGeneration)return;states=data;regionData=null;}
@@ -813,11 +863,11 @@
       $('total-count').textContent=' / '+total;$('map').setAttribute('aria-label',counties?'Klikkbart kart over Norges 15 fylker':'Klikkbart kart over '+titles[region]);
       document.querySelector('.map-credit').hidden=counties||physical;document.querySelector('.county-credit').hidden=!counties;document.querySelector('.physical-credit').hidden=!physical;if($('river-credit'))$('river-credit').hidden=region!=='rivers';
       $('water-options').hidden=region!=='seas';$('continent-practice-option').hidden=!['rivers','lakes','mountains'].includes(region);$('mistakes-label').textContent=window.QuizLanguage?.language==='en'?'Mistakes':'Feil';
-      for(const id of ['region-capital-option','region-names-option'])$(id).hidden=!countryRegion();
       $('restart').textContent=countryRegion()?'Avbryt':'↻ Ny runde';$('restart').setAttribute('aria-label',countryRegion()?'Avbryt':'Start en ny runde');
       if(countryRegion()){advancedInput().checked=false;namesInput().checked=false;}setPhase('ready');
       updateStats();
       $('map').setAttribute('preserveAspectRatio',physical&&innerWidth>700?'none':'xMidYMid meet');buildMap();window.ClickMapZoom?.setBase();window.dispatchEvent(new Event('resize'));$('statle-top-ten').disabled=!total;$('start').disabled=!total;$('start').textContent=total?'Start →':'Velg minst én kategori';setFeedback('');
+      if(physical){namesInput().disabled=!total;drawStudyNames();}
     }catch(_){if(token!==mapGeneration)return;$('start').textContent='Kartet kunne ikke lastes';setFeedback('Velg kart på nytt for å prøve igjen.','error');}
   }
   if(kart){
