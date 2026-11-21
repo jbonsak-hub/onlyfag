@@ -2,7 +2,7 @@ const path=require('node:path');
 const {pathToFileURL}=require('node:url');
 const root=path.resolve(__dirname,'..');
 const publishedIds=['bolger','fenomener'];
-const canonicalModules=new Set(['wave-basics','waves','waves-rainbow','refraction-lab','refraction-examples','examples-dialog','diffraction-lab','resonance-swing','flight-doppler','animation-clock','math-presentation']);
+const canonicalModules=new Set(['wave-basics','waves','waves-rainbow','refraction-lab','refraction-examples','examples-dialog','diffraction-lab','resonance-swing','resonance-tuning-forks','flight-doppler','animation-clock','math-presentation']);
 const modulePath=name=>path.join(root,canonicalModules.has(name)?'naturfag/bolger-straling':'prototyper/bolger-straling',name+'.js');
 const moduleUrl=name=>pathToFileURL(modulePath(name)).href;
 const browserModuleUrl=name=>'/'+(canonicalModules.has(name)?'naturfag/bolger-straling':'prototyper/bolger-straling')+'/'+name+'.js';

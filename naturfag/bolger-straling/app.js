@@ -72,7 +72,14 @@ const api={
  onFrame(fn,target){const scope=animationScope(target);return animationClock.onFrame(fn,scope,{isActive:()=>animationActive(scope)});},
  repaint,
  now:target=>animationClock.now(animationScope(target)),
- isPaused:target=>!hostVisible||animationClock.isPaused(animationScope(target))
+ isPaused:target=>!hostVisible||animationClock.isPaused(animationScope(target)),
+ play(target){
+  const scope=animationScope(target);
+  animationClock.setPaused(scope,false);
+  const button=animationButtons.get(scope);
+  if(button)syncAnimationButton(scope,button);
+  repaint(target);
+ }
 };
 function syncAnimationButton(scope,button){
  const paused=animationClock.isPaused(scope),label=paused?'Fortsett animasjonen':'Pause animasjonen';

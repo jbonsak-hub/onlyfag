@@ -1,10 +1,61 @@
 import {practicalExamplesDialogHtml,mountPracticalExamplesDialog} from './examples-dialog.js?v=20261116-naturfag1';
 import {refractionSection,mountRefraction} from './refraction-lab.js?v=20261116-naturfag1';
 import {diffractionSection,mountDiffraction} from './diffraction-lab.js?v=20261116-naturfag1';
-import {resonanceSection,mountResonance} from './resonance-swing.js?v=20261118-resonans1';
+import {resonanceSection as swingSection,mountResonance} from './resonance-swing.js?v=20261118-resonans1';
+import {tuningForkHtml,mountTuningForks} from './resonance-tuning-forks.js?v=20261121-stemmegafler1';
 import {flightSection,mountFlight} from './flight-doppler.js?v=20261116-naturfag1';
 export {buildApertureField,scalarWaveValue,diffractionEnvelope} from './diffraction-lab.js?v=20261116-naturfag1';
 export {createSwingState,swingGeometry,swingBackPoint,solveSwingArm,swingDriveAt,stepDrivenSwing,swingArmPose,stepSwingScene} from './resonance-swing.js?v=20261118-resonans1';
+const resonancePanels = [
+  {id: 'swing', label: 'Huska', body: swingSection.body},
+  {id: 'forks', label: 'Stemmegafler', body: tuningForkHtml}
+];
+
+const resonanceSection = {
+  title: 'Resonans',
+  body: `<div class="resonance-tabs" role="tablist" aria-label="Resonansmodeller">
+    ${resonancePanels.map(({id, label}, index) => `<button type="button" role="tab" id="resonance-tab-${id}"
+      aria-controls="resonance-panel-${id}" aria-selected="${index === 0}" tabindex="${index === 0 ? 0 : -1}">${label}</button>`).join('')}
+  </div>
+  ${resonancePanels.map(({id, body}, index) => `<div role="tabpanel" id="resonance-panel-${id}"
+    aria-labelledby="resonance-tab-${id}"${index === 0 ? '' : ' hidden'}>${body}</div>`).join('')}`
+};
+
+function mountResonanceTabs(root, api) {
+  const tabs = [...root.querySelectorAll('.resonance-tabs [role="tab"]')];
+  const panels = tabs.map(tab => root.querySelector('#' + tab.getAttribute('aria-controls')));
+  const forkScene = root.querySelector('#wv-tuning-forks');
+  const swingScene = root.querySelector('#wv-resonance');
+
+  function select(index) {
+    tabs.forEach((tab, i) => {
+      const selected = i === index;
+      tab.setAttribute('aria-selected', String(selected));
+      tab.tabIndex = selected ? 0 : -1;
+      panels[i].hidden = !selected;
+    });
+    api.repaint(forkScene);
+    if (index === 0) api.repaint(swingScene);
+  }
+
+  tabs.forEach((tab, index) => {
+    tab.addEventListener('click', () => select(index));
+    tab.addEventListener('keydown', event => {
+      const targets = {
+        ArrowLeft: (index + tabs.length - 1) % tabs.length,
+        ArrowRight: (index + 1) % tabs.length,
+        Home: 0,
+        End: tabs.length - 1
+      };
+      if (!Object.hasOwn(targets, event.key)) return;
+      event.preventDefault();
+      const next = targets[event.key];
+      select(next);
+      tabs[next].focus();
+    });
+  });
+}
+
 const svg = (id, title, desc, inside, height = 300) => `<svg id="${id}" viewBox="0 0 760 ${height}" role="img" aria-labelledby="${id}-title ${id}-desc"><title id="${id}-title">${title}</title><desc id="${id}-desc">${desc}</desc>${inside}</svg>`;
 const path = (d, color, width=3, extra='') => `<path d="${d}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" ${extra}/>`;
 const txt = (x,y,text,extra='') => `<text x="${x}" y="${y}" ${extra}>${text}</text>`;
@@ -258,7 +309,8 @@ const phenomena={...{
       layers.interference.innerHTML=panel(47,'Bølge 1',colors.wave,px=>component(px,l1,0),'wv-component-1')+panel(137,'Bølge 2',colors.purple,px=>component(px,l2,phase),'wv-component-2')+panel(227,'Sum',colors.amber,px=>interferenceDisplacement(worldX(px),t,l1,l2,phaseDegrees),'wv-interference-sum')+txt(730,286,'Samme sted x →','text-anchor="end" class="wv-small"');
     },q('wv-interference'));
 
- const cleanups=[mountRefraction(root,api),mountPracticalExamplesDialog(root,api),mountDiffraction(root,api),mountResonance(root,api),mountFlight(root,api)];update();
+ const cleanups=[mountRefraction(root,api),mountPracticalExamplesDialog(root,api),mountDiffraction(root,api),mountResonance(root,api),mountTuningForks(root,api),mountFlight(root,api)];
+ mountResonanceTabs(root,api);update();
  return ()=>{for(const cleanup of cleanups)if(typeof cleanup==='function')cleanup();};
  }
 };

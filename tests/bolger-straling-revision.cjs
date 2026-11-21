@@ -4,7 +4,7 @@ const near=(actual,expected,tolerance=1e-9,message='')=>assert.ok(Math.abs(actua
 const plain=html=>String(html).replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,'').replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<[^>]*>/g,' ');
 
 async function runRevisionChecks({modelFixture,topics}={}){
- const names=['flight-doppler','refraction-lab','refraction-examples','diffraction-lab','resonance-swing','atom-lab','element-spectra','element-spectra-data','animation-clock','waves-rainbow','math-presentation','cosmology-timeline','bigbang-evidence'];
+ const names=['flight-doppler','refraction-lab','refraction-examples','diffraction-lab','resonance-swing','resonance-tuning-forks','atom-lab','element-spectra','element-spectra-data','animation-clock','waves-rainbow','math-presentation','cosmology-timeline','bigbang-evidence'];
  const modules={};for(const name of names)modules[name]=await import(moduleUrl(name));
  const flight=modules['flight-doppler'],optics=modules['refraction-lab'],diff=modules['diffraction-lab'],swing=modules['resonance-swing'],atom=modules['atom-lab'],elements=modules['element-spectra'],data=modules['element-spectra-data'],examples=modules['refraction-examples'];
  const groups=[];
@@ -70,6 +70,21 @@ async function runRevisionChecks({modelFixture,topics}={}){
  for(let theta=-.7;theta<.7;theta+=.01){const back=swing.swingBackPoint(theta),arm=swing.solveSwingArm(back.x,back.y);near(Math.hypot(arm.elbowX-g.shoulderX,arm.elbowY-g.shoulderY),g.upperArm,1e-9);near(Math.hypot(arm.handX-arm.elbowX,arm.handY-arm.elbowY),g.forearm,1e-9);}
  await require('./bolger-straling-resonance.cjs').runResonanceChecks();
  groups.push('continuous arm reach, bounded damped motion and delayed undamped rope break');
+
+ const forks=modules['resonance-tuning-forks'];
+ for(const [sourceHz,otherHz] of [[262,330],[330,392],[392,440],[440,523],[523,262]]){
+  assert.equal(forks.forkResponse(.3,sourceHz,sourceHz).second,0,'The receiving fork waits for the wave.');
+  const matched=forks.forkResponse(1.6,sourceHz,sourceHz);
+  const unmatched=forks.forkResponse(1.6,sourceHz,otherHz);
+  assert.equal(unmatched.second,0,'A mismatched fork stays still.');
+  assert.ok(matched.second>0&&matched.level>unmatched.level,'Resonance adds audible amplitude.');
+  assert.equal(forks.forkResponse(8,sourceHz,sourceHz).level,0,'The sound dies away.');
+ }
+ assert.notEqual(forks.airMotion(.3,0,440).offset,0,'Air near the first fork moves immediately.');
+ assert.equal(forks.airMotion(.3,1,440).offset,0,'Air near the second fork is initially undisturbed.');
+ assert.notEqual(forks.airMotion(.9,1,440).offset,0,'The wave reaches the far side.');
+ assert.equal(forks.airMotion(8,.5,440).offset,0,'Each particle returns to its starting point.');
+ groups.push('air-wave propagation, matched tuning forks and audible buildup');
 
  // Atom energies use aJ throughout. Hydrogen stays fixed; the model atom is explicitly editable.
  const H=6.62607015e-34,C=299792458;
