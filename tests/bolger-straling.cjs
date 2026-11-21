@@ -2,7 +2,8 @@ const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),
 let pw;if(!process.argv.includes('--data-only')){for(const candidate of [process.env.PLAYWRIGHT_MODULE,'playwright',path.resolve(path.dirname(process.execPath),'../node_modules/playwright')].filter(Boolean)){try{pw=require(candidate);break;}catch{}}if(!pw)throw Error('Set PLAYWRIGHT_MODULE to an installed Playwright module.');}
 const root=path.resolve(__dirname,'..'),shots=path.resolve(root,'../research/bolger-straling-qa');
 const ids=['bolger','fenomener','em','atomer','universet','kommunikasjon','radioaktivitet','stralevern','atmosfaeren'];
-const moduleNames=['wave-basics','waves','em-atoms','radioactivity','cosmos-environment'];
+const moduleNames=['wave-basics','waves','em-spectrum','em-atoms','radioactivity','cosmos-environment'];
+const prototypeIds=ids.filter(id=>id!=='em');
 const {publishedIds,modulePath,moduleUrl,browserModuleUrl,rendererPath}=require('./bolger-straling-paths.cjs');
 const errors=[],failures=[],warnings=[],coverage=[];
 let fixtureClockFactory;
@@ -66,14 +67,14 @@ function modelFixture(topic){
  let cleanup;try{cleanup=topic.mount(root,api);}catch(e){restore();throw e;}
  return{root,get:id=>idMap.get(id),dispatchDocument(k,init={}){for(const fn of documentEvents[k]||[])fn({target:global.document,preventDefault(){},...init});},tick(t){if(clock)clock.advance(t-time);time=t;if(!clock)api.repaint();},pause(target,value=true){assert.ok(clock,'Scoped fixture clock is configured');clock.setPaused(scope(target),value);},now:target=>api.now(target),change(id,value,event='input'){const el=idMap.get(id);assert.ok(el,'Missing control '+id);el.value=value;el.dispatch(event);},click(id){const el=idMap.get(id);assert.ok(el,'Missing button '+id);el.dispatch('click');},html:()=>root.serialize(),destroy(){try{if(cleanup)cleanup();if(clock)clock.clear();}finally{restore();}}};
 }
-const server=http.createServer((req,res)=>{try{let file=path.join(root,decodeURIComponent(new URL(req.url,'http://localhost').pathname));if(fs.statSync(file).isDirectory())file=path.join(file,'index.html');res.setHeader('Content-Type',file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.js')?'text/javascript; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':'application/octet-stream');res.end(fs.readFileSync(file));}catch{res.writeHead(404);res.end('missing');}});
+const server=http.createServer((req,res)=>{try{let file=path.join(root,decodeURIComponent(new URL(req.url,'http://localhost').pathname));if(!path.extname(file)&&!fs.existsSync(file))file+='.html';if(fs.statSync(file).isDirectory())file=path.join(file,'index.html');res.setHeader('Content-Type',file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.js')?'text/javascript; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':'application/octet-stream');res.end(fs.readFileSync(file));}catch{res.writeHead(404);res.end('missing');}});
 async function attempt(label,fn){try{await fn();coverage.push(label);}catch(e){failures.push(label+': '+e.message);console.error('FAIL '+label+': '+e.message);}}
 function assertNumericQuestion(q){
  if(q.fields)assert.ok(q.fields.length>1&&q.fields.every(field=>field.label&&field.unit),q.id);
  for(const field of q.fields??[q])assert.ok(Number.isFinite(field.value)&&(field.tolerance===undefined||field.tolerance>=0),q.id);
 }
 (async()=>{
- const source=[],sourceModules={};for(const file of moduleNames){sourceModules[file]=await import(moduleUrl(file));source.push(...sourceModules[file].topics);}
+ const source=[],sourceModules={};for(const file of moduleNames){sourceModules[file]=await import(moduleUrl(file));source.push(...(sourceModules[file].topics??[sourceModules[file].emTopic]));}
  assert.deepEqual(source.map(t=>t.id).sort(),ids.slice().sort());
  const unique=new Set(),numeric=new Map();
  for(const t of source){assert.ok(t.sections.length&&t.terms.length&&t.questions.length>=10,t.id);for(const q of t.questions){assert.ok(!unique.has(q.id)&&q.prompt&&q.answer,q.id);unique.add(q.id);assert.ok(['mcq','number','open'].includes(q.type),q.id);if(q.type==='mcq')assert.ok(Number.isInteger(q.correct)&&q.correct>=0&&q.correct<q.choices.length,q.id);if(q.type==='number'){assertNumericQuestion(q);numeric.set(q.id,q);}}}
@@ -86,15 +87,16 @@ function assertNumericQuestion(q){
  assert.equal(unique.size,125);
  const publicTopics=source.filter(t=>publishedIds.includes(t.id));
  assert.deepEqual(publicTopics.map(t=>t.id),publishedIds);
- assert.deepEqual(publicTopics.map(t=>t.questions.length),[13,12]);
+ assert.deepEqual(publicTopics.map(t=>t.questions.length),[13,12,14]);
  for(const topic of publicTopics)assert.ok(!topic.terms.some(t=>/knut|\bbuk/i.test(t.term)),'Buk and knute are excluded from the published concept lists.');
  for(const [questionId,topicId] of [['wv-b8','em'],['wv-f3','em'],['wv-f13','universet']])assert.equal(source.find(t=>t.questions.some(q=>q.id===questionId))?.id,topicId,'Moved question belongs to its current teaching topic: '+questionId);
  const standingTask=publicTopics[0].questions.find(q=>q.id==='wv-b11');assert.ok(standingTask&&!/knut|\bbuk/i.test(standingTask.prompt+' '+standingTask.answer),'Standing-wave reasoning does not require the excluded glossary terms.');
  const publicEntry=fs.readFileSync(path.join(root,'naturfag/bolger-straling/entry.js'),'utf8');
- assert.deepEqual([...publicEntry.matchAll(/import \{topics as (\w+)\} from ['"]([^'"]+)['"]/g)].map(m=>m[2].split('?')[0]).sort(),['./wave-basics.js','./waves.js'],'The published entry imports exactly the two released topic modules.');
+ assert.deepEqual([...publicEntry.matchAll(/import \{(?:topics as \w+|emTopic)\} from ['"]([^'"]+)['"]/g)].map(m=>m[1].split('?')[0]).sort(),['./em-spectrum.js','./wave-basics.js','./waves.js'],'The published entry imports exactly the three released topic modules.');
+ assert.deepEqual(sourceModules['em-atoms'].topics.map(t=>t.id).sort(),['atomer','kommunikasjon'],'The prototype atom entry omits the promoted EM topic.');
  const prototypeEntry=fs.readFileSync(path.join(root,'prototyper/bolger-straling/app.js'),'utf8');
  assert.match(prototypeEntry,/naturfag\/bolger-straling\/wave-basics\.js/);assert.match(prototypeEntry,/naturfag\/bolger-straling\/waves\.js/);
- assert.ok(!fs.existsSync(path.join(root,'prototyper/bolger-straling/wave-basics.js'))&&!fs.existsSync(path.join(root,'prototyper/bolger-straling/waves.js')),'Published modules have one canonical source.');
+ for(const file of ['wave-basics.js','waves.js','em-spectrum.js','absorption.js'])assert.ok(!fs.existsSync(path.join(root,'prototyper/bolger-straling',file)),'Published modules have one canonical source: '+file);
  const appSource=fs.readFileSync(rendererPath,'utf8');
  assert.ok(!appSource.includes('animation-speed'),'The global animation-speed control was removed.');
  assert.ok(!appSource.includes('id="pause-button"'),'The global pause control was removed.');
@@ -141,14 +143,14 @@ function assertNumericQuestion(q){
  try{let radioTime=0;for(const item of iso.verifiedIsotopes.filter(x=>!x.stable)){radioFixture.change('ra-isotope-preset',item.z+','+item.n,'change');assert.equal(radioFixture.get('ra-nuclide-status').getAttribute('data-stability'),'radioactive');const before=radioFixture.get('ra-built-nucleus').getAttribute('transform');radioFixture.tick(radioTime+=.47);assert.notEqual(radioFixture.get('ra-built-nucleus').getAttribute('transform'),before);radioFixture.click('ra-builder-decay');const daughter=iso.getPreferredDecay(item.z,item.n).daughter;assert.equal(+radioFixture.get('ra-protons').value,daughter.z);assert.equal(+radioFixture.get('ra-neutrons').value,daughter.n);assert.equal(radioFixture.get('ra-nuclide-status').getAttribute('data-stability'),'stable');assert.equal(radioFixture.get('ra-builder-decay').disabled,true);}
   radioFixture.change('ra-isotope-preset','6,8','change');radioFixture.pause('#ra-decay-type');const frozenEmission=radioFixture.get('ra-emission').serialize(),movingNucleus=radioFixture.get('ra-built-nucleus').serialize();radioFixture.get('ra-half-run').checked=true;radioFixture.get('ra-half-run').dispatch('change');const halfBefore=+radioFixture.get('ra-half-time').value;radioFixture.tick(radioTime+=.1);assert.equal(radioFixture.get('ra-emission').serialize(),frozenEmission,'The decay animation pauses independently of the builder.');assert.notEqual(radioFixture.get('ra-built-nucleus').serialize(),movingNucleus);assert.ok(+radioFixture.get('ra-half-time').value>halfBefore,'Half-life keeps its own running clock.');
  }finally{radioFixture.destroy();}
- const {spectrumReadouts}=sourceModules['em-atoms'];for(const region of [2,3,4])assert.match(spectrumReadouts(5e14,region).wavelength,/nm/);assert.match(spectrumReadouts(5e14,3).energy,/J$/);assert.ok(!/eV/.test(spectrumReadouts(5e14,3).energy));
+ const {spectrumReadouts}=sourceModules['em-spectrum'];for(const region of [2,3,4])assert.match(spectrumReadouts(5e14,region).wavelength,/nm/);assert.match(spectrumReadouts(5e14,3).energy,/J$/);assert.ok(!/eV/.test(spectrumReadouts(5e14,3).energy));
  const comm=modelFixture(source.find(t=>t.id==='kommunikasjon'));
  try{for(const stage of ['auto','0','1','2','3','4','5'])comm.change('ema-flow-stage',stage,'change');for(const direction of ['a-b','b-a'])for(const route of ['direct','reflection']){comm.change('ema-network-direction',direction,'change');comm.change('ema-network-path',route,'change');comm.tick(.8);assert.ok(!/NaN|Infinity|undefined/.test(comm.html()));}
   const signalTime=comm.now('#ema-signal-plot');assert.ok(signalTime>0);comm.pause('#ema-signal-plot');const signalBefore=comm.get('ema-signal-plot').serialize(),networkBefore=comm.get('ema-network-plot').serialize();comm.tick(.9);assert.equal(comm.get('ema-signal-plot').serialize(),signalBefore);assert.equal(comm.now('#ema-signal-plot'),signalTime);assert.ok(comm.now('#ema-network-plot')>signalTime);assert.notEqual(comm.get('ema-network-plot').serialize(),networkBefore,'Pausing the encoding waveform does not pause the radio network.');
  }finally{comm.destroy();}
  const revisionGroups=await require('./bolger-straling-revision.cjs').runRevisionChecks({modelFixture,topics:source});
  assert.ok(revisionGroups.length>=8);
- console.log('Source/model checks passed: 9 prototype topics, 125 questions; 2 published topics, 25 questions; 26 numeric exercises; independent model pause/repaint, Snell constraints, retarded Doppler, swing modes and outcomes, primary/secondary rainbow, atom cascades, isotope decay and absolute Planck units.');
+ console.log('Source/model checks passed: 9 distinct topics, 125 questions; 3 published topics, 39 questions; 26 numeric exercises; independent model pause/repaint, Snell constraints, retarded Doppler, swing modes and outcomes, primary/secondary rainbow, atom cascades, isotope decay and absolute Planck units.');
  if(process.argv.includes('--data-only'))return;
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
  const base='http://127.0.0.1:'+server.address().port, url=base+'/prototyper/bolger-straling.html';
@@ -162,14 +164,14 @@ function assertNumericQuestion(q){
  const page=await context.newPage();page.setDefaultTimeout(7000);
  page.on('pageerror',e=>errors.push(e.stack||e.message));
  await page.goto(url);await page.locator('.topic-card').first().waitFor();
- const data=await page.evaluate(async urls=>{const modules=await Promise.all(urls.map(url=>import(url)));return modules.flatMap(m=>m.topics).map(t=>({id:t.id,title:t.title,sections:t.sections.length,questions:t.questions,terms:t.terms.length}));},moduleNames.map(browserModuleUrl));
+ const data=await page.evaluate(async urls=>{const modules=await Promise.all(urls.map(url=>import(url)));return modules.flatMap(m=>m.topics??[m.emTopic]).map(t=>({id:t.id,title:t.title,sections:t.sections.length,questions:t.questions,terms:t.terms.length}));},moduleNames.map(browserModuleUrl));
  await attempt('Complete, distinct, well-formed question data',async()=>{
  assert.equal(data.length,9);const seen=new Set();for(const t of data){assert.ok(t.sections>0&&t.terms>0);assert.ok(t.questions.length>=10,t.id);for(const q of t.questions){assert.ok(!seen.has(q.id),'duplicate '+q.id);seen.add(q.id);assert.ok(q.prompt&&q.answer,q.id);assert.ok(['mcq','number','open'].includes(q.type),q.id);if(q.type==='mcq')assert.ok(Number.isInteger(q.correct)&&q.correct>=0&&q.correct<q.choices.length,q.id);if(q.type==='number')assertNumericQuestion(q);}}});
  async function route(id,view='fagstoff'){await page.goto(url+'#'+id+'/'+view);await page.locator('#topic-content').waitFor();await page.waitForTimeout(70);}
- for(const id of ids)for(const view of ['fagstoff','oppgaver','begreper'])await attempt('Desktop render '+id+'/'+view,async()=>{
+ for(const id of prototypeIds)for(const view of ['fagstoff','oppgaver','begreper'])await attempt('Desktop render '+id+'/'+view,async()=>{
  await route(id,view);assert.ok((await page.locator('h1').innerText()).trim());assert.equal(await page.locator('#main').evaluate(e=>e.scrollWidth>e.clientWidth+1),false,'main content overflow');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'document overflow');assert.equal(await page.locator('#animation-speed,#pause-button,.viewbar,.page-head .eyebrow,.page-head .intro,.head-icon').count(),0,'No repeated topic introduction or global animation toolbar');if(view==='fagstoff')assert.ok(await page.locator('.content-section').count());else if(view==='oppgaver')assert.equal(await page.locator('.q-card').count(),data.find(t=>t.id===id).questions.length);});
  // Exercise controls with reduced-motion enabled, so changes cannot be attributed to animation alone.
- for(const id of ids)await attempt('Working controls '+id,async()=>{
+ for(const id of prototypeIds)await attempt('Working controls '+id,async()=>{
  await route(id);const controls=page.locator('#topic-content input,#topic-content select');const count=await controls.count();let changed=0;
  for(let i=0;i<count;i++){
  const c=controls.nth(i);if(!(await c.isVisible())||!(await c.isEnabled()))continue;
@@ -190,12 +192,31 @@ function assertNumericQuestion(q){
  await page.locator('#wv-interference-antiphase').click();assert.match(await page.locator('#wv-interference-readout').innerText(),/utslokking|kanseller|destruktiv/i);assert.equal(await page.locator('#wv-lambda1,#wv-lambda2').count(),0);await page.locator('#wv-interference-inphase').click();assert.match(await page.locator('#wv-interference-readout').innerText(),/forsterkning|konstruktiv/i);
  await page.locator('#fd-mach').fill('1');await page.locator('#fd-mach').dispatchEvent('input');assert.ok((await page.locator('#fd-status').innerText()).length>10);await page.locator('#rf-medium-top').selectOption('water');await page.locator('#rf-medium-bottom').selectOption('air');await page.locator('#rf-angle').fill('65');await page.locator('#rf-angle').dispatchEvent('input');assert.match(await page.locator('#rf-status').innerText(),/totalrefleksjon/i);
  });
+ await attempt('Resonance and Doppler comparisons share their section tabs',async()=>{
+  await route('fenomener');
+  await page.locator('#resonance-tab-swing').press('ArrowRight');
+  await page.locator('.tf-stage #tf-source').waitFor();
+  await page.locator('.tf-stage #tf-receiver').selectOption('523');
+  assert.equal(await page.locator('#resonance-tab-forks').getAttribute('aria-selected'),'true');
+  assert.equal(await page.locator('#wv-resonance').isVisible(),false);
+  await page.locator('#resonance-tab-forks').press('Home');
+  assert.equal(await page.locator('#wv-resonance').isVisible(),true);
+  await page.locator('#doppler-tab-light').click();
+  await page.locator('#ld-scene').waitFor();
+  assert.equal(await page.locator('#fd-scene').isVisible(),false);
+  assert.equal(await page.locator('#ld-wavelength-A').getAttribute('data-shift'),'blue');
+  assert.equal(await page.locator('#ld-wavelength-B').getAttribute('data-shift'),'red');
+  await page.locator('#ld-direction-A').selectOption('1');
+  assert.equal(await page.locator('#ld-wavelength-A').getAttribute('data-shift'),'red');
+  await page.locator('#doppler-tab-sound').click();
+  assert.equal(await page.locator('#fd-scene').isVisible(),true);
+ });
  await attempt('Atomic transition wavelength and half-life expectation',async()=>{
  await route('atomer');await page.locator('#al-h-upper').selectOption('3');await page.locator('#al-h-lower').selectOption('2');assert.match(await page.locator('#al-h-readout').innerText(),/656/);
  await route('radioaktivitet');await page.locator('#ra-half-time').fill('3');await page.locator('#ra-half-time').dispatchEvent('input');assert.match(await page.locator('#ra-half-expected').innerText(),/25/);assert.equal(await page.locator('.ra-decayed').count()+await page.locator('.ra-population i:not(.ra-decayed)').count(),200);
  });
  await attempt('Photon energy threshold is reflected in the displayed ionization state',async()=>{await route('atomer');for(const [energy,state]of [['2.1','bound'],['2.18','ionized'],['3','ionized']]){await page.locator('#ema-ion-energy').fill(energy);await page.locator('#ema-ion-energy').dispatchEvent('input');assert.equal(await page.locator('#ema-ion-plot').getAttribute('data-state'),'neutral');await page.locator('#ema-ion-send').click();assert.equal(await page.locator('#ema-ion-plot').getAttribute('data-state'),state);await page.locator('#ema-ion-reset').click();assert.equal(await page.locator('#ema-ion-plot').getAttribute('data-state'),'neutral');}});
- const qAll=data.flatMap(t=>t.questions.map(q=>({...q,topic:t.id})));
+ const qAll=data.filter(t=>prototypeIds.includes(t.id)).flatMap(t=>t.questions.map(q=>({...q,topic:t.id})));
  const mcq=qAll.find(q=>q.type==='mcq'),num=qAll.find(q=>q.type==='number'),open=qAll.find(q=>q.type==='open');
  const card=q=>page.locator('[data-question="'+q.id+'"]');
  await attempt('MCQ feedback and mastery persist',async()=>{await route(mcq.topic,'oppgaver');await card(mcq).locator('[data-choice="'+mcq.correct+'"]').click();await card(mcq).locator('.q-status').waitFor();assert.match(await card(mcq).locator('.feedback').innerText(),/Riktig/);await page.reload();await card(mcq).locator('.q-status').waitFor();});
@@ -220,18 +241,40 @@ function assertNumericQuestion(q){
   }
  });
  await attempt('Open draft, solution, self-assessment and bookmark persist',async()=>{await route(open.topic,'oppgaver');const c=card(open);await c.locator('textarea').fill('Mitt faglige svar.');await c.locator('.show-answer').click();assert.ok(await c.locator('.solution').isVisible());await c.locator('[data-self="again"]').click();assert.equal(await c.locator('.q-bookmark').getAttribute('aria-pressed'),'true');await page.reload();assert.equal(await c.locator('textarea').inputValue(),'Mitt faglige svar.');assert.equal(await c.locator('.q-bookmark').getAttribute('aria-pressed'),'true');});
- await attempt('All questions search, type/topic filters and bookmark list',async()=>{await route('alle','oppgaver');assert.equal(await page.locator('.q-card').count(),qAll.length);await page.locator('#question-type').selectOption('number');assert.equal(await page.locator('.q-card').count(),qAll.filter(q=>q.type==='number').length);await page.locator('#question-type').selectOption('');await page.locator('#question-search').fill('sjeldenord_ingen');assert.equal(await page.locator('.q-card').count(),0);await page.locator('#question-search').fill('');await page.locator('#bookmark-filter').click();assert.ok(await page.locator('.q-card').count()>=1);await page.locator('#bookmark-filter').click();await page.locator('#question-topic').selectOption('em');assert.equal(await page.locator('.q-card').count(),data.find(t=>t.id==='em').questions.length);});
+ await attempt('All questions search, type/topic filters and bookmark list',async()=>{await route('alle','oppgaver');assert.equal(await page.locator('.q-card').count(),qAll.length);await page.locator('#question-type').selectOption('number');assert.equal(await page.locator('.q-card').count(),qAll.filter(q=>q.type==='number').length);await page.locator('#question-type').selectOption('');await page.locator('#question-search').fill('sjeldenord_ingen');assert.equal(await page.locator('.q-card').count(),0);await page.locator('#question-search').fill('');await page.locator('#bookmark-filter').click();assert.ok(await page.locator('.q-card').count()>=1);await page.locator('#bookmark-filter').click();assert.equal(await page.locator('#question-topic option[value="em"]').count(),0);await page.locator('#question-topic').selectOption('atomer');assert.equal(await page.locator('.q-card').count(),data.find(t=>t.id==='atomer').questions.length);});
  await attempt('Automatic graphics respect reduced-motion preference',async()=>{await route('fenomener');const svg=page.locator('#wv-interference');const before=await svg.innerHTML();await page.waitForTimeout(180);assert.equal(await svg.innerHTML(),before);await page.emulateMedia({reducedMotion:'no-preference'});await page.reload();const moving=await svg.innerHTML();await page.waitForTimeout(180);assert.notEqual(await svg.innerHTML(),moving);await page.emulateMedia({reducedMotion:'reduce'});await page.reload();const frozen=await svg.innerHTML();await page.waitForTimeout(180);assert.equal(await svg.innerHTML(),frozen);});
  await attempt('Each animated figure has an independent pause button',async()=>{await page.emulateMedia({reducedMotion:'no-preference'});await route('bolger');const travel=page.locator('#wv-travel'),particles=page.locator('#wv-particles');await travel.evaluate(el=>el.closest('.model').querySelector('.animation-toggle').click());const stopped=await travel.innerHTML(),moving=await particles.innerHTML();await page.waitForTimeout(180);assert.equal(await travel.innerHTML(),stopped);assert.notEqual(await particles.innerHTML(),moving);assert.equal(await travel.evaluate(el=>el.closest('.model').querySelector('.animation-toggle').getAttribute('aria-pressed')),'true');await travel.evaluate(el=>el.closest('.model').querySelector('.animation-toggle').click());await page.waitForTimeout(180);assert.notEqual(await travel.innerHTML(),stopped);await page.emulateMedia({reducedMotion:'reduce'});});
  await attempt('Dark theme survives reload',async()=>{await page.locator('#theme-button').click();assert.ok(await page.locator('body.dark').count());await page.reload();assert.ok(await page.locator('body.dark').count());await page.locator('#theme-button').click();});
  await attempt('Keyboard skip link preserves the current topic',async()=>{await route('atomer');const before=page.url();await page.locator('.skip').focus();await page.keyboard.press('Enter');assert.equal(page.url(),before);assert.equal(await page.evaluate(()=>document.activeElement.id),'main');});
- for(const width of [390,320])for(const id of ids)await attempt('Mobile '+width+' '+id,async()=>{await page.setViewportSize({width,height:844});await route(id);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'document overflow');await route(id,'oppgaver');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'bank overflow');});
- await attempt('Mobile navigation opens/closes and route is keyboard reachable',async()=>{await page.setViewportSize({width:390,height:844});await route('em');await page.locator('#menu-button').click();assert.equal(await page.locator('#menu-button').getAttribute('aria-expanded'),'true');await page.keyboard.press('Escape');assert.equal(await page.locator('#menu-button').getAttribute('aria-expanded'),'false');await page.locator('#menu-button').click();await page.locator('[data-route="em/oppgaver"]').first().click();await page.locator('.q-card').first().waitFor();assert.equal(await page.locator('#menu-button').getAttribute('aria-expanded'),'false');});
+ for(const width of [390,320])for(const id of prototypeIds)await attempt('Mobile '+width+' '+id,async()=>{await page.setViewportSize({width,height:844});await route(id);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'document overflow');await route(id,'oppgaver');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'bank overflow');});
+ await attempt('Mobile navigation opens/closes and route is keyboard reachable',async()=>{await page.setViewportSize({width:390,height:844});await route('atomer');await page.locator('#menu-button').click();assert.equal(await page.locator('#menu-button').getAttribute('aria-expanded'),'true');await page.keyboard.press('Escape');assert.equal(await page.locator('#menu-button').getAttribute('aria-expanded'),'false');await page.locator('#menu-button').click();await page.locator('[data-route="atomer/oppgaver"]').first().click();await page.locator('.q-card').first().waitFor();assert.equal(await page.locator('#menu-button').getAttribute('aria-expanded'),'false');});
+ await attempt('Published spectrum and existing deep links',async()=>{
+  const spectrum=data.find(t=>t.id==='em');
+  await page.goto(url+'?legacy-link=1#em/oppgaver');
+  await page.waitForURL(/\/naturfag(?:\.html)?#waves\/em\/oppgaver$/);
+  const content=page.frameLocator('#waves-module-frame');
+  await content.locator('.q-card').first().waitFor();
+  assert.equal(await content.locator('.q-card').count(),spectrum.questions.length);
+  for(const width of [320,390,1440]){
+   await page.setViewportSize({width,height:844});
+   await page.goto(base+'/naturfag.html#waves/em/fagstoff');
+   await content.locator('.content-section').first().waitFor();
+   assert.equal(await content.locator('main').evaluate(e=>e.scrollWidth>e.clientWidth+1),false,'published spectrum overflow');
+  }
+  await content.locator('.abs-stage #abs-light').selectOption('blue');
+  await content.locator('.abs-stage #abs-surface').selectOption('white');
+  assert.match(await content.locator('#abs-readout').innerText(),/Reflektert:\s*bl/);
+  await content.locator('#ld-one').click();
+  await content.locator('#ld-count').filter({hasText:/^1$/}).waitFor();
+  await page.goto(base+'/naturfag.html#waves/em/begreper');
+  await content.locator('.term').first().waitFor();
+  assert.equal(await content.locator('.term').count(),spectrum.terms);
+ });
  await page.setViewportSize({width:1440,height:1000});await page.goto(url+'#oversikt');await page.screenshot({path:path.join(shots,'overview-desktop.png'),fullPage:true});
  await route('fenomener');await page.screenshot({path:path.join(shots,'phenomena-desktop.png'),fullPage:true});
  await route('radioaktivitet');await page.screenshot({path:path.join(shots,'radioactivity-desktop.png'),fullPage:true});
  await route('universet');await page.locator('#theme-button').click();await page.screenshot({path:path.join(shots,'universe-dark.png'),fullPage:true});await page.locator('#theme-button').click();
- await page.setViewportSize({width:390,height:844});await route('em');await page.screenshot({path:path.join(shots,'em-mobile.png'),fullPage:true});
+ await page.setViewportSize({width:390,height:844});await page.goto(base+'/naturfag.html#waves/em/fagstoff');await page.frameLocator('#waves-module-frame').locator('.content-section').first().waitFor();await page.screenshot({path:path.join(shots,'em-mobile.png'),fullPage:true});
  if(errors.length)failures.push('Browser errors: '+errors.join('\n'));
  const report={topics:data.map(t=>({id:t.id,questions:t.questions.length,sections:t.sections,terms:t.terms})),totalQuestions:qAll.length,passed:coverage.length,failures,warnings,shots};
  fs.writeFileSync(path.join(shots,'report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));if(failures.length)process.exitCode=1;

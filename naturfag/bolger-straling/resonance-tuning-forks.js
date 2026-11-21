@@ -8,10 +8,10 @@ const tones = [
 const arrivalTime = .72;
 const ringTime = 8;
 const pitchScale = 180;
-const columnCount = 27;
-const airLeft = 174;
-const columnSpacing = 16;
-const trackedColumn = 13;
+const columnCount = 33;
+const airLeft = 127;
+const columnSpacing = 15.8125;
+const trackedColumn = 16;
 
 function fadeOut(age) {
   return Math.max(0, Math.min(1, ringTime - age));
@@ -55,7 +55,6 @@ function tinePath(hz, displacement) {
 
 function forkDrawing(id, x) {
   return `<g transform="translate(${x} 0)" class="tf-fork tf-fork-${id}">
-    <text text-anchor="middle" y="40" id="tf-label-${id}" class="tf-frequency">440 Hz</text>
     <rect class="tf-base" x="-55" y="213" width="110" height="29" rx="5"/>
     <path class="tf-base-stripe" d="M-55 233H55"/>
     <path id="tf-tines-${id}" class="tf-tines" d="${tinePath(440, 0)}"/>
@@ -66,7 +65,7 @@ const molecules = Array.from({length: columnCount}, (_, column) => {
   const x = airLeft + column * columnSpacing;
   const dots = [100, 122, 144, 166].map((y, row) => {
     const tracked = column === trackedColumn && row === 2;
-    return `<circle cx="${row % 2 ? 3 : 0}" cy="${tracked ? y : y + ((column + row) % 3) - 1}" r="${tracked ? 6 : 3.3}"${tracked ? ' class="tf-tracked"' : ''}/>`;
+    return `<circle cx="${row % 2 && column > 0 && column < columnCount - 1 ? 3 : 0}" cy="${tracked ? y : y + ((column + row) % 3) - 1}" r="${tracked ? 6 : 3.3}"${tracked ? ' class="tf-tracked"' : ''}/>`;
   }).join('');
   return `<g class="tf-air-column" transform="translate(${x} 0)">${dots}</g>`;
 }).join('');
@@ -78,10 +77,13 @@ const toneOptions = tones.map(({note, hz}) =>
 export const tuningForkHtml = `<p>Lydbølgen brer seg som fortetninger og fortynninger i lufta. Ved lik egenfrekvens tar den andre stemmegaffelen opp energi og klinger med.</p>
   <div class="wv-scope">
     <div class="model tf-model">
+      <div class="tf-stage">
+        <select id="tf-source" class="tf-frequency-select" aria-label="Frekvens for første stemmegaffel">${toneOptions}</select>
+        <select id="tf-receiver" class="tf-frequency-select" aria-label="Frekvens for andre stemmegaffel">${toneOptions}</select>
       <svg id="wv-tuning-forks" class="tf-diagram" viewBox="0 0 760 260" role="img" aria-labelledby="tf-title tf-description">
         <title id="tf-title">Resonans mellom to stemmegafler</title>
         <desc id="tf-description">Stemmegaffelen til venstre lager en lydbølge som går mot stemmegaffelen til høyre. Prikkene viser luftmolekyler som svinger fram og tilbake. Den oransje prikken viser bevegelsen til ett molekyl.</desc>
-        <rect class="tf-air-backdrop" x="156" y="81" width="448" height="104" rx="14"/>
+        <rect class="tf-air-backdrop" x="122" y="81" width="516" height="104" rx="14"/>
         <circle class="tf-equilibrium" cx="${airLeft + trackedColumn * columnSpacing}" cy="144" r="8"/>
         ${molecules}
         ${forkDrawing('source', 91)}
@@ -89,11 +91,8 @@ export const tuningForkHtml = `<p>Lydbølgen brer seg som fortetninger og fortyn
         <path class="tf-direction" d="M199 219H561m-11 -6 11 6-11 6"/>
         <text class="tf-direction-label" text-anchor="middle" x="380" y="211">Lydbølgen brer seg</text>
       </svg>
+      </div>
       <div class="tf-settings">
-        <div class="tf-tones">
-          <label for="tf-source">Første stemmegaffel<select id="tf-source">${toneOptions}</select></label>
-          <label for="tf-receiver">Andre stemmegaffel<select id="tf-receiver">${toneOptions}</select></label>
-        </div>
         <div class="tf-actions">
           <button type="button" id="tf-strike">Slå an den første</button>
           <label for="tf-sound" class="tf-sound"><input type="checkbox" id="tf-sound" checked> Lyd</label>
@@ -105,7 +104,6 @@ export const tuningForkHtml = `<p>Lydbølgen brer seg som fortetninger og fortyn
         <meter id="tf-level" min="0" max="1.5" value="0"></meter>
         <p id="tf-audio-status" role="status" hidden></p>
       </div>
-      <p class="model-note tf-note">Animasjonen går i sakte film. Den oransje prikken svinger fram og tilbake rundt samme sted.</p>
     </div>
   </div>`;
 
@@ -153,8 +151,6 @@ export function mountTuningForks(root, api) {
   const audioStatus = get('tf-audio-status');
   const sourceTines = get('tf-tines-source');
   const receiverTines = get('tf-tines-receiver');
-  const sourceLabel = get('tf-label-source');
-  const receiverLabel = get('tf-label-receiver');
   const columns = [...scene.querySelectorAll('.tf-air-column')];
   const audio = createForkAudio();
   const reducedMotion = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)');
@@ -176,12 +172,11 @@ export function mountTuningForks(root, api) {
     lastDrawing = drawing;
     sourceTines.setAttribute('d', tinePath(sourceHz, 9 * first * Math.sin(phase(sourceHz, age))));
     receiverTines.setAttribute('d', tinePath(receiverHz, 9 * second * Math.sin(phase(sourceHz, age - arrivalTime))));
-    if (sourceLabel.textContent !== sourceHz + ' Hz') sourceLabel.textContent = sourceHz + ' Hz';
-    if (receiverLabel.textContent !== receiverHz + ' Hz') receiverLabel.textContent = receiverHz + ' Hz';
     scene.dataset.response = second > 0 ? 'resonance' : !active ? 'idle' : arrived ? 'still' : 'travelling';
     columns.forEach((column, index) => {
       const {offset, compression} = airMotion(age, index / (columnCount - 1), sourceHz);
-      column.setAttribute('transform', `translate(${airLeft + index * columnSpacing + offset} 0)`);
+      const edge = Math.min(1, .4 + .3 * Math.min(index, columnCount - 1 - index));
+      column.setAttribute('transform', `translate(${airLeft + index * columnSpacing + edge * offset} 0)`);
       column.setAttribute('fill-opacity', String(.51 + .49 * compression));
     });
     level.value = amplitude;

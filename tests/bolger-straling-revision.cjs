@@ -4,7 +4,7 @@ const near=(actual,expected,tolerance=1e-9,message='')=>assert.ok(Math.abs(actua
 const plain=html=>String(html).replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,'').replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<[^>]*>/g,' ');
 
 async function runRevisionChecks({modelFixture,topics}={}){
- const names=['flight-doppler','refraction-lab','refraction-examples','diffraction-lab','resonance-swing','resonance-tuning-forks','atom-lab','element-spectra','element-spectra-data','animation-clock','waves-rainbow','math-presentation','cosmology-timeline','bigbang-evidence'];
+ const names=['flight-doppler','light-doppler','refraction-lab','refraction-examples','diffraction-lab','resonance-swing','resonance-tuning-forks','atom-lab','element-spectra','element-spectra-data','animation-clock','waves-rainbow','math-presentation','cosmology-timeline','bigbang-evidence'];
  const modules={};for(const name of names)modules[name]=await import(moduleUrl(name));
  const flight=modules['flight-doppler'],optics=modules['refraction-lab'],diff=modules['diffraction-lab'],swing=modules['resonance-swing'],atom=modules['atom-lab'],elements=modules['element-spectra'],data=modules['element-spectra-data'],examples=modules['refraction-examples'];
  const groups=[];
@@ -37,6 +37,16 @@ async function runRevisionChecks({modelFixture,topics}={}){
  await engine.enable();engine.update({frequency:243.17,arrived:true,distance:100});near(oscillators[0].frequency.value,243.17);assert.equal(engine.snapshot().playing,true);
  engine.update({frequency:243.17,arrived:true,paused:true});assert.equal(engine.snapshot().playing,false);assert.equal(engine.snapshot().contextState,'suspended');engine.disable();assert.equal(engine.snapshot().enabled,false);engine.dispose();
  groups.push('finite-history Mach 1 arrival, retarded pitch and default-muted audio');
+
+ const {observedLightWavelength}=modules['light-doppler'];
+ assert.equal(observedLightWavelength(550,0),550);
+ for(const speed of [100,1800,3000]){
+  const nearer=observedLightWavelength(550,-speed),farther=observedLightWavelength(550,speed);
+  assert.ok(nearer<550&&farther>550);
+  near(nearer*farther,550**2);
+ }
+ near(observedLightWavelength(550,299792.458*.6),1100);
+ groups.push('relativistic redshift and blueshift with fixed emitted wavelength');
 
  // Independent Fresnel power checks, including equal-media and total-reflection limits.
  for(const upper of ['air','water','glass'])for(const lower of ['air','water','glass'])for(const angle of [0,15,45,65,80,89.99]){
@@ -122,7 +132,13 @@ async function runRevisionChecks({modelFixture,topics}={}){
  }
  groups.push('coastal refraction and continuous differential-wheel motion');
 
- if(!topics){topics=[];for(const name of ['wave-basics','waves','em-atoms','radioactivity','cosmos-environment'])topics.push(...(await import(moduleUrl(name))).topics);}
+ if(!topics){
+  topics=[];
+  for(const name of ['wave-basics','waves','em-spectrum','em-atoms','radioactivity','cosmos-environment']){
+   const source=await import(moduleUrl(name));
+   topics.push(...(source.topics??[source.emTopic]));
+  }
+ }
  const visible=topics.flatMap(topic=>[...topic.sections.map(s=>s.body),...topic.terms.map(t=>`${t.term} ${t.definition}`),...topic.questions.map(q=>`${q.prompt} ${q.answer} ${modules['math-presentation'].solutionHtml(q)} ${q.hint||''} ${(q.choices||[]).join(' ')} ${q.unit||''}`)]).map(plain).join('\n');
  assert.ok(!/\beV\b/.test(visible),'Visible topic content uses joules/prefixes rather than standalone eV.');
  const numeric=topics.flatMap(t=>t.questions).find(q=>q.id==='atom-05');assert.equal(numeric.unit,'aJ');near(numeric.value,-.24-(-.54));

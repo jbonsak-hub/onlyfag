@@ -1,31 +1,36 @@
-import {practicalExamplesDialogHtml,mountPracticalExamplesDialog} from './examples-dialog.js?v=20261116-naturfag1';
+import {practicalExamplesDialogHtml,mountPracticalExamplesDialog} from './examples-dialog.js?v=20261121-spectrum1';
 import {refractionSection,mountRefraction} from './refraction-lab.js?v=20261116-naturfag1';
 import {diffractionSection,mountDiffraction} from './diffraction-lab.js?v=20261116-naturfag1';
 import {resonanceSection as swingSection,mountResonance} from './resonance-swing.js?v=20261118-resonans1';
-import {tuningForkHtml,mountTuningForks} from './resonance-tuning-forks.js?v=20261121-stemmegafler1';
+import {tuningForkHtml,mountTuningForks} from './resonance-tuning-forks.js?v=20261121-spectrum1';
 import {flightSection,mountFlight} from './flight-doppler.js?v=20261116-naturfag1';
+import {lightDopplerHtml,mountLightDoppler} from './light-doppler.js?v=20261121-spectrum1';
 export {buildApertureField,scalarWaveValue,diffractionEnvelope} from './diffraction-lab.js?v=20261116-naturfag1';
 export {createSwingState,swingGeometry,swingBackPoint,solveSwingArm,swingDriveAt,stepDrivenSwing,swingArmPose,stepSwingScene} from './resonance-swing.js?v=20261118-resonans1';
-const resonancePanels = [
-  {id: 'swing', label: 'Huska', body: swingSection.body},
+function tabbedSection(id, title, panels) {
+  return {
+    title,
+    body: `<div class="wv-model-tabs" id="${id}-tabs" role="tablist" aria-label="${title}">
+    ${panels.map(({id: key, label}, index) => `<button type="button" role="tab" id="${id}-tab-${key}"
+      aria-controls="${id}-panel-${key}" aria-selected="${index === 0}" tabindex="${index === 0 ? 0 : -1}">${label}</button>`).join('')}
+    </div>
+    ${panels.map(({id: key, body}, index) => `<div role="tabpanel" id="${id}-panel-${key}"
+      aria-labelledby="${id}-tab-${key}"${index === 0 ? '' : ' hidden'}>${body}</div>`).join('')}`
+  };
+}
+const resonanceSection = tabbedSection('resonance', 'Resonans', [
+  {id: 'swing', label: 'Huske', body: swingSection.body},
   {id: 'forks', label: 'Stemmegafler', body: tuningForkHtml}
-];
+]);
+const dopplerSection = tabbedSection('doppler', 'Dopplereffekt', [
+  {id: 'sound', label: 'Lyd', body: flightSection.body},
+  {id: 'light', label: 'Lys', body: lightDopplerHtml}
+]);
 
-const resonanceSection = {
-  title: 'Resonans',
-  body: `<div class="resonance-tabs" role="tablist" aria-label="Resonansmodeller">
-    ${resonancePanels.map(({id, label}, index) => `<button type="button" role="tab" id="resonance-tab-${id}"
-      aria-controls="resonance-panel-${id}" aria-selected="${index === 0}" tabindex="${index === 0 ? 0 : -1}">${label}</button>`).join('')}
-  </div>
-  ${resonancePanels.map(({id, body}, index) => `<div role="tabpanel" id="resonance-panel-${id}"
-    aria-labelledby="resonance-tab-${id}"${index === 0 ? '' : ' hidden'}>${body}</div>`).join('')}`
-};
-
-function mountResonanceTabs(root, api) {
-  const tabs = [...root.querySelectorAll('.resonance-tabs [role="tab"]')];
+function mountModelTabs(root, api, id, scenes) {
+  const tabs = [...root.querySelectorAll('#'+id+'-tabs [role="tab"]')];
   const panels = tabs.map(tab => root.querySelector('#' + tab.getAttribute('aria-controls')));
-  const forkScene = root.querySelector('#wv-tuning-forks');
-  const swingScene = root.querySelector('#wv-resonance');
+  const models = scenes.map(scene => root.querySelector('#'+scene));
 
   function select(index) {
     tabs.forEach((tab, i) => {
@@ -34,8 +39,7 @@ function mountResonanceTabs(root, api) {
       tab.tabIndex = selected ? 0 : -1;
       panels[i].hidden = !selected;
     });
-    api.repaint(forkScene);
-    if (index === 0) api.repaint(swingScene);
+    models.forEach(model => api.repaint(model));
   }
 
   tabs.forEach((tab, index) => {
@@ -278,7 +282,7 @@ const phenomena={...{
       "url": "https://phet.colorado.edu/sims/html/wave-interference/latest/wave-interference_all.html"
     }
   ]
-},sections:[{"title":"Refleksjon: bølgen sendes tilbake","body":"<style>\n.wv-scope svg{display:block;width:100%;height:auto;max-height:none;overflow:hidden;background:var(--model-bg,var(--sidebar,#f1f6f7));border-radius:12px}.wv-scope svg text{font:14px system-ui,sans-serif;fill:var(--ink,#273d4a)}.wv-scope svg .wv-small{font-size:12px;fill:var(--muted,#657985)}.wv-scope .wv-live{font-variant-numeric:tabular-nums}.wv-scope .wv-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.wv-scope .wv-buttons{display:flex;gap:7px;flex-wrap:wrap}.wv-scope .wv-buttons button{padding:6px 10px;border:1px solid var(--line,#bcced2);border-radius:7px;background:var(--surface,#fff);color:var(--ink,#273d4a);cursor:pointer;font:inherit;font-size:12px}.wv-scope .wv-buttons button[aria-pressed=\"true\"]{background:#187b8c;color:#fff;border-color:#187b8c}.wv-scope select{max-width:100%;font:inherit}.wv-scope .controls{margin-top:12px}.wv-scope label{display:block}.wv-scope input[type=\"range\"]{width:100%;accent-color:#187b8c}.wv-scope .wv-keyline{margin:12px 0 0;font-size:.92em}.wv-scope .wv-swatch{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}.wv-scope .wv-legend{display:flex;gap:18px;flex-wrap:wrap;font-size:.88em;margin-top:9px}.wv-scope .wv-summary{padding:10px 12px;border-radius:9px;background:var(--surface,#fff);margin-top:12px}.wv-scope .wv-control-head{display:flex;justify-content:space-between;gap:10px}.wv-scope .wv-control-head output{font-weight:650;white-space:nowrap}.wv-scope .wv-interference-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.wv-scope .wv-interference-controls label{min-width:0}.wv-scope .wv-interference-presets{margin-top:12px}.wv-scope .wv-component-panel{fill:var(--surface,#fff);stroke:var(--line,#dce5de);stroke-width:1}.wv-scope .wv-diff-barrier{fill:#778d97}.wv-scope .wv-field-canvas{display:block;width:100%;height:auto;aspect-ratio:760/340;border-radius:12px;background:#e8f1f3}.wv-field-legend{display:flex;gap:18px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:9px 0}.wv-field-legend span{display:inline-flex;align-items:center;gap:6px}.wv-field-legend i{width:16px;height:9px;border:1px solid #b5c9d0;border-radius:3px}.wv-scope .wv-check{display:flex;align-items:center;gap:8px;font-size:12px}.wv-scope .wv-check input{width:16px;height:16px}.wv-scope .wv-svg-bubble{fill:var(--surface,#fff);stroke:var(--line,#dce5de)}.wv-scope .wv-cartoon-label{font-size:13px;font-weight:650}.wv-scope .wv-readout-tag{display:block;font-size:11px;color:var(--muted);margin-top:2px}@media(max-width:560px){.wv-scope .wv-grid{grid-template-columns:1fr}.wv-scope .wv-interference-controls{grid-template-columns:1fr 1fr}.wv-scope .wv-interference-controls label:last-child{grid-column:1/-1}.wv-scope svg text{font-size:16px}.wv-scope svg .wv-small{font-size:14px}}\n</style><p>Når en bølge treffer en flate og sendes tilbake, får vi <strong>refleksjon</strong>. Vinklene måles fra <strong>innfallsloddet</strong>, som står vinkelrett på flaten. For speilende refleksjon er innfallsvinkelen lik refleksjonsvinkelen.</p><div class=\"wv-scope\"><div class=\"model\"><svg id=\"wv-reflection\" viewBox=\"0 0 760 300\" role=\"img\" aria-labelledby=\"wv-reflection-title wv-reflection-desc\"><title id=\"wv-reflection-title\">Refleksjon fra et plant speil</title><desc id=\"wv-reflection-desc\">Innkommende og reflektert lys danner like store vinkler med innfallsloddet. Endre innfallsvinkelen.</desc></svg><div class=\"controls\"><label class=\"control\" for=\"wv-angle\"><span class=\"wv-control-head\"><span>Innfallsvinkel</span><output id=\"wv-angle-value\"></output></span><input id=\"wv-angle\" type=\"range\" min=\"5\" max=\"80\" value=\"40\" step=\"1\"></label></div><div id=\"wv-reflection-readout\" class=\"readout wv-live\" aria-live=\"polite\"></div></div></div>"},{...refractionSection,body:refractionSection.body+practicalExamplesDialogHtml},{"title":"Interferens: utslagene legges sammen","body":"<p>Bølger kan være på samme sted samtidig. Det samlede utslaget er <strong>summen</strong>. <strong>Konstruktiv interferens</strong> forsterker utslaget; <strong>destruktiv interferens</strong> svekker det. To like bølger i motfase kan slokke hverandre helt ut.</p><div class=\"wv-scope\"><div class=\"model\"><svg id=\"wv-interference\" viewBox=\"0 0 760 290\" role=\"img\" aria-labelledby=\"wv-interference-title wv-interference-desc\"><title id=\"wv-interference-title\">To bølger og summen av dem</title><desc id=\"wv-interference-desc\">Separate felt viser bølge 1, bølge 2 og summen med samme skala. Bølgene har lik amplitude, frekvens og bølgelengde. Juster faseforskjellen.</desc></svg><div class=\"controls\"><label class=\"control\" for=\"wv-phase\"><span class=\"wv-control-head\"><span>Faseforskjell</span><output id=\"wv-phase-value\"></output></span><input id=\"wv-phase\" type=\"range\" min=\"0\" max=\"360\" value=\"0\" step=\"5\"></label></div><div class=\"wv-buttons wv-interference-presets\" role=\"group\" aria-label=\"Prøv interferens\"><button type=\"button\" id=\"wv-interference-inphase\" data-wv-interference-preset=\"inphase\" aria-pressed=\"true\">Konstruktiv · i fase</button><button type=\"button\" id=\"wv-interference-antiphase\" data-wv-interference-preset=\"antiphase\" aria-pressed=\"false\">Destruktiv · motfase</button></div><div id=\"wv-interference-readout\" class=\"readout wv-live\" aria-live=\"polite\"></div><p class=\"model-note\">Begge har amplitude A og samme bølgelengde og frekvens. 0° og 360°: i fase. 180°: motfase. Prikkene viser de to utslagene og summen ved samme sted.</p></div></div>"},diffractionSection,resonanceSection,flightSection],
+},sections:[{"title":"Refleksjon: bølgen sendes tilbake","body":"<style>\n.wv-scope svg{display:block;width:100%;height:auto;max-height:none;overflow:hidden;background:var(--model-bg,var(--sidebar,#f1f6f7));border-radius:12px}.wv-scope svg text{font:14px system-ui,sans-serif;fill:var(--ink,#273d4a)}.wv-scope svg .wv-small{font-size:12px;fill:var(--muted,#657985)}.wv-scope .wv-live{font-variant-numeric:tabular-nums}.wv-scope .wv-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.wv-scope .wv-buttons{display:flex;gap:7px;flex-wrap:wrap}.wv-scope .wv-buttons button{padding:6px 10px;border:1px solid var(--line,#bcced2);border-radius:7px;background:var(--surface,#fff);color:var(--ink,#273d4a);cursor:pointer;font:inherit;font-size:12px}.wv-scope .wv-buttons button[aria-pressed=\"true\"]{background:#187b8c;color:#fff;border-color:#187b8c}.wv-scope select{max-width:100%;font:inherit}.wv-scope .controls{margin-top:12px}.wv-scope label{display:block}.wv-scope input[type=\"range\"]{width:100%;accent-color:#187b8c}.wv-scope .wv-keyline{margin:12px 0 0;font-size:.92em}.wv-scope .wv-swatch{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}.wv-scope .wv-legend{display:flex;gap:18px;flex-wrap:wrap;font-size:.88em;margin-top:9px}.wv-scope .wv-summary{padding:10px 12px;border-radius:9px;background:var(--surface,#fff);margin-top:12px}.wv-scope .wv-control-head{display:flex;justify-content:space-between;gap:10px}.wv-scope .wv-control-head output{font-weight:650;white-space:nowrap}.wv-scope .wv-interference-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.wv-scope .wv-interference-controls label{min-width:0}.wv-scope .wv-interference-presets{margin-top:12px}.wv-scope .wv-component-panel{fill:var(--surface,#fff);stroke:var(--line,#dce5de);stroke-width:1}.wv-scope .wv-diff-barrier{fill:#778d97}.wv-scope .wv-field-canvas{display:block;width:100%;height:auto;aspect-ratio:760/340;border-radius:12px;background:#e8f1f3}.wv-field-legend{display:flex;gap:18px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:9px 0}.wv-field-legend span{display:inline-flex;align-items:center;gap:6px}.wv-field-legend i{width:16px;height:9px;border:1px solid #b5c9d0;border-radius:3px}.wv-scope .wv-check{display:flex;align-items:center;gap:8px;font-size:12px}.wv-scope .wv-check input{width:16px;height:16px}.wv-scope .wv-svg-bubble{fill:var(--surface,#fff);stroke:var(--line,#dce5de)}.wv-scope .wv-cartoon-label{font-size:13px;font-weight:650}.wv-scope .wv-readout-tag{display:block;font-size:11px;color:var(--muted);margin-top:2px}@media(max-width:560px){.wv-scope .wv-grid{grid-template-columns:1fr}.wv-scope .wv-interference-controls{grid-template-columns:1fr 1fr}.wv-scope .wv-interference-controls label:last-child{grid-column:1/-1}.wv-scope svg text{font-size:16px}.wv-scope svg .wv-small{font-size:14px}}\n</style><p>Når en bølge treffer en flate og sendes tilbake, får vi <strong>refleksjon</strong>. Vinklene måles fra <strong>innfallsloddet</strong>, som står vinkelrett på flaten. For speilende refleksjon er innfallsvinkelen lik refleksjonsvinkelen.</p><div class=\"wv-scope\"><div class=\"model\"><svg id=\"wv-reflection\" viewBox=\"0 0 760 300\" role=\"img\" aria-labelledby=\"wv-reflection-title wv-reflection-desc\"><title id=\"wv-reflection-title\">Refleksjon fra et plant speil</title><desc id=\"wv-reflection-desc\">Innkommende og reflektert lys danner like store vinkler med innfallsloddet. Endre innfallsvinkelen.</desc></svg><div class=\"controls\"><label class=\"control\" for=\"wv-angle\"><span class=\"wv-control-head\"><span>Innfallsvinkel</span><output id=\"wv-angle-value\"></output></span><input id=\"wv-angle\" type=\"range\" min=\"5\" max=\"80\" value=\"40\" step=\"1\"></label></div><div id=\"wv-reflection-readout\" class=\"readout wv-live\" aria-live=\"polite\"></div></div></div>"},{...refractionSection,body:refractionSection.body+practicalExamplesDialogHtml},{"title":"Interferens: utslagene legges sammen","body":"<p>Bølger kan være på samme sted samtidig. Det samlede utslaget er <strong>summen</strong>. <strong>Konstruktiv interferens</strong> forsterker utslaget; <strong>destruktiv interferens</strong> svekker det. To like bølger i motfase kan slokke hverandre helt ut.</p><div class=\"wv-scope\"><div class=\"model\"><svg id=\"wv-interference\" viewBox=\"0 0 760 290\" role=\"img\" aria-labelledby=\"wv-interference-title wv-interference-desc\"><title id=\"wv-interference-title\">To bølger og summen av dem</title><desc id=\"wv-interference-desc\">Separate felt viser bølge 1, bølge 2 og summen med samme skala. Bølgene har lik amplitude, frekvens og bølgelengde. Juster faseforskjellen.</desc></svg><div class=\"controls\"><label class=\"control\" for=\"wv-phase\"><span class=\"wv-control-head\"><span>Faseforskjell</span><output id=\"wv-phase-value\"></output></span><input id=\"wv-phase\" type=\"range\" min=\"0\" max=\"360\" value=\"0\" step=\"5\"></label></div><div class=\"wv-buttons wv-interference-presets\" role=\"group\" aria-label=\"Prøv interferens\"><button type=\"button\" id=\"wv-interference-inphase\" data-wv-interference-preset=\"inphase\" aria-pressed=\"true\">Konstruktiv · i fase</button><button type=\"button\" id=\"wv-interference-antiphase\" data-wv-interference-preset=\"antiphase\" aria-pressed=\"false\">Destruktiv · motfase</button></div><div id=\"wv-interference-readout\" class=\"readout wv-live\" aria-live=\"polite\"></div><p class=\"model-note\">Begge har amplitude A og samme bølgelengde og frekvens. 0° og 360°: i fase. 180°: motfase. Prikkene viser de to utslagene og summen ved samme sted.</p></div></div>"},diffractionSection,resonanceSection,dopplerSection],
  mount(root,api){
  const q=id=>root.querySelector('#'+id),get=id=>+q(id).value,layers={};
  const say=(id,lines)=>{const html=(Array.isArray(lines)?lines:[lines]).map(line=>`<div>${line}</div>`).join('');if(q(id).innerHTML!==html)q(id).innerHTML=html;};
@@ -309,8 +313,9 @@ const phenomena={...{
       layers.interference.innerHTML=panel(47,'Bølge 1',colors.wave,px=>component(px,l1,0),'wv-component-1')+panel(137,'Bølge 2',colors.purple,px=>component(px,l2,phase),'wv-component-2')+panel(227,'Sum',colors.amber,px=>interferenceDisplacement(worldX(px),t,l1,l2,phaseDegrees),'wv-interference-sum')+txt(730,286,'Samme sted x →','text-anchor="end" class="wv-small"');
     },q('wv-interference'));
 
- const cleanups=[mountRefraction(root,api),mountPracticalExamplesDialog(root,api),mountDiffraction(root,api),mountResonance(root,api),mountTuningForks(root,api),mountFlight(root,api)];
- mountResonanceTabs(root,api);update();
+ const cleanups=[mountRefraction(root,api),mountPracticalExamplesDialog(root,api),mountDiffraction(root,api),mountResonance(root,api),mountTuningForks(root,api),mountFlight(root,api),mountLightDoppler(root,api)];
+ mountModelTabs(root,api,'resonance',['wv-resonance','wv-tuning-forks']);
+ mountModelTabs(root,api,'doppler',['fd-scene','ld-scene']);update();
  return ()=>{for(const cleanup of cleanups)if(typeof cleanup==='function')cleanup();};
  }
 };

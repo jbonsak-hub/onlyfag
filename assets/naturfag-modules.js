@@ -3,7 +3,7 @@
  'use strict';
  const topicEntries=[['carbs','Karbohydrater'],['protein','Proteiner'],['fat','Fett'],['micro','Vitaminer, mineraler og vann'],['digestion','Fordøyelsen'],['energy','Energi og blodsukker'],['all','Blandet øving'],['flashcards','Begreper flashcards']];
  const validTopics=new Set([...topicEntries.map(([key])=>key),'review']);
- const waveEntries=[['bolger','Bølger og svingninger'],['fenomener','Bølgefenomener']];
+ const waveEntries=[['bolger','Bølger og svingninger'],['fenomener','Bølgefenomener'],['em','Det elektromagnetiske spekteret']];
  const waveViews=[['fagstoff','Fagstoff'],['oppgaver','Oppgavebank'],['begreper','Begreper']];
  const validWaveTopics=new Set(waveEntries.map(([key])=>key)),validWaveViews=new Set(waveViews.map(([key])=>key));
  const $=selector=>document.querySelector(selector);
@@ -64,7 +64,7 @@
  function ensureWavesFrame(){
   if(wavesStarted){sendWavesDesired();sendWavesVisibility();return;}
   wavesStarted=true;
-  wavesFrame.src='naturfag/bolger-straling.html?embedded=1&topic='+encodeURIComponent(wavesDesired.topic)+'&view='+encodeURIComponent(wavesDesired.view)+'&v=20261121-stemmegafler1';
+  wavesFrame.src='naturfag/bolger-straling.html?embedded=1&topic='+encodeURIComponent(wavesDesired.topic)+'&view='+encodeURIComponent(wavesDesired.view)+'&v=20261121-spectrum1';
  }
  wavesFrame.addEventListener('load',()=>{if(!wavesStarted)return;wavesReady=true;sendTheme();sendHostLayout();sendWavesDesired();sendWavesVisibility();});
  document.addEventListener('visibilitychange',sendWavesVisibility);

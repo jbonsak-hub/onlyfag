@@ -1,4 +1,4 @@
-import {absorptionSection,mountAbsorption,absorptionQuestion,absorptionTerm} from './absorption.js?v=20261116-layout2';
+export {spectrumReadouts} from '../../naturfag/bolger-straling/em-spectrum.js?v=${specVersion}';
 import {atomLabSection,mountAtomLab} from './atom-lab.js?v=20261116-layout2';
 // Self-contained teaching models. Physical quantities use SI units internally.
 const C = 299792458, H = 6.62607015e-34, AJ = 1e-18;
@@ -19,14 +19,6 @@ const wavelengthColor = nm => {
   if (nm < 645) return '#efa946';
   return '#ef6d6c';
 };
-export function spectrumReadouts(frequency,regionIndex){
-  const f=Number(frequency),wavelength=C/f;
-  const frequencyUnits=[[1e21,'ZHz'],[1e18,'EHz'],[1e15,'PHz'],[1e12,'THz'],[1e9,'GHz'],[1e6,'MHz'],[1e3,'kHz'],[1,'Hz']];
-  const fu=frequencyUnits.find(([scale])=>f>=scale)||frequencyUnits.at(-1);
-  const wavelengthUnits=[[1e3,'km'],[1,'m'],[1e-2,'cm'],[1e-3,'mm'],[1e-6,'µm'],[1e-9,'nm'],[1e-12,'pm'],[1e-15,'fm']];
-  const wu=[2,3,4].includes(regionIndex)?[1e-9,'nm']:(wavelengthUnits.find(([scale])=>wavelength>=scale)||wavelengthUnits.at(-1));
-  return {wavelength:`${fmt(wavelength/wu[0],3)} ${wu[1]} <span class="ema-scientific">(${sci(wavelength)} m)</span>`,frequency:`${fmt(f/fu[0],3)} ${fu[1]} <span class="ema-scientific">(${sci(f)} Hz)</span>`,energy:`${sci(H*f)} J`};
-}
 const sharedStyle = `<style>
 .ema-spectrum-svg,.ema-atom-svg,.ema-com-svg{display:block;width:100%;height:auto;overflow:visible}
 .ema-region-buttons{margin:7px 0!important;gap:5px!important}.ema-region-buttons button{font-size:11px!important;padding:5px 8px!important}
@@ -69,65 +61,6 @@ const sharedStyle = `<style>
 @media(max-width:650px){.topic-page .ema-spectrum-model .ema-spectrum-lower{grid-template-columns:1fr!important;gap:10px!important}.topic-page .ema-spectrum-model .ema-values{grid-template-columns:1fr!important}.topic-page .ema-spectrum-model .ema-values>div{padding:6px 9px!important}.topic-page .ema-spectrum-model .ema-values strong{font-size:14px!important}}
 .ema-formula-box .ema-word-relation{font-size:13px;font-weight:650;line-height:1.5;margin:10px 0 5px}.ema-formula-box .ema-formula-grid>div>p:not(.ema-word-relation){font-size:11px;line-height:1.55;margin:8px 0}
 </style>`;
-
-const regions = [
-  {name:'Radiobølger', f:1e7, min:4, max:9, color:'#729b90', use:'Radio, TV og lange kommunikasjonsforbindelser.', point:'Lang bølgelengde og lav energi per foton. Radiobølger kan sendes og mottas med antenner.'},
-  {name:'Mikrobølger', f:2.45e9, min:9, max:11.48, color:'#88bdb3', use:'Wi-Fi, radar, mobilkommunikasjon og mikrobølgeovner.', point:'Mikrobølger er en del av radiobølgeområdet, men vises ofte som en egen gruppe i skoleoversikter.'},
-  {name:'Infrarødt', f:3e13, min:11.48, max:14.585, color:'#d7aa72', use:'Varmekameraer og fjernkontroller. Kroppen og jorda sender hovedsakelig ut IR.', point:'Infrarød stråling kan overføre varme ved absorpsjon. Den er usynlig for øynene våre.'},
-  {name:'Synlig lys', f:5.45e14, min:14.585, max:14.897, color:'#86b97d', use:'Syn, belysning og optisk kommunikasjon.', point:'Menneskeøyet oppfatter omtrent 380–780 nm. Grensene er gradvise og varierer noe fra person til person.'},
-  {name:'Ultrafiolett', f:3e15, min:14.897, max:16.48, color:'#a193c6', use:'Solstråling, fluorescens og desinfeksjon med bestemte UV-kilder.', point:'UV kan skade hud og øyne. Den mest energirike delen av UV kan ionisere; DNA kan også skades uten ionisering.'},
-  {name:'Røntgen', f:1e18, min:16.48, max:19.48, color:'#8299b7', use:'Medisinske bilder og kontroll av materialer.', point:'Røntgen er ioniserende. Ulik absorpsjon i vev gir kontraster i et røntgenbilde.'},
-  {name:'Gamma', f:1e21, min:19.48, max:22, color:'#b4848e', use:'Strålebehandling og undersøkelser med radioaktive sporstoffer.', point:'Gammafotoner sendes blant annet ut fra eksiterte atomkjerner. Røntgen og gamma kan overlappe i energi; betegnelsene viser også til hvordan strålingen dannes.'}
-];
-
-function mountEM(root, api) {
-  const q = s => root.querySelector(s);
-  const freq = q('#ema-frequency');
-  const graph = q('#ema-spectrum-plot');
-  const buttonHost = q('#ema-region-buttons');
-  const x=log=>20+(log-4)/18*960;
-  const selectedRegion=log=>regions.findIndex((r,i)=>log>=r.min&&(log<r.max||i===regions.length-1));
-  function renderSpectrum(){
-    const log=Number(freq.value),f=10**log,ri=selectedRegion(log);
-    let markup='<title>Det elektromagnetiske spekteret</title><desc>En logaritmisk frekvensakse. Markøren viser valgt strålingstype.</desc><defs><linearGradient id="ema-visible-gradient"><stop offset="0" stop-color="#f36464"/><stop offset=".2" stop-color="#efb55b"/><stop offset=".4" stop-color="#a8cd6c"/><stop offset=".6" stop-color="#55b4cb"/><stop offset=".8" stop-color="#657dce"/><stop offset="1" stop-color="#a87ace"/></linearGradient></defs>';
-    markup+=regions.map((r,i)=>`<rect x="${x(r.min)}" y="50" width="${x(r.max)-x(r.min)}" height="22" fill="${i===3?'url(#ema-visible-gradient)':r.color}" opacity="${i===ri?1:.65}"/>`).join('');
-    const labelXs=[125,350,485,592,650,775,916],labelYs=[31,31,31,13,31,31,31];
-    markup+=regions.map((r,i)=>`<line x1="${x((r.min+r.max)/2)}" x2="${labelXs[i]}" y1="47" y2="${labelYs[i]+6}" stroke="${r.color}"/><text x="${labelXs[i]}" y="${labelYs[i]}" text-anchor="middle" class="ema-svg-text" style="font-size:14px">${r.name}</text>`).join('');
-    markup+=[4,6,8,10,12,14,16,18,20,22].map(p=>`<line x1="${x(p)}" x2="${x(p)}" y1="72" y2="79" class="ema-gridline"/><text x="${x(p)}" y="97" text-anchor="middle" class="ema-muted-text" style="font-size:13px">10<tspan baseline-shift="super" font-size="9">${p}</tspan></text>`).join('');
-    markup+=`<text x="500" y="120" text-anchor="middle" class="ema-muted-text">Frekvens i Hz · logaritmisk skala</text><path d="M${x(log)-6} 39l6 8 6-8Z" fill="var(--green,#236448)"/><line x1="${x(log)}" x2="${x(log)}" y1="50" y2="73" stroke="var(--ink,#20352e)" stroke-width="2"/>`;
-    graph.innerHTML=markup;
-    const outputs=spectrumReadouts(f,ri);
-    q('#ema-wavelength-output').innerHTML=outputs.wavelength;q('#ema-frequency-output').innerHTML=outputs.frequency;q('#ema-energy-output').innerHTML=outputs.energy;
-    buttonHost.querySelectorAll('button').forEach((button,i)=>button.setAttribute('aria-pressed',String(i===ri)));
-  }
-  function renderWave(t){
-    const log=Number(freq.value),nm=C/(10**log)*1e9,cycles=1.2+(log-4)*.46,color=wavelengthColor(nm);
-    const points=Array.from({length:401},(_,i)=>[25+i*1.775,40-18*Math.sin((i/400*cycles-t*.7)*Math.PI*2)]);
-    q('#ema-spectrum-wave').innerHTML=`<title>Bølge ved valgt frekvens</title><rect x="12" y="7" width="736" height="66" rx="10" class="ema-dark"/><path d="${line(points)}" fill="none" stroke="${nm>=380&&nm<=780?color:'#9dcec3'}" stroke-width="2.8"/>`;
-  }
-  freq.addEventListener('input',()=>{renderSpectrum();api.repaint(q('#ema-spectrum-wave'));});
-  buttonHost.querySelectorAll('button').forEach((button,i)=>button.addEventListener('click',()=>{freq.value=Math.log10(regions[i].f);renderSpectrum();api.repaint(q('#ema-spectrum-wave'));}));
-  renderSpectrum();api.onFrame(renderWave,q('#ema-spectrum-wave'));
-  const rgb = ['red','green','blue'].map(s => q(`#ema-rgb-${s}`));
-  function renderRGB(){
-    const vals=rgb.map(el=>Number(el.value));
-    rgb.forEach((el,i)=>q(`#${el.id}-value`).textContent=vals[i]);
-    q('#ema-rgb-red-circle').setAttribute('fill',`rgb(${vals[0]},0,0)`);
-    q('#ema-rgb-green-circle').setAttribute('fill',`rgb(0,${vals[1]},0)`);
-    q('#ema-rgb-blue-circle').setAttribute('fill',`rgb(0,0,${vals[2]})`);
-    q('#ema-rgb-result').setAttribute('fill',`rgb(${vals.join(',')})`);
-    q('#ema-rgb-value').textContent=`RGB ${vals.join(' · ')}`;
-    let name='En blandingsfarge';
-    if(vals.every(v=>v===0))name='Svart: ingen lys fra pikselen';
-    else if(vals.every(v=>v===255))name='Hvitt: alle tre lyskanalene på fullt';
-    else if(vals[0]===255&&vals[1]===255&&vals[2]===0)name='Gult: rødt og grønt lys sammen';
-    q('#ema-rgb-caption').textContent=name;
-  }
-  rgb.forEach(el=>el.addEventListener('input',renderRGB));
-  root.querySelectorAll('[data-ema-rgb]').forEach(b=>b.addEventListener('click',()=>{b.dataset.emaRgb.split(',').forEach((v,i)=>rgb[i].value=v);renderRGB();}));
-  renderRGB();
-  return mountAbsorption(root);
-}
 
 function mountAtom(root,api){
   const atomCleanup=mountAtomLab(root,api),ionCleanup=mountIonization(root,api);
@@ -273,48 +206,6 @@ function mountMobileNetwork(root,api){
 }
 
 export const topics = [
-  {
-    id:'em', title:'Det elektromagnetiske spekteret', kicker:'Fra radio til gamma',
-    summary:'Én familie av stråling, mange bølgelengder. Finn sammenhengen mellom frekvens, farge og energi per foton.',
-    sections:[
-      {title:'Mekaniske og elektromagnetiske bølger',body:sharedStyle+`<dl class="ema-wave-types"><div><dt>Mekaniske bølger</dt><dd>Trenger et stoff å bre seg i. Lydbølger er svingninger i luft, vann eller faste stoffer. Bølger på en streng og vannoverflate er også mekaniske.</dd></div><div><dt>Elektromagnetiske bølger</dt><dd>Er svingninger i elektriske og magnetiske felt. De kan bre seg i vakuum, og alle går med lysfarten c ≈ 3,00 · 10<sup>8</sup> m/s i vakuum.</dd></div></dl><p>EM-stråling kan også beskrives som energipakker, <strong>fotoner</strong>. Kortere bølgelengde gir høyere frekvens og større energi per foton.</p><div class="key ema-formula-box"><div class="ema-formula-grid"><div><h3>Sammenhenger</h3><p class="ema-word-relation">Bølgefart = frekvens · bølgelengde</p><div class="calc-lines"><div class="calc-row"><span class="calc-lhs">v</span><span class="calc-eq">=</span><span class="calc-rhs">f · λ</span></div></div><p>For lys i vakuum er bølgefarten v = c. Da får vi:</p><div class="calc-lines"><div class="calc-row"><span class="calc-lhs">c</span><span class="calc-eq">=</span><span class="calc-rhs">f · λ</span></div><div class="calc-row"><span class="calc-lhs">f</span><span class="calc-eq">=</span><span class="calc-rhs"><span class="frac"><span class="num">c</span><span class="den">λ</span></span></span></div></div><p class="ema-word-relation">Energi per foton = Plancks konstant · frekvens</p><div class="calc-lines"><div class="calc-row"><span class="calc-lhs">E</span><span class="calc-eq">=</span><span class="calc-rhs">h · f</span></div></div><p>c er lysfarten, f er frekvens, λ er bølgelengde og h er Plancks konstant. E er energien i <strong>ett foton</strong>.</p></div><div><h3>Regneeksempel: grønt lys</h3><p>En lyskilde sender ut grønt lys med bølgelengde 500 nm i vakuum.</p><p><strong>a)</strong> Hvilken frekvens har lyset?<br><strong>b)</strong> Hvor mye energi har ett foton?</p><details class="ema-worked-example"><summary>Vis forklaring og utregning</summary><p>Først finner vi frekvensen fra lysfarten og bølgelengden. Vi skriver 500 nm som 500 · 10<sup>−9</sup> m.</p><div class="calc-lines"><div class="calc-row"><span class="calc-lhs">f</span><span class="calc-eq">=</span><span class="calc-rhs"><span class="frac"><span class="num">3,00 · 10<sup>8</sup> m/s</span><span class="den">500 · 10<sup>−9</sup> m</span></span></span></div><div class="calc-row"><span class="calc-lhs"></span><span class="calc-eq">=</span><span class="calc-rhs">6,00 · 10<sup>14</sup> Hz</span></div></div><p>Deretter bruker vi E = h · f for energien i ett foton.</p><div class="calc-lines"><div class="calc-row"><span class="calc-lhs">E</span><span class="calc-eq">=</span><span class="calc-rhs">h · f</span></div><div class="calc-row"><span class="calc-lhs"></span><span class="calc-eq">=</span><span class="calc-rhs">6,63 · 10<sup>−34</sup> J s · 6,00 · 10<sup>14</sup> Hz</span></div><div class="calc-row"><span class="calc-lhs"></span><span class="calc-eq">=</span><span class="calc-rhs"><strong>3,98 · 10<sup>−19</sup> J</strong></span></div></div></details></div></div><p>Mer lysintensitet kan bety flere fotoner per sekund. Det trenger ikke bety mer energi i hvert foton.</p></div>`},
-      {title:'Utforsk spekteret',body:`<div class="model ema-spectrum-model" data-model-layout="custom"><div class="model-full-width ema-spectrum-band" data-model-full-width><svg id="ema-spectrum-plot" class="ema-spectrum-band-svg" viewBox="0 0 1000 125" role="img" aria-label="Hele det elektromagnetiske spekteret"></svg></div><div class="ema-spectrum-lower"><div class="ema-spectrum-figure model-visual"><svg id="ema-spectrum-wave" class="ema-spectrum-wave-svg" viewBox="0 0 760 80" role="img" aria-label="Bølge ved valgt frekvens"></svg><div class="ema-values" aria-live="polite"><div><small>Bølgelengde λ</small><strong id="ema-wavelength-output"></strong></div><div><small>Frekvens f</small><strong id="ema-frequency-output"></strong></div><div><small>Energi per foton</small><strong id="ema-energy-output"></strong></div></div></div><div class="ema-spectrum-controls"><div class="controls"><label class="control" for="ema-frequency">Frekvens · logaritmisk skala<input id="ema-frequency" type="range" min="4" max="22" step="0.005" value="14.7364"></label></div><div class="ema-region-buttons" id="ema-region-buttons">${regions.map((r,i)=>`<button type="button" data-region="${i}" aria-pressed="${i===3}">${r.name}</button>`).join('')}</div></div></div></div>`},
-      absorptionSection,
-      {title:'Hvordan lager en skjerm hvitt og gult?',body:`<p>En skjerm blander <strong>rødt, grønt og blått lys</strong> (RGB). Hvitfarge kan lages med en passende blanding av disse tre; det er ikke nødvendig å ha alle bølgelengder i blandingen.</p><div class="model ema-rgb-layout" data-model-layout="custom"><div class="ema-rgb-screen"><svg viewBox="0 0 600 230" role="img" aria-label="Additiv blanding av rødt, grønt og blått lys"><rect width="600" height="230" rx="10" fill="#000"/><g style="isolation:isolate"><circle id="ema-rgb-red-circle" cx="160" cy="85" r="70" style="mix-blend-mode:screen"/><circle id="ema-rgb-green-circle" cx="240" cy="85" r="70" style="mix-blend-mode:screen"/><circle id="ema-rgb-blue-circle" cx="200" cy="135" r="70" style="mix-blend-mode:screen"/></g><path d="M380 35v155" stroke="#48636c"/><rect id="ema-rgb-result" x="440" y="55" width="100" height="100" rx="10"/><text x="490" y="185" text-anchor="middle" fill="#ddd" font-size="15">Blandingsfargen</text></svg><output id="ema-rgb-value"></output></div><div class="ema-rgb-controls">${[['red','Rødt',255],['green','Grønt',255],['blue','Blått',0]].map(([id,label,val])=>`<label for="ema-rgb-${id}">${label}<input type="range" id="ema-rgb-${id}" min="0" max="255" step="1" value="${val}"><output id="ema-rgb-${id}-value" for="ema-rgb-${id}">${val}</output></label>`).join('')}<div class="ema-region-buttons"><button type="button" data-ema-rgb="255,255,255">Hvitt</button><button type="button" data-ema-rgb="255,255,0">Gult</button><button type="button" data-ema-rgb="0,0,0">Svart</button></div><p id="ema-rgb-caption" aria-live="polite"></p></div></div><div class="key"><strong>Lysblanding og overflatefarger er forskjellige:</strong> En rød flate reflekterer særlig rødt lys og absorberer mye av det øvrige. Uten rødt i belysningen kan flaten se mørk ut.</div>`}
-
-    ],
-    terms:[
-      {term:'Elektromagnetisk stråling',definition:'Energi som overføres med svingende elektriske og magnetiske felt; kan bre seg i vakuum.'},
-      {term:'Foton',definition:'En energipakke i elektromagnetisk stråling. E = hf.'},
-      {term:'Synlig spekter',definition:'Den lille delen av EM-spekteret øynene våre oppfatter, omtrent 380–780 nm.'},
-      {term:'Infrarød stråling',definition:'EM-stråling med lengre bølgelengde enn synlig rødt lys. Varme gjenstander som kroppen sender hovedsakelig ut IR.'},
-      {term:'Ioniserende stråling',definition:'Stråling som har nok energi til å frigjøre elektroner fra atomer eller molekyler.'},
-      absorptionTerm,
-      {term:'RGB',definition:'Additiv lysblanding med rødt, grønt og blått, blant annet i skjermer.'},
-      {term:'Intensitet',definition:'Energi som passerer per tid og areal. Høyere intensitet er ikke det samme som høyere energi per foton.'},
-      {term:'Attojoule (aJ)',definition:'En liten energienhet: 1 aJ = 10⁻¹⁸ J. Den er nyttig for energier i atomer og i enkeltfotoner.'}
-    ],
-    questions:[
-      absorptionQuestion,
-      {id:'wv-b8',type:'open',level:'Bruk',prompt:'En film viser en eksplosjon langt ute i verdensrommet. Kan astronauten se den? Kan astronauten høre den gjennom vakuum? Forklar.',answer:'Lys er elektromagnetisk stråling og kan gå gjennom vakuum, så eksplosjonen kan sees. Lyd er en mekanisk bølge og trenger et stoff. Den kan derfor ikke høres gjennom vakuum.'},
-      {id:'em-01',type:'mcq',level:'Start',prompt:'Hvilken type stråling har størst energi per foton?',choices:['Radiobølger','Infrarødt','Synlig rødt lys','Gammastråling'],correct:3,answer:'Gammastråling har vanligvis høyest frekvens av disse. <strong>E = hf</strong> gir størst energi per foton.'},
-      {id:'em-02',type:'open',level:'Start',prompt:'Sorter fra lengst til kortest bølgelengde: gamma, synlig lys, radio, UV, mikrobølger, røntgen, infrarødt.',answer:'<strong>Radio → mikrobølger → infrarødt → synlig lys → UV → røntgen → gamma.</strong> Mikrobølger er en del av radiobølgeområdet, men skilles ofte ut i denne oversikten.'},
-      {id:'em-03',type:'number',level:'Bruk',prompt:'En radiobølge har frekvens 100 MHz. Finn bølgelengden i vakuum. Bruk c = 3,00 · 10⁸ m/s.',value:3,tolerance:.03,unit:'m',hint:'100 MHz = 100 · 10⁶ Hz. Bruk λ = c/f.',answer:'λ = c/f = (3,00 · 10<sup>8</sup>)/(100 · 10<sup>6</sup>) m = <strong>3,00 m</strong>.'},
-      {id:'em-04',type:'number',level:'Bruk',prompt:'Grønt lys har bølgelengde 500 nm. Finn frekvensen i enheten 10¹⁴ Hz. Bruk c = 3,00 · 10⁸ m/s.',value:6,tolerance:.06,unit:'· 10¹⁴ Hz',hint:'500 nm = 5,00 · 10⁻⁷ m. Bruk f = c/λ.',answer:'f = c/λ = (3,00 · 10<sup>8</sup>)/(5,00 · 10<sup>−7</sup>) Hz = <strong>6,00 · 10<sup>14</sup> Hz</strong>.'},
-      {id:'em-05',type:'mcq',level:'Start',prompt:'Hvilket utsagn stemmer om stråling i vakuum?',choices:['Gamma går raskere enn radiobølger','Synlig lys går raskest','Alle EM-bølger går like raskt','Kortere bølger går alltid saktere'],correct:2,answer:'Alle EM-bølger går med lysfarten <strong>c</strong> i vakuum, selv om frekvens og bølgelengde er forskjellige.'},
-      {id:'em-06',type:'open',level:'Bruk',prompt:'En skjerm viser gult. Hvilke to RGB-lyskilder er da aktive? Hva skjer når du skrur av alle tre?',answer:'<strong>Rødt og grønt lys</strong> kan gi gult. Når alle tre er av, sender pikselen ikke ut lys og framstår svart.'},
-      {id:'em-07',type:'mcq',level:'Bruk',prompt:'En lampe gir dobbelt så høy intensitet, men beholder samme farge. Hva kan ha skjedd?',choices:['Hvert foton har nødvendigvis fått dobbelt energi','Det sendes ut flere fotoner per sekund','Lyset har fått dobbelt fart','Bølgelengden må være halvert'],correct:1,answer:'Ved samme farge/frekvens har hvert foton samme energi. Høyere intensitet kan skyldes <strong>flere fotoner per sekund</strong>.'},
-      {id:'em-08',type:'open',level:'Bruk',prompt:'Hvorfor kan et varmekamera vise en person i et helt mørkt rom?',answer:'Kroppen sender ut <strong>varmestråling, hovedsakelig infrarødt</strong>, selv når det ikke er synlig lys i rommet. Varmekameraet registrerer denne strålingen.'},
-      {id:'em-09',type:'mcq',level:'Bruk',prompt:'Hvilket utsagn om mikrobølger er riktig?',choices:['De er mekaniske bølger','De går bare gjennom luft','De er en del av radiobølgeområdet','Alle mikrobølgefotoner er ioniserende'],correct:2,answer:'Mikrobølger er kortbølgede <strong>radiobølger</strong>. De er elektromagnetiske og kan også bre seg i vakuum.'},
-      {id:'em-10',type:'open',level:'Utfordring',prompt:'«Mobilen bruker mikrobølger, så den er som en mikrobølgeovn.» Vurder hva som er riktig og hva sammenlikningen mangler.',answer:'Begge bruker EM-stråling i radio-/mikrobølgeområdet. Men man må også sammenlikne <strong>effekt, intensitet, absorpsjon og eksponering</strong>. En mikrobølgeovn tilfører stor effekt i et skjermet rom for å varme mat. At frekvensområdene overlapper, sier ikke alene hvilken påvirkning en mobil gir.'},
-      {id:'em-11',type:'open',level:'Bruk',prompt:'Hvorfor kan en rød genser se mørk ut i rent blått lys?',answer:'Genseren reflekterer særlig rødt lys, men det er lite eller intet rødt lys å reflektere. Det blå lyset absorberes i stor grad, og genseren kan derfor se mørk ut.'},
-      {id:'em-12',type:'mcq',level:'Start',prompt:'Blått og rødt lys sammenliknes. Hvilket utsagn er riktig?',choices:['Et rødt foton har mer energi','Et blått foton har mer energi','Alle synlige fotoner har samme energi','Rødt lys går raskere i vakuum'],correct:1,answer:'Blått lys har kortere bølgelengde og høyere frekvens. Derfor har et <strong>blått foton</strong> mer energi enn et rødt.'}
-    ],
-    resources:[
-      {label:'NASA: Det elektromagnetiske spekteret',url:'https://science.nasa.gov/ems/01_intro/'},
-      {label:'PhET: Fargesyn',url:'https://phet.colorado.edu/nb/simulations/color-vision'}
-    ],mount:mountEM
-  },
   {
     id:'atomer',title:'Stråling fra atomet',kicker:'Energinivåer og fingeravtrykk',
     summary:'Atomer tar opp og sender ut bestemte fotoner. Det gjør lyset til en nøkkel til stoffenes innhold.',

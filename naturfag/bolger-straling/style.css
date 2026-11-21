@@ -205,9 +205,6 @@ body.dark{color-scheme:dark;--bg:#12251f;--surface:#1a3028;--sidebar:#152a22;--i
 }
 .topic-page .wb-equations>div{flex-direction:column;gap:7px}.topic-page .wb-equations .wb-words{font-size:11px;font-weight:500;line-height:1.5;text-align:center}.topic-page .wb-equations strong{font-size:19px;font-weight:700}
 
-.resonance-tabs{display:flex;gap:7px;margin:0 0 14px}
-.resonance-tabs button{min-height:36px;padding:7px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-size:13px}
-.resonance-tabs [aria-selected=true]{border-color:var(--green);background:var(--green-soft);color:var(--green)}
 .topic-page .tf-model .animation-surface>.animation-toolbar{top:5px;right:50%;transform:translateX(50%)}
 .tf-air-backdrop{fill:var(--sidebar);stroke:var(--line);stroke-width:1.5}
 .tf-air-column{fill:var(--blue)}
@@ -218,21 +215,29 @@ body.dark{color-scheme:dark;--bg:#12251f;--surface:#1a3028;--sidebar:#152a22;--i
 .tf-tines{fill:none;stroke:var(--blue);stroke-width:12;stroke-linecap:round}
 .tf-fork-receiver .tf-tines{stroke:var(--muted)}
 .tf-diagram[data-response=resonance] .tf-fork-receiver .tf-tines{stroke:var(--green)}
-.wv-scope .tf-diagram .tf-frequency{font-size:25px;font-weight:720}
 .wv-scope .tf-diagram .tf-direction-label{font-size:20px;fill:var(--muted)}
 .tf-direction{fill:none;stroke:var(--muted);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.tf-tones{display:grid;gap:9px}
-.tf-tones label,.tf-sound{font-size:13px}
-.tf-tones select{width:100%;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink)}
 .tf-actions{display:flex;align-items:center;gap:9px 12px;flex-wrap:wrap;margin-top:12px}
 .tf-actions button{min-height:40px}
 .tf-actions .tf-sound{display:inline-flex;align-items:center;gap:5px;min-height:36px}
 .tf-readout label{display:block;margin-top:6px;color:var(--muted)}
 .tf-readout meter{display:block;width:100%;max-width:220px;height:.8rem}
-.tf-model .tf-note{margin:0;color:var(--muted)}
 @media(max-width:779px){
- .tf-tones{grid-template-columns:repeat(2,minmax(0,1fr))}
  .tf-actions button{min-height:44px}
- .wv-scope .tf-diagram .tf-frequency{font-size:29px}
  .wv-scope .tf-diagram .tf-direction-label{font-size:24px}
+}
+
+.wv-model-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;max-width:440px;margin:10px 0 18px;padding:4px;border:1px solid var(--line);border-radius:12px;background:var(--sidebar)}
+.wv-model-tabs button{min-height:44px;padding:7px 10px;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--ink);font-size:14px;font-weight:700}
+.wv-model-tabs button:hover{background:var(--surface)}
+.wv-model-tabs [aria-selected=true],.wv-model-tabs [aria-selected=true]:hover{background:var(--green);color:var(--bg);border-color:var(--green)}
+.tf-stage{position:relative;min-width:0}
+.tf-stage .tf-frequency-select{position:absolute;z-index:4;top:4%;transform:translateX(-50%);width:min(24%,120px);min-height:30px;padding:2px 4px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);font-size:clamp(11px,1.3vw,14px);font-weight:700}
+#tf-source{left:12%}
+#tf-receiver{left:88%}
+@media(max-width:520px){
+ #tf-source{left:16%}
+ #tf-receiver{left:84%}
+ .tf-stage{padding-top:14px}
+ .tf-stage .tf-frequency-select{width:30%;min-height:28px;top:3px}
 }
