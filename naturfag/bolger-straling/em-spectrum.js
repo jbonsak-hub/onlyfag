@@ -1,5 +1,5 @@
 import {absorptionSection,mountAbsorption,absorptionQuestion,absorptionTerm} from './absorption.js?v=20261121-spectrum1';
-import {lightDualitySection,mountLightDuality} from './light-duality.js?v=20261121-spectrum1';
+import {lightDualitySection,mountLightDuality} from './light-duality.js?v=20261121-lys2';
 // Self-contained teaching models. Physical quantities use SI units internally.
 const C = 299792458, H = 6.62607015e-34;
 const fmt = (x, digits = 2) => x.toLocaleString('nb-NO', {maximumFractionDigits: digits});
@@ -69,9 +69,13 @@ const sharedStyle = `<style>
 .ema-formula-box .ema-word-relation{font-size:13px;font-weight:650;line-height:1.5;margin:10px 0 5px}.ema-formula-box .ema-formula-grid>div>p:not(.ema-word-relation){font-size:11px;line-height:1.55;margin:8px 0}
 
 [id^="section-em-"]{margin-bottom:34px}
-.ema-formula-box{margin:20px 0!important}
+.ema-formula-box{margin:20px 0!important;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:24px;align-items:center}
 .ema-formula-box .ema-vacuum{font-size:1.05rem;margin:0 0 12px}
-.ema-vacuum-equations{display:grid;gap:9px;font-size:1.15rem;padding-top:10px;color:var(--green)}
+.ema-vacuum-equations{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.ema-vacuum-equations>div{display:grid;grid-template-rows:auto 1fr;min-height:92px;gap:4px;align-items:center;text-align:center;padding:7px 4px;border:1px solid var(--line);background:var(--surface);border-radius:8px}
+.ema-vacuum-equations>div>span{font-size:12px;color:var(--muted)}
+.ema-vacuum-equations strong{display:flex;justify-content:center;gap:.24em;align-items:center;color:var(--green);font-size:clamp(15px,2vw,19px);white-space:nowrap}
+@media(max-width:780px){.ema-formula-box{grid-template-columns:1fr;gap:14px}}
 .ema-visible-intro{display:grid;grid-template-columns:minmax(0,2fr) minmax(210px,1fr);gap:20px;margin:24px 0 12px;align-items:center}
 .ema-visible-intro figure{margin:0;min-width:0}.ema-visible-intro figcaption{font-size:15px;font-weight:700;margin-bottom:10px}
 .ema-visible-intro svg{display:block;width:100%;height:auto}
@@ -158,16 +162,16 @@ export const emTopic = {
 <p>I vakuum går alle elektromagnetiske bølger med lysfarten. I luft er farten nesten den samme. I for eksempel glass kan farten variere med bølgelengden.</p>
 <p>Et <strong>foton</strong> er en energipakke i strålingen. Dobbel frekvens gir dobbelt så stor energi per foton. I vakuum hører høyere frekvens sammen med kortere bølgelengde.</p>
 <div class="key ema-formula-box">
- <h3>Lys i vakuum</h3>
- <p class="ema-vacuum"><strong>v = c = 300 000 km/s = 3,00 · 10<sup>8</sup> m/s</strong></p>
- <p>Vi setter lysfarten <i>c</i> inn for bølgefarten <i>v</i>.</p>
- <div class="ema-vacuum-equations">
-  <div><i>v</i> = <i>f</i> · <i>λ</i></div>
-  <div><i>c</i> = <i>f</i> · <i>λ</i></div>
-  <div><i>f</i> = <span class="frac"><span class="num">c</span><span class="den">λ</span></span></div>
-  <div><i>λ</i> = <span class="frac"><span class="num">c</span><span class="den">f</span></span></div>
+ <div class="ema-vacuum-intro">
+  <h3>Lys i vakuum</h3>
+  <p class="ema-vacuum"><strong>v = c = 300 000 km/s = 3,00 · 10<sup>8</sup> m/s</strong></p>
+  <p>Bølgeformelen er <i>v</i> = <i>f</i> · <i>λ</i>. I vakuum setter vi inn lysfarten <i>c</i> for <i>v</i>.</p>
  </div>
- <p><i>f</i> er frekvensen, og <i>λ</i> er bølgelengden.</p>
+ <div class="ema-vacuum-equations">
+  <div><span>Lysfart</span><strong><i>c</i> = <i>f</i> · <i>λ</i></strong></div>
+  <div><span>Frekvens</span><strong><i>f</i> = <span class="frac"><span class="num">c</span><span class="den">λ</span></span></strong></div>
+  <div><span>Bølgelengde</span><strong><i>λ</i> = <span class="frac"><span class="num">c</span><span class="den">f</span></span></strong></div>
+ </div>
 </div>
 <div class="ema-visible-intro">
  <figure><figcaption>Synlig lys</figcaption>

@@ -70,12 +70,84 @@ const styles = `<style>
 .ld-explanation{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}
 .ld-explanation p{margin:0;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);line-height:1.55}
 @media(max-width:620px){.ld-scenes,.ld-explanation{grid-template-columns:1fr}.ld-model.model{padding:12px}.ld-controls{gap:7px}.ld-controls button{min-height:44px}.ld-count{margin-left:0}}
+
+.ld-interference-link{display:inline-block;margin-top:12px;font-weight:700;color:var(--green)}
+.ld-photoelectric{margin-top:26px}
+.ld-photoelectric .ld-photo-model{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(215px,1fr);align-items:center;gap:15px;width:100%;max-width:none;padding:14px}
+.ld-photo-model svg{display:block;width:100%;height:auto;min-height:0;max-height:none;margin:0}
+.ld-photo-controls{display:grid;gap:10px}.ld-photo-controls label{display:grid;font-size:13px;font-weight:650;gap:5px}
+.ld-photo-controls select{min-width:0;width:100%;padding:7px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.ld-photo-controls output{color:var(--muted);font-weight:400}
+.ld-photo-controls p{margin:0;padding:8px;background:var(--green-soft);border-radius:6px}
+.ld-photo-insight{margin-top:12px}
+@media(max-width:660px){.ld-photoelectric .ld-photo-model{grid-template-columns:1fr}}
 </style>`;
+
+
+const photoelectricColors = [
+  {label:'Rødt lys',nm:650,color:'#fb8f84'},
+  {label:'Grønt lys',nm:530,color:'#9fe3ab'},
+  {label:'Fiolett lys',nm:405,color:'#c4a8ff'},
+  {label:'Ultrafiolett',nm:320,color:'#9ba8ff'}
+];
+
+const photoelectricHtml = `<div class="ld-photoelectric">
+  <h3>Fotoelektrisk effekt</h3>
+  <p>Kan du få elektroner ut av metallplata med rødt lys? Øk intensiteten og se hva som skjer. Prøv så fiolett lys med lav intensitet.</p>
+  <div class="model ld-photo-model" data-model-layout="custom">
+    <svg id="ld-photo-scene" viewBox="0 0 600 210" role="img" aria-label="Lys treffer en metallplate. Når fotonene har nok energi, slipper elektroner ut.">
+      <rect width="600" height="210" rx="10" fill="#121b30"/>
+      <path d="M68 71L279 143M292 139L538 64" stroke="#a1b2d5" stroke-dasharray="4 8" opacity=".35"/>
+      <rect x="43" y="51" width="22" height="34" rx="5" transform="rotate(16 54 68)" fill="#a8b6d6"/>
+      <rect x="167" y="142" width="232" height="22" rx="4" fill="#63748e" stroke="#bcc9e1" stroke-width="3"/>
+      <g id="ld-photo-photons"></g>
+      <g id="ld-photo-electrons"></g>
+      <g fill="#e1e6fa" text-anchor="middle" font-size="20" font-weight="650">
+        <text x="135" y="38">Innkommende fotoner</text>
+        <text x="287" y="185">Metallplate</text>
+        <text x="456" y="38">Frigjorte elektroner</text>
+      </g>
+    </svg>
+    <div class="ld-photo-controls">
+      <label>Type lys <select id="ld-photo-wavelength">${photoelectricColors.map(({label,nm},i)=>'<option value="'+i+'">'+label+' · '+nm+' nm</option>').join('')}</select></label>
+      <label>Lysintensitet <output id="ld-photo-intensity-output" for="ld-photo-intensity">Svak</output><input id="ld-photo-intensity" type="range" min="1" max="5" value="1"></label>
+      <p id="ld-photo-result" role="status"></p>
+    </div>
+  </div>
+  <p class="ld-photo-insight">For å løsne et elektron må ett foton overføre nok energi til det. Høyere frekvens betyr mer energi per foton. For metallplata i modellen er grensen omtrent 500 nm. Når bølgelengden er kort nok, gir sterkere lys flere frigjorte elektroner fordi flere fotoner treffer plata hvert sekund.</p>
+</div>`;
+
+function mountPhotoelectric(root){
+  const get=id=>root.querySelector('#ld-photo-'+id);
+  const wavelength=get('wavelength'),intensity=get('intensity');
+  const electrons=get('electrons'),photons=get('photons'),result=get('result');
+  const thresholdNm = 500;
+  function draw(){
+    const {nm,color}=photoelectricColors[Number(wavelength.value)];
+    const brightness=Number(intensity.value);
+    const canRelease=nm<=thresholdNm;
+    get('intensity-output').textContent=['Svak','Ganske svak','Middels','Ganske sterk','Sterk'][brightness-1];
+    photons.innerHTML=Array.from({length:brightness*2},(_,i)=>{
+      const fraction=i/(brightness*2);
+      const x=92+fraction*178, y=80+fraction*57+((i%3)-1)*6;
+      return `<path d="M${x-10} ${y}h8" stroke="${color}" stroke-width="2" opacity=".55"/><circle cx="${x}" cy="${y}" r="4" fill="${color}"/>`;
+    }).join('');
+    electrons.innerHTML=canRelease?Array.from({length:brightness},(_,i)=>{
+      const x=343+i*40,y=105+[6,8,-10,-15,-24][i];
+      return `<path d="M${x-30} ${y+10}l20 -9" stroke="#94def3" stroke-width="2" opacity=".6"/><circle cx="${x}" cy="${y}" r="9" fill="#a4e4f4"/><path d="M${x-4} ${y}h8" stroke="#15354c" stroke-width="2"/>`;
+    }).join(''):'';
+    result.textContent=canRelease?'Elektroner frigjøres.':'Ingen elektroner frigjøres.';
+    get('scene').dataset.emits=String(canRelease);
+  }
+  wavelength.addEventListener('change',draw);
+  intensity.addEventListener('input',draw);
+  draw();
+}
 
 export const lightDualitySection = {
   title: 'Lys: bølger eller partikler?',
   body: `${styles}
-    <p>I dobbeltspalteforsøket sendes ett foton om gangen mot to smale åpninger. Hvert treff gir et lite lysglimt på skjermen.</p>
+    <p>Slipp ett foton gjennom dobbeltspalten. Slipp så mange på rad og se hvor treffene samler seg på skjermen til høyre.</p>
     <div class="model ld-model" data-model-layout="custom">
       <div class="ld-scenes">
         <figure><figcaption>Forsøket sett ovenfra</figcaption>${diagram}</figure>
@@ -95,12 +167,15 @@ export const lightDualitySection = {
       </div>
     </div>
     <div class="ld-explanation">
-      <p><strong>Partikkel.</strong> Lyset treffer skjermen i enkeltpunkter. Hvert punkt viser hvor ett foton ble registrert.</p>
-      <p><strong>Bølge.</strong> Etter mange treff kommer et interferensmønster fram. Det blir flest treff der bølgene forsterker hverandre.</p>
-    </div>`
+      <p><strong>Prikkene.</strong> Hver prikk er stedet der ett foton traff skjermen. Hvor det neste fotonet treffer, er tilfeldig. Vi kan forutsi hvilke områder som får flest treff over tid.</p>
+      <p><strong>Mange treff.</strong> I de lyse stripene treffer fotonene oftere. Der forsterker bølgene fra de to spaltene hverandre. I de mørke stripene svekker bølgene hverandre, og det blir få eller ingen treff.</p>
+    </div>
+    <a class="ld-interference-link" href="/naturfag#waves/fenomener/fagstoff/interferens" target="_top">Utforsk hvordan bølgene forsterker og svekker hverandre i interferensmodellen</a>
+    ${photoelectricHtml}`
 };
 
 export function mountLightDuality(root, api) {
+  mountPhotoelectric(root);
   const detector = root.querySelector('#ld-detector');
   if (!detector) return;
   const context = detector.getContext('2d');

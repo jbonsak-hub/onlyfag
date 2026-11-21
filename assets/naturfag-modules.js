@@ -59,12 +59,13 @@
   frame.src='naturfag/ernaering.html?embedded=1&topic='+encodeURIComponent(desired.topic)+'&view='+encodeURIComponent(desired.view)+'&v=20261105-theme';
  }
  frame.addEventListener('load',()=>{if(!frameStarted)return;frameReady=true;sendTheme();sendHostLayout();sendDesired();});
- function sendWavesDesired(){if(wavesReady){wavesAwaitingState=true;wavesFrame.contentWindow.postMessage({type:'onlyfag:waves:topic',topic:wavesDesired.topic,view:wavesDesired.view},location.origin);}}
+ function waveAnchor(topic,view,section){return topic==='fenomener'&&view==='fagstoff'&&section==='interferens'?section:undefined;}
+ function sendWavesDesired(){if(wavesReady){wavesAwaitingState=true;wavesFrame.contentWindow.postMessage({type:'onlyfag:waves:topic',...wavesDesired},location.origin);}}
  function sendWavesVisibility(){if(wavesReady)wavesFrame.contentWindow.postMessage({type:'onlyfag:waves:visibility',visible:document.body.classList.contains('nf-waves-active')&&!document.hidden},location.origin);}
  function ensureWavesFrame(){
   if(wavesStarted){sendWavesDesired();sendWavesVisibility();return;}
   wavesStarted=true;
-  wavesFrame.src='naturfag/bolger-straling.html?embedded=1&topic='+encodeURIComponent(wavesDesired.topic)+'&view='+encodeURIComponent(wavesDesired.view)+'&v=20261121-spectrum1';
+  wavesFrame.src='naturfag/bolger-straling.html?embedded=1&topic='+encodeURIComponent(wavesDesired.topic)+'&view='+encodeURIComponent(wavesDesired.view)+(wavesDesired.section?'&section='+encodeURIComponent(wavesDesired.section):'')+'&v=20261121-lys2';
  }
  wavesFrame.addEventListener('load',()=>{if(!wavesStarted)return;wavesReady=true;sendTheme();sendHostLayout();sendWavesDesired();sendWavesVisibility();});
  document.addEventListener('visibilitychange',sendWavesVisibility);
@@ -88,7 +89,7 @@
   nutritionGroup.querySelectorAll('[data-nutrition-topic]').forEach(button=>{const active=button.dataset.nutritionTopic===desired.topic&&desired.view==='practice';button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));});
   for(const view of ['bank','concepts']){const button=nutritionGroup.querySelector('[data-nutrition-view="'+view+'"]');button.classList.toggle('active',desired.view===view);button.setAttribute('aria-pressed',String(desired.view===view));}
  }
- function wavesRouteHash(){return '#waves/'+wavesDesired.topic+'/'+wavesDesired.view;}
+ function wavesRouteHash(){return '#waves/'+wavesDesired.topic+'/'+wavesDesired.view+(wavesDesired.section?'/'+wavesDesired.section:'');}
  function updateWavesButtons(){
   wavesGroup.querySelectorAll('[data-waves-toggle]').forEach(button=>{const active=document.body.classList.contains('nf-waves-active')&&button.dataset.wavesToggle===wavesDesired.topic;button.classList.toggle('active',active);button.setAttribute('aria-expanded',String(active));document.getElementById(button.getAttribute('aria-controls')).hidden=!active;});
   wavesGroup.querySelectorAll('[data-waves-view]').forEach(button=>{const active=document.body.classList.contains('nf-waves-active')&&button.dataset.wavesTopic===wavesDesired.topic&&button.dataset.wavesView===wavesDesired.view;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
@@ -114,8 +115,9 @@
   $('#floatingPt')?.classList.remove('show');$('#floatingPtBtn')?.classList.remove('active');$('#infoPop')?.classList.remove('show');$('#infoBtn')?.setAttribute('aria-expanded','false');
   setGroup('nutrition');updateGroupState();updateNutritionButtons();closeMenu();ensureFrame();if(route)writeRoute(routeHash(),replace);window.scrollTo({top:0,behavior:'instant'});
  }
- function showWaves(topic='bolger',view='fagstoff',{route=true,replace=false}={}){
-  wavesDesired={topic:validWaveTopics.has(topic)?topic:'bolger',view:validWaveViews.has(view)?view:'fagstoff'};
+ function showWaves(topic='bolger',view='fagstoff',{route=true,replace=false,section}={}){
+  const anchor=waveAnchor(topic,view,section);
+  wavesDesired={topic:validWaveTopics.has(topic)?topic:'bolger',view:validWaveViews.has(view)?view:'fagstoff',...(anchor&&{section:anchor})};
   const active=$('.page.active');if(active?.id==='page-elementnames')originalOpenPage('home');
   document.body.classList.remove('nf-nutrition-active','nf-subjects-active');document.body.classList.add('nf-waves-active');
   document.querySelectorAll('.page').forEach(item=>item.classList.toggle('active',item===wavesPage));document.querySelectorAll('.nav-btn,.nf-nutrition-topic,.nf-nutrition-action').forEach(button=>{button.classList.remove('active');if(button.hasAttribute('aria-pressed'))button.setAttribute('aria-pressed','false');});
@@ -154,9 +156,10 @@
   if(event.origin!==location.origin||event.source!==wavesFrame.contentWindow||!event.data||typeof event.data!=='object')return;
   if(event.data.type==='onlyfag:waves:open-menu'){if(document.body.classList.contains('nf-waves-active'))openMenu();return;}
   if(event.data.type!=='onlyfag:waves:state'||!validWaveTopics.has(event.data.topic)||!validWaveViews.has(event.data.view))return;
-  if(wavesAwaitingState&&(event.data.topic!==wavesDesired.topic||event.data.view!==wavesDesired.view))return;
+  const section=waveAnchor(event.data.topic,event.data.view,event.data.section);
+  if(wavesAwaitingState&&(event.data.topic!==wavesDesired.topic||event.data.view!==wavesDesired.view||section!==wavesDesired.section))return;
   wavesAwaitingState=false;
-  wavesReported={topic:event.data.topic,view:event.data.view};
+  wavesReported={topic:event.data.topic,view:event.data.view,...(section&&{section})};
   if(!wavesReady||!document.body.classList.contains('nf-waves-active'))return;
   wavesDesired={...wavesReported};updateWavesButtons();writeRoute(wavesRouteHash(),true);
  });
@@ -166,7 +169,7 @@
   try{
    if(!parts[0]||parts[0]==='subjects'){showSubjects({route:false});return;}
    if(parts[0]==='nutrition'){showNutrition(parts[1]||'all',parts[2]||'practice',{route:false});return;}
-   if(parts[0]==='waves'){showWaves(parts[1],parts[2],{route:false});return;}
+   if(parts[0]==='waves'){showWaves(parts[1],parts[2],{route:false,section:parts[3]});return;}
    if(parts[0]==='chemistry'&&chemistryPages.has(parts[1])){openPage(parts[1]);return;}
    if(parts.length===1&&chemistryPages.has(parts[0])){openPage(parts[0]);return;}
    showSubjects({route:false});

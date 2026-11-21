@@ -1,4 +1,4 @@
-export {spectrumReadouts} from '../../naturfag/bolger-straling/em-spectrum.js?v=${specVersion}';
+export {spectrumReadouts} from '../../naturfag/bolger-straling/em-spectrum.js?v=20261121-lys2';
 import {atomLabSection,mountAtomLab} from './atom-lab.js?v=20261116-layout2';
 // Self-contained teaching models. Physical quantities use SI units internally.
 const C = 299792458, H = 6.62607015e-34, AJ = 1e-18;

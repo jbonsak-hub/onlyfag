@@ -119,15 +119,23 @@ function buildNav(){
 function applyTheme(){document.body.classList.toggle('dark',saved.theme==='dark');$('#theme-button').setAttribute('aria-label',saved.theme==='dark'?'Bytt til lys visning':'Bytt til mørk visning');repaint();}
 function navigate(value){if(location.hash.slice(1)===value){render();return;}location.hash=value;}
 function parseRoute(){
- let [id,view='fagstoff']=decodeURIComponent(location.hash.slice(1)).split('/');
+ let [id,view='fagstoff',requestedSection]=decodeURIComponent(location.hash.slice(1)).split('/');
  if(!id||(!byId.has(id)&&!(prototype&&id==='alle')))id=prototype?'oversikt':topics[0].id;
  if(!['fagstoff','oppgaver','begreper'].includes(view))view='fagstoff';
- if(id==='alle')view='oppgaver';return {id,view};
+ if(id==='alle')view='oppgaver';
+ const section=view==='fagstoff'?byId.get(id)?.sections.find(item=>item.anchor===requestedSection)?.anchor:undefined;
+ return {id,view,section};
 }
 function render(){
   clearFrames();route=parseRoute();document.body.classList.toggle('topic-page',route.id!=='oversikt');closeNav();buildNav();document.title=`${route.id==='oversikt'?'Bølger og stråling':route.id==='alle'?'Alle oppgaver':byId.get(route.id).title} – OnlyFag`;
   if(route.id==='oversikt')renderOverview();else renderTopic();
-  startFrames();window.scrollTo({top:0,behavior:'instant'});postState();
+  startFrames();
+  const target=route.section && document.getElementById('wave-anchor-'+route.section);
+  if(target){
+   target.focus({preventScroll:true});
+   target.scrollIntoView({block:'start',behavior:'instant'});
+  }else window.scrollTo({top:0,behavior:'instant'});
+  postState();
 }
 
 function heroArt(){return `<div class="hero-art"><svg viewBox="0 0 450 300" role="img" aria-label="Én sammenheng: en bølge, lys gjennom et prisme og lys fra et atom"><defs><linearGradient id="hero-spectrum"><stop stop-color="#b184c3"/><stop offset=".22" stop-color="#698cbd"/><stop offset=".43" stop-color="#65aea5"/><stop offset=".65" stop-color="#c9c57f"/><stop offset="1" stop-color="#d98c75"/></linearGradient><linearGradient id="hero-wash" x2="1" y2="1"><stop stop-color="#e3eee6"/><stop offset="1" stop-color="#eff3ec"/></linearGradient></defs><circle cx="230" cy="148" r="133" fill="url(#hero-wash)" opacity=".65"/><g stroke="#afc6b5" opacity=".35"><path d="M62 100h330M62 148h330M62 196h330"/><path d="M111 55v190M171 30v230M231 22v252M291 36v230M351 65v180"/></g><path id="hero-wave" d="M28 153q17-62 34 0t34 0 34 0 34 0 34 0" fill="none" stroke="#3e8e75" stroke-width="2.3"/><path d="m226 102-40 93h80Z" fill="#eff8f6" fill-opacity=".8" stroke="#59958c" stroke-width="1.5"/><path d="m197 151 160-47m-160 47 162-24m-162 24 165 0m-165 0 162 25m-162-25 160 49" stroke="url(#hero-spectrum)" stroke-width="2.8" opacity=".8"/><g transform="translate(335 105)" stroke="#689a88" fill="none" opacity=".7"><ellipse rx="37" ry="13" transform="rotate(60)"/><ellipse rx="37" ry="13" transform="rotate(-60)"/><ellipse rx="37" ry="13"/><circle r="5" fill="#528776"/><circle id="hero-electron" cx="37" r="3" fill="#b37b4c" stroke="none"/></g><text x="38" y="231" font-size="10" fill="#668572">BØLGER</text><text x="204" y="231" font-size="10" fill="#668572">LYS</text><text x="316" y="231" font-size="10" fill="#668572">ATOMER</text></svg><p class="art-caption">Fra svingninger til signaler fra universet</p></div>`;}
@@ -161,7 +169,7 @@ function renderTopic(){
  const t=byId.get(route.id),all=route.id==='alle';
  content.innerHTML=`<div class="page-head"><h1>${all?'Alle oppgaver':escapeHtml(t.title)}</h1></div><div id="topic-content"></div>`;
  if(route.view==='fagstoff'){
-   $('#topic-content').innerHTML=`${t.sections.map((s,i)=>`<section class="content-section" id="section-${t.id}-${i}"><h2><span class="section-index" aria-hidden="true">${i+1}</span>${escapeHtml(s.title)}</h2>${s.body}</section>`).join('')}${resourceHtml(t)}`;
+   $('#topic-content').innerHTML=`${t.sections.map((s,i)=>`<section class="content-section" id="section-${t.id}-${i}"><h2${s.anchor?' id="wave-anchor-'+escapeHtml(s.anchor)+'" tabindex="-1"':''}><span class="section-index" aria-hidden="true">${i+1}</span>${escapeHtml(s.title)}</h2>${s.body}</section>`).join('')}${resourceHtml(t)}`;
    if(t.mount)cleanup=t.mount($('#topic-content'),api);
    arrangeModels($('#topic-content'));
    installAnimationControls();
@@ -276,14 +284,14 @@ $('#reset-button').addEventListener('click',()=>{$('#reset-confirm').hidden=fals
 $('#cancel-reset').addEventListener('click',()=>{$('#reset-confirm').hidden=true;});
 $('#confirm-reset').addEventListener('click',()=>{saved.answers={};saved.bookmarks={};saved.drafts={};persist();$('#reset-confirm').hidden=true;$('#about-dialog').close();render();announce('Øvingshistorikken er nullstilt.');});
 addEventListener('hashchange',()=>{filters={query:'',type:'',level:'',topic:'',bookmarked:false};render();});
-function postState(){if(embedded&&parent!==window)parent.postMessage({type:'onlyfag:waves:state',topic:route.id,view:route.view},location.origin);}
+function postState(){if(embedded&&parent!==window)parent.postMessage({type:'onlyfag:waves:state',topic:route.id,view:route.view,...(route.section&&{section:route.section})},location.origin);}
 if(embedded){
  document.body.classList.add('embedded');
  addEventListener('message',event=>{
   if(event.origin!==location.origin||event.source!==parent||!event.data||typeof event.data!=='object')return;
   const data=event.data;
   if(data.type==='onlyfag:waves:topic'&&byId.has(data.topic)&&['fagstoff','oppgaver','begreper'].includes(data.view)){
-   filters={query:'',type:'',level:'',topic:'',bookmarked:false};navigate(data.topic+'/'+data.view);
+   filters={query:'',type:'',level:'',topic:'',bookmarked:false};navigate(data.topic+'/'+data.view+(data.topic==='fenomener'&&data.view==='fagstoff'&&data.section==='interferens'?'/interferens':''));
   }else if(data.type==='onlyfag:waves:theme'&&typeof data.dark==='boolean'){
    saved.theme=data.dark?'dark':'light';applyTheme();
   }else if(data.type==='onlyfag:waves:host-layout'&&typeof data.sidebarCollapsed==='boolean'){
