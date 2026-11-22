@@ -1,5 +1,6 @@
 import {absorptionSection,mountAbsorption,absorptionQuestion,absorptionTerm} from './absorption.js?v=20261121-spectrum1';
-import {lightDualitySection,mountLightDuality} from './light-duality.js?v=20261121-lys2';
+import {lightDualitySection,mountLightDuality} from './light-duality.js?v=20261122-spredning1';
+import {skyScatteringHtml,mountSkyScattering} from './sky-scattering.js?v=20261122-spredning1';
 // Self-contained teaching models. Physical quantities use SI units internally.
 const C = 299792458, H = 6.62607015e-34;
 const fmt = (x, digits = 2) => x.toLocaleString('nb-NO', {maximumFractionDigits: digits});
@@ -149,7 +150,7 @@ function mountEM(root, api) {
   rgb.forEach(el=>el.addEventListener('input',renderRGB));
   root.querySelectorAll('[data-ema-rgb]').forEach(b=>b.addEventListener('click',()=>{b.dataset.emaRgb.split(',').forEach((v,i)=>rgb[i].value=v);renderRGB();}));
   renderRGB();
-  const cleanup = [mountAbsorption(root), mountLightDuality(root, api)];
+  const cleanup = [mountAbsorption(root), mountSkyScattering(root, api), mountLightDuality(root, api)];
   return () => cleanup.forEach(dispose => dispose?.());
 }
 
@@ -188,7 +189,7 @@ export const emTopic = {
  <aside><h3>Hva er en nanometer?</h3><p>Én nanometer er én milliarddel av en meter.</p><p><strong>1 nm = 0,000 000 001 m = 10<sup>−9</sup> m</strong></p><p>Tallet 10<sup>−9</sup> betyr én delt på en milliard. Slik kan vi skrive den lille lengden kort på standardform.</p></aside>
 </div>`},
       {title:'Utforsk spekteret',body:`<div class="model ema-spectrum-model" data-model-layout="custom"><div class="model-full-width ema-spectrum-band" data-model-full-width><svg id="ema-spectrum-plot" class="ema-spectrum-band-svg" viewBox="0 0 1000 125" role="img" aria-label="Hele det elektromagnetiske spekteret"></svg></div><div class="ema-spectrum-lower"><div class="ema-spectrum-figure model-visual"><svg id="ema-spectrum-wave" class="ema-spectrum-wave-svg" viewBox="0 0 760 80" role="img" aria-label="Bølge ved valgt frekvens"></svg><div class="ema-values" aria-live="polite"><div><small>Bølgelengde λ</small><strong id="ema-wavelength-output"></strong></div><div><small>Frekvens f</small><strong id="ema-frequency-output"></strong></div><div><small>Energi per foton</small><strong id="ema-energy-output"></strong></div></div></div><div class="ema-spectrum-controls"><div class="controls"><label class="control" for="ema-frequency">Frekvens · logaritmisk skala<input id="ema-frequency" type="range" min="4" max="22" step="0.005" value="14.7364"></label></div><div class="ema-region-buttons" id="ema-region-buttons">${regions.map((r,i)=>`<button type="button" data-region="${i}" aria-pressed="${i===3}">${r.name}</button>`).join('')}</div></div></div></div>`},
-      absorptionSection,
+      {...absorptionSection,body:absorptionSection.body+skyScatteringHtml},
       {title:'Hvordan lager en skjerm hvitt og gult?',body:`<p>En skjerm blander <strong>rødt, grønt og blått lys</strong> (RGB). Hvitfarge kan lages med en passende blanding av disse tre; det er ikke nødvendig å ha alle bølgelengder i blandingen.</p><div class="model ema-rgb-layout" data-model-layout="custom"><div class="ema-rgb-screen"><svg viewBox="0 0 600 230" role="img" aria-label="Additiv blanding av rødt, grønt og blått lys"><rect width="600" height="230" rx="10" fill="#000"/><g style="isolation:isolate"><circle id="ema-rgb-red-circle" cx="160" cy="85" r="70" style="mix-blend-mode:screen"/><circle id="ema-rgb-green-circle" cx="240" cy="85" r="70" style="mix-blend-mode:screen"/><circle id="ema-rgb-blue-circle" cx="200" cy="135" r="70" style="mix-blend-mode:screen"/></g><path d="M380 35v155" stroke="#48636c"/><rect id="ema-rgb-result" x="440" y="55" width="100" height="100" rx="10"/><text x="490" y="185" text-anchor="middle" fill="#ddd" font-size="15">Blandingsfargen</text></svg><output id="ema-rgb-value"></output></div><div class="ema-rgb-controls">${[['red','Rødt',255],['green','Grønt',255],['blue','Blått',0]].map(([id,label,val])=>`<label for="ema-rgb-${id}">${label}<input type="range" id="ema-rgb-${id}" min="0" max="255" step="1" value="${val}"><output id="ema-rgb-${id}-value" for="ema-rgb-${id}">${val}</output></label>`).join('')}<div class="ema-region-buttons"><button type="button" data-ema-rgb="255,255,255">Hvitt</button><button type="button" data-ema-rgb="255,255,0">Gult</button><button type="button" data-ema-rgb="0,0,0">Svart</button></div><p id="ema-rgb-caption" aria-live="polite"></p></div></div><div class="key"><strong>Lysblanding og overflatefarger er forskjellige:</strong> En rød flate reflekterer særlig rødt lys og absorberer mye av det øvrige. Uten rødt i belysningen kan flaten se mørk ut.</div>`},
       lightDualitySection
     ],
@@ -199,6 +200,7 @@ export const emTopic = {
       {term:'Infrarød stråling',definition:'EM-stråling med lengre bølgelengde enn synlig rødt lys. Varme gjenstander som kroppen sender hovedsakelig ut IR.'},
       {term:'Ioniserende stråling',definition:'Stråling som har nok energi til å frigjøre elektroner fra atomer eller molekyler.'},
       absorptionTerm,
+      {term:'Spredning',definition:'Lys sendes i nye retninger når det møter blant annet luftmolekyler. I luft spres blått lys lettere enn rødt.'},
       {term:'RGB',definition:'Additiv lysblanding med rødt, grønt og blått, blant annet i skjermer.'},
       {term:'Intensitet',definition:'Energi som passerer per tid og areal. Høyere intensitet er ikke det samme som høyere energi per foton.'},
       {term:'Attojoule (aJ)',definition:'En liten energienhet: 1 aJ = 10⁻¹⁸ J. Den er nyttig for energier i atomer og i enkeltfotoner.'}

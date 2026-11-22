@@ -170,7 +170,7 @@ function renderTopic(){
  content.innerHTML=`<div class="page-head"><h1>${all?'Alle oppgaver':escapeHtml(t.title)}</h1></div><div id="topic-content"></div>`;
  if(route.view==='fagstoff'){
    $('#topic-content').innerHTML=`${t.sections.map((s,i)=>`<section class="content-section" id="section-${t.id}-${i}"><h2${s.anchor?' id="wave-anchor-'+escapeHtml(s.anchor)+'" tabindex="-1"':''}><span class="section-index" aria-hidden="true">${i+1}</span>${escapeHtml(s.title)}</h2>${s.body}</section>`).join('')}${resourceHtml(t)}`;
-   if(t.mount)cleanup=t.mount($('#topic-content'),api);
+   if(t.mount)cleanup=t.mount($('#topic-content'),api,{section:route.section});
    arrangeModels($('#topic-content'));
    installAnimationControls();
  }else if(route.view==='begreper'){
@@ -291,7 +291,8 @@ if(embedded){
   if(event.origin!==location.origin||event.source!==parent||!event.data||typeof event.data!=='object')return;
   const data=event.data;
   if(data.type==='onlyfag:waves:topic'&&byId.has(data.topic)&&['fagstoff','oppgaver','begreper'].includes(data.view)){
-   filters={query:'',type:'',level:'',topic:'',bookmarked:false};navigate(data.topic+'/'+data.view+(data.topic==='fenomener'&&data.view==='fagstoff'&&data.section==='interferens'?'/interferens':''));
+   const section=data.view==='fagstoff'&&byId.get(data.topic).sections.find(item=>item.anchor===data.section)?.anchor;
+   filters={query:'',type:'',level:'',topic:'',bookmarked:false};navigate(data.topic+'/'+data.view+(section?'/'+section:''));
   }else if(data.type==='onlyfag:waves:theme'&&typeof data.dark==='boolean'){
    saved.theme=data.dark?'dark':'light';applyTheme();
   }else if(data.type==='onlyfag:waves:host-layout'&&typeof data.sidebarCollapsed==='boolean'){

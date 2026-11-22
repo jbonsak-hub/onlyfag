@@ -40,7 +40,7 @@ export function diffractionRelativeIntensity(field,xIndex,yIndex){
  return (field.real[i]**2+field.imag[i]**2)*field.wavelength*Math.max(field.unit/2,dx)/reference;
 }
 const range=(id,label,min,max,value,step)=>`<label class="control" for="${id}"><span class="df-control-head"><span>${label}</span><output id="${id}-value"></output></span><input id="${id}" type="range" min="${min}" max="${max}" value="${value}" step="${step}"></label>`;
-export const diffractionSection={title:'Bøyning og interferens gjennom åpninger',body:`<style>
+export const diffractionSection={anchor:'to-spalter',title:'Bøyning og interferens gjennom åpninger',body:`<style>
 .df-control-head{display:flex;justify-content:space-between;gap:10px}.df-control-head output{font-weight:650;white-space:nowrap}.df-check{display:flex!important;gap:8px;align-items:center}.df-check input{width:16px;height:16px;flex:none!important}.df-legend{display:flex;gap:16px;font-size:11px;color:var(--muted);flex-wrap:wrap;line-height:1.5}.df-legend span{display:inline-flex;gap:5px;align-items:center}.df-legend i{width:15px;height:9px;border:1px solid #b5c9d0;border-radius:3px;flex:none}.df-presets{display:grid;gap:7px}.df-pattern-control{border-top:1px solid var(--line);margin-top:3px;padding-top:9px}.df-model .readout>div{margin:5px 0}.df-model canvas{display:block;width:100%;height:auto;border-radius:12px}.df-pattern-note{font-size:11px;line-height:1.6;color:var(--muted);margin:0}
 </style><p>Når åpningen er liten i forhold til bølgelengden, sprer bølgen seg bredt. Med <strong>to åpninger</strong> dannes faste områder med <strong>konstruktiv og destruktiv interferens</strong>.</p>
 <div class="model df-model"><canvas id="wv-diffraction" width="760" height="340" role="img" aria-label="Bølgefelt gjennom én eller to åpninger"></canvas><div class="controls">
@@ -52,8 +52,9 @@ ${range('wv-slit','Åpningens bredde a',.3,4.2,.5,.1)}${range('wv-diff-lambda','
 
 const mixColor=(from,to,value)=>from.map((n,c)=>Math.round(n+(to[c]-n)*Math.max(0,Math.min(1,value))));
 const intensityColor=value=>mixColor([9,28,41],[115,236,214],Math.pow(Math.max(0,Math.min(1,value)),.6));
-export function mountDiffraction(root,api){
+export function mountDiffraction(root,api,{twoSlits=false}={}){
  const q=id=>root.querySelector('#'+id),canvas=q('wv-diffraction'),ctx=canvas.getContext('2d',{alpha:false});
+ q('df-two').checked=twoSlits;
  const width=456,height=192,buffer=document.createElement('canvas');buffer.width=width;buffer.height=height;
  const bc=buffer.getContext('2d',{alpha:false}),image=bc?.createImageData(width,height),listeners=[];
  let field=null,key='',last=-Infinity,force=true;

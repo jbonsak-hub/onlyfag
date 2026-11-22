@@ -144,6 +144,30 @@ function assertNumericQuestion(q){
   radioFixture.change('ra-isotope-preset','6,8','change');radioFixture.pause('#ra-decay-type');const frozenEmission=radioFixture.get('ra-emission').serialize(),movingNucleus=radioFixture.get('ra-built-nucleus').serialize();radioFixture.get('ra-half-run').checked=true;radioFixture.get('ra-half-run').dispatch('change');const halfBefore=+radioFixture.get('ra-half-time').value;radioFixture.tick(radioTime+=.1);assert.equal(radioFixture.get('ra-emission').serialize(),frozenEmission,'The decay animation pauses independently of the builder.');assert.notEqual(radioFixture.get('ra-built-nucleus').serialize(),movingNucleus);assert.ok(+radioFixture.get('ra-half-time').value>halfBefore,'Half-life keeps its own running clock.');
  }finally{radioFixture.destroy();}
  const {spectrumReadouts}=sourceModules['em-spectrum'];for(const region of [2,3,4])assert.match(spectrumReadouts(5e14,region).wavelength,/nm/);assert.match(spectrumReadouts(5e14,3).energy,/J$/);assert.ok(!/eV/.test(spectrumReadouts(5e14,3).energy));
+ const {skyScatteringState}=await import('../naturfag/bolger-straling/sky-scattering.js');
+ let previous=skyScatteringState(90).direct;
+ for(const elevation of [60,30,10,5,0]){
+  const {direct}=skyScatteringState(elevation);
+  assert.ok(direct.every((amount,i)=>amount>0&&amount<previous[i]),'Less direct light reaches the observer when the sun is lower.');
+  assert.ok(direct[2]<direct[1]&&direct[1]<direct[0],'Molecular scattering removes more blue than red light from the direct beam.');
+  previous=direct;
+ }
+ const spectrumFixture=modelFixture(source.find(t=>t.id==='em'));
+ try{
+  assert.equal(spectrumFixture.get('ld-photo-scene'),undefined);
+  const sky=spectrumFixture.get('sky-dialog'),launcher=spectrumFixture.get('sky-open');
+  spectrumFixture.click('sky-open');
+  assert.equal(sky.open,true);
+  assert.equal(launcher.getAttribute('aria-expanded'),'true');
+  const sun=spectrumFixture.get('sky-sun'),disc=spectrumFixture.get('sky-disc'),path=spectrumFixture.get('sky-beam-direct');
+  const before=[sun.getAttribute('transform'),disc.getAttribute('fill'),path.getAttribute('x1')];
+  spectrumFixture.change('sky-elevation','0');
+  assert.match(spectrumFixture.get('sky-angle').textContent,/0°/);
+  assert.ok([sun.getAttribute('transform'),disc.getAttribute('fill'),path.getAttribute('x1')].every((value,i)=>value!==before[i]));
+  spectrumFixture.click('sky-close');
+  assert.equal(sky.open,false);
+  assert.equal(launcher.getAttribute('aria-expanded'),'false');
+ }finally{spectrumFixture.destroy();}
  const comm=modelFixture(source.find(t=>t.id==='kommunikasjon'));
  try{for(const stage of ['auto','0','1','2','3','4','5'])comm.change('ema-flow-stage',stage,'change');for(const direction of ['a-b','b-a'])for(const route of ['direct','reflection']){comm.change('ema-network-direction',direction,'change');comm.change('ema-network-path',route,'change');comm.tick(.8);assert.ok(!/NaN|Infinity|undefined/.test(comm.html()));}
   const signalTime=comm.now('#ema-signal-plot');assert.ok(signalTime>0);comm.pause('#ema-signal-plot');const signalBefore=comm.get('ema-signal-plot').serialize(),networkBefore=comm.get('ema-network-plot').serialize();comm.tick(.9);assert.equal(comm.get('ema-signal-plot').serialize(),signalBefore);assert.equal(comm.now('#ema-signal-plot'),signalTime);assert.ok(comm.now('#ema-network-plot')>signalTime);assert.notEqual(comm.get('ema-network-plot').serialize(),networkBefore,'Pausing the encoding waveform does not pause the radio network.');
@@ -269,6 +293,46 @@ function assertNumericQuestion(q){
   await page.goto(base+'/naturfag.html#waves/em/begreper');
   await content.locator('.term').first().waitFor();
   assert.equal(await content.locator('.term').count(),spectrum.terms);
+ });
+ await attempt('Sky scattering dialog works on a phone and runs the sunset',async()=>{
+  await page.setViewportSize({width:390,height:844});
+  await page.goto(base+'/naturfag#waves/em/fagstoff');
+  const content=page.frameLocator('#waves-module-frame');
+  const launcher=content.locator('#sky-open'),dialog=content.locator('#sky-dialog');
+  await launcher.click();
+  await content.locator('#sky-dialog[open]').waitFor();
+  assert.equal(await launcher.getAttribute('aria-expanded'),'true');
+  assert.equal(await dialog.evaluate(d=>d.scrollWidth>d.clientWidth+1),false,'Dialog fits the phone width.');
+  const disc=content.locator('#sky-disc'),daylight=await disc.getAttribute('fill');
+  await content.locator('#sky-elevation').press('Home');
+  assert.equal(await content.locator('#sky-angle').innerText(),'0°');
+  assert.notEqual(await disc.getAttribute('fill'),daylight);
+  await content.locator('#sky-play').click();
+  await content.locator('#sky-angle').filter({hasNotText:/^0°$/}).waitFor();
+  await page.keyboard.press('Escape');
+  await content.locator('#sky-dialog[open]').waitFor({state:'hidden'});
+  await content.locator('#sky-open:focus').waitFor();
+  assert.equal(await launcher.getAttribute('aria-expanded'),'false');
+ });
+ await attempt('Interference link opens two slits and the fixed pattern',async()=>{
+  await page.setViewportSize({width:1440,height:1000});
+  const hash='#waves/fenomener/fagstoff/to-spalter';
+  await page.goto(base+'/naturfag#waves/em/fagstoff');
+  const content=page.frameLocator('#waves-module-frame');
+  const link=content.locator('.ld-interference-link');
+  assert.equal(await link.getAttribute('href'),'/naturfag'+hash);
+  await link.click();
+  await page.waitForURL('**/naturfag'+hash);
+  await content.locator('#wave-anchor-to-spalter:focus').waitFor();
+  assert.ok(await content.locator('#df-two').isChecked());
+  assert.ok(await content.locator('#df-show-pattern').isChecked());
+  assert.match(await content.locator('#wv-diffraction').getAttribute('aria-label'),/Fast interferensmønster/);
+  await page.reload();
+  await content.locator('#wave-anchor-to-spalter:focus').waitFor();
+  assert.ok(await content.locator('#df-two').isChecked());
+  await page.goto(base+'/naturfag#waves/fenomener/fagstoff/interferens');
+  await content.locator('#wave-anchor-interferens:focus').waitFor();
+  assert.equal(await content.locator('#df-two').isChecked(),false);
  });
  await page.setViewportSize({width:1440,height:1000});await page.goto(url+'#oversikt');await page.screenshot({path:path.join(shots,'overview-desktop.png'),fullPage:true});
  await route('fenomener');await page.screenshot({path:path.join(shots,'phenomena-desktop.png'),fullPage:true});
