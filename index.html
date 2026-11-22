@@ -1,170 +1,148 @@
-<!DOCTYPE html>
-<html lang="no">
+<!doctype html>
+<html lang="nb">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OnlyFag</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Ressurser og oppgaver i fysikk, matematikk, geografi og naturfag.">
+  <title>OnlyFag</title>
   <style>
     :root {
-      --bg: #f7f7f5;
-      --card: #ffffff;
-      --text: #171717;
-      --muted: #6b6b6b;
-      --border: #e5e5e2;
-      --accent: #1f5f4a;
+      color-scheme: light;
+      color: #192724;
+      background: #f7f8f4;
+      font-family: Inter, "Segoe UI", system-ui, sans-serif;
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
 
     main {
-      position: relative;
-      width: min(920px, calc(100% - 40px));
-      min-height: 100vh;
-      margin: 0 auto;
-      padding: 80px 0 96px;
-    }
-
-    header {
-      margin-bottom: 44px;
+      width: min(1000px, calc(100% - 64px));
+      margin-inline: auto;
+      padding-block: clamp(48px, 8vw, 104px) 56px;
     }
 
     h1 {
-      margin: 0 0 12px;
-      font-size: clamp(2.5rem, 7vw, 4.5rem);
-      line-height: 0.95;
-      letter-spacing: -0.055em;
-    }
-
-    .intro {
-      margin: 0;
-      max-width: 620px;
-      color: var(--muted);
-      font-size: 1.08rem;
-      line-height: 1.6;
+      margin: 0 0 clamp(26px, 5vw, 50px);
+      font-size: clamp(2.75rem, 6vw, 4.4rem);
+      line-height: 1;
+      font-weight: 720;
+      letter-spacing: -.065em;
     }
 
     .subjects {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
     }
 
     .subject {
+      position: relative;
+      isolation: isolate;
       display: flex;
-      min-height: 190px;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 24px;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      background: var(--card);
-      color: inherit;
+      align-items: center;
+      min-height: clamp(154px, 19vw, 221px);
+      padding: clamp(19px, 3.2vw, 36px);
+      border-radius: 17px;
+      overflow: hidden;
+      color: var(--label);
+      background: var(--tile);
+      box-shadow: inset 0 0 0 1px #23342b12;
       text-decoration: none;
-      transition: transform 160ms ease, border-color 160ms ease;
+      transition: transform .22s ease, box-shadow .22s ease;
     }
 
-    .subject:hover {
-      transform: translateY(-3px);
-      border-color: #b9b9b4;
+    .subject--physics { --tile: #d2e9db; --label: #163c34; }
+    .subject--geography { --tile: #f2e6c4; --label: #433820; }
+    .subject--science { --tile: #d5ebf4; --label: #16394d; }
+    .subject--math { --tile: #eae0f2; --label: #3d2c50; }
+
+    .subject h2 {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      font-size: clamp(1.375rem, 3vw, 2rem);
+      line-height: 1.1;
+      letter-spacing: -.038em;
+      font-weight: 690;
+    }
+
+    .subject img {
+      position: absolute;
+      inset: 0 0 0 auto;
+      width: 62%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      mask-image: linear-gradient(90deg, transparent, #000 31%);
+      transform-origin: right center;
+      transition: transform .36s ease;
+      pointer-events: none;
+    }
+
+    .subject--geography img { object-position: center 54%; }
+    .subject--science img { object-position: center 56%; }
+    .subject--math img { object-position: center 52%; }
+
+    @media (hover: hover) {
+      .subject:hover {
+        transform: translateY(-3px);
+        box-shadow: inset 0 0 0 1px #23342b26, 0 10px 20px #23342b14;
+      }
+
+      .subject:hover img { transform: scale(1.035); }
     }
 
     .subject:focus-visible {
-      outline: 3px solid rgba(31, 95, 74, 0.25);
-      outline-offset: 3px;
+      outline: 2px solid var(--label);
+      outline-offset: 4px;
     }
 
-    .subject h2 {
-      margin: 0;
-      font-size: 1.45rem;
-      letter-spacing: -0.025em;
-    }
-
-    .subject p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    .arrow {
-      margin-top: 28px;
-      color: var(--accent);
-      font-size: 1.3rem;
-    }
-
-    footer {
-      margin-top: 42px;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-@media (max-width: 720px) {
+    @media (max-width: 670px) {
       main {
-        padding-top: 48px;
+        width: calc(100% - 36px);
+        padding-block: 42px 36px;
       }
 
       .subjects {
         grid-template-columns: 1fr;
+        gap: 12px;
       }
 
       .subject {
-        min-height: 150px;
+        min-height: clamp(132px, 30vw, 182px);
+        border-radius: 14px;
       }
-}
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .subject, .subject img { transition: none; }
+      .subject:hover, .subject:hover img { transform: none; }
+    }
   </style>
-<script src="assets/analytics.js" defer></script>
+  <script src="assets/analytics.js" defer></script>
 </head>
 <body>
   <main>
-    <header>
-      <h1>OnlyFag</h1>
-      
-    </header>
-
-    <section class="subjects" aria-label="Fag">
-      <a class="subject" href="fysikk2.html">
-        <div>
-          <h2>Fysikk 2</h2>
-          
-        </div>
-        <span class="arrow" aria-hidden="true">→</span>
+    <h1>OnlyFag</h1>
+    <nav class="subjects" aria-label="Fag">
+      <a class="subject subject--physics" href="fysikk2.html">
+        <h2>Fysikk 2</h2>
+        <img src="assets/forside-fysikk.webp" width="640" height="640" alt="">
       </a>
-
-      <a class="subject" href="geografi.html">
-        <div>
-          <h2>Geografi</h2>
-          
-        </div>
-        <span class="arrow" aria-hidden="true">→</span>
+      <a class="subject subject--geography" href="geografi.html">
+        <h2>Geografi</h2>
+        <img src="assets/forside-geografi.webp" width="640" height="640" alt="">
       </a>
-
-      <a class="subject" href="naturfag.html">
-        <div>
-          <h2>Naturfag</h2>
-          
-        </div>
-        <span class="arrow" aria-hidden="true">→</span>
+      <a class="subject subject--science" href="naturfag.html">
+        <h2>Naturfag</h2>
+        <img src="assets/forside-naturfag.webp" width="640" height="640" alt="">
       </a>
-
-      <a class="subject" href="matematikk.html">
-        <div>
-          <h2>Matematikk</h2>
-        </div>
-        <span class="arrow" aria-hidden="true">→</span>
+      <a class="subject subject--math" href="matematikk.html">
+        <h2>Matematikk</h2>
+        <img src="assets/forside-matematikk.webp" width="640" height="640" alt="">
       </a>
-
-    </section>
-</main>
-
-
+    </nav>
+  </main>
 </body>
 </html>
