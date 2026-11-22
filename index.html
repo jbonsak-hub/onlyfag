@@ -17,14 +17,14 @@
     body { margin: 0; }
 
     main {
-      width: min(1000px, calc(100% - 64px));
+      width: min(800px, calc(100% - 56px));
       margin-inline: auto;
-      padding-block: clamp(48px, 8vw, 104px) 56px;
+      padding-block: clamp(20px, 6svh, 52px) clamp(16px, 4svh, 36px);
     }
 
     h1 {
-      margin: 0 0 clamp(26px, 5vw, 50px);
-      font-size: clamp(2.75rem, 6vw, 4.4rem);
+      margin: 0 0 clamp(18px, 3svh, 26px);
+      font-size: clamp(2.25rem, 5vw, 3.5rem);
       line-height: 1;
       font-weight: 720;
       letter-spacing: -.065em;
@@ -33,7 +33,7 @@
     .subjects {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
+      gap: 14px;
     }
 
     .subject {
@@ -41,8 +41,8 @@
       isolation: isolate;
       display: flex;
       align-items: center;
-      min-height: clamp(154px, 19vw, 221px);
-      padding: clamp(19px, 3.2vw, 36px);
+      min-height: clamp(110px, 22svh, 144px);
+      padding: clamp(16px, 2.8vw, 26px);
       border-radius: 17px;
       overflow: hidden;
       color: var(--label);
@@ -61,7 +61,7 @@
       position: relative;
       z-index: 1;
       margin: 0;
-      font-size: clamp(1.375rem, 3vw, 2rem);
+      font-size: clamp(1.25rem, 2.6vw, 1.75rem);
       line-height: 1.1;
       letter-spacing: -.038em;
       font-weight: 690;
@@ -100,19 +100,31 @@
 
     @media (max-width: 670px) {
       main {
-        width: calc(100% - 36px);
-        padding-block: 42px 36px;
+        width: calc(100% - 32px);
+        padding-block: clamp(16px, 4svh, 28px) 14px;
       }
 
       .subjects {
         grid-template-columns: 1fr;
-        gap: 12px;
+        gap: 10px;
       }
 
       .subject {
-        min-height: clamp(132px, 30vw, 182px);
+        min-height: clamp(70px, 17svh, 108px);
         border-radius: 14px;
       }
+
+      .subject img { width: min(62%, 240px); }
+    }
+
+
+    @media (max-height: 440px) and (min-width: 441px) and (orientation: landscape) {
+      .subjects {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .subject { min-height: clamp(70px, 24svh, 104px); }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -126,6 +138,10 @@
   <main>
     <h1>OnlyFag</h1>
     <nav class="subjects" aria-label="Fag">
+      <a class="subject subject--science" href="naturfag.html">
+        <h2>Naturfag</h2>
+        <img src="assets/forside-naturfag.webp" width="640" height="640" alt="">
+      </a>
       <a class="subject subject--physics" href="fysikk2.html">
         <h2>Fysikk 2</h2>
         <img src="assets/forside-fysikk.webp" width="640" height="640" alt="">
@@ -133,10 +149,6 @@
       <a class="subject subject--geography" href="geografi.html">
         <h2>Geografi</h2>
         <img src="assets/forside-geografi.webp" width="640" height="640" alt="">
-      </a>
-      <a class="subject subject--science" href="naturfag.html">
-        <h2>Naturfag</h2>
-        <img src="assets/forside-naturfag.webp" width="640" height="640" alt="">
       </a>
       <a class="subject subject--math" href="matematikk.html">
         <h2>Matematikk</h2>
