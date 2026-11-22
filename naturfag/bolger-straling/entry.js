@@ -1,4 +1,4 @@
-import {emTopic} from './em-spectrum.js?v=20261122-spekter2';
+import {emTopic} from './em-spectrum.js?v=20261122-nf-layout';
 import {startCourse} from './app.js?v=20261122-spredning1';
 import {topics as basicTopics} from './wave-basics.js?v=20261118-resonans1';
 import {topics as waveTopics} from './waves.js?v=20261122-spredning1';

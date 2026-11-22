@@ -83,7 +83,7 @@ const sharedStyle = `<style>
 .ema-visible-intro aside{border:1px solid var(--line);border-radius:11px;padding:14px 16px;background:var(--surface)}
 .ema-visible-intro aside h3{margin:0 0 7px;font-size:15px}.ema-visible-intro aside p{margin:6px 0;font-size:13px}
 .topic-page .model.ema-spectrum-model{padding:20px!important}.topic-page .ema-spectrum-model .ema-values{gap:12px!important;margin-top:12px!important}
-.topic-page .ema-spectrum-model .ema-values>div{padding:11px!important}.ema-calculation{margin-top:8px;font-size:12px;font-weight:400;line-height:1.7}
+.topic-page .ema-spectrum-model .ema-values>div{padding:11px!important}.ema-calculation{display:block;margin-top:8px;font-size:12px;font-weight:400;line-height:1.7}
 @media(max-width:620px){.ema-visible-intro{grid-template-columns:1fr;gap:12px}.topic-page .model.ema-spectrum-model{padding:12px!important}}
 </style>`;
 
