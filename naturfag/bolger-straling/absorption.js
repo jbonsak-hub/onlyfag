@@ -3,11 +3,15 @@ const beamColors = {red:'#d75a55', green:'#398463', blue:'#4e7fcd'};
 const channels = Object.keys(colorNames);
 const surfaceY = 115;
 
-function ray(x1, y1, x2, y2, color) {
- const angle = Math.atan2(y2-y1, x2-x1);
- const head = 11;
- return `<path d="M${x1} ${y1}L${x2} ${y2}m${-head*Math.cos(angle-.45)} ${-head*Math.sin(angle-.45)}L${x2} ${y2}l${-head*Math.cos(angle+.45)} ${-head*Math.sin(angle+.45)}"
-   fill="none" stroke="${color}" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>`;
+function ray(x1, y1, x2, y2, color, arrowAt = 1) {
+ let path = `M${x1} ${y1}L${x2} ${y2}`;
+ if (arrowAt !== null) {
+  const angle = Math.atan2(y2-y1, x2-x1);
+  const head = 11;
+  const x = x1 + (x2-x1)*arrowAt, y = y1 + (y2-y1)*arrowAt;
+  path += `M${x-head*Math.cos(angle-.45)} ${y-head*Math.sin(angle-.45)}L${x} ${y}l${-head*Math.cos(angle+.45)} ${-head*Math.sin(angle+.45)}`;
+ }
+ return `<path d="${path}" fill="none" stroke="${color}" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>`;
 }
 
 export const absorptionSection = {
@@ -78,10 +82,10 @@ export function mountAbsorption(root) {
    + incident.map(color=>{
     const strikeX = 380 + (channels.indexOf(color)-1)*28;
     const reflectedRay = reflected.includes(color);
-    const incoming = ray(strikeX-237, 18, strikeX, surfaceY, beamColors[color]);
+    const incoming = ray(strikeX-237, 18, strikeX, surfaceY, beamColors[color], .52);
     const outgoing = reflectedRay
      ? ray(strikeX, surfaceY, strikeX+237, 18, beamColors[color])
-     : ray(strikeX, surfaceY, strikeX+47, surfaceY+19, beamColors[color])
+     : ray(strikeX, surfaceY, strikeX+47, surfaceY+19, beamColors[color], null)
        + `<circle cx="${strikeX+47}" cy="${surfaceY+19}" r="5" fill="${beamColors[color]}"/>`;
     return incoming+outgoing;
    }).join('');
