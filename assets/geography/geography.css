@@ -1,6 +1,8 @@
+@import url("/assets/page-theme.css?v=20261122-canvas");
+
 
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;display:flex;min-height:100vh;background:#f4f7f5;color:#232b25}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;display:flex;min-height:100vh;background:var(--onlyfag-page-bg, #e9ede6);color:#232b25}
 .sidebar{width:var(--sidebar-w,320px);min-width:240px;max-width:680px;background:#fff;border-right:4px solid #dfe7e1;padding:20px 0;overflow:auto;position:sticky;top:0;height:100vh;flex:0 0 var(--sidebar-w,320px)}
 .sidebar-resizer{position:fixed;top:0;left:calc(var(--sidebar-w,320px) - 4px);width:10px;height:100vh;cursor:col-resize;z-index:50;background:transparent}.sidebar-resizer::after{content:'↔';position:absolute;bottom:10px;left:-4px;color:#8a9a91;font-size:.85rem;background:#fff;border:1px solid #dfe7e1;border-radius:999px;padding:1px 4px}.sidebar-resizer:hover{background:rgba(31,122,77,.08)}body.resizing-sidebar{user-select:none;cursor:col-resize}.content{min-width:0}
 body.jeopardy-fullscreen .sidebar,body.jeopardy-fullscreen .sidebar-resizer{display:none}body.jeopardy-fullscreen .content{max-width:none;width:100%;padding:14px 18px}body.jeopardy-fullscreen .page-section{box-shadow:none;margin:0;border-radius:0;min-height:calc(100vh - 28px)}

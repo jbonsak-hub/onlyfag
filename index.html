@@ -9,7 +9,7 @@
     :root {
       color-scheme: light;
       color: #192724;
-      background: #f7f8f4;
+      background: var(--onlyfag-page-bg, #e9ede6);
       font-family: Inter, "Segoe UI", system-ui, sans-serif;
     }
 
@@ -17,13 +17,16 @@
     body { margin: 0; }
 
     main {
-      width: min(800px, calc(100% - 56px));
+      width: min(816px, calc(100% - 56px));
+      min-height: 100svh;
+      display: grid;
+      align-content: center;
       margin-inline: auto;
-      padding-block: clamp(20px, 6svh, 52px) clamp(16px, 4svh, 36px);
+      padding-block: clamp(16px, 4svh, 32px);
     }
 
     h1 {
-      margin: 0 0 clamp(18px, 3svh, 26px);
+      margin: 0 0 clamp(18px, 5.2svh, 34px);
       font-size: clamp(2.25rem, 5vw, 3.5rem);
       line-height: 1;
       font-weight: 720;
@@ -33,7 +36,7 @@
     .subjects {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
+      gap: clamp(15px, 4svh, 26px) clamp(14px, 3.8vw, 30px);
     }
 
     .subject {
@@ -101,16 +104,18 @@
     @media (max-width: 670px) {
       main {
         width: calc(100% - 32px);
-        padding-block: clamp(16px, 4svh, 28px) 14px;
+        padding-block: clamp(12px, 3svh, 24px);
       }
 
       .subjects {
         grid-template-columns: 1fr;
-        gap: 10px;
+        gap: clamp(9px, 2.4svh, 16px);
       }
 
+      h1 { margin-bottom: clamp(16px, 3.8svh, 26px); }
+
       .subject {
-        min-height: clamp(70px, 17svh, 108px);
+        min-height: clamp(68px, 17svh, 108px);
         border-radius: 14px;
       }
 
@@ -134,6 +139,7 @@
     }
   </style>
   <script src="assets/analytics.js" defer></script>
+<link rel="stylesheet" href="/assets/page-theme.css?v=20261122-canvas">
 </head>
 <body>
   <main>

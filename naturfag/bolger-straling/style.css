@@ -1,4 +1,6 @@
-:root{color-scheme:light;--bg:#f7f9f7;--surface:#fff;--sidebar:#eff4ef;--ink:#20352e;--muted:#60736b;--line:#dce5de;--green:#236448;--green-soft:#e7f3e9;--blue:#2677a0;--orange:#be7c39;--red:#ad4547;--shadow:0 6px 24px #25443406;--radius:16px;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.6}
+@import url("/assets/page-theme.css?v=20261122-canvas");
+
+:root{color-scheme:light;--bg:var(--onlyfag-page-bg, #e9ede6);--surface:#fff;--sidebar:#eff4ef;--ink:#20352e;--muted:#60736b;--line:#dce5de;--green:#236448;--green-soft:#e7f3e9;--blue:#2677a0;--orange:#be7c39;--red:#ad4547;--shadow:0 6px 24px #25443406;--radius:16px;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.6}
 body{--model-bg:var(--bg);--surface-2:var(--sidebar);--surface-alt:var(--sidebar);--border:var(--line);--accent:var(--green);--text:var(--ink)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink)}
