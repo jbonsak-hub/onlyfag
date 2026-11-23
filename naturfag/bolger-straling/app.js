@@ -20,7 +20,6 @@ const icons={
 };
 const icon=(id)=>`<svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${icons[id]||icons.bolger}"/></svg>`;
 const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const plain=s=>String(s||'').replace(/<[^>]*>/g,' ');
 function shuffledChoices(q){
   let seed=2166136261;for(const c of q.id)seed=Math.imul(seed^c.charCodeAt(0),16777619);
   const choices=q.choices.map((choice,index)=>({choice,index}));
@@ -34,7 +33,7 @@ let saved={answers:{},bookmarks:{},drafts:{},theme:'light'};
 try{const data=JSON.parse(localStorage.getItem(key)||'null');if(data&&typeof data==='object')saved={...saved,...data};}catch{}
 for(const k of ['answers','bookmarks','drafts'])if(!saved[k]||typeof saved[k]!=='object'||Array.isArray(saved[k]))saved[k]={};
 const persist=()=>{try{localStorage.setItem(key,JSON.stringify(saved));}catch{}};
-let route={id:'oversikt',view:'fagstoff'},filters={query:'',type:'',level:'',topic:'',bookmarked:false};
+let route={id:'oversikt',view:'fagstoff'};
 let cleanup,frameId=0,last=0;
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
 const animationClock=createAnimationClock({reducedMotion:reducedMotion.matches});
@@ -174,24 +173,14 @@ function renderTopic(){
    arrangeModels($('#topic-content'));
    installAnimationControls();
  }else if(route.view==='begreper'){
-   $('#topic-content').innerHTML=`<p class="question-summary">Begrepene du trenger for å forklare sammenhengene.</p><dl class="terms-list">${t.terms.map(term=>`<div class="term"><dt>${escapeHtml(term.term)}</dt><dd>${term.definition}</dd></div>`).join('')}</dl>${resourceHtml(t)}`;
+   $('#topic-content').innerHTML=`<dl class="terms-list">${t.terms.map(term=>`<div class="term"><dt>${escapeHtml(term.term)}</dt><dd>${term.definition}</dd></div>`).join('')}</dl>${resourceHtml(t)}`;
  }else renderBank();
 }
 function resourceHtml(t){return t.resources?.length?`<aside class="resource-box"><span>UNDERSØK MER</span>${t.resources.map(r=>`<a href="${escapeHtml(r.url)}" target="_blank" rel="noopener">${escapeHtml(r.label)} ↗</a>`).join('')}</aside>`:'';}
 
 function renderBank(){
- const all=route.id==='alle';
- $('#topic-content').innerHTML=`<div class="filterbar"><input id="question-search" type="search" placeholder="Søk i oppgavene …" aria-label="Søk i oppgavene" value="${escapeHtml(filters.query)}">${all?`<select id="question-topic" aria-label="Velg oppgavetema"><option value="">Alle temaer</option>${topics.map(t=>`<option value="${t.id}" ${filters.topic===t.id?'selected':''}>${escapeHtml(t.title)}</option>`).join('')}</select>`:''}<select id="question-type" aria-label="Velg oppgavetype"><option value="">Alle typer</option><option value="mcq">Flervalg</option><option value="number">Regn ut</option><option value="open">Forklar og drøft</option></select><select id="question-level" aria-label="Velg oppgavenivå"><option value="">Alle nivåer</option><option>Start</option><option>Bruk</option><option>Utfordring</option></select><button id="bookmark-filter" class="bookmark-filter" aria-pressed="${filters.bookmarked}">☆ Mine bokmerker</button></div><div id="question-list" class="question-list"></div>`;
- $('#question-type').value=filters.type;$('#question-level').value=filters.level;
- $('#question-search').addEventListener('input',e=>{filters.query=e.target.value;renderQuestions();});
- for(const [selector,prop]of [['#question-type','type'],['#question-level','level'],['#question-topic','topic']])$(selector)?.addEventListener('change',e=>{filters[prop]=e.target.value;renderQuestions();});
- $('#bookmark-filter').addEventListener('click',e=>{filters.bookmarked=!filters.bookmarked;e.currentTarget.setAttribute('aria-pressed',String(filters.bookmarked));renderQuestions();});
- renderQuestions();
-}
-function visibleQuestions(){return allQuestions.filter(q=>(route.id==='alle'?(!filters.topic||q.topic.id===filters.topic):q.topic.id===route.id)&&(!filters.type||q.type===filters.type)&&(!filters.level||(q.level||'Bruk')===filters.level)&&(!filters.bookmarked||saved.bookmarks[q.id])&&(!filters.query||`${plain(q.prompt)} ${q.topic.title}`.toLocaleLowerCase('nb').includes(filters.query.toLocaleLowerCase('nb'))));}
-function renderQuestions(){
- const questions=visibleQuestions();
- $('#question-list').innerHTML=questions.length?questions.map(q=>questionHtml(q)).join(''):`<div class="empty-state">Ingen oppgaver passer til valgene dine. Prøv et annet søk eller fjern et filter.</div>`;
+ const questions=route.id==='alle'?allQuestions:allQuestions.filter(q=>q.topic.id===route.id);
+ $('#topic-content').innerHTML=`<div id="question-list" class="question-list">${questions.length?questions.map(questionHtml).join(''):'<div class="empty-state">Det er ingen oppgaver her ennå.</div>'}</div>`;
 }
 function numberFormHtml(q,draft){
  if(!q.fields)return `<form class="q-number-form"><label class="sr-only" for="input-${q.id}">Svar ${escapeHtml(q.unit||'')}</label><input id="input-${q.id}" type="text" inputmode="decimal" autocomplete="off" placeholder="Ditt svar" value="${escapeHtml(draft)}"><span>${escapeHtml(q.unit||'')}</span><button type="submit">Sjekk</button></form>`;
@@ -251,9 +240,9 @@ document.addEventListener('click',e=>{
  if(e.target.closest('.skip')){e.preventDefault();$('#main').focus();return;}
  const section=e.target.closest('[data-section]');if(section){e.preventDefault();document.getElementById(section.dataset.section)?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});return;}
  const routeButton=e.target.closest('[data-route]');if(routeButton){navigate(routeButton.dataset.route);return;}
- const topicButton=e.target.closest('[data-topic-button]');if(topicButton){const id=topicButton.dataset.topicButton;if(route.id!==id){filters={query:'',type:'',level:'',topic:'',bookmarked:false};navigate(id+'/fagstoff');}else{const item=topicButton.closest('.topic-item');item.classList.toggle('expanded');topicButton.setAttribute('aria-expanded',String(item.classList.contains('expanded')));}return;}
+ const topicButton=e.target.closest('[data-topic-button]');if(topicButton){const id=topicButton.dataset.topicButton;if(route.id!==id){navigate(id+'/fagstoff');}else{const item=topicButton.closest('.topic-item');item.classList.toggle('expanded');topicButton.setAttribute('aria-expanded',String(item.classList.contains('expanded')));}return;}
  const card=e.target.closest('.q-card');if(!card)return;const q=findQuestion(card),answer=card.querySelector('.q-answer');
- const bookmark=e.target.closest('.q-bookmark');if(bookmark){saved.bookmarks[q.id]=!saved.bookmarks[q.id];persist();if(filters.bookmarked)renderQuestions();else{bookmark.textContent=saved.bookmarks[q.id]?'★':'☆';bookmark.setAttribute('aria-pressed',String(!!saved.bookmarks[q.id]));bookmark.setAttribute('aria-label',saved.bookmarks[q.id]?'Fjern bokmerke':'Merk oppgaven');}return;}
+ const bookmark=e.target.closest('.q-bookmark');if(bookmark){saved.bookmarks[q.id]=!saved.bookmarks[q.id];persist();bookmark.textContent=saved.bookmarks[q.id]?'★':'☆';bookmark.setAttribute('aria-pressed',String(!!saved.bookmarks[q.id]));bookmark.setAttribute('aria-label',saved.bookmarks[q.id]?'Fjern bokmerke':'Merk oppgaven');return;}
  const choice=e.target.closest('.q-choice');if(choice){const selected=Number(choice.dataset.choice),ok=selected===q.correct;card.querySelectorAll('.q-choice').forEach(b=>{const index=Number(b.dataset.choice);b.classList.toggle('selected',index===selected);b.classList.toggle('correct',index===q.correct);b.classList.toggle('incorrect',index===selected&&!ok);b.setAttribute('aria-pressed',String(index===selected));});answer.hidden=false;answer.querySelector('.solution').hidden=false;answer.querySelector('.feedback').textContent=ok?'Riktig!':'Dette alternativet stemmer ikke. Se forklaringen.';setSolved(q,card,ok);return;}
  if(e.target.closest('.show-answer')){answer.hidden=!answer.hidden;answer.querySelector('.solution').hidden=false;answer.querySelector('.feedback').textContent='';e.target.textContent=answer.hidden?(q.type==='open'?'Vis veiledende svar':'Vis forklaring'):'Skjul forklaring';return;}
  if(e.target.closest('.hint-button')){const hint=card.querySelector('.q-hint');hint.hidden=!hint.hidden;e.target.setAttribute('aria-expanded',String(!hint.hidden));return;}
@@ -283,7 +272,7 @@ $('#about-dialog').addEventListener('click',e=>{if(e.target===$('#about-dialog')
 $('#reset-button').addEventListener('click',()=>{$('#reset-confirm').hidden=false;});
 $('#cancel-reset').addEventListener('click',()=>{$('#reset-confirm').hidden=true;});
 $('#confirm-reset').addEventListener('click',()=>{saved.answers={};saved.bookmarks={};saved.drafts={};persist();$('#reset-confirm').hidden=true;$('#about-dialog').close();render();announce('Øvingshistorikken er nullstilt.');});
-addEventListener('hashchange',()=>{filters={query:'',type:'',level:'',topic:'',bookmarked:false};render();});
+addEventListener('hashchange',()=>{render();});
 function postState(){if(embedded&&parent!==window)parent.postMessage({type:'onlyfag:waves:state',topic:route.id,view:route.view,...(route.section&&{section:route.section})},location.origin);}
 if(embedded){
  document.body.classList.add('embedded');
@@ -292,7 +281,7 @@ if(embedded){
   const data=event.data;
   if(data.type==='onlyfag:waves:topic'&&byId.has(data.topic)&&['fagstoff','oppgaver','begreper'].includes(data.view)){
    const section=data.view==='fagstoff'&&byId.get(data.topic).sections.find(item=>item.anchor===data.section)?.anchor;
-   filters={query:'',type:'',level:'',topic:'',bookmarked:false};navigate(data.topic+'/'+data.view+(section?'/'+section:''));
+   navigate(data.topic+'/'+data.view+(section?'/'+section:''));
   }else if(data.type==='onlyfag:waves:theme'&&typeof data.dark==='boolean'){
    saved.theme=data.dark?'dark':'light';applyTheme();
   }else if(data.type==='onlyfag:waves:host-layout'&&typeof data.sidebarCollapsed==='boolean'){

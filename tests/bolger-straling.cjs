@@ -100,7 +100,8 @@ function assertNumericQuestion(q){
  const appSource=fs.readFileSync(rendererPath,'utf8');
  assert.ok(!appSource.includes('animation-speed'),'The global animation-speed control was removed.');
  assert.ok(!appSource.includes('id="pause-button"'),'The global pause control was removed.');
- assert.ok(!appSource.includes('id="question-summary"'),'Exercise banks omit the progress summary.');
+ assert.ok(!appSource.includes('class="filterbar"'),'Exercise banks omit the filters.');
+ assert.ok(!appSource.includes('Begrepene du trenger for å forklare sammenhengene.'),'Concept lists start directly with the terms.');
  const topicRender=appSource.match(/function renderTopic\(\)\{([\s\S]*?)\nfunction resourceHtml/)[1];
  assert.ok(!/t\.(kicker|summary)/.test(topicRender),'Topic content should not repeat its overview kicker or summary.');
  const helperModules={};for(const name of ['atom-lab','waves-rainbow','isotope-data','math-presentation','animation-clock'])helperModules[name]=await import(moduleUrl(name));
@@ -154,6 +155,33 @@ function assertNumericQuestion(q){
  }
  const spectrumFixture=modelFixture(source.find(t=>t.id==='em'));
  try{
+  const slider=spectrumFixture.get('ema-wavelength');
+  const graph=spectrumFixture.get('ema-spectrum-plot');
+  const ionizing=spectrumFixture.get('ema-ionizing-toggle');
+  const note=spectrumFixture.get('ema-ionizing-note');
+  assert.equal(slider.getAttribute('dir'),null);
+  assert.match(slider.getAttribute('aria-valuetext'),/nm$/);
+  const markerX=()=>Number(graph.innerHTML.match(/class="ema-wavelength-marker" d="M([\d.]+)/)[1]);
+  const energy=()=>{
+   const value=spectrumFixture.get('ema-energy-output');
+   return Number(value._text.match(/^[\d,]+/)[0].replace(',','.'))*10**Number(value.children[0].textContent);
+  };
+  spectrumFixture.change('ema-wavelength','-8');
+  const shortX=markerX(),highEnergy=energy();
+  spectrumFixture.change('ema-wavelength','-5');
+  assert.ok(markerX()>shortX,'Longer wavelengths move the marker right.');
+  assert.ok(energy()<highEnergy,'Longer wavelengths carry less energy per photon.');
+  assert.ok(note.hidden);
+  assert.equal(graph.querySelector('.ema-ionizing-range'),null);
+  spectrumFixture.click('ema-ionizing-toggle');
+  assert.equal(ionizing.getAttribute('aria-pressed'),'true');
+  assert.ok(!note.hidden);
+  const band=graph.querySelector('.ema-ionizing-range');
+  assert.match(band.textContent,/124 nm/);
+  assert.ok(Number(band.querySelector('rect').getAttribute('width'))>shortX-14);
+  spectrumFixture.click('ema-ionizing-toggle');
+  assert.ok(note.hidden);
+  assert.equal(graph.querySelector('.ema-ionizing-range'),null);
   assert.equal(spectrumFixture.get('ld-photo-scene'),undefined);
   const sky=spectrumFixture.get('sky-dialog'),launcher=spectrumFixture.get('sky-open');
   spectrumFixture.click('sky-open');
@@ -265,7 +293,17 @@ function assertNumericQuestion(q){
   }
  });
  await attempt('Open draft, solution, self-assessment and bookmark persist',async()=>{await route(open.topic,'oppgaver');const c=card(open);await c.locator('textarea').fill('Mitt faglige svar.');await c.locator('.show-answer').click();assert.ok(await c.locator('.solution').isVisible());await c.locator('[data-self="again"]').click();assert.equal(await c.locator('.q-bookmark').getAttribute('aria-pressed'),'true');await page.reload();assert.equal(await c.locator('textarea').inputValue(),'Mitt faglige svar.');assert.equal(await c.locator('.q-bookmark').getAttribute('aria-pressed'),'true');});
- await attempt('All questions search, type/topic filters and bookmark list',async()=>{await route('alle','oppgaver');assert.equal(await page.locator('.q-card').count(),qAll.length);await page.locator('#question-type').selectOption('number');assert.equal(await page.locator('.q-card').count(),qAll.filter(q=>q.type==='number').length);await page.locator('#question-type').selectOption('');await page.locator('#question-search').fill('sjeldenord_ingen');assert.equal(await page.locator('.q-card').count(),0);await page.locator('#question-search').fill('');await page.locator('#bookmark-filter').click();assert.ok(await page.locator('.q-card').count()>=1);await page.locator('#bookmark-filter').click();assert.equal(await page.locator('#question-topic option[value="em"]').count(),0);await page.locator('#question-topic').selectOption('atomer');assert.equal(await page.locator('.q-card').count(),data.find(t=>t.id==='atomer').questions.length);});
+ await attempt('Question banks omit the filter row and concept lists start with terms',async()=>{
+  await route('alle','oppgaver');
+  assert.equal(await page.locator('.q-card').count(),qAll.length);
+  assert.equal(await page.locator('.filterbar').count(),0);
+  await route('atomer','oppgaver');
+  assert.equal(await page.locator('.q-card').count(),data.find(t=>t.id==='atomer').questions.length);
+  assert.equal(await page.locator('.filterbar').count(),0);
+  await route('atomer','begreper');
+  assert.equal(await page.locator('#topic-content > .terms-list').count(),1);
+  assert.equal(await page.locator('.question-summary').count(),0);
+ });
  await attempt('Automatic graphics respect reduced-motion preference',async()=>{await route('fenomener');const svg=page.locator('#wv-interference');const before=await svg.innerHTML();await page.waitForTimeout(180);assert.equal(await svg.innerHTML(),before);await page.emulateMedia({reducedMotion:'no-preference'});await page.reload();const moving=await svg.innerHTML();await page.waitForTimeout(180);assert.notEqual(await svg.innerHTML(),moving);await page.emulateMedia({reducedMotion:'reduce'});await page.reload();const frozen=await svg.innerHTML();await page.waitForTimeout(180);assert.equal(await svg.innerHTML(),frozen);});
  await attempt('Each animated figure has an independent pause button',async()=>{await page.emulateMedia({reducedMotion:'no-preference'});await route('bolger');const travel=page.locator('#wv-travel'),particles=page.locator('#wv-particles');await travel.evaluate(el=>el.closest('.model').querySelector('.animation-toggle').click());const stopped=await travel.innerHTML(),moving=await particles.innerHTML();await page.waitForTimeout(180);assert.equal(await travel.innerHTML(),stopped);assert.notEqual(await particles.innerHTML(),moving);assert.equal(await travel.evaluate(el=>el.closest('.model').querySelector('.animation-toggle').getAttribute('aria-pressed')),'true');await travel.evaluate(el=>el.closest('.model').querySelector('.animation-toggle').click());await page.waitForTimeout(180);assert.notEqual(await travel.innerHTML(),stopped);await page.emulateMedia({reducedMotion:'reduce'});});
  await attempt('Dark theme survives reload',async()=>{await page.locator('#theme-button').click();assert.ok(await page.locator('body.dark').count());await page.reload();assert.ok(await page.locator('body.dark').count());await page.locator('#theme-button').click();});

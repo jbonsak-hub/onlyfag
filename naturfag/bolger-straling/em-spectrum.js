@@ -85,6 +85,19 @@ const sharedStyle = `<style>
 .topic-page .model.ema-spectrum-model{padding:20px!important}.topic-page .ema-spectrum-model .ema-values{gap:12px!important;margin-top:12px!important}
 .topic-page .ema-spectrum-model .ema-values>div{padding:11px!important}.ema-calculation{display:block;margin-top:8px;font-size:12px;font-weight:400;line-height:1.7}
 @media(max-width:620px){.ema-visible-intro{grid-template-columns:1fr;gap:12px}.topic-page .model.ema-spectrum-model{padding:12px!important}}
+
+.ema-wavelength-control{display:grid;gap:4px;margin:0 2% 18px}
+.ema-wavelength-label,.ema-energy-direction{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.ema-wavelength-label{font-weight:700;font-size:13px}
+.ema-wavelength-label span,.ema-energy-direction{font-size:11px;font-weight:400;color:var(--muted)}
+.ema-wavelength-control input{width:100%;margin:0;min-height:22px;accent-color:var(--green)}
+.ema-region-label{font-size:14px}
+.ema-wavelength-tick text,.ema-ionizing-marker{font-size:13px}
+.ema-ionizing-marker{fill:var(--ink);font-weight:700}
+.ema-spectrum-controls .ema-ionizing-toggle{width:100%;margin-top:8px}
+.ema-ionizing-toggle[aria-pressed=true]{background:var(--green-soft);border-color:var(--green);color:var(--green)}
+.ema-ionizing-note{margin:10px 0 0;padding:9px 11px;border-left:2px solid var(--orange);background:var(--green-soft);font-size:12px;line-height:1.5}
+@media(max-width:650px){.ema-region-label{font-size:24px}.ema-wavelength-tick text,.ema-ionizing-marker{font-size:23px}.ema-wavelength-tick--minor{display:none}.ema-wavelength-control{margin-bottom:12px}}
 </style>`;
 
 const regions = [
@@ -98,42 +111,90 @@ const regions = [
 ];
 
 const regionOrder = regions.map((_,i)=>i).reverse();
+const logC = Math.log10(C);
+const minLogWavelength = logC - 22;
+const maxLogWavelength = logC - 4;
+const defaultLogWavelength = Math.log10(550e-9);
+const ionizingEnergy = 10 * 1.602176634e-19;
+const ionizingLogWavelength = Math.log10(H * C / ionizingEnergy);
+const wavelengthTicks = [
+  [-13,'0,1 pm'],[-11,'10 pm'],[-9,'1 nm'],[-7,'100 nm'],[-5,'10 µm'],
+  [-3,'1 mm'],[-1,'10 cm'],[1,'10 m'],[3,'1 km']
+];
 
 function mountEM(root, api) {
   const q = s => root.querySelector(s);
-  const freq = q('#ema-frequency');
+  const slider = q('#ema-wavelength');
   const graph = q('#ema-spectrum-plot');
-  const buttonHost = q('#ema-region-buttons');
-  const x=log=>980-(log-4)/18*960;
-  const selectedRegion=log=>regions.findIndex((r,i)=>log>=r.min&&(log<r.max||i===regions.length-1));
+  const wave = q('#ema-spectrum-wave');
+  const regionButtons = q('#ema-region-buttons').querySelectorAll('button');
+  const ionizingButton = q('#ema-ionizing-toggle');
+  const ionizingNote = q('#ema-ionizing-note');
+  const x = logWavelength => 20 + (logWavelength - minLogWavelength) / 18 * 960;
+  const selectedRegion = logFrequency => regions.findIndex((r,i)=>logFrequency>=r.min&&(logFrequency<r.max||i===regions.length-1));
+  let showIonizing = false;
+
   function renderSpectrum(){
-    const log=Number(freq.value),f=10**log,ri=selectedRegion(log);
-    let markup='<title>Det elektromagnetiske spekteret</title><desc>En logaritmisk frekvensakse. Markøren viser valgt strålingstype.</desc><defs><linearGradient id="ema-visible-gradient" x1="100%" x2="0%"><stop offset="0" stop-color="#f36464"/><stop offset=".2" stop-color="#efb55b"/><stop offset=".4" stop-color="#a8cd6c"/><stop offset=".6" stop-color="#55b4cb"/><stop offset=".8" stop-color="#657dce"/><stop offset="1" stop-color="#a87ace"/></linearGradient></defs>';
-    markup+=regions.map((r,i)=>`<rect x="${x(r.max)}" y="50" width="${x(r.min)-x(r.max)}" height="22" fill="${i===3?'url(#ema-visible-gradient)':r.color}" opacity="${i===ri?1:.65}"/>`).join('');
-    const labelXs=[875,650,515,408,350,225,84],labelYs=[31,31,31,13,31,31,31];
-    markup+=regions.map((r,i)=>`<line x1="${x((r.min+r.max)/2)}" x2="${labelXs[i]}" y1="47" y2="${labelYs[i]+6}" stroke="${r.color}"/><text x="${labelXs[i]}" y="${labelYs[i]}" text-anchor="middle" class="ema-svg-text" style="font-size:14px">${r.name}</text>`).join('');
-    markup+=[22,20,18,16,14,12,10,8,6,4].map(p=>`<line x1="${x(p)}" x2="${x(p)}" y1="72" y2="79" class="ema-gridline"/><text x="${x(p)}" y="97" text-anchor="middle" class="ema-muted-text" style="font-size:13px">10<tspan baseline-shift="super" font-size="9">${p}</tspan></text>`).join('');
-    markup+=`<text x="500" y="120" text-anchor="middle" class="ema-muted-text">Frekvens i Hz · logaritmisk skala</text><path d="M${x(log)-6} 39l6 8 6-8Z" fill="var(--green,#236448)"/><line x1="${x(log)}" x2="${x(log)}" y1="50" y2="73" stroke="var(--ink,#20352e)" stroke-width="2"/>`;
+    const logWavelength = Number(slider.value);
+    const wavelength = 10 ** logWavelength;
+    const f = C / wavelength;
+    const ri = selectedRegion(logC - logWavelength);
+    let markup='<title>Det elektromagnetiske spekteret</title><desc>Bølgelengden øker fra venstre mot høyre på en logaritmisk skala. Fotonenergien avtar.</desc><defs><linearGradient id="ema-visible-gradient" x1="100%" x2="0%"><stop offset="0" stop-color="#f36464"/><stop offset=".2" stop-color="#efb55b"/><stop offset=".4" stop-color="#a8cd6c"/><stop offset=".6" stop-color="#55b4cb"/><stop offset=".8" stop-color="#657dce"/><stop offset="1" stop-color="#a87ace"/></linearGradient></defs>';
+    markup+=regions.map((r,i)=>{
+      const start=x(logC-r.max), stop=x(logC-r.min);
+      return `<rect x="${start}" y="50" width="${stop-start}" height="22" fill="${i===3?'url(#ema-visible-gradient)':r.color}" opacity="${i===ri?1:.72}"/>`;
+    }).join('');
+    const labelXs=[875,650,515,408,350,225,84],labelYs=[33,33,33,15,33,33,33];
+    markup+=regions.map((r,i)=>`<line x1="${x(logC-(r.min+r.max)/2)}" x2="${labelXs[i]}" y1="47" y2="${labelYs[i]+6}" stroke="${r.color}"/><text x="${labelXs[i]}" y="${labelYs[i]}" text-anchor="middle" class="ema-svg-text ema-region-label">${r.name}</text>`).join('');
+    markup+=wavelengthTicks.map(([log,label],i)=>{
+      if (showIonizing && log===-7) return '';
+      return `<g class="ema-wavelength-tick${i%2?' ema-wavelength-tick--minor':''}"><line x1="${x(log)}" x2="${x(log)}" y1="72" y2="80" class="ema-gridline"/><text x="${x(log)}" y="98" text-anchor="middle" class="ema-muted-text">${label}</text></g>`;
+    }).join('');
+    if (showIonizing){
+      const cutoff=x(ionizingLogWavelength);
+      markup+=`<g class="ema-ionizing-range" aria-label="Bølgelengder opp til cirka 124 nanometer">
+        <rect x="20" y="50" width="${cutoff-20}" height="22" fill="#ffd280" fill-opacity=".34" stroke="var(--orange)" stroke-width="2.5"/>
+        <line x1="${cutoff}" x2="${cutoff}" y1="43" y2="83" stroke="var(--orange)" stroke-width="2" stroke-dasharray="3 3"/>
+        <text x="${cutoff}" y="98" text-anchor="middle" class="ema-ionizing-marker">≈ 124 nm</text>
+      </g>`;
+    }
+    const marker=x(logWavelength);
+    markup+=`<path class="ema-wavelength-marker" d="M${marker-6} 39l6 8 6-8Z" fill="var(--green,#236448)"/><line x1="${marker}" x2="${marker}" y1="50" y2="73" stroke="var(--ink,#20352e)" stroke-width="2"/>`;
     graph.innerHTML=markup;
     const outputs=spectrumReadouts(f,ri);
+    slider.setAttribute('aria-valuetext',outputs.wavelength);
     const c = '3,00 · 10<sup>8</sup> m/s';
     function calculation(symbol, lhs, numerator, denominator, value, unit) {
       const fraction = (top, bottom) => `<span class="frac"><span class="num">${top}</span><span class="den">${bottom}</span></span>`;
       return `<span class="ema-calculation">${symbol} = ${lhs} = ${fraction(numerator, denominator)} ≈ ${value} ${unit}</span>`;
     }
-    q('#ema-wavelength-output').innerHTML=outputs.wavelength+calculation('λ','c / f',c,sci(f)+' Hz',sci(C/f),'m');
-    q('#ema-frequency-output').innerHTML=outputs.frequency+calculation('f','c / λ',c,sci(C/f)+' m',sci(f),'Hz');
+    q('#ema-wavelength-output').innerHTML=outputs.wavelength+calculation('λ','c / f',c,sci(f)+' Hz',sci(wavelength),'m');
+    q('#ema-frequency-output').innerHTML=outputs.frequency+calculation('f','c / λ',c,sci(wavelength)+' m',sci(f),'Hz');
     q('#ema-energy-output').innerHTML=outputs.energy;
-    buttonHost.querySelectorAll('button').forEach((button,i)=>button.setAttribute('aria-pressed',String(regionOrder[i]===ri)));
+    regionButtons.forEach(button=>button.setAttribute('aria-pressed',String(Number(button.dataset.region)===ri)));
   }
   function renderWave(t){
-    const log=Number(freq.value),nm=C/(10**log)*1e9,cycles=1.2+(log-4)*.46,color=wavelengthColor(nm);
+    const logWavelength=Number(slider.value), nm=10**logWavelength*1e9;
+    const cycles=1.2+(maxLogWavelength-logWavelength)*.46, color=wavelengthColor(nm);
     const points=Array.from({length:401},(_,i)=>[25+i*1.775,40-18*Math.sin((i/400*cycles-t*.7)*Math.PI*2)]);
-    q('#ema-spectrum-wave').innerHTML=`<title>Bølge ved valgt frekvens</title><rect x="12" y="7" width="736" height="66" rx="10" class="ema-dark"/><path d="${line(points)}" fill="none" stroke="${nm>=380&&nm<=780?color:'#9dcec3'}" stroke-width="2.8"/>`;
+    wave.innerHTML=`<title>Bølge ved valgt bølgelengde</title><rect x="12" y="7" width="736" height="66" rx="10" class="ema-dark"/><path d="${line(points)}" fill="none" stroke="${nm>=380&&nm<=780?color:'#9dcec3'}" stroke-width="2.8"/>`;
   }
-  freq.addEventListener('input',()=>{renderSpectrum();api.repaint(q('#ema-spectrum-wave'));});
-  buttonHost.querySelectorAll('button').forEach((button,i)=>button.addEventListener('click',()=>{freq.value=Math.log10(regions[regionOrder[i]].f);renderSpectrum();api.repaint(q('#ema-spectrum-wave'));}));
-  renderSpectrum();api.onFrame(renderWave,q('#ema-spectrum-wave'));
+  function updateWavelength(){
+    renderSpectrum();
+    api.repaint(wave);
+  }
+  slider.addEventListener('input',updateWavelength);
+  regionButtons.forEach(button=>button.addEventListener('click',()=>{
+    slider.value=Math.log10(C/regions[Number(button.dataset.region)].f);
+    updateWavelength();
+  }));
+  ionizingButton.addEventListener('click',()=>{
+    showIonizing=!showIonizing;
+    ionizingButton.setAttribute('aria-pressed',String(showIonizing));
+    ionizingNote.hidden=!showIonizing;
+    renderSpectrum();
+  });
+  renderSpectrum();api.onFrame(renderWave,wave);
   const rgb = ['red','green','blue'].map(s => q(`#ema-rgb-${s}`));
   function renderRGB(){
     const vals=rgb.map(el=>Number(el.value));
@@ -190,7 +251,7 @@ export const emTopic = {
  </figure>
  <aside><h3>Hva er en nanometer?</h3><p>Én nanometer er én milliarddel av en meter.</p><p><strong>1 nm = 0,000 000 001 m = 10<sup>−9</sup> m</strong></p><p>Tallet 10<sup>−9</sup> betyr én delt på en milliard. Slik kan vi skrive den lille lengden kort på standardform.</p></aside>
 </div>`},
-      {title:'Utforsk spekteret',body:`<div class="model ema-spectrum-model" data-model-layout="custom"><div class="model-full-width ema-spectrum-band" data-model-full-width><svg id="ema-spectrum-plot" class="ema-spectrum-band-svg" viewBox="0 0 1000 125" role="img" aria-label="Hele det elektromagnetiske spekteret"></svg></div><div class="ema-spectrum-lower"><div class="ema-spectrum-figure model-visual"><svg id="ema-spectrum-wave" class="ema-spectrum-wave-svg" viewBox="0 0 760 80" role="img" aria-label="Bølge ved valgt frekvens"></svg><div class="ema-values" aria-live="polite"><div><small>Bølgelengde λ</small><strong id="ema-wavelength-output"></strong></div><div><small>Frekvens f</small><strong id="ema-frequency-output"></strong></div><div><small>Energi per foton</small><strong id="ema-energy-output"></strong></div></div></div><div class="ema-spectrum-controls"><div class="controls"><label class="control" for="ema-frequency">Frekvens · logaritmisk skala<input id="ema-frequency" type="range" dir="rtl" min="4" max="22" step="0.005" value="14.7364"></label></div><div class="ema-region-buttons" id="ema-region-buttons">${regionOrder.map(i=>`<button type="button" data-region="${i}" aria-pressed="${i===3}">${regions[i].name}</button>`).join('')}</div></div></div></div>`},
+      {title:'Utforsk spekteret',body:`<div class="model ema-spectrum-model" data-model-layout="custom"><div class="model-full-width ema-spectrum-band" data-model-full-width><svg id="ema-spectrum-plot" class="ema-spectrum-band-svg" viewBox="0 0 1000 109" role="img" aria-label="Hele det elektromagnetiske spekteret"></svg><div class="ema-wavelength-control"><label class="ema-wavelength-label" for="ema-wavelength">Bølgelengde <span>Logaritmisk skala</span></label><input id="ema-wavelength" type="range" min="${minLogWavelength}" max="${maxLogWavelength}" step="0.005" value="${defaultLogWavelength}"><div class="ema-energy-direction"><span>Mer energi per foton</span><span>Mindre energi per foton</span></div></div></div><div class="ema-spectrum-lower"><div class="ema-spectrum-figure model-visual"><svg id="ema-spectrum-wave" class="ema-spectrum-wave-svg" viewBox="0 0 760 80" role="img" aria-label="Bølge ved valgt bølgelengde"></svg><div class="ema-values" aria-live="polite"><div><small>Bølgelengde λ</small><strong id="ema-wavelength-output"></strong></div><div><small>Frekvens f</small><strong id="ema-frequency-output"></strong></div><div><small>Energi per foton</small><strong id="ema-energy-output"></strong></div></div></div><div class="ema-spectrum-controls"><div class="ema-region-buttons" id="ema-region-buttons">${regionOrder.map(i=>`<button type="button" data-region="${i}" aria-pressed="${i===3}">${regions[i].name}</button>`).join('')}</div><button type="button" class="secondary ema-ionizing-toggle" id="ema-ionizing-toggle" aria-pressed="false" aria-controls="ema-ionizing-note">Vis ioniserende stråling</button><p class="ema-ionizing-note" id="ema-ionizing-note" hidden>Ved ca. <strong>124 nm</strong> har et foton omtrent 1,6 · 10<sup>−18</sup> J. Det er en omtrentlig grense. Hvor mye energi som trengs for å løsne et elektron, avhenger av atomet eller molekylet.</p></div></div></div>`},
       {...absorptionSection,body:absorptionSection.body+skyScatteringHtml},
       {title:'Hvordan lager en skjerm hvitt og gult?',body:`<p>En skjerm blander <strong>rødt, grønt og blått lys</strong> (RGB). Hvitfarge kan lages med en passende blanding av disse tre; det er ikke nødvendig å ha alle bølgelengder i blandingen.</p><div class="model ema-rgb-layout" data-model-layout="custom"><div class="ema-rgb-screen"><svg viewBox="0 0 600 230" role="img" aria-label="Additiv blanding av rødt, grønt og blått lys"><rect width="600" height="230" rx="10" fill="#000"/><g style="isolation:isolate"><circle id="ema-rgb-red-circle" cx="160" cy="85" r="70" style="mix-blend-mode:screen"/><circle id="ema-rgb-green-circle" cx="240" cy="85" r="70" style="mix-blend-mode:screen"/><circle id="ema-rgb-blue-circle" cx="200" cy="135" r="70" style="mix-blend-mode:screen"/></g><path d="M380 35v155" stroke="#48636c"/><rect id="ema-rgb-result" x="440" y="55" width="100" height="100" rx="10"/><text x="490" y="185" text-anchor="middle" fill="#ddd" font-size="15">Blandingsfargen</text></svg><output id="ema-rgb-value"></output></div><div class="ema-rgb-controls">${[['red','Rødt',192],['green','Grønt',87],['blue','Blått',146]].map(([id,label,val])=>`<label for="ema-rgb-${id}">${label}<input type="range" id="ema-rgb-${id}" min="0" max="255" step="1" value="${val}"><output id="ema-rgb-${id}-value" for="ema-rgb-${id}">${val}</output></label>`).join('')}<div class="ema-region-buttons"><button type="button" data-ema-rgb="255,255,255">Hvitt</button><button type="button" data-ema-rgb="255,255,0">Gult</button><button type="button" data-ema-rgb="0,0,0">Svart</button></div><p id="ema-rgb-caption" aria-live="polite"></p></div></div><div class="key"><strong>Lysblanding og overflatefarger er forskjellige:</strong> En rød flate reflekterer særlig rødt lys og absorberer mye av det øvrige. Uten rødt i belysningen kan flaten se mørk ut.</div>`},
       lightDualitySection

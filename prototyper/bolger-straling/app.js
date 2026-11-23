@@ -1,4 +1,4 @@
-import {startCourse} from '../../naturfag/bolger-straling/app.js?v=20261122-spredning1';
+import {startCourse} from '../../naturfag/bolger-straling/app.js?v=20261123-lambda';
 import {topics as basicTopics} from '../../naturfag/bolger-straling/wave-basics.js?v=20261118-resonans1';
 import {topics as waveTopics} from '../../naturfag/bolger-straling/waves.js?v=20261122-spredning1';
 import {topics as emTopics} from './em-atoms.js?v=20261122-spekter2';
