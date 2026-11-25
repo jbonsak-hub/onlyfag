@@ -89,15 +89,21 @@ const styles=`<style>
 .wvr-launch{display:flex;align-items:center;justify-content:space-between;gap:18px;width:100%;padding:13px 16px;margin:18px 0 0;background:var(--surface,#fff);border:1px solid var(--line,#d9e3dc);border-radius:10px;color:var(--green,#236448);font:inherit;font-size:13px;font-weight:650;text-align:left;cursor:pointer}.wvr-launch:hover{border-color:var(--green,#236448)}.wvr-launch span:last-child{font-size:19px;flex:none}
 dialog.wvr-dialog{box-sizing:border-box;width:min(1140px,calc(100vw - 32px));max-width:1140px;max-height:calc(100dvh - 32px);padding:22px;background:var(--surface,#fff);color:var(--ink,#20352e);border:1px solid var(--line,#d9e3dc);border-radius:15px;overflow:auto}dialog.wvr-dialog::backdrop{background:#132d27a8;backdrop-filter:blur(3px)}.wvr-dialog-heading{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:18px}.wvr-dialog-heading h2{margin:0;font-size:21px;line-height:1.25}.wvr-close{display:grid;place-items:center;width:34px;height:34px;padding:0;flex:none;font-size:24px;line-height:1;background:var(--bg,#f5f8f5);border:1px solid var(--line,#d9e3dc);border-radius:50%;color:var(--ink,#20352e);cursor:pointer}
 .topic-page .wvr-dialog .model.wvr-model{margin:0;padding:0;border:0;box-shadow:none;grid-template-columns:minmax(0,1fr) 195px;gap:18px}.wvr-model .model-visual{min-width:0;position:relative}.topic-page .wvr-model .model-visual svg{width:100%;height:auto;display:block;max-height:none;background:#f3f7f7;border-radius:11px}.wvr-model svg text{font:16px system-ui,sans-serif;fill:var(--ink,#20352e)}.wvr-model svg .wvr-small{font-size:14px;fill:var(--muted,#60736b)}.wvr-model svg .wvr-tiny{font-size:12px;fill:var(--muted,#60736b)}
-.topic-page .wvr-model .model-panel{justify-content:flex-start;padding-left:18px;border-left:1px solid var(--line,#d9e3dc);gap:18px}.wvr-mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px}.wvr-mode-tabs button{font:inherit;font-size:12px;font-weight:600;padding:8px 7px;cursor:pointer;border:1px solid var(--line,#d9e3dc);background:var(--surface,#fff);color:var(--ink,#20352e);border-radius:7px}.wvr-mode-tabs button[aria-pressed=true]{background:var(--green,#236448);border-color:var(--green,#236448);color:var(--surface,#fff)}.wvr-description{font-size:12px;line-height:1.7;margin:0}.wvr-dialog label{display:block;font-size:12px;line-height:1.6}.wvr-dialog select{display:block;width:100%;margin-top:6px;padding:8px;border:1px solid var(--line,#d9e3dc);border-radius:7px;background:var(--surface,#fff);color:var(--ink,#20352e);font:inherit;font-size:12px}.wvr-readout{font-size:12px;line-height:1.65;padding:10px;background:var(--green-soft,#e6f2e8);border-radius:8px}.wvr-readout>div+div{margin-top:9px}.wvr-readout strong{display:block}.wvr-source{font-size:10px;line-height:1.5;color:var(--muted,#60736b)}.wvr-dialog [hidden]{display:none!important}
-@media(max-width:800px){.topic-page .wvr-dialog .model.wvr-model{grid-template-columns:1fr}.topic-page .wvr-model .model-panel{border-left:0;border-top:1px solid var(--line,#d9e3dc);padding:14px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:13px}.wvr-mode-tabs,.wvr-description,.wvr-source{grid-column:1/-1}.wvr-dialog-heading{margin-bottom:13px}.wvr-dialog-heading h2{font-size:18px}dialog.wvr-dialog{padding:15px;width:calc(100vw - 20px);max-height:calc(100dvh - 20px)}.wvr-model svg text{font-size:18px}.wvr-model svg .wvr-small{font-size:16px}.wvr-model svg .wvr-tiny{font-size:14px}}
+.topic-page .wvr-model .model-panel{justify-content:flex-start;padding-left:18px;border-left:1px solid var(--line,#d9e3dc);gap:18px}.wvr-reflections{display:grid;gap:5px}.wvr-reflections button{min-height:36px;padding:7px 9px;border:1px solid var(--line,#d9e3dc);border-radius:7px;background:var(--surface,#fff);color:var(--ink,#20352e);font:inherit;font-size:12px;font-weight:600;text-align:left;cursor:pointer}
+.wvr-reflections button[aria-pressed=true]{background:var(--green,#236448);border-color:var(--green,#236448);color:var(--surface,#fff)}.wvr-reflections button:focus-visible,.wvr-why summary:focus-visible{outline:2px solid var(--green,#236448);outline-offset:2px}
+.wvr-description{font-size:12px;line-height:1.7;margin:0}.wvr-readout{font-size:12px;line-height:1.65;padding:10px;background:var(--sidebar,#edf1ef);border-radius:8px}.wvr-readout>div+div{margin-top:9px}.wvr-readout strong{display:block}
+.wvr-why{margin-top:9px;padding-top:7px;border-top:1px solid var(--line,#d9e3dc)}.wvr-why summary{font-weight:650;cursor:pointer}.wvr-why p{margin:6px 0 0}
+.wvr-source{font-size:10px;line-height:1.5;color:var(--muted,#60736b)}.wvr-dialog [hidden]{display:none!important}
+@media(max-width:800px){.topic-page .wvr-dialog .model.wvr-model{grid-template-columns:1fr}.topic-page .wvr-model .model-panel{border-left:0;border-top:1px solid var(--line,#d9e3dc);padding:14px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:13px}.wvr-reflections,.wvr-description,.wvr-readout,.wvr-source{grid-column:1/-1}.wvr-reflections{grid-template-columns:1fr 1fr}.wvr-dialog-heading{margin-bottom:13px}.wvr-dialog-heading h2{font-size:18px}dialog.wvr-dialog{padding:15px;width:calc(100vw - 20px);max-height:calc(100dvh - 20px)}.wvr-model svg text{font-size:18px}.wvr-model svg .wvr-small{font-size:16px}.wvr-model svg .wvr-tiny{font-size:14px}}
 body.dark .wvr-model .model-visual svg{background:#182c2e}body.dark .wvr-model svg .wvr-sky{fill:#21383b}body.dark .wvr-model svg .wvr-ground{fill:#29473c}
 </style>`;
 
 export const rainbowExampleHtml=`${styles}<div class="model model--split wvr-model"><div class="model-visual"><svg id="wvr-scene" viewBox="0 0 860 470" role="img" aria-label="Hvitt lys deles opp i farger i et prisme"></svg></div>
  <aside class="model-panel" aria-label="Velg lysfenomen">
- <p class="wvr-description" id="wvr-description"></p><label id="wvr-reflections-label" for="wvr-reflections" hidden>Lysveien i dråpen<select id="wvr-reflections"><option value="1">Én refleksjon</option><option value="2">To refleksjoner</option></select></label>
- <div id="wvr-readout" class="wvr-readout" aria-live="polite"></div><a class="wvr-source" href="https://www.weather.gov/fgz/Rainbow" target="_blank" rel="noopener">NOAA: hvordan regnbuer oppstår ↗</a></aside></div>`;
+ <p class="wvr-description" id="wvr-description"></p><div class="wvr-reflections" id="wvr-reflections" aria-label="Lysveien i dråpen" role="group" hidden>
+ <button type="button" data-wvr-reflections="1" aria-pressed="true">Én refleksjon</button>
+ <button type="button" data-wvr-reflections="2" aria-pressed="false">To refleksjoner</button></div>
+ <div id="wvr-readout" class="wvr-readout" aria-live="polite"></div><a class="wvr-source" id="wvr-source" href="https://www.weather.gov/fgz/Rainbow" target="_blank" rel="noopener">Hvordan oppstår regnbuer? (NOAA)</a></aside></div>`;
 
 function prismScene(){
  const map=p=>add([302,203],mul(rotate(p,-30*DEG),103));
@@ -196,27 +202,34 @@ function rainbowScene(reflections){
 export function mountRainbowExample(root,api){
  const q=id=>root.querySelector('#'+id),scene=q('wvr-scene');
  if(!scene)return ()=>{};
- const reflections=q('wvr-reflections');
- let mode='prism',prepared=null,previous='',lastTime=0;
+ const controls=q('wvr-reflections'),reflectionButtons=[...controls.querySelectorAll('[data-wvr-reflections]')];
+ let reflections=1,mode='prism',prepared=null,previous='';
  function prepare(){
-  const key=mode+'|'+reflections.value;if(key===previous)return;previous=key;
-  prepared=mode==='prism'?prismScene():rainbowScene(Number(reflections.value));
-  q('wvr-reflections-label').hidden=mode!=='rainbow';
-  scene.setAttribute('data-mode',mode);scene.setAttribute('data-reflections',mode==='rainbow'?reflections.value:'0');
+  const key=mode+'|'+reflections;if(key===previous)return;previous=key;
+  prepared=mode==='prism'?prismScene():rainbowScene(reflections);
+  controls.hidden=mode!=='rainbow';q('wvr-source').hidden=mode!=='rainbow';
+  for(const button of reflectionButtons)button.setAttribute('aria-pressed',String(Number(button.dataset.wvrReflections)===reflections));
+  scene.setAttribute('data-mode',mode);scene.setAttribute('data-reflections',mode==='rainbow'?String(reflections):'0');
   scene.setAttribute('aria-label',mode==='prism'?'Hvitt lys brytes og deles i farger i et prisme':'Hele hovedregnbuen og den ytre regnbuen med valgt lysvei i en dråpe');
   q('wvr-description').textContent=mode==='prism'?'Hvitt lys består av mange bølgelengder. Fargene brytes forskjellig når lyset går inn i og ut av prismet.':'Lys fra mange regndråper danner buene. Den svakere regnbuen ytterst har omvendt fargerekkefølge. Se forskjellen mellom én og to refleksjoner inne i dråpen.';
-  q('wvr-readout').innerHTML=mode==='prism'?'<div><strong>Rødt</strong>Bøyes minst.</div><div><strong>Fiolett</strong>Bøyes mest.</div>':Number(reflections.value)===1?'<div><strong>Hovedregnbuen</strong>Én indre refleksjon.</div><div><strong>Omtrent 40°–42°</strong>Rødt ytterst, fiolett innerst.</div>':'<div><strong>Regnbue nr. 2</strong>To indre refleksjoner.</div><div><strong>Omtrent 51°–54°</strong>Fiolett ytterst, rødt innerst.</div>';
+  q('wvr-readout').innerHTML=mode==='prism'?'<div><strong>Rødt bøyes minst.</strong></div><div><strong>Fiolett bøyes mest.</strong></div><details class="wvr-why"><summary>Hvorfor det?</summary><p>Fiolett lys går litt saktere i glass enn rødt lys. Brytningsindeksen er derfor litt større for fiolett. Fargene endrer retning med ulike vinkler når de går inn i og ut av prismet, slik at de skilles.</p></details>':reflections===1?'<div><strong>Hovedregnbuen</strong>Én indre refleksjon.</div><div><strong>Omtrent 40°–42°</strong>Rødt ytterst, fiolett innerst.</div>':'<div><strong>Regnbue nr. 2</strong>To indre refleksjoner.</div><div><strong>Omtrent 51°–54°</strong>Fiolett ytterst, rødt innerst.</div>';
  }
  function draw(t){
-  lastTime=t;prepare();const phase=(t*.2)%1;
+  prepare();const phase=(t*.2)%1;
   const moving=prepared.rays.map((ray,i)=>{const p=photon(ray.points,(phase+i*.018)%1);return '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="'+ray.color+'" stroke="white" stroke-width="1.2"/>';}).join('');
   scene.innerHTML=prepared.markup+moving;
  }
  function repaint(){prepare();api.repaint(scene);}
  function selectMode(next){mode=next==='rainbow'?'rainbow':'prism';repaint();}
- reflections.addEventListener('change',repaint);
+ function selectReflection(event){
+  const button=event.target.closest('[data-wvr-reflections]');
+  if(!button||!controls.contains(button))return;
+  reflections=Number(button.dataset.wvrReflections);
+  repaint();
+ }
+ controls.addEventListener('click',selectReflection);
  const removeFrame=api.onFrame(draw,scene);
- const dispose=()=>{reflections.removeEventListener('change',repaint);removeFrame?.();};
+ const dispose=()=>{controls.removeEventListener('click',selectReflection);removeFrame?.();};
  dispose.selectMode=selectMode;
  return dispose;
 }

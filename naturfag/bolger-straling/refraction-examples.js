@@ -1,4 +1,6 @@
 const DEG=Math.PI/180,TAU=2*Math.PI;
+const coastSettings={angleDeg:45,slowRatio:.4};
+const carSettings={angleDeg:40,slowRatio:.45};
 const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
 const fmt=(value,digits=1)=>Number(value).toLocaleString('nb-NO',{maximumFractionDigits:digits});
 const pt=p=>`${p[0].toFixed(2)},${p[1].toFixed(2)}`;
@@ -12,9 +14,9 @@ export function shoreAngle(angleDeg,slowRatio){
 }
 
 /** Eikonal phase: the along-shore wave number is conserved while the cross-shore part increases. */
-export function createShoreField(angleDeg=40,slowRatio=.45){
+export function createShoreField(angleDeg=coastSettings.angleDeg,slowRatio=coastSettings.slowRatio){
  shoreAngle(angleDeg,slowRatio);
- const top=50,bottom=376,deepSpeed=84,period=1.4,omega=TAU/period;
+ const top=-40,bottom=376,deepSpeed=84,period=1.4,omega=TAU/period;
  const kx=omega/deepSpeed*Math.sin(angleDeg*DEG),phase=new Float64Array(bottom-top+1),speed=new Float64Array(phase.length);
  const localSpeed=y=>{const u=clamp((y-145)/170,0,1),smooth=u*u*(3-2*u);return deepSpeed*(1-(1-slowRatio)*smooth);};
  for(let i=0;i<phase.length;i++){
@@ -74,17 +76,18 @@ function arrow(from,to,color='#245f71',width=3){
  return `<path d="${path([from,to])}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="round"/><path d="${path([[back[0]+side[0],back[1]+side[1]],to,[back[0]-side[0],back[1]-side[1]]])}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round"/>`;
 }
 
-function coastScene(time,{angleDeg,slowRatio},field){
- const waves=shoreWavefronts(field,time),far=angleDeg*DEG,near=field.finalAngleDeg*DEG;
- let out=`<title>Bølger dreier når vannet blir grunnere</title><desc>Ovenfra: skrå bølgefronter går mot en rett strand. Lavere bølgefart i grunnere vann dreier bølgene mot normalen; frontene blir mer parallelle med stranden.</desc><defs><linearGradient id="re-sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#80b4ce"/><stop offset=".48" stop-color="#acd5df"/><stop offset="1" stop-color="#d9eee7"/></linearGradient><clipPath id="re-water"><rect x="24" y="50" width="812" height="326" rx="8"/></clipPath></defs>`;
- out+=`<rect x="24" y="50" width="812" height="368" rx="10" fill="#e9d9b6"/><rect x="24" y="50" width="812" height="326" rx="8" fill="url(#re-sea)"/><path d="M24 376H836" stroke="#c8b28a" stroke-width="4"/>`;
+function coastScene(time,field){
+ const {top,bottom,angleDeg,finalAngleDeg}=field,waterHeight=bottom-top;
+ const waves=shoreWavefronts(field,time),far=angleDeg*DEG,near=finalAngleDeg*DEG;
+ let out=`<title>Bølger dreier når vannet blir grunnere</title><desc>Ovenfra: skrå bølgefronter går mot en rett strand. Lavere bølgefart i grunnere vann dreier bølgene mot normalen; frontene blir mer parallelle med stranden.</desc><defs><linearGradient id="re-sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#80b4ce"/><stop offset=".48" stop-color="#acd5df"/><stop offset="1" stop-color="#d9eee7"/></linearGradient><clipPath id="re-water"><rect x="24" y="${top}" width="812" height="${waterHeight}" rx="8"/></clipPath></defs>`;
+ out+=`<rect x="24" y="${top}" width="812" height="${waterHeight+42}" rx="10" fill="#e9d9b6"/><rect x="24" y="${top}" width="812" height="${waterHeight}" rx="8" fill="url(#re-sea)"/><path d="M24 376H836" stroke="#c8b28a" stroke-width="4"/>`;
  out+=`<g clip-path="url(#re-water)">${waves.map(points=>`<path d="${path(points)}" fill="none" stroke="#f9ffff" stroke-width="7" opacity=".42"/><path d="${path(points)}" fill="none" stroke="#287f98" stroke-width="2.4" opacity=".9"/>`).join('')}</g>`;
- out+=`<path d="M475 65V370" stroke="#3d6372" stroke-width="1.8" stroke-dasharray="6 7" opacity=".8"/>`;
- out+=`<rect x="44" y="65" width="175" height="36" rx="7" fill="#f7fcff" fill-opacity=".94"/>${txt(58,89,'Dypere vann','font-weight="650"')}`;
+ out+=`<path d="M475 ${top+14}V370" stroke="#3d6372" stroke-width="1.8" stroke-dasharray="6 7" opacity=".8"/>`;
+ out+=`<rect x="44" y="${top+15}" width="175" height="36" rx="7" fill="#f7fcff" fill-opacity=".94"/>${txt(58,top+39,'Dypere vann','font-weight="650"')}`;
  out+=`<rect x="590" y="313" width="226" height="36" rx="7" fill="#f7fcff" fill-opacity=".94"/>${txt(604,337,'Grunnere vann: lavere fart','class="re-small"')}`;
- out+=arrow([266,110],[266+65*Math.sin(far),110+65*Math.cos(far)]);
+ out+=arrow([266,45],[266+65*Math.sin(far),45+65*Math.cos(far)]);
  out+=arrow([562,270],[562+65*Math.sin(near),270+65*Math.cos(near)]);
- out+=txt(493,84,'Normal','class="re-small"');
+ out+=txt(493,top+34,'Normal','class="re-small"');
  out+=txt(430,405,'Strand','text-anchor="middle" font-weight="650"');
  out+=txt(430,453,'Bølgefrontene blir mer parallelle med stranden','class="re-caption" text-anchor="middle" font-weight="650"');
  return out;
@@ -110,58 +113,97 @@ function carScene(time,{angleDeg,slowRatio}){
  return {markup:out,state,local};
 }
 
-export function renderPracticalScene(mode,time,{angleDeg=40,slowRatio=.45}={}){
- return mode==='car'?carScene(time,{angleDeg,slowRatio}).markup:coastScene(time,{angleDeg,slowRatio},createShoreField(angleDeg,slowRatio));
+export function renderPracticalScene(mode,time,settings={}){
+ const options={...(mode==='car'?carSettings:coastSettings),...settings};
+ return mode==='car'?carScene(time,options).markup:coastScene(time,createShoreField(options.angleDeg,options.slowRatio));
 }
 
 const styles=`<style>
-.re-launch{display:flex;justify-content:space-between;align-items:center;width:100%;gap:16px;margin:14px 0 0;padding:12px 15px;border:1px solid var(--line,#d9e3dc);border-radius:10px;background:var(--surface,#fff);color:var(--green,#236448);font:inherit;font-size:13px;font-weight:650;text-align:left;cursor:pointer}.re-launch:hover{border-color:var(--green,#236448)}.re-launch>span:last-child{font-size:19px}
-dialog.re-dialog{box-sizing:border-box;width:min(1140px,calc(100vw - 32px));max-width:1140px;max-height:calc(100dvh - 32px);padding:22px;background:var(--surface,#fff);color:var(--ink,#20352e);border:1px solid var(--line,#d9e3dc);border-radius:15px;overflow:auto}dialog.re-dialog::backdrop{background:#132d27a8;backdrop-filter:blur(3px)}.re-heading{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:18px}.re-heading h2{margin:0;font-size:21px;line-height:1.25}.re-close{display:grid;place-items:center;width:34px;height:34px;padding:0;flex:none;font-size:24px;line-height:1;background:var(--bg,#f5f8f5);border:1px solid var(--line,#d9e3dc);border-radius:50%;color:var(--ink,#20352e);cursor:pointer}
-.topic-page .re-dialog .model.re-model{margin:0;padding:0;border:0;box-shadow:none;grid-template-columns:minmax(0,1fr) 205px;gap:18px}.re-model .model-visual{min-width:0}.topic-page .re-model .model-visual svg{display:block;width:100%;height:auto;max-height:none;background:var(--bg,#f3f7f7);border-radius:11px}.re-model svg text{font-family:system-ui,sans-serif;font-size:16px;fill:#213e46!important}.re-model svg .re-caption{fill:var(--ink,#213e46)!important}.re-model svg .re-small{font-size:14px;fill:#355b65!important}
-.topic-page .re-model .model-panel{justify-content:flex-start;border-left:1px solid var(--line,#d9e3dc);padding-left:18px;gap:16px}.re-mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px}.re-mode-tabs button,.re-reset{font:inherit;font-size:12px;font-weight:600;padding:8px 7px;cursor:pointer;border:1px solid var(--line,#d9e3dc);background:var(--surface,#fff);color:var(--ink,#20352e);border-radius:7px}.re-mode-tabs button[aria-pressed=true]{background:var(--green,#236448);border-color:var(--green,#236448);color:var(--surface,#fff)}.re-description{font-size:12px;line-height:1.7;margin:0}.re-dialog label{display:block;font-size:12px;line-height:1.6}.re-control-head{display:flex;justify-content:space-between;gap:9px}.re-control-head output{font-weight:650;white-space:nowrap}.re-dialog input[type=range]{width:100%;margin:7px 0 0;accent-color:var(--green,#236448)}.re-control-note{display:block;color:var(--muted,#60736b);font-size:10px}.re-readout{font-size:12px;line-height:1.65;padding:10px;background:var(--green-soft,#e6f2e8);border-radius:8px}.re-readout>div+div{margin-top:8px}.re-source{font-size:10px;line-height:1.5;color:var(--muted,#60736b)}
-@media(max-width:800px){.topic-page .re-dialog .model.re-model{grid-template-columns:1fr}.topic-page .re-model .model-panel{border-left:0;border-top:1px solid var(--line,#d9e3dc);padding:14px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:13px}.re-mode-tabs,.re-description,.re-readout,.re-source{grid-column:1/-1}.re-heading{margin-bottom:13px}.re-heading h2{font-size:18px}dialog.re-dialog{padding:15px;width:calc(100vw - 20px);max-height:calc(100dvh - 20px)}.re-model svg text{font-size:18px}.re-model svg .re-small{font-size:16px}}
+.topic-page .re-dialog .model.re-model{margin:0;padding:0;border:0;box-shadow:none;grid-template-columns:minmax(0,1fr) 205px;gap:18px}
+.re-model .model-visual{min-width:0}.topic-page .re-model .model-visual svg{display:block;width:100%;height:auto;max-height:none;background:var(--bg,#f3f7f7);border-radius:11px}
+.re-model svg text{font-family:system-ui,sans-serif;font-size:16px;fill:#213e46!important}.re-model svg .re-caption{fill:var(--ink,#213e46)!important}.re-model svg .re-small{font-size:14px;fill:#355b65!important}
+.topic-page .re-model .model-panel{justify-content:flex-start;border-left:1px solid var(--line,#d9e3dc);padding-left:18px;gap:16px}
+.re-reset{font:inherit;font-size:12px;font-weight:600;padding:8px 10px;cursor:pointer;border:1px solid var(--line,#d9e3dc);background:var(--surface,#fff);color:var(--ink,#20352e);border-radius:7px}
+.re-car-controls{display:grid;gap:13px}.re-description{font-size:12px;line-height:1.7;margin:0}.re-dialog label{display:block;font-size:12px;line-height:1.6}
+.re-control-head{display:flex;justify-content:space-between;gap:9px}.re-control-head output{font-weight:650;white-space:nowrap}.re-dialog input[type=range]{width:100%;margin:7px 0 0;accent-color:var(--green,#236448)}
+.re-control-note{display:block;color:var(--muted,#60736b);font-size:11px}.re-readout{font-size:12px;line-height:1.65;padding:10px;background:var(--green-soft,#e6f2e8);border-radius:8px}
+.re-readout>div+div{margin-top:8px}.re-source{font-size:11px;line-height:1.5;color:var(--muted,#60736b)}
+.re-question{margin-top:16px;padding:15px clamp(12px,3vw,20px);border:1px solid var(--line,#d9e3dc);border-radius:11px;background:var(--bg,#eff3f0)}
+.re-question h3{margin:0 0 11px;font-size:14px}.re-answer-rows{display:flex;flex-wrap:wrap;gap:12px 25px}.re-answer-row{min-width:0;padding:0;margin:0;border:0}
+.re-answer-row legend{margin-bottom:4px;padding:0;color:var(--ink,#20352e);font-size:13px;font-weight:650}.re-options{display:flex;flex-wrap:wrap;gap:5px}
+.re-options label{display:inline-flex;align-items:center;gap:5px;min-height:34px;padding:4px 8px;border:1px solid var(--line,#d9e3dc);border-radius:7px;background:var(--surface,#fff);color:var(--ink,#20352e);cursor:pointer}
+.re-options label:has(input:checked){background:var(--green-soft,#e6f2e8);border-color:var(--green,#236448);font-weight:650}.re-options input{margin:0;accent-color:var(--green,#236448)}
+.re-feedback{max-width:70ch;margin:13px 0 1px;padding:10px 12px;border-left:3px solid var(--green,#236448);border-radius:0 7px 7px 0;background:var(--surface,#fff);box-shadow:0 2px 6px #142c2417;font-size:12px;line-height:1.6}
+.re-feedback p{margin:0}.re-feedback p+p{margin-top:4px}
+@media(max-width:800px){.topic-page .re-dialog .model.re-model{grid-template-columns:1fr}.topic-page .re-model .model-panel{border-left:0;border-top:1px solid var(--line,#d9e3dc);padding:14px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:13px}.re-car-controls,.re-description,.re-readout,.re-source{grid-column:1/-1}.re-model svg text{font-size:18px}.re-model svg .re-small{font-size:16px}}
 </style>`;
 
-export const refractionExampleHtml=`${styles}<div class="model model--split re-model"><div class="model-visual"><svg id="re-scene" viewBox="0 0 860 470" role="img" aria-label="Bølger dreier i grunnere vann ved en strand"></svg></div>
- <aside class="model-panel" aria-label="Velg praktisk eksempel">
+const shoreChoices=[['down','Minker'],['up','Øker'],['unchanged','Uendret']];
+const shoreQuestions=[['frequency','Frekvensen'],['wavelength','Bølgelengden']];
+const answerRows=shoreQuestions.map(([name,label])=>`
+ <fieldset class="re-answer-row"><legend>${label}</legend><div class="re-options">
+ ${shoreChoices.map(([value,answer])=>`<label><input type="radio" name="re-${name}" value="${value}">${answer}</label>`).join('')}
+ </div></fieldset>`).join('');
+
+export const refractionExampleHtml=`${styles}<div class="model model--split re-model"><div class="model-visual"><svg id="re-scene" viewBox="0 0 860 470" role="img" aria-label="En lekebil dreier når det første hjulet treffer et teppe"></svg></div>
+ <aside class="model-panel" aria-label="Om modellen">
  <p class="re-description" id="re-description"></p>
+ <div class="re-car-controls" id="re-car-controls">
  <label for="re-angle"><span class="re-control-head"><span>Innkommende retning</span><output id="re-angle-value" for="re-angle">40°</output></span><input id="re-angle" type="range" min="15" max="60" step="1" value="40"><span class="re-control-note">Vinkel fra normalen</span></label>
- <label for="re-slow"><span class="re-control-head"><span id="re-slow-label">Fart nær stranden</span><output id="re-slow-value" for="re-slow">45 %</output></span><input id="re-slow" type="range" min=".35" max=".75" step=".05" value=".45"><span class="re-control-note">Andel av farten før overgangen</span></label>
- <button type="button" class="re-reset" id="re-restart">Start på nytt</button><div class="re-readout" id="re-readout" aria-live="polite"></div><a class="re-source" id="re-source" href="https://www.txdot.gov/manuals/des/hyd/chapter-15--coastal-hydraulic-design/section-4--waves---currents/waves.html" target="_blank" rel="noopener">Bølger og kyst: TxDOT ↗</a></aside></div>`;
+ <label for="re-slow"><span class="re-control-head"><span>Fart på teppet</span><output id="re-slow-value" for="re-slow">45 %</output></span><input id="re-slow" type="range" min=".35" max=".75" step=".05" value=".45"><span class="re-control-note">Andel av farten på gulvet</span></label>
+ <button type="button" class="re-reset" id="re-restart">Start på nytt</button></div>
+ <div class="re-readout" id="re-readout"></div><a class="re-source" id="re-source" href="https://www.txdot.gov/manuals/des/hyd/chapter-15--coastal-hydraulic-design/section-4--waves---currents/waves.html" target="_blank" rel="noopener">Bølger og kyst (TxDOT)</a></aside></div>
+ <form class="re-question" id="re-shore-question" aria-labelledby="re-shore-prompt" hidden>
+ <h3 id="re-shore-prompt">Bølgefarten synker nærmere land. Hva skjer med frekvensen og bølgelengden?</h3>
+ <div class="re-answer-rows">${answerRows}</div><div class="re-feedback" id="re-shore-feedback" role="status" hidden></div></form>`;
 
 export function mountRefractionExample(root,api){
  const q=id=>root.querySelector('#'+id),svg=q('re-scene');
  if(!svg)return ()=>{};
  const listeners=[];const listen=(element,event,fn)=>{element.addEventListener(event,fn);listeners.push(()=>element.removeEventListener(event,fn));};
- let mode='coast',lastTime=0,startTime=api.now?.(svg)||0,field,signature='',lastReadout='';
- const options=()=>({angleDeg:Number(q('re-angle').value),slowRatio:Number(q('re-slow').value)});
+ const angle=q('re-angle'),slow=q('re-slow'),question=q('re-shore-question'),feedback=q('re-shore-feedback');
+ const field=createShoreField();
+ let mode='car',lastTime=0,startTime=api.now?.(svg)||0,lastReadout='';
  const setReadout=html=>{if(html!==lastReadout){q('re-readout').innerHTML=html;lastReadout=html;}};
  function render(time){
-  lastTime=time;const opt=options(),elapsed=Math.max(0,time-startTime),nextSignature=`${opt.angleDeg}:${opt.slowRatio}`;
-  if(nextSignature!==signature){field=createShoreField(opt.angleDeg,opt.slowRatio);signature=nextSignature;}
+  lastTime=time;const elapsed=Math.max(0,time-startTime);
   if(mode==='coast'){
-   svg.innerHTML=coastScene(elapsed,opt,field);
-   setReadout(`<div>Retning i dypere vann: <strong>${fmt(opt.angleDeg,0)}°</strong></div><div>Retning nær stranden: <strong>${fmt(field.finalAngleDeg)}°</strong></div><div>Frontene nærmer seg retningen langs stranden.</div>`);
+   svg.innerHTML=coastScene(elapsed,field);
+   setReadout(`<div><strong>${fmt(field.angleDeg,0)}°</strong> fra normalen ute på dypt vann</div><div><strong>${fmt(field.finalAngleDeg)}°</strong> fra normalen nær stranda</div><div>Bølgefarten nær stranda er <strong>${fmt(field.slowRatio*100,0)} %</strong> av farten lenger ute.</div>`);
   }else{
+   const opt={angleDeg:Number(angle.value),slowRatio:Number(slow.value)};
    const scene=carScene(elapsed,opt);svg.innerHTML=scene.markup;
-   const phase=scene.state.phase==='fast'?'Begge hjul på glatt gulv.':scene.state.phase==='turning'?'Ett hjul på teppet: ulike rullehastigheter.':'Begge hjul på teppet.';
-   setReadout(`<div>Før teppet: <strong>${fmt(opt.angleDeg,0)}°</strong></div><div>Etter overgangen: <strong>${fmt(scene.state.plan.finalAngleDeg)}°</strong></div><div>${phase}</div>`);
+   const phase=scene.state.phase==='fast'?'Begge hjul på glatt gulv.':scene.state.phase==='turning'?'Det ene hjulet bremses først.':'Begge hjul på teppet.';
+   setReadout(`<div><strong>${fmt(opt.angleDeg,0)}°</strong> før teppet</div><div><strong>${fmt(scene.state.plan.finalAngleDeg)}°</strong> etter overgangen</div><div>${phase}</div>`);
    svg.setAttribute('data-car-phase',scene.state.phase);
   }
   svg.setAttribute('data-example',mode);svg.setAttribute('data-time',elapsed.toFixed(4));
  }
  function updateDescription(){
-  q('re-description').textContent=mode==='coast'?'Når havbølger kommer skrått inn i grunnere vann, går delen nærmest land saktere. Bølgefrontene dreier og blir ofte mer parallelle med stranden.':'Hjulet som kommer inn på teppet først, bremses først. Da dreier bilen mot normalen. Når begge hjul er på teppet, fortsetter den i den nye retningen.';
-  q('re-slow-label').textContent=mode==='coast'?'Fart nær stranden':'Fart på teppet';
-  q('re-angle-value').textContent=fmt(Number(q('re-angle').value),0)+'°';q('re-slow-value').textContent=fmt(Number(q('re-slow').value)*100,0)+' %';
-  q('re-source').hidden=mode!=='coast';
-  svg.setAttribute('aria-label',mode==='coast'?'Bølger dreier i grunnere vann ved en strand':'En lekebil dreier når det første hjulet treffer et teppe');
+  const isCoast=mode==='coast';
+  q('re-description').textContent=isCoast?'Når en skrå bølgefront nærmer seg stranda, går delen på grunnest vann saktere. Bølgefronten dreier og blir mer parallell med stranda.':'En lekebil kan illustrere brytning. Når bilen kjører skrått inn på et teppe, bremses det ene hjulet før det andre. Da dreier bilen mot normalen og fortsetter i en ny retning.';
+  q('re-angle-value').textContent=fmt(Number(angle.value),0)+'°';q('re-slow-value').textContent=fmt(Number(slow.value)*100,0)+' %';
+  q('re-car-controls').hidden=isCoast;
+  q('re-source').hidden=!isCoast;
+  question.hidden=!isCoast;
+  svg.setAttribute('viewBox',isCoast?'0 -54 860 524':'0 0 860 470');
+  svg.setAttribute('aria-label',isCoast?'Bølgefronter fra dypere vann til stranda':'En lekebil dreier når det første hjulet treffer et teppe');
+ }
+ function checkShoreAnswer(){
+  const frequency=question.querySelector('[name="re-frequency"]:checked');
+  const wavelength=question.querySelector('[name="re-wavelength"]:checked');
+  if(!frequency||!wavelength)return;
+  const correct=frequency.value==='unchanged'&&wavelength.value==='down';
+  feedback.hidden=false;
+  feedback.innerHTML=`<p><strong>${correct?'Begge svarene stemmer.':'Slik henger det sammen.'}</strong></p><p><strong>Frekvensen er uendret.</strong> Like mange topper passerer hvert sekund.</p><p><strong>Bølgelengden minker.</strong> Toppene går saktere og kommer derfor tettere, selv om det fortsatt går like lang tid mellom dem.</p>`;
  }
  function repaint(){if(api.repaint)api.repaint(svg);else render(lastTime);}
  function restart(){startTime=api.now?.(svg)??lastTime;render(startTime);repaint();}
  function changeMode(next){mode=next;updateDescription();restart();}
- for(const id of ['re-angle','re-slow'])listen(q(id),'input',()=>{updateDescription();restart();});
+ for(const control of [angle,slow])listen(control,'input',()=>{updateDescription();restart();});
  listen(q('re-restart'),'click',restart);
+ listen(question,'change',checkShoreAnswer);
+ listen(question,'submit',event=>event.preventDefault());
  updateDescription();const removeFrame=api.onFrame(render,svg);
  const dispose=()=>{for(const remove of listeners)remove();if(typeof removeFrame==='function')removeFrame();};
  dispose.selectMode=next=>changeMode(next==='car'?'car':'coast');dispose.restart=restart;return dispose;

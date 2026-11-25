@@ -1,10 +1,10 @@
-import {practicalExamplesDialogHtml,mountPracticalExamplesDialog} from './examples-dialog.js?v=20261121-spectrum1';
-import {refractionSection,mountRefraction} from './refraction-lab.js?v=20261116-naturfag1';
+import {practicalExamplesDialogHtml,mountPracticalExamplesDialog} from './examples-dialog.js?v=20261125-wave-models';
+import {refractionSection,mountRefraction} from './refraction-lab.js?v=20261125-wave-models';
 import {diffractionSection,mountDiffraction} from './diffraction-lab.js?v=20261122-spredning1';
 import {resonanceSection as swingSection,mountResonance} from './resonance-swing.js?v=20261118-resonans1';
 import {tuningForkHtml,mountTuningForks} from './resonance-tuning-forks.js?v=20261121-spectrum1';
 import {flightSection,mountFlight} from './flight-doppler.js?v=20261116-naturfag1';
-import {lightDopplerHtml,mountLightDoppler} from './light-doppler.js?v=20261121-spectrum1';
+import {lightDopplerHtml,mountLightDoppler} from './light-doppler.js?v=20261125-wave-models';
 export {buildApertureField,scalarWaveValue,diffractionEnvelope} from './diffraction-lab.js?v=20261122-spredning1';
 export {createSwingState,swingGeometry,swingBackPoint,solveSwingArm,swingDriveAt,stepDrivenSwing,swingArmPose,stepSwingScene} from './resonance-swing.js?v=20261118-resonans1';
 function tabbedSection(id, title, panels) {

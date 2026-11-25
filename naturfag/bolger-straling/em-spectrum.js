@@ -1,5 +1,5 @@
 import {absorptionSection,mountAbsorption,absorptionQuestion,absorptionTerm} from './absorption.js?v=20261122-spekter2';
-import {lightDualitySection,mountLightDuality} from './light-duality.js?v=20261122-spredning1';
+import {lightDualitySection,mountLightDuality} from './light-duality.js?v=20261125-wave-models';
 import {skyScatteringHtml,mountSkyScattering} from './sky-scattering.js?v=20261122-spredning1';
 // Self-contained teaching models. Physical quantities use SI units internally.
 const C = 299792458, H = 6.62607015e-34;

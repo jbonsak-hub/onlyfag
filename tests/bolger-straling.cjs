@@ -63,7 +63,7 @@ function modelFixture(topic){
  global.matchMedia=()=>({matches:true,addEventListener(){},removeEventListener(){}});global.window={matchMedia:global.matchMedia};
  const clock=fixtureClockFactory?.();
  const scope=target=>{const node=typeof target==='string'?root.querySelector(target):target;return node?.closest('.model')||node||root;};
- const api={onFrame(fn,target){if(clock)return clock.onFrame(fn,scope(target));callbacks.push(fn);fn(time);return()=>callbacks.splice(callbacks.indexOf(fn),1);},repaint(target){if(clock){if(arguments.length)clock.repaint(scope(target));else clock.repaint();}else callbacks.forEach(fn=>fn(time));},now:target=>clock?clock.now(scope(target)):time,isPaused:target=>clock?clock.isPaused(scope(target)):false};
+ const api={onFrame(fn,target){if(clock)return clock.onFrame(fn,scope(target));callbacks.push(fn);fn(time);return()=>callbacks.splice(callbacks.indexOf(fn),1);},repaint(target){if(clock){if(arguments.length)clock.repaint(scope(target));else clock.repaint();}else callbacks.forEach(fn=>fn(time));},now:target=>clock?clock.now(scope(target)):time,isPaused:target=>clock?clock.isPaused(scope(target)):false,play(target){clock?.setPaused(scope(target),false);}};
  let cleanup;try{cleanup=topic.mount(root,api);}catch(e){restore();throw e;}
  return{root,get:id=>idMap.get(id),dispatchDocument(k,init={}){for(const fn of documentEvents[k]||[])fn({target:global.document,preventDefault(){},...init});},tick(t){if(clock)clock.advance(t-time);time=t;if(!clock)api.repaint();},pause(target,value=true){assert.ok(clock,'Scoped fixture clock is configured');clock.setPaused(scope(target),value);},now:target=>api.now(target),change(id,value,event='input'){const el=idMap.get(id);assert.ok(el,'Missing control '+id);el.value=value;el.dispatch(event);},click(id){const el=idMap.get(id);assert.ok(el,'Missing button '+id);el.dispatch('click');},html:()=>root.serialize(),destroy(){try{if(cleanup)cleanup();if(clock)clock.clear();}finally{restore();}}};
 }
@@ -135,6 +135,10 @@ function assertNumericQuestion(q){
   const wavePath=()=>basicFixture.get('wv-travel').querySelectorAll('path').find(e=>e.getAttribute('stroke-width')==='3.5').getAttribute('d');
   basicFixture.tick(1);const before=wavePath();basicFixture.change('wv-speed',9);assert.equal(basicFixture.get('wv-wavelength').value,'2');assert.equal(wavePath(),before,'Changing speed keeps the current phase and wavelength continuous.');
   for(const button of ['wv-transverse','wv-longitudinal']){basicFixture.click(button);assert.equal(basicFixture.get(button).getAttribute('aria-pressed'),'true');}
+  const spatialButtons=basicFixture.root.querySelectorAll('[data-wb-spatial]');
+  assert.equal(spatialButtons.length,2);
+  for(const button of spatialButtons){button.dispatch('click');assert.equal(button.getAttribute('aria-pressed'),'true');}
+  assert.equal(basicFixture.get('wv-sound').tagName,'CANVAS');
   basicFixture.change('wv-harmonic',3);assert.match(basicFixture.get('wb-standing-readout').textContent,/3 buker/);assert.match(basicFixture.get('wb-standing-readout').textContent,/4 knuter/);
   basicFixture.click('wb-examples-open');basicFixture.click('wb-example-water-tab');basicFixture.change('wb-water-depth',.1);const orbit=()=>basicFixture.get('wv-water').querySelectorAll('circle').find(e=>e.getAttribute('stroke-dasharray')==='3 3');const shallow=+orbit().getAttribute('r');basicFixture.change('wb-water-depth',1.3);assert.ok(+orbit().getAttribute('r')<shallow);
   const travel=basicFixture.get('wv-travel'),particles=basicFixture.get('wv-particles');basicFixture.pause(travel);const travelBefore=travel.serialize(),particlesBefore=particles.serialize(),frozenTime=basicFixture.now(travel);basicFixture.tick(1.1);assert.equal(travel.serialize(),travelBefore,'Pausing the travel model freezes only that figure.');assert.notEqual(particles.serialize(),particlesBefore,'Other model clocks keep running.');basicFixture.change('wv-amplitude',1);assert.equal(basicFixture.now(travel),frozenTime);assert.notEqual(travel.serialize(),travelBefore,'Paused controls repaint the same simulation time.');basicFixture.pause(travel,false);basicFixture.tick(1.2);assert.ok(Math.abs(basicFixture.now(travel)-frozenTime-.1)<1e-10);
@@ -182,7 +186,16 @@ function assertNumericQuestion(q){
   spectrumFixture.click('ema-ionizing-toggle');
   assert.ok(note.hidden);
   assert.equal(graph.querySelector('.ema-ionizing-range'),null);
-  assert.equal(spectrumFixture.get('ld-photo-scene'),undefined);
+  assert.ok(!spectrumFixture.root.querySelector('details.ld-more').hasAttribute('open'));
+  assert.ok(spectrumFixture.get('ld-pe-scene'));
+  let photoTime=0;
+  for(const [nm,intensity,emitted] of [[650,5,0],[440,1,2],[440,5,10]]){
+   spectrumFixture.change('ld-pe-wavelength',nm,'change');
+   spectrumFixture.change('ld-pe-intensity',intensity);
+   spectrumFixture.click('ld-pe-run');
+   for(let step=0;step<24;step++)spectrumFixture.tick(photoTime+=.1);
+   assert.equal(Number(spectrumFixture.get('ld-pe-count').textContent),emitted);
+  }
   const sky=spectrumFixture.get('sky-dialog'),launcher=spectrumFixture.get('sky-open');
   spectrumFixture.click('sky-open');
   assert.equal(sky.open,true);
@@ -258,13 +271,14 @@ function assertNumericQuestion(q){
   assert.equal(await page.locator('#fd-scene').isVisible(),false);
   assert.equal(await page.locator('#ld-wavelength-A').getAttribute('data-shift'),'blue');
   assert.equal(await page.locator('#ld-wavelength-B').getAttribute('data-shift'),'red');
-  await page.locator('#ld-direction-A').selectOption('1');
-  assert.equal(await page.locator('#ld-wavelength-A').getAttribute('data-shift'),'red');
+  assert.equal(await page.locator('#ld-direction-A,#ld-direction-B,#ld-speed').count(),0);
+  assert.match(await page.locator('#ld-wavelength-A').innerText(),/544,5 nm/);
+  assert.match(await page.locator('#ld-wavelength-B').innerText(),/555,5 nm/);
   await page.locator('#doppler-tab-sound').click();
   assert.equal(await page.locator('#fd-scene').isVisible(),true);
  });
  await attempt('Atomic transition wavelength and half-life expectation',async()=>{
- await route('atomer');await page.locator('#al-h-upper').selectOption('3');await page.locator('#al-h-lower').selectOption('2');assert.match(await page.locator('#al-h-readout').innerText(),/656/);
+  await route('atomer');await page.locator('#al-h-spectrum-controls [data-h-line="6"]').click();assert.match(await page.locator('#al-h-readout').innerText(),/410/);
  await route('radioaktivitet');await page.locator('#ra-half-time').fill('3');await page.locator('#ra-half-time').dispatchEvent('input');assert.match(await page.locator('#ra-half-expected').innerText(),/25/);assert.equal(await page.locator('.ra-decayed').count()+await page.locator('.ra-population i:not(.ra-decayed)').count(),200);
  });
  await attempt('Photon energy threshold is reflected in the displayed ionization state',async()=>{await route('atomer');for(const [energy,state]of [['2.1','bound'],['2.18','ionized'],['3','ionized']]){await page.locator('#ema-ion-energy').fill(energy);await page.locator('#ema-ion-energy').dispatchEvent('input');assert.equal(await page.locator('#ema-ion-plot').getAttribute('data-state'),'neutral');await page.locator('#ema-ion-send').click();assert.equal(await page.locator('#ema-ion-plot').getAttribute('data-state'),state);await page.locator('#ema-ion-reset').click();assert.equal(await page.locator('#ema-ion-plot').getAttribute('data-state'),'neutral');}});
@@ -326,6 +340,7 @@ function assertNumericQuestion(q){
   await content.locator('.abs-stage #abs-light').selectOption('blue');
   await content.locator('.abs-stage #abs-surface').selectOption('white');
   assert.match(await content.locator('#abs-readout').innerText(),/Reflektert:\s*bl/);
+  await content.locator('.ld-more summary').click();
   await content.locator('#ld-one').click();
   await content.locator('#ld-count').filter({hasText:/^1$/}).waitFor();
   await page.goto(base+'/naturfag.html#waves/em/begreper');
@@ -357,6 +372,7 @@ function assertNumericQuestion(q){
   const hash='#waves/fenomener/fagstoff/to-spalter';
   await page.goto(base+'/naturfag#waves/em/fagstoff');
   const content=page.frameLocator('#waves-module-frame');
+  await content.locator('.ld-more summary').click();
   const link=content.locator('.ld-interference-link');
   assert.equal(await link.getAttribute('href'),'/naturfag'+hash);
   await link.click();

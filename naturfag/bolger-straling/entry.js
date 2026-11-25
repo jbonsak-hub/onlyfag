@@ -1,7 +1,7 @@
-import {emTopic} from './em-spectrum.js?v=20261123-lambda';
+import {emTopic} from './em-spectrum.js?v=20261125-wave-models';
 import {startCourse} from './app.js?v=20261123-lambda';
-import {topics as basicTopics} from './wave-basics.js?v=20261118-resonans1';
-import {topics as waveTopics} from './waves.js?v=20261122-spredning1';
+import {topics as basicTopics} from './wave-basics.js?v=20261125-wave-models';
+import {topics as waveTopics} from './waves.js?v=20261125-wave-models';
 const params=new URLSearchParams(location.search);
 const topic=['bolger','fenomener','em'].includes(params.get('topic'))?params.get('topic'):'bolger';
 const view=['fagstoff','oppgaver','begreper'].includes(params.get('view'))?params.get('view'):'fagstoff';
