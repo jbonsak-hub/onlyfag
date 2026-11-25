@@ -1,5 +1,5 @@
 import {rainbowExampleHtml,mountRainbowExample} from './waves-rainbow.js?v=20261125-refraction1';
-import {refractionExampleHtml,mountRefractionExample} from './refraction-examples.js?v=20261125-refraction1';
+import {refractionExampleHtml,mountRefractionExample} from './refraction-examples.js?v=20261125-shore-panel';
 
 const styles=`<style>
 .ex-launch{box-sizing:border-box;display:flex;justify-content:space-between;align-items:center;gap:16px;width:min(100%,32rem);margin:21px 0 0;padding:14px 17px 14px 20px;border:1px solid var(--green);border-radius:12px;background:var(--green);color:var(--surface);box-shadow:0 4px 11px #17302720;font:inherit;font-size:15px;font-weight:700;text-align:left;cursor:pointer}.ex-launch:hover{box-shadow:0 5px 15px #17302745}.ex-launch>span:last-child{flex:none;display:grid;place-items:center;width:28px;height:28px;border:1px solid currentColor;border-radius:50%;font-size:19px;font-weight:500;line-height:1}

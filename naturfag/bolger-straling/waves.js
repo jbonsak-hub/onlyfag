@@ -1,4 +1,4 @@
-import {practicalExamplesDialogHtml,mountPracticalExamplesDialog} from './examples-dialog.js?v=20261125-wave-models';
+import {practicalExamplesDialogHtml,mountPracticalExamplesDialog} from './examples-dialog.js?v=20261125-atom-release';
 import {refractionSection,mountRefraction} from './refraction-lab.js?v=20261125-wave-models';
 import {diffractionSection,mountDiffraction} from './diffraction-lab.js?v=20261122-spredning1';
 import {resonanceSection as swingSection,mountResonance} from './resonance-swing.js?v=20261118-resonans1';

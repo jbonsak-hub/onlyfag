@@ -1,29 +1,20 @@
 const TAU = 2 * Math.PI;
 
 export const waveVisualStyle = `<style>
-.wb-spatial-model{margin-top:14px!important}
-.wb-spatial-frame{position:relative;background:var(--surface-alt,#edf3f3);border-radius:10px;overflow:hidden}
-.wb-spatial-frame .animation-surface{position:static}
-.wb-spatial-frame .animation-toolbar{inset:8px 8px auto auto;transform:none}
-.wb-spatial-frame .wb-mode-buttons{position:relative;z-index:1;margin:0;padding:9px 48px 0 9px}
+.wb-wave-stage{position:relative;background:var(--wb-panel,#edf3f3);border-radius:10px}
+.wb-wave-drawing{padding-top:48px}
+.wb-wave-views{position:absolute;top:8px;left:8px;z-index:2;display:flex;gap:3px;background:var(--surface,#fff);border:1px solid var(--line,#d6e1e6);border-radius:9px;padding:3px}
+.wb-wave-views button{min-width:48px;min-height:32px;border:1px solid transparent;border-radius:6px;padding:2px 11px;background:transparent;color:var(--ink,#273d4a);font:700 .93rem system-ui,sans-serif;cursor:pointer}
+.wb-wave-views button[aria-pressed=true]{background:var(--green,#236448);color:#fff}
+body.dark .wb-wave-views button[aria-pressed=true]{color:var(--surface,#142621)}
+.wb-wave-views button:focus-visible{outline:2px solid var(--blue,#2677a0);outline-offset:1px}
 .wb-scope .wb-visual-canvas{display:block;width:100%;height:auto;border-radius:10px}
 .wb-scope #wv-sound{background:var(--surface-alt,#edf3f3)}
-.wb-spatial-decoration{position:absolute;right:48px;top:16px;color:var(--muted,#58717a);font-size:.8rem;font-weight:600}
 .wb-sound-model .animation-toolbar{inset:8px 8px auto auto;transform:none}
-@media(max-width:600px){.wb-spatial-decoration{display:none}.wb-spatial-frame .wb-mode-buttons{padding-right:44px}}
+@media(max-width:600px){.wb-wave-drawing{padding-top:56px}.wb-wave-views button{min-height:40px}}
 </style>`;
 
-export const spatialMarkup = `<div class="model wb-spatial-model" data-model-layout="custom">
-  <div class="wb-spatial-frame">
-    <div class="wb-mode-buttons" role="group" aria-label="Bølgetype i 3D">
-      <button type="button" data-wb-spatial="transverse" aria-pressed="true">Tversbølge</button>
-      <button type="button" data-wb-spatial="longitudinal" aria-pressed="false">Langsbølge</button>
-    </div>
-    <span class="wb-spatial-decoration">3D-modell</span>
-    <canvas id="wv-spatial" class="wb-visual-canvas" width="2000" height="564" role="img" aria-label="En tversbølge brer seg til høyre gjennom en blokk med ruter."></canvas>
-  </div>
-  <p id="wv-spatial-caption" class="wb-caption">Den oransje ruten svinger opp og ned mens bølgen brer seg mot høyre.</p>
-</div>`;
+export const spatialMarkup = `<canvas id="wv-spatial" class="wb-visual-canvas" width="2000" height="736" role="img" aria-label="En tversbølge brer seg til høyre gjennom en blokk med ruter." hidden></canvas>`;
 
 export const soundMarkup = `<canvas id="wv-sound" class="wb-visual-canvas" width="2100" height="804" role="img" aria-label="En høyttaler sender fortetninger og fortynninger gjennom luften og inn i øregangen. Trykkgrafen følger partiklene, og trommehinnen svinger."></canvas>`;
 
@@ -87,12 +78,13 @@ function frame(ctx, canvas, width, height) {
   ctx.lineJoin = 'round';
 }
 
-function drawMesh(ctx, time, transverse, ink, compact) {
+function drawMesh(ctx, cycles, transverse, ink, compact) {
   const n = 37;
   const h = 5;
   const d = 6;
-  const k = TAU / 12.5;
-  const phase = i => k * i - TAU * .46 * time;
+  const marker = 18;
+  const wavelength = n * 7 / 15;
+  const phase = i => TAU * ((i - marker - .5) / wavelength - cycles);
   const displaced = i => Math.sin(phase(i));
   const point = (i, j, z) => {
     const x = i + (transverse ? 0 : 1.3 * displaced(i));
@@ -116,7 +108,6 @@ function drawMesh(ctx, time, transverse, ink, compact) {
     stroke(ctx, boundaries.map(i=>point(i,h,z)), outline, .9);
     stroke(ctx, [point(n,0,z),point(n,h,z)], outline, .9);
   }
-  const marker = 18;
   polygon(ctx, [point(marker,2,0),point(marker+1,2,0),point(marker+1,3,0),point(marker,3,0)], '#ffb440', '#fff4d6', 2.3);
   arrow(ctx, 73, 247, 935, 247, ink, 9);
   label(ctx, 'Bølgeretning', 503, 276, ink, compact?33:24, 600, 'center');
@@ -327,39 +318,26 @@ function drawSound(ctx, canvas, time, frequency, strength, dark) {
   if (compact) ctx.restore();
 }
 
-export function mountWaveVisuals(root, api) {
-  const spatial = root.querySelector('#wv-spatial');
+export function drawSpatialWave(canvas, cycles, transverse, dark) {
+  const ctx = canvas.getContext?.('2d');
+  if (!ctx) return;
+  frame(ctx,canvas,1000,368);
+  ctx.translate(0,34);
+  drawMesh(ctx,cycles,transverse,dark?'#c8e1dd':'#315e60',canvas.clientWidth<600);
+}
+
+export function mountSoundExample(root, api) {
   const sound = root.querySelector('#wv-sound');
-  const spatialCtx = spatial.getContext?.('2d');
   const soundCtx = sound.getContext?.('2d');
-  const modeButtons = root.querySelectorAll('[data-wb-spatial]');
-  const caption = root.querySelector('#wv-spatial-caption');
+  if (!soundCtx) return () => {};
   const frequency = root.querySelector('#wb-sound-frequency');
   const strength = root.querySelector('#wb-sound-amplitude');
   const dark = () => root.ownerDocument?.body?.classList?.contains('dark') ?? false;
-  let transverse = true;
+  const unmountFrame = api.onFrame(time => drawSound(soundCtx,sound,time,Number(frequency.value),Number(strength.value),dark()), sound);
 
-  for (const button of modeButtons) button.addEventListener('click', () => {
-    transverse = button.dataset.wbSpatial === 'transverse';
-    for (const item of modeButtons) item.setAttribute('aria-pressed', String(item === button));
-    spatial.setAttribute('aria-label', transverse
-      ? 'En tversbølge brer seg til høyre gjennom en blokk med ruter.'
-      : 'En langsbølge brer seg til høyre gjennom blokka i form av tettere og glisnere ruter.');
-    caption.textContent = transverse
-      ? 'Den oransje ruten svinger opp og ned mens bølgen brer seg mot høyre.'
-      : 'Den oransje ruten svinger fram og tilbake. Fortetningene brer seg mot høyre.';
-    api.repaint(spatial);
-  });
-
-  if (spatialCtx) api.onFrame(time => {
-    frame(spatialCtx,spatial,1000,282);
-    drawMesh(spatialCtx,time,transverse,dark()?'#c8e1dd':'#315e60',spatial.clientWidth<600);
-  },spatial);
-  if (soundCtx) api.onFrame(time => drawSound(soundCtx,sound,time,Number(frequency.value),Number(strength.value),dark()), sound);
-
-  const observer = typeof ResizeObserver === 'function' && soundCtx
+  const observer = typeof ResizeObserver === 'function'
     ? new ResizeObserver(() => { if (sound.clientWidth) api.repaint(sound); })
     : null;
   observer?.observe(sound);
-  return () => observer?.disconnect();
+  return () => {observer?.disconnect();unmountFrame?.();};
 }

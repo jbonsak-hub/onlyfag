@@ -136,9 +136,9 @@ async function runRevisionChecks({modelFixture,topics}={}){
 
  if(!topics){
   topics=[];
-  for(const name of ['wave-basics','waves','em-spectrum','em-atoms','radioactivity','cosmos-environment']){
+  for(const name of ['wave-basics','waves','em-spectrum','atom-topic','communication','radioactivity','cosmos-environment']){
    const source=await import(moduleUrl(name));
-   topics.push(...(source.topics??[source.emTopic]));
+   topics.push(...(source.topics??[source.emTopic??source.atomTopic]));
   }
  }
  const visible=topics.flatMap(topic=>[...topic.sections.map(s=>s.body),...topic.terms.map(t=>`${t.term} ${t.definition}`),...topic.questions.map(q=>`${q.prompt} ${q.answer} ${modules['math-presentation'].solutionHtml(q)} ${q.hint||''} ${(q.choices||[]).join(' ')} ${q.unit||''}`)]).map(plain).join('\n');
@@ -149,6 +149,26 @@ async function runRevisionChecks({modelFixture,topics}={}){
  if(modelFixture){
   const rf=modelFixture({sections:[{body:optics.refractionSectionHtml}],mount:optics.mountRefraction});
   try{for(const medium of ['air','water','glass']){rf.change('rf-medium-top',medium);rf.change('rf-medium-bottom',medium);assert.match(rf.get('rf-reflected-value').textContent,/0\s*%/);}rf.change('rf-medium-top','water');rf.change('rf-medium-bottom','air');rf.change('rf-angle',65);assert.match(rf.get('rf-status').textContent,/totalrefleksjon/i);rf.get('rf-white').checked=true;rf.change('rf-white','on');assert.ok(!/NaN|Infinity/.test(rf.html()));}finally{rf.destroy();}
+  const coast=modelFixture({sections:[{body:examples.refractionExampleHtml}],mount(root,api){
+   const cleanup=examples.mountRefractionExample(root,api);
+   cleanup.selectMode('coast');
+   return cleanup;
+  }});
+  try{
+   const question=coast.get('re-shore-question'),feedback=coast.get('re-shore-feedback');
+   assert.ok(question.closest('.model-panel'));
+   assert.equal(question.hidden,false);
+   assert.equal(coast.get('re-car-controls').hidden,true);
+   assert.match(coast.get('re-readout').textContent,/40 %/);
+   assert.doesNotMatch(coast.get('re-readout').textContent,/°/);
+   question.querySelector('[name="re-frequency"][value="unchanged"]').checked=true;
+   question.dispatch('change');
+   assert.equal(feedback.hidden,true);
+   question.querySelector('[name="re-wavelength"][value="down"]').checked=true;
+   question.dispatch('change');
+   assert.equal(feedback.hidden,false);
+   assert.match(feedback.textContent,/Begge svarene stemmer/);
+  }finally{coast.destroy();}
   const previousAudioContext=globalThis.AudioContext,oscillatorStart=oscillators.length;globalThis.AudioContext=AudioContext;
   const f=modelFixture({sections:[flight.flightSection],mount:flight.mountFlight});
   try{assert.equal(f.get('fd-audio').getAttribute('aria-pressed'),'false');f.change('fd-mach',1);f.click('fd-audio');await Promise.resolve();await Promise.resolve();const beforeSteps=Math.floor(7/flight.FLIGHT_VISUAL_TIME_SCALE),afterSteps=Math.ceil(8/flight.FLIGHT_VISUAL_TIME_SCALE);for(let i=1;i<=beforeSteps;i++)f.tick(i/10);assert.equal(f.get('fd-scene').closest('.model').dataset.flightPhase,'waiting');for(let i=beforeSteps+1;i<=afterSteps;i++)f.tick(i/10);assert.notEqual(f.get('fd-scene').closest('.model').dataset.flightPhase,'waiting');near(oscillators[oscillatorStart].frequency.value,Number(f.get('fd-scene').closest('.model').dataset.observedFrequency));f.pause('#fd-scene');const before=f.get('fd-scene').serialize();f.tick((afterSteps+1)/10);assert.equal(f.get('fd-scene').serialize(),before);}finally{f.destroy();globalThis.AudioContext=previousAudioContext;}

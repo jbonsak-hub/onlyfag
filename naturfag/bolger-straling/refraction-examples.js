@@ -128,13 +128,14 @@ const styles=`<style>
 .re-control-head{display:flex;justify-content:space-between;gap:9px}.re-control-head output{font-weight:650;white-space:nowrap}.re-dialog input[type=range]{width:100%;margin:7px 0 0;accent-color:var(--green,#236448)}
 .re-control-note{display:block;color:var(--muted,#60736b);font-size:11px}.re-readout{font-size:12px;line-height:1.65;padding:10px;background:var(--green-soft,#e6f2e8);border-radius:8px}
 .re-readout>div+div{margin-top:8px}.re-source{font-size:11px;line-height:1.5;color:var(--muted,#60736b)}
-.re-question{margin-top:16px;padding:15px clamp(12px,3vw,20px);border:1px solid var(--line,#d9e3dc);border-radius:11px;background:var(--bg,#eff3f0)}
-.re-question h3{margin:0 0 11px;font-size:14px}.re-answer-rows{display:flex;flex-wrap:wrap;gap:12px 25px}.re-answer-row{min-width:0;padding:0;margin:0;border:0}
+.re-question{grid-column:1/-1;margin:0;padding:13px 12px;border:1px solid var(--line,#d9e3dc);border-radius:10px;background:var(--bg,#eff3f0)}
+.re-question h3{margin:0 0 11px;font-size:14px;line-height:1.45}.re-answer-rows{display:grid;gap:12px}.re-answer-row{min-width:0;padding:0;margin:0;border:0}
 .re-answer-row legend{margin-bottom:4px;padding:0;color:var(--ink,#20352e);font-size:13px;font-weight:650}.re-options{display:flex;flex-wrap:wrap;gap:5px}
 .re-options label{display:inline-flex;align-items:center;gap:5px;min-height:34px;padding:4px 8px;border:1px solid var(--line,#d9e3dc);border-radius:7px;background:var(--surface,#fff);color:var(--ink,#20352e);cursor:pointer}
 .re-options label:has(input:checked){background:var(--green-soft,#e6f2e8);border-color:var(--green,#236448);font-weight:650}.re-options input{margin:0;accent-color:var(--green,#236448)}
 .re-feedback{max-width:70ch;margin:13px 0 1px;padding:10px 12px;border-left:3px solid var(--green,#236448);border-radius:0 7px 7px 0;background:var(--surface,#fff);box-shadow:0 2px 6px #142c2417;font-size:12px;line-height:1.6}
 .re-feedback p{margin:0}.re-feedback p+p{margin-top:4px}
+@media(min-width:801px){.topic-page .re-dialog .model.re-model:has(.re-question:not([hidden])){grid-template-columns:minmax(0,1fr) 270px}.topic-page .re-model:has(.re-question:not([hidden])) .model-visual{align-self:start}}
 @media(max-width:800px){.topic-page .re-dialog .model.re-model{grid-template-columns:1fr}.topic-page .re-model .model-panel{border-left:0;border-top:1px solid var(--line,#d9e3dc);padding:14px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:13px}.re-car-controls,.re-description,.re-readout,.re-source{grid-column:1/-1}.re-model svg text{font-size:18px}.re-model svg .re-small{font-size:16px}}
 </style>`;
 
@@ -147,15 +148,15 @@ const answerRows=shoreQuestions.map(([name,label])=>`
 
 export const refractionExampleHtml=`${styles}<div class="model model--split re-model"><div class="model-visual"><svg id="re-scene" viewBox="0 0 860 470" role="img" aria-label="En lekebil dreier når det første hjulet treffer et teppe"></svg></div>
  <aside class="model-panel" aria-label="Om modellen">
+ <form class="re-question" id="re-shore-question" aria-labelledby="re-shore-prompt" hidden>
+ <h3 id="re-shore-prompt">Bølgefarten synker nærmere land. Hva skjer med frekvensen og bølgelengden?</h3>
+ <div class="re-answer-rows">${answerRows}</div><div class="re-feedback" id="re-shore-feedback" role="status" hidden></div></form>
  <p class="re-description" id="re-description"></p>
  <div class="re-car-controls" id="re-car-controls">
  <label for="re-angle"><span class="re-control-head"><span>Innkommende retning</span><output id="re-angle-value" for="re-angle">40°</output></span><input id="re-angle" type="range" min="15" max="60" step="1" value="40"><span class="re-control-note">Vinkel fra normalen</span></label>
  <label for="re-slow"><span class="re-control-head"><span>Fart på teppet</span><output id="re-slow-value" for="re-slow">45 %</output></span><input id="re-slow" type="range" min=".35" max=".75" step=".05" value=".45"><span class="re-control-note">Andel av farten på gulvet</span></label>
  <button type="button" class="re-reset" id="re-restart">Start på nytt</button></div>
- <div class="re-readout" id="re-readout"></div><a class="re-source" id="re-source" href="https://www.txdot.gov/manuals/des/hyd/chapter-15--coastal-hydraulic-design/section-4--waves---currents/waves.html" target="_blank" rel="noopener">Bølger og kyst (TxDOT)</a></aside></div>
- <form class="re-question" id="re-shore-question" aria-labelledby="re-shore-prompt" hidden>
- <h3 id="re-shore-prompt">Bølgefarten synker nærmere land. Hva skjer med frekvensen og bølgelengden?</h3>
- <div class="re-answer-rows">${answerRows}</div><div class="re-feedback" id="re-shore-feedback" role="status" hidden></div></form>`;
+ <div class="re-readout" id="re-readout"></div><a class="re-source" id="re-source" href="https://www.txdot.gov/manuals/des/hyd/chapter-15--coastal-hydraulic-design/section-4--waves---currents/waves.html" target="_blank" rel="noopener">Bølger og kyst (TxDOT)</a></aside></div>`;
 
 export function mountRefractionExample(root,api){
  const q=id=>root.querySelector('#'+id),svg=q('re-scene');
@@ -169,7 +170,7 @@ export function mountRefractionExample(root,api){
   lastTime=time;const elapsed=Math.max(0,time-startTime);
   if(mode==='coast'){
    svg.innerHTML=coastScene(elapsed,field);
-   setReadout(`<div><strong>${fmt(field.angleDeg,0)}°</strong> fra normalen ute på dypt vann</div><div><strong>${fmt(field.finalAngleDeg)}°</strong> fra normalen nær stranda</div><div>Bølgefarten nær stranda er <strong>${fmt(field.slowRatio*100,0)} %</strong> av farten lenger ute.</div>`);
+   setReadout(`<div>Bølgefarten nær stranda er <strong>${fmt(field.slowRatio*100,0)} %</strong> av farten lenger ute.</div>`);
   }else{
    const opt={angleDeg:Number(angle.value),slowRatio:Number(slow.value)};
    const scene=carScene(elapsed,opt);svg.innerHTML=scene.markup;

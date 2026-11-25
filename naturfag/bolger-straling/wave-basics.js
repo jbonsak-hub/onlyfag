@@ -1,4 +1,4 @@
-import { mountWaveVisuals, soundMarkup, spatialMarkup, waveVisualStyle } from './wave-visuals.js?v=20261125';
+import { drawSpatialWave, mountSoundExample, soundMarkup, spatialMarkup, waveVisualStyle } from './wave-visuals.js?v=20261125-wave-views';
 
 const C={wave:'#16879b',amber:'#d28a16',purple:'#8260b4',grid:'#d6e1e6',muted:'#78929e'};
 const fmt=(n,d=2)=>n.toLocaleString('nb-NO',{maximumFractionDigits:d});
@@ -16,6 +16,16 @@ const style=`<style>
 </style>`;
 
 const modes=[['transverse','Tversbølge','wv-transverse'],['longitudinal','Langsbølge','wv-longitudinal']];
+const waveViews=[['2d','2D'],['3d','3D']];
+const particleStage=`<div class="wb-wave-stage">
+  <div class="wb-wave-views" role="group" aria-label="Visning av bølgen">
+    ${waveViews.map(([view,label])=>`<button type="button" id="wv-show-${view}" data-wb-view="${view}" aria-pressed="${view==='2d'}">${label}</button>`).join('')}
+  </div>
+  <div class="wb-wave-drawing">
+    ${diagram('wv-particles','Tversbølge og langsbølge','Partiklene svinger lokalt mens bølgen brer seg.')}
+    ${spatialMarkup}
+  </div>
+</div>`;
 const descriptions={
   transverse:'Partiklene svinger på tvers av bølgeretningen. Følg den oransje partikkelen: Den blir i nærheten av samme sted mens bølgemønsteret går mot høyre.',
   longitudinal:'Partiklene svinger langs bølgeretningen. Fortetninger og fortynninger vandrer mot høyre, mens hver partikkel bare svinger fram og tilbake.',
@@ -52,7 +62,7 @@ const basics={
   id:'bolger',title:'Bølger og svingninger',kicker:'',summary:'Se sammenhengen mellom amplitude, bølgelengde, frekvens og fart. Se bevegelsen bak lyd og vannbølger.',
   sections:[
     {title:'Bølgeegenskaper',body:`${style}${waveVisualStyle}<div class="wb-scope"><p>En <strong>bølge</strong> er svingninger som brer seg og overfører energi. I mekaniske bølger svinger partiklene lokalt.</p><div class="wb-concept-layout"><dl class="wb-definitions"><div><dt>Amplitude A</dt><dd>Største utslag fra likevekt.</dd></div><div><dt>Bølgelengde λ</dt><dd>Avstand mellom nabotopper.</dd></div><div><dt>Frekvens f</dt><dd>Antall svingninger per sekund (Hz).</dd></div><div><dt>Periode T</dt><dd>Tid per svingning (s).</dd></div><div><dt>Bølgefart v</dt><dd>Farten bølgen brer seg med (m/s).</dd></div></dl><div class="wb-relations"><div class="wb-equations"><div><span class="wb-words">Bølgefart = frekvens · bølgelengde</span><strong>v = f · λ</strong></div><div><span class="wb-words">Frekvens = ${fraction(1,'periode')}</span><strong>f = ${fraction(1,'T')}</strong></div></div><div class="wb-example-prompt"><p>En bølge beveger seg med en fart på <strong>4 m/s</strong>. Avstanden mellom bølgetoppene er <strong>2 m</strong>.</p><p><strong>a)</strong> Hvor mange bølgetopper passerer et punkt i sekundet?<br><strong>b)</strong> Hvor lang tid går det mellom hver bølgetopp?</p></div><details class="wb-calculation"><summary>Se forklaring og utregning</summary><div class="wb-worked-columns"><div><p><strong>a) Frekvens</strong><br>Farten forteller hvor mange meter bølgen brer seg per sekund. Del på avstanden mellom toppene:</p><div class="calc-lines">${calc('f',fraction('v','λ'))}${calc('',fraction('4 m/s','2 m'))}${calc('','<strong>2 Hz</strong>')}</div><p>Det passerer <strong>to bølgetopper per sekund</strong>.</p></div><div><p><strong>b) Periode</strong><br>To topper per sekund betyr at tiden mellom hver topp er et halvt sekund:</p><div class="calc-lines">${calc('T',fraction(1,'f'))}${calc('',fraction(1,'2 Hz'))}${calc('','<strong>0,50 s</strong>')}</div><p>Det går <strong>0,50 s mellom bølgetoppene</strong>.</p></div></div></details></div></div><div class="model">${diagram('wv-travel','En løpende tversbølge','En bølge brer seg mot høyre. Den oransje prikken svinger på et fast sted. Endre amplitude, bølgelengde og fart med gliderne.',300)}<div class="wb-controls">${slider('wv-amplitude','Amplitude A',.2,1.2,.6,.1)}${slider('wv-wavelength','Bølgelengde λ',1,8,4,.1)}${slider('wv-speed','Bølgefart v',.5,12,4,.1)}</div><div class="readout wb-travel-calculation"><details><summary>Vis utregning</summary><div id="wv-travel-readout"></div></details></div></div></div>`},
-    {title:'Tversbølger og langsbølger',body:`<div class="wb-scope"><p>I en <strong>tversbølge</strong> svinger partiklene på tvers av bølgeretningen. I en <strong>langsbølge</strong> svinger de langs bølgeretningen. Følg den oransje partikkelen.</p><div class="model"><div class="wb-mode-buttons" role="group" aria-label="Velg bølgetype">${modes.map(([mode,label,id])=>`<button type="button" id="${id}" data-wb-mode="${mode}" aria-pressed="${mode==='transverse'}">${label}</button>`).join('')}</div>${diagram('wv-particles','Tversbølge og langsbølge','Partiklene svinger lokalt mens bølgen brer seg. Bytt bare mellom tvers og langs.')}<div id="wb-particle-controls" class="wb-controls">${slider('wb-particle-frequency','Frekvens i modellen',.3,1.2,.65,.05)}</div><div id="wb-mode-readout" class="readout" aria-live="polite"></div><p id="wv-particles-caption" class="wb-caption">${descriptions.transverse}</p></div>${spatialMarkup}
+    {title:'Tversbølger og langsbølger',body:`<div class="wb-scope"><p>I en <strong>tversbølge</strong> svinger partiklene på tvers av bølgeretningen. I en <strong>langsbølge</strong> svinger de langs bølgeretningen. Følg den oransje partikkelen.</p><div class="model">${particleStage}<div class="wb-mode-buttons" role="group" aria-label="Velg bølgetype">${modes.map(([mode,label,id])=>`<button type="button" id="${id}" data-wb-mode="${mode}" aria-pressed="${mode==='transverse'}">${label}</button>`).join('')}</div><div id="wb-particle-controls" class="wb-controls">${slider('wb-particle-frequency','Frekvens i modellen',.3,1.2,.65,.05)}</div><div id="wb-mode-readout" class="readout" aria-live="polite"></div><p id="wv-particles-caption" class="wb-caption">${descriptions.transverse}</p></div>
 <div class="wb-examples-launch"><button type="button" id="wb-examples-open" aria-haspopup="dialog" aria-controls="wb-examples-dialog" aria-expanded="false">Eksempler: lyd og vannbølger</button></div><dialog id="wb-examples-dialog" class="wb-examples-dialog" aria-labelledby="wb-examples-title"><div class="wb-dialog-shell"><header class="wb-dialog-header"><h3 id="wb-examples-title">Lyd og vannbølger</h3><button type="button" id="wb-examples-close" aria-label="Lukk eksemplene">Lukk ×</button></header><div class="wb-example-tabs" role="tablist" aria-label="Velg bølgeeksempel"><button type="button" id="wb-example-sound-tab" role="tab" aria-selected="true" aria-controls="wb-example-sound-panel" tabindex="0">Lyd: langsbølger</button><button type="button" id="wb-example-water-tab" role="tab" aria-selected="false" aria-controls="wb-example-water-panel" tabindex="-1">Vann: overflatebølger</button></div><section id="wb-example-sound-panel" class="wb-example-panel" role="tabpanel" aria-labelledby="wb-example-sound-tab"><p>${descriptions.sound}</p><div class="model wb-sound-model" data-model-layout="custom">${soundMarkup}<div id="wb-sound-controls" class="wb-controls wb-two">${slider('wb-sound-frequency','Frekvens / tonehøyde',200,1000,500,50)}${slider('wb-sound-amplitude','Trykkvariasjon / lydstyrke',.2,1,.6,.1)}</div><div id="wb-sound-readout" class="readout" aria-live="polite"></div><p class="model-note">${modelNotes.sound}</p></div></section><section id="wb-example-water-panel" class="wb-example-panel" role="tabpanel" aria-labelledby="wb-example-water-tab" hidden><p>${descriptions.water}</p><div class="model">${diagram('wv-water','Vannbølger og partikkelbaner','Vannpartiklene går i omtrent sirkulære baner som blir mindre med dybden.',260)}<div id="wb-water-controls" class="wb-controls">${slider('wb-water-depth','Dybde for oransje partikkel',.1,1.3,.3,.1)}</div><div id="wb-water-readout" class="readout" aria-live="polite"></div></div></section></div></dialog>
 </div>`},
     {title:'Stående bølger',body:`<div class="wb-scope"><p>${descriptions.standing}</p><div class="model">${diagram('wv-standing','Stående bølge på en streng','To bølger i motsatt retning gir knuter og buker.')}<div id="wb-standing-controls" class="wb-controls">${slider('wv-harmonic','Antall buker',1,4,2,1)}</div><div id="wb-standing-readout" class="readout" aria-live="polite"></div><p class="model-note">${modelNotes.standing}</p></div></div>`},
@@ -150,11 +160,19 @@ const basics={
   mount(root,api){
     const q=id=>root.querySelector('#'+id),val=id=>Number(q(id).value),say=(id,s)=>{if(q(id).textContent!==s)q(id).textContent=s;};
     const layers={};for(const id of ['wv-travel','wv-particles','wv-standing','wv-water']){const g=document.createElementNS('http://www.w3.org/2000/svg','g');q(id).append(g);layers[id]=g;}
-    const cleanWaveVisuals = mountWaveVisuals(root, api);
-    let particleMode='transverse',travelPhase=0,lastTime=null;
+    const cleanSound = mountSoundExample(root, api);
+    const flat=q('wv-particles'),spatial=q('wv-spatial');
+    let particleMode='transverse',particleView='2d',particlePhase=0,particleTime=null;
+    let travelPhase=0,lastTime=null;
     const describe=()=>{
       for(const [m,,id] of modes)q(id).setAttribute('aria-pressed',String(particleMode===m));
-      say('wv-particles-caption',descriptions[particleMode]);
+      const transverse=particleMode==='transverse';
+      spatial.setAttribute('aria-label',transverse
+        ? 'En tversbølge brer seg til høyre gjennom en blokk med ruter.'
+        : 'En langsbølge brer seg til høyre gjennom blokka i form av tettere og glisnere ruter.');
+      say('wv-particles-caption',particleView==='2d'?descriptions[particleMode]:transverse
+        ? 'Den oransje ruten svinger opp og ned mens bølgen brer seg mot høyre.'
+        : 'Den oransje ruten svinger fram og tilbake. Fortetningene brer seg mot høyre.');
     };
     const update=()=>{
       say('wv-amplitude-value',fmt(val('wv-amplitude'))+' m');say('wv-wavelength-value',fmt(val('wv-wavelength'))+' m');say('wv-speed-value',fmt(val('wv-speed'))+' m/s');
@@ -169,6 +187,15 @@ const basics={
       say('wb-mode-readout',`Frekvens: ${fmt(val('wb-particle-frequency'))} Hz · ${particleMode==='transverse'?'Svingning på tvers av bølgeretningen.':'Svingning langs bølgeretningen.'}`);api.repaint();
     };
     for(const [m,,id] of modes)q(id).addEventListener('click',()=>{particleMode=m;describe();update();});
+    for(const [view] of waveViews)q('wv-show-'+view).addEventListener('click',()=>{
+      particleView=view;
+      const [active,inactive]=view==='2d'?[flat,spatial]:[spatial,flat];
+      active.removeAttribute('hidden');
+      inactive.setAttribute('hidden','');
+      for(const [item] of waveViews)q('wv-show-'+item).setAttribute('aria-pressed',String(view===item));
+      describe();
+      api.repaint(flat);
+    });
     for(const id of ['wv-amplitude','wv-wavelength','wv-speed','wv-harmonic','wb-particle-frequency','wb-sound-frequency','wb-sound-amplitude','wb-water-depth'])q(id).addEventListener('input',update);
     api.onFrame(t=>{
       const elapsed=lastTime===null?0:Math.max(0,Math.min(.2,t-lastTime));lastTime=t;
@@ -183,8 +210,16 @@ const basics={
       const mode=sceneMode==='particles'?particleMode:sceneMode;
       let scene='';
       if(mode==='transverse'||mode==='longitudinal'){
-        const transverse=mode==='transverse',frequency=val('wb-particle-frequency');let dots='';
-        for(let i=0;i<16;i++){let x0=80+i*40,ph=2*Math.PI*(i/7-frequency*t),x=transverse?x0:x0+16*Math.sin(ph),yy=transverse?140-52*Math.sin(ph):140;dots+=`<circle cx="${x0}" cy="140" r="2.5" fill="#b3c5cc"/>${i===7?line(transverse?x0:x0-22,transverse?78:140,transverse?x0:x0+22,transverse?202:140,C.amber,'stroke-dasharray="3 4"'):''}<circle cx="${x}" cy="${yy}" r="${i===7?10:7}" fill="${i===7?C.amber:C.wave}"/>`;}
+        const transverse=mode==='transverse';
+        const elapsed=particleTime===null?0:Math.max(0,t-particleTime);
+        particleTime=t;
+        particlePhase=(particlePhase+val('wb-particle-frequency')*elapsed)%1;
+        if(particleView==='3d'){
+          drawSpatialWave(spatial,particlePhase,transverse,root.ownerDocument?.body?.classList?.contains('dark'));
+          return;
+        }
+        let dots='';
+        for(let i=0;i<16;i++){let x0=80+i*40,ph=2*Math.PI*(i/7-particlePhase),x=transverse?x0:x0+16*Math.sin(ph),yy=transverse?140-52*Math.sin(ph):140;dots+=`<circle cx="${x0}" cy="140" r="2.5" fill="#b3c5cc"/>${i===7?line(transverse?x0:x0-22,transverse?78:140,transverse?x0:x0+22,transverse?202:140,C.amber,'stroke-dasharray="3 4"'):''}<circle cx="${x}" cy="${yy}" r="${i===7?10:7}" fill="${i===7?C.amber:C.wave}"/>`;}
         scene=`${arrow(275,50,490,50)}${text(380,30,'Bølgeretning','text-anchor="middle"')}${dots}${text(380,260,'Oransje partikkel: lokal svingning','text-anchor="middle" class="wb-small"')}`;
       } else if(mode==='standing'){
         const n=val('wv-harmonic'),sy=x=>145-62*Math.sin(n*Math.PI*(x-60)/640)*Math.cos(2*Math.PI*n*.5*t);let nodes='',envelopes='';
@@ -219,7 +254,7 @@ const basics={
     for(const name of exampleNames){const tab=q('wb-example-'+name+'-tab');tab.addEventListener('click',tabClick);tab.addEventListener('keydown',tabKeys);}
     chooseExample('sound');
     describe();update();
-    return ()=>{cleanWaveVisuals();if(exampleDialog.open)closeExamples();exampleOpen.removeEventListener('click',openExamples);exampleClose.removeEventListener('click',closeExamples);exampleDialog.removeEventListener('close',onExamplesClosed);exampleDialog.removeEventListener('cancel',cancelExamples);exampleDialog.removeEventListener('click',backdropExamples);for(const name of exampleNames){const tab=q('wb-example-'+name+'-tab');tab.removeEventListener('click',tabClick);tab.removeEventListener('keydown',tabKeys);}};
+    return ()=>{cleanSound();if(exampleDialog.open)closeExamples();exampleOpen.removeEventListener('click',openExamples);exampleClose.removeEventListener('click',closeExamples);exampleDialog.removeEventListener('close',onExamplesClosed);exampleDialog.removeEventListener('cancel',cancelExamples);exampleDialog.removeEventListener('click',backdropExamples);for(const name of exampleNames){const tab=q('wb-example-'+name+'-tab');tab.removeEventListener('click',tabClick);tab.removeEventListener('keydown',tabKeys);}};
   }
 };
 

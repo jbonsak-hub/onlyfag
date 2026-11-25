@@ -2,8 +2,8 @@ const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),
 let pw;if(!process.argv.includes('--data-only')){for(const candidate of [process.env.PLAYWRIGHT_MODULE,'playwright',path.resolve(path.dirname(process.execPath),'../node_modules/playwright')].filter(Boolean)){try{pw=require(candidate);break;}catch{}}if(!pw)throw Error('Set PLAYWRIGHT_MODULE to an installed Playwright module.');}
 const root=path.resolve(__dirname,'..'),shots=path.resolve(root,'../research/bolger-straling-qa');
 const ids=['bolger','fenomener','em','atomer','universet','kommunikasjon','radioaktivitet','stralevern','atmosfaeren'];
-const moduleNames=['wave-basics','waves','em-spectrum','em-atoms','radioactivity','cosmos-environment'];
-const prototypeIds=ids.filter(id=>id!=='em');
+const moduleNames=['wave-basics','waves','em-spectrum','atom-topic','communication','radioactivity','cosmos-environment'];
+const prototypeIds=ids.filter(id=>id!=='em'&&id!=='atomer');
 const {publishedIds,modulePath,moduleUrl,browserModuleUrl,rendererPath}=require('./bolger-straling-paths.cjs');
 const errors=[],failures=[],warnings=[],coverage=[];
 let fixtureClockFactory;
@@ -14,6 +14,7 @@ function modelFixture(topic){
  const decode=s=>String(s).replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
  const attrMap=s=>{const a={};for(const m of s.matchAll(/([\w:-]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g))a[m[1]]=decode(m[2]??m[3]??m[4]??'');return a;};
  function matches(el,selector){
+  if(selector.trim().endsWith(':checked')&&!el.checked)return false;
   const chain=selector.trim().split(/\s+/);const last=chain.pop();if(!last)return false;
   const direct=(e,s)=>{const tag=s.match(/^[a-z][\w-]*/i);if(tag&&e.tagName.toLowerCase()!==tag[0].toLowerCase())return false;for(const m of s.matchAll(/#([\w-]+)/g))if(e.id!==m[1])return false;for(const m of s.matchAll(/\.([\w-]+)/g))if(!e.classList.contains(m[1]))return false;for(const m of s.matchAll(/\[([^\]=]+)(?:=["']?([^\]"']*)["']?)?\]/g))if(!(m[1]in e.attributes)||(m[2]!==undefined&&e.attributes[m[1]]!==m[2]))return false;return true;};
   if(!direct(el,last))return false;let ancestor=el.parent;for(let i=chain.length-1;i>=0;i--){while(ancestor&&!direct(ancestor,chain[i]))ancestor=ancestor.parent;if(!ancestor)return false;ancestor=ancestor.parent;}return true;
@@ -74,7 +75,7 @@ function assertNumericQuestion(q){
  for(const field of q.fields??[q])assert.ok(Number.isFinite(field.value)&&(field.tolerance===undefined||field.tolerance>=0),q.id);
 }
 (async()=>{
- const source=[],sourceModules={};for(const file of moduleNames){sourceModules[file]=await import(moduleUrl(file));source.push(...(sourceModules[file].topics??[sourceModules[file].emTopic]));}
+ const source=[],sourceModules={};for(const file of moduleNames){sourceModules[file]=await import(moduleUrl(file));const m=sourceModules[file];source.push(...(m.topics??[m.emTopic??m.atomTopic]));}
  assert.deepEqual(source.map(t=>t.id).sort(),ids.slice().sort());
  const unique=new Set(),numeric=new Map();
  for(const t of source){assert.ok(t.sections.length&&t.terms.length&&t.questions.length>=10,t.id);for(const q of t.questions){assert.ok(!unique.has(q.id)&&q.prompt&&q.answer,q.id);unique.add(q.id);assert.ok(['mcq','number','open'].includes(q.type),q.id);if(q.type==='mcq')assert.ok(Number.isInteger(q.correct)&&q.correct>=0&&q.correct<q.choices.length,q.id);if(q.type==='number'){assertNumericQuestion(q);numeric.set(q.id,q);}}}
@@ -87,16 +88,18 @@ function assertNumericQuestion(q){
  assert.equal(unique.size,125);
  const publicTopics=source.filter(t=>publishedIds.includes(t.id));
  assert.deepEqual(publicTopics.map(t=>t.id),publishedIds);
- assert.deepEqual(publicTopics.map(t=>t.questions.length),[13,12,14]);
+ assert.deepEqual(publicTopics.map(t=>t.questions.length),[13,12,14,12]);
  for(const topic of publicTopics)assert.ok(!topic.terms.some(t=>/knut|\bbuk/i.test(t.term)),'Buk and knute are excluded from the published concept lists.');
  for(const [questionId,topicId] of [['wv-b8','em'],['wv-f3','em'],['wv-f13','universet']])assert.equal(source.find(t=>t.questions.some(q=>q.id===questionId))?.id,topicId,'Moved question belongs to its current teaching topic: '+questionId);
  const standingTask=publicTopics[0].questions.find(q=>q.id==='wv-b11');assert.ok(standingTask&&!/knut|\bbuk/i.test(standingTask.prompt+' '+standingTask.answer),'Standing-wave reasoning does not require the excluded glossary terms.');
  const publicEntry=fs.readFileSync(path.join(root,'naturfag/bolger-straling/entry.js'),'utf8');
- assert.deepEqual([...publicEntry.matchAll(/import \{(?:topics as \w+|emTopic)\} from ['"]([^'"]+)['"]/g)].map(m=>m[1].split('?')[0]).sort(),['./em-spectrum.js','./wave-basics.js','./waves.js'],'The published entry imports exactly the three released topic modules.');
- assert.deepEqual(sourceModules['em-atoms'].topics.map(t=>t.id).sort(),['atomer','kommunikasjon'],'The prototype atom entry omits the promoted EM topic.');
+ assert.deepEqual([...publicEntry.matchAll(/import \{(?:topics as \w+|emTopic|atomTopic)\} from ['"]([^'"]+)['"]/g)].map(m=>m[1].split('?')[0]).sort(),['./atom-topic.js','./em-spectrum.js','./wave-basics.js','./waves.js'],'The published entry imports exactly the four released topic modules.');
+ assert.equal(sourceModules['atom-topic'].atomTopic.id,'atomer');
+ assert.equal(sourceModules['atom-topic'].atomTopic.sections[0].title,'Hydrogenatomet');
+ assert.deepEqual(sourceModules.communication.topics.map(t=>t.id),['kommunikasjon'],'Only communication remains in this prototype module.');
  const prototypeEntry=fs.readFileSync(path.join(root,'prototyper/bolger-straling/app.js'),'utf8');
  assert.match(prototypeEntry,/naturfag\/bolger-straling\/wave-basics\.js/);assert.match(prototypeEntry,/naturfag\/bolger-straling\/waves\.js/);
- for(const file of ['wave-basics.js','waves.js','em-spectrum.js','absorption.js'])assert.ok(!fs.existsSync(path.join(root,'prototyper/bolger-straling',file)),'Published modules have one canonical source: '+file);
+ for(const file of ['wave-basics.js','waves.js','em-spectrum.js','absorption.js','em-atoms.js','atom-lab.js','element-spectra.js','element-spectra-data.js'])assert.ok(!fs.existsSync(path.join(root,'prototyper/bolger-straling',file)),'Published modules have one canonical source: '+file);
  const appSource=fs.readFileSync(rendererPath,'utf8');
  assert.ok(!appSource.includes('animation-speed'),'The global animation-speed control was removed.');
  assert.ok(!appSource.includes('id="pause-button"'),'The global pause control was removed.');
@@ -135,9 +138,21 @@ function assertNumericQuestion(q){
   const wavePath=()=>basicFixture.get('wv-travel').querySelectorAll('path').find(e=>e.getAttribute('stroke-width')==='3.5').getAttribute('d');
   basicFixture.tick(1);const before=wavePath();basicFixture.change('wv-speed',9);assert.equal(basicFixture.get('wv-wavelength').value,'2');assert.equal(wavePath(),before,'Changing speed keeps the current phase and wavelength continuous.');
   for(const button of ['wv-transverse','wv-longitudinal']){basicFixture.click(button);assert.equal(basicFixture.get(button).getAttribute('aria-pressed'),'true');}
-  const spatialButtons=basicFixture.root.querySelectorAll('[data-wb-spatial]');
-  assert.equal(spatialButtons.length,2);
-  for(const button of spatialButtons){button.dispatch('click');assert.equal(button.getAttribute('aria-pressed'),'true');}
+  const wave2d=basicFixture.get('wv-particles'),wave3d=basicFixture.get('wv-spatial');
+  assert.strictEqual(wave2d.closest('.model'),wave3d.closest('.model'));
+  assert.strictEqual(basicFixture.get('wv-show-2d').closest('.wb-wave-stage'),wave2d.closest('.wb-wave-stage'));
+  assert.equal(wave2d.hasAttribute('hidden'),false);
+  assert.equal(wave3d.hasAttribute('hidden'),true);
+  basicFixture.click('wv-show-3d');
+  assert.equal(basicFixture.get('wv-show-3d').getAttribute('aria-pressed'),'true');
+  assert.equal(wave2d.hasAttribute('hidden'),true);
+  assert.equal(wave3d.hasAttribute('hidden'),false);
+  assert.equal(basicFixture.get('wv-longitudinal').getAttribute('aria-pressed'),'true','The selected wave type survives switching views.');
+  assert.equal(basicFixture.now(wave2d),basicFixture.now(wave3d),'Both views use the same clock.');
+  basicFixture.click('wv-show-2d');
+  assert.equal(basicFixture.get('wv-show-2d').getAttribute('aria-pressed'),'true');
+  assert.equal(wave2d.hasAttribute('hidden'),false);
+  assert.equal(wave3d.hasAttribute('hidden'),true);
   assert.equal(basicFixture.get('wv-sound').tagName,'CANVAS');
   basicFixture.change('wv-harmonic',3);assert.match(basicFixture.get('wb-standing-readout').textContent,/3 buker/);assert.match(basicFixture.get('wb-standing-readout').textContent,/4 knuter/);
   basicFixture.click('wb-examples-open');basicFixture.click('wb-example-water-tab');basicFixture.change('wb-water-depth',.1);const orbit=()=>basicFixture.get('wv-water').querySelectorAll('circle').find(e=>e.getAttribute('stroke-dasharray')==='3 3');const shallow=+orbit().getAttribute('r');basicFixture.change('wb-water-depth',1.3);assert.ok(+orbit().getAttribute('r')<shallow);
@@ -215,7 +230,7 @@ function assertNumericQuestion(q){
  }finally{comm.destroy();}
  const revisionGroups=await require('./bolger-straling-revision.cjs').runRevisionChecks({modelFixture,topics:source});
  assert.ok(revisionGroups.length>=8);
- console.log('Source/model checks passed: 9 distinct topics, 125 questions; 3 published topics, 39 questions; 26 numeric exercises; independent model pause/repaint, Snell constraints, retarded Doppler, swing modes and outcomes, primary/secondary rainbow, atom cascades, isotope decay and absolute Planck units.');
+ console.log('Source/model checks passed: 9 distinct topics, 125 questions; 4 published topics, 51 questions; 26 numeric exercises; independent model pause/repaint, Snell constraints, retarded Doppler, swing modes and outcomes, primary/secondary rainbow, atom cascades, isotope decay and absolute Planck units.');
  if(process.argv.includes('--data-only'))return;
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
  const base='http://127.0.0.1:'+server.address().port, url=base+'/prototyper/bolger-straling.html';
@@ -229,7 +244,7 @@ function assertNumericQuestion(q){
  const page=await context.newPage();page.setDefaultTimeout(7000);
  page.on('pageerror',e=>errors.push(e.stack||e.message));
  await page.goto(url);await page.locator('.topic-card').first().waitFor();
- const data=await page.evaluate(async urls=>{const modules=await Promise.all(urls.map(url=>import(url)));return modules.flatMap(m=>m.topics??[m.emTopic]).map(t=>({id:t.id,title:t.title,sections:t.sections.length,questions:t.questions,terms:t.terms.length}));},moduleNames.map(browserModuleUrl));
+ const data=await page.evaluate(async urls=>{const modules=await Promise.all(urls.map(url=>import(url)));return modules.flatMap(m=>m.topics??[m.emTopic??m.atomTopic]).map(t=>({id:t.id,title:t.title,sections:t.sections.length,questions:t.questions,terms:t.terms.length}));},moduleNames.map(browserModuleUrl));
  await attempt('Complete, distinct, well-formed question data',async()=>{
  assert.equal(data.length,9);const seen=new Set();for(const t of data){assert.ok(t.sections>0&&t.terms>0);assert.ok(t.questions.length>=10,t.id);for(const q of t.questions){assert.ok(!seen.has(q.id),'duplicate '+q.id);seen.add(q.id);assert.ok(q.prompt&&q.answer,q.id);assert.ok(['mcq','number','open'].includes(q.type),q.id);if(q.type==='mcq')assert.ok(Number.isInteger(q.correct)&&q.correct>=0&&q.correct<q.choices.length,q.id);if(q.type==='number')assertNumericQuestion(q);}}});
  async function route(id,view='fagstoff'){await page.goto(url+'#'+id+'/'+view);await page.locator('#topic-content').waitFor();await page.waitForTimeout(70);}
@@ -277,11 +292,9 @@ function assertNumericQuestion(q){
   await page.locator('#doppler-tab-sound').click();
   assert.equal(await page.locator('#fd-scene').isVisible(),true);
  });
- await attempt('Atomic transition wavelength and half-life expectation',async()=>{
-  await route('atomer');await page.locator('#al-h-spectrum-controls [data-h-line="6"]').click();assert.match(await page.locator('#al-h-readout').innerText(),/410/);
+ await attempt('Half-life expectation',async()=>{
  await route('radioaktivitet');await page.locator('#ra-half-time').fill('3');await page.locator('#ra-half-time').dispatchEvent('input');assert.match(await page.locator('#ra-half-expected').innerText(),/25/);assert.equal(await page.locator('.ra-decayed').count()+await page.locator('.ra-population i:not(.ra-decayed)').count(),200);
  });
- await attempt('Photon energy threshold is reflected in the displayed ionization state',async()=>{await route('atomer');for(const [energy,state]of [['2.1','bound'],['2.18','ionized'],['3','ionized']]){await page.locator('#ema-ion-energy').fill(energy);await page.locator('#ema-ion-energy').dispatchEvent('input');assert.equal(await page.locator('#ema-ion-plot').getAttribute('data-state'),'neutral');await page.locator('#ema-ion-send').click();assert.equal(await page.locator('#ema-ion-plot').getAttribute('data-state'),state);await page.locator('#ema-ion-reset').click();assert.equal(await page.locator('#ema-ion-plot').getAttribute('data-state'),'neutral');}});
  const qAll=data.filter(t=>prototypeIds.includes(t.id)).flatMap(t=>t.questions.map(q=>({...q,topic:t.id})));
  const mcq=qAll.find(q=>q.type==='mcq'),num=qAll.find(q=>q.type==='number'),open=qAll.find(q=>q.type==='open');
  const card=q=>page.locator('[data-question="'+q.id+'"]');
@@ -311,19 +324,82 @@ function assertNumericQuestion(q){
   await route('alle','oppgaver');
   assert.equal(await page.locator('.q-card').count(),qAll.length);
   assert.equal(await page.locator('.filterbar').count(),0);
-  await route('atomer','oppgaver');
-  assert.equal(await page.locator('.q-card').count(),data.find(t=>t.id==='atomer').questions.length);
+  await route('kommunikasjon','oppgaver');
+  assert.equal(await page.locator('.q-card').count(),data.find(t=>t.id==='kommunikasjon').questions.length);
   assert.equal(await page.locator('.filterbar').count(),0);
-  await route('atomer','begreper');
+  await route('kommunikasjon','begreper');
   assert.equal(await page.locator('#topic-content > .terms-list').count(),1);
   assert.equal(await page.locator('.question-summary').count(),0);
  });
  await attempt('Automatic graphics respect reduced-motion preference',async()=>{await route('fenomener');const svg=page.locator('#wv-interference');const before=await svg.innerHTML();await page.waitForTimeout(180);assert.equal(await svg.innerHTML(),before);await page.emulateMedia({reducedMotion:'no-preference'});await page.reload();const moving=await svg.innerHTML();await page.waitForTimeout(180);assert.notEqual(await svg.innerHTML(),moving);await page.emulateMedia({reducedMotion:'reduce'});await page.reload();const frozen=await svg.innerHTML();await page.waitForTimeout(180);assert.equal(await svg.innerHTML(),frozen);});
  await attempt('Each animated figure has an independent pause button',async()=>{await page.emulateMedia({reducedMotion:'no-preference'});await route('bolger');const travel=page.locator('#wv-travel'),particles=page.locator('#wv-particles');await travel.evaluate(el=>el.closest('.model').querySelector('.animation-toggle').click());const stopped=await travel.innerHTML(),moving=await particles.innerHTML();await page.waitForTimeout(180);assert.equal(await travel.innerHTML(),stopped);assert.notEqual(await particles.innerHTML(),moving);assert.equal(await travel.evaluate(el=>el.closest('.model').querySelector('.animation-toggle').getAttribute('aria-pressed')),'true');await travel.evaluate(el=>el.closest('.model').querySelector('.animation-toggle').click());await page.waitForTimeout(180);assert.notEqual(await travel.innerHTML(),stopped);await page.emulateMedia({reducedMotion:'reduce'});});
  await attempt('Dark theme survives reload',async()=>{await page.locator('#theme-button').click();assert.ok(await page.locator('body.dark').count());await page.reload();assert.ok(await page.locator('body.dark').count());await page.locator('#theme-button').click();});
- await attempt('Keyboard skip link preserves the current topic',async()=>{await route('atomer');const before=page.url();await page.locator('.skip').focus();await page.keyboard.press('Enter');assert.equal(page.url(),before);assert.equal(await page.evaluate(()=>document.activeElement.id),'main');});
+ await attempt('Keyboard skip link preserves the current topic',async()=>{await route('kommunikasjon');const before=page.url();await page.locator('.skip').focus();await page.keyboard.press('Enter');assert.equal(page.url(),before);assert.equal(await page.evaluate(()=>document.activeElement.id),'main');});
  for(const width of [390,320])for(const id of prototypeIds)await attempt('Mobile '+width+' '+id,async()=>{await page.setViewportSize({width,height:844});await route(id);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'document overflow');await route(id,'oppgaver');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'bank overflow');});
- await attempt('Mobile navigation opens/closes and route is keyboard reachable',async()=>{await page.setViewportSize({width:390,height:844});await route('atomer');await page.locator('#menu-button').click();assert.equal(await page.locator('#menu-button').getAttribute('aria-expanded'),'true');await page.keyboard.press('Escape');assert.equal(await page.locator('#menu-button').getAttribute('aria-expanded'),'false');await page.locator('#menu-button').click();await page.locator('[data-route="atomer/oppgaver"]').first().click();await page.locator('.q-card').first().waitFor();assert.equal(await page.locator('#menu-button').getAttribute('aria-expanded'),'false');});
+ await attempt('Mobile navigation opens/closes and route is keyboard reachable',async()=>{await page.setViewportSize({width:390,height:844});await route('kommunikasjon');await page.locator('#menu-button').click();assert.equal(await page.locator('#menu-button').getAttribute('aria-expanded'),'true');await page.keyboard.press('Escape');assert.equal(await page.locator('#menu-button').getAttribute('aria-expanded'),'false');await page.locator('#menu-button').click();await page.locator('[data-route="kommunikasjon/oppgaver"]').first().click();await page.locator('.q-card').first().waitFor();assert.equal(await page.locator('#menu-button').getAttribute('aria-expanded'),'false');});
+ await attempt('The published atom topic supports all views and legacy routes',async()=>{
+  await page.setViewportSize({width:1440,height:1000});
+  await page.goto(url+'#oversikt');
+  await page.locator('.topic-card').first().waitFor();
+  assert.equal(await page.locator('.topic-card[href="#atomer/fagstoff"]').count(),0);
+  await page.goto(base+'/naturfag.html#waves/fenomener/fagstoff');
+  const nav=page.locator('[data-waves-toggle="atomer"]');
+  assert.equal(await nav.innerText(),'Stråling fra atomet');
+  await nav.click();
+  await page.waitForURL(/#waves\/atomer\/fagstoff$/);
+  const atom=page.frameLocator('#waves-module-frame');
+  const spectrumLine=atom.locator('#al-h-spectrum-controls [data-h-line="6"]');
+  await spectrumLine.click();
+  assert.match(await atom.locator('#al-h-readout').innerText(),/410/);
+  for(const [energy,state] of [['2.1','bound'],['2.18','ionized'],['3','ionized']]){
+   const slider=atom.locator('#ema-ion-energy');
+   const plot=atom.locator('#ema-ion-plot');
+   await slider.fill(energy);
+   await slider.dispatchEvent('input');
+   assert.equal(await plot.getAttribute('data-state'),'neutral');
+   await atom.locator('#ema-ion-send').click();
+   assert.equal(await plot.getAttribute('data-state'),state);
+   await atom.locator('#ema-ion-reset').click();
+   assert.equal(await plot.getAttribute('data-state'),'neutral');
+  }
+  for(const [view, selector, count] of [['fagstoff','#al-hydrogen-svg',1],['oppgaver','.q-card',12],['begreper','.term',data.find(t=>t.id==='atomer').terms]]){
+   await page.goto(url+'?legacy-atom=1#atomer/'+view);
+   await page.waitForURL(new RegExp('/naturfag(?:\\.html)?#waves/atomer/'+view+'$'));
+   await atom.locator(selector).first().waitFor();
+   assert.equal(await atom.locator(selector).count(),count);
+   assert.equal(await page.locator('[data-waves-topic="atomer"][data-waves-view="'+view+'"]').getAttribute('aria-current'),'page');
+  }
+ });
+ await attempt('Wave views share the original figure and controls',async()=>{
+  await page.setViewportSize({width:1440,height:1000});
+  await page.goto(base+'/naturfag.html#waves/bolger/fagstoff');
+  const wave=page.frameLocator('#waves-module-frame');
+  const front=wave.locator('.wb-wave-stage');
+  await front.waitFor();
+  assert.equal(await front.locator('#wv-particles').isVisible(),true);
+  assert.equal(await front.locator('#wv-spatial').isVisible(),false);
+  await wave.locator('#wv-longitudinal').click();
+  await front.locator('#wv-show-3d').click();
+  assert.equal(await front.locator('#wv-particles').isVisible(),false);
+  assert.equal(await front.locator('#wv-spatial').isVisible(),true);
+  assert.equal(await wave.locator('#wv-longitudinal').getAttribute('aria-pressed'),'true');
+  await front.locator('#wv-show-2d').click();
+  assert.equal(await front.locator('#wv-particles').isVisible(),true);
+ });
+ await attempt('Coastal response controls appear next to the shore figure',async()=>{
+  await page.goto(base+'/naturfag.html#waves/fenomener/fagstoff');
+  const waves=page.frameLocator('#waves-module-frame');
+  await waves.locator('#ex-open').click();
+  await waves.locator('#ex-tab-coast').click();
+  const panel=waves.locator('#ex-refraction-panel .model-panel');
+  assert.equal(await panel.locator('#re-shore-question').isVisible(),true);
+  assert.equal(await panel.locator('#re-car-controls').isVisible(),false);
+  assert.doesNotMatch(await panel.locator('#re-readout').innerText(),/°/);
+  await panel.locator('[name="re-frequency"][value="unchanged"]').check();
+  await panel.locator('[name="re-wavelength"][value="down"]').check();
+  assert.match(await panel.locator('#re-shore-feedback').innerText(),/Begge svarene stemmer/);
+  await page.keyboard.press('Escape');
+ });
  await attempt('Published spectrum and existing deep links',async()=>{
   const spectrum=data.find(t=>t.id==='em');
   await page.goto(url+'?legacy-link=1#em/oppgaver');
