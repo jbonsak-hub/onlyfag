@@ -1,4 +1,4 @@
-import {solutionHtml} from './math-presentation.js?v=20261118-resonans1';
+import {solutionHtml} from './math-presentation.js?v=20261126-bolgefigurer';
 import {createAnimationClock} from './animation-clock.js?v=20261116-naturfag1';
 
 export function startCourse(topicList,{prototype=false,embedded=false}={}){
@@ -180,7 +180,11 @@ function resourceHtml(t){return t.resources?.length?`<aside class="resource-box"
 
 function renderBank(){
  const questions=route.id==='alle'?allQuestions:allQuestions.filter(q=>q.topic.id===route.id);
- $('#topic-content').innerHTML=`<div id="question-list" class="question-list">${questions.length?questions.map(questionHtml).join(''):'<div class="empty-state">Det er ingen oppgaver her ennå.</div>'}</div>`;
+ const bank=$('#topic-content');
+ bank.innerHTML=`<div id="question-list" class="question-list">${questions.length?questions.map(questionHtml).join(''):'<div class="empty-state">Det er ingen oppgaver her ennå.</div>'}</div>`;
+ for(const q of questions){
+  if(q.mountFigure)q.mountFigure(bank.querySelector(`[data-question="${q.id}"] .q-figure`));
+ }
 }
 function numberFormHtml(q,draft){
  if(!q.fields)return `<form class="q-number-form"><label class="sr-only" for="input-${q.id}">Svar ${escapeHtml(q.unit||'')}</label><input id="input-${q.id}" type="text" inputmode="decimal" autocomplete="off" placeholder="Ditt svar" value="${escapeHtml(draft)}"><span>${escapeHtml(q.unit||'')}</span><button type="submit">Sjekk</button></form>`;
@@ -203,7 +207,8 @@ function questionHtml(q){
  const body=q.figure?
   `${prompt}<div class="q-figure">${q.figure}</div><div class="q-controls">${controls}</div>`:
   prompt+controls;
- return `<article class="q-card${q.figure?' q-has-figure':''}" data-question="${q.id}"><div class="q-top"><span class="q-number">${String(q.index+1).padStart(2,'0')}</span><span>${escapeHtml(q.level||'Bruk')}</span><span>· ${q.type==='mcq'?'Flervalg':q.type==='number'?'Regn ut':'Forklar og drøft'}</span><span class="q-status" ${solved?'':'hidden'}>✓ Mestret</span><span class="q-topic">${escapeHtml(q.topic.title)}</span><button class="q-bookmark" aria-label="${bookmarked?'Fjern bokmerke':'Merk oppgaven'}" aria-pressed="${bookmarked}" title="Merk oppgaven">${bookmarked?'★':'☆'}</button></div>${body}</article>`;
+ const course=q.course?`<span class="q-course">(fra ${escapeHtml(q.course)})</span>`:'';
+ return `<article class="q-card${q.figure?' q-has-figure':''}" data-question="${q.id}"><div class="q-top"><span class="q-number">${String(q.index+1).padStart(2,'0')}</span><span>${escapeHtml(q.level||'Bruk')}</span><span>· ${q.type==='mcq'?'Flervalg':q.type==='number'?'Regn ut':'Forklar og drøft'}</span>${course}<span class="q-status" ${solved?'':'hidden'}>✓ Mestret</span><span class="q-topic">${escapeHtml(q.topic.title)}</span><button class="q-bookmark" aria-label="${bookmarked?'Fjern bokmerke':'Merk oppgaven'}" aria-pressed="${bookmarked}" title="Merk oppgaven">${bookmarked?'★':'☆'}</button></div>${body}</article>`;
 }
 function findQuestion(card){return allQuestions.find(q=>q.id===card.dataset.question);}
 function setSolved(q,card,solved){

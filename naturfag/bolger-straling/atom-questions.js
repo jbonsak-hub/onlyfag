@@ -115,10 +115,72 @@ function dischargeTube() {
     ${label(180,129,'Gass i røret',center)}`,143);
 }
 
+const drawingLevels=[4,3,2,1];
+const drawingY=[0,169,122,75,28];
+const drawingHeight=198;
+
 function availableLevels() {
-  return figure('atom-10','Fire energinivåer',
+  const diagram=figure('atom-10','Fire energinivåer',
     'Det er fire vannrette streker, fra n = 1 nederst til n = 4 øverst.',
-    energyAxis(57,27,129)+levelRows([[33,'n = 4'],[57,'n = 3'],[83,'n = 2'],[125,'n = 1']],72,250),146);
+    energyAxis(34,27,172)+levelRows(drawingLevels.map(n=>[drawingY[n],`n = ${n}`]),57,267)
+      +'<g data-energy-arrows aria-hidden="true"></g>',drawingHeight);
+  return `<p class="q-energy-instruction" id="atom-10-drawing-instruction"><strong>Tegn i diagrammet.</strong> Velg to nivåer for å tegne en pil nedover mellom dem.</p>
+    <div class="q-energy-diagram" role="group" aria-label="Tegn overganger" aria-describedby="atom-10-drawing-instruction">
+      ${diagram}
+      ${drawingLevels.map(n=>`<button type="button" data-energy-level="${n}" aria-label="Nivå ${n}" aria-pressed="false" style="--level-y:${100*drawingY[n]/drawingHeight}%"></button>`).join('')}
+    </div>
+    <div class="q-energy-tools">
+      <span id="atom-10-drawing-status" role="status"></span>
+      <button type="button" class="secondary" data-energy-undo>Angre</button>
+      <button type="button" class="secondary" data-energy-clear>Tøm</button>
+    </div>`;
+}
+
+function mountTransitionDrawing(figure) {
+  const buttons=[...figure.querySelectorAll('[data-energy-level]')];
+  const arrows=figure.querySelector('[data-energy-arrows]');
+  const status=figure.querySelector('#atom-10-drawing-status');
+  const undo=figure.querySelector('[data-energy-undo]');
+  const clear=figure.querySelector('[data-energy-clear]');
+  const pairs=[];
+  let start=null;
+
+  function render() {
+    for(const button of buttons){
+      button.setAttribute('aria-pressed',String(Number(button.dataset.energyLevel)===start));
+    }
+    arrows.innerHTML=pairs.map(([upper,lower],index)=>{
+      const x=76+32*index;
+      return arrow(x,drawingY[upper]+1,x,drawingY[lower]-1,exposed,2.8,`data-energy-arrow="${upper}-${lower}"`);
+    }).join('');
+    status.textContent=`${pairs.length} ${pairs.length===1?'pil':'piler'} tegnet`;
+    undo.disabled=clear.disabled=pairs.length===0;
+  }
+
+  for(const button of buttons){
+    button.addEventListener('click',()=>{
+      const level=Number(button.dataset.energyLevel);
+      if(start===null){
+        start=level;
+      }else{
+        const upper=Math.max(start,level), lower=Math.min(start,level);
+        if(upper!==lower&&!pairs.some(([from,to])=>from===upper&&to===lower))pairs.push([upper,lower]);
+        start=null;
+      }
+      render();
+    });
+  }
+  undo.addEventListener('click',()=>{
+    pairs.pop();
+    start=null;
+    render();
+  });
+  clear.addEventListener('click',()=>{
+    pairs.length=0;
+    start=null;
+    render();
+  });
+  render();
 }
 
 function detectorReadout() {
@@ -202,11 +264,6 @@ export const atomQuestions=[
     prompt:'Hvilken av hydrogenlinjene A og B kommer fra overgangen med størst energiforskjell? Begrunn.',
     answer:'<strong>A ved 486 nm</strong> har kortere bølgelengde og dermed høyere frekvens enn B. Fotonet i A har derfor større energi, som svarer til en større energiforskjell i hydrogenatomet.'
   },{
-    id:'atom-05',type:'number',level:'Bruk',figure:levelDifference(),
-    prompt:'Elektronet følger pila i energidiagrammet. Hvor stor energi får fotonet som sendes ut?',
-    value:.30,tolerance:.005,unit:'aJ',hint:'Fotonet får forskjellen mellom atomets energi før og etter.',
-    answer:'ΔE = −0,24 aJ − (−0,54 aJ) = <strong>0,30 aJ</strong>. Atomet mister energi, mens fotonet får positiv energi.'
-  },{
     id:'atom-06',type:'open',level:'Bruk',
     figure:spectrumRows('atom-06','Lyse og mørke linjer fra samme gass',
       'Det øvre spekteret har to lyse linjer. De to mørke linjene i det nedre spekteret ligger ved de samme bølgelengdene.',
@@ -233,7 +290,7 @@ export const atomQuestions=[
     choices:['Elektroner skifter energinivå','Atomkjernen mister et proton ved hver linje','Atomet mister hele kjernen','Hvert atom sender ut alle bølgelengder'],
     correct:0,answer:'Elektronene kan bare ha bestemte energier. Hver overgang mellom to nivåer gir <strong>en bestemt fotonenergi</strong> og dermed en bestemt bølgelengde.'
   },{
-    id:'atom-10',type:'open',level:'Utfordring',figure:availableLevels(),
+    id:'atom-10',type:'open',level:'Utfordring',figure:availableLevels(),mountFigure:mountTransitionDrawing,
     prompt:'I denne modellen kan elektronet falle fra ethvert høyere nivå til et hvilket som helst lavere nivå. Hvor mange ulike overganger nedover er mulige? Må ett atom sende ut alle disse fotonene?',
     answer:'Mulighetene er 4→3, 4→2, 4→1, 3→2, 3→1 og 2→1, altså <strong>seks</strong>. Ett atom følger én vei ned gjennom nivåene. I mange atomer kan ulike veier gi alle de seks fotontypene til sammen.'
   },{
@@ -244,17 +301,30 @@ export const atomQuestions=[
     prompt:'Hvordan kan vi bruke de to spektrene til å finne stoffer i stjerna? Hva kan de andre mørke linjene skyldes?',
     answer:'Vi sammenlikner plasseringen av de mørke linjene i stjernelyset med de lyse linjene fra kjente gasser. <strong>Flere samsvarende linjer</strong> tyder på at det samme grunnstoffet finnes i stjernas ytre lag. De andre mørke linjene kan komme fra andre stoffer.'
   },{
-    id:'atom-12',type:'number',level:'Utfordring',figure:detectorReadout(),
-    prompt:'Bruk frekvensmålingen til å beregne fotonenergien. Bruk h = 6,63 · 10<sup>−34</sup> J s og oppgi energien i enheten 10<sup>−19</sup> J.',
-    value:3.315,tolerance:.05,unit:'· 10⁻¹⁹ J',hint:'E = hf.',
+    id:'atom-15',type:'open',level:'Utfordring',figure:viewingDirections(),
+    prompt:'Lampa sender et sammenhengende spekter mot et rør med kjøligere gass. A ser langs lysstrålen, mens B ser på gassen fra siden. Hva slags linjer kan de to detektorene måle? Forklar.',
+    answer:'A kan måle <strong>mørke absorpsjonslinjer</strong> i lyset fra lampa. Gassen tar opp lys ved bestemte bølgelengder. Atomene kan sende ut lys ved de samme bølgelengdene i andre retninger. B kan da måle <strong>lyse emisjonslinjer</strong> fra gassen mot en mørk bakgrunn.'
+  },{
+    id:'atom-16',type:'open',level:'Utfordring',figure:cascadePaths(),
+    prompt:'Figuren viser to mulige veier ned gjennom energinivåene. Hvilken vei gir mest energi til fotonene til sammen? Hvor mange fotoner sendes ut på hver vei?',
+    answer:'Begge veier gir <strong>samme totale fotonenergi</strong>. Atomet starter på n = 4 og ender på n = 1 i begge tilfeller. A gir ett foton. B gir to fotoner, og energiene deres summerer seg til den samme forskjellen mellom n = 4 og n = 1.'
+  },{
+    id:'atom-05',course:'Fysikk 1',type:'number',level:'Bruk',figure:levelDifference(),
+    prompt:'Elektronet følger pila i energidiagrammet. Hvor stor energi får fotonet som sendes ut?',
+    value:.30,tolerance:.005,unit:'aJ',hint:'Fotonet får forskjellen mellom atomets energi før og etter.',
+    answer:'ΔE = −0,24 aJ − (−0,54 aJ) = <strong>0,30 aJ</strong>. Atomet mister energi, mens fotonet får positiv energi.'
+  },{
+    id:'atom-12',course:'Fysikk 1',type:'number',level:'Utfordring',figure:detectorReadout(),
+    prompt:'Bruk frekvensmålingen til å beregne fotonenergien med <strong>E = hf</strong>, der f er frekvensen og h = 6,63 · 10<sup>−34</sup> J s. Oppgi energien i enheten 10<sup>−19</sup> J.',
+    value:3.315,tolerance:.05,unit:'· 10⁻¹⁹ J',
     answer:'E = hf = 6,63 · 10<sup>−34</sup> J s · 5,0 · 10<sup>14</sup> Hz = <strong>3,315 · 10<sup>−19</sup> J ≈ 3,3 · 10<sup>−19</sup> J</strong>.'
   },{
-    id:'atom-13',type:'mcq',level:'Bruk',figure:startLevels(),
+    id:'atom-13',course:'Fysikk 1',type:'mcq',level:'Bruk',figure:startLevels(),
     prompt:'Hydrogenatomene A og B starter på ulike energinivåer. Hvert atom møter ett foton med energien i figuren. Hvilket atom kan ta opp fotonet og hoppe til et høyere nivå?',
     choices:['Bare A','Bare B','Begge','Ingen av dem'],
     correct:1,answer:'<strong>B</strong> kan gå fra −0,54 aJ til −0,24 aJ. Det krever 0,30 aJ. I A krever selv det korteste hoppet opp omtrent 1,64 aJ.'
   },{
-    id:'atom-14',type:'mcq',level:'Bruk',figure:absorptionDepth(),
+    id:'atom-14',course:'Fysikk 1',type:'mcq',level:'Bruk',figure:absorptionDepth(),
     prompt:'Før lyset går gjennom gassen, er lysstyrken 100 ved både A og B. Figuren viser målingen på den andre siden. Hva stemmer?',
     choices:[
       'Lyset svekkes mest ved A. Noe lys slipper gjennom ved begge bølgelengdene.',
@@ -263,13 +333,5 @@ export const atomQuestions=[
       'Lyset svekkes like mye ved A og B.'
     ],
     correct:0,answer:'Lysstyrken synker fra 100 til 40 ved <strong>A</strong> og fra 100 til 70 ved B. A har størst svekkelse. Begge målingene ligger over null, så noe lys slipper gjennom ved begge bølgelengdene.'
-  },{
-    id:'atom-15',type:'open',level:'Utfordring',figure:viewingDirections(),
-    prompt:'Lampa sender et sammenhengende spekter mot et rør med kjøligere gass. A ser langs lysstrålen, mens B ser på gassen fra siden. Hva slags linjer kan de to detektorene måle? Forklar.',
-    answer:'A kan måle <strong>mørke absorpsjonslinjer</strong> i lyset fra lampa. Gassen tar opp lys ved bestemte bølgelengder. Atomene kan sende ut lys ved de samme bølgelengdene i andre retninger. B kan da måle <strong>lyse emisjonslinjer</strong> fra gassen mot en mørk bakgrunn.'
-  },{
-    id:'atom-16',type:'open',level:'Utfordring',figure:cascadePaths(),
-    prompt:'Figuren viser to mulige veier ned gjennom energinivåene. Hvilken vei gir mest energi til fotonene til sammen? Hvor mange fotoner sendes ut på hver vei?',
-    answer:'Begge veier gir <strong>samme totale fotonenergi</strong>. Atomet starter på n = 4 og ender på n = 1 i begge tilfeller. A gir ett foton. B gir to fotoner, og energiene deres summerer seg til den samme forskjellen mellom n = 4 og n = 1.'
   }
 ];

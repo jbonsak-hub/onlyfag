@@ -65,7 +65,7 @@
  function ensureWavesFrame(){
   if(wavesStarted){sendWavesDesired();sendWavesVisibility();return;}
   wavesStarted=true;
-  wavesFrame.src='naturfag/bolger-straling.html?embedded=1&topic='+encodeURIComponent(wavesDesired.topic)+'&view='+encodeURIComponent(wavesDesired.view)+(wavesDesired.section?'&section='+encodeURIComponent(wavesDesired.section):'')+'&v=20261126-quizsporsmal';
+  wavesFrame.src='naturfag/bolger-straling.html?embedded=1&topic='+encodeURIComponent(wavesDesired.topic)+'&view='+encodeURIComponent(wavesDesired.view)+(wavesDesired.section?'&section='+encodeURIComponent(wavesDesired.section):'')+'&v=20261126-bolgefigurer';
  }
  wavesFrame.addEventListener('load',()=>{if(!wavesStarted)return;wavesReady=true;sendTheme();sendHostLayout();sendWavesDesired();sendWavesVisibility();});
  document.addEventListener('visibilitychange',sendWavesVisibility);

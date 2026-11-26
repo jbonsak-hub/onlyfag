@@ -4,6 +4,8 @@ const root=path.resolve(__dirname,'..'),shots=path.resolve(root,'../research/bol
 const ids=['bolger','fenomener','em','atomer','universet','kommunikasjon','radioaktivitet','stralevern','atmosfaeren'];
 const moduleNames=['wave-basics','waves','em-spectrum','atom-topic','communication','radioactivity','cosmos-environment'];
 const prototypeIds=ids.filter(id=>id!=='em'&&id!=='atomer');
+const bankFigureAttributes={bolger:'data-wave-basics-figure',fenomener:'data-phenomenon-figure',em:'data-em-figure',atomer:'data-atom-figure'};
+const physicsOneQuestions=['atom-05','atom-12','atom-13','atom-14'];
 const {publishedIds,modulePath,moduleUrl,browserModuleUrl,rendererPath}=require('./bolger-straling-paths.cjs');
 const errors=[],failures=[],warnings=[],coverage=[];
 let fixtureClockFactory;
@@ -102,6 +104,11 @@ function assertNumericQuestion(q){
  const publicTopics=source.filter(t=>publishedIds.includes(t.id));
  assert.deepEqual(publicTopics.map(t=>t.id),publishedIds);
  assert.deepEqual(publicTopics.map(t=>t.questions.length),[13,12,14,16]);
+ for(const topic of publicTopics)for(const question of topic.questions){
+  const figureAttribute=bankFigureAttributes[topic.id];
+  assert.match(question.figure,new RegExp('<svg[^>]*'+figureAttribute+'="'+question.id+'"'));
+  assert.match(question.figure,/<desc\b[^>]*>[^<]+<\/desc>|aria-label="[^"]+"/);
+ }
  for(const topic of publicTopics)assert.ok(!topic.terms.some(t=>/knut|\bbuk/i.test(t.term)),'Buk and knute are excluded from the published concept lists.');
  for(const [questionId,topicId] of [['wv-b8','em'],['wv-f3','em'],['wv-f13','universet']])assert.equal(source.find(t=>t.questions.some(q=>q.id===questionId))?.id,topicId,'Moved question belongs to its current teaching topic: '+questionId);
  const standingTask=publicTopics[0].questions.find(q=>q.id==='wv-b11');assert.ok(standingTask&&!/knut|\bbuk/i.test(standingTask.prompt+' '+standingTask.answer),'Standing-wave reasoning does not require the excluded glossary terms.');
@@ -113,10 +120,8 @@ function assertNumericQuestion(q){
  assert.equal(atomTopic.sections.length,4);
  assert.ok(atomTopic.sections.every(section=>!/Nordlyset forteller|Kan ett foton ionisere/.test(section.title)));
  assert.equal(atomTopic.resources.filter(resource=>new URL(resource.url).hostname==='ndla.no').length,3);
- for(const question of atomTopic.questions){
-  assert.match(question.figure,new RegExp('<svg[^>]*data-atom-figure="'+question.id+'"'));
-  assert.match(question.figure,/<desc\b[^>]*>[^<]+<\/desc>|aria-label="[^"]+"/);
- }
+ assert.deepEqual(atomTopic.questions.slice(-4).map(question=>question.id),physicsOneQuestions);
+ assert.deepEqual(atomTopic.questions.filter(question=>question.course==='Fysikk 1').map(question=>question.id),physicsOneQuestions);
  const discharge=atomTopic.questions.find(question=>question.id==='atom-08');
  assert.equal(discharge.type,'open');
  assert.match(discharge.prompt,/gass(?:en)? i røret|gassrør/i);
@@ -376,9 +381,11 @@ function assertNumericQuestion(q){
  await attempt('Question banks omit the filter row and concept lists start with terms',async()=>{
   await route('alle','oppgaver');
   assert.equal(await page.locator('.q-card').count(),qAll.length);
+  assert.equal(await page.locator('.q-card.q-has-figure').count(),qAll.filter(question=>question.figure).length);
   assert.equal(await page.locator('.filterbar').count(),0);
   await route('kommunikasjon','oppgaver');
   assert.equal(await page.locator('.q-card').count(),data.find(t=>t.id==='kommunikasjon').questions.length);
+  assert.equal(await page.locator('.q-card.q-has-figure').count(),0);
   assert.equal(await page.locator('.filterbar').count(),0);
   await route('kommunikasjon','begreper');
   assert.equal(await page.locator('#topic-content > .terms-list').count(),1);
@@ -476,7 +483,7 @@ function assertNumericQuestion(q){
    assert.equal(await page.locator('[data-waves-topic="atomer"][data-waves-view="'+view+'"]').getAttribute('aria-current'),'page');
   }
  });
- await attempt('The atom question bank renders figures and preserves shared answer behavior',async()=>{
+ await attempt('The published question banks render figures and preserve shared answer behavior',async()=>{
   await page.setViewportSize({width:1366,height:768});
   await page.goto(base+'/naturfag.html#waves/atomer/oppgaver');
   const atom=page.frameLocator('#waves-module-frame');
@@ -484,18 +491,22 @@ function assertNumericQuestion(q){
   const card=id=>atom.locator('.q-card[data-question="'+id+'"]');
   await card('atom-01').waitFor();
   assert.equal(await atom.locator('.q-card.q-has-figure').count(),16);
+  assert.deepEqual((await atom.locator('.q-card').evaluateAll(cards=>cards.map(card=>card.dataset.question))).slice(-4),physicsOneQuestions);
+  assert.equal(await atom.locator('.q-course').count(),4);
+  for(const id of physicsOneQuestions)assert.equal(await card(id).locator('.q-course').innerText(),'(fra Fysikk 1)');
+  assert.match(await card('atom-12').locator('.q-prompt').innerText(),/E\s*=\s*h\s*f/);
   for(const {id} of questions){
    const svg=card(id).locator('.q-figure svg[data-atom-figure="'+id+'"]');
    assert.equal(await svg.count(),1);
    assert.ok(await svg.getAttribute('viewBox'));
   }
   const multipleChoice=card('atom-13');
-  const position=()=>multipleChoice.evaluate(el=>{
+  const position=question=>question.evaluate(el=>{
    const box=selector=>el.querySelector(selector).getBoundingClientRect().toJSON();
-   return {prompt:box('.q-prompt'),figure:box('.q-figure'),choices:box('.q-choices')};
+   return {prompt:box('.q-prompt'),figure:box('.q-figure'),controls:box('.q-controls')};
   });
-  const desktop=await position();
-  assert.ok(desktop.prompt.right<=desktop.figure.left&&desktop.choices.right<=desktop.figure.left,'The drawing sits to the right of the prompt and choices.');
+  const desktop=await position(multipleChoice);
+  assert.ok(desktop.prompt.right<=desktop.figure.left&&desktop.controls.right<=desktop.figure.left,'The drawing sits to the right of the prompt and choices.');
   const geometry=await drawingBounds(multipleChoice,['.q-figure svg']);
   await multipleChoice.locator('[data-choice="0"]').click();
   assert.match(await multipleChoice.locator('.feedback').innerText(),/stemmer ikke/i);
@@ -511,6 +522,38 @@ function assertNumericQuestion(q){
   assert.equal(await numeric.locator('.feedback').innerText(),'Riktig!');
   assert.equal(await numeric.locator('.solution .calc-lines').isVisible(),true);
 
+  const draw=card('atom-10').locator('.q-figure');
+  const diagram=draw.locator('.q-energy-diagram');
+  const drawStatus=draw.locator('#atom-10-drawing-status');
+  const level=n=>diagram.locator('[data-energy-level="'+n+'"]');
+  const arrows=()=>diagram.locator('path[data-energy-arrow]').evaluateAll(paths=>paths.map(path=>path.dataset.energyArrow));
+  const undo=draw.getByRole('button',{name:'Angre',exact:true}),clear=draw.getByRole('button',{name:'Tøm',exact:true});
+  assert.match(await draw.locator('#atom-10-drawing-instruction').innerText(),/Velg to nivåer/);
+  assert.equal(await drawStatus.getAttribute('role'),'status');
+  assert.equal(await drawStatus.innerText(),'0 piler tegnet');
+  assert.equal(await undo.isDisabled(),true);
+  assert.equal(await clear.isDisabled(),true);
+  const drawGeometry=await drawingBounds(draw,['svg']);
+  await level(4).press('Enter');
+  await level(2).press('Enter');
+  assert.deepEqual(await arrows(),['4-2']);
+  assert.equal(await diagram.locator('path[data-energy-arrow="4-2"]').evaluate(path=>path.getPointAtLength(path.getTotalLength()).y>path.getPointAtLength(0).y),true);
+  assert.equal(await drawStatus.innerText(),'1 pil tegnet');
+  await level(2).click();
+  await level(4).click();
+  assert.deepEqual(await arrows(),['4-2'],'One pair of levels counts once in either order.');
+  await level(1).click();
+  await level(3).click();
+  assert.deepEqual((await arrows()).sort(),['3-1','4-2']);
+  assert.equal(await drawStatus.innerText(),'2 piler tegnet');
+  await undo.click();
+  assert.deepEqual(await arrows(),['4-2']);
+  assert.equal(await drawStatus.innerText(),'1 pil tegnet');
+  await clear.click();
+  assert.deepEqual(await arrows(),[]);
+  assert.equal(await drawStatus.innerText(),'0 piler tegnet');
+  assert.deepEqual(await drawingBounds(draw,['svg']),drawGeometry);
+
   const open=card('atom-16');
   assert.equal(await open.locator('.solution').isVisible(),false);
   await open.getByRole('button',{name:'Vis veiledende svar',exact:true}).click();
@@ -518,14 +561,28 @@ function assertNumericQuestion(q){
   assert.equal(await open.getByRole('button',{name:'Dette fikk jeg til',exact:true}).isVisible(),true);
   for(const width of [320,390]){
    await page.setViewportSize({width,height:844});
-   const mobile=await position();
-   assert.ok(mobile.prompt.bottom<=mobile.figure.top&&mobile.figure.bottom<=mobile.choices.top,'The drawing precedes the choices on mobile.');
+   const mobile=await position(multipleChoice);
+   assert.ok(mobile.prompt.bottom<=mobile.figure.top&&mobile.figure.bottom<=mobile.controls.top,'The drawing precedes the choices on mobile.');
    assert.equal(await atom.locator('main').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true,'Atom question bank fits '+width+'px.');
   }
-  await page.goto(base+'/naturfag.html#waves/fenomener/oppgaver');
-  await atom.locator('.q-card[data-question="wv-f1"]').waitFor();
-  assert.equal(await atom.locator('.q-card').count(),data.find(topic=>topic.id==='fenomener').questions.length);
-  assert.equal(await atom.locator('.q-card.q-has-figure').count(),0);
+  await level(4).click();
+  await level(1).click();
+  assert.deepEqual(await arrows(),['4-1']);
+  for(const topicId of ['bolger','fenomener','em']){
+   await page.setViewportSize({width:1366,height:768});
+   await page.goto(base+'/naturfag.html#waves/'+topicId+'/oppgaver');
+   const otherQuestions=data.find(topic=>topic.id===topicId).questions;
+   const sample=card(otherQuestions[0].id);
+   await sample.waitFor();
+   assert.equal(await atom.locator('.q-card.q-has-figure').count(),otherQuestions.length);
+   assert.equal(await sample.locator('.q-figure svg['+bankFigureAttributes[topicId]+']').count(),1);
+   const wide=await position(sample);
+   assert.ok(wide.prompt.right<=wide.figure.left&&wide.controls.right<=wide.figure.left,`${topicId} places its figure to the right.`);
+   await page.setViewportSize({width:320,height:844});
+   const narrow=await position(sample);
+   assert.ok(narrow.prompt.bottom<=narrow.figure.top&&narrow.figure.bottom<=narrow.controls.top,`${topicId} places its figure before the controls on mobile.`);
+   assert.equal(await atom.locator('main').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true,`${topicId} question bank fits 320px.`);
+  }
  });
  await attempt('Hydrogen transitions play from the atom, energy diagram and spectrum',async()=>{
   await page.emulateMedia({reducedMotion:'no-preference'});

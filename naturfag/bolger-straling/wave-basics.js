@@ -1,4 +1,5 @@
 import { drawSpatialWave, mountSoundExample, soundMarkup, spatialMarkup, waveVisualStyle } from './wave-visuals.js?v=20261125-wave-views';
+import {waveBasicsQuestions} from './wave-basics-questions.js?v=20261126-bolgefigurer';
 
 const C={wave:'#16879b',amber:'#d28a16',purple:'#8260b4',grid:'#d6e1e6',muted:'#78929e'};
 const fmt=(n,d=2)=>n.toLocaleString('nb-NO',{maximumFractionDigits:d});
@@ -41,22 +42,6 @@ const modelNotes={
 export function waveFrequency(speed,wavelength){return speed/wavelength;}
 const fraction=(a,b)=>`<span class="frac"><span class="num">${a}</span><span class="den">${b}</span></span>`;
 const calc=(lhs,rhs)=>`<div class="calc-row"><span class="calc-lhs">${lhs}</span><span class="calc-eq">=</span><span class="calc-rhs">${rhs}</span></div>`;
-
-function wavePracticeFigure(){
- const x=metres=>52+119*metres;
- const y=metres=>102-22*metres;
- const gridX=[1,2,3].map(n=>line(x(n),27,x(n),174,'var(--line)')
-  +text(x(n),y(0)+18,n,'text-anchor="middle"')).join('');
- const gridY=[-3,-2,-1,1,2,3].map(n=>line(x(0),y(n),444,y(n),'var(--line)')
-  +text(44,y(n)+4,String(n).replace('-','−'),'text-anchor="end"')).join('');
- return `<svg class="q-wave-figure" viewBox="0 0 480 202" role="img" aria-label="Bølgeprofil med utsving i meter langs en strekning målt i meter">
-  ${gridX}${gridY}
-  ${arrow(x(0),y(0),451,y(0),'var(--muted)')}
-  ${arrow(x(0),175,x(0),22,'var(--muted)')}
-  ${path(graph(x(0),444,px=>y(3*Math.cos(Math.PI*(px-x(0))/119))),C.wave,2.6)}
-  ${text(52,16,'Utsving (m)')}${text(444,194,'Strekning (m)','text-anchor="end"')}
- </svg>`;
-}
 
 const basics={
   id:'bolger',title:'Bølger og svingninger',kicker:'',summary:'Se sammenhengen mellom amplitude, bølgelengde, frekvens og fart. Se bevegelsen bak lyd og vannbølger.',
@@ -117,45 +102,7 @@ const basics={
       "definition": "Et svingemønster som blir på samme sted når to like bølger møtes i motsatt retning."
     }
   ],
-  questions:[
-    {id:'wv-b1',type:'mcq',level:'Start',prompt:'En lydbølge går gjennom luft. Hva gjør luftpartiklene?',choices:['Følger lyden hele veien fra høyttaleren til øret.','Svinger fram og tilbake omkring sine egne likevektsstillinger.','Står helt stille mens energien passerer.'],correct:1,answer:'Luftpartiklene svinger lokalt. Det er trykkvariasjonen og energien som brer seg gjennom lufta.'},
-    {id:'wv-b2',type:'open',level:'Start',prompt:'Tegn en bølge. Marker likevektslinje, bølgetopp, bølgebunn, amplitude og bølgelengde.',answer:'Amplitude måles fra likevektslinjen til en topp eller bunn. Bølgelengden måles mellom to nabotopper eller to nabobunner. Avstanden fra bunn til topp er 2A.'},
-    {id:'wv-b3',type:'number',level:'Bruk',prompt:'En bølge har fart 5 m/s og bølgelengde 2 m. Finn frekvensen.',value:2.5,tolerance:.02,unit:'Hz',hint:'Bruk v = f · λ og isoler f.',answer:'f = v / λ = 5 m/s / 2 m = <strong>2,5 Hz</strong>.'},
-    {id:'wv-b4',type:'number',level:'Bruk',prompt:'En bølge har frekvens 2,5 Hz. Hva er perioden?',value:.4,tolerance:.005,unit:'s',hint:'Perioden er tiden per svingning.',answer:'T = 1 / f = 1 / 2,5 Hz = <strong>0,40 s</strong>.'},
-    {id:'wv-b5',type:'number',level:'Bruk',prompt:'En A-tone har frekvens 440 Hz. Lydfarten er 345 m/s. Finn bølgelengden.',value:345/440,tolerance:.01,unit:'m',answer:'λ = v / f = 345 / 440 m ≈ <strong>0,784 m</strong>.'},
-    {id:'wv-b6',type:'number',level:'Bruk',prompt:'Du står på stranda. Bølgene går med fart 4 m/s, og to bølgetopper passerer deg hvert sekund. Hvor langt er det mellom nabotoppene?',value:2,tolerance:.02,unit:'m',answer:'f = 2 Hz. λ = v / f = 4 / 2 m = <strong>2 m</strong>.'},
-    {id:'wv-b7',type:'mcq',level:'Start',prompt:'Hva kjennetegner en langsbølge?',choices:['Partiklene svinger vinkelrett på retningen bølgen brer seg.','Partiklene svinger parallelt med retningen bølgen brer seg.','Bølgelengden er alltid større enn én meter.'],correct:1,answer:'I en langsbølge svinger partiklene langs bølgeretningen. Lyd i luft er et eksempel.'},
-    {id:'wv-b9',type:'number',level:'Bruk',prompt:'Det går 3,0 s fra du ser et lyn til du hører tordenen. Regn med lydfart 340 m/s og se bort fra lysets reisetid. Hvor langt unna er lynet?',value:1020,tolerance:10,unit:'m',answer:'s = v · t = 340 m/s · 3,0 s = <strong>1020 m</strong>, omtrent 1 km.'},
-    {id:'wv-b10',type:'mcq',level:'Bruk',prompt:'Frekvensen dobles mens bølgefarten holdes uendret. Hva skjer med bølgelengden?',choices:['Den dobles.','Den halveres.','Den er uendret.'],correct:1,answer:'λ = v / f. Når frekvensen dobles ved samme bølgefart, halveres bølgelengden.'},
-    {"id":"wv-b11","type":"open","level":"Bruk","prompt":"To like bølger går i motsatt retning på en streng og danner en stående bølge. En elev sier: «Stående bølge betyr at hele strengen står stille.» Har eleven rett? Forklar hva som står stille, og hva som beveger seg.","answer":"Nei. Selve svingemønsteret blir på samme sted, men de fleste punktene på strengen svinger opp og ned. Enkelte punkter står stille fordi bølgene hele tiden har motsatt utslag der."},
-    {id:'wv-b12',type:'open',level:'Utfordring',prompt:'En elev sier: «Når vi sender mer energi inn i en fjær, må bølgelengden bli kortere.» Vurder påstanden.',answer:'Ikke nødvendigvis. Mer energi kan gi større amplitude. Bølgelengden bestemmes av bølgefart og frekvens gjennom λ = v/f. Holder vi disse uendret, er bølgelengden uendret.'},
-    {
-      id:'wv-b13',type:'number',level:'Start',
-      prompt:'<p><strong>En kork på vannet</strong></p><p>En kork dupper opp og ned og gjør 15 hele svingninger på 10 s. Regn ut perioden og frekvensen til bølgene.</p>',
-      fields:[
-        {label:'Periode T',value:10/15,tolerance:.005,unit:'s'},
-        {label:'Frekvens f',value:15/10,unit:'Hz'}
-      ],
-      answer:'Én svingning tar omtrent 0,67 s. Korken gjør i gjennomsnitt 1,5 svingninger per sekund, så frekvensen er 1,5 Hz.'
-    },
-    {
-      id:'wv-b14',type:'number',level:'Bruk',
-      prompt:`<p><strong>Regnetrening med bølger</strong></p>
-        <p>En bølge brer seg mot høyre med konstant fart.</p>
-        <ul><li>Vannrett avstand fra en bølgetopp til nærmeste bølgebunn er 1 m.</li>
-        <li>Avstanden fra likevektslinja til en bølgetopp er 3 m.</li>
-        <li>Et punkt på bølgen gjør fire hele svingninger på 16 s.</li></ul>
-        ${wavePracticeFigure()}`,
-      fields:[
-        {label:'Bølgelengde λ',value:2,unit:'m'},
-        {label:'Amplitude A',value:3,unit:'m'},
-        {label:'Periode T',value:16/4,unit:'s'},
-        {label:'Frekvens f',value:4/16,unit:'Hz'},
-        {label:'Bølgefart v',value:2*4/16,unit:'m/s'}
-      ],
-      answer:'Bølgelengden er 2 m og amplituden er 3 m. Perioden er 4 s, frekvensen er 0,25 Hz og bølgefarten er 0,50 m/s.'
-    }
-  ],
+  questions:waveBasicsQuestions,
   resources:[{label:'PhET: Bølge på en snor',url:'https://phet.colorado.edu/sims/html/wave-on-a-string/latest/wave-on-a-string_all.html'}],
   mount(root,api){
     const q=id=>root.querySelector('#'+id),val=id=>Number(q(id).value),say=(id,s)=>{if(q(id).textContent!==s)q(id).textContent=s;};
