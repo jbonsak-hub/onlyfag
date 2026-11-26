@@ -1,4 +1,4 @@
-import {elementSpectraHtml,mountElementSpectra} from './element-spectra.js?v=20261116-layout2';
+import {elementSpectraHtml,mountElementSpectra} from './element-spectra.js?v=20261126-hydrogen-sidefelt';
 
 const C=299792458,HC_AJ_NM=198.64458571489286;
 export const HYDROGEN_GROUND_AJ=-2.17896022224;
@@ -27,6 +27,12 @@ export const CUSTOM_LEVEL_PRESETS=Object.freeze({
  modelA:{label:'Modellatom A',levels:[0,.42,.95,1.55,2.1]},
  modelB:{label:'Modellatom B',levels:[0,.68,1.06,1.28,2.2]}
 });
+// Selected neutral-atom levels and observed lines from NIST Handbook tables 3 and 5.
+// The level values are wavenumbers in cm⁻¹, and pair indices run from upper to lower.
+const observedAtomPresets={
+  sodium:{name:'Natrium', wavenumbers:[0,16973.368,25739.991,29172.839,35042.85], pairs:[[1,0],[2,1],[3,1],[4,0]]},
+  lithium:{name:'Litium', wavenumbers:[0,14903.957,27206.066,31283.053,36623.312], pairs:[[1,0],[2,1],[3,1],[4,1]]}
+};
 function photonColor(nm){if(!Number.isFinite(nm))return '#82969b';if(nm<380)return '#8767c6';if(nm>780)return '#b76e3c';if(nm<450)return '#9168e0';if(nm<490)return '#258dde';if(nm<520)return '#159fa8';if(nm<580)return '#6baf42';if(nm<630)return '#d4a024';return '#d95a4b';}
 
 const hLevels = [1, 2, 3, 4, 5, 6];
@@ -79,8 +85,6 @@ const styles = `<style>
 .al-energy-toggle { display:flex; align-items:center; gap:6px; font-size:.82rem }
 .al-energy-toggle input { accent-color:var(--green,#236448); width:auto }
 .al-energy-example { display:inline; padding:0!important; border:0!important; background:none!important; color:var(--green,#236448)!important; font:inherit; font-weight:700; text-decoration:underline; text-underline-offset:3px; cursor:pointer }
-.al-secondary { padding:7px 10px!important; color:var(--ink,#20352e)!important; background:var(--surface,#fff)!important; border:1px solid var(--line,#cddbd1)!important; font:inherit }
-.al-secondary[aria-pressed=true] { background:var(--green,#236448)!important; color:#fff!important; border-color:transparent!important }
 .al-calculation-dialog { width:min(610px,94vw); max-height:88vh; margin:auto; padding:18px 21px; border:1px solid var(--line,#dce5de); border-radius:12px; box-sizing:border-box; background:var(--surface,#fff); color:var(--ink,#20352e); overflow:auto; box-shadow:0 20px 70px #0005 }
 .al-calculation-dialog::backdrop { background:#13262099; backdrop-filter:blur(3px) }
 .al-calculation-header { display:flex; align-items:center; justify-content:space-between; gap:12px }
@@ -91,16 +95,19 @@ const styles = `<style>
 .al-calculation-columns h4 { font-size:13px; margin:0 0 9px }
 .al-calculation-columns .calc-lines { font-size:12px; margin:0; gap:7px }
 .al-calculation-columns .calc-row { grid-template-columns:32px 12px minmax(0,1fr); column-gap:4px }
-.al-targets { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:5px }
-.al-targets button { min-width:0; padding:7px 2px!important; cursor:pointer }
-.al-custom-status { font-size:.78rem; color:var(--muted,#51685e) }
+#al-custom-model .al-main { grid-area:1/1 }
+#al-custom-model .al-side { grid-area:1/2 }
+.al-custom-select { display:grid; gap:5px; color:var(--ink,#20352e); font-size:.88rem; font-weight:650 }
+.al-custom-select select { width:100%; padding:7px 8px; color:inherit; background:var(--surface,#fff); border:1px solid var(--line,#cddbd1); border-radius:7px; font:inherit }
+.al-custom-instructions { font-size:.86rem; line-height:1.5 }
+.al-custom-arrow { filter:drop-shadow(0 0 1px #3b4c45) }
 .al-model .al-level-handle { position:absolute; left:77%; transform:translate(-50%,-50%); width:22px; height:22px; min-width:22px; min-height:0; padding:0!important; border-radius:50%; border:2px solid #f2f8f4; box-shadow:0 0 0 1px #275f5b; background:#3a8881; touch-action:none; cursor:ns-resize; line-height:1; font-size:15px; font-weight:700; z-index:2 }
-.al-model .al-level-handle[data-target=true] { background:#a1651d; box-shadow:0 0 0 1px #a1651d }
 .al-model .al-level-handle::after { content:'↕'; color:white; position:absolute; inset:0; display:grid; place-items:center }
 .al-model .al-level-handle:focus-visible { outline:3px solid #2677a0; outline-offset:3px }
 @media(max-width:900px) {
   .al-model[data-model-layout=custom] { grid-template-columns:minmax(0,1fr)!important }
   .al-model[data-model-layout=custom] .al-side { grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; border-left:0; padding-left:0 }
+  #al-custom-model .al-main, #al-custom-model .al-side { grid-area:auto }
 }
 @media(max-width:520px) {
   .al-model[data-model-layout=custom] { padding:9px!important }
@@ -134,25 +141,27 @@ export const atomLabSection = {title:'Hydrogenatomet', body:`${styles}
   <div id="al-h-calculation-body"></div>
 </dialog>`};
 
-export const customAtomSection = {title:'Lag et atom', body:`
+export const customAtomSection = {title:'Hva med andre atomer?', body:`
+<p>Ulike atomer har ulike energinivåer. Hver pil viser en overgang som gir en linje i emisjonsspekteret. Større energiforskjell gir kortere bølgelengde.</p>
 <div class="model al-model" data-model-layout="custom" id="al-custom-model">
+  <div class="al-side">
+    <label class="al-custom-select" for="al-custom-preset">Velg atom
+      <select id="al-custom-preset" aria-describedby="al-custom-instructions">
+        ${Object.entries(observedAtomPresets).map(([id,preset])=>`<option value="${id}">${preset.name}</option>`).join('')}
+        <option value="custom">Vilkårlig atom</option>
+      </select>
+    </label>
+    <p class="al-custom-instructions" id="al-custom-instructions">Flytt et energinivå og se hvilke spektrallinjer som flytter seg.</p>
+  </div>
   <div class="al-main">
     <div class="al-custom-stage" id="al-c-stage">
-      <svg id="al-custom-svg" class="al-figure" viewBox="0 0 760 300" role="img" aria-label="Modellatom med energinivåer som kan flyttes"></svg>
+      <svg id="al-custom-svg" class="al-figure" viewBox="0 0 760 246" role="img" aria-label="Energinivåer som kan flyttes og overganger mellom dem"></svg>
       <div id="al-custom-handles"></div>
     </div>
     <svg id="al-custom-spectrum" class="al-figure al-spectrum" viewBox="0 0 760 130" role="img" aria-label="Emisjonsspekter der linjene flytter seg når energinivåene endres"></svg>
   </div>
-  <div class="al-side">
-    <p id="al-target-label"><strong>Eksiter atomet til</strong></p>
-    <div class="al-targets" id="al-custom-targets" role="group" aria-labelledby="al-target-label">
-      ${[2,3,4,5].map(level=>`<button type="button" class="al-secondary" data-excite-level="${level}" aria-pressed="false">L${level}</button>`).join('')}
-    </div>
-    <div id="al-custom-lines" class="al-readout" aria-live="polite"></div>
-    <p id="al-custom-state" class="al-custom-status">Velg et nivå for å starte fotonstrømmen.</p>
-  </div>
 </div>
-<p class="al-caption">Dra energinivåene opp eller ned og se hvilke spektrallinjer som flytter seg. Modellen viser lys fra mange like atomer. Ett elektron kan ta én vei ned, mens de mange atomene til sammen gir alle linjene.</p>
+<p class="al-caption">Figuren viser et utvalg av energinivåer og observerte overganger i <a href="https://physics.nist.gov/PhysRefData/Handbook/Tables/sodiumtable5.htm" target="_blank" rel="noopener">natrium</a> og <a href="https://physics.nist.gov/PhysRefData/Handbook/Tables/lithiumtable5.htm" target="_blank" rel="noopener">litium</a> fra NIST.</p>
 ${elementSpectraHtml}`};
 
 
@@ -259,65 +268,56 @@ export const atomDrawing = {
   wavelengthInk, fmt, line, text, ease, transitionKey
 };
 
-function spectrumGraphic(s,all,{max=3600, selected=null, activity=null, colorFor=t=>wavelengthInk(t.wavelengthNM), labelFor=t=>`n = ${t.from} → ${t.to}`}={}) {
-  const min=70, left=24, right=s-24, bandTop=33, bandBase=94;
-  const x=nm=>left+(right-left)*Math.log(clamp(nm,min,max)/min)/Math.log(max/min);
-  const bands=[[min,380,'#221f41','UV'],[380,780,'#123644','Synlig lys'],[780,max,'#392a32','Infrarødt']];
-  const regions=bands.map(([lo,hi,fill,label])=>`<rect x="${x(lo)}" width="${x(hi)-x(lo)}" y="${bandTop}" height="${bandBase-bandTop}" fill="${fill}"/>
-    ${text((x(lo)+x(hi))/2,22,label,'style="font-size:17px;font-weight:700" text-anchor="middle"')}`).join('');
-  const lines=all.map(t=>{
-    const xx=x(t.wavelengthNM), color=colorFor(t), key=transitionKey(t);
-    const brightness=activity?.get(key) ?? 0;
-    const picked=selected && key===transitionKey(selected);
-    const glow=picked||brightness>0;
-    return `<g><title>${labelFor(t)} · ${fmt(t.wavelengthNM,1)} nm</title>
-      ${glow?line(xx,bandTop+5,xx,bandBase-5,color,`stroke-width="${9+brightness*6}" opacity="${.27+brightness*.2}"`):''}
-      ${line(xx,bandTop+4,xx,bandBase-4,color,`stroke-linecap="round" stroke-width="${picked?4.8:2.8+brightness*2}" opacity="${glow?1:.78}"`)}
+const customHeight=246, customTop=48, customBase=214;
+const customLevelLimit=.85, customLevelGap=.02;
+const customY=energy=>customBase-(customBase-customTop)*energy/customLevelLimit;
+const customLevelLabel=n=>`Nivå ${n+1}`;
+const customTransitionLabel=t=>`${customLevelLabel(t.from)} → ${customLevelLabel(t.to)} · ${fmt(t.wavelengthNM,1)} nm`;
+
+function customSpectrumGraphic(width,transitions) {
+  const min=200, max=10000, left=22, right=width-22, top=33, bottom=92;
+  const x=nm=>left+(right-left)*Math.log(nm/min)/Math.log(max/min);
+  const regions=[[min,380,'UV'],[380,780,'Synlig lys'],[780,max,'Infrarødt']].map(([lo,hi,label])=>
+    text((x(lo)+x(hi))/2,22,label,'style="font-weight:700" text-anchor="middle"')).join('');
+  const lines=transitions.map(t=>{
+    const xx=x(t.wavelengthNM);
+    return `<g data-custom-line="${transitionKey(t)}"><title>${customTransitionLabel(t)}</title>
+      ${line(xx,top+4,xx,bottom-4,wavelengthInk(t.wavelengthNM),'stroke-linecap="round" stroke-width="3.4"')}
       </g>`;
   }).join('');
-  const ticks=[100,380,780,3000,...(max>5000?[8000]:[])].map(nm=>line(x(nm),96,x(nm),101,'var(--muted,#71887c)')
-    +text(x(nm),118,`${fmt(nm,0)} nm`,`class="al-small" text-anchor="${nm===8000?'end':'middle'}"`)).join('');
-  return `${regions}${lines}${ticks}`;
+  const ticks=[min,380,780,3000,max].map(nm=>line(x(nm),bottom+2,x(nm),bottom+7,'var(--muted,#71887c)')
+    +text(x(nm),118,`${fmt(nm,0)} nm`,`class="al-small" text-anchor="${nm===min?'start':nm===max?'end':'middle'}"`)).join('');
+  return `${regions}<rect x="${left}" y="${top}" width="${right-left}" height="${bottom-top}" rx="7" fill="#080d15"/>
+    ${[380,780].map(nm=>line(x(nm),top,x(nm),bottom,'#4b5867')).join('')}${lines}${ticks}`;
 }
 
-
-const customHeight=300, customTop=53, customBase=262;
-const customY=e=>customBase-(customBase-customTop)*e/LEVEL_MAX_AJ;
 function customHandleYs(levels) {
   const result=[];
   let next=customTop;
   for(let n=levels.length-1;n>=1;n--) {
     result[n]=Math.max(next,customY(levels[n]));
-    next=result[n]+24;
+    next=result[n]+30;
   }
   const over=Math.max(0,result[1]-(customBase-27));
   return result.map(y=>y-over);
 }
-function customGraphic(width,levels,target,all,elapsed,running) {
-  const narrow=width<700, graphLeft=narrow?237:380, graphRight=width*.761;
-  const atom={x:narrow?85:143,y:152,inner:narrow?25:30,step:narrow?13:15};
-  const current=running?all[Math.floor(elapsed/.53)%all.length]:null;
-  const progress=ease((elapsed%.53)/.24);
-  const illustrated=current?{from:current.from+1,to:current.to+1}:null;
-  const face=atomFace(atom,hLevels.slice(0,levels.length),illustrated,progress,.56);
-  const positions=customHandleYs(levels);
+function customGraphic(width,levels,transitions,positions) {
+  const graphLeft=width<500?37:65, graphRight=width*.77-5;
   const rows=levels.map((energy,n)=>{
-    const y=customY(energy), labelY=n===0?y:positions[n], selected=n===target;
-    return line(graphLeft,y,graphRight,y,selected?'#3c9185':'var(--muted,#71887c)',`stroke-width="${selected?3:1.4}" opacity="${selected?1:.72}"`)
+    const y=customY(energy), labelY=n===0?y:positions[n];
+    return line(graphLeft,y,graphRight,y,'var(--muted,#71887c)','stroke-width="1.4" opacity=".72"')
       + (n===0?'':line(graphRight,y,width*.77,labelY,'var(--muted,#71887c)','opacity=".6"'))
-      + text(width*.80,labelY+5,`L${n+1} · ${fmt(energy,2)} aJ`,'class="al-small"');
+      + text(width*.77+19,labelY+5,customLevelLabel(n),'class="al-small"');
   }).join('');
-  const emitted=running?all.map((t,index)=>{
-    const u=((elapsed*(1.58+(index%3)*.075)+index*.173)%1);
-    const x=(narrow?147:211)+(narrow?63:122)*u;
-    const y=110+(all.length===1?56:index*109/(all.length-1));
-    return wavePacket(x,y,-.12,elapsed*17+index,wavelengthInk(t.wavelengthNM),25);
-  }).join(''):'';
-  const activeArrow=current?arrow(graphLeft+23,customY(levels[current.from])+2,graphLeft+23,customY(levels[current.to])-3,current.color,2.7):'';
-  return `${text(23,29,'Modellatom','class="al-title"')}${text(graphLeft,29,'Energinivåer','class="al-title"')}
-    ${face.base}${emitted}${face.electron}${rows}${activeArrow}
-    ${text(atom.x,283,current?`L${current.from+1} → L${current.to+1}`:'L1 · grunntilstand','class="al-small" text-anchor="middle"')}
-    ${text(graphLeft,286,'Energi over L1','class="al-small"')}`;
+  const arrows=transitions.map((t,index)=>{
+    const x=graphLeft+(graphRight-graphLeft)*(index+1)/(transitions.length+1);
+    const from=customY(levels[t.from]), to=customY(levels[t.to]);
+    return `<g><title>${customTransitionLabel(t)}</title>
+      ${arrow(x,from,x,to,wavelengthInk(t.wavelengthNM),3,'class="al-custom-arrow"')}</g>`;
+  }).join('');
+  return `${text(graphLeft,29,'Energinivåer','class="al-title"')}
+    ${arrow(graphLeft-15,customBase,graphLeft-15,customTop,'var(--muted,#71887c)',1.5)}
+    ${rows}${arrows}${text(graphLeft,237,'Energi øker oppover','class="al-small"')}`;
 }
 
 const fraction = (numerator,denominator) => `<span class="frac"><span class="num">${numerator}</span><span class="den">${denominator}</span></span>`;
@@ -335,24 +335,121 @@ function calculation(t) {
     <p>h er Plancks konstant og c er lysfarten. Større energisprang gir kortere bølgelengde.</p>`;
 }
 
+function mountCustomAtom(root,listen) {
+  const node=id=>root.querySelector('#'+id);
+  const plot=node('al-custom-svg');
+  if(!plot) return ()=>{};
+  const stage=node('al-c-stage'), handles=node('al-custom-handles');
+  const spectrum=node('al-custom-spectrum'), presetSelect=node('al-custom-preset');
+  let preset='sodium', levels=[], pairs=[], width=760, drag=null;
+  const relative=energy=>Math.round(energy/customLevelLimit*100);
+  const lowerBound=index=>levels[index-1]+customLevelGap;
+  const upperBound=index=>index+1<levels.length?levels[index+1]-customLevelGap:customLevelLimit;
+
+  function render(){
+    const transitions=pairs.map(([from,to])=>({from,to,...photonFromEnergyAJ(levels[from]-levels[to])}));
+    const positions=customHandleYs(levels);
+    for(const handle of handles.querySelectorAll('[data-custom-index]')){
+      const index=Number(handle.dataset.customIndex), value=relative(levels[index]);
+      handle.style.top=positions[index]/customHeight*100+'%';
+      handle.setAttribute('aria-valuemin',String(relative(lowerBound(index))));
+      handle.setAttribute('aria-valuemax',String(relative(upperBound(index))));
+      handle.setAttribute('aria-valuenow',String(value));
+      handle.setAttribute('aria-valuetext',`${value} prosent opp i energidiagrammet`);
+    }
+    plot.innerHTML=customGraphic(width,levels,transitions,positions);
+    plot.setAttribute('data-atom',preset);
+    spectrum.innerHTML=customSpectrumGraphic(width,transitions);
+    spectrum.setAttribute('data-possible-count',String(transitions.length));
+  }
+  function selectPreset(value){
+    const observed=observedAtomPresets[value];
+    if(observed){
+      levels=observed.wavenumbers.map(cm=>HC_AJ_NM*cm/1e7);
+      pairs=observed.pairs;
+    }
+    preset=value;
+    render();
+  }
+  function changeLevel(index,value){
+    const moved=moveCustomLevel(levels,index,value,customLevelGap,customLevelLimit);
+    if(moved[index]===levels[index]) return;
+    levels=moved;
+    preset='custom';
+    presetSelect.value=preset;
+    render();
+  }
+  function release(event){
+    if(drag===null||event&&event.pointerId!==drag.pointerId) return;
+    const {pointerId}=drag;
+    drag=null;
+    try{ stage.releasePointerCapture(pointerId); } catch {}
+  }
+
+  handles.innerHTML=observedAtomPresets.sodium.wavenumbers.slice(1).map((_,i)=>{
+    const index=i+1, label=customLevelLabel(index);
+    return `<button type="button" class="al-level-handle" data-custom-index="${index}" role="slider" aria-label="Flytt ${label.toLowerCase()}" aria-orientation="vertical" title="${label}. Dra eller bruk piltastene."></button>`;
+  }).join('');
+  listen(presetSelect,'change',event=>{
+    release();
+    selectPreset(event.target.value);
+  });
+  listen(handles,'pointerdown',event=>{
+    const handle=event.target.closest('[data-custom-index]');
+    if(!handle||drag!==null||event.button!==0) return;
+    event.preventDefault();
+    handle.focus({preventScroll:true});
+    const index=Number(handle.dataset.customIndex);
+    drag={index,pointerId:event.pointerId,startY:event.clientY,startEnergy:levels[index],height:plot.getBoundingClientRect().height};
+    try{ stage.setPointerCapture(event.pointerId); } catch {}
+  });
+  listen(document,'pointermove',event=>{
+    if(drag===null||event.pointerId!==drag.pointerId||drag.height<=0) return;
+    const moved=(drag.startY-event.clientY)*customHeight/drag.height;
+    changeLevel(drag.index,drag.startEnergy+moved*customLevelLimit/(customBase-customTop));
+  },{passive:true});
+  listen(document,'pointerup',release);
+  listen(document,'pointercancel',release);
+  listen(handles,'keydown',event=>{
+    const handle=event.target.closest('[data-custom-index]');
+    if(!handle) return;
+    const step={ArrowUp:.01,ArrowRight:.01,ArrowDown:-.01,ArrowLeft:-.01,PageUp:.05,PageDown:-.05}[event.key];
+    if(!step&&event.key!=='Home'&&event.key!=='End') return;
+    event.preventDefault();
+    const index=Number(handle.dataset.customIndex);
+    const value=event.key==='Home'?lowerBound(index):event.key==='End'?upperBound(index):levels[index]+step;
+    changeLevel(index,value);
+  });
+
+  function fitDiagram(){
+    const nextWidth=stage.getBoundingClientRect().width<520?410:760;
+    if(nextWidth===width) return;
+    width=nextWidth;
+    plot.setAttribute('viewBox',`0 0 ${width} ${customHeight}`);
+    spectrum.setAttribute('viewBox',`0 0 ${width} 130`);
+    render();
+  }
+  selectPreset(preset);
+  fitDiagram();
+  const sizeObserver=typeof ResizeObserver==='function'?new ResizeObserver(fitDiagram):null;
+  sizeObserver?.observe(stage);
+  return ()=>{ sizeObserver?.disconnect(); release(); };
+}
+
 export function mountAtomLab(root,api) {
   const node=id=>root.querySelector('#'+id);
   const hydrogenSvg=node('al-hydrogen-svg');
   if (!hydrogenSvg) return ()=>{};
   const board=node('al-h-stage'), spectrumControls=node('al-h-spectrum-controls');
   const calculationDialog=node('al-h-calculation-dialog'), result=node('al-h-readout');
-  const customSvg=node('al-custom-svg'), customSpectrum=node('al-custom-spectrum');
-  const customStage=node('al-c-stage'), customHandles=node('al-custom-handles'), targetControls=node('al-custom-targets');
   const dispose=[];
   const listen=(el,event,fn,options)=>{
     el.addEventListener(event,fn,options);
     dispose.push(()=>el.removeEventListener(event,fn,options));
   };
   let selected=transition(3,2), showEnergy=false;
-  let start=null, hTime=0, cTime=0, hCache='';
+  let start=null, hTime=0, hCache='';
   let layout=hydrogenLayout(false), compact=null;
-  let levels=[...CUSTOM_LEVEL_PRESETS.modelA.levels], target=4, streamStart=null, drag=null;
-  let transitions=customTransitions(levels,target), cCache='';
   const now=(el,fallback)=>typeof api.now==='function'?api.now(el):fallback;
   const repaint=el=>api.repaint(el);
   const motionPreference=typeof matchMedia==='function'?matchMedia('(prefers-reduced-motion: reduce)'):null;
@@ -373,8 +470,6 @@ export function mountAtomLab(root,api) {
     compact=narrow;
     layout=hydrogenLayout(compact);
     hydrogenSvg.setAttribute('viewBox',`0 0 ${layout.w} ${layout.h}`);
-    customSvg.setAttribute('viewBox',`0 0 ${compact?520:760} ${customHeight}`);
-    customSpectrum.setAttribute('viewBox',`0 0 ${compact?520:760} 130`);
     const factor=100/layout.w, {spectrum, h}=layout;
     const oldFocus=spectrumControls.contains(document.activeElement)?document.activeElement.dataset.hLine:null;
     spectrumControls.innerHTML=visibleLines.map((t,i)=>{
@@ -385,9 +480,8 @@ export function mountAtomLab(root,api) {
       return `<button type="button" data-h-line="${t.from}" title="${title}" aria-label="${title}" aria-pressed="${t.from===selected.from}" style="--left:${left*factor}%;--width:${(right-left)*factor}%;--top:${(spectrum.top-3)*100/h}%;--height:${(spectrum.bottom-spectrum.top+7)*100/h}%"></button>`;
     }).join('');
     if(oldFocus!==null) spectrumControls.querySelector(`[data-h-line="${oldFocus}"]`)?.focus({preventScroll:true});
-    hCache=''; cCache='';
+    hCache='';
     repaint(hydrogenSvg);
-    repaint(customSvg);
   }
   listen(spectrumControls,'click',event=>{
     const button=event.target.closest('[data-h-line]');
@@ -422,76 +516,9 @@ export function mountAtomLab(root,api) {
     if(event.clientX<bounds.left||event.clientX>bounds.right||event.clientY<bounds.top||event.clientY>bounds.bottom) calculationDialog.close();
   });
 
-  customHandles.innerHTML=levels.slice(1).map((energy,i)=>`<button type="button" class="al-level-handle" data-custom-index="${i+1}" role="slider" aria-label="Flytt energinivå L${i+2}" aria-orientation="vertical" aria-valuenow="${energy}"></button>`).join('');
-  function syncCustom(){
-    transitions=customTransitions(levels,target);
-    const positions=customHandleYs(levels);
-    for(const handle of customHandles.querySelectorAll('[data-custom-index]')){
-      const n=Number(handle.dataset.customIndex);
-      handle.style.top=positions[n]/customHeight*100+'%';
-      handle.setAttribute('aria-valuenow',String(levels[n]));
-      handle.setAttribute('aria-valuemin',fmt(levels[n-1]+MIN_LEVEL_GAP_AJ,6).replace(',','.'));
-      handle.setAttribute('aria-valuemax',fmt(n+1<levels.length?levels[n+1]-MIN_LEVEL_GAP_AJ:LEVEL_MAX_AJ,6).replace(',','.'));
-      handle.setAttribute('aria-valuetext',`${fmt(levels[n],3)} aJ`);
-      handle.setAttribute('data-target',String(n===target&&streamStart!==null));
-      handle.title=`L${n+1}: ${fmt(levels[n],3)} aJ. Dra eller bruk piltastene.`;
-    }
-    for(const b of targetControls.querySelectorAll('[data-excite-level]')){
-      b.setAttribute('aria-pressed',String(Number(b.dataset.exciteLevel)===target+1&&streamStart!==null));
-    }
-    node('al-custom-lines').innerHTML=`<strong>${transitions.length} ${transitions.length===1?'mulig overgang':'mulige overganger'}</strong><div>Til og med energinivå L${target+1}</div>`;
-    customSpectrum.setAttribute('data-possible-count',String(transitions.length));
-    cCache='';
-    repaint(customSvg);
-  }
-  function changeLevel(index,value){
-    levels=moveCustomLevel(levels,index,value);
-    syncCustom();
-  }
-  listen(targetControls,'click',event=>{
-    const button=event.target.closest('[data-excite-level]');
-    if(!button) return;
-    target=Number(button.dataset.exciteLevel)-1;
-    streamStart=now(customSvg,cTime);
-    node('al-custom-state').textContent=`Atomer eksiteres til L${target+1}. ${target===1?'Alle sender ut lys med samme bølgelengde.':'Flere bølgelengder sendes ut samtidig.'}`;
-    syncCustom();
-  });
-  listen(customHandles,'pointerdown',event=>{
-    const handle=event.target.closest('[data-custom-index]');
-    if(!handle) return;
-    event.preventDefault();
-    handle.focus({preventScroll:true});
-    const index=Number(handle.dataset.customIndex);
-    drag={index, pointerId:event.pointerId, startY:event.clientY, startEnergy:levels[index], height:customSvg.getBoundingClientRect().height};
-    try{ customStage.setPointerCapture(event.pointerId); } catch {}
-  });
-  listen(document,'pointermove',event=>{
-    if(drag===null||event.pointerId!==drag.pointerId||drag.height<=0) return;
-    changeLevel(drag.index,drag.startEnergy-(event.clientY-drag.startY)/drag.height*customHeight*LEVEL_MAX_AJ/(customBase-customTop));
-  },{passive:true});
-  const release=event=>{
-    if(drag===null||event&&event.pointerId!==drag.pointerId) return;
-    const {pointerId}=drag;
-    drag=null;
-    try{ customStage.releasePointerCapture(pointerId); } catch {}
-  };
-  listen(document,'pointerup',release);
-  listen(document,'pointercancel',release);
-  listen(customHandles,'keydown',event=>{
-    const handle=event.target.closest('[data-custom-index]');
-    if(!handle) return;
-    const step={ArrowUp:.02,ArrowRight:.02,ArrowDown:-.02,ArrowLeft:-.02,PageUp:.1,PageDown:-.1}[event.key];
-    if(!step&&event.key!=='Home'&&event.key!=='End') return;
-    event.preventDefault();
-    const index=Number(handle.dataset.customIndex);
-    const newEnergy=event.key==='Home'?-Infinity:event.key==='End'?Infinity:levels[index]+step;
-    changeLevel(index,newEnergy);
-  });
-
   if(motionPreference?.addEventListener)listen(motionPreference,'change',event=>{
     if(event.matches&&start!==null) start=now(hydrogenSvg,hTime)-emissionDuration;
     repaint(hydrogenSvg);
-    repaint(customSvg);
   });
   api.onFrame(t=>{
     hTime=t;
@@ -503,29 +530,15 @@ export function mountAtomLab(root,api) {
     hydrogenSvg.setAttribute('data-transition',transitionKey(selected));
     hydrogenSvg.setAttribute('data-photon-arrived',String(p!==null&&p>=.89));
   },hydrogenSvg);
-  api.onFrame(t=>{
-    cTime=t;
-    const running=streamStart!==null;
-    const elapsed=running&&!motionPreference?.matches?Math.max(0,now(customSvg,t)-streamStart):0;
-    const cache=`${compact}/${levels.join(',')}/${target}/${running}/${elapsed}`;
-    if(cCache===cache) return;
-    cCache=cache;
-    const spectrumWidth=compact?520:760;
-    const activity=new Map(running?transitions.map((item,i)=>[transitionKey(item),.42+.58*(.5+.5*Math.sin(elapsed*9-i*.51))]):[]);
-    customSvg.innerHTML=customGraphic(spectrumWidth,levels,target,transitions,elapsed,running);
-    customSpectrum.innerHTML=spectrumGraphic(spectrumWidth,transitions,{activity,labelFor:item=>`L${item.from+1} → L${item.to+1}`});
-    customSpectrum.setAttribute('data-seen-count',String(activity.size));
-    customSvg.setAttribute('data-stream',String(running));
-  },customSvg);
   syncBoard();
   syncHydrogenResult();
-  syncCustom();
+  const cleanupCustomAtom=mountCustomAtom(root,listen);
   const sizeObserver=typeof ResizeObserver==='function'?new ResizeObserver(syncBoard):null;
   sizeObserver?.observe(board);
   const cleanupElementSpectra=mountElementSpectra(root,api);
   return()=>{
     sizeObserver?.disconnect();
-    release();
+    cleanupCustomAtom();
     if(calculationDialog.open) calculationDialog.close();
     for(const cleanup of dispose) cleanup();
     cleanupElementSpectra?.();

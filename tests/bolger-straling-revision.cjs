@@ -113,6 +113,8 @@ async function runRevisionChecks({modelFixture,topics}={}){
  const original=[0,.4,.9,1.5],moved=atom.moveCustomLevel(original,1,10);assert.deepEqual(original,[0,.4,.9,1.5]);assert.ok(moved[1]<=moved[2]-atom.MIN_LEVEL_GAP_AJ);assert.equal(atom.moveCustomLevel(original,0,1)[0],0);
  assert.ok(atom.atomLabSection.body.includes('id="al-h-spectrum-controls"'));
  assert.ok(atom.customAtomSection.body.includes('id="al-custom-handles"'));
+ assert.match(atom.customAtomSection.title,/^Hva med andre atomer\?$/);
+ assert.doesNotMatch(atom.customAtomSection.body,/data-excite-level|id="al-custom-targets"/);
  const series=modules['hydrogen-series'].hydrogenSeriesSection;
  const atomTopic=(topics?.find(topic=>topic.id==='atomer')??(await import(moduleUrl('atom-topic'))).atomTopic);
  assert.deepEqual(atomTopic.sections[1],series,'The spectroscopy model has its own section after the introduction.');
@@ -135,8 +137,8 @@ async function runRevisionChecks({modelFixture,topics}={}){
  for(const row of data.elementSpectraData){assert.ok(row.z>=1&&row.z<=118);assert.match(row.source,/^https:\/\/physics\.nist\.gov\//);for(const [stage,key]of [['I','n'],['II','i']]){assert.strictEqual(data.getElementEmissionLines(row.z,stage),row[key]);assert.ok(row[key].length<=data.elementSpectraMeta.maxLinesPerStage);for(const [nm,intensity,medium]of row[key])assert.ok(nm>=380&&nm<=780&&intensity>0&&Number.isFinite(intensity)&&[0,1].includes(medium));}}
  for(const [z,nm]of [[1,656.28],[1,486.13],[11,589]])assert.ok(data.getElementEmissionLines(z,'I').some(line=>Math.abs(line[0]-nm)<.2));
  assert.deepEqual(data.getElementEmissionLines(118,'I'),[]);assert.deepEqual(data.getElementEmissionLines(0,'I'),[]);assert.deepEqual(data.getElementEmissionLines(1,'combined'),[]);assert.ok(!/<line\b/.test(elements.renderEmissionSpectrum([])));
- assert.match(elements.elementSpectraHtml,/value="I"/);assert.match(elements.elementSpectraHtml,/value="II"/);
- groups.push('118 periodic positions, traceable NIST lines and separate neutral/ion stages');
+ assert.doesNotMatch(elements.elementSpectraHtml,/id="es-stage"|<option\b[^>]*value="II"/);
+ groups.push('118 periodic positions, traceable NIST lines and a neutral-only spectrum viewer');
 
  // The practical analogies are tested against direction, contacts and continuity.
  for(const angleDeg of [15,40,60])for(const slowRatio of [.35,.75]){
@@ -196,21 +198,50 @@ async function runRevisionChecks({modelFixture,topics}={}){
    assert.equal(hydrogen.getAttribute('data-photon-arrived'),'false');
    for(let step=1;step<=16;step++) af.tick(step/10);
    assert.equal(hydrogen.getAttribute('data-photon-arrived'),'true');
-   const targets=af.get('al-custom-targets'), spectrum=af.get('al-custom-spectrum');
-   for(const [level,count] of [[2,1],[5,10]]){
-    targets.dispatch('click',{target:targets.querySelector('[data-excite-level="'+level+'"]')});
-    assert.equal(spectrum.getAttribute('data-possible-count'),String(count));
-    assert.equal(spectrum.getAttribute('data-seen-count'),String(count));
-   }
-   const handles=af.get('al-custom-handles'),handle=handles.querySelector('[data-custom-index="1"]'),old=Number(handle.getAttribute('aria-valuenow'));handles.dispatch('keydown',{target:handle,key:'ArrowUp'});assert.ok(Number(handle.getAttribute('aria-valuenow'))>old);
-   handles.dispatch('pointerdown',{target:handle,clientY:160,pointerId:2});af.dispatchDocument('pointermove',{clientY:145,pointerId:2});af.dispatchDocument('pointerup',{pointerId:2});assert.ok(Number(handle.getAttribute('aria-valuenow'))>old+.02);
+   const preset=af.get('al-custom-preset'),spectrum=af.get('al-custom-spectrum'),custom=af.get('al-custom-svg');
+   const handles=af.get('al-custom-handles'),firstHandle=()=>handles.querySelector('[data-custom-index="1"]');
+   const lineCount=()=>spectrum.querySelectorAll('[data-custom-line]').length;
+   assert.equal(preset.value,'sodium');
+   assert.equal(lineCount(),4);
+   const sodium=spectrum.serialize();
+   af.change('al-custom-preset','lithium','change');
+   assert.equal(lineCount(),4);
+   assert.notEqual(spectrum.serialize(),sodium);
+   assert.doesNotMatch(custom.textContent,/\b(?:aJ|eV)\b/);
+   const lithium=spectrum.serialize(),old=Number(firstHandle().getAttribute('aria-valuenow'));
+   handles.dispatch('keydown',{target:firstHandle(),key:'ArrowUp'});
+   assert.equal(preset.value,'custom');
+   assert.ok(Number(firstHandle().getAttribute('aria-valuenow'))>old);
+   assert.notEqual(spectrum.serialize(),lithium);
+   af.change('al-custom-preset','lithium','change');
+   assert.equal(spectrum.serialize(),lithium);
+   handles.dispatch('pointerdown',{target:firstHandle(),button:0,clientY:160,pointerId:2});
+   af.dispatchDocument('pointermove',{clientY:145,pointerId:2});
+   af.dispatchDocument('pointerup',{pointerId:2});
+   assert.equal(preset.value,'custom');
+   assert.ok(Number(firstHandle().getAttribute('aria-valuenow'))>old);
+   assert.equal(lineCount(),4);
    lineButtons.dispatch('click',{target:lineButtons.querySelector('[data-h-line="3"]')});
    af.pause('#al-hydrogen-svg');
-   const h=hydrogen.serialize(),c=af.get('al-custom-svg').serialize();
+   const h=hydrogen.serialize();
    af.tick(1.75);
+   af.change('al-custom-preset','sodium','change');
+   assert.equal(spectrum.serialize(),sodium);
    assert.equal(hydrogen.serialize(),h);
-   assert.notEqual(af.get('al-custom-svg').serialize(),c);
-   af.click('es-open');assert.equal(af.get('es-dialog').open,true);af.change('es-stage','II','change');assert.equal(af.get('es-periodic').querySelectorAll('[data-es-z]').length,118);const tile=af.get('es-periodic').querySelector('[data-es-z="118"]');af.get('es-periodic').dispatch('click',{target:tile});assert.match(af.get('es-status').textContent,/ingen tabell.*ikke.*mangler spektrallinjer/i);af.click('es-info-open');assert.equal(af.get('es-info-dialog').open,true);af.click('es-info-close');assert.equal(af.get('es-info-dialog').open,false);assert.equal(af.get('es-dialog').open,true);af.click('es-close');assert.equal(af.get('es-dialog').open,false);
+   af.click('es-open');
+   assert.equal(af.get('es-dialog').open,true);
+   assert.equal(af.get('es-stage'),undefined);
+   const periodic=af.get('es-periodic');
+   assert.equal(periodic.querySelectorAll('[data-es-z]').length,118);
+   periodic.dispatch('click',{target:periodic.querySelector('[data-es-z="118"]')});
+   assert.match(af.get('es-status').textContent,/ingen tabell.*kan likevel ha spektrallinjer/i);
+   af.click('es-info-open');
+   assert.equal(af.get('es-info-dialog').open,true);
+   af.click('es-info-close');
+   assert.equal(af.get('es-info-dialog').open,false);
+   assert.equal(af.get('es-dialog').open,true);
+   af.click('es-close');
+   assert.equal(af.get('es-dialog').open,false);
   }finally{af.destroy();}
   groups.push('mounted media, Mach 1 controls, clickable spectra, editable levels and independent atom clocks');
  }

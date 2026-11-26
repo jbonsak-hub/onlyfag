@@ -272,15 +272,16 @@ function assertNumericQuestion(q){
   const model=topic.locator('#hs-model');
   await model.locator('[data-series-mode="all"]').waitFor();
   const board=model.locator('#hs-board'),spectrum=model.locator('#hs-spectrum');
+  const chooser=topic.locator('#hs-quiz-options[open]');
   const selectMode=value=>model.locator('[data-series-mode="'+value+'"]').click();
-  const selectDifficulty=value=>model.locator('[data-series-difficulty="'+value+'"]').click();
+  const selectDifficulty=value=>chooser.locator('[data-series-difficulty="'+value+'"]').click();
   const targets=part=>model.locator('[data-series-action="transition"][data-series-part="'+part+'"]');
   const target=(part,key)=>targets(part).and(model.locator('[data-series-key="'+key+'"]'));
   const lineKeys=()=>spectrum.locator('[data-series-line]').evaluateAll(lines=>lines.map(line=>line.dataset.seriesLine).sort());
   const phase=value=>topic.locator('#hs-model[data-phase="'+value+'"]').waitFor();
   if(mode!=='all')await selectMode(mode);
   if(difficulty)await selectDifficulty(difficulty);
-  return {topic,model,board,spectrum,selectMode,selectDifficulty,targets,target,lineKeys,phase};
+  return {topic,model,board,spectrum,chooser,selectMode,selectDifficulty,targets,target,lineKeys,phase};
  }
  for(const id of prototypeIds)for(const view of ['fagstoff','oppgaver','begreper'])await attempt('Desktop render '+id+'/'+view,async()=>{
  await route(id,view);assert.ok((await page.locator('h1').innerText()).trim());assert.equal(await page.locator('#main').evaluate(e=>e.scrollWidth>e.clientWidth+1),false,'main content overflow');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'document overflow');assert.equal(await page.locator('#animation-speed,#pause-button,.viewbar,.page-head .eyebrow,.page-head .intro,.head-icon').count(),0,'No repeated topic introduction or global animation toolbar');if(view==='fagstoff')assert.ok(await page.locator('.content-section').count());else if(view==='oppgaver')assert.equal(await page.locator('.q-card').count(),data.find(t=>t.id===id).questions.length);});
@@ -488,6 +489,15 @@ function assertNumericQuestion(q){
    await explanation.waitFor({state:'hidden'});
    const ionize=model.getByRole('button',{name:'n = ∞',exact:true});
    const ionization=model.locator('#hs-ionization');
+   const sceneBounds=()=>model.evaluate(el=>{
+    const origin=el.getBoundingClientRect();
+    return ['#hs-board','#hs-spectrum'].map(selector=>{
+     const box=el.querySelector(selector).getBoundingClientRect();
+     return [box.x-origin.x,box.y-origin.y,box.width,box.height].map(Math.round);
+    });
+   });
+   await phase('idle');
+   const finiteBounds=await sceneBounds();
    await ionize.click();
    await phase('ionize');
    assert.equal(await model.getAttribute('data-excited'),'Infinity');
@@ -501,20 +511,29 @@ function assertNumericQuestion(q){
    assert.equal(await board.locator('[data-series-ionized]').count(),1);
    assert.match(await board.textContent(),/H⁺/);
    assert.equal(await ionization.isVisible(),true);
+   assert.deepEqual(await sceneBounds(),finiteBounds,'Ionization keeps the atom, energy diagram and spectrum in place.');
+   assert.equal(await model.evaluate(el=>{
+    const bounds=selector=>el.querySelector(selector).getBoundingClientRect();
+    const ion=bounds('#hs-ionization'),legend=bounds('.hs-legend'),explain=bounds('#hs-explain-controls');
+    return bounds('#hs-side').left>=bounds('#hs-board').right&&ion.bottom<=legend.top&&legend.bottom<=explain.top;
+   }),true,'Ionization status is above the legend and the explanation is below it.');
    assert.deepEqual(await lineKeys(),[]);
    await selectMode('all');
    await selectMode('excite');
    assert.deepEqual(await lineKeys(),[]);
    await page.emulateMedia({reducedMotion:'reduce'});
+   await page.setViewportSize({width:390,height:844});
    await model.locator('[data-series-level="2"]').click();
    await phase('idle');
    assert.deepEqual(await lineKeys(),['2-1']);
    await model.locator('[data-series-level="6"]').click();
    await phase('idle');
    assert.equal((await lineKeys()).length,15);
+   const mobileFiniteBounds=await sceneBounds();
    await ionize.click();
    await phase('idle');
    assert.equal(await board.locator('[data-series-ionized]').count(),1);
+   assert.deepEqual(await sceneBounds(),mobileFiniteBounds,'Ionization keeps both drawings in place on mobile.');
    assert.deepEqual(await lineKeys(),[]);
    await model.locator('[data-series-level="2"]').click();
    assert.equal(await ionization.isVisible(),false);
@@ -525,9 +544,10 @@ function assertNumericQuestion(q){
  await attempt('Hydrogen quiz reshuffles all 12 and keeps missed clues in retry order',async()=>{
   await page.setViewportSize({width:390,height:844});
   const {hydrogenQuiz}=await import(moduleUrl('hydrogen-series-quiz'));
-  const {topic,model,board,spectrum,selectMode,selectDifficulty,targets,target,lineKeys,phase}=await hydrogenSeries('quiz');
+  const {topic,model,board,spectrum,chooser,selectMode,selectDifficulty,targets,target,lineKeys,phase}=await hydrogenSeries('quiz');
   const clue=model.locator('#hs-clue'),progress=model.locator('#hs-progress'),feedback=model.locator('#hs-feedback');
   const formulas=model.locator('#hs-formulas');
+  const difficulty=model.locator('#hs-difficulty-value'),restart=model.locator('[data-series-reset]');
   const choose=key=>target('diagram',key).press('Enter');
   const clueHasFocus=()=>clue.evaluate(el=>el.ownerDocument.activeElement===el);
   const fitsViewport=()=>topic.locator('main').evaluate(el=>el.scrollWidth<=el.clientWidth+1);
@@ -554,15 +574,33 @@ function assertNumericQuestion(q){
    assert.equal(await targets('diagram').and(board.locator('.hs-solved')).count(),solved.length);
    assert.deepEqual(await lineKeys(),[...solved].sort());
   }
+  async function restartWith(level){
+   await restart.click();
+   await selectDifficulty(level);
+   await chooser.waitFor({state:'hidden'});
+  }
   assert.equal(await fitsViewport(),true,'Hydrogen diagrams fit the phone width.');
-  assert.deepEqual(await model.locator('[data-series-difficulty]:visible').allTextContents(),['Mild','Småspicy','Vindaloo']);
-  assert.equal(await model.locator('[data-series-difficulty][aria-pressed="true"]').count(),0);
-  assert.equal(await model.locator('[data-series-reset]').isVisible(),false);
-  for(const element of [clue,progress,board,spectrum,formulas])assert.equal(await element.isVisible(),false);
-  assert.equal(await model.locator('[data-series-action="transition"]:visible').count(),0);
+  assert.deepEqual(await chooser.locator('[data-series-difficulty]').allTextContents(),['Mild','Småspicy','Vindaloo']);
+  assert.equal(await chooser.evaluate(el=>el.matches(':modal')),true);
+  await page.keyboard.press('Tab');
+  assert.equal(await chooser.evaluate(el=>el.contains(el.ownerDocument.activeElement)),true,'The modal keeps keyboard focus on the difficulty choices.');
+  for(const element of [restart,clue,progress,difficulty,formulas])assert.equal(await element.isVisible(),false);
+  for(const element of [board,spectrum])assert.equal(await element.isVisible(),true);
+  const previousLines=await lineKeys();
+  assert.equal(previousLines.length,12);
+  await page.keyboard.press('Escape');
+  await chooser.waitFor({state:'hidden'});
+  assert.equal(await model.getAttribute('data-mode'),'all','Cancelling the first chooser keeps the previous mode.');
+  assert.deepEqual(await lineKeys(),previousLines);
+  await selectMode('quiz');
   await setQuizSeed(1);
-  await model.getByRole('button',{name:'Mild',exact:true}).press('Enter');
-  assert.equal(await model.locator('[data-series-difficulty="mild"]').getAttribute('aria-pressed'),'true');
+  await chooser.getByRole('button',{name:'Mild',exact:true}).press('Enter');
+  await chooser.waitFor({state:'hidden'});
+  assert.match(await model.locator('#hs-quiz').innerText(),/Finn overgangen og klikk på riktig pil/i);
+  assert.equal(await difficulty.innerText(),'(Mild)');
+  assert.equal(await model.locator('[data-series-difficulty]:visible').count(),0);
+  assert.equal(await restart.isVisible(),true);
+  assert.equal(await feedback.isVisible(),false);
   for(const element of [clue,progress,board,spectrum])assert.equal(await element.isVisible(),true);
   assert.equal(await targets('diagram').count(),12);
   assert.doesNotMatch(await board.textContent(),/aJ/);
@@ -576,6 +614,7 @@ function assertNumericQuestion(q){
   assert.equal(await clueHasFocus(),true);
   assert.equal(await progress.textContent(),initialProgress);
   assert.deepEqual(await lineKeys(),[]);
+  assert.equal(await feedback.isVisible(),true);
   assert.match(await feedback.textContent(),/ledetråden kommer tilbake/i);
 
   await solve(second.key);
@@ -583,9 +622,20 @@ function assertNumericQuestion(q){
   const progressAfterOne=await progress.textContent();
   await selectMode('all');
   await selectMode('quiz');
+  assert.equal(await chooser.isVisible(),false,'Returning to a started quiz does not reopen the chooser.');
   assert.equal(await clue.textContent(),third.prompt);
   assert.equal(await progress.textContent(),progressAfterOne);
-  assert.equal(await model.locator('[data-series-difficulty="mild"]').getAttribute('aria-pressed'),'true');
+  assert.equal(await difficulty.innerText(),'(Mild)');
+  assert.deepEqual(await lineKeys(),[second.key]);
+  await restart.click();
+  await chooser.waitFor();
+  assert.equal(await board.isVisible(),true);
+  assert.deepEqual(await lineKeys(),[second.key]);
+  await page.keyboard.press('Escape');
+  await chooser.waitFor({state:'hidden'});
+  assert.equal(await clue.textContent(),third.prompt);
+  assert.equal(await progress.textContent(),progressAfterOne);
+  assert.equal(await difficulty.innerText(),'(Mild)');
   assert.deepEqual(await lineKeys(),[second.key]);
   const originalOrder=[first.key,second.key,third.key];
   await choose(allKeys.find(key=>!originalOrder.includes(key)));
@@ -619,19 +669,21 @@ function assertNumericQuestion(q){
   assert.match(await progress.textContent(),/12\s*(?:av|\/)\s*12/);
 
   await setQuizSeed(2);
-  await model.locator('[data-series-reset]').click();
+  await restartWith('mild');
   assert.equal(await progress.textContent(),initialProgress);
-  assert.equal(await model.locator('[data-series-difficulty="mild"]').getAttribute('aria-pressed'),'true');
+  assert.equal(await difficulty.innerText(),'(Mild)');
   assert.deepEqual(await lineKeys(),[]);
   solved.length=0;
   for(let index=0;index<allKeys.length;index++)await solve((await question()).key);
   assert.notDeepEqual(solved,originalOrder,'Restart shuffles the same clue bank with fresh randomness.');
 
   await setQuizSeed(1);
-  await selectDifficulty('medium');
+  await restartWith('medium');
+  assert.equal(await difficulty.innerText(),'(Småspicy)');
   const firstMedium=(await question('medium')).prompt;
   assert.equal(await formulas.isVisible(),false);
-  await selectDifficulty('spicy');
+  await restartWith('spicy');
+  assert.equal(await difficulty.innerText(),'(Vindaloo)');
   assert.match(await board.textContent(),/\d[,.]\d+\s*aJ/);
   assert.deepEqual(await lineKeys(),[]);
   assert.equal(await formulas.isVisible(),true);
@@ -640,47 +692,184 @@ function assertNumericQuestion(q){
   assert.match(formulaText,/c\s*=\s*λ\s*[·⋅×]?\s*f/);
   assert.match(formulaText,/h\s*[=≈]\s*6[,.]6\d*/);
   assert.match(formulaText,/c\s*[=≈]\s*[23][,.]\d+/);
+  const worked=model.locator('#hs-worked-solution');
+  assert.equal(await worked.isVisible(),false);
+  const firstSpicy=await question('spicy');
+  await choose(allKeys.find(key=>key!==firstSpicy.key));
+  assert.equal(await worked.isVisible(),false,'An incorrect answer does not reveal a worked solution.');
+  const {key:spicyAnswer}=await question('spicy');
+  await choose(spicyAnswer);
+  assert.equal(await worked.isVisible(),true);
+  const workedText=(await worked.innerText()).replace(/\s+/g,' ');
+  const {transition}=await import(moduleUrl('atom-lab'));
+  const [from,to]=spicyAnswer.split('-').map(Number);
+  const actual=transition(from,to);
+  const wavelength=actual.wavelengthNM.toLocaleString('nb-NO',{maximumFractionDigits:1}).replace(/\s+/g,' ');
+  assert.match(workedText,/ΔE/);
+  assert.match(workedText,/f\s*=\s*ΔE\s*\/\s*h/);
+  assert.match(workedText,/λ\s*=\s*c\s*\/\s*f/);
+  assert.ok(workedText.includes(wavelength+' nm'),'The worked answer gives the wavelength of the chosen transition.');
   assert.equal(await formulas.evaluate(el=>{
-   const clueBox=el.ownerDocument.getElementById('hs-clue').getBoundingClientRect();
-   const boardBox=el.ownerDocument.getElementById('hs-board').getBoundingClientRect();
-   const formulaBox=el.getBoundingClientRect();
-   return clueBox.bottom<=formulaBox.top&&formulaBox.bottom<=boardBox.top;
-  }),true,'The formulas appear directly after the clue and before the figures.');
+   const side=el.ownerDocument.getElementById('hs-side');
+   const solution=el.ownerDocument.getElementById('hs-worked-solution');
+   return side.contains(el)&&side.contains(solution)&&solution.getBoundingClientRect().bottom<=el.getBoundingClientRect().top;
+  }),true,'The solved calculation appears above the formulas in the side panel.');
   assert.equal(await fitsViewport(),true,'Vindaloo formulas fit the phone width.');
+  const nextSpicy=await question('spicy');
+  await choose(allKeys.find(key=>key!==nextSpicy.key&&key!==spicyAnswer));
+  assert.equal(await worked.isVisible(),false,'Incorrect feedback clears the previous worked solution.');
   await setQuizSeed(2);
-  await selectDifficulty('medium');
+  await restartWith('medium');
   assert.notEqual((await question('medium')).prompt,firstMedium,'Selecting the same difficulty after another difficulty starts a newly shuffled round.');
   assert.doesNotMatch(await board.textContent(),/aJ/);
   assert.equal(await formulas.isVisible(),false);
-  await selectDifficulty('mild');
+  assert.equal(await worked.isVisible(),false);
+  await restartWith('mild');
   const {key}=await question();
   await target('atom',key).press('Space');
   assert.deepEqual(await lineKeys(),[key]);
  });
- await attempt('Hydrogen quiz keeps its controls and clue visible at desktop and phone widths',async()=>{
-  const {topic,model,target}=await hydrogenSeries('quiz',{difficulty:'mild'});
+ await attempt('Hydrogen quiz keeps its drawing and side panel readable at desktop and phone widths',async()=>{
+  await page.setViewportSize({width:1366,height:768});
+  const {hydrogenQuiz}=await import(moduleUrl('hydrogen-series-quiz'));
+  const {topic,model,target,chooser,selectDifficulty}=await hydrogenSeries('quiz',{difficulty:'mild'});
+  const restart=model.locator('[data-series-reset]');
   const position=()=>model.evaluate(el=>{
    const bounds=selector=>el.querySelector(selector).getBoundingClientRect().toJSON();
    return {
     mode:bounds('[data-series-mode="quiz"]'),
-    difficulty:bounds('[data-series-difficulty="mild"]'),
-    clue:bounds('.hs-quiz-prompt'),
-    feedback:bounds('.hs-quiz-feedback')
+    restart:bounds('[data-series-reset]'),
+    difficulty:bounds('#hs-difficulty-value'),
+    progress:bounds('#hs-progress'),
+    prompt:bounds('#hs-quiz'),
+    board:bounds('#hs-board'),
+    spectrum:bounds('#hs-spectrum'),
+    side:bounds('#hs-side'),
+    feedback:bounds('#hs-quiz-feedback'),
+    formulas:bounds('#hs-formulas')
    };
   });
-  await page.setViewportSize({width:1366,height:768});
   await target('diagram','3-2').press('Enter');
   const desktop=await position();
-  assert.ok(Math.abs(desktop.mode.top-desktop.difficulty.top)<=4,'Mode and difficulty controls share a desktop row.');
-  assert.ok(desktop.clue.right+2<desktop.feedback.left,'Separate clue and feedback boxes fit side by side on desktop.');
+  assert.ok(desktop.mode.right<=desktop.restart.left&&desktop.mode.top<desktop.restart.bottom&&desktop.restart.top<desktop.mode.bottom,'Restart sits beside the mode controls.');
+  assert.ok(desktop.prompt.bottom<=desktop.board.top,'The quiz prompt stays above the drawing.');
+  assert.ok(desktop.difficulty.top<desktop.progress.bottom&&desktop.progress.top<desktop.difficulty.bottom,'Difficulty and progress share a row.');
+  assert.ok(desktop.board.right<=desktop.side.left&&desktop.side.left<=desktop.feedback.left,'Feedback belongs in the panel to the right of the drawing.');
+  await restart.click();
+  await selectDifficulty('spicy');
+  const prompt=await model.locator('#hs-clue').textContent();
+  const matching=hydrogenQuiz.spicy.find(([,text])=>text===prompt);
+  assert.ok(matching);
+  await target('diagram',matching[0]).press('Enter');
+  const advanced=await position();
+  assert.ok(advanced.side.top<=advanced.board.top+1&&advanced.side.bottom>=advanced.spectrum.bottom-1,'Vindaloo side panel spans both drawings.');
+  assert.ok(advanced.feedback.bottom<=advanced.formulas.top&&Math.abs(advanced.side.bottom-advanced.formulas.bottom)<=8,'Worked feedback is above the formula panel at the bottom right.');
 
   for(const width of [320,390]){
    await page.setViewportSize({width,height:844});
    const mobile=await position();
-   assert.ok(mobile.difficulty.top>=mobile.mode.bottom,'Difficulty controls wrap below the modes on mobile.');
-   assert.ok(mobile.feedback.top>mobile.clue.bottom+2,'The separate feedback box wraps below the clue on mobile.');
+   assert.ok(mobile.prompt.bottom<=mobile.board.top,'The question stays above the drawing on mobile.');
+   assert.ok(Math.max(mobile.board.bottom,mobile.spectrum.bottom)<=mobile.side.top,'The side panel wraps below both drawings on mobile.');
    assert.equal(await topic.locator('main').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true,'Hydrogen quiz fits '+width+'px without horizontal overflow.');
+   await restart.click();
+   assert.equal(await chooser.evaluate(el=>{
+    const box=el.getBoundingClientRect();
+    return box.left>=0&&box.right<=el.ownerDocument.defaultView.innerWidth;
+   }),true,'The difficulty chooser fits '+width+'px.');
+   await page.keyboard.press('Escape');
+   await chooser.waitFor({state:'hidden'});
   }
+ });
+ await attempt('Hydrogen custom atom presets reset the spectrum and edits make an arbitrary atom',async()=>{
+  await page.setViewportSize({width:1366,height:768});
+  const {topic}=await hydrogenSeries('all');
+  const model=topic.locator('#al-custom-model');
+  const preset=model.locator('#al-custom-preset'),diagram=model.locator('#al-custom-svg');
+  const spectrum=model.locator('#al-custom-spectrum'),handle=model.locator('[data-custom-index="1"]');
+  const lines=()=>spectrum.locator('[data-custom-line]').evaluateAll(items=>items.map(item=>item.innerHTML));
+  assert.equal(await topic.getByRole('heading',{name:'Hva med andre atomer?',exact:true}).isVisible(),true);
+  assert.equal(await model.locator('[data-excite-level],#al-custom-targets').count(),0);
+  assert.deepEqual(await preset.locator('option').allTextContents(),['Natrium','Litium','Vilkårlig atom']);
+  assert.equal(await preset.inputValue(),'sodium');
+  const sodium=await lines();
+  assert.equal(sodium.length,4);
+  assert.match(await spectrum.locator('[data-custom-line="1-0"] title').textContent(),/589,2\s*nm/);
+  await preset.selectOption('lithium');
+  assert.equal(await diagram.getAttribute('data-atom'),'lithium');
+  const lithium=await lines();
+  assert.equal(lithium.length,4);
+  assert.notDeepEqual(lithium,sodium);
+  assert.match(await spectrum.locator('[data-custom-line="1-0"] title').textContent(),/671\s*nm/);
+  assert.doesNotMatch(await diagram.textContent(),/\b(?:aJ|eV)\b/);
+  await handle.click();
+  assert.equal(await preset.inputValue(),'lithium','Only moving a level changes the preset.');
+  await handle.scrollIntoViewIfNeeded();
+  const box=await handle.boundingBox();
+  assert.ok(box);
+  const x=box.x+box.width/2,y=box.y+box.height/2;
+  await page.mouse.move(x,y);
+  await page.mouse.down();
+  await page.mouse.move(x,y-20,{steps:5});
+  await page.mouse.up();
+  assert.equal(await preset.inputValue(),'custom');
+  assert.equal(await diagram.getAttribute('data-atom'),'custom');
+  const edited=await lines();
+  assert.equal(edited.length,lithium.length);
+  assert.notDeepEqual(edited,lithium);
+  await preset.selectOption('lithium');
+  assert.deepEqual(await lines(),lithium);
+  await handle.press('ArrowUp');
+  assert.equal(await preset.inputValue(),'custom');
+  assert.notDeepEqual(await lines(),lithium);
+  for(const width of [320,390]){
+   await page.setViewportSize({width,height:844});
+   assert.equal(await model.evaluate(el=>el.scrollWidth<=el.clientWidth+1),true,'Custom atom fits '+width+'px.');
+   assert.equal(await handle.isVisible(),true);
+  }
+ });
+ await attempt('Hydrogen periodic table gives the neutral spectra most of each element tile',async()=>{
+  await page.setViewportSize({width:1366,height:768});
+  const {topic}=await hydrogenSeries('all');
+  const {getElementEmissionLines}=await import(moduleUrl('element-spectra-data'));
+  const launcher=topic.locator('#es-open'),dialog=topic.locator('#es-dialog[open]');
+  const tile=z=>dialog.locator('[data-es-z="'+z+'"]');
+  const graph=dialog.locator('#es-spectrum .es-spectrum-area svg');
+  await launcher.click();
+  assert.equal(await dialog.locator('select,#es-stage').count(),0);
+  assert.equal(await dialog.locator('[data-es-z]').count(),118);
+  for(const z of [1,11])assert.equal(await tile(z).locator('.es-swatch line').count(),getElementEmissionLines(z,'I').length);
+  assert.equal(await graph.locator('line').count(),getElementEmissionLines(1,'I').length);
+  const tileGeometry=()=>tile(11).evaluate(el=>{
+   const bounds=selector=>el.querySelector(selector).getBoundingClientRect();
+   const swatch=bounds('.es-swatch'),symbol=bounds('.es-symbol');
+   const fill=getComputedStyle(el.querySelector('.es-swatch rect')).fill.match(/\d+/g).slice(0,3).map(Number);
+   return {side:swatch.right<=symbol.left+1||symbol.right<=swatch.left+1,
+    vertical:swatch.bottom<=symbol.top+1||symbol.bottom<=swatch.top+1,
+    dominates:swatch.width*swatch.height>symbol.width*symbol.height,
+    dark:fill.every(channel=>channel<36)};
+  });
+  assert.deepEqual(await tileGeometry(),{side:true,vertical:false,dominates:true,dark:true});
+  await tile(11).click();
+  assert.match(await dialog.locator('#es-selected-title').innerText(),/natrium/i);
+  assert.equal(await graph.locator('line').count(),getElementEmissionLines(11,'I').length);
+  await dialog.locator('#es-info-open').click();
+  const source=topic.locator('#es-info-dialog[open]');
+  assert.match(await source.locator('#es-line-values').innerText(),/589[,.]\d+/);
+  await page.keyboard.press('Escape');
+  await source.waitFor({state:'hidden'});
+  await tile(11).press('End');
+  assert.match(await dialog.locator('#es-status').innerText(),/ingen tabell/i);
+  assert.equal(await graph.locator('line').count(),0);
+  await tile(118).press('Home');
+  assert.match(await dialog.locator('#es-selected-title').innerText(),/hydrogen/i);
+  for(const width of [320,390]){
+   await page.setViewportSize({width,height:844});
+   assert.deepEqual(await tileGeometry(),{side:false,vertical:true,dominates:true,dark:true});
+   assert.equal(await dialog.locator('.es-periodic-scroll').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true,'Periodic table fits '+width+'px.');
+  }
+  await page.keyboard.press('Escape');
+  await dialog.waitFor({state:'hidden'});
+  await topic.locator('#es-open:focus').waitFor();
  });
  await attempt('Wave views share the original figure and controls',async()=>{
   await page.setViewportSize({width:1440,height:1000});

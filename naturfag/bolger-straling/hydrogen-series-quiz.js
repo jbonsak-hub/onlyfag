@@ -1,20 +1,20 @@
 export const hydrogenQuiz = {
   mild: [
-    ['4-2', 'Overgangen i Balmerserien som har nest minst energi'],
-    ['5-2', 'Overgangen som gir blåfiolett lys'],
-    ['6-1', 'Det største energispranget i hele diagrammet'],
-    ['3-2', 'Hvilket hopp gir rødt lys?'],
-    ['2-1', 'Ultrafiolett stråling med lavest frekvens'],
-    ['3-1', 'Fra tredje skall rett til grunntilstanden'],
-    ['4-1', 'Elektronet faller tre skall helt inn til det innerste skallet.'],
-    ['5-1', 'Lymanserien, fra n = 5'],
-    ['6-2', 'Den fiolette linjen med kortest bølgelengde i det synlige spekteret'],
-    ['4-3', 'Den korteste pila i Paschenserien'],
-    ['5-3', 'Infrarødt lys fra femte skall'],
-    ['6-3', 'Hvilken pil i Paschenserien starter på øverste nivå?']
+    ['4-2', 'Et større energisprang gir høyere frekvens. Hvilken overgang i Balmerserien gir nest lavest frekvens?'],
+    ['5-2', 'Blåfiolett lys har nest høyest energi per foton blant de fire synlige linjene. Hvilken overgang gir blåfiolett lys?'],
+    ['6-1', 'Fotonet får den energien elektronet mister. Hvilken overgang gir fotonet med mest energi?'],
+    ['3-2', 'Overgangene til nivå 2 som vises her, gir synlig lys. Rødt lys har lavest energi per foton av disse. Hvilken overgang i Balmerserien har minst energi?'],
+    ['2-1', 'Lavere frekvens betyr mindre energi per foton. Hvilken ultrafiolett overgang gir lavest frekvens?'],
+    ['3-1', 'Grunntilstanden er det laveste energinivået. Hvilken overgang fra tredje skall ender der?'],
+    ['4-1', 'Overgangene i Lymanserien gir ultrafiolett lys. Hvilken overgang fra n = 4 gir slikt lys?'],
+    ['5-1', 'Overganger i samme serie ender på samme nivå. Hvilken overgang fra n = 5 hører til Lymanserien?'],
+    ['6-2', 'Fiolett lys har kortest bølgelengde av de synlige linjene. Kortere bølgelengde betyr større energisprang. Hvilken overgang gir fiolett lys?'],
+    ['4-3', 'Lengre bølgelengde betyr mindre energi per foton. Hvilken overgang i Paschenserien gir lengst bølgelengde?'],
+    ['5-3', 'Overgangene i Paschenserien ender i tredje skall og gir infrarødt lys. Hvilken av dem går to skall innover?'],
+    ['6-3', 'Når elektronet starter høyere i samme serie, får fotonet mer energi. Hvilken overgang i Paschenserien gir mest energi?']
   ],
   medium: [
-    ['3-2', 'Hvilken synlig linje har minst energi per foton?'],
+    ['3-2', 'Hvilket hopp gir rødt lys?'],
     ['2-1', 'Hvilken ultrafiolett linje ligger nærmest synlig lys i spekteret?'],
     ['5-2', 'Et spektrometer viser en synlig linje ved 434 nm. Hvor hører den hjemme i Balmerserien?'],
     ['6-1', 'En UV-detektor registrerer Lymanlinjen med kortest bølgelengde. Hvilken overgang gir den?'],
@@ -22,7 +22,7 @@ export const hydrogenQuiz = {
     ['4-2', 'Hvilken Balmerlinje har nest lengst bølgelengde?'],
     ['3-1', 'Samme startnivå som for den røde linjen, men større fotonenergi'],
     ['4-3', 'Den infrarøde lysbølgen med færrest svingninger per sekund'],
-    ['5-1', 'Hvilken ultrafiolett overgang starter på samme nivå som den midterste i Paschenserien?'],
+    ['5-1', 'Hvilken overgang gir ultrafiolett lys med nest kortest bølgelengde?'],
     ['6-2', 'Hvilken synlig linje har høyere frekvens enn den blåfiolette linjen?'],
     ['4-1', 'Atomet er eksitert til n = 4. Hvilket mulig ultrafiolett foton har høyest energi?'],
     ['5-3', 'Hvilken infrarød linje har nest høyest frekvens?']
