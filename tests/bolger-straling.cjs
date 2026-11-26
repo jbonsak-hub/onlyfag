@@ -474,30 +474,64 @@ function assertNumericQuestion(q){
    assert.equal((await lineKeys()).length,15);
   }finally{await page.emulateMedia({reducedMotion:'reduce'});}
  });
- await attempt('Hydrogen quiz accumulates 12 answers and supports three difficulties on mobile',async()=>{
+ await attempt('Hydrogen quiz queues missed clues and accumulates all 12, including on mobile',async()=>{
   await page.setViewportSize({width:390,height:844});
   const {topic,model,board,targets,target,lineKeys,phase}=await hydrogenSeries('quiz');
-  const clue=model.locator('#hs-clue'),progress=model.locator('#hs-progress');
+  const clue=model.locator('#hs-clue'),progress=model.locator('#hs-progress'),feedback=model.locator('#hs-feedback');
   const difficulty=level=>model.locator('[data-series-difficulty="'+level+'"]').click();
-  assert.equal(await topic.locator('main').evaluate(el=>el.scrollWidth>el.clientWidth+1),false,'Hydrogen diagrams fit the phone width.');
+  const choose=key=>target('diagram',key).press('Enter');
+  const clueHasFocus=()=>clue.evaluate(el=>el.ownerDocument.activeElement===el);
+  const fitsViewport=()=>topic.locator('main').evaluate(el=>el.scrollWidth<=el.clientWidth+1);
+  const solved=[];
+  async function solve(key){
+   await choose(key);
+   await phase('idle');
+   solved.push(key);
+   assert.equal(await clueHasFocus(),true);
+   assert.equal(await targets('diagram').and(board.locator('.hs-solved')).count(),solved.length);
+   assert.deepEqual(await lineKeys(),[...solved].sort());
+  }
+  assert.equal(await fitsViewport(),true,'Hydrogen diagrams fit the phone width.');
   assert.equal(await model.locator('[data-series-difficulty]:visible').count(),3);
   assert.equal(await targets('diagram').count(),12);
   assert.doesNotMatch(await board.textContent(),/aJ/);
   assert.deepEqual(await lineKeys(),[]);
   const firstClue=await clue.textContent();
+  const initialProgress=await progress.textContent();
   assert.match(firstClue,/nest minst energi/i);
-  await target('diagram','3-2').press('Enter');
-  assert.equal(await clue.textContent(),firstClue);
+  await choose('3-2');
+  assert.notEqual(await clue.textContent(),firstClue);
+  assert.equal(await clueHasFocus(),true);
+  assert.equal(await progress.textContent(),initialProgress);
   assert.deepEqual(await lineKeys(),[]);
-  assert.match(await model.locator('#hs-feedback').textContent(),/prøv en annen overgang/i);
+  assert.match(await feedback.textContent(),/ledetråden kommer tilbake/i);
 
-  const answerKeys=['4-2','5-2','6-1','3-2','2-1','3-1','4-1','5-1','6-2','4-3','5-3','6-3'];
-  for(const [index,key] of answerKeys.entries()){
-   await target('diagram',key).press('Enter');
-   await phase('idle');
-   assert.equal(await targets('diagram').and(board.locator('.hs-solved')).count(),index+1);
-   assert.deepEqual(await lineKeys(),answerKeys.slice(0,index+1).sort());
+  await solve('5-2');
+  const thirdClue=await clue.textContent();
+  const progressAfterOne=await progress.textContent();
+  await choose('4-1');
+  assert.notEqual(await clue.textContent(),thirdClue);
+  assert.equal(await clueHasFocus(),true);
+  assert.equal(await progress.textContent(),progressAfterOne);
+  assert.deepEqual(await lineKeys(),['5-2']);
+  for(const key of ['3-2','2-1','3-1','4-1','5-1','6-2','4-3','5-3','6-3'])await solve(key);
+  assert.equal(await clue.textContent(),firstClue,'The first missed clue returns after the original round.');
+  const retryProgress=await progress.textContent();
+  for(const [key,next] of [['6-1',thirdClue],['4-2',firstClue]]){
+   await choose(key);
+   assert.equal(await clue.textContent(),next,'The missed clues return in the order they were attempted.');
+   assert.equal(await clueHasFocus(),true);
+   assert.equal(await progress.textContent(),retryProgress);
+   assert.deepEqual(await lineKeys(),[...solved].sort());
   }
+  await solve('4-2');
+  assert.equal(await clue.textContent(),thirdClue);
+  const finalProgress=await progress.textContent();
+  await choose('4-2');
+  assert.equal(await clue.textContent(),thirdClue,'Reviewing a solved arrow preserves the last pending clue.');
+  assert.equal(await progress.textContent(),finalProgress);
+  assert.deepEqual(await lineKeys(),[...solved].sort());
+  await solve('6-1');
   assert.match(await progress.textContent(),/12\s*(?:av|\/)\s*12/);
   await difficulty('spicy');
   assert.match(await board.textContent(),/\d[,.]\d+\s*aJ/);
@@ -512,6 +546,31 @@ function assertNumericQuestion(q){
   await model.locator('[data-series-reset]').click();
   assert.equal(await clue.textContent(),firstClue);
   assert.deepEqual(await lineKeys(),[]);
+ });
+ await attempt('Hydrogen quiz keeps its controls and clue visible at desktop and phone widths',async()=>{
+  const {topic,model,target}=await hydrogenSeries('quiz');
+  const position=()=>model.evaluate(el=>{
+   const bounds=selector=>el.querySelector(selector).getBoundingClientRect().toJSON();
+   return {
+    mode:bounds('[data-series-mode="quiz"]'),
+    difficulty:bounds('[data-series-difficulty="mild"]'),
+    clue:bounds('#hs-clue'),
+    feedback:bounds('#hs-feedback')
+   };
+  });
+  await page.setViewportSize({width:1366,height:768});
+  await target('diagram','3-2').press('Enter');
+  const desktop=await position();
+  assert.ok(Math.abs(desktop.mode.top-desktop.difficulty.top)<=4,'Mode and difficulty controls share a desktop row.');
+  assert.ok(desktop.clue.right<=desktop.feedback.left+1,'Clue and feedback fit side by side on desktop.');
+
+  for(const width of [320,390]){
+   await page.setViewportSize({width,height:844});
+   const mobile=await position();
+   assert.ok(mobile.difficulty.top>=mobile.mode.bottom,'Difficulty controls wrap below the modes on mobile.');
+   assert.ok(mobile.feedback.top>=mobile.clue.bottom,'Feedback wraps below the clue on mobile.');
+   assert.equal(await topic.locator('main').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true,'Hydrogen quiz fits '+width+'px without horizontal overflow.');
+  }
  });
  await attempt('Wave views share the original figure and controls',async()=>{
   await page.setViewportSize({width:1440,height:1000});
