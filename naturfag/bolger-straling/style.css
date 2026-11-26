@@ -243,6 +243,7 @@ body.dark{color-scheme:dark;--bg:#12251f;--surface:#1a3028;--sidebar:#152a22;--i
  .tf-stage .tf-frequency-select{width:30%;min-height:28px;top:3px}
 }
 
+.q-figure-heading{margin:24px 0 9px;font-size:1.05rem}
 .q-course{padding:2px 6px;border-radius:4px;background:var(--green-soft);color:var(--green);font-weight:700}
 .q-has-figure .q-status[hidden]{display:inline;visibility:hidden}
 .q-figure{min-width:0;margin:0 0 15px;padding:8px;border:1px solid var(--line);border-radius:9px;background:var(--bg)}

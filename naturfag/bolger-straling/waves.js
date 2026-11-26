@@ -5,7 +5,7 @@ import {resonanceSection as swingSection,mountResonance} from './resonance-swing
 import {tuningForkHtml,mountTuningForks} from './resonance-tuning-forks.js?v=20261121-spectrum1';
 import {flightSection,mountFlight} from './flight-doppler.js?v=20261116-naturfag1';
 import {lightDopplerHtml,mountLightDoppler} from './light-doppler.js?v=20261125-wave-models';
-import {phenomenonQuestions} from './phenomena-questions.js?v=20261126-bolgefigurer';
+import {phenomenonQuestions} from './phenomena-questions.js?v=20261126-nye-figuroppgaver';
 export {buildApertureField,scalarWaveValue,diffractionEnvelope} from './diffraction-lab.js?v=20261122-spredning1';
 export {createSwingState,swingGeometry,swingBackPoint,solveSwingArm,swingDriveAt,stepDrivenSwing,swingArmPose,stepSwingScene} from './resonance-swing.js?v=20261118-resonans1';
 function tabbedSection(id, title, panels) {
@@ -157,7 +157,123 @@ const phenomena={...{
       "definition": "Mottatt frekvens endres når bølgekilden og mottakeren beveger seg mot eller fra hverandre."
     }
   ],
-  questions: phenomenonQuestions,
+  "questions": [
+    {
+      "id": "wv-f1",
+      "type": "number",
+      "level": "Start",
+      "prompt": "En lysstråle treffer et plant speil med innfallsvinkel 35°. Hvor stor er refleksjonsvinkelen, målt fra innfallsloddet?",
+      "value": 35,
+      "tolerance": 0.1,
+      "unit": "°",
+      "answer": "Refleksjonsvinkel = innfallsvinkel = <strong>35°</strong>."
+    },
+    {
+      "id": "wv-f2",
+      "type": "open",
+      "level": "Bruk",
+      "prompt": "Tegn et plant speil, innfallslodd og en innkommende stråle som lager 30° med selve speilflaten. Tegn den reflekterte strålen, og finn innfallsvinkelen.",
+      "answer": "Innfallsloddet står 90° på speilet. Innfallsvinkelen er 90° − 30° = <strong>60°</strong>. Refleksjonsvinkelen er også 60°, på motsatt side av innfallsloddet."
+    },
+    {
+      "id": "wv-f4",
+      "type": "mcq",
+      "level": "Bruk",
+      "prompt": "Lys går fra luft til glass og får lavere fart. Hva skjer med frekvens og bølgelengde?",
+      "choices": [
+        "Begge minker.",
+        "Frekvensen er uendret, og bølgelengden blir kortere.",
+        "Frekvensen øker, og bølgelengden er uendret."
+      ],
+      "correct": 1,
+      "answer": "Frekvensen bestemmes av kilden og er uendret ved overgangen. Siden λ = v/f, gir lavere fart kortere bølgelengde."
+    },
+    {
+      "id": "wv-f5",
+      "type": "open",
+      "level": "Bruk",
+      "prompt": "En blyant står halvveis ned i et glass vann og ser knekt ut sett på skrå. Forklar uten å si at selve blyanten bøyer seg.",
+      "answer": "Lys fra den nedsenkede delen endrer fart og retning i overgangen mellom vann og luft. Øyet tolker lyset som om det hadde gått rett fram, slik at den delen ser forskjøvet ut."
+    },
+    {
+      "id": "wv-f6",
+      "type": "number",
+      "level": "Bruk",
+      "prompt": "To like bølger med amplitude 3 cm møtes nøyaktig i fase. Hva er amplituden til summen?",
+      "value": 6,
+      "tolerance": 0.05,
+      "unit": "cm",
+      "answer": "Utslagene legges sammen: A<sub>sum</sub> = 3 cm + 3 cm = <strong>6 cm</strong>."
+    },
+    {
+      "id": "wv-f7",
+      "type": "open",
+      "level": "Bruk",
+      "prompt": "Hvordan kan en hodetelefon dempe støy ved å sende ut mer lyd?",
+      "answer": "En mikrofon registrerer støy, og hodetelefonen sender ut lyd med omtrent motsatt utslag ved øret. Destruktiv interferens reduserer det samlede lydtrykket der. Dempingen er ikke like god for alle frekvenser og alle steder."
+    },
+    {
+      "id": "wv-f8",
+      "type": "mcq",
+      "level": "Bruk",
+      "prompt": "Bølgelengden holdes uendret. Hva gir tydeligst bøyning gjennom en åpning?",
+      "choices": [
+        "En åpning som er mange tusen bølgelengder bred.",
+        "En åpning på omtrent én bølgelengde.",
+        "Åpningens bredde har ingen betydning."
+      ],
+      "correct": 1,
+      "answer": "Bøyning blir særlig tydelig når åpningens bredde er sammenlignbar med bølgelengden eller mindre."
+    },
+    {
+      "id": "wv-f9",
+      "type": "open",
+      "level": "Bruk",
+      "prompt": "Du hører noen snakke ute i gangen selv om du ikke kan se personen gjennom døra. Hvorfor er ikke bøyningen like tydelig for synlig lys?",
+      "answer": "Lyd har bølgelengder fra centimeter til meter og bøyes derfor merkbart i en døråpning. Synlig lys har bølgelengder på under en tusendels millimeter. Døra er enorm sammenlignet med lysbølgelengden, så bøyningen er svært liten på denne skalaen."
+    },
+    {
+      "id": "wv-f10",
+      "type": "mcq",
+      "level": "Start",
+      "prompt": "Når får en huske vanligvis størst utslag av like store, gjentatte dytt?",
+      "choices": [
+        "Når dyttene følger omtrent huskas egen svingerytme.",
+        "Når dyttene kommer så fort som mulig.",
+        "Når dyttene alltid kommer på tilfeldige tidspunkt."
+      ],
+      "correct": 0,
+      "answer": "Dyttes huska i riktig rytme og retning, overføres energi effektivt. Dette er resonans. Demping gjør at utslaget ikke vokser uten grense."
+    },
+    {
+      "id": "wv-f11",
+      "type": "open",
+      "level": "Bruk",
+      "prompt": "To stemmegafler står nær hverandre. Den ene kan begynne å svinge når du slår på den andre. Hvorfor virker dette best når de har samme egenfrekvens?",
+      "answer": "Lydbølgene fra den første påvirker den andre periodisk. Når frekvensen passer med egenfrekvensen, kan den andre ta opp energi effektivt og få merkbar amplitude: resonans."
+    },
+    {
+      "id": "wv-f12",
+      "type": "mcq",
+      "level": "Start",
+      "prompt": "En ambulanse kjører mot deg med konstant sirenefrekvens. Hvordan er frekvensen du hører sammenlignet med sirenens egen frekvens?",
+      "choices": [
+        "Lavere.",
+        "Den samme.",
+        "Høyere."
+      ],
+      "correct": 2,
+      "answer": "Kilden flytter seg nærmere mellom hver utsendte bølgetopp. Avstanden mellom toppene foran ambulansen blir mindre, så mottatt frekvens øker."
+    },
+    {
+      "id": "wv-f14",
+      "type": "open",
+      "level": "Utfordring",
+      "prompt": "Hvor høyt må et plant speil minst være for at du skal kunne se hele kroppen, fra føtter til toppen av hodet? Anta at speilet plasseres riktig og at øynene er punktformede.",
+      "answer": "Speilet må være <strong>halvparten av kroppshøyden</strong>. Lyset fra føttene treffer speilet halvveis mellom føttene og øyehøyden; lyset fra toppen treffer halvveis mellom hodetoppen og øyehøyden. Avstanden mellom disse treffpunktene er halve kroppshøyden. Dette er uavhengig av hvor langt fra speilet du står."
+    },
+    ...phenomenonQuestions
+  ],
   "resources": [
     {
       "label": "PhET: Brytning av lys",

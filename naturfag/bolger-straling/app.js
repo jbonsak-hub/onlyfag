@@ -1,4 +1,4 @@
-import {solutionHtml} from './math-presentation.js?v=20261126-bolgefigurer';
+import {solutionHtml} from './math-presentation.js?v=20261126-nye-figuroppgaver';
 import {createAnimationClock} from './animation-clock.js?v=20261116-naturfag1';
 
 export function startCourse(topicList,{prototype=false,embedded=false}={}){
@@ -181,7 +181,13 @@ function resourceHtml(t){return t.resources?.length?`<aside class="resource-box"
 function renderBank(){
  const questions=route.id==='alle'?allQuestions:allQuestions.filter(q=>q.topic.id===route.id);
  const bank=$('#topic-content');
- bank.innerHTML=`<div id="question-list" class="question-list">${questions.length?questions.map(questionHtml).join(''):'<div class="empty-state">Det er ingen oppgaver her ennå.</div>'}</div>`;
+ const cards=questions.map((question,index)=>{
+  const previous=questions[index-1];
+  const startsFigureGroup=question.newFigureQuestion&&(!previous?.newFigureQuestion||previous.topic!==question.topic);
+  const heading=startsFigureGroup?'<h2 class="q-figure-heading">Nye figuroppgaver</h2>':'';
+  return heading+questionHtml(question);
+ }).join('');
+ bank.innerHTML=`<div id="question-list" class="question-list">${cards||'<div class="empty-state">Det er ingen oppgaver her ennå.</div>'}</div>`;
  for(const q of questions){
   if(q.mountFigure)q.mountFigure(bank.querySelector(`[data-question="${q.id}"] .q-figure`));
  }

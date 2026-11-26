@@ -5,6 +5,7 @@ const ids=['bolger','fenomener','em','atomer','universet','kommunikasjon','radio
 const moduleNames=['wave-basics','waves','em-spectrum','atom-topic','communication','radioactivity','cosmos-environment'];
 const prototypeIds=ids.filter(id=>id!=='em'&&id!=='atomer');
 const bankFigureAttributes={bolger:'data-wave-basics-figure',fenomener:'data-phenomenon-figure',em:'data-em-figure',atomer:'data-atom-figure'};
+const appendedFigureQuestions={bolger:['wv-b15','wv-b16'],fenomener:['wv-f15','wv-f16'],em:['em-13','em-14']};
 const physicsOneQuestions=['atom-05','atom-12','atom-13','atom-14'];
 const {publishedIds,modulePath,moduleUrl,browserModuleUrl,rendererPath}=require('./bolger-straling-paths.cjs');
 const errors=[],failures=[],warnings=[],coverage=[];
@@ -99,16 +100,26 @@ function assertNumericQuestion(q){
  assert.deepEqual(numeric.get('wv-b13').fields.map(field=>field.value),[10/15,1.5]);
  assert.deepEqual(numeric.get('wv-b14').fields.map(field=>field.value),[2,3,4,.25,.5]);
  const originalIds=[...Array.from({length:12},(_,i)=>'wv-b'+(i+1)),...Array.from({length:14},(_,i)=>'wv-f'+(i+1)),...['em','atom','com'].flatMap(p=>Array.from({length:12},(_,i)=>p+'-'+String(i+1).padStart(2,'0'))),...Array.from({length:16},(_,i)=>'ra-q'+(i+1)),...Array.from({length:17},(_,i)=>'sv-q'+(i+1)),...['ce-u','ce-a'].flatMap(p=>Array.from({length:14},(_,i)=>p+'-'+String(i+1).padStart(2,'0')))];
- assert.deepEqual([...unique].sort(),[...originalIds,'wv-b13','wv-b14','atom-13','atom-14','atom-15','atom-16'].sort(),'Preserve existing questions and add the new exercises.');
- assert.equal(unique.size,129);
+ assert.deepEqual([...unique].sort(),[...originalIds,'wv-b13','wv-b14','atom-13','atom-14','atom-15','atom-16',...Object.values(appendedFigureQuestions).flat()].sort(),'Preserve existing question IDs and add the six figure exercises.');
+ assert.equal(unique.size,135);
  const publicTopics=source.filter(t=>publishedIds.includes(t.id));
  assert.deepEqual(publicTopics.map(t=>t.id),publishedIds);
- assert.deepEqual(publicTopics.map(t=>t.questions.length),[13,12,14,16]);
- for(const topic of publicTopics)for(const question of topic.questions){
-  const figureAttribute=bankFigureAttributes[topic.id];
-  assert.match(question.figure,new RegExp('<svg[^>]*'+figureAttribute+'="'+question.id+'"'));
-  assert.match(question.figure,/<desc\b[^>]*>[^<]+<\/desc>|aria-label="[^"]+"/);
+ assert.deepEqual(publicTopics.map(t=>t.questions.length),[15,14,16,16]);
+ for(const topic of publicTopics){
+  const appended=appendedFigureQuestions[topic.id]??[];
+  assert.deepEqual(topic.questions.filter(question=>question.newFigureQuestion).map(question=>question.id),appended);
+  if(appended.length)assert.deepEqual(topic.questions.slice(-appended.length).map(question=>question.id),appended);
+  for(const question of topic.questions){
+   if(topic.id!=='atomer'&&!appended.includes(question.id)){
+    assert.equal(question.figure,undefined,question.id+' retains its original prompt layout.');
+    continue;
+   }
+   const figureAttribute=bankFigureAttributes[topic.id];
+   assert.match(question.figure,new RegExp('<svg[^>]*'+figureAttribute+'="'+question.id+'"'));
+   assert.match(question.figure,/<desc\b[^>]*>[^<]+<\/desc>|aria-label="[^"]+"/);
+  }
  }
+ assert.match(numeric.get('wv-b14').prompt,/<svg class="q-wave-figure"/);
  for(const topic of publicTopics)assert.ok(!topic.terms.some(t=>/knut|\bbuk/i.test(t.term)),'Buk and knute are excluded from the published concept lists.');
  for(const [questionId,topicId] of [['wv-b8','em'],['wv-f3','em'],['wv-f13','universet']])assert.equal(source.find(t=>t.questions.some(q=>q.id===questionId))?.id,topicId,'Moved question belongs to its current teaching topic: '+questionId);
  const standingTask=publicTopics[0].questions.find(q=>q.id==='wv-b11');assert.ok(standingTask&&!/knut|\bbuk/i.test(standingTask.prompt+' '+standingTask.answer),'Standing-wave reasoning does not require the excluded glossary terms.');
@@ -259,7 +270,7 @@ function assertNumericQuestion(q){
  }finally{comm.destroy();}
  const revisionGroups=await require('./bolger-straling-revision.cjs').runRevisionChecks({modelFixture,topics:source});
  assert.ok(revisionGroups.length>=8);
- console.log('Source/model checks passed: 9 distinct topics, 129 questions; 4 published topics, 55 questions; 26 numeric exercises; independent model pause/repaint, Snell constraints, retarded Doppler, swing modes and outcomes, primary/secondary rainbow, atom cascades, isotope decay and absolute Planck units.');
+ console.log('Source/model checks passed: 9 distinct topics, 135 questions; 4 published topics, 61 questions; 26 numeric exercises; independent model pause/repaint, Snell constraints, retarded Doppler, swing modes and outcomes, primary/secondary rainbow, atom cascades, isotope decay and absolute Planck units.');
  if(process.argv.includes('--data-only'))return;
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
  const base='http://127.0.0.1:'+server.address().port, url=base+'/prototyper/bolger-straling.html';
@@ -382,6 +393,8 @@ function assertNumericQuestion(q){
   await route('alle','oppgaver');
   assert.equal(await page.locator('.q-card').count(),qAll.length);
   assert.equal(await page.locator('.q-card.q-has-figure').count(),qAll.filter(question=>question.figure).length);
+  const topicsWithAppendedFigures=new Set(qAll.filter(question=>question.newFigureQuestion).map(question=>question.topic));
+  assert.deepEqual(await page.locator('h2.q-figure-heading').allTextContents(),Array(topicsWithAppendedFigures.size).fill('Nye figuroppgaver'));
   assert.equal(await page.locator('.filterbar').count(),0);
   await route('kommunikasjon','oppgaver');
   assert.equal(await page.locator('.q-card').count(),data.find(t=>t.id==='kommunikasjon').questions.length);
@@ -568,16 +581,29 @@ function assertNumericQuestion(q){
   await level(4).click();
   await level(1).click();
   assert.deepEqual(await arrows(),['4-1']);
-  for(const topicId of ['bolger','fenomener','em']){
+  for(const [topicId,appended] of Object.entries(appendedFigureQuestions)){
    await page.setViewportSize({width:1366,height:768});
    await page.goto(base+'/naturfag.html#waves/'+topicId+'/oppgaver');
    const otherQuestions=data.find(topic=>topic.id===topicId).questions;
-   const sample=card(otherQuestions[0].id);
+   const original=card(otherQuestions[0].id),sample=card(appended[0]);
    await sample.waitFor();
-   assert.equal(await atom.locator('.q-card.q-has-figure').count(),otherQuestions.length);
-   assert.equal(await sample.locator('.q-figure svg['+bankFigureAttributes[topicId]+']').count(),1);
+   assert.equal(await atom.locator('.q-card').count(),otherQuestions.length);
+   assert.equal(await original.locator('.q-figure').count(),0);
+   assert.equal(await atom.locator('.q-card.q-has-figure').count(),2);
+   const order=await atom.locator('.q-card,h2.q-figure-heading').evaluateAll(nodes=>nodes.map(node=>node.dataset.question??node.textContent));
+   assert.deepEqual(order,[...otherQuestions.slice(0,-2).map(question=>question.id),'Nye figuroppgaver',...appended]);
+   for(const id of appended)assert.equal(await card(id).locator(`.q-figure svg[${bankFigureAttributes[topicId]}="${id}"]`).count(),1);
+   if(topicId==='bolger')assert.equal(await card('wv-b14').locator('.q-prompt svg.q-wave-figure').isVisible(),true);
    const wide=await position(sample);
    assert.ok(wide.prompt.right<=wide.figure.left&&wide.controls.right<=wide.figure.left,`${topicId} places its figure to the right.`);
+   const question=otherQuestions.at(-2);
+   if(question.type==='mcq'){
+    await sample.locator('[data-choice="'+question.correct+'"]').click();
+    assert.equal(await sample.locator('.feedback').innerText(),'Riktig!');
+   }else{
+    await sample.getByRole('button',{name:'Vis veiledende svar',exact:true}).click();
+    assert.equal(await sample.locator('.solution').isVisible(),true);
+   }
    await page.setViewportSize({width:320,height:844});
    const narrow=await position(sample);
    assert.ok(narrow.prompt.bottom<=narrow.figure.top&&narrow.figure.bottom<=narrow.controls.top,`${topicId} places its figure before the controls on mobile.`);

@@ -1,37 +1,26 @@
 export const frac=(num,den)=>`<span class="frac"><span class="num">${num}</span><span class="den">${den}</span></span>`;
 const rows=(lhs,values)=>`<div class="calc-lines">${values.map((v,i)=>`<div class="calc-row"><span class="calc-lhs">${i?'':lhs}</span><span class="calc-eq">=</span><span class="calc-rhs">${v}</span></div>`).join('')}</div>`;
 const worked={
- 'wv-b3':()=>'<p>Nabotoppene ligger ved 1 m og 3 m. Bølgelengden er 2 m.</p>'
-  +rows('f',[frac('v','λ'),frac('5 m/s','2 m'),'<strong>2,5 Hz</strong>']),
- 'wv-b4':()=>'<p>Én hel svingning går fra toppen ved 0,20 s til neste topp ved 0,60 s.</p>'
-  +rows('T',['0,60 s − 0,20 s','<strong>0,40 s</strong>']),
- 'wv-b5':()=>'<p>Frekvensgrafen har en topp ved 440 Hz.</p>'
-  +rows('λ',[frac('v','f'),frac('345 m/s','440 Hz'),'<strong>0,784 m</strong> (avrundet)']),
- 'wv-b6':()=>'<p>Nabotoppene passerer brygga ved 0,25 s og 0,75 s. Bølgelengden er strekningen bølgen går mellom passeringene.</p>'
-  +rows('T',['0,75 s − 0,25 s','0,50 s'])+rows('λ',['v · T','4 m/s · 0,50 s','<strong>2 m</strong>']),
- 'wv-b9':()=>'<p>Du ser lynet ved 0 s og hører tordenen ved 3 s. Lyden har dermed brukt 3,0 s.</p>'
-  +rows('s',['v · t','340 m/s · 3,0 s','<strong>1020 m</strong> ≈ 1 km']),
- 'wv-b13':()=>'<p>Grafen viser 15 hele svingninger på 10 s. Del tida på antallet svingninger for å finne perioden.</p>'
+ 'wv-b3':()=>rows('f',[frac('v','λ'),frac('5 m/s','2 m'),'<strong>2,5 Hz</strong>']),
+ 'wv-b4':()=>rows('T',[frac(1,'f'),frac(1,'2,5 Hz'),'<strong>0,40 s</strong>']),
+ 'wv-b5':()=>rows('λ',[frac('v','f'),frac('345 m/s','440 Hz'),'<strong>0,784 m</strong> (avrundet)']),
+ 'wv-b6':()=>'<p>To bølgetopper per sekund gir f = 2 Hz.</p>'+rows('λ',[frac('v','f'),frac('4 m/s','2 Hz'),'<strong>2 m</strong>']),
+ 'wv-b9':()=>rows('s',['v · t','340 m/s · 3,0 s','<strong>1020 m</strong> ≈ 1 km']),
+ 'wv-b13':()=>'<p>Del tida på antallet svingninger for å finne tida for én svingning.</p>'
   +rows('T',[frac('10 s','15'),'<strong>0,67 s</strong> (avrundet)'])
   +'<p>Del antallet svingninger på tida for å finne frekvensen i hertz.</p>'
   +rows('f',[frac('15','10 s'),'<strong>1,5 Hz</strong>']),
- 'wv-b14':()=>'<p>Fra toppen ved 0 m til bunnen ved 1 m er det en halv bølgelengde.</p>'
+ 'wv-b14':()=>'<p>Fra en topp til nærmeste bunn er det en halv bølgelengde.</p>'
   +rows('λ',['2 · 1 m','<strong>2 m</strong>'])
   +'<p>Amplituden er utslaget fra likevektslinja opp til en topp.</p>'
   +rows('A',['<strong>3 m</strong>'])
-  +'<p>Den nederste grafen viser fire hele svingninger på 16 s.</p>'
   +rows('T',[frac('16 s',4),'<strong>4 s</strong>'])
   +rows('f',[frac(4,'16 s'),'<strong>0,25 Hz</strong>'])
   +rows('v',['f · λ','0,25 Hz · 2 m','<strong>0,50 m/s</strong>']),
- 'wv-f1':()=>'<p>Figuren viser en innfallsvinkel på 35°. Begge vinkler måles fra innfallsloddet.</p>'
-  +rows('Refleksjonsvinkel',['Innfallsvinkel','<strong>35°</strong>']),
- 'wv-f6':()=>'<p>Bølgetoppene ligger på samme sted. Her legger vi sammen utslagene for å finne amplituden til summen.</p>'
-  +rows('A<sub>sum</sub>',['A₁ + A₂','3 cm + 3 cm','<strong>6 cm</strong>']),
- 'em-03':()=>'<p>Mottakeren viser 100 MHz. Det er 100 · 10<sup>6</sup> Hz.</p>'
-  +rows('λ',[frac('c','f'),frac('3,00 · 10<sup>8</sup> m/s','100 · 10<sup>6</sup> Hz'),'<strong>3,00 m</strong>']),
- 'em-04':()=>'<p>Les av avstanden mellom to nabotopper.</p>'
-  +rows('λ',['750 nm − 250 nm','500 nm = 5,00 · 10<sup>−7</sup> m'])
-  +rows('f',[frac('c','λ'),frac('3,00 · 10<sup>8</sup> m/s','5,00 · 10<sup>−7</sup> m'),'<strong>6,00 · 10<sup>14</sup> Hz</strong>']),
+ 'wv-f1':()=>rows('Refleksjonsvinkel',['Innfallsvinkel','<strong>35°</strong>']),
+ 'wv-f6':()=>rows('A<sub>sum</sub>',['A₁ + A₂','3 cm + 3 cm','<strong>6 cm</strong>']),
+ 'em-03':()=>rows('λ',[frac('c','f'),frac('3,00 · 10<sup>8</sup> m/s','100 · 10<sup>6</sup> Hz'),'<strong>3,00 m</strong>']),
+ 'em-04':()=>rows('f',[frac('c','λ'),frac('3,00 · 10<sup>8</sup> m/s','5,00 · 10<sup>−7</sup> m'),'<strong>6,00 · 10<sup>14</sup> Hz</strong>']),
  'atom-05':()=>rows('E<sub>foton</sub>',['−0,24 aJ − (−0,54 aJ)','<strong>0,30 aJ</strong>'])+'<p>Atomet mister energi; fotonet får positiv energi.</p>',
  'atom-12':()=>rows('E',['h · f','6,63 · 10<sup>−34</sup> J s · 5,0 · 10<sup>14</sup> Hz','3,315 · 10<sup>−19</sup> J','<strong>3,3 · 10<sup>−19</sup> J</strong> (avrundet)']),
  'com-04':()=>rows('Antall biter',['5 · 8','<strong>40 biter</strong>']),
