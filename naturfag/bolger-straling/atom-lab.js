@@ -98,7 +98,6 @@ const styles = `<style>
 .al-model .al-level-handle[data-target=true] { background:#a1651d; box-shadow:0 0 0 1px #a1651d }
 .al-model .al-level-handle::after { content:'↕'; color:white; position:absolute; inset:0; display:grid; place-items:center }
 .al-model .al-level-handle:focus-visible { outline:3px solid #2677a0; outline-offset:3px }
-.al-board .animation-toolbar { right:6px; top:5px }
 @media(max-width:900px) {
   .al-model[data-model-layout=custom] { grid-template-columns:minmax(0,1fr)!important }
   .al-model[data-model-layout=custom] .al-side { grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; border-left:0; padding-left:0 }
@@ -356,6 +355,8 @@ export function mountAtomLab(root,api) {
   let transitions=customTransitions(levels,target), cCache='';
   const now=(el,fallback)=>typeof api.now==='function'?api.now(el):fallback;
   const repaint=el=>api.repaint(el);
+  const motionPreference=typeof matchMedia==='function'?matchMedia('(prefers-reduced-motion: reduce)'):null;
+  const emissionDuration=1.55;
 
   function syncHydrogenResult(){
     result.innerHTML=`<strong>Emisjon · n = ${selected.from} → ${selected.to}</strong>
@@ -392,9 +393,8 @@ export function mountAtomLab(root,api) {
     const button=event.target.closest('[data-h-line]');
     if(!button) return;
     selected=transition(Number(button.dataset.hLine),2);
-    start=now(hydrogenSvg,hTime);
+    start=now(hydrogenSvg,hTime)-(motionPreference?.matches?emissionDuration:0);
     syncHydrogenResult();
-    api.play?.(hydrogenSvg);
     repaint(hydrogenSvg);
   });
   listen(node('al-h-show-energy'),'change',event=>{
@@ -455,7 +455,6 @@ export function mountAtomLab(root,api) {
     streamStart=now(customSvg,cTime);
     node('al-custom-state').textContent=`Atomer eksiteres til L${target+1}. ${target===1?'Alle sender ut lys med samme bølgelengde.':'Flere bølgelengder sendes ut samtidig.'}`;
     syncCustom();
-    api.play?.(customSvg);
   });
   listen(customHandles,'pointerdown',event=>{
     const handle=event.target.closest('[data-custom-index]');
@@ -489,9 +488,14 @@ export function mountAtomLab(root,api) {
     changeLevel(index,newEnergy);
   });
 
+  if(motionPreference?.addEventListener)listen(motionPreference,'change',event=>{
+    if(event.matches&&start!==null) start=now(hydrogenSvg,hTime)-emissionDuration;
+    repaint(hydrogenSvg);
+    repaint(customSvg);
+  });
   api.onFrame(t=>{
     hTime=t;
-    const p=start===null?null:clamp((now(hydrogenSvg,t)-start)/1.55);
+    const p=start===null?null:clamp((now(hydrogenSvg,t)-start)/emissionDuration);
     const cache=`${layout.w}/${selected.from}/${showEnergy}/${p}`;
     if(hCache===cache) return;
     hCache=cache;
@@ -501,7 +505,8 @@ export function mountAtomLab(root,api) {
   },hydrogenSvg);
   api.onFrame(t=>{
     cTime=t;
-    const running=streamStart!==null, elapsed=running?Math.max(0,now(customSvg,t)-streamStart):0;
+    const running=streamStart!==null;
+    const elapsed=running&&!motionPreference?.matches?Math.max(0,now(customSvg,t)-streamStart):0;
     const cache=`${compact}/${levels.join(',')}/${target}/${running}/${elapsed}`;
     if(cCache===cache) return;
     cCache=cache;

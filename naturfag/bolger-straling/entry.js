@@ -1,6 +1,6 @@
 import {emTopic} from './em-spectrum.js?v=20261125-wave-models';
-import {atomTopic} from './atom-topic.js?v=20261126-hydrogen-quiz';
-import {startCourse} from './app.js?v=20261123-lambda';
+import {atomTopic} from './atom-topic.js?v=20261126-hydrogen-controls';
+import {startCourse} from './app.js?v=20261126-hydrogen-controls';
 import {topics as basicTopics} from './wave-basics.js?v=20261125-atom-release';
 import {topics as waveTopics} from './waves.js?v=20261125-atom-release';
 const params=new URLSearchParams(location.search);

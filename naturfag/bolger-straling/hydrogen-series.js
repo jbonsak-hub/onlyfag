@@ -1,4 +1,4 @@
-import {atomDrawing, possibleTransitions, transition} from './atom-lab.js?v=20261126-hydrogen';
+import {atomDrawing, possibleTransitions, transition} from './atom-lab.js?v=20261126-hydrogen-controls';
 import {seriesBoardGraphic, seriesBoardLayout, seriesBoardMotion} from './hydrogen-series-graphics.js?v=20261126-hydrogen';
 import {hydrogenQuiz} from './hydrogen-series-quiz.js?v=20261126-hydrogen-quiz';
 
@@ -11,23 +11,30 @@ const styles = `<style>
 #hs-model [hidden] { display:none!important }
 .hs-toolbar,.hs-modes,.hs-options { display:flex; flex-wrap:wrap; align-items:center; gap:5px 7px }
 .hs-toolbar { justify-content:space-between; gap:8px 16px; margin-bottom:8px }
+.hs-toolbar-controls { display:grid; justify-items:end; gap:6px; max-width:100%; margin-inline-start:auto }
+.hs-panel { padding:8px 11px; border:1px solid var(--line); border-radius:8px; background:var(--sidebar); color:var(--ink); font-size:.84rem; line-height:1.4 }
+#hs-model .hs-panel p,.hs-panel dl,.hs-panel dd { margin:0 }
+#hs-selection { max-width:23rem; border-inline-start:3px solid var(--green); background:var(--green-soft) }
+.hs-readout { display:grid; grid-template-columns:repeat(2,max-content); gap:5px 18px }
+.hs-readout dt, .hs-panel-label { font-size:.8rem; font-weight:650 }
+.hs-readout dd { font-size:1rem; font-weight:750; font-variant-numeric:tabular-nums; white-space:nowrap }
+#hs-excite { display:grid; gap:3px; justify-items:start }
+.hs-excite-levels button { white-space:nowrap }
+.hs-quiz-options { justify-content:space-between; gap:5px 9px }
 #hs-model button.hs-button { padding:6px 10px; min-height:32px; border:1px solid var(--line); border-radius:7px; color:var(--ink); background:var(--sidebar); font-size:.85rem; font-weight:650 }
 #hs-model button.hs-button:hover { border-color:var(--green) }
 #hs-model button.hs-button[aria-pressed=true] { background:var(--green); border-color:var(--green); color:var(--surface) }
-#hs-model button.hs-reset { background:var(--surface) }
-#hs-model .hs-controls { min-height:2.1rem; margin-bottom:8px; display:flex; align-items:center; flex-wrap:wrap; gap:6px 12px; color:var(--muted); font-size:.84rem }
-#hs-model .hs-controls p { margin:0; line-height:1.4 }
-.hs-controls #hs-selection { margin-left:auto; color:var(--ink); font-weight:650 }
-#hs-model button.hs-explanation-trigger { padding:3px 0; border:0; background:none; color:var(--green); font:inherit; font-weight:650; text-decoration:underline; text-underline-offset:3px }
-.hs-quiz-card { display:grid; grid-template-columns:minmax(0,1fr) minmax(210px,28%); width:100%; border:1px solid var(--line); border-radius:9px; background:var(--sidebar) }
-.hs-quiz-prompt { display:grid; align-content:center; min-width:0; gap:4px; padding:10px 14px; border-inline-start:3px solid var(--green); border-radius:8px 0 0 8px; background:var(--green-soft) }
+#hs-model .hs-panel button.hs-button:not([aria-pressed=true]) { background:var(--surface) }
+#hs-model button.hs-explanation-trigger { padding:3px 0; border:0; background:none; color:var(--green); font:inherit; font-weight:650; text-align:start; white-space:normal; text-decoration:underline; text-underline-offset:3px }
+.hs-quiz-card { display:grid; grid-template-columns:minmax(0,1fr) clamp(12rem,26%,17rem); gap:7px 12px; margin-bottom:8px; color:var(--ink) }
+.hs-quiz-prompt { display:grid; align-content:center; width:min(100%,40rem); min-width:0; gap:4px; padding:10px 13px; border:1px solid var(--line); border-inline-start:3px solid var(--green); border-radius:8px; background:var(--green-soft) }
 .hs-quiz-meta { display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:1px 12px }
 .hs-quiz-label { color:var(--ink); font-size:.81rem; font-weight:650 }
 #hs-progress { color:var(--ink); font-size:.81rem; font-variant-numeric:tabular-nums; white-space:nowrap }
 #hs-model #hs-clue { margin:0; color:var(--ink); font-size:clamp(1.05rem,1.9cqi,1.375rem); font-weight:750; line-height:1.3 }
 #hs-clue:focus-visible { outline:2px solid var(--green); outline-offset:3px; border-radius:2px }
-.hs-quiz-feedback { display:grid; align-content:center; min-width:0; gap:4px; padding:9px 12px; border-inline-start:1px solid var(--line) }
-#hs-feedback { color:var(--ink); min-height:1.4em }
+.hs-quiz-feedback { display:grid; align-content:center; min-width:0; gap:4px }
+#hs-feedback { color:var(--ink) }
 #hs-feedback[data-result=correct] { color:var(--green) }
 #hs-feedback[data-result=incorrect] { color:var(--red) }
 .hs-figures { display:grid; grid-template-columns:minmax(0,1fr) max-content; grid-template-areas:'board legend' 'spectrum spectrum'; gap:7px 14px; align-items:center }
@@ -53,9 +60,7 @@ body.dark #hs-model { --hs-lyman-ink:#c491ee; --hs-balmer-ink:#72cdb9; --hs-pasc
 #hs-model .hs-figure [data-series-action]:hover .hs-focus { opacity:.3 }
 #hs-model .hs-figure [data-series-action]:focus-visible .hs-focus { opacity:.65 }
 #hs-model .hs-burst-glow { animation:hs-glow 1.25s both }
-#hs-model[data-animation-paused=true] .hs-burst-glow { animation-play-state:paused }
 @keyframes hs-glow { 0%, 20% { opacity:.16; } 55% { opacity:.55; } 100% { opacity:.15; } }
-#hs-model .animation-toolbar { top:5px; right:6px }
 #hs-formulas { margin:7px 0 0; color:var(--muted); font-size:.79rem; line-height:1.55 }
 #hs-formulas span { white-space:nowrap; display:inline-block; margin-right:12px }
 @container (max-width:730px) {
@@ -64,16 +69,17 @@ body.dark #hs-model { --hs-lyman-ink:#c491ee; --hs-balmer-ink:#72cdb9; --hs-pasc
 }
 @container (max-width:570px) {
   .hs-legend { grid-template-columns:1fr; gap:2px; padding-left:3px }
-  .hs-controls #hs-selection { margin-left:0 }
   .hs-quiz-card { grid-template-columns:minmax(0,1fr) }
-  .hs-quiz-prompt { padding:8px 10px; border-radius:8px 8px 0 0 }
-  .hs-quiz-feedback { display:flex; align-items:baseline; flex-wrap:wrap; gap:1px 7px; padding:6px 10px; border-inline-start:0; border-top:1px solid var(--line) }
+  .hs-quiz-prompt { padding:8px 10px }
+  .hs-quiz-feedback { display:flex; align-items:baseline; flex-wrap:wrap; justify-self:end; gap:1px 7px; padding:6px 10px }
   .hs-quiz-feedback .hs-quiz-label { flex:none }
 }
 @container (max-width:440px) {
-  #hs-model[data-mode=quiz] .hs-modes { display:grid; width:100%; grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) max-content; align-items:stretch }
-  #hs-model[data-mode=quiz] .hs-modes button { padding-inline:5px; white-space:normal }
-  .hs-quiz-options { width:100%; justify-content:space-between }
+  .hs-modes { display:grid; width:100%; grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) max-content; align-items:stretch }
+  #hs-model .hs-modes button { padding-inline:5px; white-space:normal }
+  .hs-excite-levels { display:grid; width:100%; grid-template-columns:repeat(5,minmax(0,1fr)) }
+  #hs-excite-label { grid-column:1/-1 }
+  #hs-model .hs-excite-levels button { padding-inline:6px }
 }
 @media (max-width:520px) { .topic-page #hs-model { padding:9px } }
 </style>`;
@@ -87,6 +93,7 @@ const legend = [
 const buttons = (type, choices, selected) => choices.map(([value, label]) =>
   `<button type="button" class="hs-button" data-series-${type}="${value}" aria-pressed="${value===selected}">${label}</button>`
 ).join('');
+const excitationQuestion = 'Hvorfor gir ett innkommende foton så mange overganger ut?';
 
 export const hydrogenSeriesSection = {title:'Flere overganger i hydrogenatomet', body:`${styles}
 <p>Ved andre overganger kan hydrogen også sende ut ultrafiolett og infrarød stråling. Overganger som ender på samme energinivå, hører til samme serie.</p>
@@ -95,35 +102,41 @@ export const hydrogenSeriesSection = {title:'Flere overganger i hydrogenatomet',
     <div class="hs-modes" role="group" aria-label="Velg modus">
       ${buttons('mode', [['all','Overganger i hydrogen'],['excite','Eksiter hydrogenatomet'],['quiz','Quiz']], 'all')}
     </div>
-    <div id="hs-quiz-options" class="hs-options hs-quiz-options" hidden>
-      <div class="hs-options" role="group" aria-label="Vanskelighetsgrad">
-        ${buttons('difficulty', [['mild','Mild'],['medium','Medium'],['spicy','Spicy']], 'mild')}
+    <div class="hs-toolbar-controls">
+      <div id="hs-excite" class="hs-panel" hidden>
+        <div class="hs-options hs-excite-levels" role="group" aria-labelledby="hs-excite-label">
+          <span id="hs-excite-label" class="hs-panel-label">Eksiter til</span>
+          ${buttons('level', [2,3,4,5,6].map(n => [n, `n = ${n}`]))}
+        </div>
+        <button type="button" class="hs-explanation-trigger" data-series-explanation aria-haspopup="dialog" aria-controls="hs-explanation">${excitationQuestion}</button>
       </div>
-      <button type="button" class="hs-button hs-reset" data-series-reset>Start på nytt</button>
+      <div id="hs-selection" class="hs-panel" role="status">
+        <p id="hs-guide">Klikk på en pil eller en spektrallinje for å se overgangen.</p>
+        <dl id="hs-readout" class="hs-readout" hidden>
+          <div><dt>Overgang</dt><dd id="hs-transition-value"></dd></div>
+          <div><dt>Bølgelengde</dt><dd id="hs-wavelength-value"></dd></div>
+        </dl>
+      </div>
+      <div id="hs-quiz-options" class="hs-panel hs-options hs-quiz-options" hidden>
+        <span id="hs-difficulty-prompt" class="hs-panel-label">Velg vanskelighetsgrad</span>
+        <div class="hs-options" role="group" aria-label="Vanskelighetsgrad">
+          ${buttons('difficulty', [['mild','Mild'],['medium','Medium'],['spicy','Spicy']])}
+        </div>
+        <button type="button" class="hs-button" data-series-reset hidden>Start på nytt</button>
+      </div>
     </div>
   </div>
-  <div class="hs-controls">
-    <p id="hs-guide">Klikk på en pil eller en spektrallinje for å se overgangen.</p>
-    <div id="hs-excite" class="hs-options" hidden>
-      <div class="hs-options" role="group" aria-label="Velg eksitasjonsnivå">
-        <span>Eksiter til</span>
-        ${buttons('level', [2,3,4,5,6].map(n => [n, `n = ${n}`]))}
-      </div>
-      <button type="button" class="hs-explanation-trigger" data-series-explanation aria-haspopup="dialog" aria-controls="hs-explanation">Hvorfor flere overganger?</button>
+  <div id="hs-quiz" class="hs-quiz-card" hidden>
+    <div class="hs-quiz-prompt">
+      <div class="hs-quiz-meta"><span class="hs-quiz-label">Finn overgangen</span><span id="hs-progress"></span></div>
+      <p id="hs-clue" tabindex="-1"></p>
     </div>
-    <div id="hs-quiz" class="hs-quiz-card" hidden>
-      <div class="hs-quiz-prompt">
-        <div class="hs-quiz-meta"><span class="hs-quiz-label">Finn overgangen</span><span id="hs-progress"></span></div>
-        <p id="hs-clue" tabindex="-1"></p>
-      </div>
-      <div class="hs-quiz-feedback">
-        <span id="hs-feedback-label" class="hs-quiz-label"></span>
-        <p id="hs-feedback" role="status"></p>
-      </div>
+    <div class="hs-panel hs-quiz-feedback">
+      <span id="hs-feedback-label" class="hs-quiz-label"></span>
+      <p id="hs-feedback" role="status"></p>
     </div>
-    <p id="hs-selection" role="status" hidden></p>
   </div>
-  <div class="hs-figures">
+  <div class="hs-figures" id="hs-figures">
     <div class="hs-board-wrap model-visual"><svg id="hs-board" class="hs-figure" viewBox="0 0 850 265" role="group" aria-label="Hydrogenatomet og energidiagrammet"></svg></div>
     <ul class="hs-legend" aria-label="Overgangsserier">
       ${legend.map(([name, description, color]) => `<li><i style="--series-color:${color}" aria-hidden="true"></i><strong>${name}</strong><span>${description}</span></li>`).join('')}
@@ -133,7 +146,7 @@ export const hydrogenSeriesSection = {title:'Flere overganger i hydrogenatomet',
   <p id="hs-formulas" hidden><span>Nivåenergiene er avrundet.</span><span>ΔE = E<sub>øvre</sub> − E<sub>nedre</sub></span><span>λ = hc/ΔE</span><span>f = c/λ</span><span>hc ≈ 198,645 aJ·nm</span><span>c ≈ 3,00 · 10⁸ m/s</span></p>
 </div>
 <dialog id="hs-explanation" class="al-calculation-dialog" aria-labelledby="hs-explanation-title">
-  <header class="al-calculation-header"><h3 id="hs-explanation-title">Hvorfor ser vi flere overganger?</h3><form method="dialog"><button type="submit">Lukk</button></form></header>
+  <header class="al-calculation-header"><h3 id="hs-explanation-title">${excitationQuestion}</h3><form method="dialog"><button type="submit">Lukk</button></form></header>
   <p>Ett foton kan eksitere ett atom. Når elektronet faller ned, svarer hvert foton som sendes ut til én overgang i det atomet. Elektronet kan gå rett ned til grunntilstanden eller falle i flere trinn.</p>
   <p>Når mange atomer eksiteres til samme nivå, kan elektronene ta ulike veier ned. Figuren viser det samlede resultatet av alle mulige overganger i svært mange hydrogenatomer.</p>
 </dialog>`};
@@ -144,14 +157,17 @@ export function mountHydrogenSeries(root, api) {
   if (!model) return;
   const board = get('board'), spectrum = get('spectrum'), dialog = get('explanation');
   const boardWrap = board.parentElement, spectrumWrap = spectrum.parentElement;
-  const guide = get('guide'), excite = get('excite'), quiz = get('quiz'), quizOptions = get('quiz-options');
+  const figures = get('figures'), excite = get('excite'), quiz = get('quiz'), quizOptions = get('quiz-options');
   const clue = get('clue'), progress = get('progress'), feedback = get('feedback');
   const feedbackLabel = get('feedback-label');
+  const difficultyPrompt = get('difficulty-prompt'), restart = quizOptions.querySelector('[data-series-reset]');
   const selection = get('selection'), formulas = get('formulas');
+  const guide = get('guide'), readout = get('readout');
+  const transitionValue = get('transition-value'), wavelengthValue = get('wavelength-value');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  let mode = 'all', difficulty = 'mild', excited = null, selected = null, animation = null;
+  let mode = 'all', difficulty = null, excited = null, selected = null, animation = null;
   const solved = new Set();
-  let questions = [...hydrogenQuiz[difficulty]];
+  let questions = [];
   let edges = overviewTransitions, lastTime = 0, boardLayout, spectrumLayout, motion;
 
   function sceneState(time = lastTime) {
@@ -207,7 +223,6 @@ export function mountHydrogenSeries(root, api) {
     const start = api.now?.(board) ?? lastTime;
     animation = reduced.matches ? null : {phase, start, transitions};
     renderScene();
-    if (animation) api.play?.(board);
   }
 
   function press(type, value) {
@@ -218,10 +233,16 @@ export function mountHydrogenSeries(root, api) {
   }
 
   function syncQuiz() {
+    const inQuiz = mode === 'quiz', playing = inQuiz && difficulty !== null;
+    quizOptions.hidden = !inQuiz;
+    quiz.hidden = restart.hidden = !playing;
+    figures.hidden = inQuiz && !playing;
+    difficultyPrompt.hidden = playing;
+    formulas.hidden = !playing || difficulty !== 'spicy';
+    if (!playing) return;
     const [next] = questions;
     clue.textContent = next?.[1] ?? 'Du fant alle overgangene!';
     progress.textContent = `${solved.size} av ${hydrogenQuiz[difficulty].length} funnet`;
-    formulas.hidden = difficulty !== 'spicy';
   }
 
   function showFeedback(message, result) {
@@ -231,23 +252,24 @@ export function mountHydrogenSeries(root, api) {
   }
 
   function syncSelection() {
-    selection.hidden = mode === 'quiz' || !selected;
-    selection.textContent = selected ? `n = ${selected.from} → ${selected.to} · ${fmt(selected.wavelengthNM,1)} nm` : '';
+    selection.hidden = mode === 'quiz' || (mode === 'excite' && !selected);
+    guide.hidden = Boolean(selected);
+    readout.hidden = !selected;
+    if (!selected) return;
+    transitionValue.textContent = `n = ${selected.from} → ${selected.to}`;
+    wavelengthValue.textContent = `λ = ${fmt(selected.wavelengthNM,1)} nm`;
   }
 
   function setMode(next) {
     mode = next;
     animation = selected = excited = null;
-    edges = mode === 'excite' ? [] : overviewTransitions;
+    edges = mode === 'all' || (mode === 'quiz' && difficulty) ? overviewTransitions : [];
     model.dataset.mode = mode;
     press('mode', mode);
     press('level', null);
-    guide.hidden = mode !== 'all';
     excite.hidden = mode !== 'excite';
-    quiz.hidden = quizOptions.hidden = mode !== 'quiz';
     showFeedback();
-    if (mode === 'quiz') syncQuiz();
-    else formulas.hidden = true;
+    syncQuiz();
     syncSelection();
     renderScene();
   }
@@ -255,6 +277,7 @@ export function mountHydrogenSeries(root, api) {
   function resetQuiz() {
     solved.clear();
     questions = [...hydrogenQuiz[difficulty]];
+    edges = overviewTransitions;
     animation = selected = null;
     showFeedback();
     press('difficulty', difficulty);
@@ -301,8 +324,10 @@ export function mountHydrogenSeries(root, api) {
     if (seriesMode && seriesMode !== mode) setMode(seriesMode);
     else if (seriesLevel) runExcitation(Number(seriesLevel));
     else if (seriesDifficulty && seriesDifficulty !== difficulty) {
+      const starting = difficulty === null;
       difficulty = seriesDifficulty;
       resetQuiz();
+      if (starting && event.detail === 0) clue.focus({preventScroll:true});
     } else if (button.hasAttribute('data-series-reset')) resetQuiz();
     else if (button.hasAttribute('data-series-explanation')) dialog.showModal();
     else if (seriesKey) chooseTransition(seriesKey, event.detail === 0);

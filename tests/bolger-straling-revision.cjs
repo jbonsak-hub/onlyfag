@@ -182,7 +182,7 @@ async function runRevisionChecks({modelFixture,topics}={}){
   const previousAudioContext=globalThis.AudioContext,oscillatorStart=oscillators.length;globalThis.AudioContext=AudioContext;
   const f=modelFixture({sections:[flight.flightSection],mount:flight.mountFlight});
   try{assert.equal(f.get('fd-audio').getAttribute('aria-pressed'),'false');f.change('fd-mach',1);f.click('fd-audio');await Promise.resolve();await Promise.resolve();const beforeSteps=Math.floor(7/flight.FLIGHT_VISUAL_TIME_SCALE),afterSteps=Math.ceil(8/flight.FLIGHT_VISUAL_TIME_SCALE);for(let i=1;i<=beforeSteps;i++)f.tick(i/10);assert.equal(f.get('fd-scene').closest('.model').dataset.flightPhase,'waiting');for(let i=beforeSteps+1;i<=afterSteps;i++)f.tick(i/10);assert.notEqual(f.get('fd-scene').closest('.model').dataset.flightPhase,'waiting');near(oscillators[oscillatorStart].frequency.value,Number(f.get('fd-scene').closest('.model').dataset.observedFrequency));f.pause('#fd-scene');const before=f.get('fd-scene').serialize();f.tick((afterSteps+1)/10);assert.equal(f.get('fd-scene').serialize(),before);}finally{f.destroy();globalThis.AudioContext=previousAudioContext;}
-  const af=modelFixture(topics.find(t=>t.id==='atomer'));
+  const af=modelFixture(topics.find(t=>t.id==='atomer'),{reducedMotion:false});
   try{
    const hydrogen=af.get('al-hydrogen-svg'), lineButtons=af.get('al-h-spectrum-controls');
    assert.equal(lineButtons.querySelectorAll('[data-h-line]').length,4);

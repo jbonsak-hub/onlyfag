@@ -9,7 +9,7 @@ const errors=[],failures=[],warnings=[],coverage=[];
 let fixtureClockFactory;
 // A limited DOM fixture for running the actual model controllers and examining
 // generated SVG geometry. It does not claim browser/layout verification.
-function modelFixture(topic){
+function modelFixture(topic,{reducedMotion=true}={}){
  const elements=[],idMap=new Map(),callbacks=[];let time=0;
  const decode=s=>String(s).replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
  const attrMap=s=>{const a={};for(const m of s.matchAll(/([\w:-]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g))a[m[1]]=decode(m[2]??m[3]??m[4]??'');return a;};
@@ -63,7 +63,7 @@ function modelFixture(topic){
  const restore=()=>Object.assign(global,previous);
  const documentEvents={};
  global.document={hidden:false,addEventListener(k,fn){(documentEvents[k]??=[]).push(fn);},removeEventListener(k,fn){documentEvents[k]=(documentEvents[k]||[]).filter(f=>f!==fn);},createElementNS:(_,tag)=>new Element(tag),createElement:tag=>new Element(tag),querySelector:s=>root.querySelector(s),getElementById:id=>idMap.get(id)};
- global.matchMedia=()=>({matches:true,addEventListener(){},removeEventListener(){}});global.window={matchMedia:global.matchMedia};
+ global.matchMedia=()=>({matches:reducedMotion,addEventListener(){},removeEventListener(){}});global.window={matchMedia:global.matchMedia};
  global.ResizeObserver=class{observe(){}disconnect(){}};
  const clock=fixtureClockFactory?.();
  const scope=target=>{const node=typeof target==='string'?root.querySelector(target):target;return node?.closest('.model')||node||root;};
@@ -261,19 +261,26 @@ function assertNumericQuestion(q){
  await attempt('Complete, distinct, well-formed question data',async()=>{
  assert.equal(data.length,9);const seen=new Set();for(const t of data){assert.ok(t.sections>0&&t.terms>0);assert.ok(t.questions.length>=10,t.id);for(const q of t.questions){assert.ok(!seen.has(q.id),'duplicate '+q.id);seen.add(q.id);assert.ok(q.prompt&&q.answer,q.id);assert.ok(['mcq','number','open'].includes(q.type),q.id);if(q.type==='mcq')assert.ok(Number.isInteger(q.correct)&&q.correct>=0&&q.correct<q.choices.length,q.id);if(q.type==='number')assertNumericQuestion(q);}}});
  async function route(id,view='fagstoff'){await page.goto(url+'#'+id+'/'+view);await page.locator('#topic-content').waitFor();await page.waitForTimeout(70);}
- async function hydrogenSeries(mode){
+ const besideHydrogenModes=panel=>panel.evaluate(el=>{
+  const bounds=el.getBoundingClientRect();
+  const modes=el.closest('#hs-model').querySelector('.hs-modes').getBoundingClientRect();
+  return bounds.left>=modes.right-1&&bounds.top<modes.bottom&&bounds.bottom>modes.top;
+ });
+ async function hydrogenSeries(mode,{difficulty}={}){
   await page.goto(base+'/naturfag.html?hydrogen='+mode+'#waves/atomer/fagstoff');
   const topic=page.frameLocator('#waves-module-frame');
   const model=topic.locator('#hs-model');
   await model.locator('[data-series-mode="all"]').waitFor();
   const board=model.locator('#hs-board'),spectrum=model.locator('#hs-spectrum');
   const selectMode=value=>model.locator('[data-series-mode="'+value+'"]').click();
+  const selectDifficulty=value=>model.locator('[data-series-difficulty="'+value+'"]').click();
   const targets=part=>model.locator('[data-series-action="transition"][data-series-part="'+part+'"]');
   const target=(part,key)=>targets(part).and(model.locator('[data-series-key="'+key+'"]'));
   const lineKeys=()=>spectrum.locator('[data-series-line]').evaluateAll(lines=>lines.map(line=>line.dataset.seriesLine).sort());
   const phase=value=>topic.locator('#hs-model[data-phase="'+value+'"]').waitFor();
   if(mode!=='all')await selectMode(mode);
-  return {topic,model,board,spectrum,selectMode,targets,target,lineKeys,phase};
+  if(difficulty)await selectDifficulty(difficulty);
+  return {topic,model,board,spectrum,selectMode,selectDifficulty,targets,target,lineKeys,phase};
  }
  for(const id of prototypeIds)for(const view of ['fagstoff','oppgaver','begreper'])await attempt('Desktop render '+id+'/'+view,async()=>{
  await route(id,view);assert.ok((await page.locator('h1').innerText()).trim());assert.equal(await page.locator('#main').evaluate(e=>e.scrollWidth>e.clientWidth+1),false,'main content overflow');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'document overflow');assert.equal(await page.locator('#animation-speed,#pause-button,.viewbar,.page-head .eyebrow,.page-head .intro,.head-icon').count(),0,'No repeated topic introduction or global animation toolbar');if(view==='fagstoff')assert.ok(await page.locator('.content-section').count());else if(view==='oppgaver')assert.equal(await page.locator('.q-card').count(),data.find(t=>t.id===id).questions.length);});
@@ -384,6 +391,7 @@ function assertNumericQuestion(q){
   const spectrumLine=atom.locator('#al-h-spectrum-controls [data-h-line="6"]');
   await spectrumLine.click();
   assert.match(await atom.locator('#al-h-readout').innerText(),/410/);
+  assert.equal(await atom.locator('#al-hydrogen-svg').getAttribute('data-photon-arrived'),'true');
   for(const [energy,state] of [['2.1','bound'],['2.18','ionized'],['3','ionized']]){
    const slider=atom.locator('#ema-ion-energy');
    const plot=atom.locator('#ema-ion-plot');
@@ -413,6 +421,14 @@ function assertNumericQuestion(q){
    assert.equal(await model.locator('[data-series-mode]').count(),3);
    assert.equal(await topic.locator('.content-section').nth(0).locator('#hs-model').count(),0);
    assert.equal(await topic.locator('.content-section').nth(1).locator('#hs-model').count(),1);
+   assert.equal(await topic.locator('.animation-toggle').count(),0,'Animation controls are omitted throughout the atom topic.');
+   await topic.locator('#al-h-spectrum-controls [data-h-line="6"]').click();
+   await topic.locator('#al-hydrogen-svg[data-transition="6-2"][data-photon-arrived="false"]').waitFor();
+   await topic.locator('#al-hydrogen-svg[data-transition="6-2"][data-photon-arrived="true"]').waitFor();
+   const selection=model.locator('#hs-selection');
+   assert.equal(await selection.isVisible(),true);
+   assert.match(await selection.innerText(),/klikk på en pil eller en spektrallinje/i);
+   assert.equal(await besideHydrogenModes(selection),true,'The overview readout sits beside the mode controls.');
    assert.deepEqual(await lineKeys(),keys);
    for(const part of ['atom','diagram','spectrum'])assert.equal(await targets(part).count(),12);
    assert.doesNotMatch(await board.textContent(),/15 mulige hopp|Andre/);
@@ -423,6 +439,10 @@ function assertNumericQuestion(q){
     await target(part,key).click();
     await phase('emission');
     assert.equal(await model.getAttribute('data-selected'),key);
+    const [from,to]=key.split('-');
+    const details=await selection.innerText();
+    assert.match(details,new RegExp('Overgang\\s*n\\s*=\\s*'+from+'\\s*→\\s*(?:n\\s*=\\s*)?'+to));
+    assert.match(details,/Bølgelengde\s*λ\s*=\s*\d+(?:[,.]\d+)?\s*nm/);
     assert.equal(await atomArrow.count(),0);
     await board.locator('.hs-motion path').first().waitFor();
     await phase('idle');
@@ -437,6 +457,10 @@ function assertNumericQuestion(q){
    const {topic,model,board,selectMode,targets,target,lineKeys,phase}=await hydrogenSeries('excite');
    assert.equal(await model.getAttribute('data-mode'),'excite');
    assert.equal(await model.locator('[data-series-level]:visible').count(),5);
+   const exciteControls=model.locator('#hs-excite');
+   assert.equal(await exciteControls.isVisible(),true);
+   assert.equal(await besideHydrogenModes(exciteControls),true,'The excitation panel sits beside the mode controls.');
+   assert.equal(await model.locator('#hs-selection').isVisible(),false);
    assert.deepEqual(await lineKeys(),[]);
    assert.equal(await targets('atom').count(),0);
    assert.equal(await targets('diagram').count(),0);
@@ -456,7 +480,7 @@ function assertNumericQuestion(q){
    await target('diagram','5-4').press('Space');
    await phase('emission');
    assert.equal(await model.getAttribute('data-selected'),'5-4');
-   await model.locator('[data-series-explanation]').click();
+   await model.getByRole('button',{name:'Hvorfor gir ett innkommende foton så mange overganger ut?',exact:true}).click();
    const explanation=topic.locator('#hs-explanation[open]');
    await explanation.waitFor();
    assert.match(await explanation.innerText(),/mange hydrogenatomer/i);
@@ -476,9 +500,8 @@ function assertNumericQuestion(q){
  });
  await attempt('Hydrogen quiz queues missed clues and accumulates all 12, including on mobile',async()=>{
   await page.setViewportSize({width:390,height:844});
-  const {topic,model,board,targets,target,lineKeys,phase}=await hydrogenSeries('quiz');
+  const {topic,model,board,spectrum,selectMode,selectDifficulty,targets,target,lineKeys,phase}=await hydrogenSeries('quiz');
   const clue=model.locator('#hs-clue'),progress=model.locator('#hs-progress'),feedback=model.locator('#hs-feedback');
-  const difficulty=level=>model.locator('[data-series-difficulty="'+level+'"]').click();
   const choose=key=>target('diagram',key).press('Enter');
   const clueHasFocus=()=>clue.evaluate(el=>el.ownerDocument.activeElement===el);
   const fitsViewport=()=>topic.locator('main').evaluate(el=>el.scrollWidth<=el.clientWidth+1);
@@ -492,7 +515,14 @@ function assertNumericQuestion(q){
    assert.deepEqual(await lineKeys(),[...solved].sort());
   }
   assert.equal(await fitsViewport(),true,'Hydrogen diagrams fit the phone width.');
-  assert.equal(await model.locator('[data-series-difficulty]:visible').count(),3);
+  assert.deepEqual(await model.locator('[data-series-difficulty]:visible').allTextContents(),['Mild','Medium','Spicy']);
+  assert.equal(await model.locator('[data-series-difficulty][aria-pressed="true"]').count(),0);
+  assert.equal(await model.locator('[data-series-reset]').isVisible(),false);
+  for(const element of [clue,progress,board,spectrum])assert.equal(await element.isVisible(),false);
+  assert.equal(await model.locator('[data-series-action="transition"]:visible').count(),0);
+  await model.getByRole('button',{name:'Mild',exact:true}).press('Enter');
+  assert.equal(await model.locator('[data-series-difficulty="mild"]').getAttribute('aria-pressed'),'true');
+  for(const element of [clue,progress,board,spectrum])assert.equal(await element.isVisible(),true);
   assert.equal(await targets('diagram').count(),12);
   assert.doesNotMatch(await board.textContent(),/aJ/);
   assert.deepEqual(await lineKeys(),[]);
@@ -509,6 +539,12 @@ function assertNumericQuestion(q){
   await solve('5-2');
   const thirdClue=await clue.textContent();
   const progressAfterOne=await progress.textContent();
+  await selectMode('all');
+  await selectMode('quiz');
+  assert.equal(await clue.textContent(),thirdClue);
+  assert.equal(await progress.textContent(),progressAfterOne);
+  assert.equal(await model.locator('[data-series-difficulty="mild"]').getAttribute('aria-pressed'),'true');
+  assert.deepEqual(await lineKeys(),['5-2']);
   await choose('4-1');
   assert.notEqual(await clue.textContent(),thirdClue);
   assert.equal(await clueHasFocus(),true);
@@ -533,42 +569,44 @@ function assertNumericQuestion(q){
   assert.deepEqual(await lineKeys(),[...solved].sort());
   await solve('6-1');
   assert.match(await progress.textContent(),/12\s*(?:av|\/)\s*12/);
-  await difficulty('spicy');
+  await selectDifficulty('spicy');
   assert.match(await board.textContent(),/\d[,.]\d+\s*aJ/);
   assert.deepEqual(await lineKeys(),[]);
   const spicyClue=await clue.textContent();
-  await difficulty('medium');
+  await selectDifficulty('medium');
   assert.notEqual(await clue.textContent(),spicyClue);
   assert.doesNotMatch(await board.textContent(),/aJ/);
-  await difficulty('mild');
+  await selectDifficulty('mild');
   await target('atom','4-2').press('Space');
   assert.deepEqual(await lineKeys(),['4-2']);
   await model.locator('[data-series-reset]').click();
   assert.equal(await clue.textContent(),firstClue);
+  assert.equal(await progress.textContent(),initialProgress);
+  assert.equal(await model.locator('[data-series-difficulty="mild"]').getAttribute('aria-pressed'),'true');
   assert.deepEqual(await lineKeys(),[]);
  });
  await attempt('Hydrogen quiz keeps its controls and clue visible at desktop and phone widths',async()=>{
-  const {topic,model,target}=await hydrogenSeries('quiz');
+  const {topic,model,target}=await hydrogenSeries('quiz',{difficulty:'mild'});
   const position=()=>model.evaluate(el=>{
    const bounds=selector=>el.querySelector(selector).getBoundingClientRect().toJSON();
    return {
     mode:bounds('[data-series-mode="quiz"]'),
     difficulty:bounds('[data-series-difficulty="mild"]'),
-    clue:bounds('#hs-clue'),
-    feedback:bounds('#hs-feedback')
+    clue:bounds('.hs-quiz-prompt'),
+    feedback:bounds('.hs-quiz-feedback')
    };
   });
   await page.setViewportSize({width:1366,height:768});
   await target('diagram','3-2').press('Enter');
   const desktop=await position();
   assert.ok(Math.abs(desktop.mode.top-desktop.difficulty.top)<=4,'Mode and difficulty controls share a desktop row.');
-  assert.ok(desktop.clue.right<=desktop.feedback.left+1,'Clue and feedback fit side by side on desktop.');
+  assert.ok(desktop.clue.right+2<desktop.feedback.left,'Separate clue and feedback boxes fit side by side on desktop.');
 
   for(const width of [320,390]){
    await page.setViewportSize({width,height:844});
    const mobile=await position();
    assert.ok(mobile.difficulty.top>=mobile.mode.bottom,'Difficulty controls wrap below the modes on mobile.');
-   assert.ok(mobile.feedback.top>=mobile.clue.bottom,'Feedback wraps below the clue on mobile.');
+   assert.ok(mobile.feedback.top>mobile.clue.bottom+2,'The separate feedback box wraps below the clue on mobile.');
    assert.equal(await topic.locator('main').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true,'Hydrogen quiz fits '+width+'px without horizontal overflow.');
   }
  });

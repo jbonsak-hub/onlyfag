@@ -1,5 +1,5 @@
-import {atomLabSection,customAtomSection,mountAtomLab,HYDROGEN_GROUND_AJ} from './atom-lab.js?v=20261126-hydrogen';
-import {hydrogenSeriesSection,mountHydrogenSeries} from './hydrogen-series.js?v=20261126-hydrogen-quiz';
+import {atomLabSection,customAtomSection,mountAtomLab,HYDROGEN_GROUND_AJ} from './atom-lab.js?v=20261126-hydrogen-controls';
+import {hydrogenSeriesSection,mountHydrogenSeries} from './hydrogen-series.js?v=20261126-hydrogen-controls';
 
 const C = 299792458, H = 6.62607015e-34, AJ = 1e-18;
 const fmt = (x, digits = 2) => x.toLocaleString('nb-NO', {maximumFractionDigits: digits});
@@ -25,12 +25,13 @@ export function ionizationOutcome(energyAJ){
 }
 
 function mountIonization(root,api){
-  const q=s=>root.querySelector(s),energyControl=q('#ema-ion-energy');
+  const q=s=>root.querySelector(s),energyControl=q('#ema-ion-energy'),plot=q('#ema-ion-plot');
   let currentTime=0,launchedAt=0,fired=false;
-  const reducedMotion=()=>typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const motionPreference=typeof matchMedia==='function'?matchMedia('(prefers-reduced-motion: reduce)'):null;
+  const duration=1.7;
   function render(t){
     currentTime=t;
-    const result=ionizationOutcome(energyControl.value),progress=fired?(reducedMotion()?1:Math.min(1,Math.max(0,(t-launchedAt)/1.7))):0;
+    const result=ionizationOutcome(energyControl.value),progress=fired?Math.min(1,Math.max(0,(t-launchedAt)/duration)):0;
     const interacted=fired&&progress>=.38,ionized=interacted&&result.ionizes;
     const escapeProgress=ionized?Math.min(1,(progress-.38)/.62):0;
     const zeroKinetic=result.kinetic<.00001;
@@ -49,8 +50,8 @@ function mountIonization(root,api){
     if(ionized)graphic+=`<text x="550" y="174" text-anchor="middle" class="ema-svg-text">H⁺</text><text x="704" y="53" text-anchor="end" class="ema-muted-text">${zeroKinetic?'Fritt e⁻ · Eₖ ≈ 0':'Fritt elektron e⁻'}</text>`;
     else graphic+=`<text x="575" y="174" text-anchor="middle" class="ema-svg-text">${interacted?'H · ingen ionisering':'H · elektronet er bundet'}</text>`;
     graphic+=`<text x="380" y="224" text-anchor="middle" class="ema-muted-text">Ioniseringsterskel for H i grunntilstanden: 2,18 aJ</text>`;
-    q('#ema-ion-plot').innerHTML=graphic;
-    q('#ema-ion-plot').setAttribute('data-state',ionized?'ionized':interacted?'bound':fired?'flight':'neutral');
+    plot.innerHTML=graphic;
+    plot.setAttribute('data-state',ionized?'ionized':interacted?'bound':fired?'flight':'neutral');
     q('#ema-ion-energy-value').textContent=fmt(result.energy,2)+' aJ';
     const wavelength=`λ ≈ ${fmt(result.wavelength,1)} nm`;
     if(!fired)q('#ema-ion-readout').innerHTML=`<div><strong>Valgt foton: ${fmt(result.energy,2)} aJ</strong></div><div>${wavelength}.</div><div>Trykk «Send foton».</div>`;
@@ -58,13 +59,27 @@ function mountIonization(root,api){
     else q('#ema-ion-readout').innerHTML=`<div><strong>Ingen ionisering.</strong></div><div>${fmt(result.energy,2)} aJ &lt; 2,18 aJ.</div><div>Elektronet kan ikke frigjøres av dette ene fotonet.</div><div>${wavelength}.</div>`;
   }
   energyControl.addEventListener('input',()=>{fired=false;render(currentTime);});
-  q('#ema-ion-send').addEventListener('click',()=>{fired=true;launchedAt=api.now?api.now(q('#ema-ion-plot')):currentTime;render(launchedAt);});
+  q('#ema-ion-send').addEventListener('click',()=>{
+    const time=api.now?.(plot)??currentTime;
+    fired=true;
+    launchedAt=time-(motionPreference?.matches?duration:0);
+    render(time);
+  });
   q('#ema-ion-reset').addEventListener('click',()=>{fired=false;render(currentTime);});
-  api.onFrame(render,q('#ema-ion-plot'));
+  function settleMotion(event){
+    if(!event.matches||!fired) return;
+    const time=api.now?.(plot)??currentTime;
+    launchedAt=time-duration;
+    render(time);
+  }
+  motionPreference?.addEventListener?.('change',settleMotion);
+  api.onFrame(render,plot);
+  return ()=>motionPreference?.removeEventListener?.('change',settleMotion);
 }
 
 export const atomTopic = {
   id:'atomer',title:'Stråling fra atomet',kicker:'Energinivåer og fingeravtrykk',
+  animationControls:false,
   summary:'Atomer tar opp og sender ut bestemte fotoner. Det gjør lyset til en nøkkel til stoffenes innhold.',
   sections:[
     atomLabSection,

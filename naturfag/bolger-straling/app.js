@@ -171,7 +171,7 @@ function renderTopic(){
    $('#topic-content').innerHTML=`${t.sections.map((s,i)=>`<section class="content-section" id="section-${t.id}-${i}"><h2${s.anchor?' id="wave-anchor-'+escapeHtml(s.anchor)+'" tabindex="-1"':''}><span class="section-index" aria-hidden="true">${i+1}</span>${escapeHtml(s.title)}</h2>${s.body}</section>`).join('')}${resourceHtml(t)}`;
    if(t.mount)cleanup=t.mount($('#topic-content'),api,{section:route.section});
    arrangeModels($('#topic-content'));
-   installAnimationControls();
+   if(t.animationControls!==false)installAnimationControls();
  }else if(route.view==='begreper'){
    $('#topic-content').innerHTML=`<dl class="terms-list">${t.terms.map(term=>`<div class="term"><dt>${escapeHtml(term.term)}</dt><dd>${term.definition}</dd></div>`).join('')}</dl>${resourceHtml(t)}`;
  }else renderBank();
