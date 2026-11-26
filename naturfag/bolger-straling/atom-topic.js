@@ -1,5 +1,5 @@
 import {atomLabSection,customAtomSection,mountAtomLab,HYDROGEN_GROUND_AJ} from './atom-lab.js?v=20261126-atomoppgaver';
-import {hydrogenSeriesSection,mountHydrogenSeries} from './hydrogen-series.js?v=20261126-atomoppgaver';
+import {hydrogenSeriesSection,mountHydrogenSeries} from './hydrogen-series.js?v=20261126-quizsporsmal';
 import {spectraLabSection,mountSpectraLab} from './spectra-lab.js?v=20261126-absorpsjon';
 import {atomQuestions} from './atom-questions.js?v=20261126-atomoppgaver';
 

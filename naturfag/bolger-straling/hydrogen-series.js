@@ -1,6 +1,6 @@
 import {atomDrawing, HYDROGEN_GROUND_AJ, photonFromEnergyAJ, possibleTransitions, transition} from './atom-lab.js?v=20261126-atomoppgaver';
 import {seriesBoardGraphic, seriesBoardLayout, seriesBoardMotion} from './hydrogen-series-graphics.js?v=20261126-hydrogen-ionisering';
-import {hydrogenQuiz} from './hydrogen-series-quiz.js?v=20261126-hydrogen-sidefelt';
+import {hydrogenQuiz} from './hydrogen-series-quiz.js?v=20261126-quizsporsmal';
 import {vindalooSolution} from './hydrogen-series-solution.js?v=20261126-hydrogen-sidefelt';
 
 const {fmt, transitionKey} = atomDrawing;
