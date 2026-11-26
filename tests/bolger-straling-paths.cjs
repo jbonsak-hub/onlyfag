@@ -2,7 +2,7 @@ const path=require('node:path');
 const {pathToFileURL}=require('node:url');
 const root=path.resolve(__dirname,'..');
 const publishedIds=['bolger','fenomener','em','atomer'];
-const canonicalModules=new Set(['wave-basics','wave-visuals','waves','waves-rainbow','refraction-lab','refraction-examples','examples-dialog','diffraction-lab','resonance-swing','resonance-tuning-forks','flight-doppler','light-doppler','animation-clock','math-presentation','em-spectrum','absorption','light-duality','atom-topic','atom-lab','hydrogen-series','hydrogen-series-quiz','element-spectra','element-spectra-data']);
+const canonicalModules=new Set(['wave-basics','wave-visuals','waves','waves-rainbow','refraction-lab','refraction-examples','examples-dialog','diffraction-lab','resonance-swing','resonance-tuning-forks','flight-doppler','light-doppler','animation-clock','math-presentation','em-spectrum','absorption','light-duality','atom-topic','atom-lab','hydrogen-series','hydrogen-series-quiz','element-spectra','element-spectra-data','spectra-lab','spectra-lab-data']);
 const modulePath=name=>path.join(root,canonicalModules.has(name)?'naturfag/bolger-straling':'prototyper/bolger-straling',name+'.js');
 const moduleUrl=name=>pathToFileURL(modulePath(name)).href;
 const browserModuleUrl=name=>'/'+(canonicalModules.has(name)?'naturfag/bolger-straling':'prototyper/bolger-straling')+'/'+name+'.js';

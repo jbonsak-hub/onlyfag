@@ -4,7 +4,7 @@ const near=(actual,expected,tolerance=1e-9,message='')=>assert.ok(Math.abs(actua
 const plain=html=>String(html).replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,'').replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<[^>]*>/g,' ');
 
 async function runRevisionChecks({modelFixture,topics}={}){
- const names=['flight-doppler','light-doppler','refraction-lab','refraction-examples','diffraction-lab','resonance-swing','resonance-tuning-forks','atom-lab','hydrogen-series','hydrogen-series-quiz','element-spectra','element-spectra-data','animation-clock','waves-rainbow','math-presentation','cosmology-timeline','bigbang-evidence'];
+ const names=['flight-doppler','light-doppler','refraction-lab','refraction-examples','diffraction-lab','resonance-swing','resonance-tuning-forks','atom-lab','hydrogen-series','hydrogen-series-quiz','element-spectra','element-spectra-data','spectra-lab','spectra-lab-data','animation-clock','waves-rainbow','math-presentation','cosmology-timeline','bigbang-evidence'];
  const modules={};for(const name of names)modules[name]=await import(moduleUrl(name));
  const flight=modules['flight-doppler'],optics=modules['refraction-lab'],diff=modules['diffraction-lab'],swing=modules['resonance-swing'],atom=modules['atom-lab'],elements=modules['element-spectra'],data=modules['element-spectra-data'],examples=modules['refraction-examples'];
  const groups=[];
@@ -116,9 +116,14 @@ async function runRevisionChecks({modelFixture,topics}={}){
  assert.match(atom.customAtomSection.title,/^Hva med andre atomer\?$/);
  assert.doesNotMatch(atom.customAtomSection.body,/data-excite-level|id="al-custom-targets"/);
  const series=modules['hydrogen-series'].hydrogenSeriesSection;
- const atomTopic=(topics?.find(topic=>topic.id==='atomer')??(await import(moduleUrl('atom-topic'))).atomTopic);
+ const {atomTopic,ionizationOutcome}=await import(moduleUrl('atom-topic'));
  assert.deepEqual(atomTopic.sections[1],series,'The spectroscopy model has its own section after the introduction.');
  assert.match(series.body,/id="hs-board"/);
+ const threshold=-atom.HYDROGEN_GROUND_AJ;
+ assert.equal(ionizationOutcome(2.1).ionizes,false);
+ assert.equal(ionizationOutcome(threshold).ionizes,true);
+ near(ionizationOutcome(threshold).kineticAJ,0);
+ near(ionizationOutcome(3).kineticAJ,3-threshold);
  const {hydrogenQuiz}=modules['hydrogen-series-quiz'];
  const seriesKeys=atom.possibleTransitions(6).filter(t=>t.to<=3).map(t=>`${t.from}-${t.to}`).sort();
  assert.deepEqual(Object.keys(hydrogenQuiz),['mild','medium','spicy']);
@@ -139,6 +144,20 @@ async function runRevisionChecks({modelFixture,topics}={}){
  assert.deepEqual(data.getElementEmissionLines(118,'I'),[]);assert.deepEqual(data.getElementEmissionLines(0,'I'),[]);assert.deepEqual(data.getElementEmissionLines(1,'combined'),[]);assert.ok(!/<line\b/.test(elements.renderEmissionSpectrum([])));
  assert.doesNotMatch(elements.elementSpectraHtml,/id="es-stage"|<option\b[^>]*value="II"/);
  groups.push('118 periodic positions, traceable NIST lines and a neutral-only spectrum viewer');
+ const gases=modules['spectra-lab-data'].spectraLabElements;
+ assert.deepEqual(atomTopic.sections[3],modules['spectra-lab'].spectraLabSection);
+ assert.deepEqual(gases.map(({symbol})=>symbol).sort(),['H','He','N','Na','Ne','O']);
+ for(const gas of gases){
+  const {z}=elements.spectralElements.find(element=>element.symbol===gas.symbol);
+  const original=data.elementSpectraData.find(row=>row.z===z);
+  assert.ok(original&&gas.lines.length>0);
+  assert.equal(gas.lineSource,original.source);
+  for(const [wavelength,relativeStrength] of gas.lines){
+   assert.ok(original.n.some(line=>line[0]===wavelength));
+   assert.ok(relativeStrength>0&&relativeStrength<=1);
+  }
+ }
+ groups.push('six discharge gases with matched, traceable neutral wavelengths');
 
  // The practical analogies are tested against direction, contacts and continuity.
  for(const angleDeg of [15,40,60])for(const slowRatio of [.35,.75]){

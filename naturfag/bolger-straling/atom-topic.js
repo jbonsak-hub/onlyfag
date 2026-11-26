@@ -1,80 +1,16 @@
-import {atomLabSection,customAtomSection,mountAtomLab,HYDROGEN_GROUND_AJ} from './atom-lab.js?v=20261126-atomspektre';
-import {hydrogenSeriesSection,mountHydrogenSeries} from './hydrogen-series.js?v=20261126-atomlayout';
+import {atomLabSection,customAtomSection,mountAtomLab,HYDROGEN_GROUND_AJ} from './atom-lab.js?v=20261126-absorpsjon';
+import {hydrogenSeriesSection,mountHydrogenSeries} from './hydrogen-series.js?v=20261126-absorpsjon';
+import {spectraLabSection,mountSpectraLab} from './spectra-lab.js?v=20261126-absorpsjon';
 
 const C = 299792458, H = 6.62607015e-34, AJ = 1e-18;
-const fmt = (x, digits = 2) => x.toLocaleString('nb-NO', {maximumFractionDigits: digits});
-const line = (points) => points.map((p,i) => `${i ? 'L' : 'M'}${p[0].toFixed(2)},${p[1].toFixed(2)}`).join(' ');
-
-const ionizationStyle = `<style>
-.ema-ion-model .ema-atom-svg{display:block;width:100%;height:auto}
-.ema-ion-model .ema-svg-text{fill:var(--ink,#183b40);font:13px system-ui,sans-serif}
-.ema-ion-model .ema-muted-text{fill:var(--muted,#526a72);font:12px system-ui,sans-serif}
-.ema-ion-model .ema-signal-result{padding:8px 11px;border-radius:9px;background:var(--sidebar,#f0f5f0);font-size:11px;line-height:1.55}
-.ema-ion-model .ema-model-details{margin:7px 0 0;font-size:10px;color:var(--muted,#526a72)}
-.ema-ion-model .ema-model-details>p{margin:6px 0 0;font-size:11px;line-height:1.55}
-</style>`;
-
 function mountAtom(root,api){
-  const cleanups=[mountAtomLab(root,api),mountHydrogenSeries(root,api),mountIonization(root,api)];
+  const cleanups=[mountAtomLab(root,api),mountHydrogenSeries(root,api),mountSpectraLab(root,api)];
   return ()=>{for(const cleanup of cleanups) cleanup?.();};
 }
 
 export function ionizationOutcome(energyAJ){
   const energy=Number(energyAJ),threshold=-HYDROGEN_GROUND_AJ,energyJ=energy*AJ,kinetic=Math.max(0,energy-threshold);
   return {energy,threshold,energyAJ:energy,thresholdAJ:threshold,energyJ,ionizes:energy>=threshold,kinetic,kineticAJ:kinetic,kineticJ:kinetic*AJ,wavelength:C*H/energyJ*1e9};
-}
-
-function mountIonization(root,api){
-  const q=s=>root.querySelector(s),energyControl=q('#ema-ion-energy'),plot=q('#ema-ion-plot');
-  let currentTime=0,launchedAt=0,fired=false;
-  const motionPreference=typeof matchMedia==='function'?matchMedia('(prefers-reduced-motion: reduce)'):null;
-  const duration=1.7;
-  function render(t){
-    currentTime=t;
-    const result=ionizationOutcome(energyControl.value),progress=fired?Math.min(1,Math.max(0,(t-launchedAt)/duration)):0;
-    const interacted=fired&&progress>=.38,ionized=interacted&&result.ionizes;
-    const escapeProgress=ionized?Math.min(1,(progress-.38)/.62):0;
-    const zeroKinetic=result.kinetic<.00001;
-    const electronX=ionized?(zeroKinetic?491:510+180*escapeProgress):510;
-    const electronY=ionized?(zeroKinetic?112:112-45*escapeProgress):112;
-    const photonVisible=fired&&progress<.38;
-    const photonX=350+160*Math.min(1,progress/.38);
-    const photonPath=Array.from({length:31},(_,i)=>[photonX-26+i*.85,112+5*Math.sin(i*.62)]);
-    let graphic=`<title>Kan ett foton ionisere hydrogen?</title><desc>Hydrogen i grunntilstanden trenger minst 2,18 attojoule for å frigjøre elektronet. ${fired?(result.ionizes?'Det valgte fotonet kan frigjøre elektronet, og resten av energien blir elektronets kinetiske energi.':'Det valgte fotonet har ikke nok energi til ionisering. Andre prosesser, som eksitasjon, vises ikke.'): 'Velg fotonenergi og send ett foton.'}</desc>`;
-    graphic+=`<defs><marker id="ema-ion-arrow" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#e0a241"/></marker></defs><text x="165" y="22" text-anchor="middle" class="ema-svg-text">Før: nøytralt hydrogen</text><text x="575" y="22" text-anchor="middle" class="ema-svg-text">${ionized?'Etter: hydrogenion og fritt elektron':'Etter møtet med fotonet'}</text><rect x="22" y="35" width="285" height="166" rx="12" fill="var(--sidebar,#eff4ef)" stroke="var(--line,#d8e3de)"/><rect x="414" y="35" width="325" height="166" rx="12" fill="var(--sidebar,#eff4ef)" stroke="var(--line,#d8e3de)"/>`;
-    graphic+=`<circle cx="165" cy="112" r="40" fill="none" stroke="#84a6a0" stroke-width="1.5" stroke-dasharray="4 4"/><circle cx="165" cy="112" r="13" fill="#d88e6d"/><text x="165" y="117" text-anchor="middle" fill="#fff" font-size="16">+</text><circle cx="205" cy="112" r="7" fill="#2b8d9f"/><text x="165" y="174" text-anchor="middle" class="ema-svg-text">H · elektronet er bundet</text><path d="M330 112h58" fill="none" stroke="#e0a241" stroke-width="2" marker-end="url(#ema-ion-arrow)"/>`;
-    graphic+=`<circle cx="550" cy="112" r="40" fill="none" stroke="#84a6a0" stroke-width="1.5" stroke-dasharray="4 4" opacity="${ionized?.18:1}"/><circle cx="550" cy="112" r="13" fill="#d88e6d"/><text x="550" y="117" text-anchor="middle" fill="#fff" font-size="16">+</text>`;
-    if(ionized&&!zeroKinetic)graphic+=`<path d="M510 112Q570 92 ${electronX.toFixed(1)} ${electronY.toFixed(1)}" fill="none" stroke="#2b8d9f" stroke-width="1.5" stroke-dasharray="4 4"/>`;
-    graphic+=`<circle cx="${electronX.toFixed(1)}" cy="${electronY.toFixed(1)}" r="7" fill="#2b8d9f"/>`;
-    if(photonVisible)graphic+=`<path d="${line(photonPath)}" fill="none" stroke="#e0a241" stroke-width="3"/>`;
-    if(ionized)graphic+=`<text x="550" y="174" text-anchor="middle" class="ema-svg-text">H⁺</text><text x="704" y="53" text-anchor="end" class="ema-muted-text">${zeroKinetic?'Fritt e⁻ · Eₖ ≈ 0':'Fritt elektron e⁻'}</text>`;
-    else graphic+=`<text x="575" y="174" text-anchor="middle" class="ema-svg-text">${interacted?'H · ingen ionisering':'H · elektronet er bundet'}</text>`;
-    graphic+=`<text x="380" y="224" text-anchor="middle" class="ema-muted-text">Ioniseringsterskel for H i grunntilstanden: 2,18 aJ</text>`;
-    plot.innerHTML=graphic;
-    plot.setAttribute('data-state',ionized?'ionized':interacted?'bound':fired?'flight':'neutral');
-    q('#ema-ion-energy-value').textContent=fmt(result.energy,2)+' aJ';
-    const wavelength=`λ ≈ ${fmt(result.wavelength,1)} nm`;
-    if(!fired)q('#ema-ion-readout').innerHTML=`<div><strong>Valgt foton: ${fmt(result.energy,2)} aJ</strong></div><div>${wavelength}.</div><div>Trykk «Send foton».</div>`;
-    else if(result.ionizes)q('#ema-ion-readout').innerHTML=`<div><strong>Fotonet kan ionisere.</strong></div><div>${fmt(result.energy,2)} aJ ≥ 2,18 aJ.</div><div>Ved absorpsjon frigjøres elektronet.</div><div class="calc-lines"><div class="calc-row"><span class="calc-lhs">E<sub>k</sub></span><span class="calc-eq">=</span><span class="calc-rhs">E<sub>foton</sub> − E<sub>binding</sub></span></div><div class="calc-row"><span class="calc-lhs"></span><span class="calc-eq">=</span><span class="calc-rhs">${fmt(result.energy,2)} aJ − ${fmt(result.threshold,3)} aJ</span></div><div class="calc-row"><span class="calc-lhs"></span><span class="calc-eq">=</span><span class="calc-rhs"><strong>${fmt(result.kinetic,3)} aJ</strong></span></div></div><div>${wavelength}.</div>`;
-    else q('#ema-ion-readout').innerHTML=`<div><strong>Ingen ionisering.</strong></div><div>${fmt(result.energy,2)} aJ &lt; 2,18 aJ.</div><div>Elektronet kan ikke frigjøres av dette ene fotonet.</div><div>${wavelength}.</div>`;
-  }
-  energyControl.addEventListener('input',()=>{fired=false;render(currentTime);});
-  q('#ema-ion-send').addEventListener('click',()=>{
-    const time=api.now?.(plot)??currentTime;
-    fired=true;
-    launchedAt=time-(motionPreference?.matches?duration:0);
-    render(time);
-  });
-  q('#ema-ion-reset').addEventListener('click',()=>{fired=false;render(currentTime);});
-  function settleMotion(event){
-    if(!event.matches||!fired) return;
-    const time=api.now?.(plot)??currentTime;
-    launchedAt=time-duration;
-    render(time);
-  }
-  motionPreference?.addEventListener?.('change',settleMotion);
-  api.onFrame(render,plot);
-  return ()=>motionPreference?.removeEventListener?.('change',settleMotion);
 }
 
 export const atomTopic = {
@@ -85,9 +21,7 @@ export const atomTopic = {
     atomLabSection,
     hydrogenSeriesSection,
     customAtomSection,
-    {title:'Spektrallinjer er stoffenes fingeravtrykk',body:`<div class="concept-grid"><article class="concept"><h3>Emisjonsspekter</h3><p>En tynn, varm gass gir lyse linjer ved bestemte bølgelengder. Grunnstoffets energinivåer bestemmer mønsteret.</p></article><article class="concept"><h3>Absorpsjonsspekter</h3><p>Når et bredt lysspekter passerer en kjøligere gass, svekkes bestemte bølgelengder. De mørke linjene svarer til de samme energiforskjellene.</p></article></div><p>Ved å sammenlikne linjemønstre kan vi finne hvilke grunnstoffer en lyskilde eller en gass inneholder. Mer om stjernespektre finner du under <a href="/prototyper/bolger-straling.html#universet/fagstoff" target="_top">Stjerner og universet</a>.</p>`},
-    {title:'Nordlyset forteller hva atmosfæren inneholder',body:`<p>Energirike partikler fra verdensrommet ledes av jordas magnetfelt og kolliderer med partikler i atmosfæren. Oksygen og nitrogen eksiteres. Når de mister energi igjen, sendes lys ut ved karakteristiske bølgelengder.</p><div class="key"><strong>Grønt og rødt nordlys</strong> kommer ofte fra oksygen; nitrogen bidrar blant annet med blålige og rødfiolette toner. Høyde og kollisjoner påvirker hvilke overganger vi ser.</div>`},
-    {title:'Kan ett foton ionisere hydrogen?',body:ionizationStyle+`<p>Et hydrogenatom i <strong>grunntilstanden</strong> trenger minst <strong>2,18 aJ</strong> for å frigjøre elektronet. Hvis et foton absorberes med større energi, blir overskuddet kinetisk energi hos elektronet.</p><div class="model ema-ion-model"><div class="controls"><label class="control" for="ema-ion-energy">Fotonenergi <output id="ema-ion-energy-value" for="ema-ion-energy">3,00 aJ</output><input id="ema-ion-energy" type="range" min="0.3" max="4.8" step="0.01" value="3"></label><button id="ema-ion-send" type="button">Send foton</button><button id="ema-ion-reset" type="button">Nullstill</button></div><svg id="ema-ion-plot" class="ema-atom-svg" viewBox="0 0 760 232" role="img" aria-label="Ett foton møter hydrogen; elektronet er bundet eller frigjøres"></svg><div id="ema-ion-readout" class="ema-signal-result" aria-live="polite"></div><p class="model-note">Under 2,18 aJ kan et foton likevel gi <strong>eksitasjon</strong> dersom energien passer til et tillatt energisprang.</p><details class="ema-model-details"><summary>Om den skjematiske atommodellen</summary><p>Prikkene og sirklene viser bundet eller fri tilstand, ikke klassiske elektronbaner. Ved terskelen er elektronet frigjort med tilnærmet null kinetisk energi; det tegnes like utenfor for å skille tilstandene. Ikke alle fotoner absorberes i et virkelig møte. Terskelen gjelder hydrogen i grunntilstanden, og andre stoffer eller eksiterte atomer kan ha andre grenser.</p></details></div>`}
+    spectraLabSection
   ],
   terms:[
     {term:'Energinivå',definition:'En tillatt energi for et elektron i et atom. Energiene er kvantiserte.'},
