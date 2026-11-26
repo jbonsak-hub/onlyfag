@@ -827,7 +827,7 @@ function assertNumericQuestion(q){
    assert.equal(await handle.isVisible(),true);
   }
  });
- await attempt('Hydrogen periodic table gives the neutral spectra most of each element tile',async()=>{
+ await attempt('Hydrogen periodic table fills each tile with a neutral spectrum beneath its symbol',async()=>{
   await page.setViewportSize({width:1366,height:768});
   const {topic}=await hydrogenSeries('all');
   const {getElementEmissionLines}=await import(moduleUrl('element-spectra-data'));
@@ -839,16 +839,20 @@ function assertNumericQuestion(q){
   assert.equal(await dialog.locator('[data-es-z]').count(),118);
   for(const z of [1,11])assert.equal(await tile(z).locator('.es-swatch line').count(),getElementEmissionLines(z,'I').length);
   assert.equal(await graph.locator('line').count(),getElementEmissionLines(1,'I').length);
-  const tileGeometry=()=>tile(11).evaluate(el=>{
+  const tileGeometry=z=>tile(z).evaluate(el=>{
    const bounds=selector=>el.querySelector(selector).getBoundingClientRect();
-   const swatch=bounds('.es-swatch'),symbol=bounds('.es-symbol');
+   const tile=el.getBoundingClientRect(),swatch=bounds('.es-swatch'),plot=bounds('.es-swatch svg'),symbol=bounds('.es-symbol');
    const fill=getComputedStyle(el.querySelector('.es-swatch rect')).fill.match(/\d+/g).slice(0,3).map(Number);
-   return {side:swatch.right<=symbol.left+1||symbol.right<=swatch.left+1,
-    vertical:swatch.bottom<=symbol.top+1||symbol.bottom<=swatch.top+1,
-    dominates:swatch.width*swatch.height>symbol.width*symbol.height,
+   return {
+    fillsTile:swatch.width>=tile.width-2.5&&swatch.height>=tile.height-2.5&&plot.width>=swatch.width-1&&plot.height>=swatch.height-1,
+    topLeft:symbol.left>=plot.left&&symbol.top>=plot.top&&symbol.left<=plot.left+4&&symbol.top<=plot.top+4,
+    smallOverlay:symbol.width>0&&symbol.height>0&&symbol.right<=plot.right+1&&symbol.height<=plot.height*.4,
     dark:fill.every(channel=>channel<36)};
   });
-  assert.deepEqual(await tileGeometry(),{side:true,vertical:false,dominates:true,dark:true});
+  async function checkTiles(){
+   for(const z of [1,11,118])assert.deepEqual(await tileGeometry(z),{fillsTile:true,topLeft:true,smallOverlay:true,dark:true});
+  }
+  await checkTiles();
   await tile(11).click();
   assert.match(await dialog.locator('#es-selected-title').innerText(),/natrium/i);
   assert.equal(await graph.locator('line').count(),getElementEmissionLines(11,'I').length);
@@ -864,7 +868,7 @@ function assertNumericQuestion(q){
   assert.match(await dialog.locator('#es-selected-title').innerText(),/hydrogen/i);
   for(const width of [320,390]){
    await page.setViewportSize({width,height:844});
-   assert.deepEqual(await tileGeometry(),{side:false,vertical:true,dominates:true,dark:true});
+   await checkTiles();
    assert.equal(await dialog.locator('.es-periodic-scroll').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true,'Periodic table fits '+width+'px.');
   }
   await page.keyboard.press('Escape');

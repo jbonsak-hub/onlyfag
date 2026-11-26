@@ -1,4 +1,4 @@
-import {elementSpectraHtml,mountElementSpectra} from './element-spectra.js?v=20261126-hydrogen-sidefelt';
+import {elementSpectraHtml,mountElementSpectra} from './element-spectra.js?v=20261126-atomspektre';
 
 const C=299792458,HC_AJ_NM=198.64458571489286;
 export const HYDROGEN_GROUND_AJ=-2.17896022224;

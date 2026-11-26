@@ -1,5 +1,5 @@
-import {atomLabSection,customAtomSection,mountAtomLab,HYDROGEN_GROUND_AJ} from './atom-lab.js?v=20261126-hydrogen-sidefelt';
-import {hydrogenSeriesSection,mountHydrogenSeries} from './hydrogen-series.js?v=20261126-hydrogen-sidefelt';
+import {atomLabSection,customAtomSection,mountAtomLab,HYDROGEN_GROUND_AJ} from './atom-lab.js?v=20261126-atomspektre';
+import {hydrogenSeriesSection,mountHydrogenSeries} from './hydrogen-series.js?v=20261126-atomspektre';
 
 const C = 299792458, H = 6.62607015e-34, AJ = 1e-18;
 const fmt = (x, digits = 2) => x.toLocaleString('nb-NO', {maximumFractionDigits: digits});

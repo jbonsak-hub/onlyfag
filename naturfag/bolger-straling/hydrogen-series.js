@@ -1,4 +1,4 @@
-import {atomDrawing, HYDROGEN_GROUND_AJ, photonFromEnergyAJ, possibleTransitions, transition} from './atom-lab.js?v=20261126-hydrogen-sidefelt';
+import {atomDrawing, HYDROGEN_GROUND_AJ, photonFromEnergyAJ, possibleTransitions, transition} from './atom-lab.js?v=20261126-atomspektre';
 import {seriesBoardGraphic, seriesBoardLayout, seriesBoardMotion} from './hydrogen-series-graphics.js?v=20261126-hydrogen-ionisering';
 import {hydrogenQuiz} from './hydrogen-series-quiz.js?v=20261126-hydrogen-sidefelt';
 import {vindalooSolution} from './hydrogen-series-solution.js?v=20261126-hydrogen-sidefelt';
