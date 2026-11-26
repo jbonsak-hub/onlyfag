@@ -208,9 +208,18 @@ async function runRevisionChecks({modelFixture,topics}={}){
   const af=modelFixture(topics.find(t=>t.id==='atomer'),{reducedMotion:false});
   try{
    const hydrogen=af.get('al-hydrogen-svg'), lineButtons=af.get('al-h-spectrum-controls');
+   const model=af.get('al-hydrogen-model');
+   assert.equal(model.getAttribute('data-levels-revealed'),'false');
+   assert.equal(lineButtons.hidden,true);
+   assert.equal(lineButtons.querySelectorAll('[data-h-line]').length,0);
+   assert.equal(hydrogen.querySelectorAll('circle[fill=none]').length,1);
+   af.click('al-h-reveal');
+   assert.equal(model.getAttribute('data-levels-revealed'),'true');
+   assert.equal(lineButtons.hidden,false);
    assert.equal(lineButtons.querySelectorAll('[data-h-line]').length,4);
-   assert.equal(hydrogen.getAttribute('data-transition'),'3-2');
-   assert.match(af.get('al-h-readout').textContent,/656/);
+   assert.equal(hydrogen.querySelectorAll('circle[fill=none]').length,6);
+   assert.equal(hydrogen.getAttribute('data-transition'),null);
+   assert.equal(af.get('al-h-readout').hidden,true);
    lineButtons.dispatch('click',{target:lineButtons.querySelector('[data-h-line="6"]')});
    assert.equal(hydrogen.getAttribute('data-transition'),'6-2');
    assert.match(af.get('al-h-readout').textContent,/410/);

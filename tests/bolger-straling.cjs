@@ -97,20 +97,29 @@ function assertNumericQuestion(q){
  assert.deepEqual(numeric.get('wv-b13').fields.map(field=>field.value),[10/15,1.5]);
  assert.deepEqual(numeric.get('wv-b14').fields.map(field=>field.value),[2,3,4,.25,.5]);
  const originalIds=[...Array.from({length:12},(_,i)=>'wv-b'+(i+1)),...Array.from({length:14},(_,i)=>'wv-f'+(i+1)),...['em','atom','com'].flatMap(p=>Array.from({length:12},(_,i)=>p+'-'+String(i+1).padStart(2,'0'))),...Array.from({length:16},(_,i)=>'ra-q'+(i+1)),...Array.from({length:17},(_,i)=>'sv-q'+(i+1)),...['ce-u','ce-a'].flatMap(p=>Array.from({length:14},(_,i)=>p+'-'+String(i+1).padStart(2,'0')))];
- assert.deepEqual([...unique].sort(),[...originalIds,'wv-b13','wv-b14'].sort(),'Preserve every existing question and add both wave calculations.');
- assert.equal(unique.size,125);
+ assert.deepEqual([...unique].sort(),[...originalIds,'wv-b13','wv-b14','atom-13','atom-14','atom-15','atom-16'].sort(),'Preserve existing questions and add the new exercises.');
+ assert.equal(unique.size,129);
  const publicTopics=source.filter(t=>publishedIds.includes(t.id));
  assert.deepEqual(publicTopics.map(t=>t.id),publishedIds);
- assert.deepEqual(publicTopics.map(t=>t.questions.length),[13,12,14,12]);
+ assert.deepEqual(publicTopics.map(t=>t.questions.length),[13,12,14,16]);
  for(const topic of publicTopics)assert.ok(!topic.terms.some(t=>/knut|\bbuk/i.test(t.term)),'Buk and knute are excluded from the published concept lists.');
  for(const [questionId,topicId] of [['wv-b8','em'],['wv-f3','em'],['wv-f13','universet']])assert.equal(source.find(t=>t.questions.some(q=>q.id===questionId))?.id,topicId,'Moved question belongs to its current teaching topic: '+questionId);
  const standingTask=publicTopics[0].questions.find(q=>q.id==='wv-b11');assert.ok(standingTask&&!/knut|\bbuk/i.test(standingTask.prompt+' '+standingTask.answer),'Standing-wave reasoning does not require the excluded glossary terms.');
  const publicEntry=fs.readFileSync(path.join(root,'naturfag/bolger-straling/entry.js'),'utf8');
  assert.deepEqual([...publicEntry.matchAll(/import \{(?:topics as \w+|emTopic|atomTopic)\} from ['"]([^'"]+)['"]/g)].map(m=>m[1].split('?')[0]).sort(),['./atom-topic.js','./em-spectrum.js','./wave-basics.js','./waves.js'],'The published entry imports exactly the four released topic modules.');
- assert.equal(sourceModules['atom-topic'].atomTopic.id,'atomer');
- assert.equal(sourceModules['atom-topic'].atomTopic.sections[0].title,'Spekteret til hydrogen');
- assert.equal(sourceModules['atom-topic'].atomTopic.sections.length,4);
- assert.ok(sourceModules['atom-topic'].atomTopic.sections.every(section=>!/Nordlyset forteller|Kan ett foton ionisere/.test(section.title)));
+ const {atomTopic}=sourceModules['atom-topic'];
+ assert.equal(atomTopic.id,'atomer');
+ assert.equal(atomTopic.sections[0].title,'Spekteret til hydrogen');
+ assert.equal(atomTopic.sections.length,4);
+ assert.ok(atomTopic.sections.every(section=>!/Nordlyset forteller|Kan ett foton ionisere/.test(section.title)));
+ assert.equal(atomTopic.resources.filter(resource=>new URL(resource.url).hostname==='ndla.no').length,3);
+ for(const question of atomTopic.questions){
+  assert.match(question.figure,new RegExp('<svg[^>]*data-atom-figure="'+question.id+'"'));
+  assert.match(question.figure,/<desc\b[^>]*>[^<]+<\/desc>|aria-label="[^"]+"/);
+ }
+ const discharge=atomTopic.questions.find(question=>question.id==='atom-08');
+ assert.equal(discharge.type,'open');
+ assert.match(discharge.prompt,/gass(?:en)? i røret|gassrør/i);
  assert.deepEqual(sourceModules.communication.topics.map(t=>t.id),['kommunikasjon'],'Only communication remains in this prototype module.');
  const prototypeEntry=fs.readFileSync(path.join(root,'prototyper/bolger-straling/app.js'),'utf8');
  assert.match(prototypeEntry,/naturfag\/bolger-straling\/wave-basics\.js/);assert.match(prototypeEntry,/naturfag\/bolger-straling\/waves\.js/);
@@ -245,7 +254,7 @@ function assertNumericQuestion(q){
  }finally{comm.destroy();}
  const revisionGroups=await require('./bolger-straling-revision.cjs').runRevisionChecks({modelFixture,topics:source});
  assert.ok(revisionGroups.length>=8);
- console.log('Source/model checks passed: 9 distinct topics, 125 questions; 4 published topics, 51 questions; 26 numeric exercises; independent model pause/repaint, Snell constraints, retarded Doppler, swing modes and outcomes, primary/secondary rainbow, atom cascades, isotope decay and absolute Planck units.');
+ console.log('Source/model checks passed: 9 distinct topics, 129 questions; 4 published topics, 55 questions; 26 numeric exercises; independent model pause/repaint, Snell constraints, retarded Doppler, swing modes and outcomes, primary/secondary rainbow, atom cascades, isotope decay and absolute Planck units.');
  if(process.argv.includes('--data-only'))return;
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
  const base='http://127.0.0.1:'+server.address().port, url=base+'/prototyper/bolger-straling.html';
@@ -395,15 +404,50 @@ function assertNumericQuestion(q){
   const firstSection=atom.locator('.content-section').first();
   assert.equal(await atom.locator('.content-section').count(),4);
   assert.equal(await firstSection.getByRole('heading',{name:'Spekteret til hydrogen',exact:true}).isVisible(),true);
-  assert.match(await firstSection.locator('p').first().innerText(),/Bohrs atommodell.*grunntilstanden.*energi oppover/);
+  assert.match(await firstSection.locator('p').first().innerText(),/Bohrs atommodell.*grunntilstanden.*lavest mulig energi/);
+  const model=firstSection.locator('#al-hydrogen-model'),stage=firstSection.locator('#al-hydrogen-svg');
+  const controls=firstSection.locator('#al-h-spectrum-controls'),reveal=firstSection.locator('#al-h-reveal');
+  const rings=stage.locator('circle[fill=none]');
+  const onInnerShell=()=>stage.locator('[data-h-atom]').evaluate(el=>{
+   const inner=el.querySelector('circle[fill=none]');
+   const electron=Array.from(el.querySelectorAll('circle')).at(-1);
+   const distance=Math.hypot(electron.cx.baseVal.value-inner.cx.baseVal.value,electron.cy.baseVal.value-inner.cy.baseVal.value);
+   return Math.abs(distance-inner.r.baseVal.value)<.01;
+  });
+  const figures=['#al-hydrogen-svg'];
+  const originalBounds=await drawingBounds(firstSection,figures);
+  assert.equal(await model.getAttribute('data-levels-revealed'),'false');
+  assert.equal(await rings.count(),1);
+  assert.equal(await onInnerShell(),true);
+  assert.equal(await stage.getAttribute('aria-label'),'Hydrogenatom i grunntilstanden');
+  assert.equal(await stage.getAttribute('data-transition'),null);
+  assert.equal(await stage.locator('.al-band').count(),0);
+  assert.doesNotMatch(await stage.textContent(),/Energinivåer/);
+  assert.equal(await controls.isVisible(),false);
+  assert.equal(await controls.locator('[data-h-line]').count(),0);
+  assert.equal(await firstSection.locator('#al-h-readout').isVisible(),false);
+  assert.match(await reveal.innerText(),/Vis andre skall elektronet kan være i/i);
+  await reveal.click();
+  const revealedBounds=await drawingBounds(firstSection,figures);
+  assert.deepEqual(revealedBounds[0].slice(0,3),originalBounds[0].slice(0,3));
+  assert.ok(revealedBounds[0][3]>originalBounds[0][3]);
+  assert.equal(await reveal.isVisible(),false);
+  assert.equal(await stage.evaluate(el=>el.ownerDocument.activeElement===el),true);
+  assert.equal(await model.getAttribute('data-levels-revealed'),'true');
+  assert.equal(await rings.count(),6);
+  assert.equal(await onInnerShell(),true);
+  assert.match(await stage.textContent(),/Energinivåer/);
+  assert.equal(await stage.locator('.al-band').count(),1);
+  assert.equal(await stage.locator('[data-h-emission-arrow]').count(),0);
+  assert.equal(await stage.getAttribute('data-transition'),null);
+  assert.equal(await controls.locator('[data-h-line][aria-pressed=false]').count(),4);
   assert.match(await firstSection.locator('.al-h-spectrum-intro').innerText(),/nivå 2.*synlig lys.*emisjonsspekter/);
   const guide=firstSection.locator('#al-h-spectrum-guide');
   assert.match(await guide.innerText(),/←\s*Velg en spektrallinje for å se overgangen/);
   assert.equal(await guide.evaluate(el=>el.getBoundingClientRect().left>=document.querySelector('#al-hydrogen-svg').getBoundingClientRect().right),true);
+  assert.equal(await guide.evaluate(el=>getComputedStyle(el).animationName),'none','The cue respects reduced motion.');
   const wavelength=firstSection.locator('#al-h-readout [data-al-wavelength-example]');
-  const figures=['#al-hydrogen-svg'];
-  const originalBounds=await drawingBounds(firstSection,figures);
-  assert.match(await wavelength.innerText(),/656,4\s*nm/);
+  assert.equal(await wavelength.isVisible(),false);
   assert.equal(await firstSection.locator('#al-h-show-energy').count(),0);
   assert.doesNotMatch(await firstSection.locator('#al-h-readout').innerText(),/ΔE/);
   await firstSection.locator('#al-h-spectrum-controls [data-h-line="6"]').click();
@@ -413,24 +457,75 @@ function assertNumericQuestion(q){
   await wavelength.click();
   const calculation=firstSection.locator('#al-h-calculation-dialog[open]');
   assert.equal(await calculation.isVisible(),true);
-  for(const step of ['1. Finn energinivåene','2. Finn energien til fotonet','3. Finn bølgelengden']){
+  for(const step of ['1. Finn energinivåene med Bohrs formel','2. Finn energien til fotonet','3. Finn bølgelengden']){
    assert.equal(await calculation.getByRole('heading',{name:step,exact:true}).isVisible(),true);
   }
   const steps=await calculation.innerText();
   assert.match(steps,/1\s*aJ\s*=\s*10/);
   assert.match(steps,/410,2\s*nm/);
   assert.match(steps,/Fysikk 1/i);
-  assert.deepEqual(await drawingBounds(firstSection,figures),originalBounds);
+  assert.deepEqual(await drawingBounds(firstSection,figures),revealedBounds);
   await page.keyboard.press('Escape');
   await calculation.waitFor({state:'hidden'});
   assert.equal(await wavelength.evaluate(el=>el.ownerDocument.activeElement===el),true);
-  for(const [view, selector, count] of [['fagstoff','#al-hydrogen-svg',1],['oppgaver','.q-card',12],['begreper','.term',data.find(t=>t.id==='atomer').terms]]){
+  for(const [view, selector, count] of [['fagstoff','#al-hydrogen-svg',1],['oppgaver','.q-card',16],['begreper','.term',data.find(t=>t.id==='atomer').terms]]){
    await page.goto(url+'?legacy-atom=1#atomer/'+view);
    await page.waitForURL(new RegExp('/naturfag(?:\\.html)?#waves/atomer/'+view+'$'));
    await atom.locator(selector).first().waitFor();
    assert.equal(await atom.locator(selector).count(),count);
    assert.equal(await page.locator('[data-waves-topic="atomer"][data-waves-view="'+view+'"]').getAttribute('aria-current'),'page');
   }
+ });
+ await attempt('The atom question bank renders figures and preserves shared answer behavior',async()=>{
+  await page.setViewportSize({width:1366,height:768});
+  await page.goto(base+'/naturfag.html#waves/atomer/oppgaver');
+  const atom=page.frameLocator('#waves-module-frame');
+  const questions=data.find(topic=>topic.id==='atomer').questions;
+  const card=id=>atom.locator('.q-card[data-question="'+id+'"]');
+  await card('atom-01').waitFor();
+  assert.equal(await atom.locator('.q-card.q-has-figure').count(),16);
+  for(const {id} of questions){
+   const svg=card(id).locator('.q-figure svg[data-atom-figure="'+id+'"]');
+   assert.equal(await svg.count(),1);
+   assert.ok(await svg.getAttribute('viewBox'));
+  }
+  const multipleChoice=card('atom-13');
+  const position=()=>multipleChoice.evaluate(el=>{
+   const box=selector=>el.querySelector(selector).getBoundingClientRect().toJSON();
+   return {prompt:box('.q-prompt'),figure:box('.q-figure'),choices:box('.q-choices')};
+  });
+  const desktop=await position();
+  assert.ok(desktop.prompt.right<=desktop.figure.left&&desktop.choices.right<=desktop.figure.left,'The drawing sits to the right of the prompt and choices.');
+  const geometry=await drawingBounds(multipleChoice,['.q-figure svg']);
+  await multipleChoice.locator('[data-choice="0"]').click();
+  assert.match(await multipleChoice.locator('.feedback').innerText(),/stemmer ikke/i);
+  assert.equal(await multipleChoice.locator('.q-status').isVisible(),false);
+  await multipleChoice.locator('[data-choice="1"]').click();
+  assert.equal(await multipleChoice.locator('.feedback').innerText(),'Riktig!');
+  assert.equal(await multipleChoice.locator('.q-status').isVisible(),true);
+  assert.deepEqual(await drawingBounds(multipleChoice,['.q-figure svg']),geometry,'Showing feedback does not move the drawing.');
+
+  const numeric=card('atom-05');
+  await numeric.locator('input').fill('0,30');
+  await numeric.getByRole('button',{name:'Sjekk',exact:true}).click();
+  assert.equal(await numeric.locator('.feedback').innerText(),'Riktig!');
+  assert.equal(await numeric.locator('.solution .calc-lines').isVisible(),true);
+
+  const open=card('atom-16');
+  assert.equal(await open.locator('.solution').isVisible(),false);
+  await open.getByRole('button',{name:'Vis veiledende svar',exact:true}).click();
+  assert.equal(await open.locator('.solution').isVisible(),true);
+  assert.equal(await open.getByRole('button',{name:'Dette fikk jeg til',exact:true}).isVisible(),true);
+  for(const width of [320,390]){
+   await page.setViewportSize({width,height:844});
+   const mobile=await position();
+   assert.ok(mobile.prompt.bottom<=mobile.figure.top&&mobile.figure.bottom<=mobile.choices.top,'The drawing precedes the choices on mobile.');
+   assert.equal(await atom.locator('main').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true,'Atom question bank fits '+width+'px.');
+  }
+  await page.goto(base+'/naturfag.html#waves/fenomener/oppgaver');
+  await atom.locator('.q-card[data-question="wv-f1"]').waitFor();
+  assert.equal(await atom.locator('.q-card').count(),data.find(topic=>topic.id==='fenomener').questions.length);
+  assert.equal(await atom.locator('.q-card.q-has-figure').count(),0);
  });
  await attempt('Hydrogen transitions play from the atom, energy diagram and spectrum',async()=>{
   await page.emulateMedia({reducedMotion:'no-preference'});
@@ -443,6 +538,11 @@ function assertNumericQuestion(q){
    assert.equal(await topic.locator('.content-section').nth(0).locator('#hs-model').count(),0);
    assert.equal(await topic.locator('.content-section').nth(1).locator('#hs-model').count(),1);
    assert.equal(await topic.locator('.animation-toggle').count(),0,'Animation controls are omitted throughout the atom topic.');
+   await topic.locator('#al-h-reveal').click();
+   assert.deepEqual(await topic.locator('#al-h-spectrum-guide').evaluate(el=>{
+    const style=getComputedStyle(el);
+    return [style.animationName,style.animationIterationCount];
+   }),['al-h-guide-cue','3']);
    await topic.locator('#al-h-spectrum-controls [data-h-line="6"]').click();
    await topic.locator('#al-hydrogen-svg[data-transition="6-2"][data-photon-arrived="false"]').waitFor();
    await topic.locator('#al-hydrogen-svg[data-transition="6-2"][data-photon-arrived="true"]').waitFor();
@@ -496,6 +596,11 @@ function assertNumericQuestion(q){
    assert.equal(await targets('diagram').count(),0);
    const finiteBounds=await sceneBounds();
    assert.equal(await help.isVisible(),true);
+   assert.equal(await help.evaluate(el=>{
+    const button=el.getBoundingClientRect();
+    const mode=el.closest('#hs-model').querySelector('[data-series-mode="excite"]').getBoundingClientRect();
+    return button.top>=mode.bottom&&Math.abs(button.left+button.width/2-mode.left-mode.width/2)<=2;
+   }),true,'Excitation help is centered below the Exciter button.');
    await help.click();
    await helpDialog.waitFor();
    assert.match(await helpDialog.innerText(),/foton/i);
@@ -518,7 +623,11 @@ function assertNumericQuestion(q){
    assert.deepEqual(await lineKeys(),keys);
    assert.equal(await explainTrigger.isVisible(),true);
    const chosenSummary=await summary.innerText();
-   assert.match(chosenSummary,/Eksitasjon opp til n\s*=\s*5 gir 10 overganger/);
+   const summaryTitle=summary.locator('.hs-excitation-level-title'),summaryCount=summary.locator('.hs-excitation-count');
+   assert.equal(await summaryTitle.innerText(),'Eksitasjon opp til n = 5.');
+   assert.equal(await summaryCount.innerText(),'Gir 10 overganger:');
+   assert.equal(await summaryTitle.evaluate(el=>getComputedStyle(el).textDecorationLine.includes('underline')),true);
+   assert.equal(await summaryCount.evaluate(el=>el.getBoundingClientRect().top>=el.previousElementSibling.getBoundingClientRect().bottom-1),true);
    assert.deepEqual(await sceneBounds(),finiteBounds,'Showing the explanation control keeps both drawings in place.');
    await target('diagram','5-4').press('Space');
    await phase('emission');
@@ -556,8 +665,8 @@ function assertNumericQuestion(q){
    assert.deepEqual(await sceneBounds(),finiteBounds,'Ionization keeps the atom, energy diagram and spectrum in place.');
    assert.equal(await model.evaluate(el=>{
     const bounds=selector=>el.querySelector(selector).getBoundingClientRect();
-    return bounds('#hs-side').left>=bounds('#hs-board').right&&bounds('#hs-ionization').bottom<=bounds('.hs-legend').top;
-   }),true,'Ionization status is above the legend.');
+    return bounds('#hs-side').left>=bounds('#hs-board').right&&bounds('#hs-ionization').bottom+25<=bounds('.hs-legend').top;
+   }),true,'Ionization status has space before the legend.');
    assert.deepEqual(await lineKeys(),[]);
    await selectMode('all');
    await selectMode('excite');
@@ -569,7 +678,8 @@ function assertNumericQuestion(q){
    await phase('idle');
    assert.deepEqual(await lineKeys(),['2-1']);
    assert.equal(await explainControls.isVisible(),false);
-   assert.match(await summary.innerText(),/Eksitasjon opp til n\s*=\s*2 gir (?:1|én) overgang\b/);
+   assert.equal(await summaryTitle.innerText(),'Eksitasjon opp til n = 2.');
+   assert.equal(await summaryCount.innerText(),'Gir 1 overgang:');
    const mobileFiniteBounds=await sceneBounds();
    for(const level of [3,4,5,6]){
     await model.locator('[data-series-level="'+level+'"]').click();
@@ -577,9 +687,10 @@ function assertNumericQuestion(q){
     assert.equal(await explainTrigger.isVisible(),true);
     assert.equal((await lineKeys()).length,level*(level-1)/2);
     assert.deepEqual(await sceneBounds(),mobileFiniteBounds);
+    assert.equal(await summaryTitle.innerText(),`Eksitasjon opp til n = ${level}.`);
+    assert.equal(await summaryCount.innerText(),`Gir ${level*(level-1)/2} overganger:`);
     if(level===4){
      const wavelengths=await summary.innerText();
-     assert.match(wavelengths,/Eksitasjon opp til n\s*=\s*4 gir 6 overganger/);
      assert.match(wavelengths,/UV[^\d]*97,\s*103,\s*122\s*nm/i);
      assert.match(wavelengths,/Synlig[^\d]*486,\s*656\s*nm/i);
      assert.match(wavelengths,/(?:IR|Infrarødt)[^\d]*1\s*875\s*nm/i);

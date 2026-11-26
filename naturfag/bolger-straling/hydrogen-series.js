@@ -1,4 +1,4 @@
-import {atomDrawing, HYDROGEN_GROUND_AJ, photonFromEnergyAJ, possibleTransitions, transition} from './atom-lab.js?v=20261126-absorpsjon';
+import {atomDrawing, HYDROGEN_GROUND_AJ, photonFromEnergyAJ, possibleTransitions, transition} from './atom-lab.js?v=20261126-atomoppgaver';
 import {seriesBoardGraphic, seriesBoardLayout, seriesBoardMotion} from './hydrogen-series-graphics.js?v=20261126-hydrogen-ionisering';
 import {hydrogenQuiz} from './hydrogen-series-quiz.js?v=20261126-hydrogen-sidefelt';
 import {vindalooSolution} from './hydrogen-series-solution.js?v=20261126-hydrogen-sidefelt';
@@ -12,6 +12,7 @@ const styles = `<style>
 .topic-page #hs-model { width:100%; max-width:none; margin:10px 0 0; padding:12px 14px; container-type:inline-size }
 #hs-model [hidden] { display:none!important }
 .hs-modes,.hs-options { display:flex; flex-wrap:wrap; align-items:center; gap:5px 7px }
+:where(#hs-model[data-mode=excite]) .hs-modes { display:grid; grid-template-columns:repeat(3,max-content) }
 .hs-toolbar { display:grid; grid-template-columns:max-content minmax(0,1fr); align-items:start; gap:8px 16px; margin-bottom:9px }
 .hs-toolbar-menu { display:grid; justify-items:start; gap:6px; margin-block-start:7px }
 .hs-toolbar-controls { display:grid; justify-items:end; gap:4px; min-width:0 }
@@ -19,6 +20,9 @@ const styles = `<style>
 #hs-model .hs-panel p,.hs-panel dl,.hs-panel dd { margin:0 }
 #hs-selection,.hs-excitation-status { max-width:23rem; border-inline-start:3px solid var(--green); background:var(--green-soft) }
 .hs-excitation-status { padding:6px 9px }
+#hs-ionization:not([hidden]) { margin-block-end:clamp(21px,2.4cqi,33px) }
+.hs-excitation-level-title,.hs-excitation-count { display:block }
+.hs-excitation-level-title { text-decoration:underline; text-underline-offset:2px }
 #hs-model dl.hs-excitation-bands { display:grid; gap:4px; margin-top:5px }
 .hs-excitation-bands > div { display:grid; grid-template-columns:3.1rem minmax(0,1fr); gap:4px }
 .hs-excitation-bands dt { font-weight:650 }
@@ -36,7 +40,8 @@ const styles = `<style>
 :is(#hs-model,#hs-quiz-options) button.hs-button:hover { border-color:var(--green) }
 :is(#hs-model,#hs-quiz-options) button.hs-button[aria-pressed=true] { background:var(--green); border-color:var(--green); color:var(--surface) }
 #hs-model .hs-panel button.hs-button:not([aria-pressed=true]) { background:var(--surface) }
-#hs-model .hs-excitation-help-button { min-height:28px; padding:4px 8px; color:var(--green) }
+#hs-model button.hs-excitation-help-button { grid-column:2; justify-self:center; min-width:0; min-height:28px; padding:4px 7px; border-color:transparent; color:var(--green); background:var(--green-soft); font-size:.79rem; text-align:center; white-space:normal }
+#hs-model button.hs-excitation-help-button:hover { border-color:var(--green) }
 #hs-model button.hs-explanation-trigger { display:block; padding:2px 0; border:0; background:none; color:var(--green); font:inherit; font-weight:650; text-align:start; white-space:normal; text-decoration:underline; text-underline-offset:3px }
 .hs-quiz-prompt { display:grid; align-content:center; width:min(100%,36rem); min-width:0; gap:4px; padding:10px 13px; border:1px solid var(--line); border-inline-start:3px solid var(--green); border-radius:8px; color:var(--ink); background:var(--green-soft) }
 .hs-quiz-label { color:var(--ink); font-size:.81rem; font-weight:650 }
@@ -128,8 +133,8 @@ export const hydrogenSeriesSection = {title:'Flere overganger i hydrogenatomet',
       <div class="hs-modes" role="group" aria-label="Modus og øving">
         ${buttons('mode', [['all','Overganger i hydrogen'],['excite','Eksiter hydrogenatomet'],['quiz','Quiz']], 'all')}
         <button type="button" class="hs-button" data-series-reset aria-haspopup="dialog" aria-controls="hs-quiz-options" hidden>Start på nytt</button>
+        <button type="button" class="hs-button hs-excitation-help-button" data-series-excitation-help aria-haspopup="dialog" aria-controls="hs-excitation-help" hidden>${excitationHelpQuestion}</button>
       </div>
-      <button type="button" class="hs-button hs-excitation-help-button" data-series-excitation-help aria-haspopup="dialog" aria-controls="hs-excitation-help" hidden>${excitationHelpQuestion}</button>
     </div>
     <div id="hs-toolbar-controls" class="hs-toolbar-controls">
       <div id="hs-excite" class="hs-panel" hidden>
@@ -331,10 +336,10 @@ export function mountHydrogenSeries(root, api) {
 
     const bands = ['UV', 'Synlig', 'IR'].map(region => {
       const wavelengths = edges.filter(item => item.region === region).map(item => fmt(item.wavelengthNM, 0));
-      return wavelengths.length ? `<div><dt>${region}</dt><dd>${wavelengths.join(', ')} nm</dd></div>` : '';
+      return wavelengths.length ? `<div><dt>${region}</dt><dd>${wavelengths.join(', ')}&nbsp;nm</dd></div>` : '';
     });
     const count = edges.length;
-    excitationSummary.innerHTML = `<strong>Eksitasjon opp til n = ${excited} gir ${count} ${count===1?'overgang':'overganger'}</strong><dl class="hs-excitation-bands">${bands.join('')}</dl>`;
+    excitationSummary.innerHTML = `<strong class="hs-excitation-level-title">Eksitasjon opp til n = ${excited}.</strong><span class="hs-excitation-count">Gir ${count} ${count===1?'overgang':'overganger'}:</span><dl class="hs-excitation-bands">${bands.join('')}</dl>`;
   }
 
   function setMode(next) {

@@ -242,3 +242,14 @@ body.dark{color-scheme:dark;--bg:#12251f;--surface:#1a3028;--sidebar:#152a22;--i
  .tf-stage{padding-top:14px}
  .tf-stage .tf-frequency-select{width:30%;min-height:28px;top:3px}
 }
+
+.q-figure{min-width:0;margin:0 0 15px;padding:8px;border:1px solid var(--line);border-radius:9px;background:var(--bg)}
+.q-figure svg{display:block;width:100%;height:auto}
+#question-list{container-type:inline-size}
+@container (min-width:660px){
+ .q-has-figure{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto 1fr;column-gap:20px;align-items:start}
+ .q-has-figure .q-top{grid-column:1/-1}
+ .q-has-figure .q-prompt{grid-area:2/1}
+ .q-has-figure .q-controls{grid-area:3/1;min-width:0}
+ .q-has-figure .q-figure{grid-area:2/2/4;margin:0}
+}
