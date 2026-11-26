@@ -100,9 +100,20 @@ function drawDiagramHit(graph,ys,t,shape,span,color,width,drawing) {
     + arrow(x,top+1,x,bottom-1,color,width,'class="hs-mark" pointer-events="none"');
 }
 
+function ionizationPoints(atom,orbitPoint) {
+  const angle=-2.64;
+  const bound=orbitPoint(atom,1,angle);
+  const outer=orbitPoint(atom,6,angle);
+  const released=[outer[0]+28*Math.cos(angle),outer[1]+28*Math.sin(angle)];
+  return {bound,released};
+}
+
 function boardGraphic(layout,state,drawing) {
-  const {atom,graph,compact}=layout, {line,text,fmt,arrow,atomFace,hLevels,transitionKey}=drawing;
+  const {atom,graph,compact}=layout, {line,text,fmt,arrow,atomFace,hLevels,orbitPoint,transitionKey}=drawing;
   const {animation,excited,mode,selected,showEnergies,solved,transitions}=state;
+  const ionization=mode==='excite'&&excited===Infinity;
+  const ionized=ionization&&!animation;
+  const thresholdY=graph.groupY-4;
   const ys=levelPositions(graph,drawing);
   const columns=shownGroups(transitions);
   const span=(graph.right-graph.left)/columns.length;
@@ -118,6 +129,11 @@ function boardGraphic(layout,state,drawing) {
   }).join('');
   const headings=columns.map((group,i)=>text(graph.left+span*(i+.5),graph.groupY,group.name,
     'class="hs-series-name" text-anchor="middle"')).join('');
+  const threshold=ionization
+    ? line(graph.left,thresholdY,graph.right,thresholdY,'var(--green,#236448)',
+      'stroke-width="2.3" stroke-dasharray="6 4" data-series-excited-row="Infinity"')
+      + text(graph.right+8,thresholdY+3.6,'n = ∞ · 0 aJ','class="hs-label"')
+    : '';
   const hits=transitions.map(t=>{
     const key=transitionKey(t),shape=boardGroups.get(key),found=solved.has(key);
     const chosen=key===selected, burst=animation?.phase==='burst'&&illuminated.has(key);
@@ -131,12 +147,17 @@ function boardGraphic(layout,state,drawing) {
       + linkGroup(key,'diagram',description,{chosen,found},drawDiagramHit(graph,ys,t,shape,span,color,width,drawing));
   }).join('');
   const showGround=mode==='excite'&&excited===null;
-  return `<desc>Nivåavstandene er skjematiske. Energien øker oppover i diagrammet.</desc>
-    ${text(atom.x,24,'Hydrogenatom','class="hs-title" text-anchor="middle"')}
+  const released=ionized?ionizationPoints(atom,orbitPoint).released:null;
+  const description=ionization
+    ? 'Den stiplede linjen markerer ioniseringsgrensen. Elektronets bevegelse er skjematisk.'
+    : 'Nivåavstandene er skjematiske. Energien øker oppover i diagrammet.';
+  return `<desc>${description}</desc>
+    ${text(atom.x,24,ionized?'Hydrogenion H⁺':'Hydrogenatom','class="hs-title" text-anchor="middle"')}
     ${text(graph.left,graph.titleY,'Energinivåer','class="hs-title"')}
     ${compact?'':line(graph.left-23,49,graph.left-23,225,'var(--line,#cddbd1)')}
-    ${arrow(graph.left-11,graph.bottom+2,graph.left-11,graph.top-3,'var(--muted,#71887c)',1.3)}
-    ${energyRows}${headings}${face.base}${showGround?face.electron:''}${hits}
+    ${arrow(graph.left-11,graph.bottom+2,graph.left-11,(ionization?thresholdY:graph.top)-3,'var(--muted,#71887c)',1.3)}
+    ${energyRows}${ionization?threshold:headings}${face.base}${showGround?face.electron:''}${hits}
+    ${released?`<g data-series-ionized="true">${electronPoint(...released,6.8)}${text(released[0],released[1]+20,'Fritt e⁻','class="hs-label" text-anchor="middle"')}</g>`:''}
     ${text(graph.left,graph.bottom+20,'Energi øker oppover','class="hs-label"')}`;
 }
 
@@ -149,6 +170,19 @@ export function seriesBoardMotion(layout,state,drawing) {
   if(!animation) return '';
   const {phase,progress,transitions}=animation;
   const {atom,graph,compact}=layout, {orbitPoint,wavePacket,ease,wavelengthInk,transitionKey}=drawing;
+  if(phase==='ionize') {
+    const {bound,released}=ionizationPoints(atom,orbitPoint);
+    const absorbedAt=.43;
+    const position=ease((progress-absorbedAt)/(1-absorbedAt));
+    const x=bound[0]+(released[0]-bound[0])*position, y=bound[1]+(released[1]-bound[1])*position;
+    const packetX=atom.x-(compact?154:106);
+    const photonX=packetX+(bound[0]-packetX)*ease(progress/absorbedAt);
+    const color=wavelengthInk(transitions[0].wavelengthNM);
+    const incoming=progress<absorbedAt
+      ? `<g data-series-ionizing-photon>${wavePacket(photonX,bound[1],0,progress*24,color,33)}</g>`
+      : '';
+    return `${incoming}<g data-series-escaping-electron>${electronPoint(x,y,6.8)}</g>`;
+  }
   if(phase==='absorb') {
     const radius=orbitPoint({x:0,y:0,inner:atom.inner,step:atom.step},excited,0)[0];
     const motion=ease((progress-.4)/.48);

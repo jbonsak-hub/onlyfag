@@ -1,20 +1,22 @@
-import {atomDrawing, possibleTransitions, transition} from './atom-lab.js?v=20261126-hydrogen-controls';
-import {seriesBoardGraphic, seriesBoardLayout, seriesBoardMotion} from './hydrogen-series-graphics.js?v=20261126-hydrogen';
-import {hydrogenQuiz} from './hydrogen-series-quiz.js?v=20261126-hydrogen-quiz';
+import {atomDrawing, HYDROGEN_GROUND_AJ, photonFromEnergyAJ, possibleTransitions, transition} from './atom-lab.js?v=20261126-hydrogen-controls';
+import {seriesBoardGraphic, seriesBoardLayout, seriesBoardMotion} from './hydrogen-series-graphics.js?v=20261126-hydrogen-ionisering';
+import {hydrogenQuiz} from './hydrogen-series-quiz.js?v=20261126-hydrogen-ionisering';
 
 const {fmt, transitionKey} = atomDrawing;
 const overviewTransitions = possibleTransitions(6).filter(item => item.to <= 3);
-const duration = {absorb: .95, burst: 1.35, emission: 1.15};
+const ionizingPhoton = photonFromEnergyAJ(-HYDROGEN_GROUND_AJ);
+const duration = {absorb: .95, burst: 1.35, emission: 1.15, ionize: 1.65};
 
 const styles = `<style>
 .topic-page #hs-model { width:100%; max-width:none; margin:10px 0 0; padding:12px 14px; container-type:inline-size }
 #hs-model [hidden] { display:none!important }
 .hs-toolbar,.hs-modes,.hs-options { display:flex; flex-wrap:wrap; align-items:center; gap:5px 7px }
-.hs-toolbar { justify-content:space-between; gap:8px 16px; margin-bottom:8px }
+.hs-toolbar { justify-content:space-between; align-items:flex-start; gap:8px 16px; margin-bottom:8px }
+.hs-toolbar > .hs-modes { margin-block-start:8px }
 .hs-toolbar-controls { display:grid; justify-items:end; gap:6px; max-width:100%; margin-inline-start:auto }
 .hs-panel { padding:8px 11px; border:1px solid var(--line); border-radius:8px; background:var(--sidebar); color:var(--ink); font-size:.84rem; line-height:1.4 }
 #hs-model .hs-panel p,.hs-panel dl,.hs-panel dd { margin:0 }
-#hs-selection { max-width:23rem; border-inline-start:3px solid var(--green); background:var(--green-soft) }
+#hs-selection,#hs-ionization { max-width:23rem; border-inline-start:3px solid var(--green); background:var(--green-soft) }
 .hs-readout { display:grid; grid-template-columns:repeat(2,max-content); gap:5px 18px }
 .hs-readout dt, .hs-panel-label { font-size:.8rem; font-weight:650 }
 .hs-readout dd { font-size:1rem; font-weight:750; font-variant-numeric:tabular-nums; white-space:nowrap }
@@ -61,8 +63,8 @@ body.dark #hs-model { --hs-lyman-ink:#c491ee; --hs-balmer-ink:#72cdb9; --hs-pasc
 #hs-model .hs-figure [data-series-action]:focus-visible .hs-focus { opacity:.65 }
 #hs-model .hs-burst-glow { animation:hs-glow 1.25s both }
 @keyframes hs-glow { 0%, 20% { opacity:.16; } 55% { opacity:.55; } 100% { opacity:.15; } }
-#hs-formulas { margin:7px 0 0; color:var(--muted); font-size:.79rem; line-height:1.55 }
-#hs-formulas span { white-space:nowrap; display:inline-block; margin-right:12px }
+#hs-formulas { display:flex; flex-wrap:wrap; gap:2px 10px; margin:4px 0 0; padding-top:5px; border-top:1px solid var(--line); color:var(--ink); font-size:.81rem; line-height:1.4 }
+#hs-formulas span { white-space:nowrap }
 @container (max-width:730px) {
   .hs-figures { grid-template-columns:minmax(0,1fr); grid-template-areas:'board' 'spectrum' 'legend' }
   .hs-legend { grid-template-columns:repeat(3,max-content); gap:6px 12px }
@@ -76,11 +78,13 @@ body.dark #hs-model { --hs-lyman-ink:#c491ee; --hs-balmer-ink:#72cdb9; --hs-pasc
 }
 @container (max-width:440px) {
   .hs-modes { display:grid; width:100%; grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) max-content; align-items:stretch }
+  .hs-toolbar > .hs-modes { margin-block-start:0 }
   #hs-model .hs-modes button { padding-inline:5px; white-space:normal }
-  .hs-excite-levels { display:grid; width:100%; grid-template-columns:repeat(5,minmax(0,1fr)) }
+  .hs-excite-levels { display:grid; width:100%; grid-template-columns:repeat(6,minmax(0,1fr)) }
   #hs-excite-label { grid-column:1/-1 }
   #hs-model .hs-excite-levels button { padding-inline:6px }
 }
+@container (max-width:320px) { .hs-excite-levels { grid-template-columns:repeat(3,minmax(0,1fr)) } }
 @media (max-width:520px) { .topic-page #hs-model { padding:9px } }
 </style>`;
 
@@ -105,8 +109,8 @@ export const hydrogenSeriesSection = {title:'Flere overganger i hydrogenatomet',
     <div class="hs-toolbar-controls">
       <div id="hs-excite" class="hs-panel" hidden>
         <div class="hs-options hs-excite-levels" role="group" aria-labelledby="hs-excite-label">
-          <span id="hs-excite-label" class="hs-panel-label">Eksiter til</span>
-          ${buttons('level', [2,3,4,5,6].map(n => [n, `n = ${n}`]))}
+          <span id="hs-excite-label" class="hs-panel-label">Velg nivå</span>
+          ${buttons('level', [2,3,4,5,6,Infinity].map(n => [n, `n = ${n === Infinity ? '∞' : n}`]))}
         </div>
         <button type="button" class="hs-explanation-trigger" data-series-explanation aria-haspopup="dialog" aria-controls="hs-explanation">${excitationQuestion}</button>
       </div>
@@ -117,10 +121,14 @@ export const hydrogenSeriesSection = {title:'Flere overganger i hydrogenatomet',
           <div><dt>Bølgelengde</dt><dd id="hs-wavelength-value"></dd></div>
         </dl>
       </div>
+      <div id="hs-ionization" class="hs-panel" role="status" hidden>
+        <strong>Ionisering</strong>
+        <p>Fotonet tilfører ${fmt(ionizingPhoton.energyAJ,2)} aJ. Elektronet blir fritt (n = ∞), og hydrogenatomet blir til H⁺.</p>
+      </div>
       <div id="hs-quiz-options" class="hs-panel hs-options hs-quiz-options" hidden>
         <span id="hs-difficulty-prompt" class="hs-panel-label">Velg vanskelighetsgrad</span>
         <div class="hs-options" role="group" aria-label="Vanskelighetsgrad">
-          ${buttons('difficulty', [['mild','Mild'],['medium','Medium'],['spicy','Spicy']])}
+          ${buttons('difficulty', [['mild','Mild'],['medium','Småspicy'],['spicy','Vindaloo']])}
         </div>
         <button type="button" class="hs-button" data-series-reset hidden>Start på nytt</button>
       </div>
@@ -130,6 +138,7 @@ export const hydrogenSeriesSection = {title:'Flere overganger i hydrogenatomet',
     <div class="hs-quiz-prompt">
       <div class="hs-quiz-meta"><span class="hs-quiz-label">Finn overgangen</span><span id="hs-progress"></span></div>
       <p id="hs-clue" tabindex="-1"></p>
+      <p id="hs-formulas" hidden><strong>Formler</strong><span>ΔE = E<sub>øvre</sub> − E<sub>nedre</sub></span><span>ΔE = hf</span><span>c = λf</span><span>h ≈ 6,626 · 10<sup>−34</sup> J·s</span><span>c ≈ 3,00 · 10<sup>8</sup> m/s</span><span>1 aJ = 10<sup>−18</sup> J</span></p>
     </div>
     <div class="hs-panel hs-quiz-feedback">
       <span id="hs-feedback-label" class="hs-quiz-label"></span>
@@ -143,7 +152,6 @@ export const hydrogenSeriesSection = {title:'Flere overganger i hydrogenatomet',
     </ul>
     <div class="hs-spectrum-wrap"><svg id="hs-spectrum" class="hs-figure" viewBox="0 0 850 95" role="group" aria-label="Hydrogenets emisjonsspekter"></svg></div>
   </div>
-  <p id="hs-formulas" hidden><span>Nivåenergiene er avrundet.</span><span>ΔE = E<sub>øvre</sub> − E<sub>nedre</sub></span><span>λ = hc/ΔE</span><span>f = c/λ</span><span>hc ≈ 198,645 aJ·nm</span><span>c ≈ 3,00 · 10⁸ m/s</span></p>
 </div>
 <dialog id="hs-explanation" class="al-calculation-dialog" aria-labelledby="hs-explanation-title">
   <header class="al-calculation-header"><h3 id="hs-explanation-title">${excitationQuestion}</h3><form method="dialog"><button type="submit">Lukk</button></form></header>
@@ -161,7 +169,7 @@ export function mountHydrogenSeries(root, api) {
   const clue = get('clue'), progress = get('progress'), feedback = get('feedback');
   const feedbackLabel = get('feedback-label');
   const difficultyPrompt = get('difficulty-prompt'), restart = quizOptions.querySelector('[data-series-reset]');
-  const selection = get('selection'), formulas = get('formulas');
+  const selection = get('selection'), formulas = get('formulas'), ionization = get('ionization');
   const guide = get('guide'), readout = get('readout');
   const transitionValue = get('transition-value'), wavelengthValue = get('wavelength-value');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
@@ -253,6 +261,7 @@ export function mountHydrogenSeries(root, api) {
 
   function syncSelection() {
     selection.hidden = mode === 'quiz' || (mode === 'excite' && !selected);
+    ionization.hidden = excited !== Infinity;
     guide.hidden = Boolean(selected);
     readout.hidden = !selected;
     if (!selected) return;
@@ -277,6 +286,10 @@ export function mountHydrogenSeries(root, api) {
   function resetQuiz() {
     solved.clear();
     questions = [...hydrogenQuiz[difficulty]];
+    for (let i=questions.length-1; i>0; i--) {
+      const j = Math.floor(Math.random() * (i+1));
+      [questions[i], questions[j]] = [questions[j], questions[i]];
+    }
     edges = overviewTransitions;
     animation = selected = null;
     showFeedback();
@@ -286,12 +299,13 @@ export function mountHydrogenSeries(root, api) {
   }
 
   function runExcitation(level) {
+    const ionizing = level === Infinity;
     excited = level;
     selected = null;
-    edges = possibleTransitions(level);
+    edges = ionizing ? [] : possibleTransitions(level);
     press('level', level);
     syncSelection();
-    startAnimation('absorb', [transition(1,level)]);
+    startAnimation(ionizing ? 'ionize' : 'absorb', [ionizing ? ionizingPhoton : transition(1,level)]);
   }
 
   function chooseTransition(key, byKeyboard) {

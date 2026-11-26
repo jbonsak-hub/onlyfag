@@ -451,12 +451,12 @@ function assertNumericQuestion(q){
    }
   }finally{await page.emulateMedia({reducedMotion:'reduce'});}
  });
- await attempt('Hydrogen excitation reveals every downhill transition from the chosen level',async()=>{
+ await attempt('Hydrogen excitation reveals downhill transitions from bound levels and ionizes at infinity',async()=>{
   await page.emulateMedia({reducedMotion:'no-preference'});
   try{
    const {topic,model,board,selectMode,targets,target,lineKeys,phase}=await hydrogenSeries('excite');
    assert.equal(await model.getAttribute('data-mode'),'excite');
-   assert.equal(await model.locator('[data-series-level]:visible').count(),5);
+   assert.deepEqual(await model.locator('[data-series-level]:visible').evaluateAll(levels=>levels.map(level=>level.dataset.seriesLevel)),['2','3','4','5','6','Infinity']);
    const exciteControls=model.locator('#hs-excite');
    assert.equal(await exciteControls.isVisible(),true);
    assert.equal(await besideHydrogenModes(exciteControls),true,'The excitation panel sits beside the mode controls.');
@@ -486,6 +486,22 @@ function assertNumericQuestion(q){
    assert.match(await explanation.innerText(),/mange hydrogenatomer/i);
    await page.keyboard.press('Escape');
    await explanation.waitFor({state:'hidden'});
+   const ionize=model.getByRole('button',{name:'n = ∞',exact:true});
+   const ionization=model.locator('#hs-ionization');
+   await ionize.click();
+   await phase('ionize');
+   assert.equal(await model.getAttribute('data-excited'),'Infinity');
+   assert.deepEqual(await lineKeys(),[]);
+   assert.equal(await targets('atom').count()+await targets('diagram').count(),0);
+   assert.equal(await board.locator('[data-series-excited-row="Infinity"]').count(),1);
+   assert.match(await board.textContent(),/n\s*=\s*∞/);
+   await board.locator('[data-series-ionizing-photon]').waitFor();
+   await board.locator('[data-series-escaping-electron]').waitFor();
+   await phase('idle');
+   assert.equal(await board.locator('[data-series-ionized]').count(),1);
+   assert.match(await board.textContent(),/H⁺/);
+   assert.equal(await ionization.isVisible(),true);
+   assert.deepEqual(await lineKeys(),[]);
    await selectMode('all');
    await selectMode('excite');
    assert.deepEqual(await lineKeys(),[]);
@@ -496,17 +512,41 @@ function assertNumericQuestion(q){
    await model.locator('[data-series-level="6"]').click();
    await phase('idle');
    assert.equal((await lineKeys()).length,15);
+   await ionize.click();
+   await phase('idle');
+   assert.equal(await board.locator('[data-series-ionized]').count(),1);
+   assert.deepEqual(await lineKeys(),[]);
+   await model.locator('[data-series-level="2"]').click();
+   assert.equal(await ionization.isVisible(),false);
+   assert.equal(await board.locator('[data-series-ionized]').count(),0);
+   assert.deepEqual(await lineKeys(),['2-1']);
   }finally{await page.emulateMedia({reducedMotion:'reduce'});}
  });
- await attempt('Hydrogen quiz queues missed clues and accumulates all 12, including on mobile',async()=>{
+ await attempt('Hydrogen quiz reshuffles all 12 and keeps missed clues in retry order',async()=>{
   await page.setViewportSize({width:390,height:844});
+  const {hydrogenQuiz}=await import(moduleUrl('hydrogen-series-quiz'));
   const {topic,model,board,spectrum,selectMode,selectDifficulty,targets,target,lineKeys,phase}=await hydrogenSeries('quiz');
   const clue=model.locator('#hs-clue'),progress=model.locator('#hs-progress'),feedback=model.locator('#hs-feedback');
+  const formulas=model.locator('#hs-formulas');
   const choose=key=>target('diagram',key).press('Enter');
   const clueHasFocus=()=>clue.evaluate(el=>el.ownerDocument.activeElement===el);
   const fitsViewport=()=>topic.locator('main').evaluate(el=>el.scrollWidth<=el.clientWidth+1);
+  const allKeys=hydrogenQuiz.mild.map(([key])=>key);
+  const setQuizSeed=seed=>model.evaluate((el,value)=>{
+   el.ownerDocument.defaultView.Math.random=()=>{
+    value=(1664525*value+1013904223)>>>0;
+    return value/2**32;
+   };
+  },seed);
+  async function question(level='mild'){
+   const prompt=await clue.textContent();
+   const entry=hydrogenQuiz[level].find(([,text])=>text===prompt);
+   assert.ok(entry,'Expected a clue in the '+level+' bank.');
+   return {key:entry[0],prompt};
+  }
   const solved=[];
   async function solve(key){
+   assert.equal(solved.includes(key),false);
    await choose(key);
    await phase('idle');
    solved.push(key);
@@ -515,75 +555,107 @@ function assertNumericQuestion(q){
    assert.deepEqual(await lineKeys(),[...solved].sort());
   }
   assert.equal(await fitsViewport(),true,'Hydrogen diagrams fit the phone width.');
-  assert.deepEqual(await model.locator('[data-series-difficulty]:visible').allTextContents(),['Mild','Medium','Spicy']);
+  assert.deepEqual(await model.locator('[data-series-difficulty]:visible').allTextContents(),['Mild','Småspicy','Vindaloo']);
   assert.equal(await model.locator('[data-series-difficulty][aria-pressed="true"]').count(),0);
   assert.equal(await model.locator('[data-series-reset]').isVisible(),false);
-  for(const element of [clue,progress,board,spectrum])assert.equal(await element.isVisible(),false);
+  for(const element of [clue,progress,board,spectrum,formulas])assert.equal(await element.isVisible(),false);
   assert.equal(await model.locator('[data-series-action="transition"]:visible').count(),0);
+  await setQuizSeed(1);
   await model.getByRole('button',{name:'Mild',exact:true}).press('Enter');
   assert.equal(await model.locator('[data-series-difficulty="mild"]').getAttribute('aria-pressed'),'true');
   for(const element of [clue,progress,board,spectrum])assert.equal(await element.isVisible(),true);
   assert.equal(await targets('diagram').count(),12);
   assert.doesNotMatch(await board.textContent(),/aJ/);
+  assert.equal(await formulas.isVisible(),false);
   assert.deepEqual(await lineKeys(),[]);
-  const firstClue=await clue.textContent();
+  const first=await question();
   const initialProgress=await progress.textContent();
-  assert.match(firstClue,/nest minst energi/i);
-  await choose('3-2');
-  assert.notEqual(await clue.textContent(),firstClue);
+  await choose(allKeys.find(key=>key!==first.key));
+  const second=await question();
+  assert.notEqual(second.key,first.key);
   assert.equal(await clueHasFocus(),true);
   assert.equal(await progress.textContent(),initialProgress);
   assert.deepEqual(await lineKeys(),[]);
   assert.match(await feedback.textContent(),/ledetråden kommer tilbake/i);
 
-  await solve('5-2');
-  const thirdClue=await clue.textContent();
+  await solve(second.key);
+  const third=await question();
   const progressAfterOne=await progress.textContent();
   await selectMode('all');
   await selectMode('quiz');
-  assert.equal(await clue.textContent(),thirdClue);
+  assert.equal(await clue.textContent(),third.prompt);
   assert.equal(await progress.textContent(),progressAfterOne);
   assert.equal(await model.locator('[data-series-difficulty="mild"]').getAttribute('aria-pressed'),'true');
-  assert.deepEqual(await lineKeys(),['5-2']);
-  await choose('4-1');
-  assert.notEqual(await clue.textContent(),thirdClue);
+  assert.deepEqual(await lineKeys(),[second.key]);
+  const originalOrder=[first.key,second.key,third.key];
+  await choose(allKeys.find(key=>!originalOrder.includes(key)));
+  assert.notEqual(await clue.textContent(),third.prompt);
   assert.equal(await clueHasFocus(),true);
   assert.equal(await progress.textContent(),progressAfterOne);
-  assert.deepEqual(await lineKeys(),['5-2']);
-  for(const key of ['3-2','2-1','3-1','4-1','5-1','6-2','4-3','5-3','6-3'])await solve(key);
-  assert.equal(await clue.textContent(),firstClue,'The first missed clue returns after the original round.');
+  assert.deepEqual(await lineKeys(),[second.key]);
+  while(originalOrder.length<allKeys.length){
+   const {key}=await question();
+   assert.equal(originalOrder.includes(key),false,'A missed clue waits until the rest of the original round is attempted.');
+   originalOrder.push(key);
+   await solve(key);
+  }
+  assert.equal(await clue.textContent(),first.prompt,'The first missed clue returns after the original round.');
   const retryProgress=await progress.textContent();
-  for(const [key,next] of [['6-1',thirdClue],['4-2',firstClue]]){
+  for(const [key,next] of [[third.key,third.prompt],[first.key,first.prompt]]){
    await choose(key);
    assert.equal(await clue.textContent(),next,'The missed clues return in the order they were attempted.');
    assert.equal(await clueHasFocus(),true);
    assert.equal(await progress.textContent(),retryProgress);
    assert.deepEqual(await lineKeys(),[...solved].sort());
   }
-  await solve('4-2');
-  assert.equal(await clue.textContent(),thirdClue);
+  await solve(first.key);
+  assert.equal(await clue.textContent(),third.prompt);
   const finalProgress=await progress.textContent();
-  await choose('4-2');
-  assert.equal(await clue.textContent(),thirdClue,'Reviewing a solved arrow preserves the last pending clue.');
+  await choose(first.key);
+  assert.equal(await clue.textContent(),third.prompt,'Reviewing a solved arrow preserves the last pending clue.');
   assert.equal(await progress.textContent(),finalProgress);
   assert.deepEqual(await lineKeys(),[...solved].sort());
-  await solve('6-1');
+  await solve(third.key);
   assert.match(await progress.textContent(),/12\s*(?:av|\/)\s*12/);
-  await selectDifficulty('spicy');
-  assert.match(await board.textContent(),/\d[,.]\d+\s*aJ/);
-  assert.deepEqual(await lineKeys(),[]);
-  const spicyClue=await clue.textContent();
-  await selectDifficulty('medium');
-  assert.notEqual(await clue.textContent(),spicyClue);
-  assert.doesNotMatch(await board.textContent(),/aJ/);
-  await selectDifficulty('mild');
-  await target('atom','4-2').press('Space');
-  assert.deepEqual(await lineKeys(),['4-2']);
+
+  await setQuizSeed(2);
   await model.locator('[data-series-reset]').click();
-  assert.equal(await clue.textContent(),firstClue);
   assert.equal(await progress.textContent(),initialProgress);
   assert.equal(await model.locator('[data-series-difficulty="mild"]').getAttribute('aria-pressed'),'true');
   assert.deepEqual(await lineKeys(),[]);
+  solved.length=0;
+  for(let index=0;index<allKeys.length;index++)await solve((await question()).key);
+  assert.notDeepEqual(solved,originalOrder,'Restart shuffles the same clue bank with fresh randomness.');
+
+  await setQuizSeed(1);
+  await selectDifficulty('medium');
+  const firstMedium=(await question('medium')).prompt;
+  assert.equal(await formulas.isVisible(),false);
+  await selectDifficulty('spicy');
+  assert.match(await board.textContent(),/\d[,.]\d+\s*aJ/);
+  assert.deepEqual(await lineKeys(),[]);
+  assert.equal(await formulas.isVisible(),true);
+  const formulaText=await formulas.innerText();
+  assert.match(formulaText,/ΔE\s*=\s*h\s*[·⋅×]?\s*f/);
+  assert.match(formulaText,/c\s*=\s*λ\s*[·⋅×]?\s*f/);
+  assert.match(formulaText,/h\s*[=≈]\s*6[,.]6\d*/);
+  assert.match(formulaText,/c\s*[=≈]\s*[23][,.]\d+/);
+  assert.equal(await formulas.evaluate(el=>{
+   const clueBox=el.ownerDocument.getElementById('hs-clue').getBoundingClientRect();
+   const boardBox=el.ownerDocument.getElementById('hs-board').getBoundingClientRect();
+   const formulaBox=el.getBoundingClientRect();
+   return clueBox.bottom<=formulaBox.top&&formulaBox.bottom<=boardBox.top;
+  }),true,'The formulas appear directly after the clue and before the figures.');
+  assert.equal(await fitsViewport(),true,'Vindaloo formulas fit the phone width.');
+  await setQuizSeed(2);
+  await selectDifficulty('medium');
+  assert.notEqual((await question('medium')).prompt,firstMedium,'Selecting the same difficulty after another difficulty starts a newly shuffled round.');
+  assert.doesNotMatch(await board.textContent(),/aJ/);
+  assert.equal(await formulas.isVisible(),false);
+  await selectDifficulty('mild');
+  const {key}=await question();
+  await target('atom',key).press('Space');
+  assert.deepEqual(await lineKeys(),[key]);
  });
  await attempt('Hydrogen quiz keeps its controls and clue visible at desktop and phone widths',async()=>{
   const {topic,model,target}=await hydrogenSeries('quiz',{difficulty:'mild'});
