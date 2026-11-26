@@ -456,15 +456,27 @@ function assertNumericQuestion(q){
   await page.emulateMedia({reducedMotion:'no-preference'});
   try{
    const {topic,model,board,selectMode,targets,target,lineKeys,phase}=await hydrogenSeries('excite');
+   const explainControls=model.locator('#hs-explain-controls');
+   const explainTrigger=explainControls.getByRole('button',{name:'Hvorfor gir ett innkommende foton så mange overganger ut?',exact:true});
+   const sceneBounds=()=>model.evaluate(el=>{
+    const origin=el.getBoundingClientRect();
+    return ['#hs-board','#hs-spectrum'].map(selector=>{
+     const box=el.querySelector(selector).getBoundingClientRect();
+     return [box.x-origin.x,box.y-origin.y,box.width,box.height].map(Math.round);
+    });
+   });
    assert.equal(await model.getAttribute('data-mode'),'excite');
    assert.deepEqual(await model.locator('[data-series-level]:visible').evaluateAll(levels=>levels.map(level=>level.dataset.seriesLevel)),['2','3','4','5','6','Infinity']);
    const exciteControls=model.locator('#hs-excite');
    assert.equal(await exciteControls.isVisible(),true);
    assert.equal(await besideHydrogenModes(exciteControls),true,'The excitation panel sits beside the mode controls.');
    assert.equal(await model.locator('#hs-selection').isVisible(),false);
+   assert.equal(await explainControls.isVisible(),false);
+   assert.equal(await explainTrigger.isVisible(),false);
    assert.deepEqual(await lineKeys(),[]);
    assert.equal(await targets('atom').count(),0);
    assert.equal(await targets('diagram').count(),0);
+   const finiteBounds=await sceneBounds();
    await model.locator('[data-series-level="5"]').click();
    await phase('absorb');
    assert.deepEqual(await lineKeys(),[]);
@@ -478,10 +490,14 @@ function assertNumericQuestion(q){
    }
    await phase('idle');
    assert.deepEqual(await lineKeys(),keys);
+   assert.equal(await explainTrigger.isVisible(),true);
+   assert.deepEqual(await sceneBounds(),finiteBounds,'Showing the explanation control keeps both drawings in place.');
    await target('diagram','5-4').press('Space');
    await phase('emission');
    assert.equal(await model.getAttribute('data-selected'),'5-4');
-   await model.getByRole('button',{name:'Hvorfor gir ett innkommende foton så mange overganger ut?',exact:true}).click();
+   assert.equal(await explainTrigger.isVisible(),true);
+   assert.equal(await model.evaluate(el=>el.querySelector('.hs-legend').getBoundingClientRect().bottom<=el.querySelector('#hs-explain-controls').getBoundingClientRect().top),true);
+   await explainTrigger.click();
    const explanation=topic.locator('#hs-explanation[open]');
    await explanation.waitFor();
    assert.match(await explanation.innerText(),/mange hydrogenatomer/i);
@@ -489,15 +505,8 @@ function assertNumericQuestion(q){
    await explanation.waitFor({state:'hidden'});
    const ionize=model.getByRole('button',{name:'n = ∞',exact:true});
    const ionization=model.locator('#hs-ionization');
-   const sceneBounds=()=>model.evaluate(el=>{
-    const origin=el.getBoundingClientRect();
-    return ['#hs-board','#hs-spectrum'].map(selector=>{
-     const box=el.querySelector(selector).getBoundingClientRect();
-     return [box.x-origin.x,box.y-origin.y,box.width,box.height].map(Math.round);
-    });
-   });
    await phase('idle');
-   const finiteBounds=await sceneBounds();
+   assert.deepEqual(await sceneBounds(),finiteBounds,'Selecting an emitted line keeps both drawings in place.');
    await ionize.click();
    await phase('ionize');
    assert.equal(await model.getAttribute('data-excited'),'Infinity');
@@ -511,32 +520,40 @@ function assertNumericQuestion(q){
    assert.equal(await board.locator('[data-series-ionized]').count(),1);
    assert.match(await board.textContent(),/H⁺/);
    assert.equal(await ionization.isVisible(),true);
+   assert.equal(await explainControls.isVisible(),false);
    assert.deepEqual(await sceneBounds(),finiteBounds,'Ionization keeps the atom, energy diagram and spectrum in place.');
    assert.equal(await model.evaluate(el=>{
     const bounds=selector=>el.querySelector(selector).getBoundingClientRect();
-    const ion=bounds('#hs-ionization'),legend=bounds('.hs-legend'),explain=bounds('#hs-explain-controls');
-    return bounds('#hs-side').left>=bounds('#hs-board').right&&ion.bottom<=legend.top&&legend.bottom<=explain.top;
-   }),true,'Ionization status is above the legend and the explanation is below it.');
+    return bounds('#hs-side').left>=bounds('#hs-board').right&&bounds('#hs-ionization').bottom<=bounds('.hs-legend').top;
+   }),true,'Ionization status is above the legend.');
    assert.deepEqual(await lineKeys(),[]);
    await selectMode('all');
    await selectMode('excite');
    assert.deepEqual(await lineKeys(),[]);
    await page.emulateMedia({reducedMotion:'reduce'});
    await page.setViewportSize({width:390,height:844});
+   assert.equal(await explainControls.isVisible(),false);
    await model.locator('[data-series-level="2"]').click();
    await phase('idle');
    assert.deepEqual(await lineKeys(),['2-1']);
-   await model.locator('[data-series-level="6"]').click();
-   await phase('idle');
-   assert.equal((await lineKeys()).length,15);
+   assert.equal(await explainControls.isVisible(),false);
    const mobileFiniteBounds=await sceneBounds();
+   for(const level of [3,4,5,6]){
+    await model.locator('[data-series-level="'+level+'"]').click();
+    await phase('idle');
+    assert.equal(await explainTrigger.isVisible(),true);
+    assert.equal((await lineKeys()).length,level*(level-1)/2);
+    assert.deepEqual(await sceneBounds(),mobileFiniteBounds);
+   }
    await ionize.click();
    await phase('idle');
    assert.equal(await board.locator('[data-series-ionized]').count(),1);
+   assert.equal(await explainControls.isVisible(),false);
    assert.deepEqual(await sceneBounds(),mobileFiniteBounds,'Ionization keeps both drawings in place on mobile.');
    assert.deepEqual(await lineKeys(),[]);
    await model.locator('[data-series-level="2"]').click();
    assert.equal(await ionization.isVisible(),false);
+   assert.equal(await explainControls.isVisible(),false);
    assert.equal(await board.locator('[data-series-ionized]').count(),0);
    assert.deepEqual(await lineKeys(),['2-1']);
   }finally{await page.emulateMedia({reducedMotion:'reduce'});}
@@ -546,6 +563,7 @@ function assertNumericQuestion(q){
   const {hydrogenQuiz}=await import(moduleUrl('hydrogen-series-quiz'));
   const {topic,model,board,spectrum,chooser,selectMode,selectDifficulty,targets,target,lineKeys,phase}=await hydrogenSeries('quiz');
   const clue=model.locator('#hs-clue'),progress=model.locator('#hs-progress'),feedback=model.locator('#hs-feedback');
+  const instruction=model.locator('#hs-quiz-instruction'),progressPanel=model.locator('#hs-side #hs-quiz-progress');
   const formulas=model.locator('#hs-formulas');
   const difficulty=model.locator('#hs-difficulty-value'),restart=model.locator('[data-series-reset]');
   const choose=key=>target('diagram',key).press('Enter');
@@ -584,7 +602,7 @@ function assertNumericQuestion(q){
   assert.equal(await chooser.evaluate(el=>el.matches(':modal')),true);
   await page.keyboard.press('Tab');
   assert.equal(await chooser.evaluate(el=>el.contains(el.ownerDocument.activeElement)),true,'The modal keeps keyboard focus on the difficulty choices.');
-  for(const element of [restart,clue,progress,difficulty,formulas])assert.equal(await element.isVisible(),false);
+  for(const element of [restart,instruction,clue,progress,difficulty,formulas])assert.equal(await element.isVisible(),false);
   for(const element of [board,spectrum])assert.equal(await element.isVisible(),true);
   const previousLines=await lineKeys();
   assert.equal(previousLines.length,12);
@@ -596,8 +614,13 @@ function assertNumericQuestion(q){
   await setQuizSeed(1);
   await chooser.getByRole('button',{name:'Mild',exact:true}).press('Enter');
   await chooser.waitFor({state:'hidden'});
-  assert.match(await model.locator('#hs-quiz').innerText(),/Finn overgangen og klikk på riktig pil/i);
+  assert.equal(await instruction.isVisible(),true);
+  assert.match(await instruction.innerText(),/Finn overgangen og klikk på riktig pil/i);
+  assert.equal(await model.locator('#hs-quiz #hs-quiz-instruction').count(),0);
   assert.equal(await difficulty.innerText(),'(Mild)');
+  assert.equal(await progressPanel.isVisible(),true);
+  assert.match(await progressPanel.locator('#hs-progress').innerText(),/^0\s*(?:av|\/)\s*12\b/);
+  assert.equal(await progressPanel.locator('#hs-difficulty-value').count(),1);
   assert.equal(await model.locator('[data-series-difficulty]:visible').count(),0);
   assert.equal(await restart.isVisible(),true);
   assert.equal(await feedback.isVisible(),false);
@@ -688,6 +711,13 @@ function assertNumericQuestion(q){
   assert.deepEqual(await lineKeys(),[]);
   assert.equal(await formulas.isVisible(),true);
   const formulaText=await formulas.innerText();
+  const formulaLines=await Promise.all([
+   formulas.getByText(/ΔE\s*=\s*E\s*øvre\s*−\s*E\s*nedre/).boundingBox(),
+   formulas.getByText('ΔE = hf',{exact:true}).boundingBox(),
+   formulas.getByText('c = λf',{exact:true}).boundingBox()
+  ]);
+  assert.ok(formulaLines.every(Boolean));
+  assert.ok(formulaLines.every((line,i)=>i===0||line.y>=formulaLines[i-1].y+formulaLines[i-1].height-1),'Each equation has its own row.');
   assert.match(formulaText,/ΔE\s*=\s*h\s*[·⋅×]?\s*f/);
   assert.match(formulaText,/c\s*=\s*λ\s*[·⋅×]?\s*f/);
   assert.match(formulaText,/h\s*[=≈]\s*6[,.]6\d*/);
@@ -741,6 +771,8 @@ function assertNumericQuestion(q){
     restart:bounds('[data-series-reset]'),
     difficulty:bounds('#hs-difficulty-value'),
     progress:bounds('#hs-progress'),
+    progressPanel:bounds('#hs-quiz-progress'),
+    instruction:bounds('#hs-quiz-instruction'),
     prompt:bounds('#hs-quiz'),
     board:bounds('#hs-board'),
     spectrum:bounds('#hs-spectrum'),
@@ -752,9 +784,11 @@ function assertNumericQuestion(q){
   await target('diagram','3-2').press('Enter');
   const desktop=await position();
   assert.ok(desktop.mode.right<=desktop.restart.left&&desktop.mode.top<desktop.restart.bottom&&desktop.restart.top<desktop.mode.bottom,'Restart sits beside the mode controls.');
+  assert.ok(Math.abs(desktop.instruction.right-desktop.prompt.right)<=2&&desktop.instruction.bottom<=desktop.prompt.top+1,'Instruction sits directly above the prompt, aligned on the right.');
   assert.ok(desktop.prompt.bottom<=desktop.board.top,'The quiz prompt stays above the drawing.');
   assert.ok(desktop.difficulty.top<desktop.progress.bottom&&desktop.progress.top<desktop.difficulty.bottom,'Difficulty and progress share a row.');
   assert.ok(desktop.board.right<=desktop.side.left&&desktop.side.left<=desktop.feedback.left,'Feedback belongs in the panel to the right of the drawing.');
+  assert.ok(desktop.progressPanel.top>=desktop.feedback.bottom&&desktop.side.left<=desktop.progressPanel.left,'Progress belongs below feedback in the sidebar.');
   await restart.click();
   await selectDifficulty('spicy');
   const prompt=await model.locator('#hs-clue').textContent();
@@ -763,11 +797,12 @@ function assertNumericQuestion(q){
   await target('diagram',matching[0]).press('Enter');
   const advanced=await position();
   assert.ok(advanced.side.top<=advanced.board.top+1&&advanced.side.bottom>=advanced.spectrum.bottom-1,'Vindaloo side panel spans both drawings.');
-  assert.ok(advanced.feedback.bottom<=advanced.formulas.top&&Math.abs(advanced.side.bottom-advanced.formulas.bottom)<=8,'Worked feedback is above the formula panel at the bottom right.');
+  assert.ok(advanced.feedback.bottom<=advanced.progressPanel.top&&advanced.progressPanel.bottom<=advanced.formulas.top&&Math.abs(advanced.side.bottom-advanced.formulas.bottom)<=8,'Progress separates worked feedback from the formula panel at the bottom right.');
 
   for(const width of [320,390]){
    await page.setViewportSize({width,height:844});
    const mobile=await position();
+   assert.ok(Math.abs(mobile.instruction.right-mobile.prompt.right)<=2&&mobile.instruction.bottom<=mobile.prompt.top+1,'Instruction stays above the prompt on mobile.');
    assert.ok(mobile.prompt.bottom<=mobile.board.top,'The question stays above the drawing on mobile.');
    assert.ok(Math.max(mobile.board.bottom,mobile.spectrum.bottom)<=mobile.side.top,'The side panel wraps below both drawings on mobile.');
    assert.equal(await topic.locator('main').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true,'Hydrogen quiz fits '+width+'px without horizontal overflow.');

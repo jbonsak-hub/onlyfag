@@ -14,13 +14,14 @@ const styles = `<style>
 .hs-modes,.hs-options { display:flex; flex-wrap:wrap; align-items:center; gap:5px 7px }
 .hs-toolbar { display:grid; grid-template-columns:max-content minmax(0,1fr); align-items:start; gap:8px 16px; margin-bottom:9px }
 .hs-toolbar > .hs-modes { margin-block-start:7px }
-.hs-toolbar-controls { display:grid; justify-items:end; min-width:0 }
+.hs-toolbar-controls { display:grid; justify-items:end; gap:4px; min-width:0 }
 .hs-panel { padding:8px 11px; border:1px solid var(--line); border-radius:8px; background:var(--sidebar); color:var(--ink); font-size:.84rem; line-height:1.4 }
 #hs-model .hs-panel p,.hs-panel dl,.hs-panel dd { margin:0 }
 #hs-selection,#hs-ionization { max-width:23rem; border-inline-start:3px solid var(--green); background:var(--green-soft) }
 #hs-ionization { padding:6px 9px }
 .hs-readout { display:grid; grid-template-columns:repeat(2,max-content); gap:5px 18px }
 .hs-side .hs-readout { grid-template-columns:minmax(0,1fr); gap:4px }
+.hs-side .hs-readout > div { display:flex; flex-wrap:wrap; align-items:baseline; column-gap:5px }
 .hs-readout dt, .hs-panel-label { font-size:.8rem; font-weight:650 }
 .hs-readout dd { font-size:1rem; font-weight:750; font-variant-numeric:tabular-nums; white-space:nowrap }
 #hs-excite { max-width:100% }
@@ -36,9 +37,9 @@ const styles = `<style>
 #hs-model .hs-panel button.hs-button:not([aria-pressed=true]) { background:var(--surface) }
 #hs-model button.hs-explanation-trigger { display:block; padding:2px 0; border:0; background:none; color:var(--green); font:inherit; font-weight:650; text-align:start; white-space:normal; text-decoration:underline; text-underline-offset:3px }
 .hs-quiz-prompt { display:grid; align-content:center; width:min(100%,36rem); min-width:0; gap:4px; padding:10px 13px; border:1px solid var(--line); border-inline-start:3px solid var(--green); border-radius:8px; color:var(--ink); background:var(--green-soft) }
-.hs-quiz-meta { display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:1px 12px }
 .hs-quiz-label { color:var(--ink); font-size:.81rem; font-weight:650 }
-#hs-progress,#hs-difficulty-value { font-size:.81rem; font-variant-numeric:tabular-nums; white-space:nowrap }
+#hs-model .hs-quiz-instruction { margin:0; color:var(--muted); text-align:right }
+#hs-model .hs-quiz-progress { margin:0; padding-inline:3px; color:var(--ink); font-size:.81rem; font-variant-numeric:tabular-nums; text-align:right }
 #hs-difficulty-value { margin-inline-start:4px; color:var(--green) }
 #hs-model #hs-clue { margin:0; color:var(--ink); font-size:clamp(1.05rem,1.9cqi,1.375rem); font-weight:750; line-height:1.3 }
 .hs-clue-context { display:block; margin-bottom:3px; font-size:.87rem; font-weight:500; line-height:1.4 }
@@ -50,6 +51,7 @@ const styles = `<style>
 #hs-feedback[data-result=incorrect] strong { color:var(--red) }
 .hs-figures { display:grid; grid-template-columns:minmax(0,1fr) var(--hs-side-width,12.5rem); grid-template-rows:var(--hs-rows,auto auto); grid-template-areas:var(--hs-areas,'board side' 'spectrum spectrum'); gap:7px 14px; align-items:start }
 .hs-side { display:flex; flex-direction:column; grid-area:side; min-width:0; min-height:0; align-self:stretch; justify-content:safe center; gap:6px; contain:size }
+#hs-model[data-mode=excite] .hs-side { gap:clamp(11px,1.3cqi,19px) }
 #hs-model[data-mode=quiz][data-quiz-difficulty=spicy] { --hs-side-width:15.5rem; --hs-areas:'board side' 'spectrum side' '. side'; --hs-rows:auto auto minmax(0,1fr) }
 #hs-model[data-mode=quiz][data-quiz-difficulty=spicy] .hs-side { justify-content:flex-start; contain:none }
 #hs-explain-controls { font-size:.82rem; line-height:1.25 }
@@ -77,8 +79,7 @@ body.dark #hs-model { --hs-lyman-ink:#c491ee; --hs-balmer-ink:#72cdb9; --hs-pasc
 #hs-model .hs-burst-glow { animation:hs-glow 1.25s both }
 @keyframes hs-glow { 0%, 20% { opacity:.16; } 55% { opacity:.55; } 100% { opacity:.15; } }
 #hs-formulas { display:grid; gap:3px; margin-top:auto; font-size:.81rem; font-variant-numeric:tabular-nums }
-#hs-formulas .hs-formula-row { display:flex; column-gap:8px; flex-wrap:wrap }
-#hs-formulas .hs-formula-row > span { white-space:nowrap }
+#hs-formulas .hs-formula-constants { display:grid; row-gap:3px; margin-top:3px; padding-top:5px; border-top:1px solid var(--line) }
 #hs-worked-solution { padding-top:4px; border-top:1px solid var(--line); font-size:.81rem; font-variant-numeric:tabular-nums }
 #hs-worked-solution .hs-solution-note { color:var(--muted); font-size:.76rem }
 @container (max-width:730px) {
@@ -136,11 +137,8 @@ export const hydrogenSeriesSection = {title:'Flere overganger i hydrogenatomet',
           <div><dt>Bølgelengde</dt><dd id="hs-wavelength-value"></dd></div>
         </dl>
       </div>
+      <p id="hs-quiz-instruction" class="hs-quiz-label hs-quiz-instruction" hidden>Finn overgangen og klikk på riktig pil</p>
       <div id="hs-quiz" class="hs-quiz-prompt" hidden>
-        <div class="hs-quiz-meta">
-          <span class="hs-quiz-label">Finn overgangen og klikk på riktig pil</span>
-          <span><span id="hs-progress"></span> <strong id="hs-difficulty-value"></strong></span>
-        </div>
         <p id="hs-clue" tabindex="-1"><span id="hs-clue-context" class="hs-clue-context" hidden></span><span id="hs-clue-question"></span></p>
       </div>
     </div>
@@ -161,13 +159,17 @@ export const hydrogenSeriesSection = {title:'Flere overganger i hydrogenatomet',
         <p id="hs-feedback" role="status"><strong id="hs-verdict"></strong><span id="hs-answer"></span></p>
         <div id="hs-worked-solution" hidden></div>
       </div>
+      <p id="hs-quiz-progress" class="hs-quiz-progress" hidden><span id="hs-progress"></span> <strong id="hs-difficulty-value"></strong></p>
       <div id="hs-formulas" class="hs-panel" hidden>
         <strong>Formler og konstanter</strong>
         <span>ΔE = E<sub>øvre</sub> − E<sub>nedre</sub></span>
-        <div class="hs-formula-row"><span>ΔE = hf</span><span>c = λf</span></div>
-        <span>h ≈ 6,626 · 10<sup>−34</sup> J·s</span>
-        <span>c ≈ 3,00 · 10<sup>8</sup> m/s</span>
-        <span>1 aJ = 10<sup>−18</sup> J</span>
+        <span>ΔE = hf</span>
+        <span>c = λf</span>
+        <div class="hs-formula-constants">
+          <span>h ≈ 6,626 · 10<sup>−34</sup> J·s</span>
+          <span>c ≈ 3,00 · 10<sup>8</sup> m/s</span>
+          <span>1 aJ = 10<sup>−18</sup> J</span>
+        </div>
       </div>
     </aside>
     <div class="hs-spectrum-wrap"><svg id="hs-spectrum" class="hs-figure" viewBox="0 0 850 95" role="group" aria-label="Hydrogenets emisjonsspekter"></svg></div>
@@ -190,6 +192,7 @@ export function mountHydrogenSeries(root, api) {
   const board = get('board'), spectrum = get('spectrum'), dialog = get('explanation');
   const boardWrap = board.parentElement, spectrumWrap = spectrum.parentElement;
   const excite = get('excite'), quiz = get('quiz'), quizOptions = get('quiz-options');
+  const quizInstruction = get('quiz-instruction'), quizProgress = get('quiz-progress');
   const side = get('side'), toolbarControls = get('toolbar-controls');
   const seriesLegend = get('legend'), explainControls = get('explain-controls');
   const clue = get('clue'), progress = get('progress'), feedback = get('feedback');
@@ -271,7 +274,7 @@ export function mountHydrogenSeries(root, api) {
 
   function syncQuiz() {
     const playing = mode === 'quiz';
-    quiz.hidden = restart.hidden = !playing;
+    quiz.hidden = quizInstruction.hidden = quizProgress.hidden = restart.hidden = !playing;
     feedbackBox.hidden = !playing || !feedback.dataset.result;
     formulas.hidden = !playing || difficulty !== 'spicy';
     if (!playing) return;
@@ -299,6 +302,7 @@ export function mountHydrogenSeries(root, api) {
   function syncSelection() {
     selection.hidden = mode === 'quiz' || (mode === 'excite' && !selected);
     ionization.hidden = excited !== Infinity;
+    explainControls.hidden = !(mode === 'excite' && excited >= 3 && excited <= 6);
     guide.hidden = Boolean(selected);
     readout.hidden = !selected;
     if (!selected) return;
@@ -313,7 +317,7 @@ export function mountHydrogenSeries(root, api) {
     model.dataset.mode = mode;
     press('mode', mode);
     press('level', null);
-    excite.hidden = explainControls.hidden = mode !== 'excite';
+    excite.hidden = mode !== 'excite';
     seriesLegend.hidden = mode === 'quiz';
     (mode === 'excite' ? side : toolbarControls).prepend(selection);
     syncQuiz();
