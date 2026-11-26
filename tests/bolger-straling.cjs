@@ -28,7 +28,9 @@ function modelFixture(topic){
   set innerHTML(v){this.children.forEach(e=>e.parent=null);this.children=[];this._text='';this._html=String(v);parse(this._html,this);}
   get innerHTML(){return this._html||this.children.map(e=>e.serialize()).join('');}
   get options(){return this.children.filter(e=>e.tagName==='OPTION');}
+  get ownerDocument(){return global.document;}
   get parentElement(){return this.parent;}
+  get lastElementChild(){return this.children.at(-1)??null;}
   get className(){return this.attributes.class||'';}
   set className(value){this.attributes.class=String(value);}
   hasAttribute(key){return key in this.attributes;}
@@ -57,18 +59,29 @@ function modelFixture(topic){
  }
  function parse(html,parent){const stack=[parent],voids=new Set(['input','br','hr','img','meta','link','source']);let last=0;for(const m of html.matchAll(/<!--[^]*?-->|<\/?[a-z][^>]*>/gi)){const current=stack.at(-1);current._text+=decode(html.slice(last,m.index).replace(/<[^>]*>/g,''));last=m.index+m[0].length;if(m[0].startsWith('<!--'))continue;const closing=/^<\//.test(m[0]),tag=m[0].match(/^<\/?([\w-]+)/)[1].toLowerCase();if(closing){if(stack.length>1)stack.pop();continue;}const a=attrMap(m[0].slice(tag.length+1).replace(/\/?\s*>$/,'')),e=new Element(tag,a);current.append(e);if(!voids.has(tag)&&!m[0].endsWith('/>'))stack.push(e);}stack.at(-1)._text+=decode(html.slice(last));}
  const root=new Element('main');parse(topic.sections.map(s=>s.body).join(''),root);
- const previous={document:global.document,matchMedia:global.matchMedia,window:global.window};
- const restore=()=>{global.document=previous.document;global.matchMedia=previous.matchMedia;global.window=previous.window;};
+ const previous={document:global.document,matchMedia:global.matchMedia,window:global.window,ResizeObserver:global.ResizeObserver};
+ const restore=()=>Object.assign(global,previous);
  const documentEvents={};
  global.document={hidden:false,addEventListener(k,fn){(documentEvents[k]??=[]).push(fn);},removeEventListener(k,fn){documentEvents[k]=(documentEvents[k]||[]).filter(f=>f!==fn);},createElementNS:(_,tag)=>new Element(tag),createElement:tag=>new Element(tag),querySelector:s=>root.querySelector(s),getElementById:id=>idMap.get(id)};
  global.matchMedia=()=>({matches:true,addEventListener(){},removeEventListener(){}});global.window={matchMedia:global.matchMedia};
+ global.ResizeObserver=class{observe(){}disconnect(){}};
  const clock=fixtureClockFactory?.();
  const scope=target=>{const node=typeof target==='string'?root.querySelector(target):target;return node?.closest('.model')||node||root;};
  const api={onFrame(fn,target){if(clock)return clock.onFrame(fn,scope(target));callbacks.push(fn);fn(time);return()=>callbacks.splice(callbacks.indexOf(fn),1);},repaint(target){if(clock){if(arguments.length)clock.repaint(scope(target));else clock.repaint();}else callbacks.forEach(fn=>fn(time));},now:target=>clock?clock.now(scope(target)):time,isPaused:target=>clock?clock.isPaused(scope(target)):false,play(target){clock?.setPaused(scope(target),false);}};
  let cleanup;try{cleanup=topic.mount(root,api);}catch(e){restore();throw e;}
  return{root,get:id=>idMap.get(id),dispatchDocument(k,init={}){for(const fn of documentEvents[k]||[])fn({target:global.document,preventDefault(){},...init});},tick(t){if(clock)clock.advance(t-time);time=t;if(!clock)api.repaint();},pause(target,value=true){assert.ok(clock,'Scoped fixture clock is configured');clock.setPaused(scope(target),value);},now:target=>api.now(target),change(id,value,event='input'){const el=idMap.get(id);assert.ok(el,'Missing control '+id);el.value=value;el.dispatch(event);},click(id){const el=idMap.get(id);assert.ok(el,'Missing button '+id);el.dispatch('click');},html:()=>root.serialize(),destroy(){try{if(cleanup)cleanup();if(clock)clock.clear();}finally{restore();}}};
 }
-const server=http.createServer((req,res)=>{try{let file=path.join(root,decodeURIComponent(new URL(req.url,'http://localhost').pathname));if(!path.extname(file)&&!fs.existsSync(file))file+='.html';if(fs.statSync(file).isDirectory())file=path.join(file,'index.html');res.setHeader('Content-Type',file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.js')?'text/javascript; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':'application/octet-stream');res.end(fs.readFileSync(file));}catch{res.writeHead(404);res.end('missing');}});
+const server=http.createServer((req,res)=>{
+ try{
+  const pathname=decodeURIComponent(new URL(req.url,'http://localhost').pathname);
+  let file=path.join(root,pathname);
+  // GitHub Pages serves /naturfag from naturfag.html alongside the naturfag directory.
+  if(!pathname.endsWith('/')&&!path.extname(file)&&fs.existsSync(file+'.html'))file+='.html';
+  if(fs.statSync(file).isDirectory())file=path.join(file,'index.html');
+  res.setHeader('Content-Type',file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.js')?'text/javascript; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':'application/octet-stream');
+  res.end(fs.readFileSync(file));
+ }catch{res.writeHead(404);res.end('missing');}
+});
 async function attempt(label,fn){try{await fn();coverage.push(label);}catch(e){failures.push(label+': '+e.message);console.error('FAIL '+label+': '+e.message);}}
 function assertNumericQuestion(q){
  if(q.fields)assert.ok(q.fields.length>1&&q.fields.every(field=>field.label&&field.unit),q.id);
@@ -248,6 +261,20 @@ function assertNumericQuestion(q){
  await attempt('Complete, distinct, well-formed question data',async()=>{
  assert.equal(data.length,9);const seen=new Set();for(const t of data){assert.ok(t.sections>0&&t.terms>0);assert.ok(t.questions.length>=10,t.id);for(const q of t.questions){assert.ok(!seen.has(q.id),'duplicate '+q.id);seen.add(q.id);assert.ok(q.prompt&&q.answer,q.id);assert.ok(['mcq','number','open'].includes(q.type),q.id);if(q.type==='mcq')assert.ok(Number.isInteger(q.correct)&&q.correct>=0&&q.correct<q.choices.length,q.id);if(q.type==='number')assertNumericQuestion(q);}}});
  async function route(id,view='fagstoff'){await page.goto(url+'#'+id+'/'+view);await page.locator('#topic-content').waitFor();await page.waitForTimeout(70);}
+ async function hydrogenSeries(mode){
+  await page.goto(base+'/naturfag.html?hydrogen='+mode+'#waves/atomer/fagstoff');
+  const topic=page.frameLocator('#waves-module-frame');
+  const model=topic.locator('#hs-model');
+  await model.locator('[data-series-mode="all"]').waitFor();
+  const board=model.locator('#hs-board'),spectrum=model.locator('#hs-spectrum');
+  const selectMode=value=>model.locator('[data-series-mode="'+value+'"]').click();
+  const targets=part=>model.locator('[data-series-action="transition"][data-series-part="'+part+'"]');
+  const target=(part,key)=>targets(part).and(model.locator('[data-series-key="'+key+'"]'));
+  const lineKeys=()=>spectrum.locator('[data-series-line]').evaluateAll(lines=>lines.map(line=>line.dataset.seriesLine).sort());
+  const phase=value=>topic.locator('#hs-model[data-phase="'+value+'"]').waitFor();
+  if(mode!=='all')await selectMode(mode);
+  return {topic,model,board,spectrum,selectMode,targets,target,lineKeys,phase};
+ }
  for(const id of prototypeIds)for(const view of ['fagstoff','oppgaver','begreper'])await attempt('Desktop render '+id+'/'+view,async()=>{
  await route(id,view);assert.ok((await page.locator('h1').innerText()).trim());assert.equal(await page.locator('#main').evaluate(e=>e.scrollWidth>e.clientWidth+1),false,'main content overflow');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'document overflow');assert.equal(await page.locator('#animation-speed,#pause-button,.viewbar,.page-head .eyebrow,.page-head .intro,.head-icon').count(),0,'No repeated topic introduction or global animation toolbar');if(view==='fagstoff')assert.ok(await page.locator('.content-section').count());else if(view==='oppgaver')assert.equal(await page.locator('.q-card').count(),data.find(t=>t.id===id).questions.length);});
  // Exercise controls with reduced-motion enabled, so changes cannot be attributed to animation alone.
@@ -348,6 +375,12 @@ function assertNumericQuestion(q){
   await nav.click();
   await page.waitForURL(/#waves\/atomer\/fagstoff$/);
   const atom=page.frameLocator('#waves-module-frame');
+  const firstSection=atom.locator('.content-section').first();
+  assert.match(await firstSection.locator('p').first().innerText(),/Bohrs atommodell.*grunntilstanden.*energi oppover/);
+  assert.match(await firstSection.locator('.al-h-spectrum-intro').innerText(),/nivå 2.*synlig lys.*emisjonsspekter/);
+  const guide=firstSection.locator('#al-h-spectrum-guide');
+  assert.match(await guide.innerText(),/←\s*Velg en spektrallinje for å se overgangen/);
+  assert.equal(await guide.evaluate(el=>el.getBoundingClientRect().left>=document.querySelector('#al-hydrogen-svg').getBoundingClientRect().right),true);
   const spectrumLine=atom.locator('#al-h-spectrum-controls [data-h-line="6"]');
   await spectrumLine.click();
   assert.match(await atom.locator('#al-h-readout').innerText(),/410/);
@@ -369,6 +402,116 @@ function assertNumericQuestion(q){
    assert.equal(await atom.locator(selector).count(),count);
    assert.equal(await page.locator('[data-waves-topic="atomer"][data-waves-view="'+view+'"]').getAttribute('aria-current'),'page');
   }
+ });
+ await attempt('Hydrogen transitions play from the atom, energy diagram and spectrum',async()=>{
+  await page.emulateMedia({reducedMotion:'no-preference'});
+  try{
+   await page.setViewportSize({width:1366,height:768});
+   const {topic,model,board,spectrum,targets,target,lineKeys,phase}=await hydrogenSeries('all');
+   const keys=['2-1','3-1','3-2','4-1','4-2','4-3','5-1','5-2','5-3','6-1','6-2','6-3'];
+   assert.equal(await model.getAttribute('data-mode'),'all');
+   assert.equal(await model.locator('[data-series-mode]').count(),3);
+   assert.equal(await topic.locator('.content-section').nth(0).locator('#hs-model').count(),0);
+   assert.equal(await topic.locator('.content-section').nth(1).locator('#hs-model').count(),1);
+   assert.deepEqual(await lineKeys(),keys);
+   for(const part of ['atom','diagram','spectrum'])assert.equal(await targets(part).count(),12);
+   assert.doesNotMatch(await board.textContent(),/15 mulige hopp|Andre/);
+   await model.evaluate(el=>el.closest('section').scrollIntoView());
+   assert.equal(await spectrum.evaluate(el=>el.getBoundingClientRect().bottom<=innerHeight),true,'The full spectrum fits below the figures at 100% zoom.');
+   for(const [part,key] of [['diagram','6-1'],['atom','3-2'],['spectrum','5-2']]){
+    const atomArrow=target('atom',key).locator('.hs-mark');
+    await target(part,key).click();
+    await phase('emission');
+    assert.equal(await model.getAttribute('data-selected'),key);
+    assert.equal(await atomArrow.count(),0);
+    await board.locator('.hs-motion path').first().waitFor();
+    await phase('idle');
+    assert.equal(await atomArrow.count(),1);
+    assert.equal(await spectrum.locator('[data-series-line="'+key+'"].hs-selected').count(),1);
+   }
+  }finally{await page.emulateMedia({reducedMotion:'reduce'});}
+ });
+ await attempt('Hydrogen excitation reveals every downhill transition from the chosen level',async()=>{
+  await page.emulateMedia({reducedMotion:'no-preference'});
+  try{
+   const {topic,model,board,selectMode,targets,target,lineKeys,phase}=await hydrogenSeries('excite');
+   assert.equal(await model.getAttribute('data-mode'),'excite');
+   assert.equal(await model.locator('[data-series-level]:visible').count(),5);
+   assert.deepEqual(await lineKeys(),[]);
+   assert.equal(await targets('atom').count(),0);
+   assert.equal(await targets('diagram').count(),0);
+   await model.locator('[data-series-level="5"]').click();
+   await phase('absorb');
+   assert.deepEqual(await lineKeys(),[]);
+   assert.equal(await model.getAttribute('data-excited'),'5');
+   assert.equal(await board.locator('[data-series-excited-row="5"]').count(),1);
+   await phase('burst');
+   const keys=['2-1','3-1','3-2','4-1','4-2','4-3','5-1','5-2','5-3','5-4'];
+   assert.deepEqual(await lineKeys(),keys);
+   for(const part of ['atom','diagram','spectrum']){
+    assert.deepEqual(await targets(part).evaluateAll(nodes=>nodes.map(node=>node.dataset.seriesKey).sort()),keys);
+   }
+   await phase('idle');
+   assert.deepEqual(await lineKeys(),keys);
+   await target('diagram','5-4').press('Space');
+   await phase('emission');
+   assert.equal(await model.getAttribute('data-selected'),'5-4');
+   await model.locator('[data-series-explanation]').click();
+   const explanation=topic.locator('#hs-explanation[open]');
+   await explanation.waitFor();
+   assert.match(await explanation.innerText(),/mange hydrogenatomer/i);
+   await page.keyboard.press('Escape');
+   await explanation.waitFor({state:'hidden'});
+   await selectMode('all');
+   await selectMode('excite');
+   assert.deepEqual(await lineKeys(),[]);
+   await page.emulateMedia({reducedMotion:'reduce'});
+   await model.locator('[data-series-level="2"]').click();
+   await phase('idle');
+   assert.deepEqual(await lineKeys(),['2-1']);
+   await model.locator('[data-series-level="6"]').click();
+   await phase('idle');
+   assert.equal((await lineKeys()).length,15);
+  }finally{await page.emulateMedia({reducedMotion:'reduce'});}
+ });
+ await attempt('Hydrogen quiz accumulates 12 answers and supports three difficulties on mobile',async()=>{
+  await page.setViewportSize({width:390,height:844});
+  const {topic,model,board,targets,target,lineKeys,phase}=await hydrogenSeries('quiz');
+  const clue=model.locator('#hs-clue'),progress=model.locator('#hs-progress');
+  const difficulty=level=>model.locator('[data-series-difficulty="'+level+'"]').click();
+  assert.equal(await topic.locator('main').evaluate(el=>el.scrollWidth>el.clientWidth+1),false,'Hydrogen diagrams fit the phone width.');
+  assert.equal(await model.locator('[data-series-difficulty]:visible').count(),3);
+  assert.equal(await targets('diagram').count(),12);
+  assert.doesNotMatch(await board.textContent(),/aJ/);
+  assert.deepEqual(await lineKeys(),[]);
+  const firstClue=await clue.textContent();
+  assert.match(firstClue,/nest minst energi/i);
+  await target('diagram','3-2').press('Enter');
+  assert.equal(await clue.textContent(),firstClue);
+  assert.deepEqual(await lineKeys(),[]);
+  assert.match(await model.locator('#hs-feedback').textContent(),/prøv en annen overgang/i);
+
+  const answerKeys=['4-2','5-2','6-1','3-2','2-1','3-1','4-1','5-1','6-2','4-3','5-3','6-3'];
+  for(const [index,key] of answerKeys.entries()){
+   await target('diagram',key).press('Enter');
+   await phase('idle');
+   assert.equal(await targets('diagram').and(board.locator('.hs-solved')).count(),index+1);
+   assert.deepEqual(await lineKeys(),answerKeys.slice(0,index+1).sort());
+  }
+  assert.match(await progress.textContent(),/12\s*(?:av|\/)\s*12/);
+  await difficulty('spicy');
+  assert.match(await board.textContent(),/\d[,.]\d+\s*aJ/);
+  assert.deepEqual(await lineKeys(),[]);
+  const spicyClue=await clue.textContent();
+  await difficulty('medium');
+  assert.notEqual(await clue.textContent(),spicyClue);
+  assert.doesNotMatch(await board.textContent(),/aJ/);
+  await difficulty('mild');
+  await target('atom','4-2').press('Space');
+  assert.deepEqual(await lineKeys(),['4-2']);
+  await model.locator('[data-series-reset]').click();
+  assert.equal(await clue.textContent(),firstClue);
+  assert.deepEqual(await lineKeys(),[]);
  });
  await attempt('Wave views share the original figure and controls',async()=>{
   await page.setViewportSize({width:1440,height:1000});

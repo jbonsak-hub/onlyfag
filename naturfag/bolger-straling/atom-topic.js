@@ -1,4 +1,5 @@
-import {atomLabSection,mountAtomLab,HYDROGEN_GROUND_AJ} from './atom-lab.js?v=20261125-atom-release';
+import {atomLabSection,customAtomSection,mountAtomLab,HYDROGEN_GROUND_AJ} from './atom-lab.js?v=20261126-hydrogen';
+import {hydrogenSeriesSection,mountHydrogenSeries} from './hydrogen-series.js?v=20261126-hydrogen';
 
 const C = 299792458, H = 6.62607015e-34, AJ = 1e-18;
 const fmt = (x, digits = 2) => x.toLocaleString('nb-NO', {maximumFractionDigits: digits});
@@ -14,8 +15,8 @@ const ionizationStyle = `<style>
 </style>`;
 
 function mountAtom(root,api){
-  const atomCleanup=mountAtomLab(root,api),ionCleanup=mountIonization(root,api);
-  return ()=>{if(typeof atomCleanup==='function')atomCleanup();if(typeof ionCleanup==='function')ionCleanup();};
+  const cleanups=[mountAtomLab(root,api),mountHydrogenSeries(root,api),mountIonization(root,api)];
+  return ()=>{for(const cleanup of cleanups) cleanup?.();};
 }
 
 export function ionizationOutcome(energyAJ){
@@ -67,6 +68,8 @@ export const atomTopic = {
   summary:'Atomer tar opp og sender ut bestemte fotoner. Det gjør lyset til en nøkkel til stoffenes innhold.',
   sections:[
     atomLabSection,
+    hydrogenSeriesSection,
+    customAtomSection,
     {title:'Spektrallinjer er stoffenes fingeravtrykk',body:`<div class="concept-grid"><article class="concept"><h3>Emisjonsspekter</h3><p>En tynn, varm gass gir lyse linjer ved bestemte bølgelengder. Grunnstoffets energinivåer bestemmer mønsteret.</p></article><article class="concept"><h3>Absorpsjonsspekter</h3><p>Når et bredt lysspekter passerer en kjøligere gass, svekkes bestemte bølgelengder. De mørke linjene svarer til de samme energiforskjellene.</p></article></div><p>Ved å sammenlikne linjemønstre kan vi finne hvilke grunnstoffer en lyskilde eller en gass inneholder. Mer om stjernespektre finner du under <a href="/prototyper/bolger-straling.html#universet/fagstoff" target="_top">Stjerner og universet</a>.</p>`},
     {title:'Nordlyset forteller hva atmosfæren inneholder',body:`<p>Energirike partikler fra verdensrommet ledes av jordas magnetfelt og kolliderer med partikler i atmosfæren. Oksygen og nitrogen eksiteres. Når de mister energi igjen, sendes lys ut ved karakteristiske bølgelengder.</p><div class="key"><strong>Grønt og rødt nordlys</strong> kommer ofte fra oksygen; nitrogen bidrar blant annet med blålige og rødfiolette toner. Høyde og kollisjoner påvirker hvilke overganger vi ser.</div>`},
     {title:'Kan ett foton ionisere hydrogen?',body:ionizationStyle+`<p>Et hydrogenatom i <strong>grunntilstanden</strong> trenger minst <strong>2,18 aJ</strong> for å frigjøre elektronet. Hvis et foton absorberes med større energi, blir overskuddet kinetisk energi hos elektronet.</p><div class="model ema-ion-model"><div class="controls"><label class="control" for="ema-ion-energy">Fotonenergi <output id="ema-ion-energy-value" for="ema-ion-energy">3,00 aJ</output><input id="ema-ion-energy" type="range" min="0.3" max="4.8" step="0.01" value="3"></label><button id="ema-ion-send" type="button">Send foton</button><button id="ema-ion-reset" type="button">Nullstill</button></div><svg id="ema-ion-plot" class="ema-atom-svg" viewBox="0 0 760 232" role="img" aria-label="Ett foton møter hydrogen; elektronet er bundet eller frigjøres"></svg><div id="ema-ion-readout" class="ema-signal-result" aria-live="polite"></div><p class="model-note">Under 2,18 aJ kan et foton likevel gi <strong>eksitasjon</strong> dersom energien passer til et tillatt energisprang.</p><details class="ema-model-details"><summary>Om den skjematiske atommodellen</summary><p>Prikkene og sirklene viser bundet eller fri tilstand, ikke klassiske elektronbaner. Ved terskelen er elektronet frigjort med tilnærmet null kinetisk energi; det tegnes like utenfor for å skille tilstandene. Ikke alle fotoner absorberes i et virkelig møte. Terskelen gjelder hydrogen i grunntilstanden, og andre stoffer eller eksiterte atomer kan ha andre grenser.</p></details></div>`}
