@@ -1,7 +1,9 @@
 import {absorptionSection,mountAbsorption,absorptionQuestion,absorptionTerm} from './absorption.js?v=20261122-spekter2';
 import {lightDualitySection,mountLightDuality} from './light-duality.js?v=20261125-wave-models';
 import {skyScatteringHtml,mountSkyScattering} from './sky-scattering.js?v=20261122-spredning1';
-import {emQuestions} from './em-questions.js?v=20261126-nye-figuroppgaver';
+import {emOrderQuestion} from './em-order-question.js?v=20261127-hvitt-lys';
+import {whiteLightSection,mountWhiteLight} from './white-light.js?v=20261127-hvitt-lys';
+import {frac} from './math-presentation.js?v=20261126-nye-figuroppgaver';
 // Self-contained teaching models. Physical quantities use SI units internally.
 const C = 299792458, H = 6.62607015e-34;
 const fmt = (x, digits = 2) => x.toLocaleString('nb-NO', {maximumFractionDigits: digits});
@@ -27,6 +29,20 @@ export function spectrumReadouts(frequency,regionIndex){
   const wavelengthUnits=[[1e3,'km'],[1,'m'],[1e-2,'cm'],[1e-3,'mm'],[1e-6,'µm'],[1e-9,'nm'],[1e-12,'pm'],[1e-15,'fm']];
   const wu=[2,3,4].includes(regionIndex)?[1e-9,'nm']:(wavelengthUnits.find(([scale])=>wavelength>=scale)||wavelengthUnits.at(-1));
   return {wavelength:`${fmt(wavelength/wu[0],3)} ${wu[1]}`,frequency:`${fmt(f/fu[0],3)} ${fu[1]}`,energy:`${sci(H*f)} J`};
+}
+const spectrumValueLabels=[['wavelength','Bølgelengde λ'],['frequency','Frekvens f'],['energy','Energi per foton']];
+const spectrumValueCards=spectrumValueLabels.map(([id,label])=>`<div>
+  <small>${label}</small><strong id="ema-${id}-output"></strong>
+  <div id="ema-${id}-calculation" class="ema-calculation calc-lines" aria-live="off"></div>
+</div>`).join('');
+const scientificQuantity=(formatted,unit)=>`<span class="ema-si">${formatted} ${unit}</span>`;
+const lightSpeedSI=scientificQuantity('3,00 · 10<sup>8</sup>','m/s');
+const planckConstantSI=scientificQuantity('6,626 · 10<sup>−34</sup>','J s');
+
+function spectrumCalculation(symbol,formula,substitution,result){
+  return [formula,substitution,result].map((step,index)=>`<div class="calc-row">
+    <span class="calc-lhs">${index?'':symbol}</span><span class="calc-eq">${index?'≈':'='}</span><span class="calc-rhs">${step}</span>
+  </div>`).join('');
 }
 const sharedStyle = `<style>
 .ema-spectrum-svg,.ema-atom-svg,.ema-com-svg{display:block;width:100%;height:auto;overflow:visible}
@@ -60,7 +76,7 @@ const sharedStyle = `<style>
 .topic-page .ema-spectrum-model .ema-spectrum-band{display:block;width:100%;min-width:0;max-width:none}
 .topic-page .ema-spectrum-model .ema-spectrum-band-svg{width:100%!important;height:auto!important;max-width:none!important;max-height:none!important;margin:0}
 .topic-page .ema-spectrum-model .ema-spectrum-lower{display:grid!important;grid-template-columns:minmax(0,1fr) 220px!important;gap:20px!important;align-items:start}
-.topic-page .ema-spectrum-model .ema-spectrum-figure{display:block!important;width:100%;min-width:0;max-width:none}
+.topic-page .ema-spectrum-model .ema-spectrum-figure{display:block!important;width:100%;min-width:0;max-width:none;container-type:inline-size}
 .topic-page .ema-spectrum-model .ema-spectrum-wave-svg{width:100%!important;height:auto!important;max-height:80px!important;margin:0}
 .topic-page .ema-spectrum-model .ema-values{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important;margin:6px 0 0!important;min-width:0}
 .topic-page .ema-spectrum-model .ema-values>div{display:block!important;grid-template-columns:none!important;min-width:0!important;max-width:none!important;padding:7px 9px!important;text-align:left;overflow:visible}
@@ -68,6 +84,7 @@ const sharedStyle = `<style>
 .topic-page .ema-spectrum-model .ema-values strong{display:block!important;width:auto!important;min-width:0;font-size:15px!important;font-weight:650;line-height:1.45;word-break:normal!important;overflow-wrap:normal!important;white-space:normal}
 .topic-page .ema-spectrum-model .ema-values .ema-scientific{display:block!important;margin:1px 0 0!important;font-size:11px!important;font-weight:400;line-height:1.35;white-space:nowrap!important;word-break:normal!important;overflow-wrap:normal!important}
 @media(max-width:650px){.topic-page .ema-spectrum-model .ema-spectrum-lower{grid-template-columns:1fr!important;gap:10px!important}.topic-page .ema-spectrum-model .ema-values{grid-template-columns:1fr!important}.topic-page .ema-spectrum-model .ema-values>div{padding:6px 9px!important}.topic-page .ema-spectrum-model .ema-values strong{font-size:14px!important}}
+@container(max-width:480px){.topic-page .ema-spectrum-model .ema-values{grid-template-columns:1fr!important}}
 .ema-formula-box .ema-word-relation{font-size:13px;font-weight:650;line-height:1.5;margin:10px 0 5px}.ema-formula-box .ema-formula-grid>div>p:not(.ema-word-relation){font-size:11px;line-height:1.55;margin:8px 0}
 
 [id^="section-em-"]{margin-bottom:34px}
@@ -84,7 +101,7 @@ const sharedStyle = `<style>
 .ema-visible-intro aside{border:1px solid var(--line);border-radius:11px;padding:14px 16px;background:var(--surface)}
 .ema-visible-intro aside h3{margin:0 0 7px;font-size:15px}.ema-visible-intro aside p{margin:6px 0;font-size:13px}
 .topic-page .model.ema-spectrum-model{padding:20px!important}.topic-page .ema-spectrum-model .ema-values{gap:12px!important;margin-top:12px!important}
-.topic-page .ema-spectrum-model .ema-values>div{padding:11px!important}.ema-calculation{display:block;margin-top:8px;font-size:12px;font-weight:400;line-height:1.7}
+.topic-page .ema-spectrum-model .ema-values>div{padding:11px!important}.ema-calculation{border-spacing:0 4px;margin:5px 0 0;font-size:12px;line-height:1.4}.ema-calculation .calc-lhs,.ema-calculation .calc-eq{padding-right:5px}.ema-si{white-space:nowrap}
 @media(max-width:620px){.ema-visible-intro{grid-template-columns:1fr;gap:12px}.topic-page .model.ema-spectrum-model{padding:12px!important}}
 
 .ema-wavelength-control{display:grid;gap:4px;margin:0 2% 18px}
@@ -164,14 +181,13 @@ function mountEM(root, api) {
     graph.innerHTML=markup;
     const outputs=spectrumReadouts(f,ri);
     slider.setAttribute('aria-valuetext',outputs.wavelength);
-    const c = '3,00 · 10<sup>8</sup> m/s';
-    function calculation(symbol, lhs, numerator, denominator, value, unit) {
-      const fraction = (top, bottom) => `<span class="frac"><span class="num">${top}</span><span class="den">${bottom}</span></span>`;
-      return `<span class="ema-calculation">${symbol} = ${lhs} = ${fraction(numerator, denominator)} ≈ ${value} ${unit}</span>`;
-    }
-    q('#ema-wavelength-output').innerHTML=outputs.wavelength+calculation('λ','c / f',c,sci(f)+' Hz',sci(wavelength),'m');
-    q('#ema-frequency-output').innerHTML=outputs.frequency+calculation('f','c / λ',c,sci(wavelength)+' m',sci(f),'Hz');
-    q('#ema-energy-output').innerHTML=outputs.energy;
+    const frequencySI=scientificQuantity(sci(f),'Hz');
+    const wavelengthSI=scientificQuantity(sci(wavelength),'m');
+    const energySI=scientificQuantity(sci(H*f),'J');
+    for(const [id] of spectrumValueLabels) q(`#ema-${id}-output`).innerHTML=outputs[id];
+    q('#ema-wavelength-calculation').innerHTML=spectrumCalculation('λ',frac('c','f'),frac(lightSpeedSI,frequencySI),wavelengthSI);
+    q('#ema-frequency-calculation').innerHTML=spectrumCalculation('f',frac('c','λ'),frac(lightSpeedSI,wavelengthSI),frequencySI);
+    q('#ema-energy-calculation').innerHTML=spectrumCalculation('E','h · f',`${planckConstantSI} · ${frequencySI}`,energySI);
     regionButtons.forEach(button=>button.setAttribute('aria-pressed',String(Number(button.dataset.region)===ri)));
   }
   function renderWave(t){
@@ -214,7 +230,7 @@ function mountEM(root, api) {
   rgb.forEach(el=>el.addEventListener('input',renderRGB));
   root.querySelectorAll('[data-ema-rgb]').forEach(b=>b.addEventListener('click',()=>{b.dataset.emaRgb.split(',').forEach((v,i)=>rgb[i].value=v);renderRGB();}));
   renderRGB();
-  const cleanup = [mountAbsorption(root), mountSkyScattering(root, api), mountLightDuality(root, api)];
+  const cleanup = [mountWhiteLight(root, api), mountAbsorption(root), mountSkyScattering(root, api), mountLightDuality(root, api)];
   return () => cleanup.forEach(dispose => dispose?.());
 }
 
@@ -252,7 +268,8 @@ export const emTopic = {
  </figure>
  <aside><h3>Hva er en nanometer?</h3><p>Én nanometer er én milliarddel av en meter.</p><p><strong>1 nm = 0,000 000 001 m = 10<sup>−9</sup> m</strong></p><p>Tallet 10<sup>−9</sup> betyr én delt på en milliard. Slik kan vi skrive den lille lengden kort på standardform.</p></aside>
 </div>`},
-      {title:'Utforsk spekteret',body:`<div class="model ema-spectrum-model" data-model-layout="custom"><div class="model-full-width ema-spectrum-band" data-model-full-width><svg id="ema-spectrum-plot" class="ema-spectrum-band-svg" viewBox="0 0 1000 109" role="img" aria-label="Hele det elektromagnetiske spekteret"></svg><div class="ema-wavelength-control"><label class="ema-wavelength-label" for="ema-wavelength">Bølgelengde <span>Logaritmisk skala</span></label><input id="ema-wavelength" type="range" min="${minLogWavelength}" max="${maxLogWavelength}" step="0.005" value="${defaultLogWavelength}"><div class="ema-energy-direction"><span>Mer energi per foton</span><span>Mindre energi per foton</span></div></div></div><div class="ema-spectrum-lower"><div class="ema-spectrum-figure model-visual"><svg id="ema-spectrum-wave" class="ema-spectrum-wave-svg" viewBox="0 0 760 80" role="img" aria-label="Bølge ved valgt bølgelengde"></svg><div class="ema-values" aria-live="polite"><div><small>Bølgelengde λ</small><strong id="ema-wavelength-output"></strong></div><div><small>Frekvens f</small><strong id="ema-frequency-output"></strong></div><div><small>Energi per foton</small><strong id="ema-energy-output"></strong></div></div></div><div class="ema-spectrum-controls"><div class="ema-region-buttons" id="ema-region-buttons">${regionOrder.map(i=>`<button type="button" data-region="${i}" aria-pressed="${i===3}">${regions[i].name}</button>`).join('')}</div><button type="button" class="secondary ema-ionizing-toggle" id="ema-ionizing-toggle" aria-pressed="false" aria-controls="ema-ionizing-note">Vis ioniserende stråling</button><p class="ema-ionizing-note" id="ema-ionizing-note" hidden>Ved ca. <strong>124 nm</strong> har et foton omtrent 1,6 · 10<sup>−18</sup> J. Det er en omtrentlig grense. Hvor mye energi som trengs for å løsne et elektron, avhenger av atomet eller molekylet.</p></div></div></div>`},
+      {title:'Utforsk spekteret',body:`<div class="model ema-spectrum-model" data-model-layout="custom"><div class="model-full-width ema-spectrum-band" data-model-full-width><svg id="ema-spectrum-plot" class="ema-spectrum-band-svg" viewBox="0 0 1000 109" role="img" aria-label="Hele det elektromagnetiske spekteret"></svg><div class="ema-wavelength-control"><label class="ema-wavelength-label" for="ema-wavelength">Bølgelengde <span>Logaritmisk skala</span></label><input id="ema-wavelength" type="range" min="${minLogWavelength}" max="${maxLogWavelength}" step="0.005" value="${defaultLogWavelength}"><div class="ema-energy-direction"><span>Mer energi per foton</span><span>Mindre energi per foton</span></div></div></div><div class="ema-spectrum-lower"><div class="ema-spectrum-figure model-visual"><svg id="ema-spectrum-wave" class="ema-spectrum-wave-svg" viewBox="0 0 760 80" role="img" aria-label="Bølge ved valgt bølgelengde"></svg><div class="ema-values" aria-live="polite">${spectrumValueCards}</div></div><div class="ema-spectrum-controls"><div class="ema-region-buttons" id="ema-region-buttons">${regionOrder.map(i=>`<button type="button" data-region="${i}" aria-pressed="${i===3}">${regions[i].name}</button>`).join('')}</div><button type="button" class="secondary ema-ionizing-toggle" id="ema-ionizing-toggle" aria-pressed="false" aria-controls="ema-ionizing-note">Vis ioniserende stråling</button><p class="ema-ionizing-note" id="ema-ionizing-note" hidden>Ved ca. <strong>124 nm</strong> har et foton omtrent 1,6 · 10<sup>−18</sup> J. Det er en omtrentlig grense. Hvor mye energi som trengs for å løsne et elektron, avhenger av atomet eller molekylet.</p></div></div></div>`},
+      whiteLightSection,
       {...absorptionSection,body:absorptionSection.body+skyScatteringHtml},
       {title:'Hvordan lager en skjerm hvitt og gult?',body:`<p>En skjerm blander <strong>rødt, grønt og blått lys</strong> (RGB). Hvitfarge kan lages med en passende blanding av disse tre; det er ikke nødvendig å ha alle bølgelengder i blandingen.</p><div class="model ema-rgb-layout" data-model-layout="custom"><div class="ema-rgb-screen"><svg viewBox="0 0 600 230" role="img" aria-label="Additiv blanding av rødt, grønt og blått lys"><rect width="600" height="230" rx="10" fill="#000"/><g style="isolation:isolate"><circle id="ema-rgb-red-circle" cx="160" cy="85" r="70" style="mix-blend-mode:screen"/><circle id="ema-rgb-green-circle" cx="240" cy="85" r="70" style="mix-blend-mode:screen"/><circle id="ema-rgb-blue-circle" cx="200" cy="135" r="70" style="mix-blend-mode:screen"/></g><path d="M380 35v155" stroke="#48636c"/><rect id="ema-rgb-result" x="440" y="55" width="100" height="100" rx="10"/><text x="490" y="185" text-anchor="middle" fill="#ddd" font-size="15">Blandingsfargen</text></svg><output id="ema-rgb-value"></output></div><div class="ema-rgb-controls">${[['red','Rødt',192],['green','Grønt',87],['blue','Blått',146]].map(([id,label,val])=>`<label for="ema-rgb-${id}">${label}<input type="range" id="ema-rgb-${id}" min="0" max="255" step="1" value="${val}"><output id="ema-rgb-${id}-value" for="ema-rgb-${id}">${val}</output></label>`).join('')}<div class="ema-region-buttons"><button type="button" data-ema-rgb="255,255,255">Hvitt</button><button type="button" data-ema-rgb="255,255,0">Gult</button><button type="button" data-ema-rgb="0,0,0">Svart</button></div><p id="ema-rgb-caption" aria-live="polite"></p></div></div><div class="key"><strong>Lysblanding og overflatefarger er forskjellige:</strong> En rød flate reflekterer særlig rødt lys og absorberer mye av det øvrige. Uten rødt i belysningen kan flaten se mørk ut.</div>`},
       lightDualitySection
@@ -274,17 +291,40 @@ export const emTopic = {
       {id:'wv-b8',type:'open',level:'Bruk',prompt:'En film viser en eksplosjon langt ute i verdensrommet. Kan astronauten se den? Kan astronauten høre den gjennom vakuum? Forklar.',answer:'Lys er elektromagnetisk stråling og kan gå gjennom vakuum, så eksplosjonen kan sees. Lyd er en mekanisk bølge og trenger et stoff. Den kan derfor ikke høres gjennom vakuum.'},
       {id:'em-01',type:'mcq',level:'Start',prompt:'Hvilken type stråling har størst energi per foton?',choices:['Radiobølger','Infrarødt','Synlig rødt lys','Gammastråling'],correct:3,answer:'Gammastråling har høyest frekvens av alternativene. Jo høyere frekvens, desto mer energi har hvert foton.<details><summary>Ekstra forklaring</summary><p>Formelen <strong>E = hf</strong> gir energien <em>E</em> til ett foton. Her er <em>f</em> frekvensen og <em>h</em> Plancks konstant, et fast tall.</p></details>'},
       {id:'em-02',type:'open',level:'Start',prompt:'Sorter fra lengst til kortest bølgelengde: gamma, synlig lys, radio, UV, mikrobølger, røntgen, infrarødt.',answer:'<strong>Radio → mikrobølger → infrarødt → synlig lys → UV → røntgen → gamma.</strong> Mikrobølger er en del av radiobølgeområdet, men skilles ofte ut i denne oversikten.'},
-      {id:'em-03',type:'number',level:'Bruk',prompt:'En radiobølge har frekvens 100 MHz. Finn bølgelengden i vakuum. Bruk c = 3,00 · 10⁸ m/s.',value:3,tolerance:.03,unit:'m',hint:'100 MHz = 100 · 10⁶ Hz. Bruk λ = c/f.',answer:'λ = c/f = (3,00 · 10<sup>8</sup>)/(100 · 10<sup>6</sup>) m = <strong>3,00 m</strong>.'},
-      {id:'em-04',type:'number',level:'Bruk',prompt:'Grønt lys har bølgelengde 500 nm. Finn frekvensen i enheten 10¹⁴ Hz. Bruk c = 3,00 · 10⁸ m/s.',value:6,tolerance:.06,unit:'· 10¹⁴ Hz',hint:'500 nm = 5,00 · 10⁻⁷ m. Bruk f = c/λ.',answer:'f = c/λ = (3,00 · 10<sup>8</sup>)/(5,00 · 10<sup>−7</sup>) Hz = <strong>6,00 · 10<sup>14</sup> Hz</strong>.'},
+      {
+        id:'em-03',type:'number',level:'Bruk',
+        prompt:`<p>En radiobølge har frekvens 100 MHz. Finn bølgelengden i vakuum. Bruk c = 3,00 · 10⁸ m/s.</p>
+          <div class="q-formula"><strong>λ = ${frac('c','f')}</strong><span class="q-prefix"><strong>Mega (M)</strong> betyr én million. 1 MHz = 10<sup>6</sup> Hz.</span></div>`,
+        value:3,tolerance:.03,unit:'m',
+        answer:'λ = c/f = (3,00 · 10<sup>8</sup>)/(100 · 10<sup>6</sup>) m = <strong>3,00 m</strong>.'
+      },
+      {
+        id:'em-04',type:'number',level:'Bruk',
+        prompt:`<p>Grønt lys har bølgelengde 500 nm. Finn frekvensen i enheten 10¹⁴ Hz. Bruk c = 3,00 · 10⁸ m/s.</p>
+          <div class="q-formula"><strong>f = ${frac('c','λ')}</strong><span class="q-prefix"><strong>Nano (n)</strong> betyr én milliarddel. 1 nm = 10<sup>−9</sup> m.</span></div>`,
+        value:6,tolerance:.06,unit:'· 10¹⁴ Hz',
+        answer:'f = c/λ = (3,00 · 10<sup>8</sup>)/(5,00 · 10<sup>−7</sup>) Hz = <strong>6,00 · 10<sup>14</sup> Hz</strong>.'
+      },
       {id:'em-05',type:'mcq',level:'Start',prompt:'Hvilket utsagn stemmer om stråling i vakuum?',choices:['Gamma går raskere enn radiobølger','Synlig lys går raskest','Alle EM-bølger går like raskt','Kortere bølger går alltid saktere'],correct:2,answer:'Alle EM-bølger går med lysfarten <strong>c</strong> i vakuum, selv om frekvens og bølgelengde er forskjellige.'},
       {id:'em-06',type:'open',level:'Bruk',prompt:'En skjerm viser gult. Hvilke to RGB-lyskilder er da aktive? Hva skjer når du skrur av alle tre?',answer:'<strong>Rødt og grønt lys</strong> kan gi gult. Når alle tre er av, sender pikselen ikke ut lys og framstår svart.'},
       {id:'em-07',type:'mcq',level:'Bruk',prompt:'En lampe gir dobbelt så høy intensitet, men beholder samme farge. Hva kan ha skjedd?',choices:['Hvert foton har nødvendigvis fått dobbelt energi','Det sendes ut flere fotoner per sekund','Lyset har fått dobbelt fart','Bølgelengden må være halvert'],correct:1,answer:'Ved samme farge/frekvens har hvert foton samme energi. Høyere intensitet kan skyldes <strong>flere fotoner per sekund</strong>.'},
       {id:'em-08',type:'open',level:'Bruk',prompt:'Hvorfor kan et varmekamera vise en person i et helt mørkt rom?',answer:'Kroppen sender ut <strong>varmestråling, hovedsakelig infrarødt</strong>, selv når det ikke er synlig lys i rommet. Varmekameraet registrerer denne strålingen.'},
       {id:'em-09',type:'mcq',level:'Bruk',prompt:'Hvilket utsagn om mikrobølger er riktig?',choices:['De er mekaniske bølger','De går bare gjennom luft','De er en del av radiobølgeområdet','Alle mikrobølgefotoner er ioniserende'],correct:2,answer:'Mikrobølger er kortbølgede <strong>radiobølger</strong>. De er elektromagnetiske og kan også bre seg i vakuum.'},
-      {id:'em-10',type:'open',level:'Utfordring',prompt:'«Mobilen bruker mikrobølger, så den er som en mikrobølgeovn.» Vurder hva som er riktig og hva sammenlikningen mangler.',answer:'Begge bruker EM-stråling i radio-/mikrobølgeområdet. Men man må også sammenlikne <strong>effekt, intensitet, absorpsjon og eksponering</strong>. En mikrobølgeovn tilfører stor effekt i et skjermet rom for å varme mat. At frekvensområdene overlapper, sier ikke alene hvilken påvirkning en mobil gir.'},
+      {id:'em-10',type:'open',level:'Utfordring',prompt:'<strong>«Mobilen bruker mikrobølger, så å bruke den er som å ha en mikrobølgeovn rett ved hodet.»</strong> Vurder hva som er riktig og hva sammenlikningen mangler.',answer:'Begge bruker EM-stråling i radio-/mikrobølgeområdet. Men man må også sammenlikne <strong>effekt, intensitet, absorpsjon og eksponering</strong>. En mikrobølgeovn tilfører stor effekt i et skjermet rom for å varme mat. At frekvensområdene overlapper, sier ikke alene hvilken påvirkning en mobil gir.'},
       {id:'em-11',type:'open',level:'Bruk',prompt:'Hvorfor kan en rød genser se mørk ut i rent blått lys?',answer:'Genseren reflekterer særlig rødt lys, men det er lite eller intet rødt lys å reflektere. Det blå lyset absorberes i stor grad, og genseren kan derfor se mørk ut.'},
       {id:'em-12',type:'mcq',level:'Start',prompt:'Blått og rødt lys sammenliknes. Hvilket utsagn er riktig?',choices:['Et rødt foton har mer energi','Et blått foton har mer energi','Alle synlige fotoner har samme energi','Rødt lys går raskere i vakuum'],correct:1,answer:'Blått lys har kortere bølgelengde og høyere frekvens. Derfor har et <strong>blått foton</strong> mer energi enn et rødt.'},
-      ...emQuestions
+      emOrderQuestion,
+      {
+        id:'em-16',type:'mcq',level:'Start',prompt:'Hva er ioniserende stråling?',
+        choices:[
+          'Stråling som kan frigjøre elektroner fra atomer eller molekyler.',
+          'Stråling som løfter elektroner til et høyere bundet energinivå.',
+          'Stråling som alltid består av elektrisk ladde partikler.',
+          'All elektromagnetisk stråling som øyet ikke kan se.'
+        ],
+        correct:0,
+        answer:'Ioniserende stråling kan <strong>frigjøre et elektron</strong> fra et atom eller molekyl. Det som blir igjen, er et positivt ion. Røntgenstråling er et eksempel på stråling som kan ionisere.'
+      }
     ],
     resources:[
       {label:'NASA: Det elektromagnetiske spekteret',url:'https://science.nasa.gov/ems/01_intro/'},

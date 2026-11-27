@@ -5,7 +5,6 @@ import {resonanceSection as swingSection,mountResonance} from './resonance-swing
 import {tuningForkHtml,mountTuningForks} from './resonance-tuning-forks.js?v=20261121-spectrum1';
 import {flightSection,mountFlight} from './flight-doppler.js?v=20261116-naturfag1';
 import {lightDopplerHtml,mountLightDoppler} from './light-doppler.js?v=20261125-wave-models';
-import {phenomenonQuestions} from './phenomena-questions.js?v=20261126-nye-figuroppgaver';
 export {buildApertureField,scalarWaveValue,diffractionEnvelope} from './diffraction-lab.js?v=20261122-spredning1';
 export {createSwingState,swingGeometry,swingBackPoint,solveSwingArm,swingDriveAt,stepDrivenSwing,swingArmPose,stepSwingScene} from './resonance-swing.js?v=20261118-resonans1';
 function tabbedSection(id, title, panels) {
@@ -271,8 +270,7 @@ const phenomena={...{
       "level": "Utfordring",
       "prompt": "Hvor høyt må et plant speil minst være for at du skal kunne se hele kroppen, fra føtter til toppen av hodet? Anta at speilet plasseres riktig og at øynene er punktformede.",
       "answer": "Speilet må være <strong>halvparten av kroppshøyden</strong>. Lyset fra føttene treffer speilet halvveis mellom føttene og øyehøyden; lyset fra toppen treffer halvveis mellom hodetoppen og øyehøyden. Avstanden mellom disse treffpunktene er halve kroppshøyden. Dette er uavhengig av hvor langt fra speilet du står."
-    },
-    ...phenomenonQuestions
+    }
   ],
   "resources": [
     {

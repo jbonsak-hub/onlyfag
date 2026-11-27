@@ -4,8 +4,7 @@ const root=path.resolve(__dirname,'..'),shots=path.resolve(root,'../research/bol
 const ids=['bolger','fenomener','em','atomer','universet','kommunikasjon','radioaktivitet','stralevern','atmosfaeren'];
 const moduleNames=['wave-basics','waves','em-spectrum','atom-topic','communication','radioactivity','cosmos-environment'];
 const prototypeIds=ids.filter(id=>id!=='em'&&id!=='atomer');
-const bankFigureAttributes={bolger:'data-wave-basics-figure',fenomener:'data-phenomenon-figure',em:'data-em-figure',atomer:'data-atom-figure'};
-const appendedFigureQuestions={bolger:['wv-b15','wv-b16'],fenomener:['wv-f15','wv-f16'],em:['em-13','em-14']};
+const questionTypes=['mcq','number','open','sort'];
 const physicsOneQuestions=['atom-05','atom-12','atom-13','atom-14'];
 const {publishedIds,modulePath,moduleUrl,browserModuleUrl,rendererPath}=require('./bolger-straling-paths.cjs');
 const errors=[],failures=[],warnings=[],coverage=[];
@@ -94,31 +93,22 @@ function assertNumericQuestion(q){
  const source=[],sourceModules={};for(const file of moduleNames){sourceModules[file]=await import(moduleUrl(file));const m=sourceModules[file];source.push(...(m.topics??[m.emTopic??m.atomTopic]));}
  assert.deepEqual(source.map(t=>t.id).sort(),ids.slice().sort());
  const unique=new Set(),numeric=new Map();
- for(const t of source){assert.ok(t.sections.length&&t.terms.length&&t.questions.length>=10,t.id);for(const q of t.questions){assert.ok(!unique.has(q.id)&&q.prompt&&q.answer,q.id);unique.add(q.id);assert.ok(['mcq','number','open'].includes(q.type),q.id);if(q.type==='mcq')assert.ok(Number.isInteger(q.correct)&&q.correct>=0&&q.correct<q.choices.length,q.id);if(q.type==='number'){assertNumericQuestion(q);numeric.set(q.id,q);}}}
+ for(const t of source){assert.ok(t.sections.length&&t.terms.length&&t.questions.length>=10,t.id);for(const q of t.questions){assert.ok(!unique.has(q.id)&&q.prompt&&q.answer,q.id);unique.add(q.id);assert.ok(questionTypes.includes(q.type),q.id);if(q.type==='mcq')assert.ok(Number.isInteger(q.correct)&&q.correct>=0&&q.correct<q.choices.length,q.id);if(q.type==='number'){assertNumericQuestion(q);numeric.set(q.id,q);}}}
  const expected={'wv-b3':5/2,'wv-b4':1/2.5,'wv-b5':345/440,'wv-b6':4/2,'wv-b9':340*3,'wv-f1':35,'wv-f6':3+3,'em-03':3e8/1e8,'em-04':3e8/(500e-9)/1e14,'atom-05':-.24-(-.54),'atom-12':6.63e-34*5e14/1e-19,'com-04':5*8,'com-10':36000/300000,'ra-q2':220-85,'ra-q9':Math.log2(40/5)*5730,'ra-q10':3000*2**(-12/4),'ra-q11':Math.log2(100/6.25)*5730,'ra-q16':1000*2**(-360/24),'sv-q7':250*20,'sv-q8':2.5*1000,'ce-u-06':2898000/6000,'ce-u-09':656*1.1,'ce-a-08':340*(1-.3),'ce-a-09':238-230};
  for(const [id,value]of Object.entries(expected)){const q=numeric.get(id);assert.ok(q,id);assert.ok(Math.abs(q.value-value)<1e-8*Math.max(1,Math.abs(value)),id+' incorrect answer');}
  assert.deepEqual(numeric.get('wv-b13').fields.map(field=>field.value),[10/15,1.5]);
  assert.deepEqual(numeric.get('wv-b14').fields.map(field=>field.value),[2,3,4,.25,.5]);
  const originalIds=[...Array.from({length:12},(_,i)=>'wv-b'+(i+1)),...Array.from({length:14},(_,i)=>'wv-f'+(i+1)),...['em','atom','com'].flatMap(p=>Array.from({length:12},(_,i)=>p+'-'+String(i+1).padStart(2,'0'))),...Array.from({length:16},(_,i)=>'ra-q'+(i+1)),...Array.from({length:17},(_,i)=>'sv-q'+(i+1)),...['ce-u','ce-a'].flatMap(p=>Array.from({length:14},(_,i)=>p+'-'+String(i+1).padStart(2,'0')))];
- assert.deepEqual([...unique].sort(),[...originalIds,'wv-b13','wv-b14','atom-13','atom-14','atom-15','atom-16',...Object.values(appendedFigureQuestions).flat()].sort(),'Preserve existing question IDs and add the six figure exercises.');
- assert.equal(unique.size,135);
+ assert.deepEqual([...unique].sort(),[...originalIds,'wv-b13','wv-b14','atom-13','atom-14','atom-15','atom-16','em-15','em-16'].sort(),'Keep the original banks and add the two EM exercises.');
+ assert.equal(unique.size,131);
  const publicTopics=source.filter(t=>publishedIds.includes(t.id));
  assert.deepEqual(publicTopics.map(t=>t.id),publishedIds);
- assert.deepEqual(publicTopics.map(t=>t.questions.length),[15,14,16,16]);
- for(const topic of publicTopics){
-  const appended=appendedFigureQuestions[topic.id]??[];
-  assert.deepEqual(topic.questions.filter(question=>question.newFigureQuestion).map(question=>question.id),appended);
-  if(appended.length)assert.deepEqual(topic.questions.slice(-appended.length).map(question=>question.id),appended);
-  for(const question of topic.questions){
-   if(topic.id!=='atomer'&&!appended.includes(question.id)){
-    assert.equal(question.figure,undefined,question.id+' retains its original prompt layout.');
-    continue;
-   }
-   const figureAttribute=bankFigureAttributes[topic.id];
-   assert.match(question.figure,new RegExp('<svg[^>]*'+figureAttribute+'="'+question.id+'"'));
-   assert.match(question.figure,/<desc\b[^>]*>[^<]+<\/desc>|aria-label="[^"]+"/);
-  }
- }
+ assert.deepEqual(publicTopics.map(t=>t.questions.length),[13,12,16,16]);
+ assert.deepEqual(source.flatMap(topic=>topic.questions).filter(question=>question.type==='sort').map(question=>question.id),['em-15']);
+ const {emTopic}=sourceModules['em-spectrum'];
+ assert.equal(emTopic.sections[2].title,'Hvitt lys');
+ assert.equal(emTopic.questions.find(question=>question.id==='em-16').type,'mcq');
+ assert.match(emTopic.questions.find(question=>question.id==='em-10').prompt,/«Mobilen bruker mikrobølger, så å bruke den er som å ha en mikrobølgeovn rett ved hodet\.»/);
  assert.match(numeric.get('wv-b14').prompt,/<svg class="q-wave-figure"/);
  for(const topic of publicTopics)assert.ok(!topic.terms.some(t=>/knut|\bbuk/i.test(t.term)),'Buk and knute are excluded from the published concept lists.');
  for(const [questionId,topicId] of [['wv-b8','em'],['wv-f3','em'],['wv-f13','universet']])assert.equal(source.find(t=>t.questions.some(q=>q.id===questionId))?.id,topicId,'Moved question belongs to its current teaching topic: '+questionId);
@@ -133,6 +123,10 @@ function assertNumericQuestion(q){
  assert.equal(atomTopic.resources.filter(resource=>new URL(resource.url).hostname==='ndla.no').length,3);
  assert.deepEqual(atomTopic.questions.slice(-4).map(question=>question.id),physicsOneQuestions);
  assert.deepEqual(atomTopic.questions.filter(question=>question.course==='Fysikk 1').map(question=>question.id),physicsOneQuestions);
+ for(const question of atomTopic.questions){
+  assert.match(question.figure,new RegExp('<svg[^>]*data-atom-figure="'+question.id+'"'));
+  assert.match(question.figure,/<desc\b[^>]*>[^<]+<\/desc>|aria-label="[^"]+"/);
+ }
  const discharge=atomTopic.questions.find(question=>question.id==='atom-08');
  assert.equal(discharge.type,'open');
  assert.match(discharge.prompt,/gass(?:en)? i røret|gassrør/i);
@@ -270,7 +264,7 @@ function assertNumericQuestion(q){
  }finally{comm.destroy();}
  const revisionGroups=await require('./bolger-straling-revision.cjs').runRevisionChecks({modelFixture,topics:source});
  assert.ok(revisionGroups.length>=8);
- console.log('Source/model checks passed: 9 distinct topics, 135 questions; 4 published topics, 61 questions; 26 numeric exercises; independent model pause/repaint, Snell constraints, retarded Doppler, swing modes and outcomes, primary/secondary rainbow, atom cascades, isotope decay and absolute Planck units.');
+ console.log('Source/model checks passed: 9 distinct topics, 131 questions; 4 published topics, 57 questions; 26 numeric exercises; independent model pause/repaint, Snell constraints, retarded Doppler, swing modes and outcomes, primary/secondary rainbow, atom cascades, isotope decay and absolute Planck units.');
  if(process.argv.includes('--data-only'))return;
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
  const base='http://127.0.0.1:'+server.address().port, url=base+'/prototyper/bolger-straling.html';
@@ -286,7 +280,7 @@ function assertNumericQuestion(q){
  await page.goto(url);await page.locator('.topic-card').first().waitFor();
  const data=await page.evaluate(async urls=>{const modules=await Promise.all(urls.map(url=>import(url)));return modules.flatMap(m=>m.topics??[m.emTopic??m.atomTopic]).map(t=>({id:t.id,title:t.title,sections:t.sections.length,questions:t.questions,terms:t.terms.length}));},moduleNames.map(browserModuleUrl));
  await attempt('Complete, distinct, well-formed question data',async()=>{
- assert.equal(data.length,9);const seen=new Set();for(const t of data){assert.ok(t.sections>0&&t.terms>0);assert.ok(t.questions.length>=10,t.id);for(const q of t.questions){assert.ok(!seen.has(q.id),'duplicate '+q.id);seen.add(q.id);assert.ok(q.prompt&&q.answer,q.id);assert.ok(['mcq','number','open'].includes(q.type),q.id);if(q.type==='mcq')assert.ok(Number.isInteger(q.correct)&&q.correct>=0&&q.correct<q.choices.length,q.id);if(q.type==='number')assertNumericQuestion(q);}}});
+ assert.equal(data.length,9);const seen=new Set();for(const t of data){assert.ok(t.sections>0&&t.terms>0);assert.ok(t.questions.length>=10,t.id);for(const q of t.questions){assert.ok(!seen.has(q.id),'duplicate '+q.id);seen.add(q.id);assert.ok(q.prompt&&q.answer,q.id);assert.ok(questionTypes.includes(q.type),q.id);if(q.type==='mcq')assert.ok(Number.isInteger(q.correct)&&q.correct>=0&&q.correct<q.choices.length,q.id);if(q.type==='number')assertNumericQuestion(q);}}});
  async function route(id,view='fagstoff'){await page.goto(url+'#'+id+'/'+view);await page.locator('#topic-content').waitFor();await page.waitForTimeout(70);}
  const besideHydrogenModes=panel=>panel.evaluate(el=>{
   const bounds=el.getBoundingClientRect();
@@ -393,8 +387,6 @@ function assertNumericQuestion(q){
   await route('alle','oppgaver');
   assert.equal(await page.locator('.q-card').count(),qAll.length);
   assert.equal(await page.locator('.q-card.q-has-figure').count(),qAll.filter(question=>question.figure).length);
-  const topicsWithAppendedFigures=new Set(qAll.filter(question=>question.newFigureQuestion).map(question=>question.topic));
-  assert.deepEqual(await page.locator('h2.q-figure-heading').allTextContents(),Array(topicsWithAppendedFigures.size).fill('Nye figuroppgaver'));
   assert.equal(await page.locator('.filterbar').count(),0);
   await route('kommunikasjon','oppgaver');
   assert.equal(await page.locator('.q-card').count(),data.find(t=>t.id==='kommunikasjon').questions.length);
@@ -581,32 +573,14 @@ function assertNumericQuestion(q){
   await level(4).click();
   await level(1).click();
   assert.deepEqual(await arrows(),['4-1']);
-  for(const [topicId,appended] of Object.entries(appendedFigureQuestions)){
-   await page.setViewportSize({width:1366,height:768});
+  for(const topicId of ['bolger','fenomener','em']){
    await page.goto(base+'/naturfag.html#waves/'+topicId+'/oppgaver');
    const otherQuestions=data.find(topic=>topic.id===topicId).questions;
-   const original=card(otherQuestions[0].id),sample=card(appended[0]);
-   await sample.waitFor();
+   await card(otherQuestions[0].id).waitFor();
    assert.equal(await atom.locator('.q-card').count(),otherQuestions.length);
-   assert.equal(await original.locator('.q-figure').count(),0);
-   assert.equal(await atom.locator('.q-card.q-has-figure').count(),2);
-   const order=await atom.locator('.q-card,h2.q-figure-heading').evaluateAll(nodes=>nodes.map(node=>node.dataset.question??node.textContent));
-   assert.deepEqual(order,[...otherQuestions.slice(0,-2).map(question=>question.id),'Nye figuroppgaver',...appended]);
-   for(const id of appended)assert.equal(await card(id).locator(`.q-figure svg[${bankFigureAttributes[topicId]}="${id}"]`).count(),1);
    if(topicId==='bolger')assert.equal(await card('wv-b14').locator('.q-prompt svg.q-wave-figure').isVisible(),true);
-   const wide=await position(sample);
-   assert.ok(wide.prompt.right<=wide.figure.left&&wide.controls.right<=wide.figure.left,`${topicId} places its figure to the right.`);
-   const question=otherQuestions.at(-2);
-   if(question.type==='mcq'){
-    await sample.locator('[data-choice="'+question.correct+'"]').click();
-    assert.equal(await sample.locator('.feedback').innerText(),'Riktig!');
-   }else{
-    await sample.getByRole('button',{name:'Vis veiledende svar',exact:true}).click();
-    assert.equal(await sample.locator('.solution').isVisible(),true);
-   }
+   assert.equal(await atom.locator('.q-card.q-has-figure').count(),topicId==='em'?1:0);
    await page.setViewportSize({width:320,height:844});
-   const narrow=await position(sample);
-   assert.ok(narrow.prompt.bottom<=narrow.figure.top&&narrow.figure.bottom<=narrow.controls.top,`${topicId} places its figure before the controls on mobile.`);
    assert.equal(await atom.locator('main').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true,`${topicId} question bank fits 320px.`);
   }
  });
@@ -1250,7 +1224,41 @@ function assertNumericQuestion(q){
    await page.goto(base+'/naturfag.html#waves/em/fagstoff');
    await content.locator('.content-section').first().waitFor();
    assert.equal(await content.locator('main').evaluate(e=>e.scrollWidth>e.clientWidth+1),false,'published spectrum overflow');
+   const white=content.locator('.content-section').nth(2);
+   assert.equal(await white.getByRole('heading',{name:'Hvitt lys',exact:true}).isVisible(),true);
+   assert.equal(await white.locator('#wl-model #wl-scene [data-wl-wave]').count(),7);
+   assert.equal(await content.locator('.content-section').nth(3).locator('#abs-light').isVisible(),true);
+   for(const [id,denominator] of [['wavelength','f'],['frequency','λ']]){
+    const formula=content.locator('#ema-'+id+'-calculation');
+    assert.equal(await formula.isVisible(),true);
+    const fraction=formula.locator('.frac').first();
+    assert.equal(await fraction.locator('.num').textContent(),'c');
+    assert.equal(await fraction.locator('.den').textContent(),denominator);
+    assert.ok(await formula.locator('.frac').count()>=2);
+   }
+   const energy=await content.locator('#ema-energy-calculation').textContent();
+   assert.match(energy,/E\s*=\s*h\s*·?\s*f/);
+   assert.match(energy,/6[,.]626.*10/);
   }
+  const whiteModel=content.locator('#wl-model');
+  const wave=whiteModel.locator('#wl-scene [data-wl-wave]').first();
+  const pause=whiteModel.locator('.animation-toggle');
+  assert.equal(await whiteModel.locator('#wl-scene [data-wl-prism]').count(),1);
+  assert.equal(await whiteModel.locator('#wl-scene [data-wl-incoming]').count(),1);
+  assert.equal(await whiteModel.locator('#wl-scene [data-wl-spectrum]').count(),1);
+  assert.equal(await pause.getAttribute('aria-pressed'),'true','The white-light animation respects reduced motion.');
+  await page.emulateMedia({reducedMotion:'no-preference'});
+  try{
+   const initial=await wave.getAttribute('d');
+   const frame=await (await wave.elementHandle()).ownerFrame();
+   await frame.waitForFunction(previous=>document.querySelector('#wl-scene [data-wl-wave]')?.getAttribute('d')!==previous,initial);
+   await pause.click();
+   assert.equal(await pause.getAttribute('aria-pressed'),'true');
+   const stopped=await wave.getAttribute('d');
+   const spectrumWave=await frame.locator('#ema-spectrum-wave path').first().getAttribute('d');
+   await frame.waitForFunction(previous=>document.querySelector('#ema-spectrum-wave path')?.getAttribute('d')!==previous,spectrumWave);
+   assert.equal(await wave.getAttribute('d'),stopped,'Pausing the prism freezes its waves only.');
+  }finally{await page.emulateMedia({reducedMotion:'reduce'});}
   await content.locator('.abs-stage #abs-light').selectOption('blue');
   await content.locator('.abs-stage #abs-surface').selectOption('white');
   assert.match(await content.locator('#abs-readout').innerText(),/Reflektert:\s*bl/);
@@ -1260,6 +1268,75 @@ function assertNumericQuestion(q){
   await page.goto(base+'/naturfag.html#waves/em/begreper');
   await content.locator('.term').first().waitFor();
   assert.equal(await content.locator('.term').count(),spectrum.terms);
+ });
+ await attempt('EM question bank shows formulas and checks sorting and ionization',async()=>{
+  await page.setViewportSize({width:1366,height:768});
+  await page.goto(base+'/naturfag.html#waves/em/oppgaver');
+  const content=page.frameLocator('#waves-module-frame');
+  const card=id=>content.locator('.q-card[data-question="'+id+'"]');
+  const emQuestions=data.find(topic=>topic.id==='em').questions;
+  await card('em-03').waitFor();
+  for(const [id,denominator,prefix,value] of [
+   ['em-03','f',/Mega \(M\) betyr én million/, '3,00'],
+   ['em-04','λ',/Nano \(n\) betyr én milliarddel/, '6,00']
+  ]){
+   const question=card(id);
+   const formula=question.locator('.q-formula'),conversion=question.locator('.q-prefix');
+   assert.equal(await formula.isVisible(),true);
+   assert.equal(await formula.locator('.frac .num').textContent(),'c');
+   assert.equal(await formula.locator('.frac .den').textContent(),denominator);
+   assert.equal(await conversion.isVisible(),true);
+   assert.match(await conversion.innerText(),prefix);
+   await question.locator('input').fill(value);
+   await question.getByRole('button',{name:'Sjekk',exact:true}).click();
+   assert.equal(await question.locator('.feedback').innerText(),'Riktig!');
+  }
+  const sorting=card('em-15'),sorter=sorting.locator('[data-em-order]');
+  const slots=sorter.locator('[data-em-order-slot]');
+  const slot=i=>sorter.locator('[data-em-order-slot="'+i+'"]');
+  const chip=key=>sorter.locator('[data-em-order-item="'+key+'"]');
+  const check=sorter.locator('[data-em-order-check]'),reset=sorter.locator('[data-em-order-reset]');
+  const status=sorter.locator('[data-em-order-status]'),mastery=sorting.locator('.q-status');
+  const order=['radio','micro','infrared','visible','ultraviolet','xray','gamma'];
+  const values=()=>slots.evaluateAll(elements=>elements.map(el=>el.dataset.emOrderValue));
+  const place=async(key,index)=>{
+   await chip(key).press('Enter');
+   assert.equal(await slot(index).evaluate(el=>el.ownerDocument.activeElement===el),true);
+   await slot(index).press('Enter');
+  };
+  assert.match(await sorting.locator('.q-prompt').innerText(),/lavest til høyest frekvens/i);
+  assert.equal(await sorter.locator('[data-em-order-bank] [data-em-order-item]:visible').count(),7);
+  await chip('micro').dragTo(slot(1));
+  assert.equal(await slot(1).getAttribute('data-em-order-value'),'micro');
+  await check.click();
+  assert.match(await status.innerText(),/Plasser alle sju brikkene/i);
+  assert.equal(await mastery.isVisible(),false);
+  const mixed=['micro','radio',...order.slice(2)];
+  for(let i=1;i<mixed.length;i++)await place(mixed[i],i+1);
+  assert.deepEqual(await values(),mixed);
+  await check.click();
+  assert.match(await status.innerText(),/5 av 7 på rett plass/i);
+  assert.equal(await mastery.isVisible(),false);
+  assert.equal(await sorter.locator('[data-em-order-slot][data-result=wrong]').count(),2);
+  await reset.click();
+  assert.deepEqual(await values(),Array(7).fill(''));
+  assert.equal(await sorter.locator('[data-em-order-item]:visible').count(),7);
+
+  await page.setViewportSize({width:320,height:844});
+  assert.equal(await content.locator('main').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true);
+  await chip('radio').click();
+  await slot(1).click();
+  for(let i=1;i<order.length;i++)await place(order[i],i+1);
+  assert.deepEqual(await values(),order);
+  await check.click();
+  assert.match(await status.innerText(),/Riktig!/);
+  assert.equal(await mastery.isVisible(),true);
+  const ionizing=emQuestions.find(question=>question.id==='em-16');
+  assert.match(ionizing.choices[ionizing.correct],/elektron/i);
+  await card('em-16').locator('[data-choice="'+ionizing.correct+'"]').click();
+  assert.equal(await card('em-16').locator('.feedback').innerText(),'Riktig!');
+  await page.reload();
+  await mastery.waitFor();
  });
  await attempt('Sky scattering dialog works on a phone and runs the sunset',async()=>{
   await page.setViewportSize({width:390,height:844});

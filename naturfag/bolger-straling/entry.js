@@ -1,8 +1,8 @@
-import {emTopic} from './em-spectrum.js?v=20261126-nye-figuroppgaver';
+import {emTopic} from './em-spectrum.js?v=20261127-hvitt-lys';
 import {atomTopic} from './atom-topic.js?v=20261126-bolgefigurer';
-import {startCourse} from './app.js?v=20261126-nye-figuroppgaver';
-import {topics as basicTopics} from './wave-basics.js?v=20261126-nye-figuroppgaver';
-import {topics as waveTopics} from './waves.js?v=20261126-nye-figuroppgaver';
+import {startCourse} from './app.js?v=20261127-hvitt-lys';
+import {topics as basicTopics} from './wave-basics.js?v=20261127-hvitt-lys';
+import {topics as waveTopics} from './waves.js?v=20261127-hvitt-lys';
 const params=new URLSearchParams(location.search);
 const topics=[...basicTopics,...waveTopics,emTopic,atomTopic];
 const topic=topics.some(item=>item.id===params.get('topic'))?params.get('topic'):'bolger';

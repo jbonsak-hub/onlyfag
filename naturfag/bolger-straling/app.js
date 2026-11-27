@@ -4,6 +4,7 @@ import {createAnimationClock} from './animation-clock.js?v=20261116-naturfag1';
 export function startCourse(topicList,{prototype=false,embedded=false}={}){
 let hostVisible=true;
 const order=['bolger','fenomener','em','atomer','universet','kommunikasjon','radioaktivitet','stralevern','atmosfaeren'];
+const questionTypes={mcq:'Flervalg',number:'Regn ut',sort:'Sorter',open:'Forklar og drøft'};
 const topics=[...topicList].sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id));
 const allQuestions=topics.flatMap(topic=>topic.questions.map((q,index)=>({...q,topic,index})));
 const byId=new Map(topics.map(t=>[t.id,t]));
@@ -181,15 +182,12 @@ function resourceHtml(t){return t.resources?.length?`<aside class="resource-box"
 function renderBank(){
  const questions=route.id==='alle'?allQuestions:allQuestions.filter(q=>q.topic.id===route.id);
  const bank=$('#topic-content');
- const cards=questions.map((question,index)=>{
-  const previous=questions[index-1];
-  const startsFigureGroup=question.newFigureQuestion&&(!previous?.newFigureQuestion||previous.topic!==question.topic);
-  const heading=startsFigureGroup?'<h2 class="q-figure-heading">Nye figuroppgaver</h2>':'';
-  return heading+questionHtml(question);
- }).join('');
+ const cards=questions.map(questionHtml).join('');
  bank.innerHTML=`<div id="question-list" class="question-list">${cards||'<div class="empty-state">Det er ingen oppgaver her ennå.</div>'}</div>`;
  for(const q of questions){
-  if(q.mountFigure)q.mountFigure(bank.querySelector(`[data-question="${q.id}"] .q-figure`));
+  if(!q.mountFigure)continue;
+  const card=bank.querySelector(`[data-question="${q.id}"]`);
+  q.mountFigure(card.querySelector('.q-figure'),{onCheck:solved=>setSolved(q,card,solved)});
  }
 }
 function numberFormHtml(q,draft){
@@ -209,12 +207,15 @@ function numberFormHtml(q,draft){
 function questionHtml(q){
  const previous=saved.answers[q.id],solved=previous?.solved,bookmarked=!!saved.bookmarks[q.id],draft=saved.drafts[q.id]||'';
  const prompt=`<div class="q-prompt" id="prompt-${q.id}">${q.prompt}</div>`;
- const controls=`${q.type==='mcq'?`<div class="q-choices" role="group" aria-labelledby="prompt-${q.id}">${shuffledChoices(q).map(({choice:c,index},i)=>`<button class="q-choice" data-choice="${index}" aria-pressed="false"><span class="choice-letter">${String.fromCharCode(65+i)}</span><span>${c}</span></button>`).join('')}</div>`:q.type==='number'?numberFormHtml(q,draft):`<label class="sr-only" for="input-${q.id}">Ditt svar</label><textarea id="input-${q.id}" class="q-open" rows="2" placeholder="Skriv et kort svar, eller forklar muntlig før du ser løsningsforslaget.">${escapeHtml(draft)}</textarea>`}<div class="q-actions"><button class="show-answer">${q.type==='open'?'Vis veiledende svar':'Vis forklaring'}</button>${q.hint?'<button class="hint-button" aria-expanded="false">Et hint</button>':''}</div>${q.hint?`<div class="q-hint" hidden>${q.hint}</div>`:''}<div class="q-answer" hidden><div class="feedback" aria-live="polite"></div><div class="solution">${solutionHtml(q)}</div>${q.type==='open'?`<div class="self-mark"><button data-self="yes">Dette fikk jeg til</button><button data-self="again" class="secondary">Øv igjen senere</button></div>`:''}</div>`;
+ const input=q.type==='mcq'?`<div class="q-choices" role="group" aria-labelledby="prompt-${q.id}">${shuffledChoices(q).map(({choice:c,index},i)=>`<button class="q-choice" data-choice="${index}" aria-pressed="false"><span class="choice-letter">${String.fromCharCode(65+i)}</span><span>${c}</span></button>`).join('')}</div>`:
+  q.type==='number'?numberFormHtml(q,draft):
+  q.type==='open'?`<label class="sr-only" for="input-${q.id}">Ditt svar</label><textarea id="input-${q.id}" class="q-open" rows="2" placeholder="Skriv et kort svar, eller forklar muntlig før du ser løsningsforslaget.">${escapeHtml(draft)}</textarea>`:'';
+ const controls=`${input}<div class="q-actions"><button class="show-answer">${q.type==='open'?'Vis veiledende svar':'Vis forklaring'}</button>${q.hint?'<button class="hint-button" aria-expanded="false">Et hint</button>':''}</div>${q.hint?`<div class="q-hint" hidden>${q.hint}</div>`:''}<div class="q-answer" hidden><div class="feedback" aria-live="polite"></div><div class="solution">${solutionHtml(q)}</div>${q.type==='open'?`<div class="self-mark"><button data-self="yes">Dette fikk jeg til</button><button data-self="again" class="secondary">Øv igjen senere</button></div>`:''}</div>`;
  const body=q.figure?
   `${prompt}<div class="q-figure">${q.figure}</div><div class="q-controls">${controls}</div>`:
   prompt+controls;
  const course=q.course?`<span class="q-course">(fra ${escapeHtml(q.course)})</span>`:'';
- return `<article class="q-card${q.figure?' q-has-figure':''}" data-question="${q.id}"><div class="q-top"><span class="q-number">${String(q.index+1).padStart(2,'0')}</span><span>${escapeHtml(q.level||'Bruk')}</span><span>· ${q.type==='mcq'?'Flervalg':q.type==='number'?'Regn ut':'Forklar og drøft'}</span>${course}<span class="q-status" ${solved?'':'hidden'}>✓ Mestret</span><span class="q-topic">${escapeHtml(q.topic.title)}</span><button class="q-bookmark" aria-label="${bookmarked?'Fjern bokmerke':'Merk oppgaven'}" aria-pressed="${bookmarked}" title="Merk oppgaven">${bookmarked?'★':'☆'}</button></div>${body}</article>`;
+ return `<article class="q-card${q.figure?' q-has-figure':''}" data-question="${q.id}"><div class="q-top"><span class="q-number">${String(q.index+1).padStart(2,'0')}</span><span>${escapeHtml(q.level||'Bruk')}</span><span>· ${questionTypes[q.type]}</span>${course}<span class="q-status" ${solved?'':'hidden'}>✓ Mestret</span><span class="q-topic">${escapeHtml(q.topic.title)}</span><button class="q-bookmark" aria-label="${bookmarked?'Fjern bokmerke':'Merk oppgaven'}" aria-pressed="${bookmarked}" title="Merk oppgaven">${bookmarked?'★':'☆'}</button></div>${body}</article>`;
 }
 function findQuestion(card){return allQuestions.find(q=>q.id===card.dataset.question);}
 function setSolved(q,card,solved){
