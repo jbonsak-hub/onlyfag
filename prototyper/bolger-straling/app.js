@@ -1,4 +1,4 @@
-import {startCourse} from '../../naturfag/bolger-straling/app.js?v=20261127-hvitt-lys';
+import {startCourse} from '../../naturfag/bolger-straling/app.js?v=20261127-lysreisetid';
 import {topics as basicTopics} from '../../naturfag/bolger-straling/wave-basics.js?v=20261127-hvitt-lys';
 import {topics as waveTopics} from '../../naturfag/bolger-straling/waves.js?v=20261127-hvitt-lys';
 import {topics as commTopics} from './communication.js?v=20261125-atom-release';

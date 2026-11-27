@@ -1,4 +1,4 @@
-import {solutionHtml} from './math-presentation.js?v=20261126-nye-figuroppgaver';
+import {solutionHtml} from './math-presentation.js?v=20261127-lysreisetid';
 import {createAnimationClock} from './animation-clock.js?v=20261116-naturfag1';
 
 export function startCourse(topicList,{prototype=false,embedded=false}={}){

@@ -21,6 +21,8 @@ const worked={
  'wv-f6':()=>rows('A<sub>sum</sub>',['A₁ + A₂','3 cm + 3 cm','<strong>6 cm</strong>']),
  'em-03':()=>rows('λ',[frac('c','f'),frac('3,00 · 10<sup>8</sup> m/s','100 · 10<sup>6</sup> Hz'),'<strong>3,00 m</strong>']),
  'em-04':()=>rows('f',[frac('c','λ'),frac('3,00 · 10<sup>8</sup> m/s','5,00 · 10<sup>−7</sup> m'),'<strong>6,00 · 10<sup>14</sup> Hz</strong>']),
+ 'em-17':()=>rows('t',[frac('s','v'),frac('150 000 000 km','300 000 km/s'),'<strong>500 s</strong>'])
+  +'<p>500 s er <strong>8 min 20 s</strong>. Så lenge ville det ta før det siste sollyset nådde jorda.</p>',
  'atom-05':()=>rows('E<sub>foton</sub>',['−0,24 aJ − (−0,54 aJ)','<strong>0,30 aJ</strong>'])+'<p>Atomet mister energi; fotonet får positiv energi.</p>',
  'atom-12':()=>rows('E',['h · f','6,63 · 10<sup>−34</sup> J s · 5,0 · 10<sup>14</sup> Hz','3,315 · 10<sup>−19</sup> J','<strong>3,3 · 10<sup>−19</sup> J</strong> (avrundet)']),
  'com-04':()=>rows('Antall biter',['5 · 8','<strong>40 biter</strong>']),

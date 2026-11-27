@@ -3,7 +3,7 @@ import {lightDualitySection,mountLightDuality} from './light-duality.js?v=202611
 import {skyScatteringHtml,mountSkyScattering} from './sky-scattering.js?v=20261122-spredning1';
 import {emOrderQuestion} from './em-order-question.js?v=20261127-hvitt-lys';
 import {whiteLightSection,mountWhiteLight} from './white-light.js?v=20261127-hvitt-lys';
-import {frac} from './math-presentation.js?v=20261126-nye-figuroppgaver';
+import {frac} from './math-presentation.js?v=20261127-lysreisetid';
 // Self-contained teaching models. Physical quantities use SI units internally.
 const C = 299792458, H = 6.62607015e-34;
 const fmt = (x, digits = 2) => x.toLocaleString('nb-NO', {maximumFractionDigits: digits});
@@ -324,6 +324,13 @@ export const emTopic = {
         ],
         correct:0,
         answer:'Ioniserende stråling kan <strong>frigjøre et elektron</strong> fra et atom eller molekyl. Det som blir igjen, er et positivt ion. Røntgenstråling er et eksempel på stråling som kan ionisere.'
+      },
+      {
+        id:'em-17',type:'number',level:'Utfordring*',
+        prompt:'Lyset beveger seg i nesten 300 000 kilometer i sekundet og det er nesten 150 000 000 kilometer mellom jorda og sola. Hvis sola plutselig hadde slukket, hvor lang tid ville det tatt før det hadde blitt mørkt her? Oppgi svaret i sekunder.',
+        value:500,unit:'s',
+        hint:`Tid = ${frac('strekning','fart')}.`,
+        answer:'Det siste sollyset ville nå jorda etter omtrent <strong>500 s</strong>, altså <strong>8 min 20 s</strong>.'
       }
     ],
     resources:[

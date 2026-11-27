@@ -94,20 +94,23 @@ function assertNumericQuestion(q){
  assert.deepEqual(source.map(t=>t.id).sort(),ids.slice().sort());
  const unique=new Set(),numeric=new Map();
  for(const t of source){assert.ok(t.sections.length&&t.terms.length&&t.questions.length>=10,t.id);for(const q of t.questions){assert.ok(!unique.has(q.id)&&q.prompt&&q.answer,q.id);unique.add(q.id);assert.ok(questionTypes.includes(q.type),q.id);if(q.type==='mcq')assert.ok(Number.isInteger(q.correct)&&q.correct>=0&&q.correct<q.choices.length,q.id);if(q.type==='number'){assertNumericQuestion(q);numeric.set(q.id,q);}}}
- const expected={'wv-b3':5/2,'wv-b4':1/2.5,'wv-b5':345/440,'wv-b6':4/2,'wv-b9':340*3,'wv-f1':35,'wv-f6':3+3,'em-03':3e8/1e8,'em-04':3e8/(500e-9)/1e14,'atom-05':-.24-(-.54),'atom-12':6.63e-34*5e14/1e-19,'com-04':5*8,'com-10':36000/300000,'ra-q2':220-85,'ra-q9':Math.log2(40/5)*5730,'ra-q10':3000*2**(-12/4),'ra-q11':Math.log2(100/6.25)*5730,'ra-q16':1000*2**(-360/24),'sv-q7':250*20,'sv-q8':2.5*1000,'ce-u-06':2898000/6000,'ce-u-09':656*1.1,'ce-a-08':340*(1-.3),'ce-a-09':238-230};
+ const expected={'wv-b3':5/2,'wv-b4':1/2.5,'wv-b5':345/440,'wv-b6':4/2,'wv-b9':340*3,'wv-f1':35,'wv-f6':3+3,'em-03':3e8/1e8,'em-04':3e8/(500e-9)/1e14,'em-17':500,'atom-05':-.24-(-.54),'atom-12':6.63e-34*5e14/1e-19,'com-04':5*8,'com-10':36000/300000,'ra-q2':220-85,'ra-q9':Math.log2(40/5)*5730,'ra-q10':3000*2**(-12/4),'ra-q11':Math.log2(100/6.25)*5730,'ra-q16':1000*2**(-360/24),'sv-q7':250*20,'sv-q8':2.5*1000,'ce-u-06':2898000/6000,'ce-u-09':656*1.1,'ce-a-08':340*(1-.3),'ce-a-09':238-230};
  for(const [id,value]of Object.entries(expected)){const q=numeric.get(id);assert.ok(q,id);assert.ok(Math.abs(q.value-value)<1e-8*Math.max(1,Math.abs(value)),id+' incorrect answer');}
  assert.deepEqual(numeric.get('wv-b13').fields.map(field=>field.value),[10/15,1.5]);
  assert.deepEqual(numeric.get('wv-b14').fields.map(field=>field.value),[2,3,4,.25,.5]);
  const originalIds=[...Array.from({length:12},(_,i)=>'wv-b'+(i+1)),...Array.from({length:14},(_,i)=>'wv-f'+(i+1)),...['em','atom','com'].flatMap(p=>Array.from({length:12},(_,i)=>p+'-'+String(i+1).padStart(2,'0'))),...Array.from({length:16},(_,i)=>'ra-q'+(i+1)),...Array.from({length:17},(_,i)=>'sv-q'+(i+1)),...['ce-u','ce-a'].flatMap(p=>Array.from({length:14},(_,i)=>p+'-'+String(i+1).padStart(2,'0')))];
- assert.deepEqual([...unique].sort(),[...originalIds,'wv-b13','wv-b14','atom-13','atom-14','atom-15','atom-16','em-15','em-16'].sort(),'Keep the original banks and add the two EM exercises.');
- assert.equal(unique.size,131);
+ assert.deepEqual([...unique].sort(),[...originalIds,'wv-b13','wv-b14','atom-13','atom-14','atom-15','atom-16','em-15','em-16','em-17'].sort(),'Keep existing question IDs and add the travel-time exercise.');
+ assert.equal(unique.size,132);
  const publicTopics=source.filter(t=>publishedIds.includes(t.id));
  assert.deepEqual(publicTopics.map(t=>t.id),publishedIds);
- assert.deepEqual(publicTopics.map(t=>t.questions.length),[13,12,16,16]);
+ assert.deepEqual(publicTopics.map(t=>t.questions.length),[13,12,17,16]);
  assert.deepEqual(source.flatMap(topic=>topic.questions).filter(question=>question.type==='sort').map(question=>question.id),['em-15']);
  const {emTopic}=sourceModules['em-spectrum'];
  assert.equal(emTopic.sections[2].title,'Hvitt lys');
  assert.equal(emTopic.questions.find(question=>question.id==='em-16').type,'mcq');
+ assert.equal(emTopic.questions.at(-1).id,'em-17');
+ assert.equal(numeric.get('em-17').unit,'s');
+ assert.equal(numeric.get('em-17').level,'Utfordring*');
  assert.match(emTopic.questions.find(question=>question.id==='em-10').prompt,/«Mobilen bruker mikrobølger, så å bruke den er som å ha en mikrobølgeovn rett ved hodet\.»/);
  assert.match(numeric.get('wv-b14').prompt,/<svg class="q-wave-figure"/);
  for(const topic of publicTopics)assert.ok(!topic.terms.some(t=>/knut|\bbuk/i.test(t.term)),'Buk and knute are excluded from the published concept lists.');
@@ -144,7 +147,7 @@ function assertNumericQuestion(q){
  const helperModules={};for(const name of ['atom-lab','waves-rainbow','isotope-data','math-presentation','animation-clock'])helperModules[name]=await import(moduleUrl(name));
  fixtureClockFactory=helperModules['animation-clock'].createAnimationClock;
  const {solutionHtml}=helperModules['math-presentation'];
- assert.equal(numeric.size,26,'All 26 numeric questions receive the shared solution format.');
+ assert.equal(numeric.size,27,'All 27 numeric questions receive the shared solution format.');
  for(const q of numeric.values()){const html=solutionHtml(q);assert.ok(html.includes('calc-lines')&&html.includes('calc-row')&&html.includes('calc-rhs'),q.id+' has aligned calculation rows');assert.notEqual(html,q.answer,q.id+' has the shared mathematical presentation');}
  const fallback={id:'not-a-worked-example',answer:'Keep this explanation.'};assert.equal(solutionHtml(fallback),fallback.answer);
  assert.ok(!topicRender.includes('class="section-links"')&&!topicRender.includes('nextHtml('),'Topic chip navigation and next-topic panels are removed.');
@@ -264,7 +267,7 @@ function assertNumericQuestion(q){
  }finally{comm.destroy();}
  const revisionGroups=await require('./bolger-straling-revision.cjs').runRevisionChecks({modelFixture,topics:source});
  assert.ok(revisionGroups.length>=8);
- console.log('Source/model checks passed: 9 distinct topics, 131 questions; 4 published topics, 57 questions; 26 numeric exercises; independent model pause/repaint, Snell constraints, retarded Doppler, swing modes and outcomes, primary/secondary rainbow, atom cascades, isotope decay and absolute Planck units.');
+ console.log('Source/model checks passed: 9 distinct topics, 132 questions; 4 published topics, 58 questions; 27 numeric exercises; independent model pause/repaint, Snell constraints, retarded Doppler, swing modes and outcomes, primary/secondary rainbow, atom cascades, isotope decay and absolute Planck units.');
  if(process.argv.includes('--data-only'))return;
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
  const base='http://127.0.0.1:'+server.address().port, url=base+'/prototyper/bolger-straling.html';
@@ -1335,6 +1338,17 @@ function assertNumericQuestion(q){
   assert.match(ionizing.choices[ionizing.correct],/elektron/i);
   await card('em-16').locator('[data-choice="'+ionizing.correct+'"]').click();
   assert.equal(await card('em-16').locator('.feedback').innerText(),'Riktig!');
+  const travelTime=card('em-17'),hint=travelTime.locator('.q-hint');
+  assert.equal(await hint.isVisible(),false);
+  await travelTime.getByRole('button',{name:'Et hint',exact:true}).click();
+  assert.equal(await hint.isVisible(),true);
+  assert.equal(await hint.locator('.frac .num').textContent(),'strekning');
+  assert.equal(await hint.locator('.frac .den').textContent(),'fart');
+  await travelTime.locator('input').fill('500');
+  await travelTime.getByRole('button',{name:'Sjekk',exact:true}).click();
+  assert.equal(await travelTime.locator('.feedback').innerText(),'Riktig!');
+  assert.match(await travelTime.locator('.solution .calc-lines').innerText(),/500\s*s/);
+  assert.match(await travelTime.locator('.solution').innerText(),/8\s*min\s+20\s*s/);
   await page.reload();
   await mastery.waitFor();
  });
