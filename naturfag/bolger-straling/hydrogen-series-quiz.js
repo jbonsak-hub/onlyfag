@@ -1,17 +1,17 @@
 export const hydrogenQuiz = {
   mild: [
-    ['4-2', 'Hvilken overgang i Balmerserien gir nest minst energi?'],
-    ['5-2', 'Blåfiolett lys har nest høyest energi per foton blant de fire synlige linjene. Hvilken overgang gir blåfiolett lys?'],
-    ['6-1', 'Fotonet får den energien elektronet mister. Hvilken overgang gir fotonet med mest energi?'],
-    ['3-2', 'De fire overgangene ned til nivå 2 gir synlig lys. Den med minst energi gir rødt lys, og er ...?'],
+    ['4-2', 'Hvilken overgang gir synlig lys med nest lavest frekvens?'],
+    ['5-2', 'Blåfiolett lys har nest høyest energi per foton blant de fire synlige linjene. Klikk på overgangen.'],
+    ['6-1', 'Når elektronet faller til et lavere nivå, får fotonet energien atomet mister. Hvilken av overgangene du ser her gir fotonet med mest energi?'],
+    ['3-2', 'Overgangene til nivå 2 som vises her gir synlig lys, og rødt lys har lavest energi per foton av disse. Finn denne overgangen.'],
     ['2-1', 'Lavere frekvens betyr mindre energi per foton. Hvilken ultrafiolett overgang gir lavest frekvens?'],
     ['3-1', 'Grunntilstanden er det laveste energinivået. Hvilken overgang fra tredje skall ender der?'],
-    ['4-1', 'Overgangene i Lymanserien gir ultrafiolett lys. Hvilken overgang fra n = 4 gir slikt lys?'],
-    ['5-1', 'Overganger som ender i grunntilstanden (1) gir UV-lys. Hvilken av disse har nest høyest energi?'],
-    ['6-2', 'Fiolett lys har kortest bølgelengde av de synlige linjene (Balmer). Hvilken overgang er dette?'],
-    ['4-3', 'Lengre bølgelengde betyr mindre energi per foton. Hvilken overgang i Paschenserien gir lengst bølgelengde?'],
-    ['5-3', 'Denne overgangen gir infrarødt lys, men det er verken den mest eller minst energirike av IR-overgangene.'],
-    ['6-3', 'Overgangen ned til tredje nivå gir infrarødt lys. Hvilken overgang gir IR-lys med mest energi?']
+    ['4-1', 'Overgangene ned til grunntilstanden gir ultrafiolett lys. Hvilken overgang fra n = 4 gir slikt lys?'],
+    ['5-1', 'Overganger i samme serie ender på samme nivå. Hvilken overgang fra n = 5 hører til Lymanserien?'],
+    ['6-2', 'Fiolett lys har kortest bølgelengde av de synlige linjene. Hvilken overgang gir slikt fiolett lys?'],
+    ['4-3', 'Hvilken av alle overgangene du ser her gir lys med lengst bølgelengde?'],
+    ['5-3', 'Overgangen vi skal frem til gir infrarødt lys og kommer av at elektronet hopper to skall innover.'],
+    ['6-3', 'Denne overgangen gir IR-lys med høyest frekvens av de vi ser her. Hvilken?']
   ],
   medium: [
     ['3-2', 'Hvilket hopp gir rødt lys?'],

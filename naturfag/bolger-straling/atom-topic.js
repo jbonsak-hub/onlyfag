@@ -1,7 +1,7 @@
-import {atomLabSection,customAtomSection,mountAtomLab,HYDROGEN_GROUND_AJ} from './atom-lab.js?v=20261126-atomoppgaver';
-import {hydrogenSeriesSection,mountHydrogenSeries} from './hydrogen-series.js?v=20261126-quizsporsmal';
+import {atomLabSection,customAtomSection,mountAtomLab,HYDROGEN_GROUND_AJ} from './atom-lab.js?v=20261128-hydrogenoppgaver';
+import {hydrogenSeriesSection,mountHydrogenSeries} from './hydrogen-series.js?v=20261128-hydrogenoppgaver';
 import {spectraLabSection,mountSpectraLab} from './spectra-lab.js?v=20261126-absorpsjon';
-import {atomQuestions} from './atom-questions.js?v=20261126-bolgefigurer';
+import {atomQuestions} from './atom-questions.js?v=20261128-hydrogenoppgaver';
 
 const C = 299792458, H = 6.62607015e-34, AJ = 1e-18;
 function mountAtom(root,api){

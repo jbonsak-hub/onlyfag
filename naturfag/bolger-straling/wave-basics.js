@@ -1,4 +1,5 @@
 import { drawSpatialWave, mountSoundExample, soundMarkup, spatialMarkup, waveVisualStyle } from './wave-visuals.js?v=20261125-wave-views';
+import {waterDepthQuestion} from './wave-water-depth-question.js?v=20261128-hydrogenoppgaver';
 
 const C={wave:'#16879b',amber:'#d28a16',purple:'#8260b4',grid:'#d6e1e6',muted:'#78929e'};
 const fmt=(n,d=2)=>n.toLocaleString('nb-NO',{maximumFractionDigits:d});
@@ -154,7 +155,8 @@ const basics={
         {label:'Bølgefart v',value:2*4/16,unit:'m/s'}
       ],
       answer:'Bølgelengden er 2 m og amplituden er 3 m. Perioden er 4 s, frekvensen er 0,25 Hz og bølgefarten er 0,50 m/s.'
-    }
+    },
+    waterDepthQuestion
   ],
   resources:[{label:'PhET: Bølge på en snor',url:'https://phet.colorado.edu/sims/html/wave-on-a-string/latest/wave-on-a-string_all.html'}],
   mount(root,api){

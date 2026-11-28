@@ -1,6 +1,6 @@
-import {atomDrawing, HYDROGEN_GROUND_AJ, photonFromEnergyAJ, possibleTransitions, transition} from './atom-lab.js?v=20261126-atomoppgaver';
-import {seriesBoardGraphic, seriesBoardLayout, seriesBoardMotion} from './hydrogen-series-graphics.js?v=20261126-hydrogen-ionisering';
-import {hydrogenQuiz} from './hydrogen-series-quiz.js?v=20261126-quizsporsmal';
+import {atomDrawing, HYDROGEN_GROUND_AJ, photonFromEnergyAJ, possibleTransitions, transition} from './atom-lab.js?v=20261128-hydrogenoppgaver';
+import {seriesBoardGraphic, seriesBoardLayout, seriesBoardMotion} from './hydrogen-series-graphics.js?v=20261128-hydrogenoppgaver';
+import {hydrogenQuiz} from './hydrogen-series-quiz.js?v=20261128-hydrogenoppgaver';
 import {vindalooSolution} from './hydrogen-series-solution.js?v=20261126-hydrogen-sidefelt';
 
 const {fmt, transitionKey} = atomDrawing;
@@ -16,6 +16,8 @@ const styles = `<style>
 .hs-toolbar { display:grid; grid-template-columns:max-content minmax(0,1fr); align-items:start; gap:8px 16px; margin-bottom:9px }
 .hs-toolbar-menu { display:grid; justify-items:start; gap:6px; margin-block-start:7px }
 .hs-toolbar-controls { display:grid; justify-items:end; gap:4px; min-width:0 }
+#hs-model[data-mode=quiz] .hs-toolbar { grid-template-columns:minmax(0,1fr) }
+#hs-model[data-mode=quiz] .hs-toolbar-controls { grid-template-columns:minmax(9rem,1fr) minmax(0,36rem); align-items:center; gap:6px 16px }
 .hs-panel { padding:8px 11px; border:1px solid var(--line); border-radius:8px; background:var(--sidebar); color:var(--ink); font-size:.84rem; line-height:1.4 }
 #hs-model .hs-panel p,.hs-panel dl,.hs-panel dd { margin:0 }
 #hs-selection,.hs-excitation-status { max-width:23rem; border-inline-start:3px solid var(--green); background:var(--green-soft) }
@@ -45,7 +47,7 @@ const styles = `<style>
 #hs-model button.hs-explanation-trigger { display:block; padding:2px 0; border:0; background:none; color:var(--green); font:inherit; font-weight:650; text-align:start; white-space:normal; text-decoration:underline; text-underline-offset:3px }
 .hs-quiz-prompt { display:grid; align-content:center; width:min(100%,36rem); min-width:0; gap:4px; padding:10px 13px; border:1px solid var(--line); border-inline-start:3px solid var(--green); border-radius:8px; color:var(--ink); background:var(--green-soft) }
 .hs-quiz-label { color:var(--ink); font-size:.81rem; font-weight:650 }
-#hs-model .hs-quiz-instruction { margin:0; color:var(--muted); text-align:right }
+#hs-model .hs-quiz-instruction { margin:0; color:var(--muted); justify-self:end; text-align:start }
 #hs-model .hs-quiz-progress { margin:0; padding-inline:3px; color:var(--ink); font-size:.81rem; font-variant-numeric:tabular-nums; text-align:right }
 #hs-difficulty-value { margin-inline-start:4px; color:var(--green) }
 #hs-model #hs-clue { margin:0; color:var(--ink); font-size:clamp(1.05rem,1.9cqi,1.375rem); font-weight:750; line-height:1.3 }
@@ -77,10 +79,11 @@ const styles = `<style>
 #hs-model .hs-selected-wavelength { font-weight:700 }
 body.dark #hs-model { --hs-lyman-ink:#c491ee; --hs-balmer-ink:#72cdb9; --hs-paschen-ink:#f2a77f; --hs-infrared-ink:#eabd70; --hs-red-ink:#ff716c; --hs-cyan-ink:#54d9eb; --hs-blue-ink:#a3a5ff; --hs-violet-ink:#d0a0ff }
 #hs-model .hs-legend { display:grid; align-content:center; gap:5px; margin:0; padding:0; list-style:none; font-size:.79rem; line-height:1.35; color:var(--ink) }
-.hs-legend li { display:flex; align-items:baseline; gap:4px; margin:0 }
-.hs-legend i { display:inline-block; flex:none; width:8px; height:8px; border-radius:50%; background:var(--series-color) }
+.hs-legend li { display:flex; align-items:flex-start; gap:6px; margin:0 }
+.hs-legend i { flex:none; width:8px; height:8px; margin-top:.38em; border-radius:50%; background:var(--series-color) }
 .hs-legend strong { font-weight:650 }
 .hs-legend span { color:var(--muted) }
+.hs-legend .hs-legend-level { white-space:nowrap; color:inherit }
 #hs-model .hs-figure [data-series-action] { cursor:pointer; outline:none }
 #hs-model .hs-figure .hs-focus { opacity:0; pointer-events:none }
 #hs-model .hs-figure [data-series-action]:hover .hs-focus { opacity:.3 }
@@ -96,10 +99,10 @@ body.dark #hs-model { --hs-lyman-ink:#c491ee; --hs-balmer-ink:#72cdb9; --hs-pasc
   .hs-toolbar-menu { margin-block-start:0 }
   .hs-figures { grid-template-columns:minmax(0,1fr); grid-template-rows:auto auto auto; grid-template-areas:'board' 'spectrum' 'side' }
   .hs-side { contain:none; align-self:start; justify-self:end; width:min(100%,29rem) }
-  #hs-model .hs-legend { grid-template-columns:repeat(3,auto); gap:6px 10px }
 }
 @container (max-width:570px) {
-  #hs-model .hs-legend { grid-template-columns:1fr; gap:3px; padding-left:3px }
+  #hs-model[data-mode=quiz] .hs-toolbar-controls { grid-template-columns:minmax(0,1fr) }
+  #hs-model[data-mode=quiz] .hs-quiz-instruction { justify-self:start }
   .hs-quiz-prompt { padding:8px 10px }
 }
 @container (max-width:440px) {
@@ -113,9 +116,9 @@ body.dark #hs-model { --hs-lyman-ink:#c491ee; --hs-balmer-ink:#72cdb9; --hs-pasc
 </style>`;
 
 const legend = [
-  ['Lyman', 'til n = 1 · UV', '#a66bd4'],
-  ['Balmer', 'til n = 2 · synlig her', '#23988a'],
-  ['Paschen', 'til n = 3 · infrarødt', '#cc7142']
+  ['Alle overgangene ned til <span class="hs-legend-level">n = 1</span> gir UV-lys', 'Lyman-serien', 'var(--hs-lyman-ink,#9460c3)'],
+  ['Overgangene ned til <span class="hs-legend-level">n = 2</span> du ser her gir synlig lys', 'Balmer-serien', 'var(--hs-balmer-ink,#188273)'],
+  ['Overganger ned til <span class="hs-legend-level">n = 3</span> gir IR-lys', 'Paschen-serien', 'var(--hs-paschen-ink,#ba613b)']
 ];
 
 const buttons = (type, choices, selected) => choices.map(([value, label]) =>
@@ -165,7 +168,7 @@ export const hydrogenSeriesSection = {title:'Flere overganger i hydrogenatomet',
         <p>Elektronet blir fritt. H⁺ blir igjen.</p>
       </div>
       <ul id="hs-legend" class="hs-legend" aria-label="Overgangsserier">
-        ${legend.map(([name, description, color]) => `<li><i style="--series-color:${color}" aria-hidden="true"></i><strong>${name}</strong><span>${description}</span></li>`).join('')}
+        ${legend.map(([description, series, color]) => `<li><i style="--series-color:${color}" aria-hidden="true"></i><div><strong>${description}</strong> <span>(kalles gjerne ${series})</span></div></li>`).join('')}
       </ul>
       <div id="hs-explain-controls" hidden><button type="button" class="hs-explanation-trigger" data-series-explanation aria-haspopup="dialog" aria-controls="hs-explanation">${excitationQuestion}</button></div>
       <div id="hs-quiz-feedback" class="hs-panel hs-quiz-feedback" hidden>
@@ -230,7 +233,7 @@ export function mountHydrogenSeries(root, api) {
 
   function sceneState(time = lastTime) {
     return {
-      mode, excited, selected: selected && transitionKey(selected), solved,
+      mode, difficulty, excited, selected: selected && transitionKey(selected), solved,
       showEnergies: mode === 'quiz' && difficulty === 'spicy',
       transitions: animation?.phase === 'absorb' ? [] : edges,
       animation: animation && {...animation, progress: Math.max(0, Math.min(1, (time-animation.start)/duration[animation.phase]))}

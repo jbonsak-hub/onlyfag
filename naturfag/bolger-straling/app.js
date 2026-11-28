@@ -4,7 +4,7 @@ import {createAnimationClock} from './animation-clock.js?v=20261116-naturfag1';
 export function startCourse(topicList,{prototype=false,embedded=false}={}){
 let hostVisible=true;
 const order=['bolger','fenomener','em','atomer','universet','kommunikasjon','radioaktivitet','stralevern','atmosfaeren'];
-const questionTypes={mcq:'Flervalg',number:'Regn ut',sort:'Sorter',open:'Forklar og drøft'};
+const questionTypes={mcq:'Flervalg',number:'Regn ut',sort:'Sorter',matrix:'Tabelloppgave',open:'Forklar og drøft'};
 const topics=[...topicList].sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id));
 const allQuestions=topics.flatMap(topic=>topic.questions.map((q,index)=>({...q,topic,index})));
 const byId=new Map(topics.map(t=>[t.id,t]));
@@ -204,18 +204,38 @@ function numberFormHtml(q,draft){
  }).join('');
  return `<form class="q-number-form q-number-form--multi">${fields}<button type="submit">Sjekk</button></form>`;
 }
+function matrixFormHtml(q,draft){
+ const values=Array.isArray(draft)?draft:[];
+ const columnId=index=>`${q.id}-column-${index}`;
+ const headings=q.columns.map((column,index)=>`<th scope="col" id="${columnId(index)}">${column}</th>`).join('');
+ const rows=q.rows.map(({label},index)=>{
+  const rowId=`${q.id}-row-${index}`;
+  const choices=q.columns.map((_,column)=>`<td><label><input type="radio" name="${rowId}" value="${column}"
+   aria-labelledby="${rowId} ${columnId(column)}"${values[index]===String(column)?' checked':''}></label></td>`).join('');
+  return `<tr data-matrix-row="${index}"><th scope="row"><span id="${rowId}">${label}</span><span class="q-matrix-row-result"></span></th>${choices}</tr>`;
+ }).join('');
+ return `<form class="q-matrix-form">
+  <table class="q-matrix-table" aria-labelledby="prompt-${q.id}">
+   <colgroup><col class="q-matrix-label"><col span="${q.columns.length}"></colgroup>
+   <thead><tr><td></td>${headings}</tr></thead>
+   <tbody>${rows}</tbody>
+  </table>
+  <div class="q-matrix-actions"><button type="submit">Sjekk</button><p class="q-matrix-feedback" role="status"></p></div>
+ </form>`;
+}
 function questionHtml(q){
  const previous=saved.answers[q.id],solved=previous?.solved,bookmarked=!!saved.bookmarks[q.id],draft=saved.drafts[q.id]||'';
  const prompt=`<div class="q-prompt" id="prompt-${q.id}">${q.prompt}</div>`;
  const input=q.type==='mcq'?`<div class="q-choices" role="group" aria-labelledby="prompt-${q.id}">${shuffledChoices(q).map(({choice:c,index},i)=>`<button class="q-choice" data-choice="${index}" aria-pressed="false"><span class="choice-letter">${String.fromCharCode(65+i)}</span><span>${c}</span></button>`).join('')}</div>`:
   q.type==='number'?numberFormHtml(q,draft):
+  q.type==='matrix'?matrixFormHtml(q,draft):
   q.type==='open'?`<label class="sr-only" for="input-${q.id}">Ditt svar</label><textarea id="input-${q.id}" class="q-open" rows="2" placeholder="Skriv et kort svar, eller forklar muntlig før du ser løsningsforslaget.">${escapeHtml(draft)}</textarea>`:'';
  const controls=`${input}<div class="q-actions"><button class="show-answer">${q.type==='open'?'Vis veiledende svar':'Vis forklaring'}</button>${q.hint?'<button class="hint-button" aria-expanded="false">Et hint</button>':''}</div>${q.hint?`<div class="q-hint" hidden>${q.hint}</div>`:''}<div class="q-answer" hidden><div class="feedback" aria-live="polite"></div><div class="solution">${solutionHtml(q)}</div>${q.type==='open'?`<div class="self-mark"><button data-self="yes">Dette fikk jeg til</button><button data-self="again" class="secondary">Øv igjen senere</button></div>`:''}</div>`;
  const body=q.figure?
   `${prompt}<div class="q-figure">${q.figure}</div><div class="q-controls">${controls}</div>`:
   prompt+controls;
  const course=q.course?`<span class="q-course">(fra ${escapeHtml(q.course)})</span>`:'';
- return `<article class="q-card${q.figure?' q-has-figure':''}" data-question="${q.id}"><div class="q-top"><span class="q-number">${String(q.index+1).padStart(2,'0')}</span><span>${escapeHtml(q.level||'Bruk')}</span><span>· ${questionTypes[q.type]}</span>${course}<span class="q-status" ${solved?'':'hidden'}>✓ Mestret</span><span class="q-topic">${escapeHtml(q.topic.title)}</span><button class="q-bookmark" aria-label="${bookmarked?'Fjern bokmerke':'Merk oppgaven'}" aria-pressed="${bookmarked}" title="Merk oppgaven">${bookmarked?'★':'☆'}</button></div>${body}</article>`;
+ return `<article class="q-card${q.figure?' q-has-figure':''}${q.type==='matrix'?' q-matrix':''}" data-question="${q.id}"><div class="q-top"><span class="q-number">${String(q.index+1).padStart(2,'0')}</span><span>${escapeHtml(q.level||'Bruk')}</span><span>· ${questionTypes[q.type]}</span>${course}<span class="q-status" ${solved?'':'hidden'}>✓ Mestret</span><span class="q-topic">${escapeHtml(q.topic.title)}</span><button class="q-bookmark" aria-label="${bookmarked?'Fjern bokmerke':'Merk oppgaven'}" aria-pressed="${bookmarked}" title="Merk oppgaven">${bookmarked?'★':'☆'}</button></div>${body}</article>`;
 }
 function findQuestion(card){return allQuestions.find(q=>q.id===card.dataset.question);}
 function setSolved(q,card,solved){
@@ -253,6 +273,37 @@ function checkNumber(card){
  if(complete)setSolved(q,card,ok);
 }
 
+function matrixRows(form){
+ return [...form.querySelectorAll('[data-matrix-row]')];
+}
+function matrixValue(row){
+ return row.querySelector('input:checked')?.value ?? '';
+}
+function checkMatrix(card,form){
+ const question=findQuestion(card), rows=matrixRows(form), selected=rows.map(matrixValue);
+ const feedback=form.querySelector('.q-matrix-feedback');
+ if(selected.includes('')){
+  feedback.textContent='Velg ett svar på hver rad før du sjekker.';
+  return;
+ }
+ let correct=0;
+ rows.forEach((row,index)=>{
+  const ok=Number(selected[index])===question.rows[index].correct;
+  if(ok)correct++;
+  row.dataset.result=ok?'correct':'wrong';
+  row.querySelector('.q-matrix-row-result').textContent=ok?'Riktig':'Prøv igjen';
+ });
+ const solved=correct===rows.length;
+ feedback.textContent=solved?'Riktig! Alle radene stemmer.':`${correct} av ${rows.length} riktige.`;
+ if(solved){
+  const answer=card.querySelector('.q-answer');
+  answer.hidden=false;
+  answer.querySelector('.solution').hidden=false;
+  card.querySelector('.show-answer').textContent='Skjul forklaring';
+ }
+ setSolved(question,card,solved);
+}
+
 document.addEventListener('click',e=>{
  if(e.target.closest('.skip')){e.preventDefault();$('#main').focus();return;}
  const section=e.target.closest('[data-section]');if(section){e.preventDefault();document.getElementById(section.dataset.section)?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});return;}
@@ -265,10 +316,27 @@ document.addEventListener('click',e=>{
  if(e.target.closest('.hint-button')){const hint=card.querySelector('.q-hint');hint.hidden=!hint.hidden;e.target.setAttribute('aria-expanded',String(!hint.hidden));return;}
  const self=e.target.closest('[data-self]');if(self){setSolved(q,card,self.dataset.self==='yes');card.querySelectorAll('[data-self]').forEach(b=>b.classList.toggle('selected',b===self));if(self.dataset.self==='again'){saved.bookmarks[q.id]=true;persist();const b=card.querySelector('.q-bookmark');b.textContent='★';b.setAttribute('aria-pressed','true');b.setAttribute('aria-label','Fjern bokmerke');}announce(self.dataset.self==='yes'?'Oppgaven er markert som mestret.':'Oppgaven er bokmerket til neste gang.');}
 });
-document.addEventListener('submit',e=>{if(e.target.matches('.q-number-form')){e.preventDefault();checkNumber(e.target.closest('.q-card'));}});
+document.addEventListener('submit',e=>{
+ const form=e.target;
+ if(!form.matches('.q-number-form,.q-matrix-form'))return;
+ e.preventDefault();
+ const card=form.closest('.q-card');
+ if(form.matches('.q-number-form'))checkNumber(card);
+ else checkMatrix(card,form);
+});
 document.addEventListener('input',e=>{
  const card=e.target.closest('.q-card');
  if(!card||!e.target.matches('textarea,input'))return;
+ const matrix=e.target.closest('.q-matrix-form');
+ if(matrix){
+  const row=e.target.closest('[data-matrix-row]');
+  row.removeAttribute('data-result');
+  row.querySelector('.q-matrix-row-result').textContent='';
+  matrix.querySelector('.q-matrix-feedback').textContent='';
+  saved.drafts[card.dataset.question]=matrixRows(matrix).map(matrixValue);
+  persist();
+  return;
+ }
  const form=e.target.closest('.q-number-form--multi');
  saved.drafts[card.dataset.question]=form?[...form.querySelectorAll('input')].map(input=>input.value):e.target.value;
  if(form){

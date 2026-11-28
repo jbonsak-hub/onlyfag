@@ -1,6 +1,7 @@
-import {atomDrawing} from './atom-lab.js?v=20261126-atomoppgaver';
+import {atomDrawing} from './atom-lab.js?v=20261128-hydrogenoppgaver';
 import {wavelengthColor} from './element-spectra.js?v=20261126-atomspektre';
 import {spectraLabElements} from './spectra-lab-data.js?v=20261126-absorpsjon';
+import {atomTransitionQuestion} from './atom-transition-question.js?v=20261128-hydrogenoppgaver';
 
 const {arrow, line, wavePacket}=atomDrawing;
 const ink='var(--ink,#20352e)', exposed='var(--green,#236448)', muted='var(--muted,#52685f)';
@@ -289,7 +290,9 @@ export const atomQuestions=[
     prompt:'Spekteret har bare lys ved enkelte bølgelengder. Hvilken endring i atomene kan gi disse linjene?',
     choices:['Elektroner skifter energinivå','Atomkjernen mister et proton ved hver linje','Atomet mister hele kjernen','Hvert atom sender ut alle bølgelengder'],
     correct:0,answer:'Elektronene kan bare ha bestemte energier. Hver overgang mellom to nivåer gir <strong>en bestemt fotonenergi</strong> og dermed en bestemt bølgelengde.'
-  },{
+  },
+  atomTransitionQuestion,
+  {
     id:'atom-10',type:'open',level:'Utfordring',figure:availableLevels(),mountFigure:mountTransitionDrawing,
     prompt:'I denne modellen kan elektronet falle fra ethvert høyere nivå til et hvilket som helst lavere nivå. Hvor mange ulike overganger nedover er mulige? Må ett atom sende ut alle disse fotonene?',
     answer:'Mulighetene er 4→3, 4→2, 4→1, 3→2, 3→1 og 2→1, altså <strong>seks</strong>. Ett atom følger én vei ned gjennom nivåene. I mange atomer kan ulike veier gi alle de seks fotontypene til sammen.'

@@ -1,7 +1,7 @@
 const groups = [
-  {name:'Lyman', color:'var(--hs-lyman-ink,#9460c3)', angle:-1.56, keys:['6-1','5-1','4-1','3-1','2-1']},
-  {name:'Balmer', color:'var(--hs-balmer-ink,#188273)', angle:-.16, keys:['6-2','5-2','4-2','3-2']},
-  {name:'Paschen', color:'var(--hs-paschen-ink,#ba613b)', angle:1.16, keys:['6-3','5-3','4-3']},
+  {name:'Lyman', band:'UV', color:'var(--hs-lyman-ink,#9460c3)', angle:-1.56, keys:['6-1','5-1','4-1','3-1','2-1']},
+  {name:'Balmer', band:'Synlig', color:'var(--hs-balmer-ink,#188273)', angle:-.16, keys:['6-2','5-2','4-2','3-2']},
+  {name:'Paschen', band:'IR', color:'var(--hs-paschen-ink,#ba613b)', angle:1.16, keys:['6-3','5-3','4-3']},
   {name:'Til n = 4 og 5', color:'var(--hs-infrared-ink,#966719)', angle:2.50, keys:['6-4','5-4','6-5']}
 ];
 
@@ -108,16 +108,19 @@ function ionizationPoints(atom,orbitPoint) {
   return {bound,released};
 }
 
+const ionizationY = graph=>graph.groupY-4;
+
 function boardGraphic(layout,state,drawing) {
   const {atom,graph,compact}=layout, {line,text,fmt,arrow,atomFace,hLevels,orbitPoint,transitionKey}=drawing;
-  const {animation,excited,mode,selected,showEnergies,solved,transitions}=state;
+  const {animation,excited,mode,difficulty,selected,showEnergies,solved,transitions}=state;
   const ionization=mode==='excite'&&excited===Infinity;
   const ionized=ionization&&!animation;
-  const thresholdY=graph.groupY-4;
+  const thresholdY=ionizationY(graph);
   const ys=levelPositions(graph,drawing);
   const columns=shownGroups(transitions);
   const span=(graph.right-graph.left)/columns.length;
   const absorption=animation?.phase==='absorb';
+  const showSeriesNames=mode==='quiz'&&difficulty!=='mild';
   const illuminated = new Set(animation?.transitions.map(transitionKey));
   const face=atomFace(atom,hLevels,absorption?{from:1,to:excited}:null,0,-Math.PI);
   const energyRows=hLevels.map(n=>{
@@ -127,7 +130,7 @@ function boardGraphic(layout,state,drawing) {
       + text(graph.right+8,y+3.6,`n = ${n}`,'class="hs-label"')
       + (showEnergies?text(graph.right+44,y+3.6,`${fmt(-2.18/n**2,3)} aJ`,'class="hs-energy"'):'');
   }).join('');
-  const headings=columns.map((group,i)=>text(graph.left+span*(i+.5),graph.groupY,group.name,
+  const headings=columns.map((group,i)=>text(graph.left+span*(i+.5),graph.groupY,showSeriesNames?group.name:group.band??group.name,
     'class="hs-series-name" text-anchor="middle"')).join('');
   const threshold=ionization
     ? line(graph.left,thresholdY,graph.right,thresholdY,'var(--green,#236448)',
@@ -156,7 +159,8 @@ function boardGraphic(layout,state,drawing) {
     ${text(graph.left,graph.titleY,'Energinivåer','class="hs-title"')}
     ${compact?'':line(graph.left-23,49,graph.left-23,225,'var(--line,#cddbd1)')}
     ${arrow(graph.left-11,graph.bottom+2,graph.left-11,(ionization?thresholdY:graph.top)-3,'var(--muted,#71887c)',1.3)}
-    ${energyRows}${ionization?threshold:headings}${face.base}${showGround?face.electron:''}${hits}
+    ${energyRows}${ionization?threshold:headings}${face.base}${hits}
+    ${showGround?face.electron+diagramElectron(graph,ys[1],'ground'):''}
     ${released?`<g data-series-ionized="true">${electronPoint(...released,6.8)}${text(released[0],released[1]+20,'Fritt e⁻','class="hs-label" text-anchor="middle"')}</g>`:''}
     ${text(graph.left,graph.bottom+20,'Energi øker oppover','class="hs-label"')}`;
 }
@@ -165,11 +169,16 @@ function electronPoint(x,y,radius,opacity=1) {
   return `<circle cx="${x}" cy="${y}" r="${radius}" fill="#237897" stroke="#f4fffa" stroke-width="1.3" opacity="${opacity}"/>`;
 }
 
+function diagramElectron(graph,y,phase) {
+  return `<g data-series-diagram-electron="${phase}">${electronPoint(graph.left+3,y,6.8)}</g>`;
+}
+
 export function seriesBoardMotion(layout,state,drawing) {
   const {animation,excited}=state;
   if(!animation) return '';
   const {phase,progress,transitions}=animation;
   const {atom,graph,compact}=layout, {orbitPoint,wavePacket,ease,wavelengthInk,transitionKey}=drawing;
+  const ys=phase==='emission'?null:levelPositions(graph,drawing);
   if(phase==='ionize') {
     const {bound,released}=ionizationPoints(atom,orbitPoint);
     const absorbedAt=.43;
@@ -181,7 +190,8 @@ export function seriesBoardMotion(layout,state,drawing) {
     const incoming=progress<absorbedAt
       ? `<g data-series-ionizing-photon>${wavePacket(photonX,bound[1],0,progress*24,color,33)}</g>`
       : '';
-    return `${incoming}<g data-series-escaping-electron>${electronPoint(x,y,6.8)}</g>`;
+    const energyY=ys[1]+(ionizationY(graph)-ys[1])*position;
+    return `${incoming}<g data-series-escaping-electron>${electronPoint(x,y,6.8)}</g>${diagramElectron(graph,energyY,phase)}`;
   }
   if(phase==='absorb') {
     const radius=orbitPoint({x:0,y:0,inner:atom.inner,step:atom.step},excited,0)[0];
@@ -191,10 +201,10 @@ export function seriesBoardMotion(layout,state,drawing) {
     const u=ease(progress/.45);
     const color=wavelengthInk(transitions[0]?.wavelengthNM??122);
     const incoming=progress<.45?wavePacket(packetX+(atom.x-atom.inner-packetX)*u,atom.y,0,progress*24,color,33):'';
-    return incoming+electronPoint(x,atom.y,6.8);
+    const energyY=ys[1]+(ys[excited]-ys[1])*motion;
+    return incoming+electronPoint(x,atom.y,6.8)+diagramElectron(graph,energyY,phase);
   }
   const burst=phase==='burst';
-  const ys=burst?levelPositions(graph,drawing):null;
   const span=(graph.right-graph.left)/shownGroups(state.transitions).length;
   const drop=ease(progress/.33),travel=ease((progress-.35)/.65);
   return transitions.map(t=>{

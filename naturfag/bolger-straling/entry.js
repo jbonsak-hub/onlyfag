@@ -1,7 +1,7 @@
 import {emTopic} from './em-spectrum.js?v=20261127-lysreisetid';
-import {atomTopic} from './atom-topic.js?v=20261126-bolgefigurer';
-import {startCourse} from './app.js?v=20261127-lysreisetid';
-import {topics as basicTopics} from './wave-basics.js?v=20261127-hvitt-lys';
+import {atomTopic} from './atom-topic.js?v=20261128-hydrogenoppgaver';
+import {startCourse} from './app.js?v=20261128-hydrogenoppgaver';
+import {topics as basicTopics} from './wave-basics.js?v=20261128-hydrogenoppgaver';
 import {topics as waveTopics} from './waves.js?v=20261127-hvitt-lys';
 const params=new URLSearchParams(location.search);
 const topics=[...basicTopics,...waveTopics,emTopic,atomTopic];

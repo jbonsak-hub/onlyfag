@@ -210,6 +210,7 @@ async function runRevisionChecks({modelFixture,topics}={}){
    const hydrogen=af.get('al-hydrogen-svg'), lineButtons=af.get('al-h-spectrum-controls');
    const model=af.get('al-hydrogen-model');
    assert.equal(model.getAttribute('data-levels-revealed'),'false');
+   assert.equal(hydrogen.getAttribute('data-h-phase'),'ground');
    assert.equal(lineButtons.hidden,true);
    assert.equal(lineButtons.querySelectorAll('[data-h-line]').length,0);
    assert.equal(hydrogen.querySelectorAll('circle[fill=none]').length,1);
@@ -222,10 +223,18 @@ async function runRevisionChecks({modelFixture,topics}={}){
    assert.equal(af.get('al-h-readout').hidden,true);
    lineButtons.dispatch('click',{target:lineButtons.querySelector('[data-h-line="6"]')});
    assert.equal(hydrogen.getAttribute('data-transition'),'6-2');
-   assert.match(af.get('al-h-readout').textContent,/410/);
+   assert.equal(hydrogen.getAttribute('data-h-phase'),'excitation');
+   assert.ok(hydrogen.querySelector('[data-h-excitation-arrow]'));
    assert.equal(hydrogen.getAttribute('data-photon-arrived'),'false');
-   for(let step=1;step<=16;step++) af.tick(step/10);
+   for(let step=1;step<=23;step++) af.tick(step/10);
+   assert.equal(hydrogen.getAttribute('data-h-phase'),'excited');
+   for(let step=24;step<=38;step++) af.tick(step/10);
+   assert.equal(hydrogen.getAttribute('data-h-phase'),'emission');
+   assert.ok(hydrogen.querySelector('[data-h-emitted-photon]'));
+   for(let step=39;step<=50;step++) af.tick(step/10);
+   assert.equal(hydrogen.getAttribute('data-h-phase'),'settled');
    assert.equal(hydrogen.getAttribute('data-photon-arrived'),'true');
+   assert.match(af.get('al-h-readout').textContent,/410/);
    const preset=af.get('al-custom-preset'),spectrum=af.get('al-custom-spectrum'),custom=af.get('al-custom-svg');
    const handles=af.get('al-custom-handles'),firstHandle=()=>handles.querySelector('[data-custom-index="1"]');
    const lineCount=()=>spectrum.querySelectorAll('[data-custom-line]').length;
@@ -252,7 +261,7 @@ async function runRevisionChecks({modelFixture,topics}={}){
    lineButtons.dispatch('click',{target:lineButtons.querySelector('[data-h-line="3"]')});
    af.pause('#al-hydrogen-svg');
    const h=hydrogen.serialize();
-   af.tick(1.75);
+   af.tick(5.15);
    af.change('al-custom-preset','sodium','change');
    assert.equal(spectrum.serialize(),sodium);
    assert.equal(hydrogen.serialize(),h);
